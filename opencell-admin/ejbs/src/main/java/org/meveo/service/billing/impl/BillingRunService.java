@@ -690,6 +690,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 
         } else {
+        	if(billingRun.isExceptionalBR() && billingRun.getExceptionalBAIds() != null && !billingRun.getExceptionalBAIds().isEmpty()) {
+                return billingAccountService.findByIds(billingRun.getExceptionalBAIds());
+            }
             if(billingRun.isExceptionalBR() &&
                     ((billingRun.getExceptionalILIds() != null && billingRun.getExceptionalILIds().isEmpty()) ||
                             (billingRun.getExceptionalRTIds() != null && billingRun.getExceptionalRTIds().isEmpty()))) {
@@ -1555,7 +1558,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param jobInstanceId the job instance id
      * @throws BusinessException
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis,
                                                  Long jobInstanceId, JobExecutionResultImpl jobExecutionResult, boolean v11Process) throws BusinessException {
         List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun, v11Process);
@@ -1687,7 +1690,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             } else {
                 FilterConverter converter = new FilterConverter(RatedTransaction.class);
                 PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
-                queryBuilder = ratedTransactionService.getQuery(configuration);
+                queryBuilder = ratedTransactionService.getQuery(configuration, "rt");
             }
             filter.setPollingQuery(buildPollingQuery(queryBuilder));
         }

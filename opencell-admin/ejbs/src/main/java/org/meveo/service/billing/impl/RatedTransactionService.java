@@ -20,10 +20,10 @@ package org.meveo.service.billing.impl;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
-import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
 import static org.apache.commons.collections4.ListUtils.partition;
 import static org.meveo.commons.utils.ParamBean.getInstance;
+import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
+import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -1653,7 +1653,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
                 + "              rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
                 + "              rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax, rt.unit_amount_with_tax "
-                + "    FROM billing_rated_transaction rt WHERE id in (:ids) "
+                + "    FROM billing_rated_transaction rt WHERE rt.status='OPEN' and id in (:ids) "
                 + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
                 + "             rt.offer_id, rt.service_instance_id, " + usageDateAggregation + ",  "
                 + "             rt.order_number, rt.tax_percent, rt.tax_id, "
@@ -1663,36 +1663,31 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return executeNativeSelectQuery(query, params);
     }
 
-    public int makeAsProcessed(List<Long> ratedTransactionIds) {
-        return getEntityManager()
-                    .createNamedQuery("RatedTransaction.markAsProcessed")
-                    .setParameter("listOfIds", ratedTransactionIds)
-                    .executeUpdate();
-    }
 
     public void linkRTWithInvoiceLine(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
         for (Map.Entry<Long, List<Long>> entry : iLIdsRtIdsCorrespondence.entrySet()) {
             final List<Long> ratedTransactionsIDs = entry.getValue();
             final Long invoiceLineID = entry.getKey();
-            linkRTsToIL(ratedTransactionsIDs, invoiceLineID);
+            linkRTsToIL(ratedTransactionsIDs, invoiceLineID, null);
         }
     }
 
-    public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID) {
+    public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID, Long billingRunId) {
     	final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
         if (ratedTransactionsIDs.size() > maxValue) {
             SubListCreator<Long> subLists = new SubListCreator<>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / maxValue)));
             while (subLists.isHasNext()) {
-                linkRTsWithILByIds(invoiceLineID, subLists.getNextWorkSet());
+                linkRTsWithILByIds(invoiceLineID, subLists.getNextWorkSet(), billingRunId);
             }
         } else {
-            linkRTsWithILByIds(invoiceLineID, ratedTransactionsIDs);
+            linkRTsWithILByIds(invoiceLineID, ratedTransactionsIDs, billingRunId);
         }
     }
 
-    private void linkRTsWithILByIds( Long invoiceLineId, final List<Long> ids) {
+    private void linkRTsWithILByIds( Long invoiceLineId, final List<Long> ids, Long billingRunId) {
         getEntityManager().createNamedQuery("RatedTransaction.linkRTWithInvoiceLine")
                 .setParameter("il", invoiceLineId)
+                .setParameter("billingRunId", billingRunId)
                 .setParameter("ids", ids).executeUpdate();
     }
 
@@ -1707,27 +1702,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
             BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate, Filter filter) {
 
-        if (filter != null) {
-
-            // TODO #MEL use of filter must be reviewed
-            List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(filter, null);
-            List<Long> ratedTransactionIds = null;
-            if (billingRun.isExceptionalBR()) {
-                ratedTransactionIds = ratedTransactions.stream().filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.OPEN && rt.getBillingRun() == null))
-                        .map(RatedTransaction::getId)
-                        .collect(toList());
-            } else {
-                ratedTransactionIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
-            }
-            if (!ratedTransactionIds.isEmpty()) {
-                return getGroupedRTsWithAggregation(ratedTransactionIds, aggregationConfiguration);
-            }
-        }
-
         BillingCycle billingCycle = billingRun.getBillingCycle();
         Map<String, Object> billingCycleFilters = null;
         if (billingRun.getBillingCycle().getFilters() != null && !billingRun.getBillingCycle().getFilters().isEmpty()) {
             billingCycleFilters = new HashMap<>(billingRun.getBillingCycle().getFilters());
+        }
+        Map<String, Object> BRfilter = billingRun.getFilters();
+		if (BRfilter!=null && !BRfilter.isEmpty()) {
+        	billingCycleFilters=BRfilter;
         }
         if(!billingCycle.isDisableAggregation()) {
             if(billingCycle.getDateAggregation() == null) {
@@ -2068,19 +2050,28 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public int calculateAccountingArticle(JobExecutionResultImpl result, IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
-		List<RatedTransaction> ratedTransactions = getRatedTransactionHavingEmptyAccountingArticle(billableEntity, pageSize, pageIndex);
-		ratedTransactions.stream().forEach(rt->rt.setAccountingArticle(accountingArticleService.getAccountingArticleByChargeInstance(rt.getChargeInstance())));
-	    return ratedTransactions.size();
+		List<ChargeInstance> chargeInstances = readChargeInstancesHavingEmptyAccountingArticle(billableEntity, pageSize, pageIndex);
+		chargeInstances.stream().forEach(charge -> updateAccountingArticlesByChargeInstance(charge, accountingArticleService.getAccountingArticleByChargeInstance(charge)));
+	    return chargeInstances.size();
 	}
     
+	private void updateAccountingArticlesByChargeInstance(ChargeInstance charge,
+			AccountingArticle accountingArticle) {
+        String strQuery = "UPDATE RatedTransaction rt SET rt.accountingArticle=:accountingArticle WHERE rt.status='OPEN' and rt.chargeInstance=:chargeInstance and rt.accountingArticle is null ";
+        Query query = getEntityManager().createQuery(strQuery);
+        query.setParameter("chargeInstance", charge);
+        query.setParameter("accountingArticle", accountingArticle);
+        query.executeUpdate();
+	}
+
 	/**
 	 * @param billableEntity
 	 * @param pageSize
 	 * @param pageIndex
 	 * @return
 	 */
-	public List<RatedTransaction> getRatedTransactionHavingEmptyAccountingArticle(IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
-		QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt ", "rt");
+	public List<ChargeInstance> readChargeInstancesHavingEmptyAccountingArticle(IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
+		QueryBuilder qb = new QueryBuilder("select distinct rt.chargeInstance from RatedTransaction rt ", "rt");
 		if (billableEntity instanceof Subscription) {
         	qb.addCriterion("rt.subscription.id ", "=", billableEntity.getId(), false);
         } else if (billableEntity instanceof BillingAccount) {
@@ -2088,7 +2079,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } else if (billableEntity instanceof Order) {
         	qb.addCriterion("orderNumber ","=", ((Order) billableEntity).getOrderNumber(), false);
         }
-        qb.addSql(" rt.status='OPEN' and accountingArticle is null ");
+        qb.addSql(" rt.status='OPEN' and rt.accountingArticle is null ");
         try {
             final Query query = qb.getQuery(getEntityManager());
             if(pageIndex!=null && pageSize!=null) {
