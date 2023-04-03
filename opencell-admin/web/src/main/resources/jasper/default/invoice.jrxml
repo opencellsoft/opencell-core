@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-20230328"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-ManyTaxes"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -153,6 +153,9 @@
 	<field name="invoiceDate" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/header/invoiceDate]]></fieldDescription>
 	</field>
+	<field name="country" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::invoice/@country]]></fieldDescription>
+	</field>
 	<field name="baQuality" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/quality]]></fieldDescription>
 	</field>
@@ -187,6 +190,10 @@
 	<field name="invoiceCodeType" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@invoiceCodeType"/>
 		<fieldDescription><![CDATA[/invoice/@invoiceCodeType]]></fieldDescription>
+	</field>
+	<field name="invoiceCodeTypeLabel" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@invoiceCodeTypeLabel"/>
+		<fieldDescription><![CDATA[/invoice/@invoiceCodeTypeLabel]]></fieldDescription>
 	</field>
 	<field name="invoiceStatus" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@status"/>
@@ -447,7 +454,7 @@
 + "\n"]]></textFieldExpression>
 						</textField>
 						<staticText>
-							<reportElement mode="Opaque" x="14" y="-71" width="217" height="54" forecolor="#F0F7FA" backcolor="rgba(169, 173, 176, 0.0)" uuid="6ec6b279-7d84-4be1-b2d2-eec6845ed69b">
+							<reportElement mode="Opaque" x="15" y="-71" width="217" height="54" forecolor="#F0F7FA" backcolor="rgba(169, 173, 176, 0.0)" uuid="6ec6b279-7d84-4be1-b2d2-eec6845ed69b">
 								<property name="com.jaspersoft.studio.unit.x" value="px"/>
 								<property name="com.jaspersoft.studio.unit.y" value="px"/>
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -553,21 +560,21 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{invoiceStatus}=="VALIDATED" ? ($F{invoiceCodeType} != null ? $F{invoiceCodeType} : "Invoice") + ": "+ $F{invoiceNumber} : "Draft " + ($F{invoiceCodeType} != null ? $F{invoiceCodeType} : "Invoice")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{invoiceStatus}=="VALIDATED" ? ($F{invoiceCodeTypeLabel} != null ? $F{invoiceCodeTypeLabel} : "Invoice") + ": "+ $F{invoiceNumber} : "Draft " + ($F{invoiceCodeTypeLabel} != null ? $F{invoiceCodeTypeLabel} : "Invoice")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="18" y="86" width="190" height="20" uuid="f9f73956-b4a2-41c9-9fea-f0e4e3956d22"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Date: " + $F{invoiceDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Date: " + ($F{country}=="US" ? java.time.LocalDate.parse($F{invoiceDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{invoiceDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="18" y="101" width="190" height="20" uuid="f03bb93f-44f7-4b09-a3f9-e78c4d7ecb22"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Due Date: " + $F{dueDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Due Date: " + ($F{country}=="US" ? java.time.LocalDate.parse($F{dueDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{dueDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="249" y="70" width="345" height="70" uuid="ec6e4a89-edc8-445f-a3cb-8827a5725e9b">
