@@ -258,8 +258,9 @@ public class CustomTableCreatorService implements Serializable {
             DropDefaultValueChange dropDefaultValueChange = new DropDefaultValueChange();
             dropDefaultValueChange.setTableName(dbTableName);
             dropDefaultValueChange.setColumnName(dbFieldname);
-
-            if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+            if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+                dropDefaultValueChange.setColumnDataType("boolean");
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
                 dropDefaultValueChange.setColumnDataType("numeric(23, 12)");
             } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
                 dropDefaultValueChange.setColumnDataType("bigInt");
@@ -278,7 +279,10 @@ public class CustomTableCreatorService implements Serializable {
                 addDefaultValueChange.setTableName(dbTableName);
                 addDefaultValueChange.setColumnName(dbFieldname);
 
-                if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+                    addDefaultValueChange.setColumnDataType("boolean");
+                    addDefaultValueChange.setDefaultValueBoolean("true".equalsIgnoreCase(cft.getDefaultValue()));
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
                     addDefaultValueChange.setColumnDataType("numeric(23, 12)");
                     addDefaultValueChange.setDefaultValueNumeric(cft.getDefaultValue());
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
