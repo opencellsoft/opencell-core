@@ -1098,7 +1098,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             commit();
             associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
             basicStatistics.setCount(associatedRtIds.size());
-            ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId(), billingRun.getId());
+            ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId(), billingRun!=null?billingRun.getId():null);
             if(groupedRT.get("rated_transaction_ids") != null) {
             	var ratedTransIds = Arrays.asList( ((String) groupedRT.get("rated_transaction_ids")).split(","));
             	for(String id: ratedTransIds) {
