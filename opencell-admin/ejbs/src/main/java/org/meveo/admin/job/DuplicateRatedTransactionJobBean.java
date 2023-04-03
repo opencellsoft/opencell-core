@@ -27,11 +27,6 @@ public class DuplicateRatedTransactionJobBean extends IteratorBasedJobBean<Rated
     private void processRatedTransactionToDuplicate(RatedTransaction ratedTransaction, JobExecutionResultImpl jobExecutionResult) {
         duplicateRated(ratedTransaction, ratedTransaction.getPendingDuplicates(), false);
         duplicateRated(ratedTransaction, ratedTransaction.getPendingDuplicatesToNegate(), true);
-
-        ratedTransaction.setPendingDuplicates(0);
-        ratedTransaction.setPendingDuplicatesToNegate(0);
-
-        ratedTransactionService.update(ratedTransaction);
     }
 
     private void duplicateRated(RatedTransaction ratedTransaction, int numberIteration, boolean isNegate) {
@@ -46,9 +41,13 @@ public class DuplicateRatedTransactionJobBean extends IteratorBasedJobBean<Rated
                 duplicate.setAmountWithTax(duplicate.getAmountWithTax() != null ? duplicate.getAmountWithTax().negate() : null);
                 duplicate.setRawAmountWithTax(duplicate.getRawAmountWithTax() != null ? duplicate.getRawAmountWithTax().negate() : null);
                 duplicate.setRawAmountWithoutTax(duplicate.getRawAmountWithoutTax() != null ? duplicate.getRawAmountWithoutTax().negate() : null);
+                ratedTransaction.setPendingDuplicatesToNegate(ratedTransaction.getPendingDuplicatesToNegate() - 1);
+            }else{
+                ratedTransaction.setPendingDuplicates(ratedTransaction.getPendingDuplicates() - 1);
             }
             duplicate.setOriginRatedTransaction(ratedTransaction);
             ratedTransactionService.create(duplicate);
+
         }
     }
 }
