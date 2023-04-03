@@ -144,9 +144,6 @@ public class NativePersistenceService extends BaseService {
     @Inject
     protected Event<CustomTableEvent> entityChangeEventProducer;
 
-    @Inject
-    private EntityManagerProvider entityManagerProvider;
-
     /**
      * Find record by its identifier
      *
