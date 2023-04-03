@@ -91,7 +91,7 @@ public class DocumentFileService {
         if(Objects.nonNull(calculatedDocumentRelativePath)){
             return documentRootDir + File.separator + calculatedDocumentRelativePath + File.separator + document.getFileName();
         }
-        return documentRootDir + File.separator + documentCategory.getRelativePath()+ File.separator + document.getCode()+"_"+document.getDocumentVersion() + File.separator + document.getFileName();
+        return documentRootDir + File.separator + documentCategory.getRelativePath() + File.separator + document.getFileName();
     }
 
     @VisibleForTesting
@@ -107,7 +107,7 @@ public class DocumentFileService {
         if(Objects.nonNull(calculatedDocumentRelativePath)){
             return documentRootDir + File.separator + calculatedDocumentRelativePath;
         }
-        return documentRootDir + File.separator + documentCategory.getRelativePath() + File.separator + document.getCode()+"_"+document.getDocumentVersion();
+        return documentRootDir + File.separator + documentCategory.getRelativePath();
     }
 
     public boolean hasFile(Document documentEntity) {
