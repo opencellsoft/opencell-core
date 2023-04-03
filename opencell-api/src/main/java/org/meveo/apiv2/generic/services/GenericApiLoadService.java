@@ -175,7 +175,7 @@ public class GenericApiLoadService {
     public Optional<String> findByClassNameAndId(Boolean extractList, Class entityClass, Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities, Long nestedDepth, Set<String> excludedFields) {
         checkId(id);
 
-        IEntity iEntity = persistenceDelegate.findAndRefresh(entityClass, id, searchConfig.getFetchFields());
+        IEntity iEntity = persistenceDelegate.findByIdIgnoringCache(entityClass, id, searchConfig.getFetchFields());
 
         return Optional
                 .ofNullable(iEntity)

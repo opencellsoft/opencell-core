@@ -65,11 +65,13 @@ import javax.ws.rs.NotFoundException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.io.IOUtils;
+import org.hibernate.CacheMode;
 import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.jpa.QueryHints;
 import org.hibernate.query.NativeQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -404,6 +406,27 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             if (refresh) {
                 getEntityManager().refresh(e);
             }
+        }
+        return e;
+    }
+
+    public E findByIdIgnoringCache(Long id, List<String> fetchFields) {
+        log.trace("Find {}/{} by id without cache hint {}", entityClass.getSimpleName(), id);
+        final Class<? extends E> productClass = getEntityClass();
+        StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
+        if (fetchFields != null && !fetchFields.isEmpty()) {
+            for (String fetchField : fetchFields) {
+                queryString.append(" left join fetch a." + fetchField);
+            }
+        }
+        queryString.append(" where a.id = :id");
+        Query query = getEntityManager().createQuery(queryString.toString()).setHint(QueryHints.HINT_CACHE_MODE, CacheMode.IGNORE);
+        query.setParameter("id", id);
+
+        List<E> results = query.getResultList();
+        E e = null;
+        if (!results.isEmpty()) {
+            e = (E) results.get(0);
         }
         return e;
     }
