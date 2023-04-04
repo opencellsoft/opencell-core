@@ -1861,7 +1861,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                         : invoice.getBillingAccount().getTradingCurrency().getCurrencyCode());
         Text currencyRateValue = this.createTextNode(doc, invoice.getBillingAccount().getTradingCurrency().getCurrentRate() == null
                 ? "1.00"
-                : new DecimalFormat("#,##0.00").format(invoice.getBillingAccount().getTradingCurrency().getCurrentRate()));
+                : new DecimalFormat("0.00").format(invoice.getBillingAccount().getTradingCurrency().getCurrentRate()));
         currency.appendChild(currencyCodeValue);
         currencySymbol.appendChild(currencySymbolValue);
         currencyRate.appendChild(currencyRateValue);

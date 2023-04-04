@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-20230330"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ERR-COM-20230404"/>
 	<queryString language="xPath">
 		<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
 	</queryString>
@@ -251,7 +251,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{articleLabelLine}.substring(0, 1).toUpperCase() + $F{articleLabelLine}.substring(1) + "\n" +
+					<textFieldExpression><![CDATA[$F{articleLabelLine} != null ? ($F{articleLabelLine}.substring(0, 1).toUpperCase() + $F{articleLabelLine}.substring(1)) + "\n"  : "" +
 ($F{country}=="US" ? java.time.LocalDate.parse($F{periodStartDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{periodStartDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))
  + ($F{periodEndDate}.isEmpty() ? "" : " - " + $F{periodEndDate}) + "\n" +
 $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></textFieldExpression>

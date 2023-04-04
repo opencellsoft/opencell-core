@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-ManyTaxes"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ERR-COM-20230404"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -307,7 +307,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Bottom">
 						<font fontName="Vista Sans OT Reg" size="9" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[(($F{currencyRate}!=null && !String.valueOf($F{currencyRate}).isEmpty() && !String.valueOf($F{currencyRate}).equals("null") && new Double($F{currencyRate}) > 1d) ? "Rate applied against EUR : " + (($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{currencyRate}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{currencyRate})))) + " " + $F{currencySymbol} : "")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[(($F{currencyRate}!=null && !String.valueOf($F{currencyRate}).isEmpty() && !String.valueOf($F{currencyRate}).equals("null") && new Double($F{currencyRate}.replace(",", ".")) > 1d) ? "Rate applied against EUR : " + (($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{currencyRate}.replace(",", ".")))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{currencyRate}.replace(",", "."))))) + " " + $F{currencySymbol} : "")]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="7">
