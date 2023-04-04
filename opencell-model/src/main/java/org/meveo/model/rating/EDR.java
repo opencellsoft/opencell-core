@@ -51,7 +51,7 @@ import org.meveo.model.billing.WalletOperation;
  */
 @Entity
 @Table(name = "rating_edr")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_edr_seq"), @Parameter(name = "increment_size", value = "500") })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_edr_seq"), @Parameter(name = "increment_size", value = "5000") })
 @NamedQueries({
         @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_'),case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
 

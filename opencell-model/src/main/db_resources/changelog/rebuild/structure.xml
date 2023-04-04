@@ -237,7 +237,7 @@
         <createSequence sequenceName="billing_invoice_seq" />
         <createSequence sequenceName="billing_invoice_sub_cat_seq" startValue="3" />
         <createSequence sequenceName="billing_invoice_template_seq" />
-        <createSequence sequenceName="billing_rated_transaction_seq" incrementBy="500" />
+        <createSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000" />
         <createSequence sequenceName="billing_rejected_ba_seq" />
         <createSequence sequenceName="billing_reservation_seq" />
         <createSequence sequenceName="billing_service_instance_seq" />
@@ -248,7 +248,7 @@
         <createSequence sequenceName="billing_trading_country_seq" startValue="3" />
         <createSequence sequenceName="billing_trading_currency_seq" startValue="3" />
         <createSequence sequenceName="billing_trading_language_seq" startValue="3" />
-        <createSequence sequenceName="billing_wallet_operation_seq" incrementBy="500" />
+        <createSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000" />
         <createSequence sequenceName="billing_wallet_seq" />
         <createSequence sequenceName="cat_calendar_interval_seq" />
         <createSequence sequenceName="cat_calendar_seq" startValue="4" />
@@ -291,7 +291,7 @@
         <createSequence sequenceName="job_execution_seq" />
         <createSequence sequenceName="medina_access_seq" />
         <createSequence sequenceName="meveo_timer_seq" startValue="2" />
-        <createSequence sequenceName="rating_edr_seq" incrementBy="500" />
+        <createSequence sequenceName="rating_edr_seq" incrementBy="5000" />
         <createSequence sequenceName="rm_service_param_template_seq" />
         <createSequence sequenceName="billing_invoice_configuration_seq" startValue="2" />
         <createSequence sequenceName="ar_credit_category_seq" startValue="6" />
@@ -366,7 +366,7 @@
         <createSequence sequenceName="flat_file_seq" startValue="1" />
         <createSequence sequenceName="ar_accounting_writing_seq"/>
         <createSequence sequenceName="adm_file_type_seq"/>
-        <createSequence sequenceName="rating_cdr_seq" incrementBy="500"/>
+        <createSequence sequenceName="rating_cdr_seq" incrementBy="5000"/>
         <createSequence sequenceName="billing_tax_category_seq" startValue="1" />
         <createSequence sequenceName="billing_tax_class_seq" startValue="1" />
         <createSequence sequenceName="billing_tax_mapping_seq" startValue="1" />
@@ -19579,6 +19579,7 @@
     <changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari" />
     <changeSet id="#INTRD-14597_20230324" author="TarikFA." />
     
+    <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
