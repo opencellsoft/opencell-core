@@ -29,6 +29,7 @@ import java.lang.reflect.TypeVariable;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,6 +65,8 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
@@ -99,6 +102,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -116,6 +120,7 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.expressions.ExpressionFactory;
 import org.meveo.service.base.expressions.ExpressionParser;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
@@ -1091,15 +1096,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public QueryBuilder getQuery(PaginationConfiguration config) {
-    	return getQuery(config,"a");
+    	return getQuery(config,"a", false);
     }
     	
-    public QueryBuilder getQuery(PaginationConfiguration config, String alias) {
+    public QueryBuilder getQuery(PaginationConfiguration config, String alias, boolean distinct) {
         Map<String, Object> filters = config.getFilters();
 
         adaptOrdering(config, filters);
         
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, alias, config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator());
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, alias, config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator(), distinct);
         if (filters != null && !filters.isEmpty()) {
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);
@@ -1745,4 +1750,24 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return map;
         };
     }
+    
+	/**
+	 * Create Query builder from a map of filters filters : Map of filters Return :
+	 * QueryBuilder
+	 */
+	public QueryBuilder getQueryFromFilters(Map<String, Object> filters, List<String> fetchFields, boolean distinct) {
+		QueryBuilder queryBuilder;
+		String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
+		if (!StringUtils.isBlank(filterValue)) {
+			queryBuilder = new QueryBuilder(filterValue, "a",true);
+		} else {
+			FilterConverter converter = new FilterConverter(RatedTransaction.class);
+			PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
+			if (!CollectionUtils.isEmpty(fetchFields)) {
+				configuration.setFetchFields(fetchFields);
+			}
+			queryBuilder = getQuery(configuration, "a", true);
+		}
+		return queryBuilder;
+	}
 }
