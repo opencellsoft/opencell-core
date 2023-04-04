@@ -267,9 +267,9 @@ public class QueryBuilder {
     
     
 	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType) {
-		initQueryBuilder(getInitQuery(clazz, alias, doFetch, fetchFields), alias);
-    	this.clazz = clazz;
+		this.clazz = clazz;
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
+		initQueryBuilder(getInitQuery(clazz, alias, doFetch, fetchFields), alias);
 	}
 	
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
@@ -299,8 +299,10 @@ public class QueryBuilder {
 	 * @param filterOperator Operator to build where statement
 	 */
 	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator, boolean distinct) {
-		this(clazz, alias, doFetch, fetchFields, joinType, filterOperator);
-    	this.distinct = distinct;
+		this.distinct = distinct;
+		this.joinType=joinType;
+		this.filterOperator=filterOperator;
+		initQueryBuilder(getInitQuery(clazz, alias, doFetch,  fetchFields), alias);
 	}
 
 	/**
@@ -325,8 +327,8 @@ public class QueryBuilder {
      * @param fetchFields Additional (list/map type) fields to fetch
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
+    	this.clazz = clazz;
     	initQueryBuilder(getInitQuery(clazz, alias, true, fetchFields), alias);
-        this.clazz = clazz;
     }
 
     /**
