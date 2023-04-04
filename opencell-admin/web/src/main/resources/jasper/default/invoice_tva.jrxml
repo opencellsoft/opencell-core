@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-20230330"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="WAFA-DUPLICATED-LINE"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -207,7 +207,7 @@
 		<field name="country" class="java.lang.String">
 			<fieldDescription><![CDATA[ancestor::invoice/@country]]></fieldDescription>
 		</field>
-		<sortField name="percent"/>
+		<sortField name="taxIndex"/>
 	</subDataset>
 	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
