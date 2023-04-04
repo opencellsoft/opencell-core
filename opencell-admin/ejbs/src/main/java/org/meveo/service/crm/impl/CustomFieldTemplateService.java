@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -114,7 +115,13 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     @Inject
     private CustomTableService customTableService;
 
-    private static boolean useCFTCache = ParamBeanFactory.getAppScopeInstance().getPropertyAsBoolean("cache.cacheCFT", true);
+    static boolean useCFTCache = true;
+
+    @PostConstruct
+    private void init() {
+        useCFTCache = ParamBeanFactory.getAppScopeInstance().getPropertyAsBoolean("cache.cacheCFT", true);
+    }
+
 
     public static void setCacheCFTAsTrue() {
         useCFTCache = true;
