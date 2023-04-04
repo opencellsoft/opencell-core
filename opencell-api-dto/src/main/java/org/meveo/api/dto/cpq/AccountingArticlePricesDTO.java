@@ -85,7 +85,8 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
   
 
     
-	public AccountingArticlePricesDTO(QuoteArticleLine quoteArticleline) {
+	public AccountingArticlePricesDTO(QuoteArticleLine quoteArticleline,
+									  Map<String, String> mapTaxIndexes) {
 		super();
 		accountingArticleCode=quoteArticleline.getAccountingArticle().getCode();
 		accountingArticleLabel=quoteArticleline.getAccountingArticle().getDescription();
@@ -103,7 +104,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 	                    .stream()
 	                    .map(key -> reducePrices(key, pricesPerType, quoteArticleline.getQuoteVersion(), quoteArticleline.getQuoteProduct()!=null?quoteArticleline.getQuoteProduct().getQuoteOffer():null, PriceLevelEnum.PRODUCT))
 	                    .filter(Optional::isPresent)
-	                    .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
+	                    .map(price -> new PriceDTO(price.get(), mapTaxIndexes)).collect(Collectors.toList());
 
 	            quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
 	        }

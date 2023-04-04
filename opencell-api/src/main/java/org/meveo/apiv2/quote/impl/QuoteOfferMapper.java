@@ -1,7 +1,9 @@
 package org.meveo.apiv2.quote.impl;
 
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.MapUtils;
 import org.meveo.api.dto.cpq.QuoteAttributeDTO;
 import org.meveo.api.dto.cpq.QuoteProductDTO;
 import org.meveo.apiv2.generic.ResourceMapper;
@@ -22,7 +24,7 @@ public class QuoteOfferMapper extends ResourceMapper<org.meveo.apiv2.quote.Quote
 				.contractCode(entity.getContract() != null ? entity.getContract().getCode() : null)
 				.position(entity.getPosition())
 				.sequence(entity.getSequence())
-				.quoteProduct(entity.getQuoteProduct().stream().map(qp -> new QuoteProductDTO(qp, true)).collect(Collectors.toList()))
+				.quoteProduct(entity.getQuoteProduct().stream().map(qp -> new QuoteProductDTO(qp, true, new HashMap<String, String>())).collect(Collectors.toList()))
 				.quoteAttributes(entity.getQuoteAttributes().stream().map(qa -> new QuoteAttributeDTO(qa)).collect(Collectors.toList()))
 				.deliveryDate(entity.getDeliveryDate())
 				.build();

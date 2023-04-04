@@ -27,13 +27,16 @@ import org.meveo.api.dto.cpq.xml.BillableAccount;
 import org.meveo.api.dto.cpq.xml.BillingAccount;
 import org.meveo.api.dto.cpq.xml.Category;
 import org.meveo.api.dto.cpq.xml.Contract;
+import org.meveo.api.dto.cpq.xml.CustomerAccount;
 import org.meveo.api.dto.cpq.xml.Details;
 import org.meveo.api.dto.cpq.xml.Header;
 import org.meveo.api.dto.cpq.xml.PaymentMethod;
 import org.meveo.api.dto.cpq.xml.Product;
 import org.meveo.api.dto.cpq.xml.Quote;
 import org.meveo.api.dto.cpq.xml.QuoteLine;
+import org.meveo.api.dto.cpq.xml.QuoteXMLHeader;
 import org.meveo.api.dto.cpq.xml.QuoteXmlDto;
+import org.meveo.api.dto.cpq.xml.Seller;
 import org.meveo.api.dto.cpq.xml.SubCategory;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.article.AccountingArticle;
@@ -105,15 +108,15 @@ public class QuoteToXmlScript extends ModuleScript {
     }
 
     public QuoteXmlDto map(QuoteVersion quoteVersion) {
-    	
-    	 
-
-        CpqQuote quote = quoteVersion.getQuote();
+    	CpqQuote quote = quoteVersion.getQuote();
         org.meveo.model.billing.BillingAccount bac=quote.getBillableAccount() == null ? quote.getApplicantAccount() : quote.getBillableAccount();
         
         PaymentMethod paymentMethod=new PaymentMethod(bac.getPaymentMethod(),entityToDtoConverter.getCustomFieldsDTO(bac.getPaymentMethod()));
         
         BillingAccount billingAccount = new BillingAccount(bac,paymentMethod,entityToDtoConverter.getCustomFieldsDTO(bac));
+        CustomerAccount customerAccount = new CustomerAccount(bac.getCustomerAccount());
+        Seller seller = new Seller(bac.getSeller());
+
         org.meveo.model.cpq.contract.Contract contract = quoteVersion.getContract();
         Contract ctr=null;
         if(contract!=null) {
@@ -125,9 +128,10 @@ public class QuoteToXmlScript extends ModuleScript {
          endDate=quote.getValidity().getTo();
          duration = startDate.getTime()-endDate.getTime();
        }
-        
-        Header header = new Header(billingAccount,ctr,quoteVersion.getQuoteVersion(),quote.getCode(),startDate,duration,
-        		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate,quoteVersion.getComment());
+
+        QuoteXMLHeader header = new QuoteXMLHeader(billingAccount,ctr,quoteVersion.getQuoteVersion(),quote.getCode(),startDate,duration,
+        		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate,quoteVersion.getComment(),
+                customerAccount, seller);
 
         Map<org.meveo.model.billing.BillingAccount, List<QuoteArticleLine>> linesByBillingAccount = getAllOffersQuoteLineStream(quoteVersion)
                 .collect(groupingBy(QuoteArticleLine::getBillableAccount));
@@ -221,7 +225,7 @@ public class QuoteToXmlScript extends ModuleScript {
                             currencies.put(quotePrice.getCurrencyCode(), currencyService.findByTradingCurrencyCode(quotePrice.getCurrencyCode()));
                         }
                     });
-                    return new QuoteLine(line,mapToOffer(line.getQuoteProduct()), currencies);
+                    return new QuoteLine(line,mapToOffer(line.getQuoteProduct()), currencies, new HashMap<>());
                 })
     			.collect(Collectors.toList()));
     	return accountingArticleDto; 
@@ -278,7 +282,7 @@ public class QuoteToXmlScript extends ModuleScript {
                 .stream()
                 .map(key -> reducePrices(key, pricesPerType))
                 .filter(Optional::isPresent)
-                .map(price -> new PriceDTO(price.get()))
+                .map(price -> new PriceDTO(price.get(), new HashMap<>()))
                 .collect(Collectors.toList());
     }
 

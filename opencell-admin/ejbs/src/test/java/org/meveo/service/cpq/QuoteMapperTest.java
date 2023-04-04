@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -98,7 +99,7 @@ public class QuoteMapperTest {
         QuoteVersion quoteVersion = new QuoteVersion();
         quoteVersion.setQuote(quote);
 
-        QuoteXmlDto quoteXmlDto = new QuoteMapper().map(quoteVersion);
+        QuoteXmlDto quoteXmlDto = new QuoteMapper().map(quoteVersion, new HashMap<>());
 
         Header header = quoteXmlDto.getHeader();
         assertThat(header).isNotNull();
@@ -137,7 +138,7 @@ public class QuoteMapperTest {
         QuoteVersion quoteVersion = new QuoteVersion();
         quoteVersion.setQuote(quote);
 
-        QuoteXmlDto quoteXmlDto = quoteMapper.map(quoteVersion);
+        QuoteXmlDto quoteXmlDto = quoteMapper.map(quoteVersion, new HashMap<>());
 
         String xmlQuoteRepresentation = xmlQuoteFormatter.format(quoteXmlDto);
     }
@@ -174,7 +175,7 @@ public class QuoteMapperTest {
         quoteVersion.setQuote(quote);
         quoteVersion.setQuoteOffers(List.of(quoteOffer));
 
-        QuoteXmlDto quoteXmlDto = quoteMapper.map(quoteVersion);
+        QuoteXmlDto quoteXmlDto = quoteMapper.map(quoteVersion, new HashMap<>());
 
         assertThat(quoteXmlDto.getDetails()).isNotNull();
         Quote quoteXml = quoteXmlDto.getDetails().getQuote();
