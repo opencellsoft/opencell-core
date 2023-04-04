@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE-ManyTaxes"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="WAFA-DUPLICATED-LINE"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -577,10 +577,10 @@
 				<textFieldExpression><![CDATA["Due Date: " + ($F{country}=="US" ? java.time.LocalDate.parse($F{dueDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{dueDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="249" y="70" width="345" height="70" uuid="ec6e4a89-edc8-445f-a3cb-8827a5725e9b">
+				<reportElement x="410" y="70" width="184" height="70" uuid="ec6e4a89-edc8-445f-a3cb-8827a5725e9b">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Top">
+				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
 					<paragraph rightIndent="7"/>
 				</textElement>
