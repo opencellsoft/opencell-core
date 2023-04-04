@@ -1,6 +1,7 @@
 package org.meveo.api.dto.response.cpq;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -41,7 +42,7 @@ public class GetQuoteVersionDtoResponse extends QuoteVersionDto{
 		super(q);
 		if (loadQuoteOffers) {
 			for (QuoteOffer quoteOffer : q.getQuoteOffers()) {
-				quoteItems.add(new QuoteOfferDTO(quoteOffer, loadQuoteProduct, loadQuoteAttributes,loadOfferAttributes));
+				quoteItems.add(new QuoteOfferDTO(quoteOffer, loadQuoteProduct, loadQuoteAttributes,loadOfferAttributes, new HashMap<>()));
 			}
 		}
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
