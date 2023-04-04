@@ -14,11 +14,18 @@ public class Seller {
     protected Address address;
 
     public Seller(org.meveo.model.admin.Seller seller) {
+        if (seller == null) {
+            return;
+        }
+
         this.registrationNo = seller.getRegistrationNo();
         this.vatNo = seller.getVatNo();
-        this.contactInformation = new ContactInformation(seller.getContactInformation().getEmail(),
-                seller.getContactInformation().getPhone(), seller.getContactInformation().getMobile(),
-                seller.getContactInformation().getFax());
+
+        if (seller.getContactInformation() != null) {
+            this.contactInformation = new ContactInformation(seller.getContactInformation().getEmail(),
+                    seller.getContactInformation().getPhone(), seller.getContactInformation().getMobile(),
+                    seller.getContactInformation().getFax());
+        }
         this.address = new Address(seller.getAddress());
     }
 
