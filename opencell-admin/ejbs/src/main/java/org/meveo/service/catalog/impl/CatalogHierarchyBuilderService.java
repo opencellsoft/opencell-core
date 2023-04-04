@@ -39,6 +39,7 @@ import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Channel;
@@ -322,7 +323,7 @@ public class CatalogHierarchyBuilderService {
     		productCharge.forEach(pct -> { 
     			ProductChargeTemplateMapping duplicat = new ProductChargeTemplateMapping();
     			duplicat.setCounterTemplate(pct.getCounterTemplate());
-                duplicat.setChargeTemplate(chargeTemplateServiceAll.duplicateCharge(pct.getChargeTemplate()));
+                duplicat.setChargeTemplate(chargeTemplateServiceAll.duplicateCharge(PersistenceUtils.initializeAndUnproxy(pct.getChargeTemplate())));
     			duplicat.setProduct(entity);
     			duplicat.setAccumulatorCounterTemplates(new ArrayList<>());
     			duplicat.setWalletTemplates(new ArrayList<>());
