@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.Timeout;
@@ -115,7 +116,12 @@ public class CustomFieldInstanceService extends BaseService {
     @Inject
 	private CustomTableService customTableService;
 
-    private static boolean accumulateCF = ParamBeanFactory.getAppScopeInstance().getPropertyAsBoolean("accumulateCF", false);
+    private static boolean accumulateCF = false;
+
+    // @PostConstruct
+    // private void init() {
+    // accumulateCF = ParamBeanFactory.getAppScopeInstance().getPropertyAsBoolean("accumulateCF", false);
+    // }
 
     /**
      * Find a list of entities of a given class and matching given code. In case classname points to CustomEntityTemplate, find CustomEntityInstances of a CustomEntityTemplate code
