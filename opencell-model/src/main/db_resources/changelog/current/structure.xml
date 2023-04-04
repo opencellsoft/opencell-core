@@ -16227,6 +16227,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </changeSet>
 
     <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius">
-        <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="500"/>
+        <alterSequence sequenceName="rating_cdr_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="rating_edr_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000"/>
     </changeSet>
 </databaseChangeLog>
