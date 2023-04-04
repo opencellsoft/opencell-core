@@ -1150,7 +1150,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         int i = 1;
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-                mapTaxesIndexes.put(((TaxInvoiceAgregate) invoiceAgregate).getTax().getCode(), "#"+i++);
+                if (mapTaxesIndexes.get(((TaxInvoiceAgregate) invoiceAgregate).getTax().getCode()) == null) {
+                    mapTaxesIndexes.put(((TaxInvoiceAgregate) invoiceAgregate).getTax().getCode(), "#" + i++);
+                }
             }
         }
 
