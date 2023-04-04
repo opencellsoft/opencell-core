@@ -687,12 +687,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                         : orderService.findOrders(billingCycle);
             }
 
-            return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+            return v11Process? billingAccountService.findBillingAccountsToInvoice(billingRun) : billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 
         } else {
-        	if(billingRun.isExceptionalBR() && billingRun.getExceptionalBAIds() != null && !billingRun.getExceptionalBAIds().isEmpty()) {
-                return billingAccountService.findByIds(billingRun.getExceptionalBAIds());
-            }
             if(billingRun.isExceptionalBR() &&
                     ((billingRun.getExceptionalILIds() != null && billingRun.getExceptionalILIds().isEmpty()) ||
                             (billingRun.getExceptionalRTIds() != null && billingRun.getExceptionalRTIds().isEmpty()))) {
@@ -713,6 +710,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             return result;
         }
     }
+    
+	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
+		Map<String, Object> filters = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
+		filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
+		QueryBuilder queryBuilder = ratedTransactionService.getQueryFromFilters(filters, Arrays.asList("billingAccount.id"), true);
+		return queryBuilder.getQuery(getEntityManager()).getResultList();
+	}
 
     /**
      * Gets entities that are associated with a billing run
@@ -1616,8 +1620,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             try {
                 List<Invoice> invoices = invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
-                        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true) : null,
-                        null, null, null, minAmountForAccounts,
+                        null, null, null, null, minAmountForAccounts,
                         false, automaticInvoiceCheck, false);
                 jobExecutionResult.addNbItemsToProcess(invoices.size());
                 jobExecutionResult.addNbItemsCorrectlyProcessed(invoices.size());
@@ -1690,7 +1693,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             } else {
                 FilterConverter converter = new FilterConverter(RatedTransaction.class);
                 PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
-                queryBuilder = ratedTransactionService.getQuery(configuration, "rt");
+                queryBuilder = ratedTransactionService.getQuery(configuration, "rt", false);
             }
             filter.setPollingQuery(buildPollingQuery(queryBuilder));
         }

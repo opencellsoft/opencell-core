@@ -1701,16 +1701,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return
      */
     public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
-            BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate, Filter filter) {
+            BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate) {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
-        Map<String, Object> billingCycleFilters = null;
-        if (billingRun.getBillingCycle().getFilters() != null && !billingRun.getBillingCycle().getFilters().isEmpty()) {
-            billingCycleFilters = new HashMap<>(billingRun.getBillingCycle().getFilters());
+        Map<String, Object> filter = null;
+        if (billingCycle !=null && billingRun.getBillingCycle().getFilters() != null && !billingRun.getBillingCycle().getFilters().isEmpty()) {
+            filter = new HashMap<>(billingRun.getBillingCycle().getFilters());
         }
         Map<String, Object> BRfilter = billingRun.getFilters();
 		if (BRfilter!=null && !BRfilter.isEmpty()) {
-        	billingCycleFilters=BRfilter;
+        	filter=BRfilter;
         }
         if(!billingCycle.isDisableAggregation()) {
             if(billingCycle.getDateAggregation() == null) {
@@ -1718,17 +1718,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
             String usageDateAggregation = getUsageDateAggregation(billingCycle.getDateAggregation());
             String unitAmount = appProvider.isEntreprise() ? "unitAmountWithoutTax" : "unitAmountWithTax";
-            String unitAmountField =
-                    billingCycle.isAggregateUnitAmounts() ? "SUM(a.unitAmountWithoutTax)" : unitAmount;
+            String unitAmountField = billingCycle.isAggregateUnitAmounts() ? "SUM(a.unitAmountWithoutTax)" : unitAmount;
             List<String> fieldToFetch = buildFieldList(usageDateAggregation, unitAmountField,
                     billingCycle.isIgnoreSubscriptions(), billingCycle.isIgnoreOrders(),
                     true, billingCycle.isUseAccountingArticleLabel(), billingCycle.getType());
 
-            String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
+            String query = buildFetchQuery(new PaginationConfiguration(filter, fieldToFetch, null),
                     usageDateAggregation, getEntityCondition(be), billingCycle, true);
             return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
         } else {
-            return getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate, billingCycleFilters, billingCycle);
+            return getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate, filter, billingCycle);
         }
     }
 

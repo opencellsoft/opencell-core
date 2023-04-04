@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.RatingResult;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -135,7 +136,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                                 .createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )").setParameter("edrId", previousEdr.getId()).getResultList();
 
                             // Any WO is billed already - exists RT with status Billed
-                            boolean billedTransaction = wos.stream().anyMatch(wo -> wo.getRatedTransaction() != null && wo.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED);
+                            boolean billedTransaction = wos.stream().anyMatch(wo -> wo.getRatedTransaction() != null && wo.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED && wo.getRatedTransaction().getInvoiceLine().getStatus() == InvoiceLineStatusEnum.BILLED);
                             if (billedTransaction) {
                                 if (cdr != null) {
                                     cdr.setStatus(CDRStatusEnum.DISCARDED);
