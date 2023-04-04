@@ -54,7 +54,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Table(name = "rating_cdr")
 @CustomFieldEntity(cftCodePrefix = "CDR")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_cdr_seq"),
-        @Parameter(name = "increment_size", value = "500") })
+        @Parameter(name = "increment_size", value = "5000") })
 @NamedQueries({ 
         @NamedQuery(name = "CDR.checkFileNameExists", query = "SELECT originBatch FROM CDR where originBatch=:fileName"), 
         @NamedQuery(name = "CDR.findByEdr", query = "from CDR where headerEDR = :edr"),
