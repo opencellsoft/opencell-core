@@ -22,6 +22,7 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.ReflectionUtils.getSubclassObjectByDiscriminatorValue;
 import static org.meveo.model.payments.AccountOperationStatus.EXPORTED;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -36,13 +37,16 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.assertj.core.util.Arrays;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.account.CustomerToTransfertOperationDto;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
+import org.meveo.api.dto.account.TransferOperationsDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
@@ -53,6 +57,7 @@ import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -95,8 +100,11 @@ import org.meveo.service.payments.impl.JournalReportService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.PaymentPlanService;
+import org.meveo.service.payments.impl.AccountOperationService.AccountOperationActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * The Class AccountOperationApi.
@@ -842,4 +850,56 @@ public class AccountOperationApi extends BaseApi {
         }
 
 	}
+
+    public void transferOperations(TransferOperationsDto transferOperationsDto) {
+        if(transferOperationsDto == null) {
+            throw new MissingParameterException(List.of("accountOperationsList", "toCustomerAccount"));
+        }
+        
+        if(CollectionUtils.isEmpty(transferOperationsDto.getAccountOperationsList())) {
+            missingParameters.add("accountOperationsList");
+        }
+        if(transferOperationsDto.getToCustomerAccount() == null) {
+            missingParameters.add("toCustomerAccount");
+        }
+        CustomerToTransfertOperationDto toCostumerAccount = transferOperationsDto.getToCustomerAccount();
+        if(toCostumerAccount.getId() == null && StringUtils.isBlank(toCostumerAccount.getCode())) {
+            missingParameters.add("toCustomerAccount.id or toCustomerAccount.code");
+        }
+        handleMissingParameters();
+        
+        CustomerAccount toCA = null;
+        
+        if(toCostumerAccount.getId() != null) {
+            toCA = customerAccountService.findById(toCostumerAccount.getId());
+            if(toCA == null) {
+                throw new EntityDoesNotExistsException(CustomerAccount.class, toCostumerAccount.getId());
+            }
+        }
+        if(toCA == null && StringUtils.isNotBlank(toCostumerAccount.getCode())) {
+            toCA = customerAccountService.findByCode(toCostumerAccount.getCode());
+            if(toCA == null) {
+                throw new EntityDoesNotExistsException(CustomerAccount.class, toCostumerAccount.getCode());
+            }
+        }
+       
+        AccountOperation accountOperation = null;
+        TransferCustomerAccountDto transferCustomerAccountDto = new TransferCustomerAccountDto();
+        
+        for (Long aoId : transferOperationsDto.getAccountOperationsList()) {
+            accountOperation = accountOperationService.findById(aoId);
+            if(accountOperation == null) {
+                throw new EntityDoesNotExistsException(AccountOperation.class, aoId);
+            }
+            transferCustomerAccountDto.setFromCustomerAccountCode(accountOperation.getCustomerAccount().getCode());
+            transferCustomerAccountDto.setToCustomerAccountCode(toCA.getCode());
+            transferCustomerAccountDto.setAmount(accountOperation.getAmount());
+            
+            accountOperationService.transferAccountOperation(accountOperation, transferCustomerAccountDto);
+            
+            accountOperation.setReference(accountOperationService.getRefrence(accountOperation.getId(), accountOperation.getReference() , AccountOperationActionEnum.s.name()));
+            
+        }
+        
+    }
 }
