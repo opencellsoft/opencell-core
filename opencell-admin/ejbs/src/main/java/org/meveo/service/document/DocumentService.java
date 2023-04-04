@@ -37,6 +37,7 @@ public class DocumentService extends BusinessService<Document> {
         		documentVersion = 0;
         	}
         	entity.setDocumentVersion(documentVersion);
+        	entity.setFileName(entity.getCode()+"_"+entity.getDocumentVersion()+"_"+entity.getFileName());
         }
         if(Objects.isNull(fetchedFileType)){
             throw new BadRequestException("file type with code "+entity.getFileType().getCode()+" not found");
