@@ -377,9 +377,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     public List<InvoiceLine> listInvoiceLinesToInvoice(BillingRun billingRun, IBillableEntity entityToInvoice, Date firstTransactionDate,
                                                        Date lastTransactionDate, Filter filter,Map<String, Object> filterParams, int pageSize) throws BusinessException {
-        if (filter != null) {
-            return (List<InvoiceLine>) filterService.filteredListAsObjects(filter, filterParams);
-		} else {
 			TypedQuery<InvoiceLine> namedQuery = null;
 			String byBr = billingRun != null ? "AndBR" : "";
 			if (entityToInvoice instanceof Subscription) {
@@ -408,7 +405,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 						.setParameter("lastTransactionDate", lastTransactionDate);
 			}
 			return namedQuery.setHint("org.hibernate.readOnly", true).setMaxResults(pageSize).getResultList();
-		}
     }
 
     public List<InvoiceLine> listInvoiceLinesByInvoice(long invoiceId) {
@@ -1078,31 +1074,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      * Return : QueryBuilder
      */
     public QueryBuilder fromFilters(Map<String, Object> filters) {
-    	return fromFilters(filters, false);
+    	return getQueryFromFilters(filters, null, false);
     }
     	
     	
-        /**
-         * Create Query builder from a map of filters
-         * filters : Map of filters
-         * Return : QueryBuilder
-         */
-        public QueryBuilder fromFilters(Map<String, Object> filters, boolean idsOnly) {
-        QueryBuilder queryBuilder;
-        String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
-        if (!StringUtils.isBlank(filterValue)) {
-            queryBuilder = new QueryBuilder(filterValue);
-        } else {
-            FilterConverter converter = new FilterConverter(RatedTransaction.class);
-            PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
-			if (idsOnly) {
-				configuration.setFetchFields(Arrays.asList("id","billingAccount.id"));
-			}
-            queryBuilder = ratedTransactionService.getQuery(configuration);
-        }
-        return queryBuilder;
-    }
-
     /**
      * Retrieve invoice lines associated to an invoice
      *
@@ -1186,8 +1161,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
-	    BasicStatistics ilBasicStatistics = createInvoiceLines(ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
-		        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null), aggregationConfiguration, result, billingRun);
+	    BasicStatistics ilBasicStatistics = createInvoiceLines(ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate()), aggregationConfiguration, result, billingRun);
 	    basicStatistics.append(ilBasicStatistics);
 	}
 
