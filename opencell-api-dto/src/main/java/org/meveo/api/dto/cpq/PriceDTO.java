@@ -19,6 +19,7 @@
 package org.meveo.api.dto.cpq;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -62,6 +63,8 @@ public class PriceDTO extends BaseEntityDto {
     private BigDecimal taxAmount;
     
     private BigDecimal taxRate;
+
+	private String taxIndex;
     
     private Boolean priceOverCharged;
 
@@ -92,13 +95,14 @@ public class PriceDTO extends BaseEntityDto {
     private CustomFieldsDto customFields;
     
     
-	public PriceDTO(QuotePrice quotePrice) {
+	public PriceDTO(QuotePrice quotePrice, Map<String, String> mapTaxIndexes) {
 		super();
 		id=quotePrice.getId();
 		priceType=quotePrice.getPriceTypeEnum();
 	    unitPriceWithoutTax=quotePrice.getUnitPriceWithoutTax();
 	    taxAmount=quotePrice.getTaxAmount();
 	    taxRate=quotePrice.getTaxRate();
+		taxIndex = mapTaxIndexes.get(taxRate.toString());
 	    priceOverCharged=quotePrice.getPriceOverCharged();
 	    currencyCode=quotePrice.getCurrencyCode();
 	    recurrenceDuration=quotePrice.getRecurrenceDuration();
@@ -118,7 +122,7 @@ public class PriceDTO extends BaseEntityDto {
 	   quantity = quotePrice.getQuantity();
 	   unitMultiplicator=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getUnitMultiplicator():null;
 	   if(quotePrice.getDiscountedQuotePrice() != null) {
-		   discountedQuotePrice = new PriceDTO(quotePrice.getDiscountedQuotePrice());
+		   discountedQuotePrice = new PriceDTO(quotePrice.getDiscountedQuotePrice(), mapTaxIndexes);
 	   }
 	   discountPlanItemCode=quotePrice.getDiscountPlanItem()!=null?quotePrice.getDiscountPlanItem().getCode():null;
 	   discountPlanType=quotePrice.getDiscountPlanType();
@@ -130,13 +134,13 @@ public class PriceDTO extends BaseEntityDto {
 		
 	}
 
-	public PriceDTO(QuotePrice quotePrice, TradingCurrency currency) {
-		this(quotePrice);
+	public PriceDTO(QuotePrice quotePrice, TradingCurrency currency, Map<String, String> mapTaxIndexes) {
+		this(quotePrice, mapTaxIndexes);
 		this.setCurrencySymbol(currency.getSymbol());
 	}
 
-	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields) {
-		this(quotePrice);
+	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields, Map<String, String> mapTaxIndexes) {
+		this(quotePrice, mapTaxIndexes);
 		this.customFields = customFields;
 	}
 	
@@ -338,5 +342,13 @@ public class PriceDTO extends BaseEntityDto {
 
 	public void setCurrencySymbol(String currencySymbol) {
 		this.currencySymbol = currencySymbol;
+	}
+
+	public String getTaxIndex() {
+		return taxIndex;
+	}
+
+	public void setTaxIndex(String taxIndex) {
+		this.taxIndex = taxIndex;
 	}
 }

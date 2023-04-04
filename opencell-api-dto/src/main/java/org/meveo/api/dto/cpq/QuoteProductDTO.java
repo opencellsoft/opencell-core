@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -112,7 +113,8 @@ public class QuoteProductDTO extends BaseEntityDto{
 		deliveryDate=quoteProduct.getDeliveryDate();
 	   }
 	
-	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes) {
+	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes,
+						   Map<String, String> mapTaxIndexes) {
 		super();
 		init(quoteProduct);
 		if(loadAttributes) {
@@ -123,7 +125,7 @@ public class QuoteProductDTO extends BaseEntityDto{
 		}
 		accountingArticlePrices=new ArrayList<AccountingArticlePricesDTO>();
 		for(QuoteArticleLine quoteArticleLine:quoteProduct.getQuoteArticleLines()) {
-			accountingArticlePrices.add(new AccountingArticlePricesDTO(quoteArticleLine));
+			accountingArticlePrices.add(new AccountingArticlePricesDTO(quoteArticleLine, mapTaxIndexes));
 		}
 		
 	}
