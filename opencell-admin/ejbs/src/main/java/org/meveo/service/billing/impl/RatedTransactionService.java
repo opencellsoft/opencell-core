@@ -1626,7 +1626,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds,
                                                                   AggregationConfiguration aggregationConfiguration) {
-        final int maxValue =
+        final int maxValue = EntityManagerProvider.isDBOracle() ? 500 :
                 getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
         if (ratedTransactionIds.size() > maxValue) {
             List<List<Long>> rtSubLists = partition(ratedTransactionIds, maxValue);
