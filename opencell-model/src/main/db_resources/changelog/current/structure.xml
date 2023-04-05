@@ -15138,5 +15138,31 @@ public class AgedBalanceReporting extends ReportExtractScript {
     		<where>applicable_on_discounted_price is null</where>
     	</update>
     </changeSet>
+    
+    <changeSet id="#INTRD-14522_20230301" author="TarikFA.">
+    	<addColumn tableName="billing_subscription">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+    	<addColumn tableName="quote_offer">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+    	
+        <addForeignKeyConstraint baseTableName="quote_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+         <dropColumn tableName="quote_offer">
+         	<column name="contract_code" />
+         </dropColumn>
+    </changeSet>
 
 </databaseChangeLog>

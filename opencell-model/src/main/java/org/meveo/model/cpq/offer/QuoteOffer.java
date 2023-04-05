@@ -34,6 +34,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
@@ -61,7 +62,7 @@ public class QuoteOffer extends BusinessCFEntity {
 		this.quoteVersion = copy.quoteVersion;
 		this.quoteLot = copy.quoteLot;
 		this.quoteProduct = copy.quoteProduct;
-		this.contractCode = copy.contractCode;
+		this.contract = copy.contract;
 		this.position = copy.position;
 		this.cfValues = copy.getCfValues();
 		this.sequence = copy.sequence;
@@ -108,13 +109,6 @@ public class QuoteOffer extends BusinessCFEntity {
     @OneToMany(mappedBy = "quoteOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuoteAttribute> quoteAttributes = new ArrayList<QuoteAttribute>();
-    
-    /**
-	 * opportunityRef
-	 */
-	@Column(name = "contract_code", length = 50)
-	@Size(max = 50)
-	private String contractCode;
 	
 	/**
 	 * opportunityRef
@@ -156,6 +150,10 @@ public class QuoteOffer extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -244,20 +242,6 @@ public class QuoteOffer extends BusinessCFEntity {
 	 */
 	public void setQuoteLot(QuoteLot quoteLot) {
 		this.quoteLot = quoteLot;
-	}
-
-	/**
-	 * @return the contractCode
-	 */
-	public String getContractCode() {
-		return contractCode;
-	}
-
-	/**
-	 * @param contractCode the contractCode to set
-	 */
-	public void setContractCode(String contractCode) {
-		this.contractCode = contractCode;
 	}
 
 	/**
@@ -384,5 +368,18 @@ public class QuoteOffer extends BusinessCFEntity {
 
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
+	}
+	
+	/**
+	 * @return the contract
+	 */
+	public Contract getContract() {
+		return contract;
+	}
+	/**
+	 * @param contract the contract to set
+	 */
+	public void setContract(Contract contract) {
+		this.contract = contract;
 	}
 }

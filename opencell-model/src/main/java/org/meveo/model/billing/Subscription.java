@@ -87,6 +87,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderOffer;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
@@ -391,6 +392,10 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     @MapKey(name = "code")
     Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
 
     /**
      * Extra Rated transactions to reach minimum invoice amount per subscription
@@ -1266,6 +1271,19 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
 		YearMonth m1 = YearMonth.from(getSubscriptionDate().toInstant().atZone(ZoneOffset.UTC));
 	    YearMonth m2 = YearMonth.from(now.toInstant().atZone(ZoneOffset.UTC));
 		return Math.toIntExact(m1.until(m2, unit));
+	}
+	
+	/**
+	 * @return the contract
+	 */
+	public Contract getContract() {
+		return contract;
+	}
+	/**
+	 * @param contract the contract to set
+	 */
+	public void setContract(Contract contract) {
+		this.contract = contract;
 	}
 	
 }

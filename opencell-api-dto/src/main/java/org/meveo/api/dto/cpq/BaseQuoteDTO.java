@@ -93,6 +93,9 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	@Schema(description = "The sales person name")
 	private String salesPersonName;
 	
+	@Schema(description = "Contract code")
+	private String contractCode;
+	
 	/**
 	 * @return the quoteDate
 	 */
@@ -301,5 +304,18 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	 */
 	public void setSalesPersonName(String salesPersonName) {
 		this.salesPersonName = salesPersonName;
+	} 
+	
+	/**
+	 * @return the contractCode
+	 */
+	public String getContractCode() {
+		return contractCode;
+	}
+	/**
+	 * @param contractCode the contractCode to set
+	 */
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
 	} 
 }
