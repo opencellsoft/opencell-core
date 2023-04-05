@@ -24,16 +24,14 @@ public class ContractHierarchyHelper {
 			Contract contract = ofNullable(contractService.findByCode(contractCode)).orElseThrow(() -> new BusinessException("No contract found with the given code : " + contractCode));
 			CustomerAccount customerAccount = billingAccount.getCustomerAccount();
 			Customer customer = customerAccount.getCustomer();
-			Customer customerParent = customer.getParentCustomer();
 			Seller seller = customer.getSeller();
 			
 			boolean isAttachedToBA = contract.getBillingAccount() != null && contract.getBillingAccount().getCode().equals(billingAccount.getCode());
 			boolean isAttachedToCA = contract.getCustomerAccount() != null && contract.getCustomerAccount().getCode().equals(customerAccount.getCode());
 			boolean isAttachedToCustomer = contract.getCustomer() != null && contract.getCustomer().getCode().equals(customer.getCode());
-			boolean isAttacheToParentCustomer = contract.getCustomer() != null && contract.getCustomer().getCode().equals(customerParent.getCode());
 			boolean isAttachedToSeller = contract.getSeller() != null && contract.getSeller().getCode().equals(seller.getCode());
 			
-			if (isAttachedToBA || isAttachedToCA || isAttachedToCustomer || isAttacheToParentCustomer || isAttachedToSeller) {
+			if (isAttachedToBA || isAttachedToCA || isAttachedToCustomer || isAttachedToSeller) {
 				return contract;
 			} else {
 				throw new BusinessApiException("Current contract code : " + contract.getCode() + " is not applicable for any customer hierarchy.");
