@@ -1,5 +1,7 @@
 package org.meveo.admin.job;
 
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.DateAggregationOption;
 
 public class AggregationConfiguration {
@@ -12,6 +14,38 @@ public class AggregationConfiguration {
 	private DateAggregationOption dateAggregationOption = DateAggregationOption.MONTH_OF_USAGE_DATE;
 
 	private boolean aggregationPerUnitAmount;
+	
+    private boolean useAccountingArticleLabel = false;
+    
+    private boolean ignoreSubscriptions = true;
+    
+    private boolean ignoreOrders = true;
+
+	private BillingEntityTypeEnum type = BillingEntityTypeEnum.BILLINGACCOUNT;
+
+	public boolean isUseAccountingArticleLabel() {
+		return useAccountingArticleLabel;
+	}
+
+	public void setUseAccountingArticleLabel(boolean useAccountingArticleLabel) {
+		this.useAccountingArticleLabel = useAccountingArticleLabel;
+	}
+
+	public boolean isIgnoreSubscriptions() {
+		return ignoreSubscriptions;
+	}
+
+	public void setIgnoreSubscriptions(boolean ignoreSubscriptions) {
+		this.ignoreSubscriptions = ignoreSubscriptions;
+	}
+
+	public boolean isIgnoreOrders() {
+		return ignoreOrders;
+	}
+
+	public void setIgnoreOrders(boolean ignoreOrders) {
+		this.ignoreOrders = ignoreOrders;
+	}
 
 	public AggregationConfiguration(boolean enterprise) {
 		this.enterprise = enterprise;
@@ -21,6 +55,15 @@ public class AggregationConfiguration {
 		this.enterprise = enterprise;
 		this.aggregationPerUnitAmount = AggregationPerUnitAmount;
 		this.dateAggregationOption = dateAggregationOption;
+	}
+	
+	public AggregationConfiguration(BillingCycle billingCycle) {
+		this.dateAggregationOption = billingCycle.getDateAggregation()!=null? billingCycle.getDateAggregation() : DateAggregationOption.NO_DATE_AGGREGATION;
+		this.aggregationPerUnitAmount= billingCycle.isAggregateUnitAmounts();
+		this.useAccountingArticleLabel = billingCycle.isUseAccountingArticleLabel() ;
+		this.ignoreSubscriptions = billingCycle.isIgnoreSubscriptions();
+		this.ignoreOrders = billingCycle.isIgnoreOrders();
+		this.type=billingCycle.getType();
 	}
 
 	public boolean isEnterprise() {
@@ -57,5 +100,10 @@ public class AggregationConfiguration {
 	 */
 	public void setAggregationPerUnitAmount(boolean AggregationPerUnitAmount) {
 		this.aggregationPerUnitAmount = AggregationPerUnitAmount;
+	}
+
+	public BillingEntityTypeEnum getType() {
+		// TODO Auto-generated method stub
+		return type ;
 	}
 }
