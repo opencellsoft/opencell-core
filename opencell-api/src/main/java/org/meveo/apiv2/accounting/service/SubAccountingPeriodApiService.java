@@ -6,9 +6,12 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
+
+import com.ingenico.connect.gateway.sdk.java.ValidationException;
 
 public class SubAccountingPeriodApiService  implements ApiService<SubAccountingPeriod> {
 	
@@ -83,7 +86,11 @@ public class SubAccountingPeriodApiService  implements ApiService<SubAccountingP
 	
 	public void updateSubAccountingRegularUsersStatus(String fiscalYear, String status,
 			SubAccountingPeriod subAccountingPeriod, String reason) {
-		subAccountingPeriodService.updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, reason);
+		try {
+			subAccountingPeriodService.updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, reason);
+		} catch(ValidationException v) {
+			throw new ConflictException(v.getMessage());
+		}
 	}
 
 

@@ -17,6 +17,7 @@ import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodActionLevelEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
@@ -218,6 +219,10 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {
 			throw new NotFoundException("The accounting period in fiscal year "+fiscalYear+" not found");
 		}
+		if(status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.OPEN.toString()) 
+				&& subAccountingPeriod.getAllUsersSubPeriodStatus().equals(SubAccountingPeriodStatusEnum.CLOSED)){
+			throw new ValidationException("Before the accounting period can be reopened for regular users, it must first be reopened for all users");
+		}
 		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.OPEN.toString())) {
 			subAccountingPeriod.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
 			subAccountingPeriod.setRegularUsersClosedDate(null);
@@ -360,19 +365,19 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
                 .getSingleResult() == 0;
     }
 
-    public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, String status, boolean isUserHaveThisRole) {
+    public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, String status) {
         List<SubAccountingPeriod> subAccountingPeriods = null;
-        if (isUserHaveThisRole) {
+        
             subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity);
             for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
                 updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
             }
-        } else {
+            
             subAccountingPeriods = getRegularUsersSubPeriodWithStatusOpen(entity);
             for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
                 updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, "");
             }
-        }            
+                   
     }
     
     public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, String status, AccountingPeriodActionLevelEnum level) {
