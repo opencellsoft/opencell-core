@@ -2139,6 +2139,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Query query = this.getEntityManager().createNamedQuery("RatedTransaction.updatePendingDuplicate");
         query.setParameter("rtI", rtIds);
         query.setParameter("pendingDuplicatesToNegate", isPendingNegateExist ? 1 : 0);
+        query.setParameter("pendingDuplicates", isPendingNegateExist ? 0 : 1);
         query.executeUpdate();
     }
 

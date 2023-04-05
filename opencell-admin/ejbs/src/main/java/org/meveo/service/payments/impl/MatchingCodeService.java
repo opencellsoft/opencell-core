@@ -659,11 +659,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             }
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
                 cptOccDebit++;
-                amoutDebit = amoutDebit.add(accountOperation.getTransactionalUnMatchingAmount());
+                amoutDebit = amoutDebit.add(accountOperation.getUnMatchingAmount());
             }
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
                 cptOccCredit++;
-                amoutCredit = amoutCredit.add(accountOperation.getTransactionalMatchingAmount());
+                amoutCredit = amoutCredit.add(accountOperation.getTransactionalUnMatchingAmount());
             }
         }
         if (cptOccCredit == 0) {
