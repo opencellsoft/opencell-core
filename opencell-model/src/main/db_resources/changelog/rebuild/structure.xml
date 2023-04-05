@@ -10467,6 +10467,7 @@
             <column name="subscription_id" type="bigint" />
             <column name="termination_date" type="datetime" />
             <column name="sub_termin_reason_id" type="bigint" />
+            <column name="contract_id" type="bigint" />
         </createTable>
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_user_account" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
@@ -17733,6 +17734,423 @@
                                  constraintName="fk_billing_invoice_validation_rule"
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-12677_20221229_rebuild" author="AdilElJaouhari">
+		<createTable tableName="crm_provider_order_line_type">
+			<column name="provider_id" type="bigint" />
+			<column name="order_line_type" type="varchar(20)" />
+		</createTable>
+
+		<addForeignKeyConstraint
+			baseTableName="crm_provider_order_line_type"
+			baseColumnNames="provider_id"
+			constraintName="crm_provider_order_line_type_provider_fk"
+			referencedTableName="crm_provider" referencedColumnNames="id" />
+
+		<addUniqueConstraint
+			columnNames="provider_id, order_line_type"
+			constraintName="crm_provider_order_line_type_uk"
+			tableName="crm_provider_order_line_type" />
+	</changeSet>
+	
+	<changeSet id="#INTRD-10544_20221207-rebuild" author="HatimOUDAD">   
+        <createSequence sequenceName="iso_icd_seq" startValue="1" />
+        <createTable tableName="iso_icd">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_iso_icd" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_icd_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="scheme_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        
+        <createSequence sequenceName="untdid_1001_invoice_code_type_seq" startValue="1" />
+        <createTable tableName="untdid_1001_invoice_code_type">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_1001_invoice_type" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_1001_code_type_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="en16931_interpretation" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_2475_vat_payment_option_seq" startValue="1" />
+        <createTable tableName="untdid_2475_vat_payment_option">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_2475_vat_payment" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <!-- Simple fields -->           
+            <column name="code_2005" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+             <column name="value_2005" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+             <column name="code_2475" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+             <column name="value_2475" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_4451_invoice_subject_code_seq" startValue="1" />
+        <createTable tableName="untdid_4451_invoice_subject_code">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_4451_invoice_subject" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_4451_subject_code_unique"/>
+            </column>
+
+            <!-- Simple fields --> 
+            <column name="code_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_5305_taxation_category_seq" startValue="1" />
+        <createTable tableName="untdid_5305_taxation_category">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_5305_taxation_category" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_5305_taxation_category_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="semantic_model" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_vatex_seq" startValue="1" />
+        <createTable tableName="untdid_vatex">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_vatex" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_vatex_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="remark" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+            <column name="code_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_4461_payment_means_seq" startValue="1" />
+        <createTable tableName="untdid_4461_payment_means">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_4461_payment_means" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_4461_payment_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="usage_in_en16931" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+            <column name="code_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
+         <createTable tableName="untdid_5189_allowance_code">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_5189_allowance_code" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(10)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_5189_allowance_code_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="description" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <addForeignKeyConstraint baseTableName="billing_tax"
+                                 baseColumnNames="taxation_category_id"
+                                 constraintName="fk_billing_tax_5305_taxation_category"
+                                 referencedTableName="untdid_5305_taxation_category"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="billing_tax"
+                                 baseColumnNames="vatex_id"
+                                 constraintName="fk_billing_tax_vatex"
+                                 referencedTableName="untdid_vatex"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+        <addForeignKeyConstraint baseTableName="billing_invoice_type"
+                                 baseColumnNames="invoice_code_type_id"
+                                 constraintName="fk_billing_invoice_1001_invoice"
+                                 referencedTableName="untdid_1001_invoice_code_type"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="billing_invoice_type"
+                                 baseColumnNames="vat_payment_option_id"
+                                 constraintName="fk_billing_invoice_2475_vat"
+                                 referencedTableName="untdid_2475_vat_payment_option"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        
+        
+    </changeSet>
+    
+    
+
+	<changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
+        <createTable tableName="cpq_converted_price_plan_version">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_converted_price_plan_version_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" />
+            <column name="price_plan_matrix_version_id" type="bigint" />
+            <column name="converted_price" type="numeric(23, 12)" />
+            <column name="trading_currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="rate" type="numeric(23, 12)" />
+            <column name="use_for_billing_accounts" type="${type.boolean}"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="#INTRD-12405_20221226-rebuild" author="HichamHANINE">
+		<addForeignKeyConstraint baseTableName="billing_billing_account"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_billing_account_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="billing_user_account"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_user_account_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="crm_seller"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_seller_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="crm_provider"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_provider_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />							 
+		<addForeignKeyConstraint baseTableName="billing_invoice_type"
+								 baseColumnNames="invoice_subject_code"
+								 constraintName="fk_invoice_type_untdid_4451_invoice_subject"
+								 referencedTableName="untdid_4451_invoice_subject_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="ar_payment_token"
+								 baseColumnNames="payment_means"
+								 constraintName="fk_payment_token_untdid_4461_payment_means"
+								 referencedTableName="untdid_4461_payment_means"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="billing_accounting_article"
+								 baseColumnNames="allowance_code"
+								 constraintName="fk_accounting_article_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+	</changeSet>
+
+    <changeSet id="#INTRD-13883_20230208_fk" author="hichamELHALOUI">
+        <addForeignKeyConstraint baseTableName="cat_discount_plan"
+								 baseColumnNames="allowance_code_id"
+								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+
+    <changeSet id="#INTRD-13062-20230124-rebuild" author="ZBariki">
+        <createSequence sequenceName="ar_customer_balance_seq" />
+        <createTable tableName="ar_customer_balance">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="customer_balance_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="default_balance" type="${type.boolean}" defaultValueNumeric="0" />
+        </createTable>
+        <createTable tableName="ar_customer_balance_templates">
+            <column name="customer_balance_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="customer_balance_id, template_id"
+                       constraintName="ar_templates_customer_balance_pkey"
+                       tableName="ar_customer_balance_templates" />
+        <addForeignKeyConstraint baseTableName="ar_customer_balance_templates" baseColumnNames="customer_balance_id"
+                                 constraintName="fk_ar_customer_balance_templates"
+                                 referencedTableName="ar_customer_balance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ar_customer_balance_templates" baseColumnNames="template_id"
+                                 constraintName="fk_ar_templates_customer_balance"
+                                 referencedTableName="ar_occ_template"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-13045_20230202_rebuild_str_fk" author="ZBariki">
+        <addForeignKeyConstraint baseTableName="dunning_settings" baseColumnNames="customer_balance_id"
+                                 constraintName="fk_dunning_settings_customer_balance_id"
+                                 referencedTableName="ar_customer_balance"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="crm_customer" baseColumnNames="parent_customer_id"
+                                 constraintName="fk_crm_customer_parent_customer_id"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="crm_customer_category" baseColumnNames="default_seller_id"
+                                 constraintName="fk_crm_customer_category_default_seller_id"
+                                 referencedTableName="crm_seller"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
+        <addForeignKeyConstraint baseTableName="cpq_order_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_cpq_order_offer_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
