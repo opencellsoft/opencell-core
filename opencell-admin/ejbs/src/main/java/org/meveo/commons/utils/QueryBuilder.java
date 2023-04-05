@@ -383,6 +383,8 @@ public class QueryBuilder {
      * @return SQL query.
      */
     private String getInitQuery(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields) {
+    	this.alias=alias;
+    	this.clazz=clazz;
     	List<String> select = new ArrayList<>();
     	boolean useSelectColumns = false;
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
