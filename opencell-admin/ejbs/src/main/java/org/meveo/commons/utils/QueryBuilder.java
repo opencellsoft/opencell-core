@@ -104,8 +104,6 @@ public class QueryBuilder {
     private Map<String, JoinWrapper> innerJoins = new HashMap<>();
     private Set<InnerJoin> rootInnerJoins = new HashSet<>();
 
-    private InnerJoin rootInnerJoin;
-
     protected PaginationConfiguration paginationConfiguration;
 
     private String paginationSortAlias;
@@ -116,7 +114,9 @@ public class QueryBuilder {
 
     public static final String  JOIN_AS = " as ";
     
-    private static Set<String> joinAlias = new TreeSet<String>();
+    private Set<String> joinAlias = new TreeSet<String>();
+    
+	private boolean distinct;
     
     private JoinType joinType = JoinType.INNER ;
     
@@ -220,8 +220,12 @@ public class QueryBuilder {
      * @param sql Sql.
      */
     public QueryBuilder(String sql) {
-        this(sql, null);
+        this(sql, null, false);
     }
+    
+    public QueryBuilder(String sql, String alias) {
+    	this(sql, alias, false);
+	}
 
     /**
      * Constructor.
@@ -229,8 +233,13 @@ public class QueryBuilder {
      * @param sql Sql
      * @param alias Alias of a main table
      */
-    public QueryBuilder(String sql, String alias) {
+    public QueryBuilder(String sql, String alias, boolean distinct) {
         q = new StringBuilder(sql);
+        initQueryBuilder(sql, alias);
+    }
+    
+    private void initQueryBuilder(String sql, String alias) {
+		q = new StringBuilder(sql);
         this.alias = alias;
         params = new HashMap<String, Object>();
         hasOneOrMoreCriteria = false;
@@ -258,9 +267,9 @@ public class QueryBuilder {
     
     
 	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType) {
-		this(getInitQuery(clazz, alias, doFetch, fetchFields), alias);
-    	this.clazz = clazz;
+		this.clazz = clazz;
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
+		initQueryBuilder(getInitQuery(clazz, alias, doFetch, fetchFields), alias);
 	}
 	
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
@@ -278,6 +287,22 @@ public class QueryBuilder {
 	 */
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
 		this(clazz, alias, true, fetchFields, joinType, filterOperator);
+	}
+	
+	/**
+	 * Contructor 
+	 * 
+	 * @param clazz Class for which query is created.
+     * @param alias Alias of a main table.
+     * @param fetchFields Additional (list/map type) fields to fetch
+	 * @param joinType
+	 * @param filterOperator Operator to build where statement
+	 */
+	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator, boolean distinct) {
+		this.distinct = distinct;
+		this.joinType=joinType;
+		this.filterOperator=filterOperator;
+		initQueryBuilder(getInitQuery(clazz, alias, doFetch,  fetchFields), alias);
 	}
 
 	/**
@@ -302,8 +327,8 @@ public class QueryBuilder {
      * @param fetchFields Additional (list/map type) fields to fetch
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
-        this(getInitQuery(clazz, alias, true, fetchFields), alias);
-        this.clazz = clazz;
+    	this.clazz = clazz;
+    	initQueryBuilder(getInitQuery(clazz, alias, true, fetchFields), alias);
     }
 
     /**
@@ -357,7 +382,9 @@ public class QueryBuilder {
      * @param fetchFields list of field need to be fetched.
      * @return SQL query.
      */
-    private static String getInitQuery(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields) {
+    private String getInitQuery(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields) {
+    	this.alias=alias;
+    	this.clazz=clazz;
     	List<String> select = new ArrayList<>();
     	boolean useSelectColumns = false;
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
@@ -383,7 +410,7 @@ public class QueryBuilder {
 				
             }
             if(useSelectColumns) {
-            	query.replace(0, 0, "select "+String.join(", ", select)+" ");
+            	query.replace(0, 0, "select "+(distinct ? "distinct ":"")+String.join(", ", select)+" ");
             }
         }
 
@@ -397,8 +424,12 @@ public class QueryBuilder {
 	 * @param fetchField
 	 * @return
 	 */
-	public static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
-		String result = alias+"_"+fetchField.replaceAll("\\.", "_");
+    public static String getJoinAlias(String alias, String fetchField) {
+    	return alias+"_"+fetchField.replaceAll("\\.", "_");
+    }
+    	
+    private String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
+		String result = getJoinAlias(alias, fetchField);
 		if(checkExisting) {
 			if(joinAlias.contains(result)) {
 				return result;

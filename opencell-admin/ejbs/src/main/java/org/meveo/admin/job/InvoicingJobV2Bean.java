@@ -35,17 +35,12 @@ import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.InvoiceLine;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -53,10 +48,8 @@ import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
-import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 
 @Stateless
@@ -75,12 +68,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 
     @Inject
     private IteratorBasedJobProcessing iteratorBasedJobProcessing;
-
-    @Inject
-    private InvoiceLineService invoiceLineService;
-
-    @Inject
-    private RatedTransactionService ratedTransactionService;
 
     @Inject
     private BillingRunExtensionService billingRunExtensionService;
@@ -111,9 +98,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             } else {
                 validateBRList(billingRuns, result);
                 for (BillingRun billingRun : billingRuns) {
-                    if(billingRun.isExceptionalBR() && addExceptionalInvoiceLineIds(billingRun) == 0) {
-                        result.setReport("Exceptional Billing filters returning no invoice line to process");
-                    }
                     executeBillingRun(billingRun, jobInstance, result,
                             billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getBillingRunValidationScript() : null, true);
                     initAmounts();
@@ -136,21 +120,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                                         "Only Billing runs with status=INVOICE_LINES_CREATED can be processed", br.getId())));
         result.setNbItemsProcessedWithWarning(excludedBRs.size());
         billingRuns.removeAll(excludedBRs);
-    }
-
-    private int addExceptionalInvoiceLineIds(BillingRun billingRun) {
-    	//ALL THIS MUST BE REVIEWEd. INVOICELINES ARE ALREADY CREATED USING EXCEPTIONAL FILTER!
-        Map<String, Object> filters = billingRun.getFilters();
-        QueryBuilder queryBuilder = invoiceLineService.fromFilters(filters);
-        List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
-        billingRun.setExceptionalILIds(ratedTransactions
-                .stream()
-                .filter(rt -> (rt.getStatus() == RatedTransactionStatusEnum.BILLED))
-                .map(RatedTransaction::getInvoiceLine)
-                .filter(il -> (il.getStatus() == InvoiceLineStatusEnum.OPEN))
-                .map(InvoiceLine::getId)
-                .collect(toList()));
-        return billingRun.getExceptionalILIds().size();
     }
 
     private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result, ScriptInstance billingRunValidationScript, boolean v11Process) {

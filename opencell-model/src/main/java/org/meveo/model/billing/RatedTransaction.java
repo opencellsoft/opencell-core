@@ -138,7 +138,7 @@ import org.meveo.model.tax.TaxClass;
         		+ "AND r.invoiceLine.id in (select il.id from InvoiceLine il where il.billingRun=:billingRun and il.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED)"),
 
         @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoice", query = "DELETE from RatedTransaction r WHERE r.type = 'MINIMUM' and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice=:invoice)"),
-        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByBR", query = "DELETE from RatedTransaction r WHERE r.type = 'MINIMUM' and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun AND r.invoiceLine.invoice.id in (select r2.invoiceLine.invoice.id from RatedTransaction r2 where r2.invoiceLine.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED)"),
+        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByBR", query = "DELETE from RatedTransaction r WHERE r.type = 'MINIMUM' and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun AND r.invoiceLine.id in (select il.invoice.id from InvoiceLine il where il.billingRun=:billingRun and il.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED)"),
 
         @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByBA", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate) "),
 
