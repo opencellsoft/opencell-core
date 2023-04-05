@@ -40,7 +40,7 @@ public class UntdidPaymentMeansService extends PersistenceService<UntdidPaymentM
 			pOldUntdidPaymentMeans.setCodeName(pNewUntdidPaymentMeans.getCodeName());
 		}
 		
-		if(pNewUntdidPaymentMeans.getUsageEN16931() != null && !pNewUntdidPaymentMeans.getUsageEN16931().isBlank()){
+		if(pNewUntdidPaymentMeans != null && pNewUntdidPaymentMeans.getUsageEN16931() != null && !pNewUntdidPaymentMeans.getUsageEN16931().isBlank()){
 			pOldUntdidPaymentMeans.setUsageEN16931(pNewUntdidPaymentMeans.getUsageEN16931());
 		}
 		

@@ -53,7 +53,7 @@ public class UntdidInvoiceCodeTypeService extends PersistenceService<UntdidInvoi
     		pOldUntdidInvoiceCodeType.setInterpretation16931(pNewUntdidInvoiceCodeType.getInterpretation16931());
     	}
     	
-    	if(pNewUntdidInvoiceCodeType.getName() != null && !pNewUntdidInvoiceCodeType.getName().isBlank()) {
+    	if(pNewUntdidInvoiceCodeType != null && pNewUntdidInvoiceCodeType.getName() != null && !pNewUntdidInvoiceCodeType.getName().isBlank()) {
     		pOldUntdidInvoiceCodeType.setName(pNewUntdidInvoiceCodeType.getName());
     	}
     	

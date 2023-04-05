@@ -40,7 +40,7 @@ public class UntdidVatexService extends PersistenceService<UntdidVatex> {
 			pOldUntdidVatex.setCodeName(pNewUntdidVatex.getCodeName());
 		}
 		
-		if(pNewUntdidVatex.getRemark() != null && !pNewUntdidVatex.getRemark().isBlank()){
+		if(pNewUntdidVatex != null && pNewUntdidVatex.getRemark() != null && !pNewUntdidVatex.getRemark().isBlank()){
 			pOldUntdidVatex.setRemark(pNewUntdidVatex.getRemark());
 		}
 		
