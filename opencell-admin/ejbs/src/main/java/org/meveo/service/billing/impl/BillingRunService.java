@@ -690,6 +690,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             return v11Process? billingAccountService.findBillingAccountsToInvoice(billingRun) : billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 
         } else {
+        	if(v11Process) {
+        		return billingAccountService.findBillingAccountsToInvoice(billingRun);
+        	}
             if(billingRun.isExceptionalBR() &&
                     ((billingRun.getExceptionalILIds() != null && billingRun.getExceptionalILIds().isEmpty()) ||
                             (billingRun.getExceptionalRTIds() != null && billingRun.getExceptionalRTIds().isEmpty()))) {
@@ -716,7 +719,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		if(filters==null && billingRun.getBillingCycle() != null) {
 			filters=new TreeMap<>();
 			filters.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
-		} else {
+		} 
+		if(filters==null){
 			throw new BusinessException("No filter found for billingRun "+billingRun.getId());
 		}
 		filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
