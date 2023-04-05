@@ -40,7 +40,7 @@ public class UntdidTaxationCategoryService extends PersistenceService<UntdidTaxa
 			pOldUntdidTaxationCategory.setName(pNewUntdidTaxationCategory.getName());
 		}
 		
-		if(pNewUntdidTaxationCategory.getSemanticModel() != null && !pNewUntdidTaxationCategory.getSemanticModel().isBlank()){
+		if(pNewUntdidTaxationCategory != null && pNewUntdidTaxationCategory.getSemanticModel() != null && !pNewUntdidTaxationCategory.getSemanticModel().isBlank()){
 			pOldUntdidTaxationCategory.setSemanticModel(pNewUntdidTaxationCategory.getSemanticModel());
 		}
 		
