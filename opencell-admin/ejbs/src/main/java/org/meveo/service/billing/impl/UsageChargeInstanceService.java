@@ -153,12 +153,11 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
     /**
      * Get a list of usage charge instances valid for a given subscription and a date
      *
-     * @param subscription Subscription
-     * @param date Date to check usage charge validity
+     * @param subscriptionId Subscription
+     * @param consumptionDate Date to check usage charge validity
      * @return An ordered list by priority (ascended) of usage charge instances
      */
     public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Long subscriptionId, Object consumptionDate) {
-
 
         return getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValidesForDateBySubscription", UsageChargeInstance.class)
                 .setParameter("terminationDate", consumptionDate).setParameter("subscriptionId", subscriptionId)
