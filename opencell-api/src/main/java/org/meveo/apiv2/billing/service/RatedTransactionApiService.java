@@ -137,7 +137,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	public Object duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
 			boolean returnRts, boolean startJob) {
 		DuplicateRTResult result = new DuplicateRTResult();
-		int maxLimit = ParamBean.getInstance().getPropertyAsInteger("api.ratedTransaction.massAction.limit", 5);
+		int maxLimit = ParamBean.getInstance().getPropertyAsInteger("api.ratedTransaction.massAction.limit", 10000);
 
 		if(MapUtils.isEmpty(filters)) {
 			throw new InvalidParameterException("filters is required");
