@@ -47,6 +47,7 @@ import org.meveo.admin.exception.NoChargeException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.CounterValueChangeInfo;
@@ -103,9 +104,9 @@ public class UsageRatingService extends RatingService implements Serializable {
 
     @Inject
     private UsageChargeTemplateService usageChargeTemplateService;
-
-    @EJB
-    private UsageRatingService usageRatingServiceNewTX;
+    
+    @Inject
+    private MethodCallingUtils methodCallingUtils;
 
     @Inject
     @Rejected
@@ -253,16 +254,16 @@ public class UsageRatingService extends RatingService implements Serializable {
     public void ratePostpaidUsage(Long edrId) throws BusinessException, RatingException {
 
         try {
-            usageRatingServiceNewTX.rateUsageInNewTransaction(edrId, false, 0, 0);
+            methodCallingUtils.callMethodInNewTx(()->rateUsageInNewTransaction(edrId, false, 0, 0));
 
         } catch (RatingException e) {
             log.trace("Failed to rate EDR {}: {}", edrId, e.getRejectionReason());
-            usageRatingServiceNewTX.rejectEDR(edrId, e);
+            methodCallingUtils.callMethodInNewTx(()->rejectEDR(edrId, e));
             throw e;
 
         } catch (Exception e) {
             log.error("Failed to rate EDR {}: {}", edrId, e.getMessage(), e);
-            usageRatingServiceNewTX.rejectEDR(edrId, e);
+            methodCallingUtils.callMethodInNewTx(()->rejectEDR(edrId, e));
             throw e;
         }
     }
