@@ -6568,6 +6568,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (InvoiceStatusEnum.NEW.equals(status)) {            
             toUpdate.setStatus(InvoiceStatusEnum.DRAFT);
+            toUpdate.assignTemporaryInvoiceNumber();
         }
         if (input.getComment() != null) {
             toUpdate.setComment(input.getComment());
