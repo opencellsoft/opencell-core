@@ -5,6 +5,7 @@ import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.meveo.api.MeveoApiErrorCodeEnum.DIFFERENT_CURRENCIES;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,9 @@ import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
+import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.Refund;
+import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
@@ -58,33 +62,65 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
     @Inject
     private AccountOperationApi accountOperationApi;
 
+    /**
+     * Get accounting date of account operation
+     *
+     * @param accountOperation the account operation
+     * @return accounting date
+     */
+    private Date getAccountingDate(AccountOperation accountOperation) {
+        Date accountingDate = accountOperation.getAccountingDate();
+        if(accountingDate == null){
+            accountingDate = accountOperation.getTransactionDate();
+            if (accountOperation instanceof Refund ||
+                    accountOperation instanceof Payment ||
+                    accountOperation instanceof RejectedPayment) {
+                accountingDate = accountOperation.getCollectionDate() != null ? accountOperation.getCollectionDate()
+                        : accountOperation.getDueDate();
+            }
+        }
+        return accountingDate;
+    }
+
     @Override
     public Response post(Map<String, Set<Long>> accountOperations) {
         Set<Long> accountOperationsIds = accountOperations.getOrDefault("accountOperations", Collections.EMPTY_SET);
         Set<Long> notFoundAos = new HashSet(accountOperationsIds);
         Set<Long> aOWithClosedAccountingPeriod = new HashSet();
         Set<Long> aOWithSubClosedAccountingPeriod = new HashSet();
+        Set<Long> aONotHaveTransactionDate = new HashSet();
         accountOperationsIds.stream()
                 .map(aOId -> accountOperationService.findById(aOId))
                 .filter(accountOperation -> accountOperation != null)
                 .forEach(accountOperation -> {
-                    String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountOperation.getAccountingDate()));
+                    Date accountingDate = getAccountingDate(accountOperation);
+                    if (accountingDate == null) {
+                        aONotHaveTransactionDate.add(accountOperation.getId());
+                        return;
+                    }
+                    String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountingDate));
                     AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(fiscalYear);
                     if (accountingPeriod == null || accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.CLOSED) {
                         aOWithClosedAccountingPeriod.add(accountOperation.getId());
                         return;
                     }
-                    SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
+                    SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountingDate);
                     if (subAccountingPeriod == null || subAccountingPeriod.getRegularUsersSubPeriodStatus() == SubAccountingPeriodStatusEnum.CLOSED) {
                         aOWithSubClosedAccountingPeriod.add(accountOperation.getId());
                         return;
                     }
-                    accountOperation.setAccountingDate(accountOperation.getTransactionDate());
+                    accountOperation.setAccountingDate(accountingDate);
                     accountOperation.setStatus(AccountOperationStatus.POSTED);
                     accountOperationService.update(accountOperation);
                     notFoundAos.remove(accountOperation.getId());
                 });
 
+        if (!aONotHaveTransactionDate.isEmpty()) {
+            return Response.status(Response.Status.CONFLICT).entity("{\"message\":\"no transaction date found for these Account operations: {" +
+                    aONotHaveTransactionDate.stream()
+                            .map(aLong -> aLong.toString())
+                            .collect(Collectors.joining(", ")) + "} for the given fiscal year.\"}").build();
+        }
         if(!aOWithSubClosedAccountingPeriod.isEmpty()){
             return Response.status(Response.Status.CONFLICT).entity("{\"message\":\"no open sub accounting period found for these Account operations: {" +
                     aOWithSubClosedAccountingPeriod.stream()
@@ -111,6 +147,7 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
         Set<Long> accountOperationsIds = accountOperations.getOrDefault("accountOperations", Collections.EMPTY_SET);
         Set<Long> notFoundAos = new HashSet<>();
         Set<Long> aOWithClosedAccountingPeriod = new HashSet<>();
+        Set<Long> aONotHaveTransactionDate = new HashSet();
 		accountOperationsIds.stream().map(aOId -> {
 			AccountOperation ao = accountOperationService.findById(aOId);
 			if (ao == null) {
@@ -118,15 +155,27 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
 			}
 			return ao;
 		}).filter(accountOperation -> accountOperation != null).forEach(accountOperation -> {
-			String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountOperation.getAccountingDate()));
+            Date accountingDate = getAccountingDate(accountOperation);
+            if (accountingDate == null) {
+                aONotHaveTransactionDate.add(accountOperation.getId());
+                return;
+            }
+            String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountingDate));
 			AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(fiscalYear);
 			if (accountingPeriod == null || accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.CLOSED) {
 				aOWithClosedAccountingPeriod.add(accountOperation.getId());
 				return;
 			}
+            accountOperation.setAccountingDate(accountingDate);
 			accountOperationService.forceAccountOperation(accountOperation, accountingPeriod);
 			accountOperationService.update(accountOperation);
 	       });
+        if (!aONotHaveTransactionDate.isEmpty()) {
+            return Response.status(Response.Status.CONFLICT).entity("{\"message\":\"no transaction date found for these Account operations: {" +
+                    aONotHaveTransactionDate.stream()
+                            .map(aLong -> aLong.toString())
+                            .collect(Collectors.joining(", ")) + "} for the given fiscal year.\"}").build();
+        }
         if(!aOWithClosedAccountingPeriod.isEmpty()){
             return Response.status(Response.Status.CONFLICT).entity("{\"message\":\"no open accounting period found for these Account operations: {" +
                     aOWithClosedAccountingPeriod.stream()
