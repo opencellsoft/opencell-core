@@ -117,7 +117,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH }, orphanRemoval = true)
-    @Cache(usage =  CacheConcurrencyStrategy.READ_WRITE)
     private Set<PricePlanMatrixColumn> columns = new HashSet<>();
 
     /**
