@@ -12,8 +12,6 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
 
-import com.ingenico.connect.gateway.sdk.java.ValidationException;
-
 public class SubAccountingPeriodApiService  implements ApiService<SubAccountingPeriod> {
 	
     @Inject
