@@ -597,21 +597,16 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 				}
 			// SUB ACCOUTING PERIOD ARE USED	
 			} else {
-				SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
-				if (subAccountingPeriod == null) {
-					log.warn("No sub accounting period has been defined for this accountingDate - period : {} - {}", accountOperation.getAccountingDate(), accountingPeriod);
-					rejectAccountOperation(accountOperation);
-				} else {
-					if (subAccountingPeriod.isOpen()) {
-						accountOperation.setStatus(AccountOperationStatus.POSTED);
-					} else {
-						if (action == AccountingOperationAction.FORCE) {
-							forceAccountOperation(accountOperation, accountingPeriod);
-						} else {
-							rejectAccountOperation(accountOperation);
-						}
-					}
-				}
+                SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
+                if (subAccountingPeriod != null && subAccountingPeriod.isOpen()) {
+                    accountOperation.setStatus(AccountOperationStatus.POSTED);
+                } else {
+                    if (action == AccountingOperationAction.FORCE) {
+                        forceAccountOperation(accountOperation, accountingPeriod);
+                    } else {
+                        rejectAccountOperation(accountOperation);
+                    }
+                }
 			}
 		}
 	}
