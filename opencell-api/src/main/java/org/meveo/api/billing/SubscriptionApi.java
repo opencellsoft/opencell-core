@@ -2750,25 +2750,23 @@ public class SubscriptionApi extends BaseApi {
             throw new InvalidParameterException("Subscription with code: " + code + " had one version, could not rollback it");
 
 
-        Subscription actualSubscription = subscriptions.stream()
-                .filter(s -> s.getValidity().getTo() == null)
-                .findFirst()
-                .get();
-
-        Subscription lastSubscription = subscriptions.stream()
-                .filter(s -> s.getValidity().getTo() != null)
-                .sorted((a, b) -> b.getValidity().getTo().compareTo(a.getValidity().getTo()))
-                .findFirst()
-                .get();
+        Subscription actualSubscription = subscriptions.stream().filter(s -> s.getValidity().getTo() == null).findFirst().get();
+        Subscription lastSubscription = subscriptions.stream().filter(s -> actualSubscription.getValidity().getFrom().equals(s.getValidity().getTo())).findFirst().get();
 
         actualSubscription.setToValidity(actualSubscription.getValidity().getFrom());
         subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, actualSubscription.getOrderNumber());
 
         lastSubscription.setToValidity(null);
-        subscriptionService.subscriptionReactivation(lastSubscription, lastSubscription.getSubscriptionDate());
+        // do not reactivate previous sub only if it has already terminated (means offer change already activated)
+        if (lastSubscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
+            subscriptionService.subscriptionReactivation(lastSubscription, lastSubscription.getSubscriptionDate());
         reactivateServices(lastSubscription, actualSubscription.getValidity().getFrom());
-        if(lastSubscription.getInitialSubscriptionRenewal() != null)
+            if(lastSubscription.getInitialSubscriptionRenewal() != null)
+                subscriptionService.cancelSubscriptionTermination(lastSubscription);
+        } else {
+            // previous sub is still active, but maybe was planed for termination
             subscriptionService.cancelSubscriptionTermination(lastSubscription);
+        }
         versionRemovedEvent.fire(lastSubscription);
     }
 
