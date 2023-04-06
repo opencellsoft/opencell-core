@@ -19756,6 +19756,16 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+	<changeSet id="#INTRD-15186_20230328" author="zelmeliani">  
+        <sql>SELECT setval('iso_icd_seq', 208, true)</sql> 
+        <sql>SELECT setval('untdid_5189_allowance_code_seq', 19, true)</sql> 
+        <sql>SELECT setval('untdid_1001_invoice_code_type_seq', 43, true)</sql> 
+        <sql>SELECT setval('untdid_4451_invoice_subject_code_seq', 383, true)</sql> 
+        <sql>SELECT setval('untdid_4461_payment_means_seq', 83, true)</sql> 
+        <sql>SELECT setval('untdid_5305_taxation_category_seq', 9, true)</sql> 
+        <sql>SELECT setval('untdid_vatex_seq', 57, true)</sql> 
+        <sql>SELECT setval('untdid_2475_vat_payment_option_seq', 3, true)</sql> 
+    </changeSet>
     <changeSet id="#INTRD-14750_20230331" author="TarikFA.">
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-65" />
