@@ -16119,4 +16119,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000"/>
         <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000"/>
     </changeSet>
+
+    <changeSet id="#INTRD-15146_20230406" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="billing_accounting_article"
+                                  constraintName="billing_accounting_article_open_order_id_fk"/>
+        <dropColumn tableName="billing_accounting_article" columnName="open_order_id" />
+    </changeSet>
 </databaseChangeLog>
