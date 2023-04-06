@@ -74,6 +74,17 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 					this.doubleValue=((Number)value).doubleValue();
 				}
 				break;
+				
+			case EXPRESSION_LANGUAGE:
+                if (value instanceof Boolean) {
+                    this.booleanValue = (Boolean) value;
+                } else if (value instanceof Double) {
+                    this.doubleValue = (Double) value;
+                } else {
+                    this.stringValue = value.toString();
+                }
+			    
+			    break;
 			default:
 				this.stringValue = value.toString();
 				break;
