@@ -85,7 +85,7 @@ public class QuoteMapper {
          duration = startDate.getTime()-endDate.getTime();
        }
 
-        QuoteXMLHeader header = new QuoteXMLHeader(billingAccount,ctr,quoteVersion.getQuoteVersion(),quote.getCode(),startDate,duration,
+        QuoteXMLHeader header = new QuoteXMLHeader(billingAccount,ctr,quoteVersion,quote.getCode(),startDate,duration,
         		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate,quoteVersion.getComment(),
                 customer, seller);
 

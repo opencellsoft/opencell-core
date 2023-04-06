@@ -459,6 +459,10 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/quoteVersion"/>
 		<fieldDescription><![CDATA[/quote/header/quoteVersion]]></fieldDescription>
 	</field>
+	<field name="quoteVersionEndDate" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/quoteVersionEndDate"/>
+		<fieldDescription><![CDATA[/quote/header/quoteVersionEndDate]]></fieldDescription>
+	</field>
 	<field name="quoteCode" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/quoteCode"/>
 		<fieldDescription><![CDATA[/quote/header/quoteCode]]></fieldDescription>
@@ -1334,7 +1338,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Date: " + ($F{caCountryCode}=="US" ? java.time.LocalDate.parse(($F{quoteDate}).substring(0,10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{quoteDate}.substring(0, 10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Date: " + ($F{caCountryCode}=="US" ? java.time.LocalDate.parse(($F{quoteVersionEndDate}).substring(0,10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{quoteVersionEndDate}.substring(0, 10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RealSize" hAlign="Left" vAlign="Middle">
 				<reportElement x="0" y="-1" width="202" height="61" uuid="3a507fd9-2958-42dc-b452-26696f92232b"/>
