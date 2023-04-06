@@ -153,7 +153,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     private static final String INVOICING_PROCESS_TYPE = "RatedTransaction";
 
-    private static final String QUERY_FILTER = "a.status = 'OPEN' AND :firstTransactionDate <= a.usageDate AND a.usageDate < :lastTransactionDate AND (a.invoicingDate is NULL or a.invoicingDate < :invoiceUpToDate) AND a.accountingArticle.ignoreAggregation = false";
+    private static final String QUERY_FILTER = "a.status = 'OPEN' AND :firstTransactionDate <= a.usageDate AND (a.invoicingDate is NULL or a.invoicingDate < :invoiceUpToDate) AND a.accountingArticle.ignoreAggregation = false ";
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -1703,9 +1703,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate) {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
-        if (lastTransactionDate == null) {
-            lastTransactionDate = invoiceDate;
-        }
         Map<String, Object> filter = null;
         if (billingCycle !=null && billingRun.getBillingCycle().getFilters() != null && !billingRun.getBillingCycle().getFilters().isEmpty()) {
             filter = new HashMap<>(billingRun.getBillingCycle().getFilters());
@@ -1726,7 +1723,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     true, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType());
 
             String query = buildFetchQuery(new PaginationConfiguration(filter, fieldToFetch, null),
-                    usageDateAggregation, getEntityCondition(be), aggregationConfiguration, true);
+                    usageDateAggregation, getEntityCondition(be), aggregationConfiguration, true, lastTransactionDate);
             return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
         } else {
             return getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate, filter, aggregationConfiguration);
@@ -1810,10 +1807,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     private String buildFetchQuery(PaginationConfiguration searchConfig,
                                    String usageDateAggregation, String entityCondition,
-                                   AggregationConfiguration aggregationConfiguration, boolean withGrouping) {
+                                   AggregationConfiguration aggregationConfiguration, boolean withGrouping, Date lastTransactionDate) {
         QueryBuilder queryBuilder =
                 nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
-        queryBuilder.addSql(entityCondition + " AND " + QUERY_FILTER);
+        queryBuilder.addSql(entityCondition +  (lastTransactionDate!=null? " AND a.usageDate < :lastTransactionDate AND ":" AND ")+ QUERY_FILTER);
         if(withGrouping) {
             boolean ignoreSubscription = BILLINGACCOUNT == aggregationConfiguration.getType() && aggregationConfiguration.isIgnoreSubscriptions();
             return queryBuilder.getQueryAsString() +
@@ -1843,7 +1840,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
         Map<String, Object> params = new HashMap<>();
         params.put("firstTransactionDate", new Date(0));
-        params.put("lastTransactionDate", lastTransactionDate);
+        if(lastTransactionDate!=null){
+        	params.put("lastTransactionDate", lastTransactionDate);
+        }
         params.put("invoiceUpToDate", billingRun.getInvoiceDate());
         return params;
     }
@@ -1856,7 +1855,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 aggregationConfiguration.isIgnoreSubscriptions(), aggregationConfiguration.isIgnoreOrders(),
                 false, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType());
         String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
-                null, getEntityCondition(be), null, false);
+                null, getEntityCondition(be), null, false, lastTransactionDate);
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
     }
 
