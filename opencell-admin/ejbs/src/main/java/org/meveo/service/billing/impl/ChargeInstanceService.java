@@ -19,8 +19,8 @@ package org.meveo.service.billing.impl;
 
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 
@@ -39,13 +39,13 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class ChargeInstanceService<P extends ChargeInstance> extends BusinessService<P> {
 
-    @EJB
+    @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
-    @EJB
+    @Inject
     private UsageChargeInstanceService usageChargeInstanceService;
 
-    @EJB
+    @Inject
     private OneShotChargeInstanceService oneShotChargeInstanceService;
 
     /**
