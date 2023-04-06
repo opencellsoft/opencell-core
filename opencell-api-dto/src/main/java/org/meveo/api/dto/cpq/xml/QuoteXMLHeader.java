@@ -10,7 +10,7 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class QuoteXMLHeader extends Header {
     @XmlElement
-    private org.meveo.api.dto.cpq.xml.CustomerAccount customerAccount;
+    private org.meveo.api.dto.cpq.xml.Customer customer;
     @XmlElement
     private org.meveo.api.dto.cpq.xml.Seller seller;
 
@@ -19,20 +19,20 @@ public class QuoteXMLHeader extends Header {
 
     public QuoteXMLHeader(BillingAccount billingAccount, Contract contract, QuoteVersion quoteVersion, String quoteCode, Date startDate,
                           Long duration, int opportunityDuration, String customerReference, String registrationNumber,
-                          Date validFromDate, Date validToDate, String comment, org.meveo.api.dto.cpq.xml.CustomerAccount customerAccount, org.meveo.api.dto.cpq.xml.Seller seller) {
+                          Date validFromDate, Date validToDate, String comment, org.meveo.api.dto.cpq.xml.Customer customer, org.meveo.api.dto.cpq.xml.Seller seller) {
         super(billingAccount, contract, quoteVersion.getQuoteVersion(), quoteCode, startDate,
                 duration, opportunityDuration, customerReference, registrationNumber,
                 validFromDate, validToDate, comment, quoteVersion.getStartDate(), quoteVersion.getEndDate());
-        this.customerAccount = customerAccount;
+        this.customer = customer;
         this.seller = seller;
     }
 
-    public CustomerAccount getCustomerAccount() {
-        return customerAccount;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerAccount(CustomerAccount customerAccount) {
-        this.customerAccount = customerAccount;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public org.meveo.api.dto.cpq.xml.Seller getSeller() {

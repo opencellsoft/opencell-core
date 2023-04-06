@@ -21,9 +21,8 @@ import org.meveo.api.dto.cpq.xml.BillableAccount;
 import org.meveo.api.dto.cpq.xml.BillingAccount;
 import org.meveo.api.dto.cpq.xml.Category;
 import org.meveo.api.dto.cpq.xml.Contract;
-import org.meveo.api.dto.cpq.xml.CustomerAccount;
+import org.meveo.api.dto.cpq.xml.Customer;
 import org.meveo.api.dto.cpq.xml.Details;
-import org.meveo.api.dto.cpq.xml.Header;
 import org.meveo.api.dto.cpq.xml.PaymentMethod;
 import org.meveo.api.dto.cpq.xml.Quote;
 import org.meveo.api.dto.cpq.xml.QuoteLine;
@@ -71,7 +70,7 @@ public class QuoteMapper {
         PaymentMethod paymentMethod=new PaymentMethod(bac.getPaymentMethod(),entityToDtoConverter.getCustomFieldsDTO(bac.getPaymentMethod()));
         
         BillingAccount billingAccount = new BillingAccount(bac,paymentMethod,entityToDtoConverter.getCustomFieldsDTO(bac));
-        CustomerAccount customerAccount = new CustomerAccount(bac.getCustomerAccount());
+        Customer customer = new Customer(bac.getCustomerAccount().getCustomer());
         Seller seller = new Seller(bac.getSeller());
 
         org.meveo.model.cpq.contract.Contract contract = quoteVersion.getContract();
@@ -88,7 +87,7 @@ public class QuoteMapper {
 
         QuoteXMLHeader header = new QuoteXMLHeader(billingAccount,ctr,quoteVersion,quote.getCode(),startDate,duration,
         		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate,quoteVersion.getComment(),
-                customerAccount, seller);
+                customer, seller);
 
         Map<org.meveo.model.billing.BillingAccount, List<QuoteArticleLine>> linesByBillingAccount = quoteVersion.getQuoteArticleLines().stream()
                 .collect(groupingBy(QuoteArticleLine::getBillableAccount));

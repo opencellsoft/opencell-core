@@ -83,6 +83,13 @@
             <version>2.0.1</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Import hibernate for boolean mapping to Char - compatibility between postgress and mysql - use provided scope as is included in JBoss -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

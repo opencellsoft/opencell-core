@@ -70,8 +70,9 @@ public class JpaAmpNewTxInterceptor implements Serializable {
 
             obj = invocationContext.proceed();
 
-            emWrapper.getEntityManager().flush();
-            emWrapper.getEntityManager().clear();
+            // Original comment: Re #INTRD-1692 RT job performance improvements
+            // emWrapper.getEntityManager().flush();
+            // emWrapper.getEntityManager().clear();
             return obj;
 
         } finally {

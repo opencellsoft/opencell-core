@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -18,7 +19,7 @@ public class MethodCallingUtils {
     private final static ConcurrentMap<Long, AtomicIntegerWithEquals> identifierToLockCounter = new ConcurrentHashMap<>();
 
     /**
-     * Execute runnable method in a new transaction
+     * Execute runnable method in a NEW transaction
      * 
      * @param runnable Runnable to execute
      */
@@ -30,7 +31,29 @@ public class MethodCallingUtils {
     }
 
     /**
-     * Execute a callable method in a new transaction
+     * Execute runnable method in a NO transaction
+     * 
+     * @param runnable Runnable to execute
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void callMethodInNoTx(Runnable runnable) {
+
+        runnable.run();
+    }
+
+    /**
+     * Execute runnable method asynchronously
+     * 
+     * @param runnable Runnable to execute
+     */
+    @Asynchronous
+    public void callMethodAsync(Runnable runnable) {
+
+        runnable.run();
+    }
+
+    /**
+     * Execute a callable method in a NEW transaction
      * 
      * @param <T> A result class
      * 
@@ -43,6 +66,35 @@ public class MethodCallingUtils {
     public <T> T callCallableInNewTx(Callable<T> function) throws Exception {
 
         return function.call();
+    }
+
+    /**
+     * Execute a callable method in a NO transaction
+     * 
+     * @param <T> A result class
+     * 
+     * @param function Callable method to execute
+     * @return Method return value
+     * @throws Exception Execution failure
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <T> T callCallableInNoTx(Callable<T> function) throws Exception {
+
+        return function.call();
+    }
+
+    /**
+     * Execute a callable method asynchronously
+     * 
+     * @param <T> A result class
+     * 
+     * @param function Callable method to execute
+     * @throws Exception Execution failure
+     */
+    @Asynchronous
+    public <T> void callCallableAsync(Callable<T> function) throws Exception {
+
+        function.call();
     }
 
     /**

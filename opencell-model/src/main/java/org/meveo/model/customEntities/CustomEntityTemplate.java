@@ -26,6 +26,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -121,6 +122,14 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
 
     public static String getAppliesTo(String code) {
         return CFT_PREFIX + "_" + code;
+    }
+
+    public static String getCodeFromAppliesTo(String appliesTo) {
+        if (appliesTo.startsWith(CFT_PREFIX)) {
+            return appliesTo.substring(CFT_PREFIX.length() + 1);
+        } else {
+            throw new ValidationException("CFT appliesTo value '" + appliesTo + "' does not correspond to a Custom entity field");
+        }
     }
 
     public String getReadPermission() {

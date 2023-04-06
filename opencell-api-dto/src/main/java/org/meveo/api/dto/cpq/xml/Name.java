@@ -12,13 +12,7 @@ public class Name {
         if (name == null) {
             return;
         }
-        if (StringUtils.isNotBlank(name.getFullName())) {
-            this.name = name.getFullName();
-            this.firstName = name.getFirstName();
-            this.lastName = name.getLastName();
-        } else {
-            this.name = name.getFirstName() + " " + name.getLastName();
-        }
+        this.name = getOrEmpty(name.getFirstName()) + getOrEmpty(name.getLastName());
         if (name.getTitle() != null) {
             this.quality = name.getTitle().getIsCompany() ? "Society" : name.getTitle().getDescription();
         }
@@ -38,5 +32,9 @@ public class Name {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    private String getOrEmpty(String value) {
+        return StringUtils.isNotBlank(value) ? value + " ": "";
     }
 }
