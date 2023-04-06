@@ -10145,7 +10145,6 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="open_order_id" type="bigint"/>
             <column name="allowance_code" type="bigint" />
         </createTable>
     </changeSet>
@@ -16798,10 +16797,6 @@
                                  constraintName="cpq_product_open_order_id_fk"
                                  referencedTableName="open_order"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="billing_accounting_article" baseColumnNames="open_order_id"
-                                 constraintName="billing_accounting_article_open_order_id_fk"
-                                 referencedTableName="open_order"
-                                 referencedColumnNames="id"/>
         <addForeignKeyConstraint baseTableName="crm_address_book_contact" baseColumnNames="address_book_id"
                                  constraintName="address_book_contact_address_book_fk"
                                  referencedTableName="crm_address_book"
@@ -19663,6 +19658,7 @@
     <changeSet id="#INTRD-14743_20230316" author="TarikFA." />
     <changeSet id="#INTRD-14966_20230329" author="HatimO."/>
     <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-15146_20230406" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
