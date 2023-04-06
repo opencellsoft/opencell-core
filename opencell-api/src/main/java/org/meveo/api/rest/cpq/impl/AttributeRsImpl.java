@@ -20,7 +20,6 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
 	
 	@Override
 	public Response create(AttributeDTO attributeDto) {
-      
         GetAttributeDtoResponse result = new GetAttributeDtoResponse();
         try {
         	Attribute att = attributeApi.create(attributeDto);
@@ -28,7 +27,7 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
         	result.setCode(att.getCode());
         	return Response.ok(result).build();
         } catch(MeveoApiException e) {
-		       return errorResponse(e, result.getActionStatus());
+			return errorResponse(e, result.getActionStatus());
         }
 	}
 
@@ -39,7 +38,7 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
 	        	attributeApi.update(attributeDto);
 	        	return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
-			       return errorResponse(e, result.getActionStatus());
+				return errorResponse(e, result.getActionStatus());
 	        }
 	}
 	@Override
@@ -49,7 +48,7 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
 	        	attributeApi.remove(code);
 	        	return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
-			       return errorResponse(e, result.getActionStatus());
+				return errorResponse(e, result.getActionStatus());
 	        }
 	}
 
@@ -60,21 +59,9 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
 	    	result=attributeApi.findByCode(code);
 	        return Response.ok(result).build();
 	    } catch (MeveoApiException e) {
-		       return errorResponse(e, result.getActionStatus());
+			return errorResponse(e, result.getActionStatus());
 	    }
 	}
- 
-	
-	/*@Override
-	public Response createOrUpdateAttribute(AttributeDTO postData) {
-		GetAttributeDtoResponse result = new GetAttributeDtoResponse();
-        try {
-        	attributeApi.createOrUpdate(postData);
-			return Response.ok(result).build();
-        } catch (MeveoApiException e) {
-		       return errorResponse(e, result.getActionStatus());
-        }
-	}*/
 
 	@Override
 	public Response listPost(String productCode, String currentProductVersion,OfferContextDTO offerContextDto) {
@@ -86,12 +73,5 @@ public class AttributeRsImpl extends BaseRs implements AttributeRs {
 			return errorResponse(e, result.getActionStatus());
 		}
 	}
- 
-
-
-
-
-	 
-
 	 
 }

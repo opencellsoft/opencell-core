@@ -25,7 +25,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-
 /**
  * @author Mbarek-Ay
  * @version 10.0
@@ -50,10 +49,8 @@ public interface  AttributeRs extends IBaseRs {
             		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
             @ApiResponse(responseCode = "400", description = "No grouped attribute is found for the parameter GroupedAttributeCode", 
     		content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
-            
     })
-	
-	Response create(	@Parameter( name = "attributeDto",
+	Response create(@Parameter( name = "attributeDto",
 									description = "Attribute dto for a new insertion")AttributeDTO attributeDTO);
 	
 	@PUT
@@ -94,8 +91,6 @@ public interface  AttributeRs extends IBaseRs {
             		content = @Content(schema = @Schema(implementation = GetAttributeDtoResponse.class))),
     })
 	Response findByCode(@Parameter(description = "retrieving a attribute with its code") @PathParam("code") String code);
-	
-	
     
     @POST
     @Path("/cpq/offers/{productCode}/{productVersion}")
@@ -109,9 +104,8 @@ public interface  AttributeRs extends IBaseRs {
             @ApiResponse(responseCode = "404", description = "productCode does not exist"),
             @ApiResponse(responseCode = "404", description = "selected service does not exist")
     })
-    public Response listPost(@Parameter(description = "product code", required = true) @PathParam("productCode") String productCode,
+    Response listPost(@Parameter(description = "product code", required = true) @PathParam("productCode") String productCode,
     		@Parameter(description = "product version", required = true) @PathParam("productVersion") String productVersion,
-    		@Parameter(description = "The Offer context", required = false) OfferContextDTO quoteContext);
-	
-	 
+    		@Parameter(description = "The Offer context") OfferContextDTO quoteContext);
+
 }
