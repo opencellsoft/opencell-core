@@ -1093,6 +1093,7 @@ public class AccountHierarchyApi extends BaseApi {
             CustomerAccountDto customerAccountDto = createCustomerAccountDto(postData, accountHierarchyTypeEnum);
             customerAccountDto.setIsCompany(postData.getCompany());
             accountEntity = customerAccountApi.create(customerAccountDto, true, businessAccountModel, (Customer) accountEntity);
+            customerAccountService.commit();
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
