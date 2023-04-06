@@ -1,5 +1,7 @@
 package org.meveo.api.cpq;
 
+import static org.meveo.commons.utils.StringUtils.isBlank;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +26,6 @@ import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Media;
@@ -70,20 +71,21 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
     private CommercialRuleLineService commercialRuleLineService;
 
 	@Inject
-	CustomGenericEntityCodeService customGenericEntityCodeService;
+	private CustomGenericEntityCodeService customGenericEntityCodeService;
 	
 	@Override
 	public Attribute create(AttributeDTO postData) throws MeveoApiException, BusinessException {
-
-		if (!StringUtils.isBlank(postData.getCode()) && postData.getCode() != null && attributeService.findByCode(postData.getCode()) != null) {
+		if (!isBlank(postData.getCode())
+				&& attributeService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(Attribute.class, postData.getCode());
 		}
-
-		handleMissingParametersAndValidate(postData);
-
-		// check if groupedAttributes  exists
 		Attribute attribute = new Attribute();
-		attribute.setCode(StringUtils.isBlank(postData.getCode()) ? customGenericEntityCodeService.getGenericEntityCode(attribute) : postData.getCode());
+		if(postData.getCode() == null || postData.getCode().isEmpty()) {
+			postData.setCode(customGenericEntityCodeService.getGenericEntityCode(attribute));
+		}
+		handleMissingParametersAndValidate(postData);
+		// check if groupedAttributes  exists
+		attribute.setCode(postData.getCode());
 		attribute.setDescription(postData.getDescription());
 		attribute.setPriority(postData.getPriority());
 		attribute.setAttributeType(postData.getAttributeType());
@@ -117,7 +119,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	private void processTags(AttributeDTO postData, Attribute attribute) {
 		List<String> tagCodes = postData.getTagCodes();
 		if (tagCodes != null && !tagCodes.isEmpty()) {
-			Set<Tag> tags = new HashSet<Tag>();
+			Set<Tag> tags = new HashSet<>();
 			for (String code : tagCodes) {
 				Tag tag = tagService.findByCode(code);
 				if (tag == null) {
@@ -134,7 +136,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	 private void processMedias(AttributeDTO postData, Attribute attribute) {
 			Set<String> mediaCodes = postData.getMediaCodes(); 
 			if(mediaCodes != null && !mediaCodes.isEmpty()){
-				List<Media> medias=new ArrayList<Media>();
+				List<Media> medias=new ArrayList<>();
 				for(String code:mediaCodes) {
 					Media media=mediaService.findByCode(code);
 					if(media == null) { 
@@ -151,7 +153,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	private void processAssignedAttributes(AttributeDTO postData, Attribute attribute) {
 		List<String> assignedAttrCodes = postData.getAssignedAttributeCodes();
 		if (assignedAttrCodes != null && !assignedAttrCodes.isEmpty()) {
-			Set<Attribute> assignedAttributes = new HashSet<Attribute>();
+			Set<Attribute> assignedAttributes = new HashSet<>();
 			for (String code : assignedAttrCodes) {
 				Attribute attr = attributeService.findByCode(code);
 				if (attr == null) {
@@ -173,14 +175,14 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	@Override
 	public Attribute update(AttributeDTO postData) throws MeveoApiException, BusinessException {
 
-		if (StringUtils.isBlank(postData.getCode())) {
+		if (isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		} 
 		Attribute attribute=attributeService.findByCode(postData.getCode());
 		if (attribute== null) {
 			throw new EntityDoesNotExistsException(Attribute.class, postData.getCode());
 		} 
-		attribute.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+		attribute.setCode(isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		attribute.setDescription(postData.getDescription());
 		attribute.setPriority(postData.getPriority());
 		attribute.setAttributeType(postData.getAttributeType());
@@ -199,7 +201,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	}
 
 	public GetAttributeDtoResponse findByCode(String code) throws MeveoApiException {
-		if (StringUtils.isBlank(code)) {
+		if (isBlank(code)) {
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
@@ -209,20 +211,20 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			throw new EntityDoesNotExistsException(Attribute.class, code);
 		}
 		ChargeTemplateDto chargeTemplateDto = null;
-		Set<ChargeTemplateDto> chargeTemplateDtos = new HashSet<ChargeTemplateDto>();
+		Set<ChargeTemplateDto> chargeTemplateDtos = new HashSet<>();
 		for (ChargeTemplate charge : attribute.getChargeTemplates()) {
 			chargeTemplateDto = new ChargeTemplateDto(charge, entityToDtoConverter.getCustomFieldsDTO(charge));
 			chargeTemplateDtos.add(chargeTemplateDto);
 		}
 		TagDto tagDto = null;
-		List<TagDto> tagDtos = new ArrayList<TagDto>();
+		List<TagDto> tagDtos = new ArrayList<>();
 		for (Tag tag : attribute.getTags()) {
 			tagDto = new TagDto(tag);
 			tagDtos.add(tagDto);
 		}
 
 		AttributeDTO attributeDto = null;
-		List<AttributeDTO> assignedAttributes = new ArrayList<AttributeDTO>();
+		List<AttributeDTO> assignedAttributes = new ArrayList<>();
 		for (Attribute attr : attribute.getAssignedAttributes()) {
 			attributeDto = new AttributeDTO(attr);
 			assignedAttributes.add(attributeDto);
@@ -234,7 +236,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 
 	@Override
 	public void remove(String code) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(code)) {
+		if (isBlank(code)) {
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
