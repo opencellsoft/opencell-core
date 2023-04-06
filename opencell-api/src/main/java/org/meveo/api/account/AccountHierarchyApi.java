@@ -1572,8 +1572,8 @@ public class AccountHierarchyApi extends BaseApi {
             	terminateCRMAccountHierarchy(postData);
             }else {
             	BillingAccountDto billingAccountDto = createBillingAccountDto(postData, accountHierarchyTypeEnum);
+            	billingAccountDto.setIsCompany(postData.getCompany());
             	accountEntity = billingAccountApi.update(billingAccountDto, true, businessAccountModel);
-            	accountEntity.setIsCompany(postData.getCompany());
             	setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
             }
         }
