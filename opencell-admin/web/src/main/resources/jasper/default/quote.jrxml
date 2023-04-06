@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="152"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE3-Quote-20230403"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="WM-Quote-Name"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -261,7 +261,7 @@
 			<fieldDescription><![CDATA[currencySymbol]]></fieldDescription>
 		</field>
 		<field name="country" class="java.lang.String">
-			<fieldDescription><![CDATA[ancestor::quote/header/customerAccount/address/country]]></fieldDescription>
+			<fieldDescription><![CDATA[ancestor::quote/header/customer/address/country]]></fieldDescription>
 		</field>
 	</subDataset>
 	<subDataset name="ba_prices" uuid="5584035b-3f01-4c5b-b63f-2bc9582f7d4a">
@@ -366,7 +366,7 @@
 			<fieldDescription><![CDATA[ancestor::quoteLine/@quantity]]></fieldDescription>
 		</field>
 		<field name="country" class="java.lang.String">
-			<fieldDescription><![CDATA[ancestor::quote/header/customerAccount/address/country]]></fieldDescription>
+			<fieldDescription><![CDATA[ancestor::quote/header/customer/address/country]]></fieldDescription>
 		</field>
 	</subDataset>
 	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
@@ -458,6 +458,10 @@
 	<field name="quoteVersion" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/quoteVersion"/>
 		<fieldDescription><![CDATA[/quote/header/quoteVersion]]></fieldDescription>
+	</field>
+	<field name="quoteVersionEndDate" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/quoteVersionEndDate"/>
+		<fieldDescription><![CDATA[/quote/header/quoteVersionEndDate]]></fieldDescription>
 	</field>
 	<field name="quoteCode" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/quoteCode"/>
@@ -563,34 +567,34 @@
 		<fieldDescription><![CDATA[/quote/header/billingAccount/address/countryName]]></fieldDescription>
 	</field>
 	<field name="caQuality" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/customerAccount/name/quality]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/customer/name/quality]]></fieldDescription>
 	</field>
 	<field name="caName" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/customerAccount/name/name]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/customer/name/name]]></fieldDescription>
 	</field>
 	<field name="caFirstName" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/customerAccount/name/firstName]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/customer/name/firstName]]></fieldDescription>
 	</field>
 	<field name="caAddrLine1" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/customerAccount/address/address1]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/customer/address/address1]]></fieldDescription>
 	</field>
 	<field name="caAddrLine2" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/customerAccount/address/address2]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/customer/address/address2]]></fieldDescription>
 	</field>
 	<field name="caAddrLine3" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/customerAccount/address/address3]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/customer/address/address3]]></fieldDescription>
 	</field>
 	<field name="caCity" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/customerAccount/address/city]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/customer/address/city]]></fieldDescription>
 	</field>
 	<field name="caAddrZip" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/customerAccount/address/zipCode]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/customer/address/zipCode]]></fieldDescription>
 	</field>
 	<field name="caCountry" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/customerAccount/address/countryName]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/customer/address/countryName]]></fieldDescription>
 	</field>
 	<field name="caCountryCode" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/header/customerAccount/address/country]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/customer/address/country]]></fieldDescription>
 	</field>
 	<field name="sellerVatNo" class="java.lang.String">
 		<fieldDescription><![CDATA[/quote/header/seller/@vatNo]]></fieldDescription>
@@ -1192,7 +1196,7 @@
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
-									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{taxRate}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{taxRate})))]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{taxRate})))+"%"  : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{taxRate})))+"%"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1334,7 +1338,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Date: " + ($F{caCountryCode}=="US" ? java.time.LocalDate.parse(($F{quoteDate}).substring(0,10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{quoteDate}.substring(0, 10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Date: " + ($F{caCountryCode}=="US" ? java.time.LocalDate.parse(($F{quoteVersionEndDate}).substring(0,10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{quoteVersionEndDate}.substring(0, 10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RealSize" hAlign="Left" vAlign="Middle">
 				<reportElement x="0" y="-1" width="202" height="61" uuid="3a507fd9-2958-42dc-b452-26696f92232b"/>

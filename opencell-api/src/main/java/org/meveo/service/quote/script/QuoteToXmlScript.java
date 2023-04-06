@@ -29,7 +29,6 @@ import org.meveo.api.dto.cpq.xml.Category;
 import org.meveo.api.dto.cpq.xml.Contract;
 import org.meveo.api.dto.cpq.xml.CustomerAccount;
 import org.meveo.api.dto.cpq.xml.Details;
-import org.meveo.api.dto.cpq.xml.Header;
 import org.meveo.api.dto.cpq.xml.PaymentMethod;
 import org.meveo.api.dto.cpq.xml.Product;
 import org.meveo.api.dto.cpq.xml.Quote;
@@ -129,7 +128,7 @@ public class QuoteToXmlScript extends ModuleScript {
          duration = startDate.getTime()-endDate.getTime();
        }
 
-        QuoteXMLHeader header = new QuoteXMLHeader(billingAccount,ctr,quoteVersion.getQuoteVersion(),quote.getCode(),startDate,duration,
+        QuoteXMLHeader header = new QuoteXMLHeader(billingAccount,ctr,quoteVersion,quote.getCode(),startDate,duration,
         		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate,quoteVersion.getComment(),
                 customerAccount, seller);
 
