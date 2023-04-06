@@ -20,7 +20,6 @@ package org.meveo.service.billing.impl;
 
 import com.mifmif.common.regex.Generex;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
@@ -51,7 +50,6 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
-import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
