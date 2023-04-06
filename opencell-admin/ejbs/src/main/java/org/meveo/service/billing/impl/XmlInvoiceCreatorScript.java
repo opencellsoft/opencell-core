@@ -2941,7 +2941,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element categoriesTag = doc.createElement("categories");
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
             Element categoryTag = createDetailsUAInvoiceCategorySectionIL(doc, invoice, categoryInvoiceAgregate,
-                    invoiceLines, isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode, invoiceConfiguration, mapTaxesIndexes);
+                    invoiceLines.stream()
+                            .filter(invoiceLine -> categoryInvoiceAgregate.getInvoiceCategory() != null &&
+                                    invoiceLine.getAccountingArticle().getInvoiceSubCategory().getInvoiceCategory().getId().equals(categoryInvoiceAgregate.getInvoiceCategory().getId()))
+                            .collect(Collectors.toList()),
+                    isVirtual, invoiceDateFormat, invoiceDateTimeFormat, invoiceLanguageCode, invoiceConfiguration, mapTaxesIndexes);
             if (categoryTag != null) {
                 categoriesTag.appendChild(categoryTag);
             }
