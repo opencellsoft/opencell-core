@@ -725,7 +725,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     	unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
                     	unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
                     }
-                    BigDecimal amount=null;
+                    BigDecimal amount= BigDecimal.ZERO;
                     BigDecimal discountRate=null;
                     PricePlanMatrixVersion ppmVersion=null;
                     PricePlanMatrixLine pricePlanMatrixLine =null;
