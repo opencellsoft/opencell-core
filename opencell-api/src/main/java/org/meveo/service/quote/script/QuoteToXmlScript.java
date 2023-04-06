@@ -27,9 +27,8 @@ import org.meveo.api.dto.cpq.xml.BillableAccount;
 import org.meveo.api.dto.cpq.xml.BillingAccount;
 import org.meveo.api.dto.cpq.xml.Category;
 import org.meveo.api.dto.cpq.xml.Contract;
-import org.meveo.api.dto.cpq.xml.CustomerAccount;
+import org.meveo.api.dto.cpq.xml.Customer;
 import org.meveo.api.dto.cpq.xml.Details;
-import org.meveo.api.dto.cpq.xml.Header;
 import org.meveo.api.dto.cpq.xml.PaymentMethod;
 import org.meveo.api.dto.cpq.xml.Product;
 import org.meveo.api.dto.cpq.xml.Quote;
@@ -114,7 +113,7 @@ public class QuoteToXmlScript extends ModuleScript {
         PaymentMethod paymentMethod=new PaymentMethod(bac.getPaymentMethod(),entityToDtoConverter.getCustomFieldsDTO(bac.getPaymentMethod()));
         
         BillingAccount billingAccount = new BillingAccount(bac,paymentMethod,entityToDtoConverter.getCustomFieldsDTO(bac));
-        CustomerAccount customerAccount = new CustomerAccount(bac.getCustomerAccount());
+        Customer customer = new Customer(bac.getCustomerAccount().getCustomer());
         Seller seller = new Seller(bac.getSeller());
 
         org.meveo.model.cpq.contract.Contract contract = quoteVersion.getContract();
@@ -131,7 +130,7 @@ public class QuoteToXmlScript extends ModuleScript {
 
         QuoteXMLHeader header = new QuoteXMLHeader(billingAccount,ctr,quoteVersion.getQuoteVersion(),quote.getCode(),startDate,duration,
         		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate,quoteVersion.getComment(),
-                customerAccount, seller);
+                customer, seller);
 
         Map<org.meveo.model.billing.BillingAccount, List<QuoteArticleLine>> linesByBillingAccount = getAllOffersQuoteLineStream(quoteVersion)
                 .collect(groupingBy(QuoteArticleLine::getBillableAccount));
