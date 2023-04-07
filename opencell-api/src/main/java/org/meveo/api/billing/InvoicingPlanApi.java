@@ -58,6 +58,10 @@ public class InvoicingPlanApi extends BaseCrudApi<InvoicingPlan, InvoicingPlanDt
 	 */
 	public InvoicingPlan create(InvoicingPlanDto postData) throws MeveoApiException, BusinessException {
 
+		InvoicingPlan invoicingPlan = new InvoicingPlan();
+		if(StringUtils.isBlank(postData.getCode())) {
+			postData.setCode(customGenericEntityCodeService.getGenericEntityCode(invoicingPlan));
+		}
 		handleMissingParametersAndValidate(postData);
 
 		String invoicingPlanCode = postData.getCode();
@@ -68,7 +72,6 @@ public class InvoicingPlanApi extends BaseCrudApi<InvoicingPlan, InvoicingPlanDt
 			}
 		}
 
-		InvoicingPlan invoicingPlan = new InvoicingPlan();
 		invoicingPlan.setCode(StringUtils.isBlank(invoicingPlanCode) ? customGenericEntityCodeService.getGenericEntityCode(invoicingPlan): invoicingPlanCode);
 		invoicingPlan.setDescription(postData.getDescription());
 		populateCustomFields(postData.getCustomFields(), invoicingPlan, true);

@@ -364,7 +364,7 @@ public class SubscriptionApi extends BaseApi {
     public Subscription create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(Subscription.class.getName(), postData);
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(new Subscription()));
         }
         if (StringUtils.isBlank(postData.getUserAccount())) {
             missingParameters.add("userAccount");

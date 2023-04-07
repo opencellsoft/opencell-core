@@ -162,16 +162,17 @@ public class ProductApi extends BaseApi {
 	 * @throws ProductException
 	 */
 	public ProductDto create(ProductDto productDto){
-		if(Strings.isEmpty(productDto.getCode())) {
-			missingParameters.add("code");
-		}
 		if(Strings.isEmpty(productDto.getLabel())){
 			missingParameters.add("label");
+		}
+		Product product = new Product();
+		if(Strings.isEmpty(productDto.getCode())) {
+			productDto.setCode(customGenericEntityCodeService.getGenericEntityCode(product));
 		}
 		handleMissingParameters();
 		try {
 			productDto.setCode(productDto.getCode().trim());
-			Product product = populateProduct(productDto, true);
+			product = populateProduct(productDto, true);
 			productService.create(product);
 			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
 			ProductDto response = new ProductDto(product);

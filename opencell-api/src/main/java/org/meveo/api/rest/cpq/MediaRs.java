@@ -45,7 +45,7 @@ public interface MediaRs {
 		            @ApiResponse(responseCode = "404", description = "composed id of media does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 		   }
 			)
-	public Response createMedai(@Parameter(required = true, description = "information for a new media") MediaDto mediaDto);
+	Response createMedia(@Parameter(required = true, description = "information for a new media") MediaDto mediaDto);
 	
 	@PUT
 	@Operation(
