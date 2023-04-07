@@ -270,8 +270,9 @@ public class CpqQuoteApi extends BaseApi {
 	    if(StringUtils.isBlank(quoteDto.getApplicantAccountCode())) {
             missingParameters.add("applicantAccountCode");
         }
+        CpqQuote cpqQuote = new CpqQuote();
         if(StringUtils.isBlank(quoteDto.getCode())) {
-            missingParameters.add("code");
+            customGenericEntityCodeService.getGenericEntityCode(cpqQuote);
         }
         handleMissingParameters();
         
@@ -279,7 +280,6 @@ public class CpqQuoteApi extends BaseApi {
             throw new EntityAlreadyExistsException(CpqQuote.class, quoteDto.getCode());
         }
 
-        CpqQuote cpqQuote = new CpqQuote();
         cpqQuote.setCode(quoteDto.getCode());
         final BillingAccount applicantAccount = billingAccountService.findByCode(quoteDto.getApplicantAccountCode());
         if(applicantAccount == null) {
