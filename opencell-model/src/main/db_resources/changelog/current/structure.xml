@@ -15122,12 +15122,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </sql>
     </changeSet>
     
-    <changeSet id="#INTRD-14598_20230303" author="zelmeliani">
-        <addColumn tableName="finance_settings">
-            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
-        </addColumn>
-    </changeSet>
-    
     <changeSet id="#INTR-14747_20230308" author="TarikFA.">
     	<update tableName="cat_discount_plan">
     		<column name="applicable_on_overridden_price" value="1"/>
@@ -15163,19 +15157,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
          <dropColumn tableName="quote_offer">
          	<column name="contract_code" />
          </dropColumn>
-    </changeSet>
-
-    <changeSet id="#INTRD-14336_20230227" author="ZBariki">
-        <addColumn tableName="cpq_contract_item">
-            <column name="application_el" type="varchar(2000)" />
-        </addColumn>
-        <addColumn tableName="billing_wallet_operation">
-            <column name="contract_line_id" type="bigint" />
-        </addColumn>
-        <addForeignKeyConstraint baseTableName="billing_wallet_operation" baseColumnNames="contract_line_id"
-                                 constraintName="fk_wo_contract_line_id" referencedTableName="cpq_contract_item"
-                                 referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
     
     <changeSet id="#INTRD-14598_20230303" author="zelmeliani">

@@ -17726,84 +17726,6 @@
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id" />
     </changeSet>
-    
-    <changeSet id="#INTRD-12677_20221229_rebuild" author="AdilElJaouhari">
-		<createTable tableName="crm_provider_order_line_type">
-			<column name="provider_id" type="bigint" />
-			<column name="order_line_type" type="varchar(20)" />
-		</createTable>
-
-		<addForeignKeyConstraint
-			baseTableName="crm_provider_order_line_type"
-			baseColumnNames="provider_id"
-			constraintName="crm_provider_order_line_type_provider_fk"
-			referencedTableName="crm_provider" referencedColumnNames="id" />
-
-		<addUniqueConstraint
-			columnNames="provider_id, order_line_type"
-			constraintName="crm_provider_order_line_type_uk"
-			tableName="crm_provider_order_line_type" />
-	</changeSet>
-	
-	<changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
-        <createTable tableName="cpq_converted_price_plan_version">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_converted_price_plan_version_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="creator" type="varchar(100)" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="updater" type="varchar(100)" />
-            <column name="price_plan_matrix_version_id" type="bigint" />
-            <column name="converted_price" type="numeric(23, 12)" />
-            <column name="trading_currency_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="rate" type="numeric(23, 12)" />
-            <column name="use_for_billing_accounts" type="${type.boolean}"/>
-        </createTable>
-    </changeSet>
-	
-    <changeSet id="#INTRD-13062-20230124-rebuild" author="ZBariki">
-        <createSequence sequenceName="ar_customer_balance_seq" />
-        <createTable tableName="ar_customer_balance">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="customer_balance_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)" />
-            <column name="description" type="varchar(255)" />
-            <column name="default_balance" type="${type.boolean}" defaultValueNumeric="0" />
-        </createTable>
-        <createTable tableName="ar_customer_balance_templates">
-            <column name="customer_balance_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="template_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="customer_balance_id, template_id"
-                       constraintName="ar_templates_customer_balance_pkey"
-                       tableName="ar_customer_balance_templates" />
-        <addForeignKeyConstraint baseTableName="ar_customer_balance_templates" baseColumnNames="customer_balance_id"
-                                 constraintName="fk_ar_customer_balance_templates"
-                                 referencedTableName="ar_customer_balance"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="ar_customer_balance_templates" baseColumnNames="template_id"
-                                 constraintName="fk_ar_templates_customer_balance"
-                                 referencedTableName="ar_occ_template"
-                                 referencedColumnNames="id"/>
-    </changeSet>
 
     <changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
         <addForeignKeyConstraint baseTableName="cpq_order_offer" baseColumnNames="contract_id"
@@ -19088,15 +19010,6 @@
     <changeSet id="#INTRD-6364_20220519" author="aelmalki" />
     <changeSet id="#INTRD-14598_20230303" author="zelmeliani" />
     <changeSet id="#INTR-14747_20230308" author="TarikFA." />
-    <changeSet id="#INTRD-13009_20230202" author="bourras" />
-    <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
-    <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI" />
-    <changeSet id="#INTRD-13957-20230214" author="houdad"/>
-    <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI" />
-    <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari" />
-    <changeSet id="#INTRD-14161_20230221" author="AdilElJaouhari" />
-    <changeSet id="#INTRD-14264_20230222" author="TarikFA." />
-    <changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe" />
     <changeSet id="#INTRD-14522_20230301" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
