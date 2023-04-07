@@ -117,8 +117,4 @@ public class AccountingPeriodApiService  implements ApiService<AccountingPeriod>
 
 	}
 	
-	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear, AccountingPeriodActionLevelEnum level) {
-		return accountingPeriodService.updateStatus(entity, status, fiscalYear, level);
-
-	}
 }

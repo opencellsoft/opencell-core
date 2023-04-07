@@ -1,7 +1,9 @@
 package org.meveo.service.accounting.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -70,10 +72,9 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
 		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
 			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
-		} else {	
-	        if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
-	            boolean isUserHaveThisRole = currentUser.hasRole(API_FINANCE_MANAGEMENT);
-	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, status, isUserHaveThisRole);                
+		} else {		    
+			if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
+	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, status);                
             }
 		    
 			AuditLog auditLog = createAuditLog(entity, status);
@@ -88,37 +89,6 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		return entity;
 	}
 	
-	/**
-	 * Update the status of a fiscal year after checking the subAccountingCycles and also status
-	 * @param entity {@link AccountingPeriod}
-	 * @param status Status
-	 * @param fiscalYear Fiscal Year
-	 * @return {@link AccountingPeriod}
-	 */
-	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear, AccountingPeriodActionLevelEnum level) {
-	    AccountingPeriodStatusEnum accountingPeriodStatus = AccountingPeriodStatusEnum.valueOf(status);
-        if(entity.isUseSubAccountingCycles() && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
-			throw new ValidationException("the accounting period " + fiscalYear + " has sub-accounting periods option activated");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
-			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
-			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
-		} else {	
-	        if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
-	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, status, level);                
-            }
-		    
-			AuditLog auditLog = createAuditLog(entity, status);
-			entity.setAccountingPeriodStatus(accountingPeriodStatus);
-			update(entity);
-
-			if(auditLog.getEntity() != null) {
-				auditLogService.create(auditLog);
-			}
-		}
-
-		return entity;
-	}
 
 	/**
 	 * Create auditLog by passing the Accounting Period ans status

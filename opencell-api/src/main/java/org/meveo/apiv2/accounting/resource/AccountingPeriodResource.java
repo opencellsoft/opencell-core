@@ -79,14 +79,5 @@ public interface AccountingPeriodResource {
 	Response updateStatus(@Parameter(description = "fiscalYear of the Invoice", required = true) @PathParam("fiscalYear") String fiscalYear,
 						 	@Parameter(description = "status", required = true) @PathParam("status") String status);
 	
-	@PUT
-	@Path("/{fiscalYear}/{status}/{level}")
-	@Operation(summary = "update regularUsers status", tags = {
-			"AccountingPeriods" }, description = "Update a SubaccountingPeriod", responses = {
-			@ApiResponse(responseCode = "200", description = "regularUsers status is successfully updated"),
-			@ApiResponse(responseCode = "404", description = "target entity does not exist")})
-	Response updateStatus(@Parameter(description = "fiscalYear of the Invoice", required = true) @PathParam("fiscalYear") String fiscalYear,
-						 	@Parameter(description = "status", required = true) @PathParam("status") String status,
-						 	@Parameter(description = "level", required = true) @PathParam("level") AccountingPeriodActionLevelEnum level);
 
 }
