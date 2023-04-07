@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Properties;
 
 public class PropertiesDto implements Serializable {
@@ -39,13 +40,9 @@ public class PropertiesDto implements Serializable {
     }
 
     public PropertiesDto(Properties properties) {
-        Iterator<Entry<Object, Object>> it = properties.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Object, Object> pair = it.next();
-            PropertyDto property = new PropertyDto(pair.getKey(), pair.getValue());
-            this.properties.add(property);
-            it.remove();
-        }
+        this.properties = properties.entrySet().stream()
+        									   .map(e -> new PropertyDto(e.getKey(), e.getValue()))
+        									   .collect(Collectors.toList());
 
     }
 
