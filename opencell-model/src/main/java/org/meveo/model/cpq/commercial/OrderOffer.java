@@ -36,6 +36,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
 /** 
@@ -121,6 +122,11 @@ public class OrderOffer extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
+    
+    /** FrArgs contract. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
     
 	
     @Override
@@ -256,4 +262,13 @@ public class OrderOffer extends BusinessCFEntity {
 	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
 	}
+
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
+	
 }

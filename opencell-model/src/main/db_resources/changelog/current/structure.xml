@@ -15122,12 +15122,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </sql>
     </changeSet>
     
-    <changeSet id="#INTRD-14598_20230303" author="zelmeliani">
-        <addColumn tableName="finance_settings">
-            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
-        </addColumn>
-    </changeSet>
-    
     <changeSet id="#INTR-14747_20230308" author="TarikFA.">
     	<update tableName="cat_discount_plan">
     		<column name="applicable_on_overridden_price" value="1"/>
@@ -15138,5 +15132,49 @@ public class AgedBalanceReporting extends ReportExtractScript {
     		<where>applicable_on_discounted_price is null</where>
     	</update>
     </changeSet>
+    
+    <changeSet id="#INTRD-14522_20230301" author="TarikFA.">
+    	<addColumn tableName="billing_subscription">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+    	<addColumn tableName="quote_offer">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+    	
+        <addForeignKeyConstraint baseTableName="quote_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+         <dropColumn tableName="quote_offer">
+         	<column name="contract_code" />
+         </dropColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14598_20230303" author="zelmeliani">
+        <addColumn tableName="finance_settings">
+            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
 
+
+    <changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
+    	<addColumn tableName="cpq_order_offer">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="cpq_order_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_cpq_order_offer_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
 </databaseChangeLog>

@@ -319,6 +319,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private AuditableFieldService auditableFieldService;
+    
+	@Inject
+	private ContractHierarchyHelper contractHierarchyHelper;
 
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
@@ -582,6 +585,11 @@ public class SubscriptionApi extends BaseApi {
         if(postData.getSalesPersonName() != null) {
         	subscription.setSalesPersonName(postData.getSalesPersonName());
         }
+        
+		if (!StringUtils.isBlank(postData.getContractCode())) {
+			subscription.setContract(contractHierarchyHelper.checkContractHierarchy(subscription.getUserAccount().getBillingAccount(), postData.getContractCode()));
+		}
+		
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false);
@@ -2834,6 +2842,10 @@ public class SubscriptionApi extends BaseApi {
         }
 
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
+        
+		if (!StringUtils.isBlank(postData.getContractCode())) {
+			subscription.setContract(contractHierarchyHelper.checkContractHierarchy(userAccount.getBillingAccount(), postData.getContractCode()));
+		}
 
         // subscription.setTerminationDate(postData.getTerminationDate());
 
