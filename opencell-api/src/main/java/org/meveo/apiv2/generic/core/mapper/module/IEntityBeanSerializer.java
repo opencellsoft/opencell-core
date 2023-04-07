@@ -28,11 +28,11 @@ class IEntityBeanSerializer extends StdSerializer<IEntity> implements GenericSer
     public void serialize(IEntity value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         JsonStreamContext outputContext = gen.getOutputContext();
 
-        boolean exists = sharedEntityToSerialize.stream().anyMatch(e -> e.getClass().equals(value.getClass()) && e.getId().equals(value.getId()));
-		if(exists
+        boolean exists = sharedEntityToSerialize.stream().anyMatch(e -> isMatch(e, value));
+        if (exists
                 || DATA_ROOT_ELEMENT.equals(outputContext.getCurrentName())
-                || isNestedEntityCandidate(getPathToRoot(gen), outputContext.getCurrentName())){
-            sharedEntityToSerialize.removeIf(e -> e.getClass().equals(value.getClass()) && e.getId().equals(value.getId()));
+                || isNestedEntityCandidate(getPathToRoot(gen), outputContext.getCurrentName())) {
+            sharedEntityToSerialize.removeIf(e -> isMatch(e, value));
             this.defaultSerializer.serialize(value, gen, serializers);
         } else {
             gen.writeStartObject();
@@ -40,6 +40,11 @@ class IEntityBeanSerializer extends StdSerializer<IEntity> implements GenericSer
             gen.writeObject(value.getId());
             gen.writeEndObject();
         }
+    }
+
+    private boolean isMatch(IEntity e, IEntity value) {
+        return e.getClass().equals(value.getClass()) &&
+                (e.getId() != null ? e.getId().equals(value.getId()) : e.equals(value));
     }
 
     @Override
