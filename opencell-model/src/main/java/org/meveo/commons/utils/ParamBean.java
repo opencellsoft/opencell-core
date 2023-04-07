@@ -99,7 +99,7 @@ public class ParamBean {
     private static boolean reload = false;
 
     protected ParamBean() {
-    	System.out.println("new param bean");
+
     }
 
     /**
