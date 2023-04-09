@@ -17,6 +17,7 @@ import java.util.Map;
 @Tag(name = "PricePlanMatrixLine")
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
+@Deprecated
 public interface SearchPriceLineByAttributeResource {
     @POST
     @Path("/search")
