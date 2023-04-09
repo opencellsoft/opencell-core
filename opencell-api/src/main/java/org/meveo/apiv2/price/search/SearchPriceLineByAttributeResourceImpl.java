@@ -1,6 +1,7 @@
 package org.meveo.apiv2.price.search;
 
 import org.hibernate.criterion.MatchMode;
+import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
@@ -15,95 +16,20 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineByAttributeResource {
     @Inject
-    private PricePlanMatrixLineService pricePlanMatrixLineService;
+    private PricePlanMatrixLineApi pricePlanMatrixLineApi;
 
     @Override
     public Response search(Map<String, Object> searchInfo) {
-        Query query = pricePlanMatrixLineService.getEntityManager().createQuery(buildQuery(searchInfo), PricePlanMatrixLine.class);
-        injectParamsIntoQuery(searchInfo, query);
-        List<PricePlanMatrixLine> resultList = query.getResultList();
+        List<PricePlanMatrixLine> resultList = pricePlanMatrixLineApi.search(searchInfo);
         return  Response.ok().entity(buildResponse(resultList,
                         (Integer) searchInfo.getOrDefault("limit", 10),
                         (Integer) searchInfo.getOrDefault("offset", 0),
                         (String) searchInfo.getOrDefault("sortBy","id"),
                         (String) searchInfo.getOrDefault("order","ASC")))
                 .build();
-    }
-
-    private void injectParamsIntoQuery(Map<String, Object> searchInfo, Query query) {
-        query.setParameter("description", MatchMode.ANYWHERE.toMatchString(((String) searchInfo.getOrDefault("description", "")).toLowerCase()));
-        if(searchInfo.containsKey("pricePlanMatrixVersion") && ((Map) searchInfo.get("pricePlanMatrixVersion")).containsKey("id")){
-            query.setParameter("pricePlanMatrixVersionId", Long.valueOf(((Map) searchInfo.get("pricePlanMatrixVersion")).getOrDefault("id", 1l)+""));
-        }
-        if(searchInfo.containsKey("priceWithoutTax")){
-            query.setParameter("priceWithoutTax", BigDecimal.valueOf(Double.valueOf(searchInfo.getOrDefault("priceWithoutTax", 0.0)+"")));
-        }
-    }
-
-    private String buildQuery(Map<String, Object> searchInfo) {
-        StringBuilder queryString = new StringBuilder();
-        queryString.append("SELECT distinct ppml FROM PricePlanMatrixLine ppml");
-        queryString.append(" LEFT JOIN FETCH ppml.pricePlanMatrixValues ppmvs ");
-        queryString.append(" WHERE (LOWER(ppml.description) LIKE :description OR ppml.description is null) ");
-        if(searchInfo.containsKey("pricePlanMatrixVersion") && ((Map) searchInfo.get("pricePlanMatrixVersion")).containsKey("id")){
-            queryString.append(" AND ppml.pricePlanMatrixVersion.id = :pricePlanMatrixVersionId ");
-        }
-        if(searchInfo.containsKey("priceWithoutTax")){
-            queryString.append(" AND ppml.priceWithoutTax = :priceWithoutTax ");
-        }
-        if(searchInfo.containsKey("attributes") && !((List)searchInfo.get("attributes")).isEmpty()){
-            queryString.append(" AND EXISTS ");
-            queryString.append(appendAttributesToQuery((List<Map<String, Object>>) searchInfo.getOrDefault("attributes", Collections.EMPTY_LIST)));
-        }
-        queryString.append(" ORDER BY ppml." + searchInfo.getOrDefault("sortBy","id"));
-        queryString.append(" ");
-        queryString.append(searchInfo.getOrDefault("order","ASC"));
-
-        return queryString.toString();
-    }
-
-    private String appendAttributesToQuery(List<Map<String, Object>> attributesSearch) {
-        return attributesSearch.stream()
-                .map(stringObjectMap ->
-                        "(SELECT ppmv.id FROM PricePlanMatrixValue ppmv"+
-                                " JOIN PricePlanMatrixColumn ppmc ON ppmv.pricePlanMatrixColumn=ppmc"+
-                                " WHERE (LOWER(ppmc.code)='"
-                        + stringObjectMap.get("column").toString().toLowerCase()
-                        + "' AND "
-                        + resolveType((String) stringObjectMap.get("type"), stringObjectMap.get("value"))
-                        +"AND ppmv.id in elements(ppmvs)))")
-                .collect(Collectors.joining(" AND EXISTS "));
-    }
-
-    private String resolveType(String type, Object value) {
-        switch(type.toLowerCase()){
-            case "string":
-                return "(LOWER(ppmv.stringValue) LIKE '"+value.toString().toLowerCase()+"' OR ppmv.stringValue IS NULL)";
-            case "long":
-                return "(ppmv.longValue = " + value + " OR ppmv.long_value IS NULL)";
-            case "double":
-                return "(ppmv.doubleValue = " + Double.valueOf(value.toString())+ " OR ppmv.doubleValue IS NULL)";
-            case "boolean":
-                return "(ppmv.booleanValue = " + Boolean.valueOf(value.toString())+ " OR ppmv.booleanValue IS NULL)";
-           case "date":
-                return "(ppmv.dateValue = '" + new java.sql.Date(parseDate(value).getTime())+ "' OR ppmv.dateValue IS NULL)";
-           default:
-                return "stringValue = ''";
-        }
-    }
-
-    private Date parseDate(Object value) {
-        if(value instanceof String) {
-            try {
-                return ((String) value).matches("^\\d{4}-\\d{2}-\\d{2}$") ? new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(value))
-                        : new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(value));
-            } catch (ParseException e) {
-                throw new IllegalArgumentException("date attribute has not a valid filter value, hint : yyyy-MM-dd or dd/MM/yyyy");
-            }
-        }
-        return new Date((Long) value);
     }
 
     private Map<String, Object> buildResponse(List<PricePlanMatrixLine> resultList, int limit, int offset, String sortBy, String order) {
