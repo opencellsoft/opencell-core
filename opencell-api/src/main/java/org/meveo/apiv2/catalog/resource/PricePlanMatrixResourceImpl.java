@@ -1,8 +1,5 @@
 package org.meveo.apiv2.catalog.resource;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -10,14 +7,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.Query;
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-import org.hibernate.criterion.MatchMode;
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.api.dto.response.catalog.ImportResultResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
