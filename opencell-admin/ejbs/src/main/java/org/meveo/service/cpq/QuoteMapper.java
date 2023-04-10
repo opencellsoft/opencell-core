@@ -71,7 +71,7 @@ public class QuoteMapper {
         
         BillingAccount billingAccount = new BillingAccount(bac,paymentMethod,entityToDtoConverter.getCustomFieldsDTO(bac));
         Customer customer = new Customer(bac.getCustomerAccount().getCustomer());
-        Seller seller = new Seller(bac.getSeller());
+        Seller seller = new Seller(quote.getSeller());
 
         org.meveo.model.cpq.contract.Contract contract = quoteVersion.getContract();
         Contract ctr=null;
