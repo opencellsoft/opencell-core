@@ -19,14 +19,14 @@ public class MediaRsImpl extends BaseRs implements MediaRs{
 	private MediaApi mediaApi;
 	
 	@Override
-	public Response createMedai(MediaDto mediaDto) {
-		 GetMediaDtoResponse result = new GetMediaDtoResponse();
-		 try {
-			 result.setMediaDto(mediaApi.createMedia(mediaDto));
-	            return Response.ok(result).build();
-	        } catch (MeveoApiException e) {
-			       return errorResponse(e, result.getActionStatus());
-	        }
+	public Response createMedia(MediaDto mediaDto) {
+		GetMediaDtoResponse result = new GetMediaDtoResponse();
+		try {
+			result.setMediaDto(mediaApi.createMedia(mediaDto));
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
 	}
 
 	@Override

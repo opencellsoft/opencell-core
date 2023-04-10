@@ -77,15 +77,14 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if(postData.getDiscountPlanType() == null)
             missingParameters.add("discountPlanType");
 
-        handleMissingParameters();
+        DiscountPlan discountPlan = new DiscountPlan();
         if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(DiscountPlan.class.getName(), postData);
+            customGenericEntityCodeService.getGenericEntityCode(discountPlan);
         }
+        handleMissingParameters();
         if (discountPlanService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(DiscountPlan.class, postData.getCode());
         }
-
-        DiscountPlan discountPlan = new DiscountPlan();
 
         if (StringUtils.isBlank(postData.getAllowanceCode())) {
            postData.setAllowanceCode(DISCOUNT_DEFAULT_ALLOWANCE_CODE);

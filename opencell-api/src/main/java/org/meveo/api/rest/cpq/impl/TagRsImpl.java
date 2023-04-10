@@ -20,19 +20,19 @@ public class TagRsImpl extends BaseRs implements TagRs {
 	
 	public static final String TAG_TYPE_CREATED = "the Tag type successfully created";
 	public static final String TAG_CREATED = "the Tag successfully created";
-	
+
 	@Override
 	public Response createTag(TagDto tagDto) {
-      
-        GetTagDtoResponse result = new GetTagDtoResponse();
-        try {
-        	Long id=tagApi.create(tagDto);
-        	result.getActionStatus().setMessage(TAG_CREATED);
-        	result.setId(id);
-        	return Response.ok(result).build();
-        } catch(MeveoApiException e) {
-		       return errorResponse(e, result.getActionStatus());
-        }
+
+		GetTagDtoResponse result = new GetTagDtoResponse();
+		try {
+			Long id = tagApi.create(tagDto);
+			result.getActionStatus().setMessage(TAG_CREATED);
+			result.setId(id);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
 	}
 
 	@Override
@@ -77,15 +77,15 @@ public class TagRsImpl extends BaseRs implements TagRs {
 
 	@Override
 	public Response createTagType(TagTypeDto tagTypeDto) {
-		 GetTagTypeDtoResponse result = new GetTagTypeDtoResponse();
-	        try {
-	        	Long id=tagApi.create(tagTypeDto);
-	        	result.getActionStatus().setMessage(TAG_TYPE_CREATED);
-	        	result.setId(id);
-	        	return Response.ok(result).build();
-	        } catch(MeveoApiException e) {
-			       return errorResponse(e, result.getActionStatus());
-	        }
+		GetTagTypeDtoResponse result = new GetTagTypeDtoResponse();
+		try {
+			Long id = tagApi.create(tagTypeDto);
+			result.getActionStatus().setMessage(TAG_TYPE_CREATED);
+			result.setId(id);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
 	}
 
 	@Override
