@@ -4,14 +4,10 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
 @Entity
@@ -19,8 +15,10 @@ import org.meveo.model.ObservableEntity;
 @Cacheable
 @Table(name = "untdid_2475_vat_payment_option")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_2475_vat_payment_option_seq"), })
-public class UntdidVatPaymentOption extends BaseEntity{
+public class UntdidVatPaymentOption extends AuditableEntity {
 	
+	private static final long serialVersionUID = 6328943927385071967L;
+
 	@Column(name = "code_2005", length = 10)
 	private String code2005;
 	  

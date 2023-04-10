@@ -68,7 +68,6 @@ import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering.Builder;
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -124,6 +123,11 @@ public class NativePersistenceService extends BaseService {
      */
     public static final String FIELD_DISABLED = "disabled";
 
+    /**
+     * Field name to field data type mapping to be used when native query caching is enabled. Format <db tablename:<field name,data type>>
+     */
+    private static Map<String, Map<String, CustomFieldTypeEnum>> fieldDataTypeMappings;
+
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -144,9 +148,6 @@ public class NativePersistenceService extends BaseService {
     @Inject
     protected Event<CustomTableEvent> entityChangeEventProducer;
 
-    @Inject
-    private EntityManagerProvider entityManagerProvider;
-
     /**
      * Find record by its identifier
      *
@@ -157,11 +158,13 @@ public class NativePersistenceService extends BaseService {
     public Map<String, Object> findById(String tableName, Long id) {
         return findByIdWithouCheckCodeAndDescription(tableName, id, true);
     }
+
     /**
      * Find record by its identifier
      *
      * @param tableName Table name
      * @param id        Identifier
+     * @param canCheck When True it will get id, and the code of the customer table
      * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
      */
     @SuppressWarnings({ "rawtypes", "deprecation" })
@@ -648,7 +651,6 @@ public class NativePersistenceService extends BaseService {
 //        return getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
     }
     
-
     /**
      * Delete multiple records. Note: There is no check done that records exists.
      * Will not check Code or description field, it will find the table by id and then delete
@@ -863,6 +865,7 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Get Query without adding dependencies left join
+     * 
      * @param tableName Table name
      * @param config {@link PaginationConfiguration}
      * @param id Id
@@ -1106,9 +1109,32 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> list(String tableName, PaginationConfiguration config) {
+        
+        tableName = tableName.toLowerCase();
+        
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config, null);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
+
+        if (config.isCacheable()) {
+
+            Map<String, CustomFieldTypeEnum> tableFieldTypes = fieldDataTypeMappings.get(tableName);
+
+            if (tableFieldTypes != null) {
+                query.setCacheable(true);
+
+                // Define a data type for all or only requested fields to fetch
+                for (String fieldName : (config.getFetchFields() != null && !config.getFetchFields().isEmpty()) ? config.getFetchFields() : tableFieldTypes.keySet()) {
+
+                    CustomFieldTypeEnum fieldType = tableFieldTypes.get(fieldName);
+                    if (fieldType != null) {
+                        query.addScalar(fieldName, fieldType.getHibernateType());
+                    } else {
+                        query.addScalar(fieldName, new StringType());
+                    }
+                }
+            }
+        }
         return query.setFlushMode(FlushMode.COMMIT).list();
     }
 
@@ -1125,6 +1151,26 @@ public class NativePersistenceService extends BaseService {
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config, null);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
+
+        if (config.isCacheable()) {
+
+            Map<String, CustomFieldTypeEnum> tableFieldTypes = fieldDataTypeMappings.get(tableName);
+
+            if (tableFieldTypes != null) {
+                query.setCacheable(true);
+
+                // Define a data type for all or only requested fields to fetch
+                for (String fieldName : (config.getFetchFields() != null && !config.getFetchFields().isEmpty()) ? config.getFetchFields() : tableFieldTypes.keySet()) {
+
+                    CustomFieldTypeEnum fieldType = tableFieldTypes.get(fieldName);
+                    if (fieldType != null) {
+                        query.addScalar(fieldName, fieldType.getHibernateType());
+                    } else {
+                        query.addScalar(fieldName, new StringType());
+                    }
+                }
+            }
+        }
         return query.setFlushMode(FlushMode.COMMIT).list();
     }
 
@@ -1205,7 +1251,10 @@ public class NativePersistenceService extends BaseService {
      * @return Entity manager
      */
     public EntityManager getEntityManager() {
-        return entityManagerProvider.getEntityManager().getEntityManager();
+        return emWrapper.getEntityManager();
+        
+        // Original comment: RE #5414 SQL request to create a new CT on second tenant issue
+        //return entityManagerProvider.getEntityManager().getEntityManager();
     }
 
     /**
@@ -1487,8 +1536,7 @@ public class NativePersistenceService extends BaseService {
      * @return DB Table name prefixed with a schema name
      */
     public String addCurrentSchema(String tableName) {
-        CurrentUserProvider currentUserProvider = (CurrentUserProvider) EjbUtils.getServiceInterface("CurrentUserProvider");
-        String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+        String currentproviderCode = CurrentUserProvider.getCurrentTenant();
         return addCurrentSchema(tableName, currentproviderCode);
     }
 
@@ -1593,5 +1641,48 @@ public class NativePersistenceService extends BaseService {
                 .filter(genericField -> isAggregationField(genericField))
                 .findFirst()
                 .isPresent();
+    }
+
+    /**
+     * Refresh native table field to data type mapping. Used in NativePersistenceService to determine a field data type when caching is enabled.
+     * 
+     * @param tableName Table name to refresh mapping for. Optional. If not provided, mapping for all tables will be refreshed.
+     */
+    public void refreshTableFieldMapping(String tableName) {
+
+        Map<String, Map<String, CustomFieldTypeEnum>> fieldMappings = new HashMap<String, Map<String, CustomFieldTypeEnum>>();
+
+        if (tableName == null) {
+            List<CustomEntityTemplate> cets = customEntityTemplateService.listNoCache();
+
+            for (CustomEntityTemplate cet : cets) {
+                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesToNoCache(cet.getAppliesTo());
+
+                if (cfts != null) {
+
+                    Map<String, CustomFieldTypeEnum> fieldTypeMap = new HashMap<String, CustomFieldTypeEnum>();
+                    fieldMappings.put(cet.getDbTablename(), fieldTypeMap);
+
+                    fieldTypeMap.put("id", CustomFieldTypeEnum.LONG);
+
+                    for (CustomFieldTemplate cft : cfts.values()) {
+                        fieldTypeMap.put(cft.getDbFieldname(), cft.getFieldType());
+                    }
+                }
+            }
+        } else {
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesToNoCache(CustomEntityTemplate.getAppliesTo(tableName));
+
+            Map<String, CustomFieldTypeEnum> fieldTypeMap = new HashMap<String, CustomFieldTypeEnum>();
+            fieldMappings.put(tableName, fieldTypeMap);
+
+            fieldTypeMap.put("id", CustomFieldTypeEnum.LONG);
+
+            for (CustomFieldTemplate cft : cfts.values()) {
+                fieldTypeMap.put(cft.getDbFieldname(), cft.getFieldType());
+            }
+        }
+
+        fieldDataTypeMappings = fieldMappings;
     }
 }

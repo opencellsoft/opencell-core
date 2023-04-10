@@ -56,6 +56,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
@@ -64,6 +65,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.generics.GenericRequestMapper;
 import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.commons.utils.ParamBean;
@@ -1624,7 +1626,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds,
                                                                   AggregationConfiguration aggregationConfiguration) {
-        final int maxValue =
+        final int maxValue = EntityManagerProvider.isDBOracle() ? 500 :
                 getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
         if (ratedTransactionIds.size() > maxValue) {
             List<List<Long>> rtSubLists = partition(ratedTransactionIds, maxValue);
@@ -2114,16 +2116,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<RatedTransaction> findByFilter(Map<String, Object> filters) {
-        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        filters = genericRequestMapper.evaluateFilters(filters, entityClass);
-        PaginationConfiguration configuration = new PaginationConfiguration(filters);
-        QueryBuilder query = getQuery(configuration);
-		return query.getQuery(getEntityManager()).getResultList();
-	}
-    
-
     public List<BillingAccount> findBillingAccountsBy(List<Long> rtIds) {
         final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
         if (rtIds.size() > maxValue) {
@@ -2141,4 +2133,34 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setParameter("ids", rtIds)
                 .getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+	public List<RatedTransaction> findByFilter(Map<String, Object> filters) {
+        PaginationConfiguration configuration = getPaginationConfigurationFromFilter(filters);
+        QueryBuilder query = getQuery(configuration);
+		return query.getQuery(getEntityManager()).getResultList();
+	}
+
+    public Long count(Map<String, Object> filters){
+        PaginationConfiguration configuration = getPaginationConfigurationFromFilter(filters);
+        return this.count(configuration);
+    }
+
+    public void incrementPendingDuplicate(List<Long> rtIds, boolean isPendingNegateExist){
+        if(CollectionUtils.isEmpty(rtIds)){
+            throw new BusinessApiException("List of rated Transaction is empty");
+        }
+        Query query = this.getEntityManager().createNamedQuery("RatedTransaction.updatePendingDuplicate");
+        query.setParameter("rtI", rtIds);
+        query.setParameter("pendingDuplicatesToNegate", isPendingNegateExist ? 1 : 0);
+        query.setParameter("pendingDuplicates", isPendingNegateExist ? 0 : 1);
+        query.executeUpdate();
+    }
+
+    private PaginationConfiguration getPaginationConfigurationFromFilter(Map<String, Object> filters) {
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+        filters = genericRequestMapper.evaluateFilters(filters, entityClass);
+        return new PaginationConfiguration(filters);
+    }
+    
 }

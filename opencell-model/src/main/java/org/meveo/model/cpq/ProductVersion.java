@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -32,6 +33,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -56,6 +59,7 @@ import org.meveo.model.cpq.tags.Tag;
 	@NamedQuery(name = "ProductVersion.findTagsByTagType", query = "select tag from ProductVersion p LEFT JOIN p.tags as tag left join tag.tagType tp where tp.code IN (:tagTypeCodes)") ,
 	@NamedQuery(name = "ProductVersion.findByCode", query = "select pv from ProductVersion pv LEFT JOIN pv.product pp where pp.code=:code order by pv.currentVersion desc") 
 })
+@Cacheable
 public class ProductVersion extends AuditableEntity{
 
 
@@ -128,16 +132,13 @@ public class ProductVersion extends AuditableEntity{
      */   
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_product_version_tags", joinColumns = @JoinColumn(name = "product_version_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Tag> tags = new HashSet<Tag>();
-    
-
-	
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "productVersion", orphanRemoval = true)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<ProductVersionAttribute> attributes = new ArrayList<ProductVersionAttribute>();
 	
-	
-
 	/**
 	 * list of grouped attribute attached to this product version
 	 */
@@ -147,6 +148,7 @@ public class ProductVersion extends AuditableEntity{
 				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),
 				inverseJoinColumns = @JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")				
 			)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<GroupedAttributes> groupedAttributes = new ArrayList<GroupedAttributes>();
     
     
@@ -157,10 +159,11 @@ public class ProductVersion extends AuditableEntity{
 		this.setStatus(VersionStatusEnum.DRAFT);
 		this.setCurrentVersion(1);
 		this.setStatusDate(Calendar.getInstance().getTime());
-		if(product != null)
+		if(product != null) {
 			this.setProduct(product);
-		else
+		} else {
 			this.setProduct(copy.getProduct());
+		}
 		this.setTags(new HashSet<>());
 		this.setAttributes(new ArrayList<>());
 		this.setShortDescription(copy.getShortDescription());

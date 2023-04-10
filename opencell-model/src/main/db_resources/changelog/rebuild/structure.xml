@@ -237,7 +237,7 @@
         <createSequence sequenceName="billing_invoice_seq" />
         <createSequence sequenceName="billing_invoice_sub_cat_seq" startValue="3" />
         <createSequence sequenceName="billing_invoice_template_seq" />
-        <createSequence sequenceName="billing_rated_transaction_seq" incrementBy="500" />
+        <createSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000" />
         <createSequence sequenceName="billing_rejected_ba_seq" />
         <createSequence sequenceName="billing_reservation_seq" />
         <createSequence sequenceName="billing_service_instance_seq" />
@@ -248,7 +248,7 @@
         <createSequence sequenceName="billing_trading_country_seq" startValue="3" />
         <createSequence sequenceName="billing_trading_currency_seq" startValue="3" />
         <createSequence sequenceName="billing_trading_language_seq" startValue="3" />
-        <createSequence sequenceName="billing_wallet_operation_seq" />
+        <createSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000" />
         <createSequence sequenceName="billing_wallet_seq" />
         <createSequence sequenceName="cat_calendar_interval_seq" />
         <createSequence sequenceName="cat_calendar_seq" startValue="4" />
@@ -291,7 +291,7 @@
         <createSequence sequenceName="job_execution_seq" />
         <createSequence sequenceName="medina_access_seq" />
         <createSequence sequenceName="meveo_timer_seq" startValue="2" />
-        <createSequence sequenceName="rating_edr_seq" incrementBy="500" />
+        <createSequence sequenceName="rating_edr_seq" incrementBy="5000" />
         <createSequence sequenceName="rm_service_param_template_seq" />
         <createSequence sequenceName="billing_invoice_configuration_seq" startValue="2" />
         <createSequence sequenceName="ar_credit_category_seq" startValue="6" />
@@ -366,7 +366,7 @@
         <createSequence sequenceName="flat_file_seq" startValue="1" />
         <createSequence sequenceName="ar_accounting_writing_seq"/>
         <createSequence sequenceName="adm_file_type_seq"/>
-        <createSequence sequenceName="rating_cdr_seq" incrementBy="500"/>
+        <createSequence sequenceName="rating_cdr_seq" incrementBy="5000"/>
         <createSequence sequenceName="billing_tax_category_seq" startValue="1" />
         <createSequence sequenceName="billing_tax_class_seq" startValue="1" />
         <createSequence sequenceName="billing_tax_mapping_seq" startValue="1" />
@@ -8902,7 +8902,12 @@
             </column>
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="document_version" type="int4" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
         </createTable>
+    	<addUniqueConstraint columnNames="code, document_version" constraintName="document_code_version_key" tableName="document" />
+    		
     </changeSet>    
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-416">           
         <createTable tableName="document_category" >
@@ -10140,7 +10145,6 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="open_order_id" type="bigint"/>
             <column name="allowance_code" type="bigint" />
         </createTable>
     </changeSet>
@@ -16793,10 +16797,6 @@
                                  constraintName="cpq_product_open_order_id_fk"
                                  referencedTableName="open_order"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="billing_accounting_article" baseColumnNames="open_order_id"
-                                 constraintName="billing_accounting_article_open_order_id_fk"
-                                 referencedTableName="open_order"
-                                 referencedColumnNames="id"/>
         <addForeignKeyConstraint baseTableName="crm_address_book_contact" baseColumnNames="address_book_id"
                                  constraintName="address_book_contact_address_book_fk"
                                  referencedTableName="crm_address_book"
@@ -17173,7 +17173,12 @@
         <sql>CREATE INDEX edr_header_edr_id ON ${db.schema.adapted}rating_edr (header_edr_id)</sql>
         <sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx) </sql>
         <sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id) </sql>
-        <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql></changeSet>
+        <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql>
+        <sql>CREATE INDEX rt_customer_id_contract_index ON ${db.schema.adapted}cpq_contract (customer_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_billing_account_id_contract_index ON ${db.schema.adapted}cpq_contract (billing_account_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_customer_account_contract_index ON ${db.schema.adapted}cpq_contract (customer_account_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
+        <sql>CREATE INDEX CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql></changeSet>
         
         
     <changeSet id="#INTRD-12047-20230112-rebuild" author="AbdelmounaimAkadid">
@@ -17192,7 +17197,11 @@
 	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
 	      	<column name="service_instance_id"/>
 	  	</createIndex>
+        <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
+            <column name="event_key"/>
+        </createIndex>
     </changeSet>
+
 
     <!-- end index -->
 
@@ -19613,6 +19622,7 @@
     <changeSet id="#INTRD-14522_20230301" author="TarikFA." />
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
     <changeSet id="#INTRD-14597_20230324" author="TarikFA." />
+     <changeSet id="#INTRD-6364_20220519" author="aelmalki" />
     
     <changeSet id="#INTRD-13326_20230227_FK" author="zelmeliani">
 		<addForeignKeyConstraint
@@ -19642,8 +19652,13 @@
     <changeSet id="#INTRD-14811_20200310" author="TarikFA." />
     <changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari" />
     <changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari" />
-    
+    <changeSet id="#INTRD-14743_20230313" author="TarikFA." />
 
+    <changeSet id="#INTRD-14743_20230315" author="TarikFA." />
+    <changeSet id="#INTRD-14743_20230316" author="TarikFA." />
+    <changeSet id="#INTRD-14966_20230329" author="HatimO."/>
+    <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-15146_20230406" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

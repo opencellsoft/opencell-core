@@ -46,7 +46,7 @@ public enum AttributeTypeEnum {
 
 		@Override
 		public Object getValue(AttributeValue attributeValue) {
-			return attributeValue.getDoubleValue();
+			return attributeValue.getDoubleValue() != null ? attributeValue.getDoubleValue() : attributeValue.getStringValue();
 		}
 	},
 	

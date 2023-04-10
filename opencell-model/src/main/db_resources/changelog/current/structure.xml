@@ -9316,6 +9316,10 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
     <changeSet id="#INTRD-2322-20211018" author="khalidHORRI" failOnError="true">
+    <dropForeignKeyConstraint baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_dunning_level"/>
+    <dropForeignKeyConstraint baseTableName="dunning_level_dunning_action" constraintName="dunning_level_dunning_action_pkey_const"/>
+    <dropForeignKeyConstraint baseTableName="dunning_level_instance" constraintName="fk_dunning_level_instance_dunning_level"/>
+		
 		<dropTable tableName="dunning_level" />
         <createSequence sequenceName="dunning_level_seq" startValue="1" />
         <createTable tableName="dunning_level">
@@ -9902,7 +9906,8 @@ public class OrderAdvancement extends ModuleScript {
         <dropForeignKeyConstraint baseTableName="ar_customer_account" constraintName="fk_9i811xvc40e19t613cmpvwmu9" />
         <dropForeignKeyConstraint baseTableName="billing_billing_account" constraintName="fk_fky4ah96o9fohkx7u569phxxr" />
         <dropForeignKeyConstraint baseTableName="billing_user_account" constraintName="fk_alpl7r5p2nm43w0ro26ckcqnb" />
-
+        <dropForeignKeyConstraint baseTableName="com_contact" constraintName="fk9im60lcguu9v09p3dds2f4a3h" />
+        <dropForeignKeyConstraint baseTableName="crm_seller" constraintName="fkjscoerhfwoc4i65w3pxpls10o" />
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_rt_ua"/>
         <dropForeignKeyConstraint baseTableName="document" constraintName="document_account_entity_id_fk"/>
 
@@ -16191,5 +16196,46 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-14663_20230327" author="HatimO.">
+        <addColumn tableName="document">
+            <column name="document_version" type="int4" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 
+    <changeSet id="#INTRD-14743_20230313" author="TarikFA.">
+        <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
+            <column name="event_key"/>
+        </createIndex>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14743_20230315" author="TarikFA.">
+        <sql>CREATE INDEX rt_customer_id_contract_index ON ${db.schema.adapted}cpq_contract (customer_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_billing_account_id_contract_index ON ${db.schema.adapted}cpq_contract (billing_account_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_customer_account_contract_index ON ${db.schema.adapted}cpq_contract (customer_account_id) where status='ACTIVE'</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14743_20230316" author="TarikFA.">
+        <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
+        <sql>CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14966_20230329" author="HatimO.">
+        <addUniqueConstraint columnNames="code, document_version" constraintName="document_code_version_key" tableName="document" />
+    </changeSet>
+
+    <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius">
+        <alterSequence sequenceName="rating_cdr_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="rating_edr_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-15146_20230406" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="billing_accounting_article"
+                                  constraintName="billing_accounting_article_open_order_id_fk"/>
+        <dropColumn tableName="billing_accounting_article" columnName="open_order_id" />
+    </changeSet>
 </databaseChangeLog>

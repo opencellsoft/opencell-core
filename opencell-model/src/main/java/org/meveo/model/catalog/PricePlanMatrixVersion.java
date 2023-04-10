@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -20,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,6 +30,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -53,11 +57,15 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
         @NamedQuery(name = "PricePlanMatrixVersion.lastCurrentVersion", query = "select p.currentVersion from PricePlanMatrixVersion p where  p.pricePlanMatrix=:pricePlanMatrix order by p.currentVersion desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.getPricePlanVersionsByIds", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where p.id IN (:ids) order by p.id desc"),
-        @NamedQuery(name = "PricePlanMatrixVersion.getPublishedVersionValideForDate", query = "select distinct v from PricePlanMatrixVersion v left join v.pricePlanMatrix m left join fetch v.lines lines left join fetch lines.pricePlanMatrixValues where m.code=:pricePlanMatrixCode and v.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED and (v.validity.from is null or v.validity.from<=:operationDate) and (v.validity.to is null or v.validity.to>:operationDate)"),
+        @NamedQuery(name = "PricePlanMatrixVersion.getPublishedVersionValideForDate", query = "select v from PricePlanMatrixVersion v where v.pricePlanMatrix.id=:pricePlanMatrixId and v.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED and (v.validity.from is null or v.validity.from<=:operationDate) and (v.validity.to is null or v.validity.to>:operationDate)", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
+        @NamedQuery(name = "PricePlanMatrixVersion.getPublishedVersionValideForDateByPpmCode", query = "select v from PricePlanMatrixVersion v where v.pricePlanMatrix.code=:pricePlanMatrixCode and v.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED and (v.validity.from is null or v.validity.from<=:operationDate) and (v.validity.to is null or v.validity.to>:operationDate)", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),        
         @NamedQuery(name = "PricePlanMatrixVersion.findEndDates", query = "from PricePlanMatrixVersion p where p.status='PUBLISHED' and p.pricePlanMatrix=:pricePlanMatrix and (p.validity.to >= :date or p.validity.to is null) order by p.validity.from desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlan", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:priceplan and p.status<>'CLOSED'"),
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlans", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix in :priceplans and p.status<>'CLOSED'"),
     })
+@Cacheable
 public class PricePlanMatrixVersion extends AuditableEntity {
 
     @Enumerated(EnumType.STRING)
@@ -65,7 +73,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @NotNull
     private VersionStatusEnum status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ppm_id")
     @NotNull
     private PricePlanMatrix pricePlanMatrix;
@@ -111,6 +119,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH }, orphanRemoval = true)
+    @Cache(usage =  CacheConcurrencyStrategy.READ_WRITE)
     private Set<PricePlanMatrixColumn> columns = new HashSet<>();
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.LAZY)

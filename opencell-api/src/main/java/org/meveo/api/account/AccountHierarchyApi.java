@@ -1093,6 +1093,7 @@ public class AccountHierarchyApi extends BaseApi {
             CustomerAccountDto customerAccountDto = createCustomerAccountDto(postData, accountHierarchyTypeEnum);
             customerAccountDto.setIsCompany(postData.getCompany());
             accountEntity = customerAccountApi.create(customerAccountDto, true, businessAccountModel, (Customer) accountEntity);
+            customerAccountService.commit();
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
@@ -1532,7 +1533,14 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCrmAccountType() == null) {
             missingParameters.add("crmAccountType");
         }
-
+        
+        if (postData.getCompany() == null) {
+            postData.setCompany(false);
+            if (appProvider.isEntreprise()) {
+                postData.setCompany(true);
+            }
+        }
+        
         handleMissingParameters();
 
         String accountType = postData.getCrmAccountType();

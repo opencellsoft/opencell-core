@@ -16,6 +16,7 @@
         <module>opencell-admin</module>
         <module>opencell-api</module>
         <module>opencell-client</module>
+        <module>opencell-scripts</module>
     </modules>
 
     <properties>
@@ -137,6 +138,11 @@
             <dependency>
                 <groupId>com.opencellsoft</groupId>
                 <artifactId>opencell-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.opencellsoft</groupId>
+                <artifactId>opencell-scripts</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

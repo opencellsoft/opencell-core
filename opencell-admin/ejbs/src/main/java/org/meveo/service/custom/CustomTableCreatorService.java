@@ -260,7 +260,9 @@ public class CustomTableCreatorService implements Serializable {
                 dropDefaultValueChange.setTableName(dbTableName);
                 dropDefaultValueChange.setColumnName(dbFieldname);
 
-                if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+                    dropDefaultValueChange.setColumnDataType("boolean");
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
                     dropDefaultValueChange.setColumnDataType("numeric(23, 12)");
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
                     dropDefaultValueChange.setColumnDataType("bigInt");
@@ -279,7 +281,10 @@ public class CustomTableCreatorService implements Serializable {
                 addDefaultValueChange.setTableName(dbTableName);
                 addDefaultValueChange.setColumnName(dbFieldname);
 
-                if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+                    addDefaultValueChange.setColumnDataType("boolean");
+                    addDefaultValueChange.setDefaultValueBoolean("true".equalsIgnoreCase(cft.getDefaultValue()));
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
                     addDefaultValueChange.setColumnDataType("numeric(23, 12)");
                     addDefaultValueChange.setDefaultValueNumeric(cft.getDefaultValue());
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
@@ -596,9 +601,9 @@ public class CustomTableCreatorService implements Serializable {
 
     private void liquibaseUpdate(DatabaseChangeLog dbLog, Connection connection) throws DatabaseException, LiquibaseException {
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-        String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
+        String currentproviderCode = CurrentUserProvider.getCurrentTenant();
         if (currentproviderCode != null) {
-            database.setDefaultSchemaName(entityManagerProvider.convertToSchemaName(currentproviderCode));
+            database.setDefaultSchemaName(EntityManagerProvider.convertToSchemaName(currentproviderCode));
         }
 
         Liquibase liquibase = new liquibase.Liquibase(dbLog, new ClassLoaderResourceAccessor(), database);

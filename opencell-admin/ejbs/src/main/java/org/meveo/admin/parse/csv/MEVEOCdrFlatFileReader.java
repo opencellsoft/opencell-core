@@ -58,16 +58,18 @@ import org.slf4j.LoggerFactory;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvReader {
 
-    private static Logger log = LoggerFactory.getLogger(MEVEOCdrFlatFileReader.class);
-
-    static MessageDigest messageDigest = null;
-    static {
-        try {
-            messageDigest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            log.error("No message digest of type MD5", e);
-        }
-    }
+    private static final ThreadLocal<MessageDigest> messageDigest = new ThreadLocal<MessageDigest>() {
+        @Override
+        protected MessageDigest initialValue() {
+            try {
+                return MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e) {
+                Logger log = LoggerFactory.getLogger(MEVEOCdrFlatFileReader.class);
+                log.error("No message digest of type MD5", e);
+                return null;
+            }
+        }        
+    };
 
     protected String batchName;
     protected String username;
@@ -171,17 +173,16 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
      */
     private String getOriginRecord(String cdr) {
 
-        if (messageDigest != null) {
-            synchronized (messageDigest) {
-                messageDigest.reset();
-                messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
-                final byte[] resultByte = messageDigest.digest();
-                StringBuffer sb = new StringBuffer();
-                for (int i = 0; i < resultByte.length; ++i) {
-                    sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
-                }
-                return sb.toString();
+        MessageDigest md = messageDigest.get();
+        if (md != null) {
+            md.reset();
+            md.update(cdr.getBytes(Charset.forName("UTF8")));
+            final byte[] resultByte = md.digest();
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < resultByte.length; ++i) {
+                sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
             }
+            return sb.toString();
         }
 
         return null;

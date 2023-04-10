@@ -4,15 +4,31 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.persistence.*;
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.accountingScheme.*;
+import org.meveo.model.accountingScheme.AccountingCodeMapping;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
@@ -27,6 +43,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "AccountingArticle.findByAccountingCode", query = "select a from AccountingArticle a where a.accountingCode.code = :accountingCode"),
         @NamedQuery(name = "AccountingArticle.findByTaxClassAndSubCategory", query = "select a from AccountingArticle a where a.taxClass = :taxClass and a.invoiceSubCategory = :invoiceSubCategory"),
 })
+@Cacheable
 public class AccountingArticle extends EnableBusinessCFEntity {
 
     /**
@@ -80,6 +97,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     private String columnCriteriaEL;
 
     @OneToMany(mappedBy = "accountingArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<AccountingCodeMapping> accountingCodeMappings;
     
 

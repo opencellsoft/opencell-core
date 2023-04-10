@@ -49,6 +49,7 @@ public interface  Document {
                 .status(documentEntity.getDocumentStatus())
                 .linkedAccountEntity(documentEntity.getLinkedAccountEntity())
                 .encodedFile(encodedFileContent)
+                .documentVersion(documentEntity.getDocumentVersion())
                 .build();
     }
 
@@ -100,6 +101,9 @@ public interface  Document {
 
     @Nullable
     String getEncodedFile();
+    
+    @Nullable
+    Integer getDocumentVersion();
 
     default org.meveo.model.document.Document toEntity(){
         final org.meveo.model.document.Document documentEntity = new org.meveo.model.document.Document();

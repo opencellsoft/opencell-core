@@ -23,7 +23,9 @@ import java.util.Map;
 @CustomFieldEntity(cftCodePrefix = "Document")
 @Table(name = "document", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @NamedQueries({
-        @NamedQuery(name = "Document.findByFileNameAndType", query = "FROM Document document where document.fileName=:fileName AND document.fileType.id=:fileTypeId")
+	@NamedQuery(name = "Document.findByFileNameAndType", query = "FROM Document document where document.fileName=:fileName AND document.fileType.id=:fileTypeId"),
+    @NamedQuery(name = "Document.findByCodeAndLastVersion", query = "FROM Document d WHERE d.code = :code AND d.documentVersion = (SELECT MAX(d2.documentVersion) FROM Document d2 WHERE d2.code = :code)"),
+	@NamedQuery(name = "Document.findByCodeAndVersion", query = "FROM Document d WHERE d.code = :code AND d.documentVersion = :version")
 })
 public class Document extends BusinessCFEntity {
     /**
@@ -85,6 +87,12 @@ public class Document extends BusinessCFEntity {
     @Column(name = "document_status", length = 25, nullable = false)
     @NotNull
     private DocumentStatus documentStatus = DocumentStatus.ACTIVE;
+    
+    /**
+     * document version
+     */
+    @Column(name = "document_version")
+    private Integer documentVersion;
 
     public Map<String, String> getDescriptionI18n() {
         return descriptionI18n;
@@ -149,4 +157,13 @@ public class Document extends BusinessCFEntity {
     public void setDocumentStatus(DocumentStatus documentStatus) {
         this.documentStatus = documentStatus;
     }
+
+	public Integer getDocumentVersion() {
+		return documentVersion;
+	}
+
+	public void setDocumentVersion(Integer documentVersion) {
+		this.documentVersion = documentVersion;
+	}
+  
 }

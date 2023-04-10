@@ -28,6 +28,7 @@ import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
+import static org.meveo.commons.utils.StringUtils.isBlank;
 import static org.meveo.service.base.ValueExpressionWrapper.*;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
@@ -2677,7 +2678,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         cancelInvoiceAdvances(invoice, null, true);
         List<Long> invoicesIds = new ArrayList<>();
         invoicesIds.add(invoice.getId());
-        invoiceLinesService.cancelIlByInvoices(invoicesIds);
+        ratedTransactionService.deleteSupplementalRTs(invoicesIds);
+        ratedTransactionService.uninvoiceRTs(invoicesIds);
+        invoiceLinesService.uninvoiceILs(invoicesIds);//reopen ILs not created from  RTs
+        invoiceLinesService.cancelIlByInvoices(invoicesIds);//cancell ILs created from RTs
         if (remove) {
             super.remove(invoice);
         } else {
@@ -3422,7 +3426,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @SuppressWarnings("unchecked")
     public List<InvoicesToNumberInfo> getInvoicesToNumberSummary(Long billingRunId) {
-
+    	List<InvoiceStatusEnum> statusList=new ArrayList<InvoiceStatusEnum>();
+    	statusList.add(InvoiceStatusEnum.NEW);
+    	statusList.add(InvoiceStatusEnum.DRAFT);
         List<InvoicesToNumberInfo> invoiceSummaries = new ArrayList<>();
         List<Object[]> summary = getEntityManager().createNamedQuery("Invoice.invoicesToNumberSummary").setParameter("billingRunId", billingRunId).getResultList();
 
@@ -4480,6 +4486,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if(entity instanceof CommercialOrder){
             CommercialOrder commercialOrder = (CommercialOrder) entity;
             invoice.setCommercialOrder(commercialOrder);
+            invoice.setCpqQuote(commercialOrder.getQuote());
         }else if(entity instanceof CpqQuote){
             CpqQuote quote = (CpqQuote) entity;
             invoice.setCpqQuote(quote);
@@ -5797,8 +5804,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (entityToInvoice instanceof Order) {
                 paymentMethod = ((Order) entityToInvoice).getPaymentMethod();
-            } else if (entityToInvoice instanceof  CommercialOrder){
-                 paymentMethod = ((CommercialOrder) entityToInvoice).getBillingAccount().getPaymentMethod();
             }else {
                 // Calculate customer account balance
                 boolean isBalanceDue = ParamBean.getInstance().getPropertyAsBoolean("invoice.balance.limitByDueDate", true);
@@ -5853,7 +5858,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
  
         while (moreInvoiceLinesExpected) {
 
-            if (entityToInvoice instanceof Order || entityToInvoice instanceof CommercialOrder) {
+            if (entityToInvoice instanceof Order) {
                 billingAccount = null;
                 defaultInvoiceType = null;
             }
@@ -5872,6 +5877,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         && (existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty())) {
                     cleanInvoiceAggregates(existingInvoice.getId());
                     initAmounts(existingInvoice.getId());
+                    existingInvoice = refreshOrRetrieve(existingInvoice);
                 }
                 return new ArrayList<>();
             } else if (!invoiceLinesGroupsPaged.isEmpty()) {
@@ -5901,7 +5907,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if (invoiceAggregateProcessingInfo.invoice == null) {
                         if (existingInvoice != null) {
                             cleanInvoiceAggregates(existingInvoice.getId());
-                            invoiceAggregateProcessingInfo.invoice = existingInvoice;
+                            initAmounts(existingInvoice.getId());
+                            invoiceAggregateProcessingInfo.invoice = refreshOrRetrieve(existingInvoice);
                         } else {
                             // TODO check instantiateInvoice(entityToInvoice
                             invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoiceLinesGroup.getSeller().getId(), billingRun, invoiceDate, isDraft,
@@ -6577,6 +6584,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (InvoiceStatusEnum.NEW.equals(status)) {            
             toUpdate.setStatus(InvoiceStatusEnum.DRAFT);
+            toUpdate.assignTemporaryInvoiceNumber();
         }
         if (input.getComment() != null) {
             toUpdate.setComment(input.getComment());
@@ -6967,7 +6975,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
-        LinkedInvoice linkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice);
+        LinkedInvoice linkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice, duplicatedInvoice.getAmountWithTax(), duplicatedInvoice.getTransactionalAmountWithTax(), InvoiceTypeEnum.ADJUSTMENT);
         duplicatedInvoice.setLinkedInvoices(of(linkedInvoice));
         duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
         getEntityManager().flush();
@@ -7166,9 +7174,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoicesWithAdv.get(key).add(adv);
             }
         });
-       invoicesWithAdv.keySet().forEach(inv -> {
-           applyAdvanceInvoice(inv, invoicesWithAdv.get(inv));
-       });
+       invoicesWithAdv.keySet().forEach(inv -> applyAdvanceInvoice(inv, invoicesWithAdv.get(inv)));
        return null;
    }
 

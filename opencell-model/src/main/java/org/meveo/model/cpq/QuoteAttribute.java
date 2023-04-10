@@ -40,10 +40,8 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 	public QuoteAttribute(QuoteAttribute copy) {
 		this.attribute = copy.attribute;
 		this.stringValue = copy.stringValue;
-		this.quoteProduct = copy.quoteProduct;
 		this.dateValue = copy.dateValue;
 		this.doubleValue = copy.doubleValue;
-		this.quoteOffer = copy.quoteOffer;
 		this.booleanValue = copy.booleanValue;
 	}
 
