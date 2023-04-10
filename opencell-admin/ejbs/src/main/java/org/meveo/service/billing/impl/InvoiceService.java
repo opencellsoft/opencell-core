@@ -5379,7 +5379,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public Invoice createBasicInvoice(BasicInvoice resource) {
         final String billingAccountCode = resource.getBillingAccountCode();
-        final BigDecimal amountWithTax = resource.getAmountWithTax();
+        final BigDecimal amountWithTax = resource.getAmountWithTax() != null ? resource.getAmountWithTax() : ZERO;
         final Date invoiceDate = resource.getInvoiceDate() != null ? resource.getInvoiceDate() : new Date();
         final String invoiceTypeCodeInput = resource.getInvoiceTypeCode();
 
