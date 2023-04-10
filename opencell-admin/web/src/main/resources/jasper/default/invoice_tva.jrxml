@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="WAFA-DUPLICATED-LINE"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Transact-Amount-EPE"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -187,7 +187,7 @@
 			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
 		</field>
 		<field name="amountWithoutTax" class="java.lang.String">
-			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+			<fieldDescription><![CDATA[transactionalAmountWithoutTax]]></fieldDescription>
 		</field>
 		<field name="amount" class="java.lang.String">
 			<fieldDescription><![CDATA[amount]]></fieldDescription>
@@ -227,10 +227,10 @@
 		<fieldDescription><![CDATA[/invoice/@country]]></fieldDescription>
 	</field>
 	<field name="amountWithTax" class="java.lang.String">
-		<fieldDescription><![CDATA[/invoice/amount/amountWithTax]]></fieldDescription>
+		<fieldDescription><![CDATA[/invoice/amount/transactionalAmountWithTax]]></fieldDescription>
 	</field>
 	<field name="amountTax" class="java.lang.String">
-		<fieldDescription><![CDATA[/invoice/amount/amount]]></fieldDescription>
+		<fieldDescription><![CDATA[/invoice/amount/transactionalAmount]]></fieldDescription>
 	</field>
 	<field name="dueDate" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/header/dueDate]]></fieldDescription>
@@ -246,8 +246,8 @@
 		<fieldDescription><![CDATA[/invoice/header/customer/@vatNo]]></fieldDescription>
 	</field>
 	<field name="amountWithoutTax" class="java.lang.String">
-		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/amount/amountWithoutTax"/>
-		<fieldDescription><![CDATA[/invoice/amount/amountWithoutTax]]></fieldDescription>
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/amount/transactionalAmountWithoutTax"/>
+		<fieldDescription><![CDATA[/invoice/amount/transactionalAmountWithoutTax]]></fieldDescription>
 	</field>
 	<field name="currencySymbol" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/amount/currencySymbol]]></fieldDescription>
@@ -632,7 +632,7 @@
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{country}=="FR" ? new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{percent})) : new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{percent}))]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{country}=="FR" ? new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{percent}))+"%" : new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{percent}))+"%"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -701,10 +701,7 @@
 									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="100" height="15" uuid="249a5b76-e45c-4611-ba34-9458b99761a6">
-										<printWhenExpression><![CDATA[($F{percent} && $F{percent}.matches("-?\\d+(\\.\\d+)?") &&
-new Double($F{percent}) > 1)]]></printWhenExpression>
-									</reportElement>
+									<reportElement x="0" y="0" width="100" height="15" uuid="249a5b76-e45c-4611-ba34-9458b99761a6"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
