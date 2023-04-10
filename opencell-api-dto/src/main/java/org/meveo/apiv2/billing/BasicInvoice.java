@@ -40,6 +40,7 @@ public interface BasicInvoice extends Resource {
 	@Schema(description = "The label")
 	String getLabel();
 
+	@Nullable
 	@Schema(description = "The maount with tax")
 	BigDecimal getAmountWithTax();
 	
