@@ -46,43 +46,44 @@ public class TagApi extends BaseApi {
 	 * @param tagDto
 	 */
 	public Long create(TagDto tagDto) {
-	try {
-	
-		checkParams(tagDto);
-		if(tagService.findByCode(tagDto.getCode()) != null) {
-			throw new EntityAlreadyExistsException(Tag.class, tagDto.getCode());
-		}
-		final Tag tag = new Tag();
-		tag.setCode(tagDto.getCode());
-		tag.setDescription(tagDto.getDescription());		
-		tag.setName(tagDto.getName());
-		
-		TagType tagType = tagTypeService.findByCode(tagDto.getTagTypeCode());
-		if(tagType == null) {
-			throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
-		}
-		tag.setTagType(tagType);
-		
-
-		if(!Strings.isEmpty(tagDto.getSellerCode())) {
-			tag.setSeller(loadEntityByCode(sellerService, tagDto.getSellerCode(), Seller.class));
-		}
-
-		if(!StringUtils.isBlank(tagDto.getParentTagCode())) {
-			Tag parentTag=tagService.findByCode(tagDto.getParentTagCode());
-			if(parentTag!=null) 
-				if(!tagDto.getParentTagCode().equalsIgnoreCase(tagDto.getCode()))
-					tag.setParentTag(parentTag);
-				else
-					throw new BusinessApiException("Parent and child has the same code !!");
+		try {
+			final Tag tag = new Tag();
+			if(StringUtils.isBlank(tagDto.getCode())) {
+				tagDto.setCode(customGenericEntityCodeService.getGenericEntityCode(tag));
 			}
-		tag.setFilterEl(tagDto.getFilterEl());
-		
-		tagService.create(tag);
-		return tag.getId();
-	} catch (BusinessApiException e) {
-		throw new BusinessApiException(e);
-	}
+			checkParams(tagDto);
+			if (tagService.findByCode(tagDto.getCode()) != null) {
+				throw new EntityAlreadyExistsException(Tag.class, tagDto.getCode());
+			}
+			tag.setCode(tagDto.getCode());
+			tag.setDescription(tagDto.getDescription());
+			tag.setName(tagDto.getName());
+
+			TagType tagType = tagTypeService.findByCode(tagDto.getTagTypeCode());
+			if (tagType == null) {
+				throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
+			}
+			tag.setTagType(tagType);
+
+			if (!Strings.isEmpty(tagDto.getSellerCode())) {
+				tag.setSeller(loadEntityByCode(sellerService, tagDto.getSellerCode(), Seller.class));
+			}
+
+			if (!StringUtils.isBlank(tagDto.getParentTagCode())) {
+				Tag parentTag = tagService.findByCode(tagDto.getParentTagCode());
+				if (parentTag != null)
+					if (!tagDto.getParentTagCode().equalsIgnoreCase(tagDto.getCode()))
+						tag.setParentTag(parentTag);
+					else
+						throw new BusinessApiException("Parent and child has the same code !!");
+			}
+			tag.setFilterEl(tagDto.getFilterEl());
+
+			tagService.create(tag);
+			return tag.getId();
+		} catch (BusinessApiException e) {
+			throw new BusinessApiException(e);
+		}
 	}
 	
 	/**
@@ -194,12 +195,15 @@ public class TagApi extends BaseApi {
 	 * @param tagTypeDto
 	 */
 	public Long create(TagTypeDto tagTypeDto) {
+		final TagType tagType = new TagType();
+		if(StringUtils.isBlank(tagTypeDto.getCode())) {
+			tagTypeDto.setCode(customGenericEntityCodeService.getGenericEntityCode(tagType));
+		}
 		checkCodeTagTypeExist(tagTypeDto);
 		if(tagTypeService.findByCode(tagTypeDto.getCode()) != null) {
 			throw new EntityAlreadyExistsException(TagType.class, tagTypeDto.getCode());
 		}
-		final TagType tagType = new TagType();
-		
+
 		tagType.setCode(tagTypeDto.getCode());
 		tagType.setDescription(tagTypeDto.getDescription());
 		tagType.setSeller(sellerService.findByCode(tagTypeDto.getSellerCode()));

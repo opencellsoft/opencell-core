@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -185,7 +186,7 @@ public abstract class BaseApi {
     private AuditableFieldService auditableFieldService;
 
     @Inject
-    private CustomGenericEntityCodeService customGenericEntityCodeService;
+    protected CustomGenericEntityCodeService customGenericEntityCodeService;
 
     @Inject
     private ServiceSingleton serviceSingleton;
@@ -1857,7 +1858,7 @@ public abstract class BaseApi {
     
     protected <T extends Enum<T>> List<String> allStatus(Class<T> enums, String paramBeanName, String defaultValueForParamBean){
     	
-		final List<String> allStatus = new ArrayList<String>();
+		final List<String> allStatus = new ArrayList<>();
 		for(T status:enums.getEnumConstants()) {
 			allStatus.add(status.toString().toLowerCase());
 		}

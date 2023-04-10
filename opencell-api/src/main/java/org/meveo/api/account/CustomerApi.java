@@ -189,17 +189,17 @@ public class CustomerApi extends AccountEntityApi {
             missingParameters.add("name.lastName");
         }
 
+        Customer customer = new Customer();
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
+        }
+
         handleMissingParameters(postData);
 
         // check if customer already exists
         if (!StringUtils.isBlank(postData.getCode()) && customerService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
-        }
-
-        Customer customer = new Customer();
-
-        if (StringUtils.isBlank(postData.getCode())) {
-            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
         }
 
         dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, associatedSeller);
