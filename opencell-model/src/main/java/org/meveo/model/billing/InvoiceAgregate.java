@@ -419,6 +419,60 @@ public abstract class InvoiceAgregate extends AuditableEntity {
         }
     }
 
+    public void addTransactionAmountWithTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountWithTax == null) {
+            	transactionalAmountWithTax = new BigDecimal("0");
+            }
+            transactionalAmountWithTax = transactionalAmountWithTax.add(deltaAmount);
+        }
+    }
+
+    public void subtractTransactionAmountWithTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountWithTax == null) {
+            	transactionalAmountWithTax = new BigDecimal("0");
+            }
+            transactionalAmountWithTax = transactionalAmountWithTax.subtract(deltaAmount);
+        }
+    }
+
+    public void addTransactionAmountWithoutTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountWithoutTax == null) {
+            	transactionalAmountWithoutTax = new BigDecimal("0");
+            }
+            transactionalAmountWithoutTax = transactionalAmountWithoutTax.add(deltaAmount);
+        }
+    }
+
+    public void subtractTransactionAmountWithoutTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountWithoutTax == null) {
+            	transactionalAmountWithoutTax = new BigDecimal("0");
+            }
+            transactionalAmountWithoutTax = transactionalAmountWithoutTax.subtract(deltaAmount);
+        }
+    }
+
+    public void addTransactionAmountTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountTax == null) {
+            	transactionalAmountTax = new BigDecimal("0");
+            }
+            transactionalAmountTax = transactionalAmountTax.add(deltaAmount);
+        }
+    }
+
+    public void subtractTransactionAmountTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountTax == null) {
+            	transactionalAmountTax = new BigDecimal("0");
+            }
+            transactionalAmountTax = transactionalAmountTax.subtract(deltaAmount);
+        }
+    }
+
     public void resetAmounts() {
         setAmount(new BigDecimal(0));
         setAmountTax(new BigDecimal(0));

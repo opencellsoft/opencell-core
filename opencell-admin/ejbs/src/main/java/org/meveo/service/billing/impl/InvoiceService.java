@@ -26,7 +26,6 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 import static org.meveo.commons.utils.StringUtils.isBlank;
@@ -3935,6 +3934,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Map<String, TaxInvoiceAgregate> taxAggregates = new HashMap<>();
 
         // Create category aggregates
+        boolean anyUseSpecificConversion = subCategoryAggregates.stream().anyMatch(SubCategoryInvoiceAgregate::isUseSpecificPriceConversion);
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
             List<InvoiceLine> erronedLines = scAggregate.getInvoiceLinesToAssociate()
                     .stream()
@@ -3979,6 +3979,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountWithoutTax(scAggregate.getAmountWithoutTax());
             invoice.addAmountWithTax(scAggregate.getAmountWithTax());
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
+            if(scAggregate.isUseSpecificPriceConversion()) {
+            	invoice.setUseSpecificPriceConversion(true);
+            	invoice.addTransactionalAmountWithoutTax(scAggregate.getTransactionalAmountWithoutTax());
+            	invoice.addTransactionalAmountWithTax(scAggregate.getTransactionalAmountWithTax());
+            	invoice.addTransactionalAmountTax(scAggregate.getTransactionalAmountTax());
+            }
         }
 
         if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(),invoice.getInvoiceDate())) {
@@ -4196,8 +4202,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if (isEnterprise) {
             taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
+            taxAggregate.addTransactionAmountWithoutTax(amountByTax.getValue().getTransactionalAmountWithoutTax());
         } else {
             taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
+            taxAggregate.addTransactionAmountWithTax(amountByTax.getValue().getTransactionalAmountWithTax());
         }
         return taxAggregate;
     }
@@ -6141,6 +6149,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         boolean taxWasRecalculated = false;
+        boolean anyILUseSpecificConversion = invoiceLines.stream().anyMatch(InvoiceLine::isUseSpecificPriceConversion);
         for (InvoiceLine invoiceLine : invoiceLines) {
 
             addFixedDiscount(invoiceLine);
@@ -6213,6 +6222,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             scAggregate.addInvoiceLine(invoiceLine, isEnterprise, true);
+            if(anyILUseSpecificConversion) {
+            	scAggregate.setUseSpecificPriceConversion(true);
+        		scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
+            	scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
+            	scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
+            	scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(), invoiceLine.getTransactionalAmountWithTax(), invoiceLine.getTransactionalAmountTax());
+            }
         }
         if (moreInvoiceLinesExpected) {
             return;
