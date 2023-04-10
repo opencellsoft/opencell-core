@@ -11,6 +11,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -101,6 +103,7 @@ public class PricePlanMatrixResourceImpl implements PricePlanMatrixResource {
                 .collect(Collectors.toList());
     }
 
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public Response search(Map<String, Object> searchInfo) {
         List<PricePlanMatrixLine> resultList = pricePlanMatrixLineApi.search(searchInfo);
         return  Response.ok().entity(buildResponse(resultList,
