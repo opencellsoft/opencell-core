@@ -114,6 +114,8 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private Future<DataImportExportStatistics> importFuture;
 
+    private boolean newEntity = false;
+
     public CustomTableBean() {
         super(CustomEntityTemplate.class);
     }
@@ -785,5 +787,13 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
             }
             return dbFieldnames;
         }
+    }
+
+    public boolean isNewEntity() {
+        return newEntity;
+    }
+
+    public void setNewEntity(boolean newEntity) {
+        this.newEntity = newEntity;
     }
 }
