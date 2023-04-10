@@ -5983,12 +5983,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                     .setParameter("invoiceAgregateF", subCategoryAggregate)
                                     .setParameter("ids", ids)
                                     .executeUpdate();
-                            em.createNamedQuery("RatedTransaction.linkRTWithInvoice")
-                                    .setParameter("billingRun", billingRun)
-                                    .setParameter("invoice", invoice)
-                                    .setParameter("now", now)
-                                    .setParameter("ids", ids)
-                                    .executeUpdate();
                         });
                     }
 
