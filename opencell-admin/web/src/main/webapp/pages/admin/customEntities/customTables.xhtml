@@ -158,6 +158,7 @@
 			<ui:define name="buttons">
 				<p:commandButton value="#{messages['commons.new']}" process="@this" update="ctRowDetailsDialog" oncomplete="PF('ctRowDetailsDialog').show();"
 					action="#{customTableBean.cleanRowValues()}">
+					<f:setPropertyActionListener target="#{customTableBean.newEntity}" value="true" />
 					<p:resetInput target=":ctRowDetails:addUpdateFields" />
 				</p:commandButton>
 			</ui:define>
@@ -260,6 +261,7 @@
 					<p:column headerText="#{messages['commons.actions']}" exportable="false">
 						<p:commandButton icon="ui-icon-search" oncomplete="PF('ctRowDetailsDialog').show()" update=":ctRowDetailsDialog" title="#{messages['commons.view']}">
 							<f:setPropertyActionListener target="#{customTableBean.rowValues}" value="#{entity}" />
+							<f:setPropertyActionListener target="#{customTableBean.newEntity}" value="false" />
 						</p:commandButton>
 						<p:commandButton id="deletelink" icon="ui-icon-trash" action="#{customTableBean.delete(entity['id'])}" rendered="#{customTableBean.edit}" update=":ctForm:ctSearchResults"
 							process="@this" immediate="true">
@@ -291,33 +293,32 @@
 
 						<hf:namingContainer id="addUpdateFields" wrap="true">
 							<c:forEach items="#{customTableBean.fields}" var="field">
-
-								<hftl:decorateFormField fieldId="#{id}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" rendered="#{!field.hideOnNew}">
+								<hftl:decorateFormField fieldId="#{id}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" rendered="#{!customTableBean.newEntity or !field.hideOnNew}">
 
 									<c:if test="#{field.fieldType eq CustomFieldTypeEnum.STRING}">
 										<p:inputText id="#{field.dbFieldname}" value="#{customTableBean.rowValues[field.dbFieldname]}"
 											placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
 											label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="20" maxlength="#{field.maxValue}" required="#{field.valueRequired}"
-											disabled="#{!field.allowEdit}"/>
+											disabled="#{!customTableBean.newEntity and !field.allowEdit}"/>
 									</c:if>
 									<c:if test="#{field.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
 										<p:selectBooleanButton id="#{field.dbFieldname}" value="#{customTableBean.rowValues[field.dbFieldname]}"
 											placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px" onLabel="true" offLabel="false"
 											label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="20" maxlength="#{field.maxValue}" required="#{field.valueRequired}"
-											disabled="#{!field.allowEdit}">
+											disabled="#{!customTableBean.newEntity and !field.allowEdit}">
 										</p:selectBooleanButton>
 									</c:if>
 									<c:if test="#{field.fieldType eq CustomFieldTypeEnum.DATE}">
 										<p:calendar id="#{field.dbFieldname}" value="#{customTableBean.rowValues[field.dbFieldname]}"
 											placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}"
 											showButtonPanel="true" pattern="#{field.displayFormat!=null? field.displayFormat:paramBean.dateFormat}" required="#{field.valueRequired}" style="margin-left:5px"
-											size="15" disabled="#{!field.allowEdit}"/>
+											size="15" disabled="#{!customTableBean.newEntity and !field.allowEdit}"/>
 									</c:if>
 									<c:if test="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
 										<p:inputText id="#{field.dbFieldname}" value="#{customTableBean.rowValues[field.dbFieldname]}" required="#{field.valueRequired}"
 											placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
 											label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="10">
-											<f:convertNumber minFractionDigits="2" disabled="#{!field.allowEdit}"/>
+											<f:convertNumber minFractionDigits="2" disabled="#{!customTableBean.newEntity and !field.allowEdit}"/>
 											<c:if test="#{field.minValue!=null and field.maxValue!=null}">
 												<f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}" />
 											</c:if>
@@ -332,7 +333,7 @@
 									<c:if test="#{field.fieldType eq CustomFieldTypeEnum.LONG}">
 										<p:inputText id="#{field.dbFieldname}" value="#{customTableBean.rowValues[field.dbFieldname]}" required="#{field.valueRequired}"
 											placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
-											label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="10" disabled="#{!field.allowEdit}">
+											label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="10" disabled="#{!customTableBean.newEntity and !field.allowEdit}">
 											<f:convertNumber integerOnly="true" />
 											<c:if test="#{field.minValue!=null and field.maxValue!=null}">
 												<f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}" />
@@ -349,7 +350,7 @@
 									<c:if test="#{field.fieldType eq CustomFieldTypeEnum.LIST}">
 										<p:selectOneMenu id="#{field.dbFieldname}" value="#{customTableBean.rowValues[field.dbFieldname]}" required="#{field.valueRequired}"
 											placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
-											label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" disabled="#{!field.allowEdit}">
+											label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" disabled="#{!customTableBean.newEntity and !field.allowEdit}">
 											<f:selectItem itemValue="#{null}" itemLabel="" />
 											<f:selectItems value="#{field.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
 										</p:selectOneMenu>
