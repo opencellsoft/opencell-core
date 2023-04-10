@@ -11528,6 +11528,316 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         <sql>SELECT setval('untdid_vatex_seq', 57, true)</sql> 
         <sql>SELECT setval('untdid_2475_vat_payment_option_seq', 3, true)</sql> 
     </changeSet>
+    
+    <changeSet id="#INTRD-13978_20230407" author="HOudad">
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="attribute_code_sequence"/>
+            <column name="description" value="attribute code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.Attribute"/>
+            <column name="format_el" value="#{'AT-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'attribute_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="user_account_code_sequence"/>
+            <column name="description" value="consumer code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.billing.UserAccount"/>
+            <column name="format_el" value="#{'UA-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'user_account_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="customer_code_sequence"/>
+            <column name="description" value="customer code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.billing.BillingAccount"/>
+            <column name="format_el" value="#{'CU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'customer_code_sequence')"/>
+        </insert>
+        
+        
+         <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="offer_template_code_sequence"/>
+            <column name="description" value="offer code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.catalog.OfferTemplate"/>
+            <column name="format_el" value="#{'OF-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'offer_template_code_sequence')"/>
+        </insert>
+        
+        
+         <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="discount_plan_code_sequence"/>
+            <column name="description" value="discount plan code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.catalog.DiscountPlan"/>
+            <column name="format_el" value="#{'DP-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="invoicing_plan_code_sequence"/>
+            <column name="description" value="invoice plan code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.commercial.InvoicingPlan"/>
+            <column name="format_el" value="#{'IP-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'invoicing_plan_code_sequence')"/>
+        </insert>
+       
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="invoicing_plan_item_code_sequence"/>
+            <column name="description" value="invoice plan line code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.commercial.InvoicingPlanItem"/>
+            <column name="format_el" value="#{'IPL-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'invoicing_plan_item_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="commercial_order_code_sequence"/>
+            <column name="description" value="order code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.commercial.CommercialOrder"/>
+            <column name="format_el" value="#{'ORD-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'commercial_order_code_sequence')"/>
+        </insert>
+      
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="product_code_sequence"/>
+            <column name="description" value="product code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.Product"/>
+            <column name="format_el" value="#{'PR-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'product_code_sequence')"/>
+        </insert>
+        
+         
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="product_line_code_sequence"/>
+            <column name="description" value="product line code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.ProductLine"/>
+            <column name="format_el" value="#{'PF-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'product_line_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="quote_code_sequence"/>
+            <column name="description" value="quote code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.CpqQuote"/>
+            <column name="format_el" value="#{'QU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'quote_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="subscription_code_sequence"/>
+            <column name="description" value="subscription code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.billing.Subscription"/>
+            <column name="format_el" value="#{'SU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'subscription_code_sequence')"/>
+        </insert>
+    
+    
+    
+      <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="tag_code_sequence"/>
+            <column name="description" value="tag code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.tags.Tag"/>
+            <column name="format_el" value="#{'TG-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'tag_code_sequence')"/>
+        </insert>
+        
+        
+         <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="tag_category_code_sequence"/>
+            <column name="description" value="tag category code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.tags.TagType"/>
+            <column name="format_el" value="#{'TC-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'tag_category_code_sequence')"/>
+        </insert>
+    </changeSet>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
