@@ -15188,4 +15188,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
     
+    <changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe">
+		<addColumn tableName="cpq_contract">
+            <column name="application_el" type="varchar(2000)" />
+		</addColumn>
+	</changeSet>
+    
 </databaseChangeLog>

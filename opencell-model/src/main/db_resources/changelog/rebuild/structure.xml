@@ -9497,6 +9497,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
+            <column name="application_el" type="varchar(2000)" />
         </createTable>
     </changeSet>
 
@@ -19026,6 +19027,8 @@
     <changeSet id="#INTRD-14598_20230303" author="zelmeliani" />
     <changeSet id="#INTR-14747_20230308" author="TarikFA." />
     <changeSet id="#INTRD-14522_20230301" author="TarikFA." />
+    <changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe" />
+    
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
