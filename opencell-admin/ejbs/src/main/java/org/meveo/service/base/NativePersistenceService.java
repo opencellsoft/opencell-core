@@ -813,7 +813,7 @@ public class NativePersistenceService extends BaseService {
         }
 
         List<String> fetch = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().filter(s -> s.contains(".")).map(s -> s.substring(0, s.lastIndexOf("."))).distinct().collect(Collectors.toList()) : Collections.emptyList();
-        Map<String, String> fetchAlias = fetch.stream().collect(Collectors.toMap(Function.identity(), s -> QueryBuilder.getJoinAlias("a", s, false)));
+        Map<String, String> fetchAlias = fetch.stream().collect(Collectors.toMap(Function.identity(), s -> QueryBuilder.getJoinAlias("a", s)));
 
          String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
         if(fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
