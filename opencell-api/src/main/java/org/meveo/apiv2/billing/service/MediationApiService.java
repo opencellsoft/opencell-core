@@ -277,73 +277,81 @@ public class MediationApiService {
 
         ProcessCdrListResult cdrListResult = new ProcessCdrListResult(mode, cdrLines.size());
 
-        final ICdrCsvReader cdrReader = cdrParsingService.getCDRReader(currentUser.getUserName(), ipAddress);
+        try {
 
-        final ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
+            final ICdrCsvReader cdrReader = cdrParsingService.getCDRReader(currentUser.getUserName(), ipAddress);
 
-        boolean isDuplicateCheckOn = cdrParser.isDuplicateCheckOn();
+            final ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
 
-        int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
-        if (nbThreads > cdrLines.size()) {
-            nbThreads = cdrLines.size();
-        }
+            boolean isDuplicateCheckOn = cdrParser.isDuplicateCheckOn();
 
-        List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
-        List<Future> futures = new ArrayList<>();
-        MeveoUser lastCurrentUser = currentUser.unProxy();
+            int nbThreads = mode == PROCESS_ALL ? Runtime.getRuntime().availableProcessors() : 1;
+            if (nbThreads > cdrLines.size()) {
+                nbThreads = cdrLines.size();
+            }
 
-        final SynchronizedIterator<String> cdrLineIterator = new SynchronizedIterator<String>(cdrLines);
+            List<Runnable> tasks = new ArrayList<Runnable>(nbThreads);
+            List<Future> futures = new ArrayList<>();
+            MeveoUser lastCurrentUser = currentUser.unProxy();
 
-        final Map<String, List<CounterPeriod>> virtualCounters = new HashMap<String, List<CounterPeriod>>();
-        final Map<String, List<CounterPeriod>> counterUpdates = new HashMap<String, List<CounterPeriod>>();
+            final SynchronizedIterator<String> cdrLineIterator = new SynchronizedIterator<String>(cdrLines);
 
-        counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
+            final Map<String, List<CounterPeriod>> virtualCounters = new HashMap<String, List<CounterPeriod>>();
+            final Map<String, List<CounterPeriod>> counterUpdates = new HashMap<String, List<CounterPeriod>>();
 
-        // No need to launch a separate thread if only one thread is used
-        if (nbThreads > 1) {
-            for (int k = 0; k < nbThreads; k++) {
+            counterInstanceService.reestablishCounterTracking(virtualCounters, counterUpdates);
 
-                int finalK = k;
-                tasks.add(() -> {
+            // No need to launch a separate thread if only one thread is used
+            if (nbThreads > 1) {
+                for (int k = 0; k < nbThreads; k++) {
 
-                    Thread.currentThread().setName("MediationApi" + "-" + finalK);
+                    int finalK = k;
+                    tasks.add(() -> {
 
-                    currentUserProvider.reestablishAuthentication(lastCurrentUser);
-                    methodCallingUtils.callMethodInNewTx(() -> processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations,
+                        Thread.currentThread().setName("MediationApi" + "-" + finalK);
+
+                        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+                        methodCallingUtils.callMethodInNewTx(() -> processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations,
+                                returnWalletOperationDetails, returnEDRs, cdrListResult, virtualCounters, counterUpdates, generateRTs));
+
+                    });
+                }
+
+                for (Runnable task : tasks) {
+                    futures.add(executor.submit(task));
+                }
+
+                // Wait for all async methods to finish
+                for (Future future : futures) {
+                    try {
+                        future.get();
+
+                    } catch (InterruptedException | CancellationException e) {
+                        // wasKilled = true;
+
+                    } catch (ExecutionException e) {
+                        Throwable cause = e.getCause();
+                        log.error("Failed to execute Mediation API async method", cause);
+                    }
+                }
+
+            } else {
+                methodCallingUtils.callMethodInNewTx(() -> processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations,
                         returnWalletOperationDetails, returnEDRs, cdrListResult, virtualCounters, counterUpdates, generateRTs));
-
-                });
             }
 
-            for (Runnable task : tasks) {
-                futures.add(executor.submit(task));
-            }
-
-            // Wait for all async methods to finish
-            for (Future future : futures) {
-                try {
-                    future.get();
-
-                } catch (InterruptedException | CancellationException e) {
-                    // wasKilled = true;
-
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    log.error("Failed to execute Mediation API async method", cause);
+            // Gather counter update summary information
+            if (returnCounters) {
+                List<CounterPeriod> counterPeriods = counterInstanceService.getCounterUpdates();
+                if (counterPeriods != null) {
+                    counterPeriods.sort(Comparator.comparing(CounterPeriod::getPeriodStartDate));
+                    cdrListResult.setCounterPeriods(counterPeriods.stream().map(CounterPeriodDto::new).collect(Collectors.toList()));
                 }
             }
-
-        } else {
-            methodCallingUtils.callMethodInNewTx(() -> processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations,
-                returnWalletOperationDetails, returnEDRs, cdrListResult, virtualCounters, counterUpdates, generateRTs));
-        }
-
-        // Gather counter update summary information
-        if (returnCounters) {
-            List<CounterPeriod> counterPeriods = counterInstanceService.getCounterUpdates();
-            if (counterPeriods != null) {
-                counterPeriods.sort(Comparator.comparing(CounterPeriod::getPeriodStartDate));
-                cdrListResult.setCounterPeriods(counterPeriods.stream().map(CounterPeriodDto::new).collect(Collectors.toList()));
+            // Catch the business exception only in the ROLLBACK_ON_ERROR mode, in order to obtain the same format of the result as the rest of the modes
+        } catch (BusinessException be) {
+            if (mode != ROLLBACK_ON_ERROR) {
+                throw be;
             }
         }
 
@@ -378,6 +386,11 @@ public class MediationApiService {
         boolean noNeedToRollback = false;
 
         String originRecordEL = appProvider.getCdrDeduplicationKeyEL();
+
+        cdrProcessingResult.setAmountWithTax(BigDecimal.ZERO);
+        cdrProcessingResult.setAmountWithoutTax(BigDecimal.ZERO);
+        cdrProcessingResult.setAmountTax(BigDecimal.ZERO);
+        cdrProcessingResult.setWalletOperationCount(0);
 
         while (true) {
 
@@ -562,10 +575,6 @@ public class MediationApiService {
                 }
             }
         }
-        cdrProcessingResult.setAmountWithTax(BigDecimal.ZERO);
-        cdrProcessingResult.setAmountWithoutTax(BigDecimal.ZERO);
-        cdrProcessingResult.setAmountTax(BigDecimal.ZERO);
-        cdrProcessingResult.setWalletOperationCount(0);
 
         Arrays.stream(cdrProcessingResult.getChargedCDRs()).forEach(cdrCharge -> {
             if (cdrCharge != null) {
