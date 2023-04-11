@@ -36,6 +36,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -100,6 +101,7 @@ import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
+import org.meveo.commons.utils.BeanUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
@@ -2321,7 +2323,7 @@ public class EntityExportImportService implements Serializable {
                 }
                 attributeClassAdded = true;
             }
-            super.addAttribute(key, value);
+            super.addAttribute(key, value != null ? value : "");
         }
 
         @Override
@@ -2456,13 +2458,12 @@ public class EntityExportImportService implements Serializable {
      * Load export model version update changesets
      */
     private void loadExportModelVersionChangesets() {
-        Set<String> changesets = new Reflections("exportVersions", new ResourcesScanner()).getResources(Pattern.compile("changeSet_.*\\.xslt"));
-        ArrayList<String> sortedChangesets = new ArrayList<String>();
-        sortedChangesets.addAll(changesets);
-        Collections.sort(sortedChangesets);
+    	List<String> returnListFilesPath = new ArrayList<>();
+    	File folder = new File(Thread.currentThread().getContextClassLoader().getResource("./exportVersions").getPath());
+        org.meveo.commons.utils.FileUtils.listAllFiles(folder, returnListFilesPath);
 
         exportModelVersionChangesets = new LinkedHashMap<String, String>();
-        for (String changesetFile : sortedChangesets) {
+        for (String changesetFile : returnListFilesPath) {
             String version = changesetFile.substring(changesetFile.indexOf("_") + 1, changesetFile.indexOf(".xslt"));
             exportModelVersionChangesets.put(version, changesetFile);
             currentExportModelVersionChangeset = version;
