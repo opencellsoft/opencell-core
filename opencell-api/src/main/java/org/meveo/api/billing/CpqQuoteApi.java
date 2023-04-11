@@ -346,6 +346,7 @@ public class CpqQuoteApi extends BaseApi {
         
         quoteDto.setStatusDate(cpqQuote.getStatusDate());
         quoteDto.setId(cpqQuote.getId());
+        quoteDto.setCode(cpqQuote.getCode());
         return quoteDto;
 	}
 
