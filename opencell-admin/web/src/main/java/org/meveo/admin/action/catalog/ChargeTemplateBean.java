@@ -45,7 +45,7 @@ import org.primefaces.model.LazyDataModel;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 

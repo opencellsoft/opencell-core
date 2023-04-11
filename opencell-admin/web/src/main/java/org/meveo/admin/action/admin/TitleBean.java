@@ -31,7 +31,7 @@ import org.meveo.service.catalog.impl.TitleService;
 
 
 @Named
-@ViewScoped
+
 public class TitleBean extends BaseBean<Title> {
 
     private static final long serialVersionUID = -2634473401390003093L;

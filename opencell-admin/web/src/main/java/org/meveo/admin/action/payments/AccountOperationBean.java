@@ -56,7 +56,7 @@ import org.primefaces.model.LazyDataModel;
  * @lastModifiedVersion willBeSetHere
  */
 @Named
-@ViewScoped
+
 public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +70,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
     @Inject
     protected MatchingCodeService matchingCodeService;
 
-    @Inject
+
     private AccountOperationListBean accountOperationListBean;
 
 

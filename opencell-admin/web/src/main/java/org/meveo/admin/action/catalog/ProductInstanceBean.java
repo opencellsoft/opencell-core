@@ -31,7 +31,7 @@ import org.omnifaces.cdi.ViewScoped;
  * @author Edward P. Legaspi
  **/
 @Named
-@ViewScoped
+
 public class ProductInstanceBean extends CustomFieldBean<ProductInstance> {
 
 	private static final long serialVersionUID = -3583227845810897037L;

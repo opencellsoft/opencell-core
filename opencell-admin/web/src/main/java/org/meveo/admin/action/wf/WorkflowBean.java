@@ -63,7 +63,7 @@ import org.omnifaces.cdi.Param;
  * 
  */
 @Named
-@ViewScoped
+
 @ViewBean
 public class WorkflowBean extends BaseBean<Workflow> {
 

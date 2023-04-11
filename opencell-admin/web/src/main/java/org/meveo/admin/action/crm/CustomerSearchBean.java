@@ -40,7 +40,7 @@ import org.meveo.service.crm.impl.AccountEntitySearchService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
+
 public class CustomerSearchBean extends BaseBean<AccountEntity> {
 
 	private static final long serialVersionUID = 1L;

@@ -49,7 +49,7 @@ import org.slf4j.Logger;
  * @author Edward P. Legaspi
  **/
 @Named
-@ViewScoped
+
 public class AuditConfigurationBean implements Serializable {
 
     private static final long serialVersionUID = -2288050777565855090L;

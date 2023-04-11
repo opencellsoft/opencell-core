@@ -41,7 +41,7 @@ import com.opencsv.exceptions.CsvException;
 
 
 @Named
-@ViewScoped
+
 public class ContactBean extends BaseBean<Contact> {
 	/**
 	 * 

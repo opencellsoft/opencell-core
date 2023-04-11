@@ -59,7 +59,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     @Inject
     protected Logger log;
 
-    @EJB
+    @Inject
     private EdrService edrService;
 
     private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();

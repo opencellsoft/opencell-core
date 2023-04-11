@@ -51,7 +51,7 @@ import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Named
-@ConversationScoped
+
 public class CRMConnectorRejectedFileBean implements Serializable {
 
     private static final long serialVersionUID = 1L;

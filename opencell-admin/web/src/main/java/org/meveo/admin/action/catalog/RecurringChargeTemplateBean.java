@@ -47,7 +47,7 @@ import org.primefaces.model.DualListModel;
  * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class RecurringChargeTemplateBean extends CustomFieldBean<RecurringChargeTemplate> {
     private static final long serialVersionUID = 1L;
     /**
@@ -56,7 +56,7 @@ public class RecurringChargeTemplateBean extends CustomFieldBean<RecurringCharge
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
 
-    @Inject
+    
     private UsageChargeTemplateService usageChargeTemplateService;
 
     @Inject

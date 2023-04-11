@@ -43,7 +43,7 @@ import org.meveo.service.billing.impl.BillingCycleService;
  * custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
 
     private static final long serialVersionUID = 1L;

@@ -63,7 +63,7 @@ import org.omnifaces.cdi.Param;
 import org.primefaces.model.DualListModel;
 
 @Named
-@ViewScoped
+
 public class CalendarBean extends BaseBean<Calendar> {
 
     private static final long serialVersionUID = 1L;

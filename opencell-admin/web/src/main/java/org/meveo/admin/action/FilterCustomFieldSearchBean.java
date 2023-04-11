@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * Created by Tony Alejandro on 03/06/2016.
  */
 @Named
-@ViewScoped
+
 public class FilterCustomFieldSearchBean implements Serializable {
 
 	private static final long serialVersionUID = 4300150745614341095L;

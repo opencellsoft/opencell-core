@@ -45,20 +45,20 @@ import org.primefaces.model.LazyDataModel;
  * @lastModifiedVersion 7.0
  */
 @Named
-@ViewScoped
+
 public class WalletOperationBean extends BaseBean<WalletOperation> {
 	private static final long serialVersionUID = 1L;
 
 	/**
      * Injected @{link WalletOperation} service. Extends {@link PersistenceService}.
 	 */
-	@Inject
+	
 	private WalletOperationService walletOperationService;
 	
 	@Inject
 	private TradingCurrencyService tradingCurrencyService;
 	
-	@Inject
+	
 	private RatedTransactionService ratedTransactionService;
    private Map<String, Currency> listCurrency = new HashMap<String, Currency>();
 

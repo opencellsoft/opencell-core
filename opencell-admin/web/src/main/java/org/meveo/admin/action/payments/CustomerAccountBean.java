@@ -71,7 +71,7 @@ import org.meveo.service.payments.impl.PaymentMethodService;
  * @lastModifiedVersion 5.0
  */
 @Named
-@ViewScoped
+
 public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     private static final long serialVersionUID = 1L;

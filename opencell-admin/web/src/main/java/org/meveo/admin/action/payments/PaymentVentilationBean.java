@@ -46,7 +46,7 @@ import org.primefaces.model.LazyDataModel;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class PaymentVentilationBean extends BaseBean<PaymentVentilation> {
 
     private static final long serialVersionUID = 1L;

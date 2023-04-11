@@ -51,7 +51,7 @@ import org.primefaces.model.UploadedFile;
  *
  */
 @Named
-@ViewScoped
+
 public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 
     private static final long serialVersionUID = -1644247310944456827L;

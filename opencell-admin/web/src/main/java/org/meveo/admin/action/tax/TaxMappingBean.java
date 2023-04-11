@@ -38,7 +38,7 @@ import org.meveo.service.tax.TaxMappingService;
  *
  */
 @Named
-@ViewScoped
+
 public class TaxMappingBean extends BaseBean<TaxMapping> implements Serializable {
     private static final long serialVersionUID = 1L;
 

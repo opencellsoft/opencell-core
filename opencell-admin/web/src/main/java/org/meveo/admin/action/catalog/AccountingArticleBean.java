@@ -29,7 +29,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 
 @Named
-@ViewScoped
+
 public class AccountingArticleBean extends BaseBean<AccountingArticle> {
 
 	private static final long serialVersionUID = 1L;
@@ -37,7 +37,7 @@ public class AccountingArticleBean extends BaseBean<AccountingArticle> {
 	private AccountingArticle selectedAccountingArticle;
 
 	
-	@Inject
+	
 	private AccountingArticleService accountingArticleService;
 
 	/**

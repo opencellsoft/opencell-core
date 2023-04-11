@@ -57,7 +57,7 @@ import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 
 @Named
-@ViewScoped
+
 public class EntityExportImportBean implements Serializable {
 
     private static final long serialVersionUID = -8190794739629651135L;

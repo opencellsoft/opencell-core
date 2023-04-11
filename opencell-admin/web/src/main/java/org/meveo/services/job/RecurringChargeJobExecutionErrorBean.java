@@ -42,7 +42,7 @@ import org.meveo.service.job.RecurringChargeJobExecutionErrorService;
  * @lastModifiedVersion 10.0
  */
 @Named
-@ViewScoped
+
 public class RecurringChargeJobExecutionErrorBean extends BaseBean<RecurringChargeJobExecutionError> {
 
     private static final long serialVersionUID = 1L;

@@ -62,7 +62,7 @@ import org.meveo.util.view.ServiceBasedLazyDataModel;
  * @lastModifiedVersion 5.2
  */
 @Named
-@ViewScoped
+
 public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     private static final long serialVersionUID = 1L;

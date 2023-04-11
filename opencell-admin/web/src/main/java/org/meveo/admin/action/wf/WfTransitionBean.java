@@ -55,7 +55,7 @@ import org.primefaces.model.TreeNode;
  * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private static final long serialVersionUID = 1L;

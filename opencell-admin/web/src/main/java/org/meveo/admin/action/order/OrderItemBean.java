@@ -35,7 +35,7 @@ import org.meveo.service.order.OrderItemService;
  * @lastModifiedVersion 9.4.0
  */
 @Named
-@ViewScoped
+
 public class OrderItemBean extends CustomFieldBean<OrderItem> {
     
     /**

@@ -42,7 +42,7 @@ import org.slf4j.Logger;
  * @since 2010.11.09
  */
 @Named
-@ConversationScoped
+
 public class CustomerAccountImportAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;

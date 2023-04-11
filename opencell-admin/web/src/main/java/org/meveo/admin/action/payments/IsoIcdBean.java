@@ -16,7 +16,7 @@ import org.meveo.service.billing.impl.IsoIcdService;
 import org.meveo.service.billing.impl.UntdidInvoiceSubjectCodeService;
 
 @Named
-@ViewScoped
+
 public class IsoIcdBean extends BaseBean<IsoIcd> {
 
         private static final long serialVersionUID = 1L;

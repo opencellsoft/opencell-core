@@ -35,7 +35,7 @@ import org.meveo.service.billing.impl.ChargeInstanceService;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class ChargeInstanceBean extends BaseBean<ChargeInstance> {
 
 	private static final long serialVersionUID = 1L;

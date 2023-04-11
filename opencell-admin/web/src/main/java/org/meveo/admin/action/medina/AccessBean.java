@@ -47,7 +47,7 @@ import org.omnifaces.cdi.Param;
  * @lastModifiedVersion 5.0
  */
 @Named
-@ViewScoped
+
 public class AccessBean extends CustomFieldBean<Access> {
 
 	private static final long serialVersionUID = 1L;
@@ -55,13 +55,13 @@ public class AccessBean extends CustomFieldBean<Access> {
 	/**
 	 * Injected @{link PriceCode} service. Extends {@link PersistenceService}.
 	 */
-	@Inject
+	
 	private AccessService accessService;
 
 	@Inject
 	private SubscriptionService subscriptionService;
 
-	@EJB
+	
 	private CDRParsingService cdrParsingService;
 
 	@Inject

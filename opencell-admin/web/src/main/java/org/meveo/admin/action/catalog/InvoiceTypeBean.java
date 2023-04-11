@@ -35,7 +35,7 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.primefaces.model.DualListModel;
 
 @Named
-@ViewScoped
+
 public class InvoiceTypeBean extends CustomFieldBean<InvoiceType> {
 
 	private static final long serialVersionUID = 1L;

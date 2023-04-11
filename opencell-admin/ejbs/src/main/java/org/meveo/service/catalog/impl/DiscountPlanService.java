@@ -65,7 +65,7 @@ import org.meveo.service.tax.TaxMappingService.TaxInfo;
 /**
  * @author Edward P. Legaspi
  **/
-@Stateless
+
 public class DiscountPlanService extends BusinessService<DiscountPlan> {
 
 

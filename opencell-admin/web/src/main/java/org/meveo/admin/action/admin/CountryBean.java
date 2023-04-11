@@ -40,7 +40,7 @@ import org.meveo.service.base.local.IPersistenceService;
  * @since 2009.10.13
  */
 @Named
-@ViewScoped
+
 public class CountryBean extends BaseBean<Country> {
 
 	private static final long serialVersionUID = 1L;

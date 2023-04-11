@@ -26,7 +26,7 @@ import org.primefaces.model.chart.BarChartModel;
 
 
 @Named
-@ViewScoped
+
 public class BarChartBean extends ChartEntityBean<BarChart,BarChartModel,BarChartEntityModel> {
 
 	/**

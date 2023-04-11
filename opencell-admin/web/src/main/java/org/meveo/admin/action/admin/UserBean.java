@@ -64,7 +64,7 @@ import org.primefaces.model.TreeNode;
  * @lastModifiedVersion 8.0.0
  */
 @Named
-@ViewScoped
+
 public class UserBean extends CustomFieldBean<User> {
 
     private static final long serialVersionUID = 1L;

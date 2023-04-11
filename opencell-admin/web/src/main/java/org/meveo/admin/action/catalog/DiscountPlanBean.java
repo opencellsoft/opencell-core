@@ -38,7 +38,7 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
  * @author Edward P. Legaspi
  **/
 @Named
-@ViewScoped
+
 public class DiscountPlanBean extends CustomFieldBean<DiscountPlan> {
 
 	private static final long serialVersionUID = -2345373648137067066L;

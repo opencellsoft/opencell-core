@@ -32,7 +32,7 @@ import org.meveo.service.job.JobExecutionErrorService;
  * @lastModifiedVersion 10.0
  */
 @Named
-@ViewScoped
+
 public class JobExecutionErrorBean extends BaseBean<JobExecutionError> {
 
     private static final long serialVersionUID = 1L;

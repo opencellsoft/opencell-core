@@ -58,7 +58,7 @@ import org.primefaces.model.SortOrder;
  * 
  */
 @Named
-@ViewScoped
+
 public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
     private static final long serialVersionUID = 1L;
@@ -120,7 +120,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
     @Produces
     @Named("billingRunInvoices")
-    @ConversationScoped
+    
     public List<Invoice> getBillingRunInvoices() {
         if (entity == null) {
             return null;

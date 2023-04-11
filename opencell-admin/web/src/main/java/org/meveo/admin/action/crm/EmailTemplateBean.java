@@ -34,7 +34,7 @@ import org.meveo.service.communication.impl.EmailTemplateService;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 
 	private static final long serialVersionUID = 1L;

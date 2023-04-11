@@ -34,7 +34,7 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
 @Named
-@ConversationScoped
+
 public class CdrListBean extends CdrBean {
 
     private static final long serialVersionUID = -6872704581103186463L;

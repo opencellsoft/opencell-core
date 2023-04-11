@@ -48,7 +48,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 @Named
-@ViewScoped
+
 @ViewBean
 public class ActionBean extends BaseBean<GWFTransitionAction> {
 

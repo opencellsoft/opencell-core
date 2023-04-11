@@ -48,7 +48,7 @@ import org.primefaces.model.LazyDataModel;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 
 	private static final long serialVersionUID = -6762628879784107169L;

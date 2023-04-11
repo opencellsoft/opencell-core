@@ -62,7 +62,7 @@ import java.util.TreeMap;
  */
 
 @Named
-@ViewScoped
+
 @ViewBean
 public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
 

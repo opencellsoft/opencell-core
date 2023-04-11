@@ -31,7 +31,7 @@ import org.meveo.service.intcrm.impl.AddressBookService;
 import org.slf4j.Logger;
 
 @Named
-@ViewScoped
+
 public class AddressBookBean extends CustomFieldBean<AddressBook>{
 	/**
 	 * 

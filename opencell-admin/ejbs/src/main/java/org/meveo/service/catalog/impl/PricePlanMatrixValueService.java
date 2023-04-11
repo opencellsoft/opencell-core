@@ -10,7 +10,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.service.base.PersistenceService;
 
-@Stateless
+
 public class PricePlanMatrixValueService extends PersistenceService<PricePlanMatrixValue> {
 
 	@SuppressWarnings("unchecked")

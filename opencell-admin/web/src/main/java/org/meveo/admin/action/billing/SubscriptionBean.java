@@ -101,7 +101,7 @@ import static org.meveo.commons.utils.StringUtils.isBlank;
  * @lastModifiedVersion 7.0
  */
 @Named
-@ViewScoped
+
 public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     private static final long serialVersionUID = 1L;

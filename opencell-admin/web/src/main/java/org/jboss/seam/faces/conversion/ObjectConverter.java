@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author <a href="http://community.jboss.org/people/LightGuard">Jason Porter</a>
  */
-@ConversationScoped
+
 @FacesConverter(value = "org.jboss.seam.faces.conversion.ObjectConverter", managed = true)
 public class ObjectConverter implements javax.faces.convert.Converter, Serializable {
 

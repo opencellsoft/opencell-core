@@ -54,7 +54,7 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
 @Named
-@ViewScoped
+
 public class CacheBean implements Serializable {
 
     private static final long serialVersionUID = -8072659867697109888L;

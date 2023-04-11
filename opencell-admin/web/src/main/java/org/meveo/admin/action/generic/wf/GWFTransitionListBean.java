@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class GWFTransitionListBean extends GWFTransitionBean {
 
     private static final long serialVersionUID = 8408828513467146633L;

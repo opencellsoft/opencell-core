@@ -25,7 +25,7 @@ import org.meveo.service.base.PersistenceService;
 import org.primefaces.model.LazyDataModel;
 
 @Named
-@ConversationScoped
+
 public class ServiceTemplateListBean extends ServiceTemplateBean {
 
     private static final long serialVersionUID = -3037867704912788028L;

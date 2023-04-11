@@ -39,7 +39,7 @@ import org.meveo.service.catalog.impl.BusinessProductModelService;
  * @author Edward P. Legaspi
  */
 @Named
-@ViewScoped
+
 public class BusinessProductModelBean extends GenericModuleBean<BusinessProductModel> {
 
     private static final long serialVersionUID = -1731438369618574084L;

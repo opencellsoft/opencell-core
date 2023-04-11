@@ -49,7 +49,7 @@ import org.meveo.service.filter.FilterService;
  * @author Edward P. Legaspi
  **/
 @Named
-@ViewScoped
+
 public class FilterBean extends BaseBean<Filter> {
 
     private static final long serialVersionUID = 6689238784280187702L;

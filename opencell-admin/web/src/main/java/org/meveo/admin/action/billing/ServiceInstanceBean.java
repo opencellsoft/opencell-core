@@ -50,7 +50,7 @@ import org.omnifaces.cdi.Param;
  * @lastModifiedVersion 7.0
  */
 @Named
-@ViewScoped
+
 public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
     private static final long serialVersionUID = -4881285967381681922L;

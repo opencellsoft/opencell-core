@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -35,16 +34,15 @@ import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 
-@Stateless
 public class MediationsettingService extends PersistenceService<MediationSetting> {
 
-    @Inject
+    
     private WalletOperationService walletOperationService;
 
-    @Inject
+    
     private RatedTransactionService ratedTransactionService;
 
-    @Inject
+    
     private UsageRatingService usageRatingService;
 
     @Inject

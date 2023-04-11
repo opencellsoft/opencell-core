@@ -31,7 +31,7 @@ import javax.inject.Named;
  * @author Abdellatif BARI
  * @since 7.0
  */
-@ViewScoped
+
 @Named
 public class AuditableFieldBean extends BaseBean<AuditableField> {
 

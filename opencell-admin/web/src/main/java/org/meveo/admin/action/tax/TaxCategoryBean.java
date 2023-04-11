@@ -38,7 +38,7 @@ import org.meveo.service.tax.TaxCategoryService;
  *
  */
 @Named
-@ViewScoped
+
 public class TaxCategoryBean extends CustomFieldBean<TaxCategory> implements Serializable {
     private static final long serialVersionUID = 1L;
 

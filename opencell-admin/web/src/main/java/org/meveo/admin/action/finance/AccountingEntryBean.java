@@ -36,7 +36,7 @@ import javax.inject.Named;
  * @author mboukayoua
  */
 @Named
-@ViewScoped
+
 public class AccountingEntryBean extends BaseBean<AccountingEntry> {
 
     /**

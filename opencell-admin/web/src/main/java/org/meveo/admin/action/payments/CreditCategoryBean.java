@@ -31,7 +31,7 @@ import org.meveo.service.payments.impl.CreditCategoryService;
  * @author Edward P. Legaspi
  **/
 @Named
-@ViewScoped
+
 public class CreditCategoryBean extends BaseBean<CreditCategory> {
 
 	private static final long serialVersionUID = 2958011009867008164L;

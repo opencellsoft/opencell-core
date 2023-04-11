@@ -36,7 +36,7 @@ import org.meveo.service.bi.impl.JobHistoryService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
+
 public class JobHistoryBean extends BaseBean<JobHistory> {
 
 	private static final long serialVersionUID = 1L;

@@ -28,7 +28,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 
 
 @Named
-@ViewScoped
+
 public class ServiceChargeTemplateUsageBean extends BaseBean<ServiceChargeTemplateUsage> {
 
     private static final long serialVersionUID = 1L;

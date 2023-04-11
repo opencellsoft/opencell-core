@@ -36,7 +36,7 @@ import org.meveo.service.bi.impl.JobExecutionHistoryService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
+
 public class JobExecutionHistoryBean extends
 		BaseBean<JobExecutionHisto> {
 

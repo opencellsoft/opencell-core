@@ -25,7 +25,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.order.OrderListBean;
 
 @Named
-@ConversationScoped
+
 public class QuoteListBean extends QuoteBean {
 
     private static final long serialVersionUID = 1954649215739728918L;

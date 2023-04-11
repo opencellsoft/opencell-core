@@ -32,7 +32,7 @@ import org.meveo.service.base.local.IPersistenceService;
  */
 
 @Named
-@ViewScoped
+
 public class MeveoModuleBean extends GenericModuleBean<MeveoModule> {
 
     private static final long serialVersionUID = 1L;

@@ -37,7 +37,7 @@ import org.meveo.service.custom.EntityCustomActionService;
  * @lastModifiedVersion 5.1
  */
 @Named
-@ViewScoped
+
 public class EntityCustomActionBean extends BaseBean<EntityCustomAction> {
 
     private static final long serialVersionUID = 5401687428382698718L;

@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class ProviderListBean extends ProviderBean {
 
     private static final long serialVersionUID = -143087966204608278L;

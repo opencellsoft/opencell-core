@@ -35,7 +35,7 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 @Named
-@ConversationScoped
+
 public class MeveoModuleListBean extends MeveoModuleBean {
 
     private static final long serialVersionUID = 1L;

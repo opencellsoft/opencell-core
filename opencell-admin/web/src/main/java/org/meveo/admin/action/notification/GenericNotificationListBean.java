@@ -26,7 +26,7 @@ import javax.inject.Named;
  *
  **/
 @Named
-@ConversationScoped
+
 public class GenericNotificationListBean extends GenericNotificationBean {
 
 	private static final long serialVersionUID = 1L;

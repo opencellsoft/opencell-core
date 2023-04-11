@@ -59,7 +59,7 @@ import static java.util.Comparator.comparing;
  * @author Andrius Karpavicius
  */
 @Named
-@ViewScoped
+
 public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     private static final long serialVersionUID = 1187554162639618526L;

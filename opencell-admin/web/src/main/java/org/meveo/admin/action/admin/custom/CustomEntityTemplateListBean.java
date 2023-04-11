@@ -31,7 +31,7 @@ import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.model.SortOrder;
 
 @Named
-@ConversationScoped
+
 public class CustomEntityTemplateListBean extends CustomEntityTemplateBean {
 
     private static final long serialVersionUID = 7731570832396817056L;

@@ -47,7 +47,7 @@ import org.primefaces.event.CellEditEvent;
  *
  */
 @Named
-@ConversationScoped
+
 public class ParamActionBean extends BaseBean<ParamProperty> implements Serializable {
 
     private static final long serialVersionUID = -4570971790276879220L;

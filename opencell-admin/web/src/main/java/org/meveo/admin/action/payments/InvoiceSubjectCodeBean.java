@@ -14,7 +14,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.UntdidInvoiceSubjectCodeService;
 
 @Named
-@ViewScoped
+
 public class InvoiceSubjectCodeBean extends BaseBean<UntdidInvoiceSubjectCode> {
 
         private static final long serialVersionUID = 1L;

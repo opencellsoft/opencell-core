@@ -73,7 +73,7 @@ import org.slf4j.LoggerFactory;
  * @lastModifiedVersion 8.0.0
  */
 @Named
-@ViewScoped
+
 public class FilesBean implements Serializable {
 
     private static final long serialVersionUID = 1L;

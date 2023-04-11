@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class WorkflowInstanceHistoryListBean extends WorkflowInstanceHistoryBean {
 
     private static final long serialVersionUID = -6458237121527670796L;

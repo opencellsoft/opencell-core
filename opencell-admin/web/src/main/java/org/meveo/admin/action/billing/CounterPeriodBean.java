@@ -43,7 +43,7 @@ import org.primefaces.model.SortOrder;
  * custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class CounterPeriodBean extends BaseBean<CounterPeriod> {
 
 	private static final long serialVersionUID = 1L;

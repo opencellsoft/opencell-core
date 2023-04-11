@@ -34,7 +34,7 @@ import org.meveo.service.crm.impl.CustomerService;
  * custom JSF components.
  */
 @Named
-@ConversationScoped
+
 public class CustomerListBean extends BaseBean<Customer> {
 
 	private static final long serialVersionUID = 1L;

@@ -31,7 +31,7 @@ import org.meveo.service.filter.FilterConditionService;
  * @author Edward P. Legaspi
  **/
 @Named
-@ViewScoped
+
 public class FilterConditionBean extends BaseBean<FilterCondition> {
 
 	@Inject

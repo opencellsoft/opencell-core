@@ -30,7 +30,7 @@ import javax.inject.Named;
  *
  */
 @Named
-@ConversationScoped
+
 public class TaxMappingListBean extends TaxMappingBean implements Serializable {
     private static final long serialVersionUID = 1L;
 

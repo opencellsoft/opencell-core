@@ -67,7 +67,7 @@ import org.meveo.service.base.BusinessService;
  * @lastModifiedVersion 7.2.0
  *
  */
-@Stateless
+
 public class ScriptInstanceService extends BusinessService<ScriptInstance> {
 
     @Inject

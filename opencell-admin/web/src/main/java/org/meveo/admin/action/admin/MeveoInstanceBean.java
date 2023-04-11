@@ -29,7 +29,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 
 @Named
-@ViewScoped
+
 public class MeveoInstanceBean extends BaseBean<MeveoInstance> {
 
 	private static final long serialVersionUID = 1L;

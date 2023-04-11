@@ -45,7 +45,7 @@ import org.meveo.service.catalog.impl.CustomerSequenceService;
  * @lastModifiedVersion 5.2
  **/
 @Named
-@ViewScoped
+
 public class SellerBean extends CustomFieldBean<Seller> {
 
     private static final long serialVersionUID = 1L;

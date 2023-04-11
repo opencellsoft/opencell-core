@@ -44,7 +44,7 @@ import org.primefaces.model.LazyDataModel;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
 
 	private static final long serialVersionUID = 1L;

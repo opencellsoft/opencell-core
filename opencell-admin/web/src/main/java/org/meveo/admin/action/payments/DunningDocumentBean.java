@@ -45,7 +45,7 @@ import javax.inject.Named;
  * @author mboukayoua
  */
 @Named
-@ViewScoped
+
 public class DunningDocumentBean extends BaseBean<DunningDocument> {
 	
 	/**

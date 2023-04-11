@@ -36,7 +36,7 @@ import org.meveo.service.payments.impl.MatchingCodeService;
  * custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class MatchingCodeBean extends BaseBean<MatchingCode> {
 
 	private static final long serialVersionUID = 1L;

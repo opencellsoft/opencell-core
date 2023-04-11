@@ -31,7 +31,7 @@ import org.meveo.service.crm.impl.BusinessAccountModelService;
  * @author Edward P. Legaspi
  **/
 @Named
-@ViewScoped
+
 public class BusinessAccountModelBean extends GenericModuleBean<BusinessAccountModel> {
 
     private static final long serialVersionUID = -3508425903046756219L;

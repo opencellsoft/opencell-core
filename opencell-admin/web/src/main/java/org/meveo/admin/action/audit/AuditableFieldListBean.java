@@ -32,7 +32,7 @@ import javax.inject.Named;
  * @since 7.0
  */
 @Named
-@ConversationScoped
+
 public class AuditableFieldListBean extends AuditableFieldBean {
 
     private static final long serialVersionUID = -2949768843671394990L;

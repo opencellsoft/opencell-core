@@ -68,7 +68,7 @@ import static org.meveo.commons.utils.StringUtils.isBlank;
  * @author Edward P. Legaspi
  */
 @Named
-@ViewScoped
+
 public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
     private static final long serialVersionUID = -7002455215420815747L;

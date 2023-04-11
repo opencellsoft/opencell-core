@@ -28,7 +28,7 @@ import org.meveo.model.payments.OtherCreditAndCharge;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
+
 public class OtherCreditAndChargeListBean extends OtherCreditAndChargeBean {
 
     private static final long serialVersionUID = -3037867704912788054L;

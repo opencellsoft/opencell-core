@@ -68,7 +68,7 @@ import org.primefaces.model.UploadedFile;
  * 
  */
 @Named
-@ViewScoped
+
 public class EmailNotificationBean extends BaseNotificationBean<EmailNotification> {
 
     private static final long serialVersionUID = 6473465285480945644L;
@@ -79,7 +79,7 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
     @Inject
     CounterTemplateService counterTemplateService;
 
-    @Inject
+    
     ScriptInstanceService scriptInstanceService;
 
     CsvBuilder csv = null;

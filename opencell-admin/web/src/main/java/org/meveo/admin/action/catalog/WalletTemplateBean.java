@@ -31,7 +31,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 
 @Named
-@ViewScoped
+
 public class WalletTemplateBean extends BaseBean<WalletTemplate> {
 
 	private static final long serialVersionUID = 1L;

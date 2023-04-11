@@ -42,7 +42,7 @@ import org.primefaces.model.LazyDataModel;
  * @lastModifiedVersion 5.1
  */
 @Named
-@ConversationScoped
+
 public class OfferTemplateListBean extends OfferTemplateBean {
 
 	private static final long serialVersionUID = -3037867704912788024L;

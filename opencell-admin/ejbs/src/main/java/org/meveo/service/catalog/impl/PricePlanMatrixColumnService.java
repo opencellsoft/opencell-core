@@ -38,7 +38,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.cpq.AttributeService;
 
-@Stateless
+
 public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatrixColumn> {
 
     @Inject

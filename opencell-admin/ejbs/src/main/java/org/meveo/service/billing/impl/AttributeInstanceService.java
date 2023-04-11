@@ -6,7 +6,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.service.cpq.AttributeValueService;
 
-@Stateless
+
 public class AttributeInstanceService extends AttributeValueService<AttributeInstance> {
 
     @Override

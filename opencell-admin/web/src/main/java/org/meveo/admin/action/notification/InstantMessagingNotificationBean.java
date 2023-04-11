@@ -65,7 +65,7 @@ import org.primefaces.model.UploadedFile;
  * 
  */
 @Named
-@ViewScoped
+
 public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingNotification> {
 
     private static final long serialVersionUID = 6473465285480945644L;

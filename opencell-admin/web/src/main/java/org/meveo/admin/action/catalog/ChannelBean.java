@@ -31,7 +31,7 @@ import org.meveo.service.catalog.impl.ChannelService;
  * @author Edward P. Legaspi
  */
 @Named
-@ViewScoped
+
 public class ChannelBean extends BaseBean<Channel> {
 
 	private static final long serialVersionUID = -7840171299348011926L;

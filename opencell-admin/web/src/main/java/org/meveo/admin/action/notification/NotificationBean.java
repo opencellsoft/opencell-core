@@ -59,7 +59,7 @@ import org.primefaces.model.UploadedFile;
  *
  */
 @Named
-@ViewScoped
+
 public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
 
     private static final long serialVersionUID = 6473465285480945644L;

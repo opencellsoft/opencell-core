@@ -43,11 +43,11 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.primefaces.model.DualListModel;
 
 @Named
-@ViewScoped
+
 public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate> {
     private static final long serialVersionUID = 1L;
 
-    @Inject
+    
     private UsageChargeTemplateService usageChargeTemplateService;
 
     @Inject

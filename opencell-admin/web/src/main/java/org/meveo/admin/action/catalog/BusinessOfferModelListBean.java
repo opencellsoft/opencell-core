@@ -29,7 +29,7 @@ import org.meveo.model.catalog.BusinessOfferModel;
  * @author Edward P. Legaspi
  **/
 @Named
-@ConversationScoped
+
 public class BusinessOfferModelListBean extends BusinessOfferModelBean {
 
 	private static final long serialVersionUID = 2963552034235893444L;

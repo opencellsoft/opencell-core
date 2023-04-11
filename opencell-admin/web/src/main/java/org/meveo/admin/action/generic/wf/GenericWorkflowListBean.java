@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class GenericWorkflowListBean extends GenericWorkflowBean {
 
     private static final long serialVersionUID = 2203955290140287775L;

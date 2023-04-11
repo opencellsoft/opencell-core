@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class UsageChargeTemplateListBean extends UsageChargeTemplateBean {
 
     private static final long serialVersionUID = -3037867704912788031L;

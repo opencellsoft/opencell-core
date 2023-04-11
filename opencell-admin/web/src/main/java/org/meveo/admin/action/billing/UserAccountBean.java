@@ -74,7 +74,7 @@ import org.primefaces.model.LazyDataModel;
  * @lastModifiedVersion 5.2
  */
 @Named
-@ViewScoped
+
 public class UserAccountBean extends AccountBean<UserAccount> {
 
     private static final long serialVersionUID = 1L;

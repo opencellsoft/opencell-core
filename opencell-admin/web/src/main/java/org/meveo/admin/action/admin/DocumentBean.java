@@ -50,7 +50,7 @@ import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Named
-@ConversationScoped
+
 public class DocumentBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -92,7 +92,7 @@ public class DocumentBean implements Serializable {
      */
     @Produces
     @Named("documents")
-    @ConversationScoped
+    
     // @Begin(join = true)
     public List<Document> list() {
         documents = new ArrayList<Document>();

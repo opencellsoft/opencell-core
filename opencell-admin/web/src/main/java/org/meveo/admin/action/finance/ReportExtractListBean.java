@@ -32,7 +32,7 @@ import org.meveo.model.finance.ReportExtract;
  * @lastModifiedVersion 5.0
  **/
 @Named
-@ConversationScoped
+
 public class ReportExtractListBean extends ReportExtractBean {
 
     private static final long serialVersionUID = 4017580316723675037L;

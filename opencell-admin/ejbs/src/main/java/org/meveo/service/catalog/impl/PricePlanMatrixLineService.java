@@ -42,13 +42,13 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
-@Stateless
+
 public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatrixLine> {
 
     @Inject
     private PricePlanMatrixValueService pricePlanMatrixValueService;
 
-    @Inject
+    
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
     @Inject

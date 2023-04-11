@@ -73,7 +73,7 @@ import org.reflections.Reflections;
  */
 
 @Named
-@ViewScoped
+
 public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldTemplate> {
 
     private static final long serialVersionUID = 9099292371182275568L;

@@ -39,7 +39,7 @@ import org.meveo.service.bi.impl.ReportService;
  * custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class ReportBean extends BaseBean<Report> {
 
 	private static final long serialVersionUID = 1L;

@@ -52,7 +52,7 @@ import org.primefaces.model.LazyDataModel;
  * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemplate> {
     private static final long serialVersionUID = 1L;
 
@@ -65,7 +65,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
 
-    @Inject
+    
     private UsageChargeTemplateService usageChargeTemplateService;
 
     @Inject

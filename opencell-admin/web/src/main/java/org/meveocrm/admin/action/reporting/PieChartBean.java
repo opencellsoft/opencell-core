@@ -25,7 +25,7 @@ import org.meveo.model.dwh.PieChart;
 import org.primefaces.model.chart.PieChartModel;
 
 @Named
-@ViewScoped
+
 public class PieChartBean extends ChartEntityBean<PieChart,PieChartModel,PieChartEntityModel> {
 
 	/**

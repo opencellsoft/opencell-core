@@ -67,7 +67,7 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.UploadedFile;
 
 @Named
-@ViewScoped
+
 public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private static final long serialVersionUID = -2748591950645172132L;

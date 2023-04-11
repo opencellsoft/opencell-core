@@ -37,7 +37,7 @@ import org.meveo.service.catalog.impl.ServiceParameterTemplateService;
  * It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 // TODO: @Restrict("#{s:hasRole('meveo.catalog')}")
 public class ServiceParameterTemplateBean extends
 		BaseBean<ServiceParameterTemplate> {

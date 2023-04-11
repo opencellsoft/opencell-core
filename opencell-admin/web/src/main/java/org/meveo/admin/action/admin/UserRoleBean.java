@@ -56,7 +56,7 @@ import org.primefaces.model.DualListModel;
  * @lastModifiedVersion 6.0
  */
 @Named
-@ViewScoped
+
 public class UserRoleBean extends BaseBean<Role> {
 
     private static final long serialVersionUID = 1L;

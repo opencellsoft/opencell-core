@@ -39,7 +39,7 @@ import org.primefaces.model.TreeNode;
  * @lastModifiedVersion 5.2
  **/
 @Named
-@ConversationScoped
+
 public class OfferTemplateCategoryListBean extends OfferTemplateCategoryBean {
 
 	private static final long serialVersionUID = 5774070245274693692L;

@@ -24,7 +24,7 @@ import javax.inject.Named;
 import org.meveo.service.billing.impl.SubscriptionService;
 
 @Named
-@ConversationScoped
+
 public class AccessListBean extends AccessBean {
 
     private static final long serialVersionUID = -3037867704912788038L;

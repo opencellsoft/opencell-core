@@ -32,7 +32,7 @@ import org.meveo.model.billing.AccountingCode;
  * @lastModifiedVersion 5.0
  **/
 @Named
-@ConversationScoped
+
 public class AccountingCodeListBean extends AccountingCodeBean {
 
     private static final long serialVersionUID = 7930022522613448157L;

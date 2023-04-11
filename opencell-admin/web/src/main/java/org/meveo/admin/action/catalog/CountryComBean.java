@@ -32,7 +32,7 @@ import org.meveo.service.catalog.impl.CountryComService;
 
 
 @Named
-@ConversationScoped
+
 public class CountryComBean extends BaseBean<TradingCountry> {
 
 	private static final long serialVersionUID = 1L;

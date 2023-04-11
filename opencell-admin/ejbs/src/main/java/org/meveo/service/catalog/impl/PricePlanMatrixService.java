@@ -68,7 +68,7 @@ import org.meveo.service.base.BusinessService;
  * @lastModifiedVersion 5.0
  *
  */
-@Stateless
+
 public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {  
 
     @Inject 

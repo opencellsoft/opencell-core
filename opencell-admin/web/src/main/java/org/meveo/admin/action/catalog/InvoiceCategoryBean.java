@@ -32,7 +32,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 
 @Named
-@ViewScoped
+
 public class InvoiceCategoryBean extends CustomFieldBean<InvoiceCategory> {
 
 	private static final long serialVersionUID = 1L;

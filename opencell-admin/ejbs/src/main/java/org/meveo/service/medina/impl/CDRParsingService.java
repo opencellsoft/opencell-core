@@ -50,7 +50,7 @@ import org.meveo.service.base.PersistenceService;
  * 
  * @author Andrius Karpavicius
  */
-@Stateless
+
 public class CDRParsingService extends PersistenceService<EDR> {
 
     @Inject

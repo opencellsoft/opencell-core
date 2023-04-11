@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class TradingCurrencyListBean extends TradingCurrencyBean {
 
     private static final long serialVersionUID = 5761298784298195322L;

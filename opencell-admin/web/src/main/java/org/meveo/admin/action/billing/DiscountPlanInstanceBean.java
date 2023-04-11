@@ -32,7 +32,7 @@ import org.meveo.service.billing.impl.DiscountPlanInstanceService;
  * @lastModifiedVersion 5.3
  */
 @Named
-@ViewScoped
+
 public class DiscountPlanInstanceBean extends CustomFieldBean<DiscountPlanInstance> {
 
 	private static final long serialVersionUID = -4454680184449485082L;

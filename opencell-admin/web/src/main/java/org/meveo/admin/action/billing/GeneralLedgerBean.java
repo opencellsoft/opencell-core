@@ -28,7 +28,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.GeneralLedgerService;
 
 @Named
-@ViewScoped
+
 public class GeneralLedgerBean extends BaseBean<GeneralLedger> {
 
     private static final long serialVersionUID = 1L;

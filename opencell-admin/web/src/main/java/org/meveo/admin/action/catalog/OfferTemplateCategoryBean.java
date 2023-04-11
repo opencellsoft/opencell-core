@@ -65,7 +65,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
  * @author Edward P. Legaspi
  **/
 @Named
-@ViewScoped
+
 public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCategory> {
 
     private static final long serialVersionUID = 1L;

@@ -28,7 +28,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 
 
 @Named
-@ViewScoped
+
 public class ServiceChargeTemplateTerminationBean extends BaseBean<ServiceChargeTemplateTermination> {
 
     private static final long serialVersionUID = 1L;

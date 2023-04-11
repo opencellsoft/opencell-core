@@ -43,7 +43,7 @@ import org.primefaces.model.DualListModel;
  * @author Edward P. Legaspi
  */
 @Named
-@ViewScoped
+
 public class ProductChargeTemplateBean extends BaseBean<ProductChargeTemplate> {
 
     private static final long serialVersionUID = -1167691337353764450L;
@@ -57,7 +57,7 @@ public class ProductChargeTemplateBean extends BaseBean<ProductChargeTemplate> {
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
 
-    @Inject
+    
     private UsageChargeTemplateService usageChargeTemplateService;
 
     @Inject

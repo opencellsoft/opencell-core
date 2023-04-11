@@ -30,7 +30,7 @@ import org.meveo.service.base.local.IPersistenceService;
 /**
  * @author Edward P. Legaspi
  **/
-@ViewScoped
+
 @Named
 public class AuditLogBean extends BaseBean<AuditLog> {
 

@@ -35,7 +35,7 @@ import org.meveo.service.billing.impl.OneShotChargeInstanceService;
  * It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class PonctualChargeInstanceBean extends
 		BaseBean<OneShotChargeInstance> {
 

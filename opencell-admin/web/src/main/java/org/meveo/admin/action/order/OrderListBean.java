@@ -23,7 +23,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class OrderListBean extends OrderBean {
 
     private static final long serialVersionUID = 6301829745333803753L;

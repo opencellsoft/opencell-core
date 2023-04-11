@@ -42,7 +42,7 @@ import org.meveo.util.EntityCustomizationUtils;
  * @author Andrius Karpavicius
  **/
 @FacesConverter(value = "customFieldAppliesToConverter", managed = true)
-@ViewScoped
+
 public class CustomFieldAppliesToConverter implements Converter, Serializable {
 
     private static final long serialVersionUID = -7175173363564310863L;

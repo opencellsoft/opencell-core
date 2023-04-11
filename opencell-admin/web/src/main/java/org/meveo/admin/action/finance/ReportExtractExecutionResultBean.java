@@ -36,7 +36,7 @@ import org.meveo.service.finance.ReportExtractExecutionResultService;
  * @lastModifiedVersion 5.1
  **/
 @Named
-@ViewScoped
+
 public class ReportExtractExecutionResultBean extends BaseBean<ReportExtractExecutionResult> {
 
     private static final long serialVersionUID = 7729137918906130036L;

@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class BillingCycleListBean extends BillingCycleBean {
 
     private static final long serialVersionUID = -3934817549235717857L;

@@ -35,7 +35,7 @@ import org.meveo.service.billing.impl.CounterInstanceService;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class CounterInstanceBean extends BaseBean<CounterInstance> {
 
 	private static final long serialVersionUID = 1L;

@@ -32,7 +32,7 @@ import org.meveo.service.notification.GenericNotificationService;
  *
  **/
 @Named
-@ViewScoped
+
 public class GenericNotificationBean extends UpdateMapTypeFieldBean<Notification> {
 
 	private static final long serialVersionUID = 1L;

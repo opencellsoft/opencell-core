@@ -40,7 +40,7 @@ import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.primefaces.model.LazyDataModel;
 
 @Named
-@ViewScoped
+
 public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
     private static final long serialVersionUID = 1L;

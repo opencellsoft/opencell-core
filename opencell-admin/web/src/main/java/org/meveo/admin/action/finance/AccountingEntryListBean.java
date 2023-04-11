@@ -39,7 +39,7 @@ import org.meveo.model.payments.RecordedInvoice;
  * @author mboukayoua
  */
 @Named
-@ConversationScoped
+
 public class AccountingEntryListBean extends AccountingEntryBean {
 	
 	private static final long serialVersionUID = 1L;

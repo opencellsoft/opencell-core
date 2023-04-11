@@ -90,7 +90,7 @@ import org.slf4j.LoggerFactory;
  * @author Tarik FA.
  * @version 10.0
  */
-@Stateless
+
 public class PricePlanMatrixVersionService extends PersistenceService<PricePlanMatrixVersion> {
 
     private static final String STATUS_ERROR_MSG = "status of the price plan matrix version is %s, it can not be updated nor removed";
@@ -113,7 +113,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     @Inject
     private AttributeInstanceService attributeInstanceService;
 
-    @Inject
+    
     private PricePlanMatrixService pricePlanMatrixService;
     
 	@Inject

@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class WalletListBean extends WalletBean {
 
     private static final long serialVersionUID = -3037867704912788017L;

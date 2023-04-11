@@ -28,7 +28,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.job.TimerEntityService;
 
 @Named
-@ViewScoped
+
 public class TimerEntityBean extends BaseBean<TimerEntity> {
 
     private static final long serialVersionUID = 1L;

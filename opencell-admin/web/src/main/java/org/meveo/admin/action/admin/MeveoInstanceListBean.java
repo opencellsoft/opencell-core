@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class MeveoInstanceListBean extends MeveoInstanceBean {
 
 	private static final long serialVersionUID = 1L;

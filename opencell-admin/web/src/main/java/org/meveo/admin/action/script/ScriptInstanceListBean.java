@@ -25,7 +25,7 @@ import javax.inject.Named;
  * @lastModifiedVersion 5.1
  */
 @Named
-@ConversationScoped
+
 public class ScriptInstanceListBean extends ScriptInstanceBean {
 
     private static final long serialVersionUID = -3037867704912788029L;

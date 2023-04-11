@@ -41,7 +41,7 @@ import org.primefaces.model.LazyDataModel;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class PaymentBean extends CustomFieldBean<Payment> {
 
 	private static final long serialVersionUID = 1L;

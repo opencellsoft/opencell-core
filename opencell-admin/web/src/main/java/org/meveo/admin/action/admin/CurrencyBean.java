@@ -33,7 +33,7 @@ import org.meveo.service.base.local.IPersistenceService;
  * custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class CurrencyBean extends BaseBean<Currency> {
 
     private static final long serialVersionUID = 1895532923500996522L;

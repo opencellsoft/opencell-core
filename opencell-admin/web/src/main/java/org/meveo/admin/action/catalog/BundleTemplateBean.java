@@ -60,7 +60,7 @@ import static org.meveo.commons.utils.StringUtils.isBlank;
  * 
  */
 @Named
-@ViewScoped
+
 public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
     private static final long serialVersionUID = -2076286547281668406L;

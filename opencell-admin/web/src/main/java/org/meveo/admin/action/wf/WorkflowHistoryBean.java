@@ -40,7 +40,7 @@ import org.meveo.service.wf.WorkflowService;
  * components.
  */
 @Named
-@ViewScoped
+
 public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 	private static final long serialVersionUID = 1L;
 

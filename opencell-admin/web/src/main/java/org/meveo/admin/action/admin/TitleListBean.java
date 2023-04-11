@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class TitleListBean extends TitleBean {
 
     private static final long serialVersionUID = 8647763338227138845L;

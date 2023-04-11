@@ -30,7 +30,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.service.base.PersistenceService;
 
 @Named
-@ConversationScoped
+
 public class ProductAndBundleTemplateListBean extends ProductTemplateListBean {
 
     private static final long serialVersionUID = 7690305402189246824L;

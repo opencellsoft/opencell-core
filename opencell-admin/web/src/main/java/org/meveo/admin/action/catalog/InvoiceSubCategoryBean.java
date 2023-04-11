@@ -37,7 +37,7 @@ import org.omnifaces.cdi.Param;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> {
     private static final long serialVersionUID = 1L;
 

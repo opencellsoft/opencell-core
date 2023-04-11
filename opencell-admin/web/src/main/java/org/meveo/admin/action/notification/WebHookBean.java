@@ -63,7 +63,7 @@ import org.primefaces.model.UploadedFile;
  * 
  */
 @Named
-@ViewScoped
+
 public class WebHookBean extends BaseNotificationBean<WebHook> {
 
     private static final long serialVersionUID = -5605274745661054861L;

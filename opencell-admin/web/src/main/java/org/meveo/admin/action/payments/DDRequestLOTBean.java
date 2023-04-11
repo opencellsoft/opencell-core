@@ -48,7 +48,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  * @author anasseh
  */
 @Named
-@ViewScoped
+
 public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 
     private static final long serialVersionUID = 1L;

@@ -44,7 +44,7 @@ import java.util.List;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
     private static final long serialVersionUID = 1L;
 

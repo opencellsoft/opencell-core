@@ -30,7 +30,7 @@ import org.meveo.security.client.ApiProtectionGranularityEnum;
 import org.meveo.security.client.KeycloakAdminClientService;
 
 @Named
-@ConversationScoped
+
 public class ApiSecurityBean implements Serializable {
 
     private static final long serialVersionUID = 5761298784298195322L;

@@ -39,7 +39,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.AccountService;
 
-@Stateless
+
 public class UserAccountService extends AccountService<UserAccount> {
 	
 	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount)

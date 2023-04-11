@@ -47,7 +47,7 @@ import org.meveo.service.dwh.GdprService;
  * @lastModifiedVersion 5.2
  */
 @Named
-@ViewScoped
+
 public class CustomerBean extends AccountBean<Customer> {
 
     private static final long serialVersionUID = 1L;

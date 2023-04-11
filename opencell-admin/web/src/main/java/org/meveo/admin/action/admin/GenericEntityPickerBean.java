@@ -35,7 +35,7 @@ import org.meveo.service.base.BaseEntityService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.primefaces.model.LazyDataModel;
 
-@ViewScoped
+
 @Named
 public class GenericEntityPickerBean extends BaseBean<IEntity> {
 

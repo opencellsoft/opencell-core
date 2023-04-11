@@ -34,7 +34,7 @@ import javax.inject.Named;
 import java.util.*;
 
 @Named
-@ViewScoped
+
 public class DataCollectorBean extends UpdateMapTypeFieldBean<DataCollector> {
 
     private static final long serialVersionUID = -1644247310764456827L;

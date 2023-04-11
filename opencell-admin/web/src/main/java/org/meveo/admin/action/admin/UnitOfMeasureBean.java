@@ -35,7 +35,7 @@ import org.meveo.service.catalog.impl.UnitOfMeasureService;
  */
 
 @Named
-@ViewScoped
+
 public class UnitOfMeasureBean extends BaseBean<UnitOfMeasure> {
 
     private static final long serialVersionUID = -2634473401391113093L;

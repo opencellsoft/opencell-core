@@ -30,7 +30,7 @@ import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
 
 @Named
-@ConversationScoped
+
 public class AccountOperationListBean extends AccountOperationBean {
 
     private static final long serialVersionUID = 6901290794255512020L;

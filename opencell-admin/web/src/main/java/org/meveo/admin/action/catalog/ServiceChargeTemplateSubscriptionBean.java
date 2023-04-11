@@ -27,7 +27,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 
 @Named
-@ViewScoped
+
 public class ServiceChargeTemplateSubscriptionBean extends BaseBean<ServiceChargeTemplateSubscription> {
 
 	private static final long serialVersionUID = 1L;

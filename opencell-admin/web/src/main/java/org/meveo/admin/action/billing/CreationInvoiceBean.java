@@ -106,7 +106,7 @@ import org.primefaces.model.LazyDataModel;
  * @lastModifiedVersion 7.0
  */
 @Named
-@ViewScoped
+
 public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     private static final long serialVersionUID = 1L;
@@ -135,7 +135,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @Inject
     private ServiceSingleton serviceSingleton;
 
-    @Inject
+    
     private UserAccountService userAccountService;
 
     @Inject

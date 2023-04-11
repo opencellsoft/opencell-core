@@ -51,14 +51,14 @@ import org.primefaces.model.LazyDataModel;
  * @lastModifiedVersion 7.2.0
  */
 @Named
-@ViewScoped
+
 @ViewBean
 public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     private static final long serialVersionUID = 1L;
     /**
      * Injected @{link ScriptInstance} service. Extends {@link PersistenceService}.
      */
-    @Inject
+    
     private ScriptInstanceService scriptInstanceService;
 
     @Inject

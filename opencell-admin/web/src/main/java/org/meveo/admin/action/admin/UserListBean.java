@@ -31,7 +31,7 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
 @Named
-@ConversationScoped
+
 public class UserListBean extends UserBean {
 
     private static final long serialVersionUID = 5761298784298195322L;

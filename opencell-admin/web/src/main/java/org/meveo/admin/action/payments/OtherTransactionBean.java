@@ -46,7 +46,7 @@ import org.primefaces.model.LazyDataModel;
  * @lastModifiedVersion 5.4.0
  */
 @Named
-@ViewScoped
+
 public class OtherTransactionBean extends CustomFieldBean<OtherTransaction> {
 
     private static final long serialVersionUID = 1L;

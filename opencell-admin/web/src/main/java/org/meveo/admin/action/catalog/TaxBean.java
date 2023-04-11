@@ -40,7 +40,7 @@ import org.meveo.service.catalog.impl.TaxService;
  * @lastModifiedVersion 5.0
  */
 @Named
-@ViewScoped
+
 public class TaxBean extends CustomFieldBean<Tax> {
     private static final long serialVersionUID = 1L;
     /**

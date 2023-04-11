@@ -33,7 +33,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ConversationScoped
+
 public class CustomerAccountListBean extends BaseBean<CustomerAccount> {
 
     private static final long serialVersionUID = 1L;

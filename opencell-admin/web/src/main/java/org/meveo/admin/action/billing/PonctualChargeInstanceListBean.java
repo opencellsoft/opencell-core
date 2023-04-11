@@ -21,7 +21,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 @Named
-@ConversationScoped
+
 public class PonctualChargeInstanceListBean extends PonctualChargeInstanceBean {
 
     private static final long serialVersionUID = -7980264970481861911L;

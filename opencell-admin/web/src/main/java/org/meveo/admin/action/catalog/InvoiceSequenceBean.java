@@ -37,7 +37,7 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.primefaces.model.DualListModel;
 
 @Named
-@ViewScoped
+
 @ViewBean
 public class InvoiceSequenceBean extends BaseBean<InvoiceSequence> {
 

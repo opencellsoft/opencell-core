@@ -35,7 +35,7 @@ import org.slf4j.Logger;
  * Class to manage other applications : Medina, Vertina, Oudaya, Bayad.
  */
 @Named
-@ConversationScoped
+
 public class Management implements Serializable {
 
     private static final long serialVersionUID = 1L;

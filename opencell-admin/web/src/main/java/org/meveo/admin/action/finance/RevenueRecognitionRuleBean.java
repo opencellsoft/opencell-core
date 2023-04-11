@@ -28,7 +28,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
 
 @Named
-@ViewScoped
+
 public class RevenueRecognitionRuleBean extends BaseBean<RevenueRecognitionRule> {
 
 	private static final long serialVersionUID = 1L;

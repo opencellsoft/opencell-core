@@ -61,7 +61,7 @@ import org.primefaces.model.UploadedFile;
  *
  */
 @Named
-@ViewScoped
+
 public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
 
     private static final long serialVersionUID = 6473465285480945644L;
@@ -72,7 +72,7 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
     @Inject
     private JobInstanceService jobInstanceService;
 
-    @Inject
+    
     private ScriptInstanceService scriptInstanceService;
 
     CsvReader csvReader = null;

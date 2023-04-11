@@ -43,7 +43,7 @@ import org.meveo.service.base.BusinessService;
  * @author khalid HORRI
  * @lastModifiedVersion 6.1
  */
-@Stateless
+
 public class UsageChargeInstanceService extends BusinessService<UsageChargeInstance> {
 
     @Inject
@@ -150,19 +150,5 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
             return getEntityManager().createNamedQuery("UsageChargeInstance.getActiveUsageCharges", UsageChargeInstance.class).getResultList();
         }
         return getEntityManager().createNamedQuery("UsageChargeInstance.getActiveUsageChargesBySubscriptionId", UsageChargeInstance.class).setParameter("subscriptionId", subscriptionId).getResultList();
-    }
-
-    /**
-     * Get a list of usage charge instances valid for a given subscription and a date
-     *
-     * @param subscription Subscription
-     * @param date Date to check usage charge validity
-     * @return An ordered list by priority (ascended) of usage charge instances
-     */
-    public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Subscription subscription, Date date) {
-
-        return subscription.getUsageChargeInstances().stream()
-            .filter(ci -> ci.getStatus() == InstanceStatusEnum.ACTIVE || ((ci.getStatus() == InstanceStatusEnum.TERMINATED || ci.getStatus() == InstanceStatusEnum.SUSPENDED) && ci.getTerminationDate().after(date)))
-            .collect(Collectors.toList());
     }
 }

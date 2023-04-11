@@ -41,7 +41,7 @@ import org.primefaces.event.CellEditEvent;
  * @lastModifiedVersion 5.0
  */
 @Named
-@ViewScoped
+
 public class MeasurementBean extends BaseBean<MeasuredValue> {
 
     private static final long serialVersionUID = 883901110961710869L;

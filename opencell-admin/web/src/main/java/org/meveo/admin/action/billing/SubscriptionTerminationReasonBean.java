@@ -29,7 +29,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
 @Named
-@ConversationScoped
+
 public class SubscriptionTerminationReasonBean extends
 		BaseBean<SubscriptionTerminationReason> {
 	private static final long serialVersionUID = 1L;

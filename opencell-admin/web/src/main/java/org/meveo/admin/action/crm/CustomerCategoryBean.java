@@ -35,7 +35,7 @@ import org.meveo.service.crm.impl.CustomerCategoryService;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class CustomerCategoryBean extends CustomFieldBean<CustomerCategory> {
 
 	private static final long serialVersionUID = 1L;

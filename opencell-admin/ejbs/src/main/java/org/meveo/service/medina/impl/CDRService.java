@@ -42,7 +42,7 @@ import org.meveo.service.base.PersistenceService;
  * @author anasseh
  * @since 9.3
  */
-@Stateless
+
 public class CDRService extends PersistenceService<CDR> {
     
     private boolean persistCDR = false;

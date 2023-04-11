@@ -61,7 +61,7 @@ import org.primefaces.model.UploadedFile;
  * 
  */
 @Named
-@ViewScoped
+
 public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
 
     private static final long serialVersionUID = -6762628879784107169L;

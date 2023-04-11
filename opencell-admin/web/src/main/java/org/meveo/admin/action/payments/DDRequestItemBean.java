@@ -37,7 +37,7 @@ import org.meveo.service.payments.impl.DDRequestItemService;
  * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class DDRequestItemBean extends BaseBean<DDRequestItem> {
 
     private static final long serialVersionUID = 1L;

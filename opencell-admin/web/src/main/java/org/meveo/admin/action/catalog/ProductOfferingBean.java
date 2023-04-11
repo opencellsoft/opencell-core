@@ -27,7 +27,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 
 @Named
-@ViewScoped
+
 public class ProductOfferingBean extends BaseBean<ProductOffering> {
 
     private static final long serialVersionUID = -5781632820061377157L;

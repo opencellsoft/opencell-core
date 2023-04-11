@@ -40,7 +40,7 @@ import org.meveo.service.crm.impl.ProviderContactService;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class ProviderContactBean extends BaseBean<ProviderContact> {
 
     private static final long serialVersionUID = 1L;

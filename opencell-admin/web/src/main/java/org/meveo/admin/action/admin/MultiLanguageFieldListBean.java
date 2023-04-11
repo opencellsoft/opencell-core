@@ -35,7 +35,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
 @Named
-@ConversationScoped
+
 public class MultiLanguageFieldListBean extends BaseBean<IEntity> {
 
     private static final long serialVersionUID = 8501551399825487066L;

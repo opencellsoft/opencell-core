@@ -49,7 +49,7 @@ import org.primefaces.model.DualListModel;
  * @lastModifiedVersion 6.X
  */
 @Named
-@ViewScoped
+
 public class ProviderBean extends CustomFieldBean<Provider> {
 
     private static final long serialVersionUID = 1L;

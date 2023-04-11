@@ -32,7 +32,7 @@ import org.meveo.service.crm.impl.CrmAccountService;
  */
 
 @Named
-@ConversationScoped
+
 public class CrmAccountListBean extends BaseBean<AccountEntity> {
 
     private static final long serialVersionUID = 1L;

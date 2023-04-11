@@ -36,7 +36,7 @@ import org.meveo.service.billing.impl.AccountingCodeService;
  * @lastModifiedVersion 5.0
  **/
 @Named
-@ViewScoped
+
 public class AccountingCodeBean extends BaseBean<AccountingCode> {
 
     private static final long serialVersionUID = 2651189307182763842L;

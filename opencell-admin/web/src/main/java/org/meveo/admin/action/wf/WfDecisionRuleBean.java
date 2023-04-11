@@ -31,7 +31,7 @@ import org.meveo.service.wf.WFDecisionRuleService;
  * filtering/sorting in datatable, their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class WfDecisionRuleBean extends BaseBean<WFDecisionRule> {
 
     private static final long serialVersionUID = 1L;

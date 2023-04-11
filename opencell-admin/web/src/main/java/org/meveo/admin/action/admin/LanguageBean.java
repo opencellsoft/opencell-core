@@ -29,7 +29,7 @@ import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.base.local.IPersistenceService;
 
 @Named
-@ViewScoped
+
 public class LanguageBean extends BaseBean<Language> {
 
 	private static final long serialVersionUID = 1L;

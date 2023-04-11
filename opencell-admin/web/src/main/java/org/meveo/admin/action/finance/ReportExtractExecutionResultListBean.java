@@ -28,7 +28,7 @@ import javax.inject.Named;
  * @lastModifiedVersion 5.1
  **/
 @Named
-@ConversationScoped
+
 public class ReportExtractExecutionResultListBean extends ReportExtractExecutionResultBean {
 
     private static final long serialVersionUID = 1157978310112246125L;

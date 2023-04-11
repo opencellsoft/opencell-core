@@ -36,7 +36,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
 
 @Named
-@ViewScoped
+
 public class BusinessServiceModelBean extends GenericModuleBean<BusinessServiceModel> {
 
     private static final long serialVersionUID = 8222060379099238520L;

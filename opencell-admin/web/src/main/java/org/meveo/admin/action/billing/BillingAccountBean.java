@@ -74,7 +74,7 @@ import org.primefaces.model.DualListModel;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     private static final long serialVersionUID = 1L;
@@ -98,7 +98,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     @Inject
     private CustomerAccountService customerAccountService;
 
-    @Inject
+    
     private DiscountPlanService discountPlanService;
     
     @Inject

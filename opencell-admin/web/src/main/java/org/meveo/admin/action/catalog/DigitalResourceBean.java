@@ -31,7 +31,7 @@ import org.meveo.service.catalog.impl.DigitalResourceService;
  * @author Edward P. Legaspi
  */
 @Named
-@ViewScoped
+
 public class DigitalResourceBean extends BaseBean<DigitalResource> {
 
 	private static final long serialVersionUID = -7239556219857397001L;

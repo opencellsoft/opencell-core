@@ -45,7 +45,7 @@ import org.primefaces.event.SelectEvent;
  * @lastModifiedVersion 8.0.0
  */
 @Named
-@ViewScoped
+
 public class TradingCountryBean extends BaseBean<TradingCountry> {
 
 	private static final long serialVersionUID = 1L;

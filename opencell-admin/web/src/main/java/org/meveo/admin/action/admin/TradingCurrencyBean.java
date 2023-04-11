@@ -42,7 +42,7 @@ import org.primefaces.event.SelectEvent;
  * view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 
 	private static final long serialVersionUID = 1L;

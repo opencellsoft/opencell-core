@@ -59,7 +59,7 @@ import org.primefaces.model.DualListModel;
  */
 
 @Named
-@ViewScoped
+
 public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
     private static final long serialVersionUID = 1L;

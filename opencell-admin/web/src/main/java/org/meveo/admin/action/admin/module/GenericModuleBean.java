@@ -77,7 +77,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     @Inject
     private MeveoModuleApi moduleApi;
 
-    @Inject
+//    @Inject
     private ScriptInstanceService scriptInstanceService;
 
     @Inject

@@ -37,7 +37,7 @@ import org.meveo.service.crm.impl.EmailService;
  * custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class EmailBean extends BaseBean<Email> {
 
 	private static final long serialVersionUID = 1L;

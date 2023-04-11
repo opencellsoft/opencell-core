@@ -61,7 +61,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.cpq.AttributeService;
 
-@Stateless
+
 public class AccountingArticleService extends BusinessService<AccountingArticle> {
 
 	@Inject private ArticleMappingLineService articleMappingLineService;

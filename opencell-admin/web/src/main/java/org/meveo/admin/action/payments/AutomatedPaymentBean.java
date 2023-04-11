@@ -38,7 +38,7 @@ import org.meveo.service.payments.impl.AutomatedPaymentService;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class AutomatedPaymentBean extends CustomFieldBean<AutomatedPayment> {
 
 	private static final long serialVersionUID = 1L;

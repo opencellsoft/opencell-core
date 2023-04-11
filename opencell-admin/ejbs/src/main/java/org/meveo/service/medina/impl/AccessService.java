@@ -32,7 +32,7 @@ import java.util.List;
 
 import static org.meveo.model.shared.DateUtils.isPeriodsOverlap;
 
-@Stateless
+
 public class AccessService extends PersistenceService<Access> {
 
     /**

@@ -56,7 +56,7 @@ import org.primefaces.model.StreamedContent;
  * @lastModifiedVersion 5.3
  **/
 @Named
-@ViewScoped
+
 public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
 
     private static final long serialVersionUID = -3817116164208834748L;

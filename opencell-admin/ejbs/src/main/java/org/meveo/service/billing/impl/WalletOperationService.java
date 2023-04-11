@@ -99,7 +99,7 @@ import org.meveo.service.filter.FilterService;
  * @author Mbarek-Ay
  * @lastModifiedVersion 7.0
  */
-@Stateless
+
 public class WalletOperationService extends PersistenceService<WalletOperation> {
 
     @Inject

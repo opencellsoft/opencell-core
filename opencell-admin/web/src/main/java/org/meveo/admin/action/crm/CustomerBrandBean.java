@@ -35,7 +35,7 @@ import org.meveo.service.crm.impl.CustomerBrandService;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class CustomerBrandBean extends BaseBean<CustomerBrand> {
 
 	private static final long serialVersionUID = 1L;

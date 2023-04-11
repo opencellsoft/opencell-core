@@ -104,7 +104,7 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
  * @lastModifiedVersion 7.0
  */
 @Named
-@ViewScoped
+
 public class OrderBean extends CustomFieldBean<Order> {
 
     private static final long serialVersionUID = 7399464661886086329L;
@@ -124,7 +124,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     @Inject
     private OrderApi orderApi;
 
-    @Inject
+    
     private UserAccountService userAccountService;
 
     @Inject

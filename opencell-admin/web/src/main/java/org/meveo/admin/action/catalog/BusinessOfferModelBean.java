@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 @Named
-@ViewScoped
+
 public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel> {
 
     private static final long serialVersionUID = 8222060379099238520L;

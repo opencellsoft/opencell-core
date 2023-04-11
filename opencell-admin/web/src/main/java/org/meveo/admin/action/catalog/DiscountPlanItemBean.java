@@ -37,12 +37,12 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
  * @author Edward P. Legaspi
  **/
 @Named
-@ViewScoped
+
 public class DiscountPlanItemBean extends CustomFieldBean<DiscountPlanItem> {
 
 	private static final long serialVersionUID = -2345373648137067066L;
 
-	@Inject
+	
 	private DiscountPlanItemService discountPlanItemService;
 
 	@Inject

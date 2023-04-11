@@ -37,7 +37,7 @@ import org.meveo.service.wf.WorkflowService;
  * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class ActionPlanItemBean extends BaseBean<WFAction> {
 
     private static final long serialVersionUID = 1L;

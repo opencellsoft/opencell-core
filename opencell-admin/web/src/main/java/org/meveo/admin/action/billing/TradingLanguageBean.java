@@ -46,7 +46,7 @@ import org.primefaces.event.SelectEvent;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 
 	private static final long serialVersionUID = 1L;

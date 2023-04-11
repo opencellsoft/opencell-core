@@ -38,7 +38,7 @@ import org.meveo.service.generic.wf.WorkflowInstanceService;
  * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistory> {
 
     private static final long serialVersionUID = 1L;

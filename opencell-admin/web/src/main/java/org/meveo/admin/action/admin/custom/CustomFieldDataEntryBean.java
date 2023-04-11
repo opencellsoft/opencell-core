@@ -114,7 +114,7 @@ import java.util.Set;
  * @lastModifiedVersion 7.2.0
  */
 @Named
-@ViewScoped
+
 public class CustomFieldDataEntryBean implements Serializable {
 
     private static final long serialVersionUID = 2587695185934268809L;
@@ -146,7 +146,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     @Inject
     private EntityCustomActionService entityActionScriptService;
 
-    @Inject
+    
     private ScriptInstanceService scriptInstanceService;
 
     @Inject

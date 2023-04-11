@@ -38,7 +38,7 @@ import org.primefaces.model.LazyDataModel;
  * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class PaymentScheduleInstanceBean extends CustomFieldBean<PaymentScheduleInstance> {
     
     /** The Constant serialVersionUID. */

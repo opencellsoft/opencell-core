@@ -28,7 +28,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.RevenueScheduleService;
 
 @Named
-@ViewScoped
+
 public class RevenueScheduleBean extends BaseBean<RevenueSchedule> {
 
 	private static final long serialVersionUID = 1L;

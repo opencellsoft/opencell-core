@@ -36,7 +36,7 @@ import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 
 @Named
-@ViewScoped
+
 public class CustomEntityInstanceBean extends CustomFieldBean<CustomEntityInstance> {
 
     private static final long serialVersionUID = -459772193950603406L;

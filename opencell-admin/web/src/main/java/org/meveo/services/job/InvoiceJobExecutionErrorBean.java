@@ -42,7 +42,7 @@ import org.meveo.service.job.JobInstanceService;
  * @lastModifiedVersion 10.0
  */
 @Named
-@ViewScoped
+
 public class InvoiceJobExecutionErrorBean extends BaseBean<InvoiceJobExecutionError> {
 
     private static final long serialVersionUID = 1L;

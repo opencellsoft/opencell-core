@@ -145,7 +145,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Khalid HORRI
  * @lastModifiedVersion 10.0
  */
-@Stateless
+
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
 
     private static final String APPLY_MINIMA_EVEN_ON_ZERO_TRANSACTION = "apply.minima.even.on.zero.transaction";

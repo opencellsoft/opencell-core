@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBTransactionRolledbackException;
@@ -53,9 +54,11 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.DeducedCounter;
 import org.meveo.model.RatingResult;
+import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
@@ -82,7 +85,6 @@ import org.meveo.service.medina.impl.CDRService;
  * @author Abdellatif BARI
  * @author Mounir BAHIJE
  */
-@Stateless
 public class UsageRatingService extends RatingService implements Serializable {
 
     private static final long serialVersionUID = 1411446109227299227L;
@@ -391,7 +393,7 @@ public class UsageRatingService extends RatingService implements Serializable {
                 
                 boolean isSubscriptionInitialized = Hibernate.isInitialized(edr.getSubscription());
                 
-                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(edr.getSubscription(), edr.getEventDate());
+                usageChargeInstances = getUsageChargeInstancesValidForDateBySubscriptionId(edr.getSubscription(), edr.getEventDate());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     throw new NoChargeException("No active usage charges are associated with subscription " + subscriptionId);
                 }
@@ -712,5 +714,19 @@ public class UsageRatingService extends RatingService implements Serializable {
         } else if (fireRejectEvent) {
             rejectedEdrProducer.fire(edr);
         }
+    }
+    
+    /**
+     * Get a list of usage charge instances valid for a given subscription and a date
+     *
+     * @param subscription Subscription
+     * @param date Date to check usage charge validity
+     * @return An ordered list by priority (ascended) of usage charge instances
+     */
+    private List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Subscription subscription, Date date) {
+
+        return subscription.getUsageChargeInstances().stream()
+            .filter(ci -> ci.getStatus() == InstanceStatusEnum.ACTIVE || ((ci.getStatus() == InstanceStatusEnum.TERMINATED || ci.getStatus() == InstanceStatusEnum.SUSPENDED) && ci.getTerminationDate().after(date)))
+            .collect(Collectors.toList());
     }
 }

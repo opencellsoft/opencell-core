@@ -29,7 +29,7 @@ import org.meveo.service.payments.impl.JournalReportService;
 
 
 @Named
-@ViewScoped
+
 public class JournalBean extends BaseBean<Journal> {
 
 	private static final long serialVersionUID = 1L;

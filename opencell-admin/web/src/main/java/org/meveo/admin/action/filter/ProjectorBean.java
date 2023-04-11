@@ -31,7 +31,7 @@ import org.meveo.service.filter.ProjectorService;
  * @author Edward P. Legaspi
  **/
 @Named
-@ViewScoped
+
 public class ProjectorBean extends BaseBean<Projector> {
 
 	private static final long serialVersionUID = 2713969688721420571L;

@@ -54,7 +54,7 @@ import org.primefaces.model.TreeNode;
  * Standard backing bean for {@link AccountEntity} that allows build accounts hierarchy for richfaces tree component. In this Bean you can set icons and links used in tree.
  */
 @Named
-@ViewScoped
+
 public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
     protected static final String SELLER_KEY = "Seller";
@@ -103,7 +103,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     @Inject
     private BillingAccountService billingAccountService;
 
-    @Inject
+    
     private UserAccountService userAccountService;
 
     @Inject

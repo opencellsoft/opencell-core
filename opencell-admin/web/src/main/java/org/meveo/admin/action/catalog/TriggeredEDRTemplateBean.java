@@ -32,7 +32,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 
 @Named
-@ViewScoped
+
 public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 
     private static final long serialVersionUID = 1L;

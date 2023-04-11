@@ -37,7 +37,7 @@ import org.meveo.service.payments.impl.OCCTemplateService;
  * custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class OccTemplateBean extends BaseBean<OCCTemplate> {
 
 	private static final long serialVersionUID = 1L;

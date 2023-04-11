@@ -34,7 +34,7 @@ import org.primefaces.model.LazyDataModel;
  * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class RejectedBillingAccountBean extends BaseBean<RejectedBillingAccount> {
 
     private static final long serialVersionUID = 1L;

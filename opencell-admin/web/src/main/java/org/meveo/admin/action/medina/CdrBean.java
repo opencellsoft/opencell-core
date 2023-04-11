@@ -47,12 +47,12 @@ import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.medina.impl.CDRService;
 
 @Named
-@ViewScoped
+
 public class CdrBean extends BaseBean<CDR> {
 
     private static final long serialVersionUID = 7833532801870480214L;
 
-    @Inject
+    
     private CDRService cdrService;
 
     @Inject

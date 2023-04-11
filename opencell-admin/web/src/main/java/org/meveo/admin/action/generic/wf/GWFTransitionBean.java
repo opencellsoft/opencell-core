@@ -32,7 +32,7 @@ import org.meveo.service.generic.wf.GWFTransitionService;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class GWFTransitionBean extends BaseBean<GWFTransition> {
 
     private static final long serialVersionUID = 1L;

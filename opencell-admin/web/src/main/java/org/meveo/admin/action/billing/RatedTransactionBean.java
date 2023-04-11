@@ -43,7 +43,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
  * @lastModifiedVersion 7.0
  */
 @Named
-@ViewScoped
+
 public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 
     private static final long serialVersionUID = 1L;
@@ -51,7 +51,7 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
     /**
      * Injected @{link RatedTransaction} service. Extends {@link PersistenceService}.
      */
-    @Inject
+    
     private RatedTransactionService ratedTransactionService;
 
     @Inject

@@ -37,7 +37,7 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
 
 @Named
-@ConversationScoped
+
 public class EdrBean extends BaseBean<EDR> {
 
     private static final long serialVersionUID = 7833532801870480214L;

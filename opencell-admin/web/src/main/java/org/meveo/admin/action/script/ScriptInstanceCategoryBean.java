@@ -32,7 +32,7 @@ import org.meveo.service.script.ScriptInstanceCategoryService;
  * @lastModifiedVersion 5.1
  */
 @Named
-@ViewScoped
+
 public class ScriptInstanceCategoryBean extends BaseBean<ScriptInstanceCategory> {
 
     private static final long serialVersionUID = 4315061097389241940L;

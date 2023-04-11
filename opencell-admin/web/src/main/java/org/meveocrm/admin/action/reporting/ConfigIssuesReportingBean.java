@@ -67,7 +67,7 @@ import org.primefaces.event.TabChangeEvent;
  *
  */
 @Named
-@ViewScoped
+
 public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
 
     private static final long serialVersionUID = 1L;

@@ -36,7 +36,7 @@ import org.meveo.service.job.FtpTransferredFileService;
  * @author Tyshan Shi
  */
 @Named
-@ViewScoped
+
 public class FtpImportedFileBean extends BaseBean<FtpTransferredFile> {
 
 	private static final long serialVersionUID = 1L;

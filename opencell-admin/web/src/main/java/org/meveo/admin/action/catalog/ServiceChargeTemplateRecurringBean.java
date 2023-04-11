@@ -28,7 +28,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 
 
 @Named
-@ViewScoped
+
 public class ServiceChargeTemplateRecurringBean extends BaseBean<ServiceChargeTemplateRecurring> {
 
     private static final long serialVersionUID = 1L;

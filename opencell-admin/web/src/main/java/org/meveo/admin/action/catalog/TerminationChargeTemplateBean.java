@@ -28,7 +28,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 
 @Named
-@ViewScoped
+
 public class TerminationChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 

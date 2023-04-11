@@ -35,7 +35,7 @@ import org.omnifaces.cdi.Param;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class WalletBean extends BaseBean<WalletInstance> {
 
 	private static final long serialVersionUID = 1L;

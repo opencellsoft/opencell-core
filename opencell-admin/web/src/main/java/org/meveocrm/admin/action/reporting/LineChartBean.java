@@ -26,7 +26,7 @@ import org.primefaces.model.chart.LineChartModel;
 
 
 @Named
-@ViewScoped
+
 public class LineChartBean extends ChartEntityBean<LineChart,LineChartModel,LineChartEntityModel> {
 
 	private static final long serialVersionUID = -5171375359771241684L;

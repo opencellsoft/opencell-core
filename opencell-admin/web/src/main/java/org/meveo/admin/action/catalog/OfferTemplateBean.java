@@ -84,7 +84,7 @@ import static org.meveo.commons.utils.StringUtils.isBlank;
  * 
  */
 @Named
-@ViewScoped
+
 @ViewBean
 public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 

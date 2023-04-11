@@ -33,7 +33,7 @@ import org.meveo.service.billing.impl.TerminationReasonService;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class TerminationReasonBean extends
 		BaseBean<SubscriptionTerminationReason> {
 

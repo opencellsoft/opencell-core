@@ -61,7 +61,7 @@ import org.primefaces.model.Visibility;
  * @lastModifiedVersion 5.1
  */
 @Named
-@ViewScoped
+
 public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 
     private static final long serialVersionUID = -7046887530976683885L;
@@ -69,10 +69,10 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
     /**
      * Injected @{link PricePlanMatrix} service. Extends {@link PersistenceService}.
      */
-    @Inject
+    
     private PricePlanMatrixService pricePlanMatrixService;
 
-    @Inject
+    
     ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     @Inject

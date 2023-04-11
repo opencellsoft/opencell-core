@@ -37,7 +37,7 @@ import org.meveo.service.crm.impl.CrmAccountService;
  * @lastModifiedVersion 5.2
  */
 @Named
-@ViewScoped
+
 public class CrmAccountBean extends BaseBean<AccountEntity> {
 
     private static final long serialVersionUID = 1L;

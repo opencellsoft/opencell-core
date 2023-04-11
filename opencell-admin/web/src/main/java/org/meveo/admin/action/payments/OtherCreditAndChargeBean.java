@@ -53,7 +53,7 @@ import org.omnifaces.cdi.Param;
  * 
  */
 @Named
-@ViewScoped
+
 public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndCharge> {
     private static final long serialVersionUID = 1L;
 

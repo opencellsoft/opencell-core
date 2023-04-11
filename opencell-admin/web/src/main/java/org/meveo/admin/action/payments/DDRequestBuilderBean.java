@@ -43,7 +43,7 @@ import org.meveo.util.DDRequestBuilderClass;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class DDRequestBuilderBean extends CustomFieldBean<DDRequestBuilder> {
     private static final long serialVersionUID = 1L;
     /**

@@ -73,10 +73,10 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
  * @author R.AITYAAZZA
  * @version 11.0
  **/
-@Stateless
+
 public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem> {
 
-	@EJB
+	
 	private DiscountPlanService discountPlanService;
 	
 	@Inject

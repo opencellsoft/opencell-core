@@ -39,7 +39,7 @@ import org.meveo.service.payments.impl.DDRequestLotOpService;
  * Manaty custom JSF components.
  */
 @Named
-@ViewScoped
+
 public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
 
 	private static final long serialVersionUID = 1L;

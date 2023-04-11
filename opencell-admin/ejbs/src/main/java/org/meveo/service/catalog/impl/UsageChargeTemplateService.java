@@ -30,7 +30,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
  * Charge Template service implementation.
  * 
  */
-@Stateless
+
 public class UsageChargeTemplateService extends ChargeTemplateService<UsageChargeTemplate> {
 
     @Override

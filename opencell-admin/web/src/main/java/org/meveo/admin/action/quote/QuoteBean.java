@@ -85,7 +85,7 @@ import org.tmf.dsmapi.quote.ProductQuoteItem;
  * @lastModifiedVersion 7.0
  */
 @Named
-@ViewScoped
+
 public class QuoteBean extends CustomFieldBean<Quote> {
 
     private static final long serialVersionUID = 7399464661886086329L;

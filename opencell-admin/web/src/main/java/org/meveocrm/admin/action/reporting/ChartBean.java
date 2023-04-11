@@ -49,7 +49,7 @@ import com.google.gson.Gson;
  * @lastModifiedVersion 5.2
  */
 @Named
-@ViewScoped
+
 public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityModel<Chart, ChartModel>> {
 
     @Inject
