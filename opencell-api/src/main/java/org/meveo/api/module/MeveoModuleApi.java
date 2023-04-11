@@ -148,6 +148,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     @Inject
     private ProductTemplateService productTemplateService;
 
+    @Inject
+    private MeveoModuleApi thisNewTX;
+
     private static JAXBContext jaxbCxt;
     private static final Logger log = LoggerFactory.getLogger(MeveoModuleApi.class);
     static {
@@ -397,7 +400,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         MeveoModule meveoModule = meveoModuleService.findByCode(moduleDto.getCode());
         boolean installed = false;
         if (meveoModule == null) {
-            meveoModule = meveoModuleService.findByCode(moduleDto.getCode());
+            meveoModule = create(moduleDto);
 
         } else {
             if (!meveoModule.isDownloaded()) {
@@ -642,7 +645,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                             apiService.enableOrDisable((String) FieldUtils.readField(dto, "code", true), (Date) FieldUtils.readField(dto, "validFrom", true), (Date) FieldUtils.readField(dto, "validTo", true), true);
                         } else {
                             ApiService apiService = getApiService(entityClass, true);
-                            apiService.createOrUpdate((BusinessEntityDto) dto);
+
+                            thisNewTX.createOrUpdateApiServiceInNewTx(apiService, dto);
+
                             apiService.enableOrDisable((String) FieldUtils.readField(dto, "code", true), true);
                         }
 
@@ -683,6 +688,12 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         } else if (moduleDto instanceof BusinessProductModelDto) {
             unpackAndInstallBPMItems((BusinessProductModel) meveoModule, (BusinessProductModelDto) moduleDto);
         }
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createOrUpdateApiServiceInNewTx(ApiService apiService, BaseEntityDto dto) {
+        apiService.createOrUpdate(dto);
     }
 
     private void writeModulePicture(String filename, byte[] fileData) {
