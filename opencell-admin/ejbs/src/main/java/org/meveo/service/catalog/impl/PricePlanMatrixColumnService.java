@@ -45,9 +45,6 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
     private PricePlanMatrixValueService pricePlanMatrixValueService;
     
     @Inject
-    PricePlanMatrixColumnService pricePlanMatrixColumnService;
-
-    @Inject
     private AttributeService attributeService;
 
     public List<PricePlanMatrixColumn> findByAttributes(List<Attribute> attributes) {
@@ -131,7 +128,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
             boolean isRange = firstLine[i].split("\\[").length > 1 && firstLine[i].split("\\[")[1].toLowerCase().contains("range");
             if (StringUtils.isNotBlank(column) && isValidColumn(column)) {
 
-                PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnService.findByCode(column);
+                PricePlanMatrixColumn pricePlanMatrixColumn = findByCode(column);
                 if (pricePlanMatrixColumn == null) {
                     throw new NotFoundException("PricePlanMatrixColumn with code= " + column + " does not exists");
                 }

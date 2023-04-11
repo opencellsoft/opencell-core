@@ -125,9 +125,6 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
-    @EJB
-    private ReratingService reratingServiceNewTx;
-
     @Inject
     private WalletOperationService walletOperationService;
 
@@ -272,7 +269,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                 if (sameTx) {
                     reRate(woIdsToRerate, false);
                 } else {
-                    reratingServiceNewTx.reRateInNewTx(woIdsToRerate, false);
+                    methodCallingUtils.callMethodInNewTx(()->reRateInNoTx(woIdsToRerate, false));
                 }
             }
 
@@ -354,8 +351,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
      * @throws BusinessException business exception
      * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void reRateInNewTx(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
+    private void reRateInNoTx(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         for (Long woId : woIds) {
 

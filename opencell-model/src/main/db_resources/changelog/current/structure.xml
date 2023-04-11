@@ -15739,4 +15739,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql>
     </changeSet>
 
+    <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius">
+        <alterSequence sequenceName="rating_cdr_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="rating_edr_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000"/>
+    </changeSet>
 </databaseChangeLog>
