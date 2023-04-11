@@ -26,22 +26,14 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.CustomGenericEntityCode;
-import org.meveo.model.sequence.Sequence;
-import org.meveo.service.base.BusinessEntityService;
-import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.ServiceSingleton;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -61,7 +53,7 @@ public class CustomGenericEntityCodeService extends PersistenceService<CustomGen
     private ServiceSingleton serviceSingleton;
 
     @Inject
-    private BusinessEntityService businessEntityService;
+    private PersistenceService persistenceService;
 
     public CustomGenericEntityCode findByClass(String entityClass) {
         if (entityClass == null) {
@@ -82,22 +74,22 @@ public class CustomGenericEntityCodeService extends PersistenceService<CustomGen
      *
      * @return the generic entity code
      */
-    public String getGenericEntityCode(BusinessEntity businessEntity) throws BusinessException {
+    public String getGenericEntityCode(BaseEntity entity) throws BusinessException {
         String customGenericCode = null;
-        CustomGenericEntityCode customGenericEntityCode = findByClass(businessEntity.getClass().getName());
+        CustomGenericEntityCode customGenericEntityCode = findByClass(entity.getClass().getName());
         if (customGenericEntityCode != null) {
             customGenericCode = serviceSingleton.getGenericCode(customGenericEntityCode);
         }
         if (customGenericCode == null) {
             customGenericCode = randomUUID().toString();
-            BusinessEntity entity =
-                    ((BusinessService) getServiceInterface(businessEntity.getClass())).findByCode(customGenericCode);
-            if (entity != null) {
-                Optional<Parameter> parameter = stream(businessEntity.getClass()
+            BaseEntity baseEntity =
+                    ((PersistenceService) getServiceInterface(entity.getClass())).findBusinessEntityByCode(customGenericCode);
+            if (baseEntity != null) {
+                Optional<Parameter> parameter = stream(baseEntity.getClass()
                         .getAnnotation(GenericGenerator.class).parameters())
                         .findFirst();
                 if(parameter.isPresent()) {
-                    customGenericCode += businessEntityService.findNextSequenceId(parameter.get().value()).toString();
+                    customGenericCode += persistenceService.findNextSequenceId(parameter.get().value()).toString();
                 } else {
                     customGenericCode += now().getNano();
                 }

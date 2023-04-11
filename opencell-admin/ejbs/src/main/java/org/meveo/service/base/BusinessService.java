@@ -17,10 +17,6 @@
  */
 package org.meveo.service.base;
 
-import static java.math.BigInteger.ONE;
-import static org.meveo.jpa.EntityManagerProvider.isDBOracle;
-
-import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -204,14 +200,6 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
             log.error("More than one entity of type {} with code {} found", entityClass, code);
             return null;
         }
-    }
-
-    public Long findNextSequenceId(String sequenceName) {
-        BigInteger nextSequenceValue = (BigInteger) getEntityManager().createNativeQuery(isDBOracle()
-                ? "SELECT " + sequenceName +".nextval FROM dual"
-                : "select nextval('"+ sequenceName + "')" )
-                .getSingleResult();
-        return (nextSequenceValue.add(ONE)).longValue();
     }
     
 }
