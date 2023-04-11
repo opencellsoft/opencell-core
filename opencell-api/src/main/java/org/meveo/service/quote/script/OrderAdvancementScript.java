@@ -26,6 +26,7 @@ import org.meveo.model.cpq.commercial.InvoicingPlanItem;
 import org.meveo.model.cpq.commercial.OrderArticleLine;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderPrice;
+import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -79,7 +80,7 @@ OrderAdvancementScript extends ModuleScript {
                 return;
             }
 
-            List<Object[]>  groupedPricesToBill = orderPriceService.getGroupedOrderPrices(commercialOrder.getId());
+            List<Object[]>  groupedPricesToBill = orderPriceService.getGroupedOrderPrices(commercialOrder.getId(), PriceTypeEnum.ONE_SHOT_INVOICING_PLAN);
 
             if(orderProgress == 100) {
                 if(commercialOrder.getRateInvoiced() < 100) {
