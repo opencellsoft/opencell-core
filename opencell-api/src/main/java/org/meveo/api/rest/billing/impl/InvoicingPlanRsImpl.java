@@ -34,6 +34,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.InvoicingPlanRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.commercial.InvoicingPlan;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -46,7 +47,9 @@ public class InvoicingPlanRsImpl extends BaseRs implements InvoicingPlanRs {
 	public ActionStatus create(InvoicingPlanDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			result.setEntityId(invoicingPlanApi.create(postData).getId());
+			InvoicingPlan invoicingPlan = invoicingPlanApi.create(postData);
+			result.setEntityId(invoicingPlan.getId());
+			result.setEntityCode(invoicingPlan.getCode());
 		} catch (Exception e) {
 			processException(e, result);
 		}
