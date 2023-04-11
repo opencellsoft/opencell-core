@@ -18,6 +18,8 @@
 
 package org.meveo.api.billing;
 
+import static org.meveo.commons.utils.StringUtils.isBlank;
+
 import java.math.BigDecimal;
 import java.util.function.BiFunction;
 
@@ -32,7 +34,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.InvoicingPlanItem;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
@@ -65,10 +66,13 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 	 */
 	public InvoicingPlanItem create(InvoicingPlanItemDto postData) throws MeveoApiException, BusinessException {
 
+		if(isBlank(postData.getCode())) {
+			postData.setCode(customGenericEntityCodeService.getGenericEntityCode(new InvoicingPlanItem()));
+		}
 		handleMissingParametersAndValidate(postData);
 
 		String invoicingPlanItemCode = postData.getCode();
-        if(!StringUtils.isBlank(invoicingPlanItemCode)){
+        if(!isBlank(invoicingPlanItemCode)) {
 			InvoicingPlanItem existingInvoicingPlanItem = invoicingPlanItemService.findByCode(invoicingPlanItemCode);
 			if (existingInvoicingPlanItem != null) {
 				throw new EntityAlreadyExistsException(InvoicingPlanItem.class, invoicingPlanItemCode);
@@ -92,7 +96,7 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 	 */
 	public InvoicingPlanItem update(InvoicingPlanItemDto postData) throws MeveoApiException, BusinessException {
 		String invoicingPlanItemCode = postData.getCode();
-		if (StringUtils.isBlank(invoicingPlanItemCode)) {
+		if (isBlank(invoicingPlanItemCode)) {
 			missingParameters.add("invoicingPlanItemCode");
 		}
 
@@ -112,7 +116,7 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 	private InvoicingPlanItem dtoToEntity(InvoicingPlanItemDto postData, InvoicingPlanItem invoicingPlanItem, boolean isNewEntity) {
 		final String billingPlanCode = postData.getBillingPlanCode();
 
-		if (!StringUtils.isBlank(billingPlanCode)) {
+		if (!isBlank(billingPlanCode)) {
 			InvoicingPlan invoicingPlan = invoicingPlanService.findByCode(billingPlanCode);
 			if (invoicingPlan == null) {
 				throw new EntityDoesNotExistsException(InvoicingPlan.class, billingPlanCode);
@@ -138,11 +142,11 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 				throw new InvalidParameterException("Down payment of invoicing plan can not be more than 100");
 			}
 		}
-		if (StringUtils.isBlank(postData.getCode())) {
+		if (isBlank(postData.getCode())) {
 			postData.setCode(customGenericEntityCodeService.getGenericEntityCode(invoicingPlanItem));
 		}
 		invoicingPlanItem.setCode(
-				StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+				isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		if (postData.getDescription() != null) {
 			invoicingPlanItem.setDescription(postData.getDescription());
 		}
