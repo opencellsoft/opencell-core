@@ -397,6 +397,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         MeveoModule meveoModule = meveoModuleService.findByCode(moduleDto.getCode());
         boolean installed = false;
         if (meveoModule == null) {
+            create(moduleDto);
             meveoModule = meveoModuleService.findByCode(moduleDto.getCode());
 
         } else {
