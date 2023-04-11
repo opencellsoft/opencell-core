@@ -810,4 +810,23 @@ public final class FileUtils {
     public static void deleteDirectory(File dir) throws IOException {
         org.apache.commons.io.FileUtils.deleteDirectory(dir);
     }
+    
+    public static void listAllFiles(File folder, List<String> returnListFilesPath) {
+		try {
+			if(folder.exists() && folder.isDirectory())  {
+				File[] fileNames = folder.listFiles();
+		        for (File file : fileNames) {
+		            // if directory call the same method again
+		            if (file.isDirectory()) {
+		                listAllFiles(file, returnListFilesPath);
+		            } else {
+						returnListFilesPath.add(file.getCanonicalPath());
+		            }
+		        }
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
