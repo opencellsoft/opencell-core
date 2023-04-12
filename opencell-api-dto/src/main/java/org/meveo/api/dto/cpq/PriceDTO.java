@@ -30,6 +30,7 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.tax.TaxCategory;
@@ -76,6 +77,9 @@ public class PriceDTO extends BaseEntityDto {
     private String recurrencePeriodicity;
     private String chargeCode;
     private String chargeLabel;
+	private int unitNbDecimal;
+	private String calendarType;
+	private String calendarCode;
     
     private String taxCategory;
     private String taxCode;
@@ -95,14 +99,17 @@ public class PriceDTO extends BaseEntityDto {
     private CustomFieldsDto customFields;
     
     
-	public PriceDTO(QuotePrice quotePrice, Map<String, String> mapTaxIndexes) {
+	public PriceDTO(QuotePrice quotePrice, Map<String, TaxDTO> mapTaxIndexes) {
 		super();
 		id=quotePrice.getId();
 		priceType=quotePrice.getPriceTypeEnum();
 	    unitPriceWithoutTax=quotePrice.getUnitPriceWithoutTax();
 	    taxAmount=quotePrice.getTaxAmount();
 	    taxRate=quotePrice.getTaxRate();
-		taxIndex = mapTaxIndexes.get(taxRate.toString());
+		TaxDTO taxDto = mapTaxIndexes.get(taxRate.toString());
+		if (taxDto!=null) {
+			taxIndex = taxDto.getIndex();
+		}
 	    priceOverCharged=quotePrice.getPriceOverCharged();
 	    currencyCode=quotePrice.getCurrencyCode();
 	    recurrenceDuration=quotePrice.getRecurrenceDuration();
@@ -111,9 +118,14 @@ public class PriceDTO extends BaseEntityDto {
 		amountWithoutTax=quotePrice.getAmountWithoutTax();
 		amountWithoutTaxWithoutDiscount=quotePrice.getAmountWithoutTaxWithoutDiscount();
 		
-
 	    chargeCode=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getCode():null;
 	    chargeLabel=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getDescription():null;
+		if (quotePrice.getChargeTemplate() != null && quotePrice.getChargeTemplate() instanceof RecurringChargeTemplate) {
+			RecurringChargeTemplate recurringCharge = (RecurringChargeTemplate) quotePrice.getChargeTemplate();
+			unitNbDecimal = recurringCharge.getUnitNbDecimal();
+			calendarCode = recurringCharge.getCalendar().getCode();
+			calendarType = recurringCharge.getCalendar().getCalendarType();
+		}
 	   TaxCategory taxCategoryEntity = quotePrice.getQuoteArticleLine() != null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory()!=null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory(): 
 	    	quotePrice.getQuoteArticleLine().getBillableAccount().getCustomerAccount().getCustomer().getCustomerCategory().getTaxCategory() : null;
 	   taxCategory=taxCategoryEntity!=null?taxCategoryEntity.getCode():null;
@@ -134,12 +146,12 @@ public class PriceDTO extends BaseEntityDto {
 		
 	}
 
-	public PriceDTO(QuotePrice quotePrice, TradingCurrency currency, Map<String, String> mapTaxIndexes) {
+	public PriceDTO(QuotePrice quotePrice, TradingCurrency currency, Map<String, TaxDTO> mapTaxIndexes) {
 		this(quotePrice, mapTaxIndexes);
 		this.setCurrencySymbol(currency.getSymbol());
 	}
 
-	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields, Map<String, String> mapTaxIndexes) {
+	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields, Map<String, TaxDTO> mapTaxIndexes) {
 		this(quotePrice, mapTaxIndexes);
 		this.customFields = customFields;
 	}
@@ -350,5 +362,29 @@ public class PriceDTO extends BaseEntityDto {
 
 	public void setTaxIndex(String taxIndex) {
 		this.taxIndex = taxIndex;
+	}
+
+	public int getUnitNbDecimal() {
+		return unitNbDecimal;
+	}
+
+	public void setUnitNbDecimal(int unitNbDecimal) {
+		this.unitNbDecimal = unitNbDecimal;
+	}
+
+	public String getCalendarType() {
+		return calendarType;
+	}
+
+	public void setCalendarType(String calendarType) {
+		this.calendarType = calendarType;
+	}
+
+	public String getCalendarCode() {
+		return calendarCode;
+	}
+
+	public void setCalendarCode(String calendarCode) {
+		this.calendarCode = calendarCode;
 	}
 }

@@ -1,5 +1,7 @@
 package org.meveo.api.dto.cpq.xml;
 
+import org.meveo.api.dto.cpq.CurrencyDetailDto;
+import org.meveo.api.dto.cpq.TaxDetailDTO;
 import org.meveo.model.quote.QuoteVersion;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,18 +15,25 @@ public class QuoteXMLHeader extends Header {
     private org.meveo.api.dto.cpq.xml.Customer customer;
     @XmlElement
     private org.meveo.api.dto.cpq.xml.Seller seller;
+    @XmlElement
+    private CurrencyDetailDto currency;
+    @XmlElement
+    private TaxDetailDTO taxDetail;
 
     public QuoteXMLHeader() {
     }
 
     public QuoteXMLHeader(BillingAccount billingAccount, Contract contract, QuoteVersion quoteVersion, String quoteCode, Date startDate,
                           Long duration, int opportunityDuration, String customerReference, String registrationNumber,
-                          Date validFromDate, Date validToDate, String comment, org.meveo.api.dto.cpq.xml.Customer customer, org.meveo.api.dto.cpq.xml.Seller seller) {
+                          Date validFromDate, Date validToDate, String comment, org.meveo.api.dto.cpq.xml.Customer customer, org.meveo.api.dto.cpq.xml.Seller seller,
+                          CurrencyDetailDto currency, TaxDetailDTO taxDetail) {
         super(billingAccount, contract, quoteVersion.getQuoteVersion(), quoteCode, startDate,
                 duration, opportunityDuration, customerReference, registrationNumber,
                 validFromDate, validToDate, comment, quoteVersion.getStartDate(), quoteVersion.getEndDate());
         this.customer = customer;
         this.seller = seller;
+        this.currency = currency;
+        this.taxDetail = taxDetail;
     }
 
     public Customer getCustomer() {
@@ -43,4 +52,11 @@ public class QuoteXMLHeader extends Header {
         this.seller = seller;
     }
 
+    public CurrencyDetailDto getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(CurrencyDetailDto currency) {
+        this.currency = currency;
+    }
 }

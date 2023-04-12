@@ -22,7 +22,10 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.cpq.CurrencyDetailDto;
 import org.meveo.api.dto.cpq.PriceDTO;
+import org.meveo.api.dto.cpq.TaxDTO;
+import org.meveo.api.dto.cpq.TaxDetailDTO;
 import org.meveo.api.dto.cpq.xml.BillableAccount;
 import org.meveo.api.dto.cpq.xml.BillingAccount;
 import org.meveo.api.dto.cpq.xml.Category;
@@ -41,6 +44,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -53,6 +57,7 @@ import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.api.EntityToDtoConverter;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.QuoteMapper;
 import org.meveo.service.cpq.XmlQuoteFormatter;
@@ -69,8 +74,10 @@ public class QuoteToXmlScript extends ModuleScript {
     protected ParamBeanFactory paramBeanFactory = (ParamBeanFactory) getServiceInterface(ParamBeanFactory.class.getSimpleName());
     private EntityToDtoConverter entityToDtoConverter = (EntityToDtoConverter) getServiceInterface(EntityToDtoConverter.class.getSimpleName());
     private TradingCurrencyService currencyService = (TradingCurrencyService) getServiceInterface(TradingCurrencyService.class.getSimpleName());
+    private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final String DISCOUNT_ALLOWANCE_CODE = "95";
 
     @Override
     public void execute(Map<String, Object> methodContext) throws BusinessException {
@@ -82,7 +89,9 @@ public class QuoteToXmlScript extends ModuleScript {
 
         String quoteXml = null;
         try {
-            quoteXml = quoteFormatter.format(map(quoteVersion));
+            TaxDetailDTO taxDetail = new TaxDetailDTO();
+            Map<String, TaxDTO> mapTaxIndexes = buildTaxesIndexes(quoteVersion, taxDetail);
+            quoteXml = quoteFormatter.format(map(quoteVersion, taxDetail));
         } catch (JAXBException e) {
             log.error("Can not format QuoteXmlDto object");
             return;
@@ -106,7 +115,7 @@ public class QuoteToXmlScript extends ModuleScript {
         methodContext.put(Script.RESULT_VALUE, xmlContent);
     }
 
-    public QuoteXmlDto map(QuoteVersion quoteVersion) {
+    public QuoteXmlDto map(QuoteVersion quoteVersion, TaxDetailDTO taxDetail) {
     	CpqQuote quote = quoteVersion.getQuote();
         org.meveo.model.billing.BillingAccount bac=quote.getBillableAccount() == null ? quote.getApplicantAccount() : quote.getBillableAccount();
         
@@ -128,13 +137,17 @@ public class QuoteToXmlScript extends ModuleScript {
          duration = startDate.getTime()-endDate.getTime();
        }
 
+        CurrencyDetailDto currencyDetailDto = null;
+        if (bac.getTradingCurrency()!=null) {
+            currencyDetailDto = new CurrencyDetailDto(bac.getTradingCurrency().getCurrencyCode(), bac.getTradingCurrency().getCurrentRate());
+        }
+
         QuoteXMLHeader header = new QuoteXMLHeader(billingAccount,ctr,quoteVersion,quote.getCode(),startDate,duration,
         		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate,quoteVersion.getComment(),
-                customer, seller);
+                customer, seller, currencyDetailDto, taxDetail);
 
         Map<org.meveo.model.billing.BillingAccount, List<QuoteArticleLine>> linesByBillingAccount = getAllOffersQuoteLineStream(quoteVersion)
                 .collect(groupingBy(QuoteArticleLine::getBillableAccount));
-
 
         List<BillableAccount> billableAccounts = linesByBillingAccount.keySet()
                 .stream()
@@ -209,10 +222,16 @@ public class QuoteToXmlScript extends ModuleScript {
         List<org.meveo.api.dto.cpq.xml.AccountingArticle> articleLines = linesByAccountingArticle.keySet().stream()
                 .map(accountingArticle -> mapToArticleLine(accountingArticle, linesByAccountingArticle.get(accountingArticle), ba))
                 .collect(toList());
-        return new SubCategory(subCategory, articleLines, getTradingLanguage(ba));
+        List<org.meveo.api.dto.cpq.xml.AccountingArticle> articleLinesDiscounts = linesByAccountingArticle.keySet().stream()
+                .map(accountingArticle -> mapToArticleLineDiscount(accountingArticle, linesByAccountingArticle.get(accountingArticle), ba))
+                .collect(toList());
+        return new SubCategory(subCategory, articleLines, articleLinesDiscounts, getTradingLanguage(ba));
     }
 
     protected org.meveo.api.dto.cpq.xml.AccountingArticle mapToArticleLine(AccountingArticle accountingArticle, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
+        if (accountingArticle.getAllowanceCode() != null && DISCOUNT_ALLOWANCE_CODE.equals(accountingArticle.getAllowanceCode().getCode())) {
+            return null;
+        }
     	org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(accountingArticle, quoteArticleLines, getTradingLanguage(ba));
 
     	accountingArticleDto.setQuoteLines(quoteArticleLines.stream().filter(line -> line.getQuoteProduct() != null)
@@ -227,7 +246,28 @@ public class QuoteToXmlScript extends ModuleScript {
                     return new QuoteLine(line,mapToOffer(line.getQuoteProduct()), currencies, new HashMap<>());
                 })
     			.collect(Collectors.toList()));
-    	return accountingArticleDto; 
+    	return accountingArticleDto;
+    }
+
+    protected org.meveo.api.dto.cpq.xml.AccountingArticle mapToArticleLineDiscount(AccountingArticle accountingArticle, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
+        if (accountingArticle.getAllowanceCode() != null && !DISCOUNT_ALLOWANCE_CODE.equals(accountingArticle.getAllowanceCode().getCode())) {
+            return null;
+        }
+        org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(accountingArticle, quoteArticleLines, getTradingLanguage(ba));
+
+        accountingArticleDto.setQuoteLines(quoteArticleLines.stream().filter(line -> line.getQuoteProduct() != null)
+                .map(line -> {
+                    // build currency details
+                    Map<String, TradingCurrency> currencies = new HashMap<>();
+                    line.getQuotePrices().forEach(quotePrice -> {
+                        if(StringUtils.isNotBlank(quotePrice.getCurrencyCode())){
+                            currencies.put(quotePrice.getCurrencyCode(), currencyService.findByTradingCurrencyCode(quotePrice.getCurrencyCode()));
+                        }
+                    });
+                    return new QuoteLine(line,mapToOffer(line.getQuoteProduct()), currencies, new HashMap<>());
+                })
+                .collect(Collectors.toList()));
+        return accountingArticleDto;
     }
     
     protected org.meveo.api.dto.cpq.xml.Offer mapToOffer(QuoteProduct quoteProduct) {
@@ -297,5 +337,58 @@ public class QuoteToXmlScript extends ModuleScript {
             quotePrice.setTaxRate(a.getTaxRate());
             return quotePrice;
         });
+    }
+
+    private Map<String, TaxDTO> buildTaxesIndexes(QuoteVersion quoteVersion, TaxDetailDTO taxDetail) {
+        Map<String, TaxDTO> mapTaxesIndexes = new HashMap<>();
+
+        List<TaxDTO> taxes = new ArrayList<>();
+        taxDetail.setTaxes(taxes);
+
+        StringBuilder vatex = new StringBuilder();
+
+        int i = 0;
+        for (QuoteArticleLine quoteArticleLine : quoteVersion.getQuoteArticleLines()) {
+            for (QuotePrice quotePrice : quoteArticleLine.getQuotePrices()) {
+                Tax tax = taxService.findTaxByPercent(quotePrice.getTaxRate());
+
+                TaxDTO taxDTO = mapTaxesIndexes.get(quotePrice.getTaxRate().toString());
+
+                if (taxDTO == null) {
+                    taxDTO = new TaxDTO();
+                    taxDTO.setTax(quotePrice.getTaxRate());
+                    taxDTO.setIndex(String.valueOf(++i));
+                    taxDTO.setPercent(String.valueOf(tax.getPercent()));
+                    taxDTO.setCode(tax.getCode());
+
+                    taxDTO.setAmountTax(taxDTO.getAmountTax().add(quotePrice.getTaxAmount()));
+                    taxDTO.setAmountWithTax(taxDTO.getAmountWithTax().add(quotePrice.getAmountWithTax()));
+                    taxDTO.setAmountWithoutTax(taxDTO.getAmountWithoutTax().add(quotePrice.getAmountWithoutTax()));
+
+                    mapTaxesIndexes.put(quotePrice.getTaxRate().toString(), taxDTO);
+                } else {
+                    taxDTO.setAmountTax(taxDTO.getAmountTax().add(quotePrice.getTaxAmount()));
+                    taxDTO.setAmountWithTax(taxDTO.getAmountWithTax().add(quotePrice.getAmountWithTax()));
+                    taxDTO.setAmountWithoutTax(taxDTO.getAmountWithoutTax().add(quotePrice.getAmountWithoutTax()));
+                }
+
+                if (tax.getUntdidVatex() != null) {
+                    if (vatex.length() > 0) {
+                        vatex.append("|");
+                    }
+                    vatex.append(tax.getUntdidVatex().getCodeName());
+                }
+
+                taxDetail.setTotalAmountTax(taxDetail.getTotalAmountTax().add(quotePrice.getTaxAmount()));
+                taxDetail.setTotalAmountWithTax(taxDetail.getTotalAmountWithTax().add(quotePrice.getAmountWithTax()));
+                taxDetail.setTotalAmountWithoutTax(taxDetail.getTotalAmountWithoutTax().add(quotePrice.getAmountWithoutTax()));
+
+            }
+        }
+
+        taxDetail.setVatex(vatex.toString());
+        taxDetail.setTaxes(new ArrayList<>(mapTaxesIndexes.values()));
+
+        return mapTaxesIndexes;
     }
 }

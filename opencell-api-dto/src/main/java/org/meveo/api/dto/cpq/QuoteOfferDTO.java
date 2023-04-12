@@ -186,7 +186,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 	
 
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes,
-						 Map<String, String> mapTaxIndexes) {
+						 Map<String, TaxDTO> mapTaxIndexes) {
 		init(quoteOffer);
 		prices=calculateTotalsPerOffer(quoteOffer, mapTaxIndexes);
 		if(loadQuoteProduct) {
@@ -205,7 +205,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 	}
 
 	private List<TaxPricesDto> calculateTotalsPerOffer(QuoteOffer quoteOffer,
-													   Map<String, String> mapTaxIndexes) {
+													   Map<String, TaxDTO> mapTaxIndexes) {
 		quoteOffer.getQuotePrices().size();
 		List<QuotePrice> quotePrices = quoteOffer.getQuotePrices();
 		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
