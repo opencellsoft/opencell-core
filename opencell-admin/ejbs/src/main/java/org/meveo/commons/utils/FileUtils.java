@@ -46,10 +46,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.meveo.admin.job.FlatFileProcessingJob;
-import org.meveo.admin.job.SortingFilesEnum;
 import org.meveo.admin.storage.StorageFactory;
-import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -811,22 +808,28 @@ public final class FileUtils {
         org.apache.commons.io.FileUtils.deleteDirectory(dir);
     }
     
-    public static void listAllFiles(File folder, List<String> returnListFilesPath) {
+    /**
+     * Get list of files in a folder
+     * @param pFolder Folder
+     * @param pReturnListFilesPath A list of files path
+     * @param pExtension Extension
+     */
+    public static void listAllFiles(File pFolder, List<String> pReturnListFilesPath, String pExtension) {
 		try {
-			if(folder.exists() && folder.isDirectory())  {
-				File[] fileNames = folder.listFiles();
+			if(pFolder.exists() && pFolder.isDirectory())  {
+				File[] fileNames = pFolder.listFiles();
 		        for (File file : fileNames) {
-		            // if directory call the same method again
 		            if (file.isDirectory()) {
-		                listAllFiles(file, returnListFilesPath);
+		                listAllFiles(file, pReturnListFilesPath, pExtension);
 		            } else {
-						returnListFilesPath.add(file.getCanonicalPath());
+		            	if(file.getCanonicalPath().endsWith(pExtension)) {
+		            		pReturnListFilesPath.add(file.getCanonicalPath());
+		            	}
 		            }
 		        }
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Failed to get file name in a folder {}", e);
 		}
 	}
 }

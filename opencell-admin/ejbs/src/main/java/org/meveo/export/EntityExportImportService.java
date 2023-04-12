@@ -36,13 +36,22 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.concurrent.Future;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -89,9 +98,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.proxy.HibernateProxy;
-import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -101,7 +110,6 @@ import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
-import org.meveo.commons.utils.BeanUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
@@ -112,7 +120,8 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
@@ -126,7 +135,6 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
 import org.slf4j.Logger;
 
 import com.thoughtworks.xstream.MarshallingStrategy;
@@ -148,10 +156,6 @@ import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.XppReader;
 import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
-import com.thoughtworks.xstream.security.ArrayTypePermission;
-import com.thoughtworks.xstream.security.NoTypePermission;
-import com.thoughtworks.xstream.security.NullPermission;
-import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
 /**
  * @author Andrius Karpavicius
@@ -175,6 +179,8 @@ public class EntityExportImportService implements Serializable {
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
     protected static final String CSV_EXTENTION = ".csv";
+    protected static final String XSLT_EXTENTION = ".xslt";
+    protected static final String SEP = "_";
     protected static final String ENTITY_FILE_HEADER = ".entity type, entity code";
 
     @Inject
@@ -2460,12 +2466,12 @@ public class EntityExportImportService implements Serializable {
     private void loadExportModelVersionChangesets() {
     	List<String> returnListFilesPath = new ArrayList<>();
     	File folder = new File(Thread.currentThread().getContextClassLoader().getResource("./exportVersions").getPath());
-        org.meveo.commons.utils.FileUtils.listAllFiles(folder, returnListFilesPath);
+        org.meveo.commons.utils.FileUtils.listAllFiles(folder, returnListFilesPath, XSLT_EXTENTION);
         Collections.sort(returnListFilesPath);
 
         exportModelVersionChangesets = new LinkedHashMap<String, String>();
         for (String changesetFile : returnListFilesPath) {
-            String version = changesetFile.substring(changesetFile.indexOf("_") + 1, changesetFile.indexOf(".xslt"));
+            String version = changesetFile.substring(changesetFile.indexOf(SEP) + 1, changesetFile.indexOf(XSLT_EXTENTION));
             exportModelVersionChangesets.put(version, changesetFile);
             currentExportModelVersionChangeset = version;
         }
