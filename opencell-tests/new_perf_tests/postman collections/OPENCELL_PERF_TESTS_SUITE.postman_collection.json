@@ -4675,6 +4675,16 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const dateNow= new Date();\r",
+									"pm.environment.set('perf_test_date', dateNow.toISOString());"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
