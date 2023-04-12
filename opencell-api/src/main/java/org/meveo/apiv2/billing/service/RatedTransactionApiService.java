@@ -1,10 +1,16 @@
 package org.meveo.apiv2.billing.service;
 
+import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.joining;
+import static org.meveo.model.billing.RatedTransactionStatusEnum.OPEN;
+import static org.meveo.model.billing.RatedTransactionStatusEnum.REJECTED;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.JobExecutionResultDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
@@ -16,6 +22,7 @@ import org.meveo.apiv2.billing.ProcessCdrListResult.Statistics;
 import org.meveo.apiv2.billing.ProcessingModeEnum;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -26,14 +33,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -65,18 +75,18 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	@Override
 	public Optional<RatedTransaction> update(Long id, RatedTransaction baseEntity) {
 		// TODO Auto-generated method stub
-		return null;
+		return empty();
 	}
 
 	@Override
 	public Optional<RatedTransaction> patch(Long id, RatedTransaction baseEntity) {
 		// TODO Auto-generated method stub
-		return null;
+		return empty();
 	}
 
 	@Override
 	public Optional<RatedTransaction> delete(Long id) {
-		return null;
+		return empty();
 	}
 
 	@Override
@@ -88,7 +98,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	 * @param id
 	 */
 	public void cancelRatedTransaction(Long id) {
-		ratedTransactionService.cancelRatedTransactions(Arrays.asList(id));
+		ratedTransactionService.cancelRatedTransactions(asList(id));
 	}
 
 	/**
@@ -106,7 +116,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	@Override
 	public List<RatedTransaction> list(Long offset, Long limit, String sort, String orderBy, String filter) {
 		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -221,4 +231,54 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 		return result;
 	}
 
+	public Entry<String, String> cancelRatedTransactions(Map<String, Object> filters,
+														  boolean failOnIncorrectStatus, boolean returnRTs) {
+		StringBuilder response = new StringBuilder();
+		if (failOnIncorrectStatus) {
+			List<RatedTransaction> validationResult = getRatedTransactionsList(filters, true);
+			if(!validationResult.isEmpty()) {
+				Map<RatedTransactionStatusEnum, List<RatedTransaction>> groupedRt
+						= validationResult.stream().collect(Collectors.groupingBy(RatedTransaction::getStatus));
+				response.append("Cancellation process stopped RT list : ");
+				groupedRt.entrySet().forEach(entry -> response.append(entry.getKey())
+						.append(": ")
+						.append(entry.getValue().stream()
+								.map(ratedTransaction -> ratedTransaction.getId().toString())
+								.collect(joining(",")))
+						.append("\n"));
+				return new SimpleEntry<>("FAILS", response.toString());
+			}
+		}
+		List<RatedTransaction> ratedTransactionToCancel = getRatedTransactionsList(filters, false);
+		List<Long> rtIds = ratedTransactionToCancel.stream().map(RatedTransaction::getId).collect(Collectors.toList());
+		if(rtIds.isEmpty()) {
+			throw new NotFoundException("No rated transaction found to cancel");
+		}
+		ratedTransactionService.cancelRatedTransactions(rtIds);
+		response.append(ratedTransactionToCancel.size()).append(" RTs cancelled");
+		if(returnRTs) {
+			response.append(", having ids : ")
+					.append(
+							ratedTransactionToCancel.stream()
+									.map(ratedTransaction -> ratedTransaction.getId().toString())
+									.collect(joining(",")));
+		}
+		return new SimpleEntry<>("SUCCESS", response.toString());
+	}
+
+	private List<RatedTransaction> getRatedTransactionsList(Map<String, Object> filters, boolean validation) {
+		Map<String, Object> fetchFilters =  new HashMap<>(filters);
+		if(fetchFilters.containsKey("status") && fetchFilters.get("status") instanceof String) {
+			fetchFilters.put("status", RatedTransactionStatusEnum.valueOf((String) fetchFilters.get("status")));
+		}
+		if(validation) {
+			fetchFilters.put("not-inList status", asList(OPEN, REJECTED));
+		} else {
+			fetchFilters.put("inList status", asList(OPEN, REJECTED));
+		}
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(fetchFilters);
+		QueryBuilder queryBuilder =
+				ratedTransactionService.getQuery(paginationConfiguration);
+		return queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
+ 	}
 }
