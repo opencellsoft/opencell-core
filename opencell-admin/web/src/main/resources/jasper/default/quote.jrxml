@@ -732,6 +732,22 @@
 	<field name="totalAmountWithTax" class="java.lang.Double">
 		<fieldDescription><![CDATA[/quote/header/taxDetail/totalAmountWithTax]]></fieldDescription>
 	</field>
+	<field name="providerCurrencySymbol" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/currency/symbol"/>
+		<fieldDescription><![CDATA[/quote/header/currency/symbol]]></fieldDescription>
+	</field>
+	<field name="baCurrencyCode" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/currency/baCode"/>
+		<fieldDescription><![CDATA[/quote/header/currency/baCode]]></fieldDescription>
+	</field>
+	<field name="baCurrencySymbol" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/currency/baSymbol"/>
+		<fieldDescription><![CDATA[/quote/header/currency/baSymbol]]></fieldDescription>
+	</field>
+	<field name="baCurrencyRate" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/currency/baRate"/>
+		<fieldDescription><![CDATA[/quote/header/currency/baRate]]></fieldDescription>
+	</field>
 	<group name="1">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
@@ -824,7 +840,7 @@
 				<subreport>
 					<reportElement x="10" y="56" width="570" height="74" uuid="e0e44b6e-fe3b-465c-be24-90c4a3640065"/>
 					<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).dataSource("/quote")]]></dataSourceExpression>
-					<subreportExpression><![CDATA["quote-article.jasper"]]></subreportExpression>
+					<subreportExpression><![CDATA[$P{messagePath}+"/quote-article.jasper"]]></subreportExpression>
 				</subreport>
 			</band>
 		</groupHeader>
@@ -914,7 +930,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Arial" size="16" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{currencySymbol}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{providerCurrencySymbol}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="263" y="145" width="100" height="12" forecolor="#0D0101" uuid="2ec5fba6-2ead-4a5f-a7cc-10e6d7fb20be">
@@ -1183,7 +1199,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Bottom">
 						<font fontName="Vista Sans OT Reg" size="9" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[(($F{currencyRate}!=null && !String.valueOf($F{currencyRate}).isEmpty() && !String.valueOf($F{currencyRate}).equals("null") && new Double($F{currencyRate}.replace(",", ".")) > 1d) ? "Rate applied against EUR : " + (($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{currencyRate}.replace(",", ".")))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{currencyRate}.replace(",", "."))))) + " " + $F{currencySymbol} : "")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[(($F{baCurrencyRate}!=null && !String.valueOf($F{baCurrencyRate}).isEmpty() && !String.valueOf($F{baCurrencyRate}).equals("null") && new Double($F{baCurrencyRate}.replace(",", ".")) > 1d) ? "Rate applied against EUR : " + (($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{baCurrencyRate}.replace(",", ".")))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{baCurrencyRate}.replace(",", "."))))) + " " + $F{baCurrencySymbol} : "")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>

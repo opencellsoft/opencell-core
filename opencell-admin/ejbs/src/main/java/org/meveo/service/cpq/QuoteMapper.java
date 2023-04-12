@@ -4,14 +4,13 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -38,13 +37,13 @@ import org.meveo.common.UtilsDto;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
@@ -53,8 +52,8 @@ import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.api.EntityToDtoConverter;
-import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.order.OpenOrderService;
+import org.meveo.util.ApplicationProvider;
 
 @Stateless
 public class QuoteMapper {
@@ -71,7 +70,8 @@ public class QuoteMapper {
     private TradingCurrencyService currencyService;
 
     @Inject
-    private TaxService taxService;
+    @ApplicationProvider
+    protected Provider appProvider;
    	
     
     public QuoteXmlDto map(QuoteVersion quoteVersion, Map<String, TaxDTO> mapTaxIndexes, TaxDetailDTO taxDetail) {
@@ -96,11 +96,18 @@ public class QuoteMapper {
          duration = startDate.getTime()-endDate.getTime();
        }
 
-       CurrencyDetailDto currencyDetailDto = null;
+       CurrencyDetailDto currencyDetailDto = new CurrencyDetailDto();
        if (bac.getTradingCurrency()!=null) {
-           currencyDetailDto = new CurrencyDetailDto(bac.getTradingCurrency().getCurrencyCode(), bac.getTradingCurrency().getCurrentRate());
+           currencyDetailDto.setBaCode(bac.getTradingCurrency().getCurrencyCode());
+           currencyDetailDto.setBaSymbol(bac.getTradingCurrency().getSymbol());
+           currencyDetailDto.setBaRate(bac.getTradingCurrency().getCurrentRate());
        }
 
+        if (appProvider != null && appProvider.getCurrency() != null) {
+            currencyDetailDto.setCode(appProvider.getCurrency().getCurrencyCode());
+            currencyDetailDto.setSymbol(appProvider.getCurrency().getSymbol());
+            currencyDetailDto.setRate(BigDecimal.ONE); // Functional currency is 1, waiting to apply transactionalCurrency on Quote
+        }
         QuoteXMLHeader header = new QuoteXMLHeader(billingAccount,ctr,quoteVersion,quote.getCode(),startDate,duration,
         		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate,quoteVersion.getComment(),
                 customer, seller, currencyDetailDto, taxDetail);
@@ -122,14 +129,6 @@ public class QuoteMapper {
         return new QuoteXmlDto(header, details);
     }
 
-    private Stream<QuoteArticleLine> getAllOffersQuoteLineStream(QuoteVersion quoteVersion) {
-        return quoteVersion.getQuoteOffers()
-                    .stream()
-                    .map(offer -> offer.getQuoteProduct().stream())
-                    .flatMap(identity())
-                    .map(quoteProduct -> quoteProduct.getQuoteArticleLines().stream())
-                    .flatMap(identity());
-    }
     private org.meveo.api.dto.cpq.xml.BillableAccount mapToBillableAccount(org.meveo.model.billing.BillingAccount ba,
                                                                            List<QuoteArticleLine> lines,
                                                                            Map<String, TaxDTO> mapTaxIndexes){
