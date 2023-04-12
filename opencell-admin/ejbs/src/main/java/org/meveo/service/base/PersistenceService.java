@@ -417,22 +417,29 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public E findByIdIgnoringCache(Long id, List<String> fetchFields) {
         log.trace("Find {}/{} by id without cache hint {}", entityClass.getSimpleName(), id);
         final Class<? extends E> productClass = getEntityClass();
-        StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
         if (fetchFields != null && !fetchFields.isEmpty()) {
+            StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
+
             for (String fetchField : fetchFields) {
                 queryString.append(" left join fetch a." + fetchField);
             }
-        }
-        queryString.append(" where a.id = :id");
-        Query query = getEntityManager().createQuery(queryString.toString()).setHint(QueryHints.HINT_CACHE_MODE, CacheMode.IGNORE);
-        query.setParameter("id", id);
 
-        List<E> results = query.getResultList();
-        E e = null;
-        if (!results.isEmpty()) {
-            e = (E) results.get(0);
+            queryString.append(" where a.id = :id");
+            Query query = getEntityManager().createQuery(queryString.toString()).setHint(QueryHints.HINT_CACHE_MODE, CacheMode.IGNORE);
+            query.setParameter("id", id);
+
+            List<E> results = query.getResultList();
+            E e = null;
+            if (!results.isEmpty()) {
+                e = (E) results.get(0);
+            }
+            return e;
+            
+        } else {
+            Map<String, Object> hints = new HashMap<>();
+            hints.put(QueryHints.HINT_CACHE_MODE, CacheMode.IGNORE);
+            return getEntityManager().find(entityClass, id, hints);
         }
-        return e;
     }
 
     /**
