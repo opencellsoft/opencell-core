@@ -46,10 +46,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.meveo.admin.job.FlatFileProcessingJob;
-import org.meveo.admin.job.SortingFilesEnum;
 import org.meveo.admin.storage.StorageFactory;
-import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -810,4 +807,29 @@ public final class FileUtils {
     public static void deleteDirectory(File dir) throws IOException {
         org.apache.commons.io.FileUtils.deleteDirectory(dir);
     }
+    
+    /**
+     * Get list of files in a folder
+     * @param pFolder Folder
+     * @param pReturnListFilesPath A list of files path
+     * @param pExtension Extension
+     */
+    public static void listAllFiles(File pFolder, List<String> pReturnListFilesPath, String pExtension) {
+		try {
+			if(pFolder.exists() && pFolder.isDirectory())  {
+				File[] fileNames = pFolder.listFiles();
+		        for (File file : fileNames) {
+		            if (file.isDirectory()) {
+		                listAllFiles(file, pReturnListFilesPath, pExtension);
+		            } else {
+		            	if(file.getCanonicalPath().endsWith(pExtension)) {
+		            		pReturnListFilesPath.add(file.getCanonicalPath());
+		            	}
+		            }
+		        }
+			}
+		} catch (IOException e) {
+			logger.error("Failed to get file name in a folder {}", e);
+		}
+	}
 }
