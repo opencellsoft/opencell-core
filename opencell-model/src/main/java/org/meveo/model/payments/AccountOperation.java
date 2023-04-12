@@ -500,6 +500,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     
     @Transient
     private BigDecimal amountForUnmatching;
+    
+    /**
+     * Comments Text free if litigation or special conditions
+     */
+    @Type(type = "longText")
+    @Column(name = "comment_text")
+    private String comment;
 
     public Date getDueDate() {
         return dueDate;
@@ -1173,4 +1180,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     public void setAppliedRateDate(Date appliedRateDate) {
         this.appliedRateDate = appliedRateDate;
     }
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+    
 }
