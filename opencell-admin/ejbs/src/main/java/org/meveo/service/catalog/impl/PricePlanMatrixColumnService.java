@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.ws.rs.NotFoundException;
 
+import org.hibernate.SessionFactory;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.ConvertedPricePlanMatrixLineDto;
@@ -401,4 +402,19 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
         }
 		return str;
 	}
+
+    @Override
+    public void create(PricePlanMatrixColumn entity) {
+        super.create(entity);
+        getEntityManager().getEntityManagerFactory().getCache().evict(PricePlanMatrixVersion.class, entity.getPricePlanMatrixVersion().getId());
+        getEntityManager().getEntityManagerFactory().unwrap(SessionFactory.class).getCache().evictCollectionData("org.meveo.model.catalog.PricePlanMatrixVersion.columns", entity.getPricePlanMatrixVersion().getId());
+    }
+
+    @Override
+    public PricePlanMatrixColumn update(PricePlanMatrixColumn entity) {
+        entity = super.update(entity);
+        getEntityManager().getEntityManagerFactory().getCache().evict(PricePlanMatrixVersion.class, entity.getPricePlanMatrixVersion().getId());
+        getEntityManager().getEntityManagerFactory().unwrap(SessionFactory.class).getCache().evictCollectionData("org.meveo.model.catalog.PricePlanMatrixVersion.columns", entity.getPricePlanMatrixVersion().getId());
+        return entity;
+    }
 }
