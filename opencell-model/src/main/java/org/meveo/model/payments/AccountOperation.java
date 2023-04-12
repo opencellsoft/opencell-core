@@ -1094,7 +1094,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     }
 
     public BigDecimal getTransactionalAmount() {
-        return transactionalAmount != null ? amount : transactionalAmount;
+        return transactionalAmount;
     }
 
     public void setTransactionalAmount(BigDecimal transactionalAmount) {

@@ -278,18 +278,24 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
         Provider provider = providerService.getProvider();
         firstEntry.setCurrency(provider.getCurrency() != null ? provider.getCurrency().getCurrencyCode() : "");
+        
+        firstEntry.setTradingCurrency((ao.getTransactionalCurrency() != null) ? ao.getTransactionalCurrency().getCurrencyCode() : null);
+		firstEntry.setTransactionalAmount((ao.getAppliedRate() != null) ? amount.multiply(ao.getAppliedRate()) : null);
 
         if (ao instanceof RecordedInvoice) {
             firstEntry.setSupportingDocumentRef(((RecordedInvoice) ao).getInvoice());
             firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType() != null
                     ? ((RecordedInvoice) ao).getInvoice().getInvoiceType().getCode() : null);
             
-            firstEntry.setTradingCurrency(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getTradingCurrency() != null
-                    ? ((RecordedInvoice) ao).getInvoice().getTradingCurrency().getCurrencyCode() : null);
+			if (firstEntry.getTradingCurrency() == null) {
+				firstEntry.setTradingCurrency(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getTradingCurrency() != null
+								? ((RecordedInvoice) ao).getInvoice().getTradingCurrency().getCurrencyCode() : null);
+			}
 
-            firstEntry.setTransactionalAmount((ao.getTransactionalAmount() != null)?  ao.getTransactionalAmount() :
-            		(((RecordedInvoice) ao).getInvoice() != null ? ((RecordedInvoice) ao).getInvoice().getTransactionalAmountWithTax() : null));     
-            
+			if (firstEntry.getTransactionalAmount() == null) {
+				firstEntry.setTransactionalAmount(((RecordedInvoice) ao).getInvoice() != null ? ((RecordedInvoice) ao).getInvoice().getTransactionalAmountWithTax() : null);
+			}
+
         }
         Map<String, String> accountingInfo = addAccountingInfo(customerAccount);
         if(accountingInfo != null && !accountingInfo.isEmpty()) {
@@ -364,6 +370,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
                 String groupKey = taxACC.getCode() + (taxAgr.getTax() == null ? "" : taxAgr.getTax().getCode());
                 BigDecimal amoutTax = taxAgr.getAmountTax() == null ? BigDecimal.ZERO : taxAgr.getAmountTax();
+                BigDecimal transactionAmoutTax = taxAgr.getTransactionalAmountTax() == null ? BigDecimal.ZERO : taxAgr.getTransactionalAmountTax();
 
                 if (accountingCodeJournal.get(groupKey) == null) {
                     JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxACC,
@@ -374,6 +381,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 } else {
                     JournalEntry entry = accountingCodeJournal.get(groupKey);
                     entry.setAmount(entry.getAmount().add(amoutTax));
+                    entry.setTransactionalAmount(entry.getTransactionalAmount().add(transactionAmoutTax));
                 }
             });
 
@@ -424,6 +432,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 } else {
                     JournalEntry entry = accountingCodeJournal.get(groupKey);
                     entry.setAmount(entry.getAmount().add(invoiceLine.getAmountWithoutTax()));
+                    entry.setTransactionalAmount(entry.getTransactionalAmount().add(invoiceLine.getTransactionalAmountWithoutTax()));
                 }
 
             });
