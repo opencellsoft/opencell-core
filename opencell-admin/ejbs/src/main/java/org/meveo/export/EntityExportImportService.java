@@ -2461,6 +2461,7 @@ public class EntityExportImportService implements Serializable {
     	List<String> returnListFilesPath = new ArrayList<>();
     	File folder = new File(Thread.currentThread().getContextClassLoader().getResource("./exportVersions").getPath());
         org.meveo.commons.utils.FileUtils.listAllFiles(folder, returnListFilesPath);
+        Collections.sort(returnListFilesPath);
 
         exportModelVersionChangesets = new LinkedHashMap<String, String>();
         for (String changesetFile : returnListFilesPath) {
