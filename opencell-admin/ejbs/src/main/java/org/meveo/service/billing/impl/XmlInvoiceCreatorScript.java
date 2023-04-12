@@ -902,6 +902,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         PaymentMethod preferredPaymentMethod = PersistenceUtils.initializeAndUnproxy(customerAccount.getPreferredPaymentMethod());
         if (preferredPaymentMethod != null) {
             paymentMethodTag.setAttribute("type", preferredPaymentMethod.getPaymentType().name());
+            paymentMethodTag.setAttribute("paymentMeans", (preferredPaymentMethod.getPaymentMeans() !=null) ? preferredPaymentMethod.getPaymentMeans().getCode() : "");
+            paymentMethodTag.setAttribute("paymentMeansLabel", (preferredPaymentMethod.getPaymentMeans() !=null) ? preferredPaymentMethod.getPaymentMeans().getCodeName() : "");
+
         }
         if (preferredPaymentMethod != null && PaymentMethodEnum.DIRECTDEBIT.equals(preferredPaymentMethod.getPaymentType())) {
             DDPaymentMethod directDebitPayment = (DDPaymentMethod) preferredPaymentMethod;
@@ -1350,6 +1353,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                             subCatInvoiceAgregate.getInvoiceSubCategory() != null && subCatInvoiceAgregate.getInvoiceSubCategory().getSortIndex() != null
                                     ? subCatInvoiceAgregate.getInvoiceSubCategory().getSortIndex().toString()
                                     : "");
+                    subCategory.setAttribute("allowanceCode", subCatInvoiceAgregate.getDiscountPlanItem() != null && subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan() != null && subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode() != null ? subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode().getCode() : "");
                     if (subCatInvoiceAgregate.getAmountsByTax() != null && !subCatInvoiceAgregate.getAmountsByTax().isEmpty()) {
                         Element amountsByTaxXml = doc.createElement("amountsByTax");
                         subCategory.appendChild(amountsByTaxXml);
@@ -2416,6 +2420,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         subCategory.setAttribute("amountTax", toPlainString(subCatInvoiceAgregate.getAmountTax()));
         subCategory.setAttribute("transactionalAmountTax", toPlainString(subCatInvoiceAgregate.getTransactionalAmountTax()));
         subCategory.setAttribute("sortIndex", (invoiceSubCat.getSortIndex() != null) ? invoiceSubCat.getSortIndex() + "" : "");
+        subCategory.setAttribute("allowanceCode", subCatInvoiceAgregate.getDiscountPlanItem() != null && subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan() != null && subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode() != null ? subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode().getCode() : "");
         Collections.sort(ratedTransactions, InvoiceCategoryComparatorUtils.getRatedTransactionComparator());
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             if ((ratedTransaction.getInvoiceAgregateF().getId() != null && !ratedTransaction.getInvoiceAgregateF().getId().equals(subCatInvoiceAgregate.getId()))
@@ -3165,6 +3170,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         subCategory.setAttribute("transactionalAmountTax", toPlainString(subCatInvoiceAggregate.getTransactionalAmountTax()));
         subCategory.setAttribute("sortIndex", (invoiceSubCat!= null && invoiceSubCat.getSortIndex() != null)
                 ? invoiceSubCat.getSortIndex() + "" : "");
+        subCategory.setAttribute("allowanceCode", subCatInvoiceAggregate.getDiscountPlanItem() != null && subCatInvoiceAggregate.getDiscountPlanItem().getDiscountPlan() != null && subCatInvoiceAggregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode() != null ? subCatInvoiceAggregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode().getCode() : "");
         for (InvoiceLine invoiceLine : invoiceLines) {
             if ((invoiceLine.getInvoiceAggregateF() != null && invoiceLine.getInvoiceAggregateF().getId() != null
                     && !invoiceLine.getInvoiceAggregateF().getId().equals(subCatInvoiceAggregate.getId()))
