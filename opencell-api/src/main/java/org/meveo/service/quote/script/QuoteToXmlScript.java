@@ -137,9 +137,11 @@ public class QuoteToXmlScript extends ModuleScript {
          duration = startDate.getTime()-endDate.getTime();
        }
 
-        CurrencyDetailDto currencyDetailDto = null;
+        CurrencyDetailDto currencyDetailDto = new CurrencyDetailDto();
         if (bac.getTradingCurrency()!=null) {
-            currencyDetailDto = new CurrencyDetailDto(bac.getTradingCurrency().getCurrencyCode(), bac.getTradingCurrency().getCurrentRate());
+            currencyDetailDto.setBaCode(bac.getTradingCurrency().getCurrencyCode());
+            currencyDetailDto.setBaSymbol(bac.getTradingCurrency().getSymbol());
+            currencyDetailDto.setBaRate(bac.getTradingCurrency().getCurrentRate());
         }
 
         QuoteXMLHeader header = new QuoteXMLHeader(billingAccount,ctr,quoteVersion,quote.getCode(),startDate,duration,
