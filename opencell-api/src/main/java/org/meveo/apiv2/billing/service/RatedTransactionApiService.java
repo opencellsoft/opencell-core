@@ -143,9 +143,14 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 			throw new InvalidParameterException("filters is required");
 		}
 		Long countRatedTransaction = ratedTransactionService.count(filters);
-		List<RatedTransaction> rtToDuplicate = new ArrayList<>();
+		if(countRatedTransaction == 0) {
+			log.warn("list of rated transaction to duplicate is empty for filters : {}", filters);
+			result.getActionStatus().setMessage("list of rated transaction to duplicate is empty.");
+			return result;
+		}
+
+		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(filters);
 		if(countRatedTransaction.intValue() > maxLimit) {
-			rtToDuplicate = ratedTransactionService.findByFilter(filters);
 			log.info("filter for duplication has more than : " + maxLimit + ", current rated transaction from filters are : " + countRatedTransaction + ". will job be lunched ? : " + startJob);
 			ratedTransactionService.incrementPendingDuplicate(rtToDuplicate.stream().map(RatedTransaction::getId).collect(Collectors.toList()), negateAmount);
 			if(!startJob){
@@ -154,11 +159,6 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 			}else{
 				return duplicateRatedTransactionWithJob();
 			}
-		}
-		if(CollectionUtils.isEmpty(rtToDuplicate)) {
-			log.warn("list of rated transaction to duplicate is empty for filters : {}", filters);
-			result.getActionStatus().setMessage("list of rated transaction to duplicate is empty.");
-			return result;
 		}
 
 		List<Long> successList = new ArrayList<>();
