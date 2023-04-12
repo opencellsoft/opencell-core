@@ -114,7 +114,7 @@ public class QuoteProductDTO extends BaseEntityDto{
 	   }
 	
 	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes,
-						   Map<String, String> mapTaxIndexes) {
+						   Map<String, TaxDTO> mapTaxIndexes) {
 		super();
 		init(quoteProduct);
 		if(loadAttributes) {

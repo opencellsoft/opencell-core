@@ -86,7 +86,7 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 
     
 	public AccountingArticlePricesDTO(QuoteArticleLine quoteArticleline,
-									  Map<String, String> mapTaxIndexes) {
+									  Map<String, TaxDTO> mapTaxIndexes) {
 		super();
 		accountingArticleCode=quoteArticleline.getAccountingArticle().getCode();
 		accountingArticleLabel=quoteArticleline.getAccountingArticle().getDescription();

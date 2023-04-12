@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="WAFA-DUPLICATED-LINE"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE3-20230411-006"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -560,7 +560,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{invoiceStatus}=="VALIDATED" ? ($F{invoiceCodeTypeLabel} != null ? $F{invoiceCodeTypeLabel} : "Invoice") + ": "+ $F{invoiceNumber} : "Draft " + ($F{invoiceCodeTypeLabel} != null ? $F{invoiceCodeTypeLabel} : "Invoice")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{invoiceStatus}=="VALIDATED" ? ($F{invoiceCodeTypeLabel} != null && !$F{invoiceCodeTypeLabel}.isEmpty() ? $F{invoiceCodeTypeLabel} : "Invoice") + ": "+ $F{invoiceNumber} : "Draft " + ($F{invoiceCodeTypeLabel} != null ? $F{invoiceCodeTypeLabel} : "Invoice")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="18" y="86" width="190" height="20" uuid="f9f73956-b4a2-41c9-9fea-f0e4e3956d22"/>
@@ -627,6 +627,7 @@
 + (($F{sellerAddress2}!=null && !String.valueOf($F{sellerAddress2}).isEmpty() && !String.valueOf($F{sellerAddress2}).equals("null")) ? " " + $F{sellerAddress2} : "")
 + (($F{sellerAddress3}!=null && !String.valueOf($F{sellerAddress3}).isEmpty() && !String.valueOf($F{sellerAddress3}).equals("null")) ? " " + $F{sellerAddress3} : "")
 + (($F{sellerPostalCode}!=null && !String.valueOf($F{sellerPostalCode}).isEmpty() && !String.valueOf($F{sellerPostalCode}).equals("null")) ? ", " + $F{sellerPostalCode} : "")
++ (($F{sellerCity}!=null && !String.valueOf($F{sellerCity}).isEmpty() && !String.valueOf($F{sellerCity}).equals("null")) ? ", " + $F{sellerCity} : "")
 + (($F{sellerCountryName}!=null && !String.valueOf($F{sellerCountryName}).isEmpty() && !String.valueOf($F{sellerCountryName}).equals("null")) ? ", " + $F{sellerCountryName} : "")]]></textFieldExpression>
 				</textField>
 			</frame>
