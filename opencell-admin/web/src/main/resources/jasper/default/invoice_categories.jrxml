@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ERR-COM-20230404"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE3-20230411-006"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -214,7 +214,7 @@
 			<fieldDescription><![CDATA[percent]]></fieldDescription>
 		</field>
 		<field name="discountAmountWithoutTax" class="java.math.BigDecimal">
-			<fieldDescription><![CDATA[sum(/invoice/header/discounts/discount/@discountAmountWithoutTax)]]></fieldDescription>
+			<fieldDescription><![CDATA[sum(/invoice/header/discounts/discount/@discountTransactionalAmountWithoutTax)]]></fieldDescription>
 		</field>
 		<variable name="discountAmountWithoutTax_total" class="java.lang.Double" calculation="Sum">
 			<variableExpression><![CDATA[$F{discountAmountWithoutTax}]]></variableExpression>
@@ -248,7 +248,7 @@
 		<fieldDescription><![CDATA[/invoice/header/categories/category/@label]]></fieldDescription>
 	</field>
 	<field name="catAmountWithoutTax" class="java.lang.Double">
-		<fieldDescription><![CDATA[/invoice/header/categories/category/amountWithoutTax]]></fieldDescription>
+		<fieldDescription><![CDATA[/invoice/header/categories/category/transactionalAmountWithoutTax]]></fieldDescription>
 	</field>
 	<field name="currencySymbol" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/amount/currencySymbol]]></fieldDescription>
@@ -299,7 +299,7 @@
 						<font fontName="Vista Sans OT Reg" size="10"/>
 						<paragraph rightIndent="5"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{catAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{catAmountWithoutTax})))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{catAmountWithoutTax}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="6" y="25" width="350" height="19" forecolor="#878787" uuid="5d7f0c02-8094-464f-a79f-bea5b34c4549"/>
