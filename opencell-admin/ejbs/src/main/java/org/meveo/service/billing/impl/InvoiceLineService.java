@@ -206,8 +206,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             securityDepositInput.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), 
             securityDepositInput.getBillingAccount(), null, new Date(), null, isExonerated, false, invoiceLine.getTax());
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(securityDepositInput.getAmount(), securityDepositInput.getAmount(), 
-            recalculatedTaxInfo.tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(),
-            appProvider.getRoundingMode().getRoundingMode());
+            recalculatedTaxInfo.tax.getPercent(), appProvider.isEntreprise(), appProvider.getInvoiceRounding(),
+            appProvider.getInvoiceRoundingMode().getRoundingMode());
         invoiceLine.setAmountWithoutTax(amounts[0]);
         invoiceLine.setAmountWithTax(amounts[1]);
         invoiceLine.setAmountTax(amounts[2]);
@@ -504,7 +504,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 invoiceLine.setTaxRecalculated(taxRecalculated);
                 
                 if(!tax.getPercent().equals(invoiceLine.getTaxRate())) {
-                       invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
+                       invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode());
                        invoiceLine.setTaxRate(tax.getPercent());
                 }
             }
@@ -626,7 +626,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                                           TaxMappingService.TaxInfo taxInfo, BigDecimal ilMinAmount) {
         Tax tax = taxInfo.tax;
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(ilMinAmount, ilMinAmount, tax.getPercent(), appProvider.isEntreprise(),
-                appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
         InvoiceLine invoiceLine = new InvoiceLine(minRatingDate, BigDecimal.ONE, amounts[0], amounts[1], amounts[2], OPEN,
                 billingAccount, minAmountLabel, tax, tax.getPercent(), defaultAccountingArticle);
         if (entity instanceof ServiceInstance) {
@@ -770,7 +770,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         } else {
             invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(resource.getQuantity()));
             invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
-                    invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).add(invoiceLine.getAmountWithoutTax()));
+                    invoiceLine.getTaxRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()).add(invoiceLine.getAmountWithoutTax()));
         }
 
 		if(resource.getServiceInstanceCode()!=null) {
@@ -843,12 +843,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		}
         if(!appProvider.isEntreprise()) {
             BigDecimal taxAmount = NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
-                    invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                    invoiceLine.getTaxRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
             invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(taxAmount));
         }
 		
         /****recalculate amountWithoutTax and amountWithTax  according to tax percent and the business model (b2b or b2c)*/
-        invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
+        invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode());
 
         invoiceLine.setValidity(datePeriod);
         invoiceLine.setProductVersion((ProductVersion) tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
