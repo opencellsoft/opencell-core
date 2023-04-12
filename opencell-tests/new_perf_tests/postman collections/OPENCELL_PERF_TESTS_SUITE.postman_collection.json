@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "97b7debe-9713-4251-b727-3c9dc248778e",
+		"_postman_id": "1276cf22-3b98-436e-878a-a068d7ea45bd",
 		"name": "OPENCELL_PERF_TESTS_SUITE_Hassnaa",
 		"description": "# Introduction\r\n\r\nThis configuration file is designed to be a basis for all configurations provided by Opencell.\r\nIt merely contains most common general settings and a catalog of services implementing various rating models.\r\n\r\n# Configuring Opencell\r\n\r\nThere are 2 main ways for configuring ***Opencell***:\r\n* GUI (*Administration GUI* and *Marketing Manager*)\r\n* API (all Opencell configuration and operations can be performed using our extensive API library)\r\n\r\nThe most flexible way is using APIs which currently are available as **Rest** and **Soap**.\r\nThe **Soap** API are deprecated, so will won't mention them anymore.\r\n\r\n## Tools\r\n\r\nAny tools able to send HTTP requests will do.\r\nOne could even just script *curl* calls using shell script.\r\nBut of course, a more user friendly tool will make things easier.\r\n\r\nHere at ***Opencell***, we prefer **Postman** (https://getpostman.com):\r\n* it has a modern, friendly interface\r\n* Sets of API request can be organized into collections, themselves structured into a folder tree.\r\n* Collections can be exported as _JSON_ files or shared with other team members using collaboration features (payed version)\r\n* it allows to uses variables at different levels (collection, environement, global) and to execute *Javascript* scripts before and after executing API calls which allows great flexibility and API response testing.\r\n\r\n\r\n\r\n# Configuration documentation guidelines\r\n\r\nIn order to document our configuration, we make full used of the internal documentation capabilities of the Markdown fields on Postman Objects\r\n\r\n## Default template for *Collection* documentation\r\n\r\n## Default template for *Folder* documentation\r\n\r\n## Default template for *Request* documentation\r\n\r\n\r\n\r\n# Tips & guidelines\r\n\r\nHere follow a few tips for understanding this collection.\r\n\r\n## Collection pre-request script\r\n\r\n```javascript\r\npm.globals.set(\"timestamp.iso\", (new Date()).toISOString());\r\npm.globals.set(\"request.label\", pm.info.requestName);\r\n\r\nvar parts = pm.info.requestName.split(\"|\");\r\n\r\nfor(let i=0; i<parts.length; i++) {\r\n    pm.globals.set(\"request.label.\"+i, parts[i]);\r\n}\r\n```\r\n\r\n## Configuration guidelines\r\n\r\n## Entities\r\n\r\n<entity>_<project_code>_XXX\r\n\r\n### Custom Fields\r\n\r\nCF_<entity>_<project_code>_ XXX\r\n\r\n<entity> will be discarded for inherited\r\n\r\n#### Custom field visibility\r\n\r\nSE_<entity>_<project_code>_<markers>_XXX\r\n\r\n<markers> are used in CFT.applicableOnEl to show CFT on entities\r\n\r\n\r\n## Entity abbreviation\r\n\r\n| code  | entity                        |\r\n|:-----:|:------------------------------|\r\n|   P   | Provider                      |\r\n|   S   | Seller                        |\r\n|   C   | Customer                      |\r\n|  CA   | Customer Account              |\r\n|  BA   | Billing Account               |\r\n|  UA   | User Account                  |\r\n|  SU   | Subscription                  |\r\n|  AP   | Access Point                  |\r\n|  OF   | Offer Template                |\r\n|  SE   | Service Template and Instance |\r\n|  CH   | Charge Template               |\r\n|  PP   | Price Plan                    |\r\n|  CN   | Counter                       |\r\n| ICAT  | Invoice Category              |\r\n| ISCAT | Invoice SubCategory           |\r\n|  CAL  | Calendar                      |\r\n|  BC   | Billing Cycle                 |\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -399,7 +399,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n\t\"code\" : \"{{request.label.1}}\",\r\n\t\"description\" : \"{{request.label.2}}\",\r\n    \"currencyCode\": \"EUR\",\r\n    \"countryCode\": \"FR\",\r\n    \"languageCode\": \"ENG\",\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": \"Esc. A\",\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": null\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"billing@opencellsoft.com\",\r\n        \"phone\": \"0123456789\",\r\n        \"mobile\": \"0678912345\",\r\n        \"fax\": null\r\n    }\r\n}"
+													"raw": "{\r\n\t\"code\" : \"{{request.label.1}}\",\r\n\t\"description\" : \"{{request.label.2}}\",\r\n    \"currencyCode\": \"EUR\",\r\n    \"countryCode\": \"FR\",\r\n    \"languageCode\": \"ENG\",\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": \"Esc. A\",\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": null\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"billing@opencellsoft.com\",\r\n        \"phone\": \"0123456789\",\r\n        \"mobile\": \"0678912345\",\r\n        \"fax\": null\r\n    },\r\n    \"registrationNo\": \"732-829-320-00074\",\r\n    \"isoICDCode\": \"0002\"\r\n}"
 												},
 												"url": {
 													"raw": "{{opencell.url}}/seller/createOrUpdate",
@@ -430,7 +430,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\t\"code\" : \"{{request.label.1}}\",\n\t\"description\" : \"{{request.label.2}}\",\n\t\"parentSeller\" : \"{{request.label.3}}\",\n\t\"currencyCode\" : \"EUR\",\n\t\"countryCode\" : \"FR\",\n\t\"languageCode\" : \"FRA\",\n    \"contactInformation\": null,\n    \"address\": {\n        \"address1\": \"52 rue Kléber\",\n        \"address2\": null,\n        \"address3\": null,\n        \"zipCode\": \"92300\",\n        \"city\": \"Levallois-Perret\",\n        \"country\": \"FR\",\n        \"state\": null\n    },\n    \"invoiceTypeSequences\": {\n        \"COM\": {\n            \"prefixEL\": \"{{request.label.1}}\",\n            \"sequenceSize\": 6\n        }\n    },\n    \"customFields\": { \"customField\": []}\n}"
+													"raw": "{\n\t\"code\" : \"{{request.label.1}}\",\n\t\"description\" : \"{{request.label.2}}\",\n\t\"parentSeller\" : \"{{request.label.3}}\",\n\t\"currencyCode\" : \"EUR\",\n\t\"countryCode\" : \"FR\",\n\t\"languageCode\" : \"FRA\",\n    \"contactInformation\": null,\n    \"address\": {\n        \"address1\": \"52 rue Kléber\",\n        \"address2\": null,\n        \"address3\": null,\n        \"zipCode\": \"92300\",\n        \"city\": \"Levallois-Perret\",\n        \"country\": \"FR\",\n        \"state\": null\n    },\n    \"invoiceTypeSequences\": {\n        \"COM\": {\n            \"prefixEL\": \"{{request.label.1}}\",\n            \"sequenceSize\": 6\n        }\n    },\n    \"customFields\": { \"customField\": []},\n    \"registrationNo\": \"732-829-320-00075\",\n    \"isoICDCode\": \"0002\"\n}"
 												},
 												"url": {
 													"raw": "{{opencell.url}}/seller/createOrUpdate",
@@ -457,7 +457,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n\t\"code\" : \"{{request.label.1}}\",\n\t\"description\" : \"{{request.label.2}}\",\n\t\"parentSeller\" : \"{{request.label.3}}\",\n\t\"currencyCode\" : \"EUR\",\n\t\"countryCode\" : \"FR\",\n\t\"languageCode\" : \"FRA\",\n    \"contactInformation\": null,\n    \"registrationNo\": \"REG999999999\",\n    \"vatNo\": \"VAT999999999\",\n    \"address\": {\n        \"address1\": \"52 rue Kléber\",\n        \"address2\": null,\n        \"address3\": null,\n        \"zipCode\": \"92300\",\n        \"city\": \"Levallois-Perret\",\n        \"country\": \"FR\",\n        \"state\": null\n    },\n    \"customFields\": { \"customField\": []}\n}"
+													"raw": "{\n\t\"code\" : \"{{request.label.1}}\",\n\t\"description\" : \"{{request.label.2}}\",\n\t\"parentSeller\" : \"{{request.label.3}}\",\n\t\"currencyCode\" : \"EUR\",\n\t\"countryCode\" : \"FR\",\n\t\"languageCode\" : \"FRA\",\n    \"contactInformation\": null,\n    \"registrationNo\": \"REG999999999\",\n    \"vatNo\": \"VAT999999999\",\n    \"address\": {\n        \"address1\": \"52 rue Kléber\",\n        \"address2\": null,\n        \"address3\": null,\n        \"zipCode\": \"92300\",\n        \"city\": \"Levallois-Perret\",\n        \"country\": \"FR\",\n        \"state\": null\n    },\n    \"customFields\": { \"customField\": []},\n    \"isoICDCode\": \"0002\"\n}"
 												},
 												"url": {
 													"raw": "{{opencell.url}}/seller/createOrUpdate",
@@ -932,7 +932,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\n  \"code\": \"{{code}}\",\n  \"description\": \"{{desc}}\",\n  \"percent\": \"{{percentage}}\",\n  \"languageDescriptions\": [\n  {\n    \"languageCode\": \"FRA\",\n    \"description\": \"{{desc}}\"\n  }\n  ]\n}"
+													"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"percent\": \"{{percentage}}\",\n    \"taxationCategory\": \"S\",\n    \"languageDescriptions\": [\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{desc}}\"\n        }\n    ]\n}"
 												},
 												"url": {
 													"raw": "{{opencell.url}}/tax/createOrUpdate",
@@ -1421,7 +1421,7 @@
 									"response": []
 								},
 								{
-									"name": "custCat|code=PROSPECT|taxCat=REGULAR",
+									"name": "custCat|code=PROSPECT|taxCat=REGULAR|defaultSellerCode=OPENCELL",
 									"request": {
 										"method": "POST",
 										"header": [
@@ -1432,7 +1432,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"Prospect\",\r\n    \"taxCategoryCode\": \"{{taxCat}}\"\r\n}\r\n"
+											"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"Prospect\",\r\n    \"taxCategoryCode\": \"{{taxCat}}\",\r\n    \"defaultSellerCode\": \"{{defaultSellerCode}}\"\r\n}\r\n"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/customer/createOrUpdateCategory",
@@ -1449,7 +1449,7 @@
 									"response": []
 								},
 								{
-									"name": "custCat|code=ASSOCIATION|taxCat=EXEMPTED",
+									"name": "custCat|code=ASSOCIATION|taxCat=EXEMPTED|defaultSellerCode=OPENCELL",
 									"request": {
 										"method": "POST",
 										"header": [
@@ -1460,7 +1460,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"Association\",\r\n    \"taxCategoryCode\": \"{{taxCat}}\"\r\n}\r\n"
+											"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"Association\",\r\n    \"taxCategoryCode\": \"{{taxCat}}\",\r\n    \"defaultSellerCode\": \"{{defaultSellerCode}}\"\r\n}\r\n"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/customer/createOrUpdateCategory",
@@ -3954,75 +3954,6 @@
 			"name": "Perf_test_jobs",
 			"item": [
 				{
-					"name": "Update cacheCFT to false to look up in DB",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if( pm.response.code == 200 ) { \r",
-									"    tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors==null ||JSON.parse(responseBody).compilationErrors.length === 0; \r",
-									"    }"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "opencell.superadmin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "opencell.superadmin",
-									"type": "string"
-								},
-								{
-									"key": "saveHelperData",
-									"value": true,
-									"type": "boolean"
-								},
-								{
-									"key": "showPassword",
-									"value": false,
-									"type": "boolean"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"property\": \"cache.cacheCFT\",\r\n    \"value\": false\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/configurations",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"configurations"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "SCRIPT|MailNotificationScript",
 					"event": [
 						{
@@ -4048,6 +3979,55 @@
 						"body": {
 							"mode": "raw",
 							"raw": "<ScriptInstance>\r\n    <code>org.meveo.service.script.MailNotificationScript</code>\r\n    <description>MailNotificationScript</description>\r\n    <type>JAVA</type>\r\n    <script>\r\n        <![CDATA[package org.meveo.service.script;\r\n\r\nimport java.util.Arrays;\r\nimport java.util.Date;\r\nimport java.util.HashMap;\r\nimport java.util.LinkedHashMap;\r\nimport java.util.List;\r\nimport java.util.Map;\r\nimport java.util.Map.Entry;\r\nimport java.util.Set;\r\n\r\nimport javax.persistence.EntityManager;\r\nimport javax.persistence.Query;\r\n\r\nimport org.meveo.admin.exception.BusinessException;\r\nimport org.meveo.service.billing.impl.EdrService;\r\nimport org.meveo.service.communication.impl.EmailSender;\r\nimport org.meveo.util.Version;\r\n\r\nimport java.math.BigDecimal;\r\nimport java.math.BigInteger;\r\n\r\npublic class MailNotificationScript extends Script {\r\n\r\n private EmailSender emailSender = (EmailSender) getServiceInterface(\"EmailSender\");\r\n private EdrService edrService = (EdrService) getServiceInterface(\"EdrService\");\r\n\r\n @Override\r\n public void execute(Map<String, Object> methodContext) throws BusinessException {\r\n\r\n  String jobNativeQuery = \"SELECT meveo_job_instance.code, start_date, ((\"\r\n    + \"DATE_PART('day', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp) * 24 + \"\r\n    + \"DATE_PART('hour', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp)) * 60 + \"\r\n    + \"DATE_PART('minute', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp)) * 60 + \"\r\n    + \"DATE_PART('second', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp) as time_in_seconds, nb_to_process, nb_success, nb_error, nb_warning FROM job_execution, meveo_job_instance \"\r\n    + \"WHERE job_execution.job_instance_id=meveo_job_instance.id AND code in ('Cust_Job','Acco_Job','Subs_Job','M_Job','U_Job','RT_Job','BillingRunJob','Inv_Job','XML_Job','PDF_Job','AO_Job','A_SEPA') order by start_date\";\r\n  \r\n\r\n  String nbBASQL = \"SELECT count (*) FROM billing_billing_account\";\r\n  EntityManager entityManager = edrService.getEntityManager();\r\n\r\n  Query query = entityManager.createNativeQuery(jobNativeQuery);\r\n  List<Object[]> rows = query.getResultList();\r\n  Map<String, Date> jobDateMap = new LinkedHashMap<>();\r\n  Map<String, Double> jobDuration = new LinkedHashMap<>();\r\n  Map<String, BigInteger> jobProcess = new LinkedHashMap<>();   \r\n  Map<String, BigInteger> jobSuccess = new LinkedHashMap<>();\r\n  Map<String, BigInteger> jobErrors = new LinkedHashMap<>();\r\n  Map<String, BigInteger> jobWarnings = new LinkedHashMap<>();\r\n\r\n  Query nbBAQuery = entityManager.createNativeQuery(nbBASQL);\r\n\r\n  BigInteger nbBA = (BigInteger) nbBAQuery.getSingleResult();\r\n   \r\n\r\n  for (Object[] row : rows) {\r\n   try {\r\n    jobDateMap.put((String) row[0], (Date) row[1]);\r\n    jobDuration.put((String) row[0], (Double) row[2]);\r\n    jobProcess.put((String) row[0], (BigInteger) row[3]);\r\n    jobSuccess.put((String) row[0], (BigInteger) row[4]);\r\n    jobErrors.put((String) row[0], (BigInteger) row[5]);\r\n    jobWarnings.put((String) row[0], (BigInteger) row[6]);\r\n   } catch (Exception ex) {\r\n    System.out.println(ex.getMessage());\r\n   }\r\n  }\r\n\r\n \r\n  StringBuilder stringBuilder = new StringBuilder();\r\n  stringBuilder.append(\"<html>\");\r\n  stringBuilder.append(\"<head>\");\r\n  stringBuilder.append(\"<title>Test Perfs Result on \" + nbBA + \" entities </title>\");\r\n  stringBuilder.append(\"</head>\");\r\n  stringBuilder.append(\"<body>\");\r\n  stringBuilder.append(\"<style>table{font-family:Arial,Helvetica,sans-serif;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px}tr:nth-child(even){background-color:#f2f2f2}tr:hover{background-color:#ddd}th{padding-top:12px;padding-bottom:12px;text-align:left;background-color:#4CAF50;color:#fff}</style>\");\r\n  stringBuilder.append(\"<h2>Jobs Performance tests results on \" + nbBA + \" entities for version : \" + Version.appVersion + \"on {{opencell.base}} </h2>\");\r\n  stringBuilder.append(\"<table>\");\r\n  stringBuilder.append(\"<thead>\");\r\n  stringBuilder.append(\"<tr>\");\r\n  stringBuilder.append(\"<th>JOB</th>\");\r\n  stringBuilder.append(\"<th>START DATE</th>\");\r\n  stringBuilder.append(\"<th>DURATION</th>\");\r\n  stringBuilder.append(\"<th>NB PROCESS</th>\");\r\n  stringBuilder.append(\"<th>NB SUCESS</th>\");\r\n  stringBuilder.append(\"<th>NB ERRORS</th>\");\r\n  stringBuilder.append(\"<th>NB WARNINGS</th>\");\r\n  stringBuilder.append(\"<th>TPS</th>\");\r\n  stringBuilder.append(\"</tr>\");\r\n  stringBuilder.append(\"</thead>\");\r\n  stringBuilder.append(\"<tbody>\");\r\n  Set<Entry<String, Date>> entrySet = jobDateMap.entrySet();\r\n  for (Entry<String, Date> entry : entrySet) {\r\n   stringBuilder.append(\"<tr>\");\r\n   String key = entry.getKey();\r\n   stringBuilder.append(\"<td>\" + key + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + entry.getValue() + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + String.format(\"%1.0f\",jobDuration.get(key)) + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + jobProcess.get(key) + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + jobSuccess.get(key) + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + jobErrors.get(key) + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + jobWarnings.get(key) + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + String.format(\"%1.0f\",(nbBA.doubleValue()/jobDuration.get(key))) + \"</td>\");\r\n   stringBuilder.append(\"<tr>\");\r\n  }\r\n\r\n  stringBuilder.append(\"</tbody>\");\r\n  stringBuilder.append(\"</table>\");\r\n\r\n  stringBuilder.append(\"</br>\");\r\n\r\n  stringBuilder.append(\"<p>Nota : <em>Duration is in second and TPS is number of Treatements Per Second</em></p>\");\r\n\r\n  stringBuilder.append(\"</body>\");\r\n  stringBuilder.append(\"</html>\");\r\n\r\n  Map<String, Object> emailParams = new HashMap<String, Object>();\r\n  emailParams.put(\"JobStartDate\", jobDateMap);\r\n  emailParams.put(\"JobDuration\", jobDateMap);\r\n  emailParams.put(\"nbBA\", nbBA);\r\n\r\n  String from = \"bot@opencellsoft.com\";\r\n  String replyTo = \"no-reply@opencellsoft.com\";\r\n  String to1 = \"{{EMAIL1}}\";\r\n  String to2 = \"wassim.drira@opencellsoft.com\";\r\n  String to3 = \"antoine.michea@opencellsoft.com\";\r\n  String cc = \"thang.nguyen@opencellsoft.com\";\r\n\r\n  try {\r\n   emailSender.send(from, Arrays.asList(replyTo), Arrays.asList(to1), cc == null ? null : Arrays.asList(cc),\r\n     null, \"Test Perfs Result\", null, stringBuilder.toString(), null, new Date(), true);\r\n   methodContext.put(Script.RESULT_VALUE, \"Email sent\");\r\n\r\n  } catch (Exception e) {\r\n   e.printStackTrace();\r\n  }\r\n\r\n }\r\n}]]></script>\r\n</ScriptInstance>"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/scriptInstance/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"scriptInstance",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SCRIPT|SendResultScript",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if( pm.response.code == 200 ) { \r",
+									"    tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors==null ||JSON.parse(responseBody).compilationErrors.length === 0; \r",
+									"    }"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<ScriptInstance>\r\n    <code>org.meveo.service.script.SendResultScript</code>\r\n    <description>Send Result Script</description>\r\n    <type>JAVA</type>\r\n    <script>\r\n        <![CDATA[                                   package org.meveo.service.script;\r\n\r\nimport java.io.IOException;\r\nimport java.net.URI;\r\nimport java.net.http.HttpClient;\r\nimport java.net.http.HttpRequest;\r\nimport java.net.http.HttpResponse;\r\nimport java.util.ArrayList;\r\nimport java.util.Base64;\r\nimport java.util.List;\r\nimport java.util.Map;\r\nimport java.util.Objects;\r\nimport java.util.regex.Matcher;\r\nimport java.util.regex.Pattern;\r\n\r\nimport javax.persistence.EntityManager;\r\nimport javax.persistence.Query;\r\n\r\nimport org.apache.commons.io.FileUtils;\r\nimport org.hibernate.query.internal.NativeQueryImpl;\r\nimport org.hibernate.transform.AliasToEntityMapResultTransformer;\r\nimport org.json.JSONObject;\r\nimport org.meveo.admin.exception.BusinessException;\r\nimport org.meveo.service.billing.impl.EdrService;\r\n\r\npublic class SendResultScript extends Script {\r\n\r\n    private EdrService edrService = (EdrService) getServiceInterface(\"EdrService\");\r\n\r\n    private static final String SERVICE_URL = \"http://perf1.opencellsoft.com:8089/v1/graphql\";\r\n\r\n    private static final String PERF_SERVER_URL = \"{{opencell.base}}\" + \"/opencell/api/rest/seller/version\";\r\n\r\n    private String getResultFromOCDatabase = \"with res AS\\n\" +\r\n            \" (SELECT meveo_job_instance.code AS job_name,\\n\" +\r\n            \" ? AS test_id,\\n\" +\r\n            \" job_execution.start_date,\\n\" +\r\n            \" job_execution.end_date,\\n\" +\r\n            \" ((DATE_PART('day', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp) * 24 + DATE_PART('hour', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp)) * 60 + DATE_PART('minute', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp)) * 60 + DATE_PART('second', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp) AS duration_in_s,\\n\" +\r\n            \" job_execution.nb_success,\\n\" +\r\n            \" job_execution.nb_error,\\n\" +\r\n            \" job_execution.nb_warning\\n\" +\r\n            \" FROM job_execution,\\n\" +\r\n            \" meveo_job_instance\\n\" +\r\n            \" WHERE job_execution.job_instance_id = meveo_job_instance.id\\n\" +\r\n            \" AND code IN ('Cust_Job', 'Acco_Job', 'Subs_Job', 'M_Job', 'U_Job', 'RT_Job', 'BillingRunJob', 'Inv_Job', 'XML_Job', 'PDF_Job', 'AO_Job', 'A_SEPA', 'Invoice_Lines_Job_V2', 'Invoicing_Job_V2',\\n\" +\r\n            \" 'RR_Job')\\n\" +\r\n            \" AND start_date >= TO_TIMESTAMP(?,'YYYY-MM-DDTHH:MI:SS')\\n\" +\r\n            \" ORDER BY start_date)\\n\" +\r\n            \"SELECT test_id, job_name, min(start_date) AS start_date, min(end_date) AS end_date, sum(duration_in_s)\\\\:\\\\:INTEGER AS duration_in_s, 5000 AS tps, sum(nb_success) AS nb_success, sum(nb_error) AS nb_error, sum(nb_warning) AS nb_warning\\n\" +\r\n            \"FROM res\\n\" +\r\n            \"GROUP BY res.job_name, res.test_id\\n\" +\r\n            \"ORDER BY start_date\";\r\n\r\n    private String testDate;\r\n\r\n\r\n    @Override\r\n    public void execute(Map<String, Object> methodContext) throws BusinessException {\r\n        EntityManager entityManager = edrService.getEntityManager();\r\n\r\n        // add information of server\r\n        insertServerTable();\r\n\r\n        // add parameters related to performance test\r\n        long test_id = 0;\r\n        try {\r\n            test_id = insertPerfTestTable(entityManager);\r\n        } catch (Exception e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        // add results for multiple jobs to table Job Exec\r\n        addJobExecLines(entityManager, test_id, testDate);\r\n    }\r\n\r\n    public void insertServerTable() {\r\n        // ********* Set  iops, server_name, network, etc. of server **********\r\n        long iops = 1000;\r\n        String serverName = \"{{opencell.base}}\";\r\n        int network = 100;\r\n        String ram = FileUtils.byteCountToDisplaySize(Runtime.getRuntime().totalMemory());\r\n        int cpu = Runtime.getRuntime().availableProcessors();\r\n\r\n        String payload = \"{\\n\" +\r\n                \"    \\\"query\\\": \\\"mutation insertData($objects: [server_insert_input!] = {}) { insert_server_one(object: {\" +\r\n                \"iops: \\\\\\\"\" + iops + \"\\\\\\\", name: \\\\\\\"\" + serverName + \"\\\\\\\", network: \\\\\\\"\" + network\r\n                + \"\\\\\\\", ram: \\\\\\\"\" + ram + \"\\\\\\\", cpu: \\\\\\\"\" + cpu\r\n                + \"\\\\\\\"}){ network }}\\\"\\n}\";\r\n\r\n        // Execute the API call\r\n        String actualResponse = Objects.requireNonNull(callAPIService(SERVICE_URL, payload, \"POST\")).body();\r\n        \r\n        System.out.println(\"response of callAPIService insertServerTable : \" + actualResponse);\r\n    }\r\n\r\n    public long insertPerfTestTable(EntityManager entityManager) throws Exception {\r\n        long id = 0;\r\n\r\n        // ************* Set OC version and OC commit ****************\r\n        HttpResponse<String> apiGetVersionResponse = callAPIService(PERF_SERVER_URL, \"\", \"GET\");\r\n        assert apiGetVersionResponse != null;\r\n        JSONObject responseJson = new JSONObject(apiGetVersionResponse.body());\r\n        String message = (String) responseJson.get(\"message\");\r\n        String pattern = \".*version\\\\s(.*)\\\\scommit\\\\s(.*)\";\r\n        Pattern pt = Pattern.compile(pattern);\r\n        Matcher m = pt.matcher(message);\r\n\r\n        String opencellVersion;\r\n        String opencellCommit;\r\n\r\n        if (m.find()) {\r\n            opencellVersion = m.group(1);\r\n            opencellCommit = m.group(2);\r\n        } else {\r\n            throw new Exception(\"No match for opencellVersion and/or opencellCommit\");\r\n        }\r\n\r\n        // ************* Set pg_version ****************\r\n        String pgVersion = entityManager.createNativeQuery(\"SELECT version();\").getSingleResult().toString();\r\n\r\n\r\n        // ********* Set cdrs_per_sub, cdrs, customers, opencell_container_image, etc. from Postman collection **********\r\n        long cdrsPerSub = {{performance_CDR_PER_DAY}} * {{performance_CDR_DAYS}};\r\n        long customers = {{NB_CUST}};\r\n        long cdrs = cdrsPerSub*customers;\r\n        int opencellContainerImage = 1;\r\n        String serverName = \"{{opencell.base}}\";\r\n        long subscriptions = {{NB_CUST}};\r\n        testDate = \"{{perf_test_date}}\";\r\n\r\n//        long cdrsPerSub = 1;\r\n//        long customers = 1;\r\n//        long cdrs = cdrsPerSub*customers;\r\n//        int opencellContainerImage = 1;\r\n//        String serverName = \"test\";\r\n//        long subscriptions = 1;\r\n//        Date testDate = new Date();\r\n\r\n        String payload = \"{\\n\" +\r\n                \"    \\\"query\\\": \\\"mutation insertData($objects: [server_insert_input!] = {}) {  insert_test_one(object: {\" +\r\n                \"cdr_per_sub: \\\\\\\"\" + cdrsPerSub + \"\\\\\\\", cdrs: \\\\\\\"\" + cdrs + \"\\\\\\\", customers: \\\\\\\"\" + customers\r\n                + \"\\\\\\\", opencell_commit: \\\\\\\"\" + opencellCommit + \"\\\\\\\", opencell_container_image: \\\\\\\"\" + opencellContainerImage\r\n                + \"\\\\\\\", opencell_version: \\\\\\\"\" + opencellVersion + \"\\\\\\\", pg_version: \\\\\\\"\" + pgVersion +\r\n                \"\\\\\\\", server_name: \\\\\\\"\" + serverName + \"\\\\\\\", subscriptions: \\\\\\\"\" + subscriptions + \"\\\\\\\", test_date: \\\\\\\"\" + testDate\r\n                + \"\\\\\\\"}){ id }}\\\"\\n}\";\r\n\r\n        // Construct Httpclient and execute the API call\r\n        HttpResponse<String> response = callAPIService(SERVICE_URL, payload, \"POST\");\r\n        \r\n        System.out.println(\"response of callAPIService insertPerfTestTable : \" + response.body());\r\n\r\n        responseJson = new JSONObject(response.body());\r\n\r\n        id = ((Number)((JSONObject)((JSONObject) responseJson.get(\"data\")).get(\"insert_test_one\")).get(\"id\")).longValue();\r\n\r\n        System.out.println(\"value of id : \" + id);\r\n\r\n        return id;\r\n    }\r\n\r\n    public void addJobExecLines(EntityManager entityManager, long id, String testDate) {\r\n        // Get list result of jobs\r\n        Query query = entityManager.createNativeQuery(getResultFromOCDatabase).setParameter(1, id).setParameter(2, testDate);\r\n        NativeQueryImpl<Map<String, Object>> nativeQuery = (NativeQueryImpl) query;\r\n        nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);\r\n        List<Map<String, Object>> resultList = nativeQuery.getResultList();\r\n\r\n        // Build Json string based on the result list obtained from the query 'getResultQuery'\r\n        String jsonString = buildJson(resultList);\r\n\r\n        String payload = \"{\\n\" +\r\n                \"    \\\"query\\\": \\\"mutation insertData($objects: [server_insert_input!] = {}) {insert_job_exec(objects: \"\r\n                + jsonString\r\n                + \") { affected_rows }}\\\"\\n}\";\r\n\r\n        // Construct Httpclient and execute the GraphQL call\r\n        HttpResponse<String> httpResponse = callAPIService(SERVICE_URL, payload, \"POST\");\r\n\r\n        assert httpResponse != null;\r\n        String actualResponse = httpResponse.body();\r\n        System.out.println(\"response of callAPIService addJobExecLines : \" + actualResponse);\r\n    }\r\n\r\n    public static String buildJson(List<Map<String, Object>> resultList) {\r\n        StringBuilder jsonStringBuilder = new StringBuilder(\"[\");\r\n\r\n        if (!resultList.isEmpty()) {\r\n            for (int j = 0; j < resultList.size(); j++) {\r\n                Map<String, Object> aResult = resultList.get(j);\r\n                jsonStringBuilder.append(\"{\");\r\n                List<String> keyList = new ArrayList<>(aResult.keySet());\r\n                for (int i = 0; i < keyList.size(); i++) {\r\n                    String key = keyList.get(i);\r\n                    jsonStringBuilder.append(key).append(\":\").append(\"\\\\\\\"\").append(aResult.get(key)).append(\"\\\\\\\"\");\r\n                    if (i != keyList.size() - 1)\r\n                        jsonStringBuilder.append(\", \");\r\n                }\r\n                jsonStringBuilder.append(\"}\");\r\n                if (j != resultList.size() - 1)\r\n                    jsonStringBuilder.append(\", \");\r\n            }\r\n        }\r\n\r\n        jsonStringBuilder.append(\"]\");\r\n\r\n        return new String(jsonStringBuilder);\r\n    }\r\n\r\n    public static HttpResponse<String> callAPIService(String url, String payload, String typeRequest) {\r\n        HttpClient client = HttpClient.newHttpClient();\r\n\r\n        HttpRequest request = HttpRequest.newBuilder()\r\n                .uri(URI.create(url))\r\n                .build();\r\n\r\n        try {\r\n            if (typeRequest.equalsIgnoreCase(\"POST\")) {\r\n                request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(payload))\r\n                        .uri(URI.create(url)).header(\"Authorization\", \"Basic \"\r\n                                + Base64.getEncoder().encodeToString((\"opencell.superadmin\" + \":\" + \"opencell.superadmin\").getBytes()))\r\n                        .build();\r\n            }\r\n            else if (typeRequest.equalsIgnoreCase(\"GET\")) {\r\n                request = HttpRequest.newBuilder().GET()\r\n                        .uri(URI.create(url)).header(\"Authorization\", \"Basic \"\r\n                                + Base64.getEncoder().encodeToString((\"opencell.superadmin\" + \":\" + \"opencell.superadmin\").getBytes()))\r\n                        .build();\r\n            }\r\n\r\n            try {\r\n                return client.send(request, HttpResponse.BodyHandlers.ofString());\r\n            } catch (InterruptedException e) {\r\n                e.printStackTrace();\r\n            }\r\n        } catch (IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        return null;\r\n    }\r\n\r\n}\r\n\r\n\r\n\r\n]]></script>\r\n</ScriptInstance>"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/scriptInstance/createOrUpdate",
@@ -4179,6 +4159,44 @@
 					"response": []
 				},
 				{
+					"name": "Create|code=SendResultsToDB",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"SendResultsToDB\",\n    \"disabled\": false,\n    \"jobCategory\": \"MEDIATION\",\n    \"jobTemplate\": \"ScriptingJob\",\n    \"active\": true,\n    \"customFields\": {\n        \"customField\": [\n            {\n                \"code\": \"ScriptingJob_script\",\n                \"description\": \"Script to run\",\n                \"fieldType\": \"ENTITY\",\n                \"entityReferenceValue\": {\n                    \"classname\": \"org.meveo.model.scripts.ScriptInstance\",\n                    \"classnameCode\": null,\n                    \"code\": \"org.meveo.service.script.SendResultScript\"\n                },\n                \"guiPosition\": \"tab:Configuration:0;field:0\"\n            }\n        ]\n    },\n    \"limitToSingleNode\": true,\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DDREQUEST CReation",
 					"event": [
 						{
@@ -4239,7 +4257,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"A_SEPA\",\n    \"jobCategory\": \"PAYMENT\",\n    \"jobTemplate\": \"SepaDirectDebitJob\",\n    \"customFields\": {\n            \"customField\": [\n                {\n                    \"code\": \"SepaJob_ddRequestBuilder\",\n                    \"description\": \"DDRequest builder\",\n                    \"fieldType\": \"ENTITY\",\n                    \"entityReferenceValue\": {\n                        \"classname\": \"org.meveo.model.payments.DDRequestBuilder\",\n                        \"classnameCode\": null,\n                        \"code\": \"Sepa_STD\"\n                    },\n                    \"guiPosition\": \"tab:Configuration:0;field:2\"\n                }\n            ]\n        },\n    \"verboseReport\": true,    \n    \"followingJob\": \"SendResults\"\n}"
+							"raw": "{\n    \"code\": \"A_SEPA\",\n    \"jobCategory\": \"PAYMENT\",\n    \"jobTemplate\": \"SepaDirectDebitJob\",\n    \"customFields\": {\n            \"customField\": [\n                {\n                    \"code\": \"SepaJob_ddRequestBuilder\",\n                    \"description\": \"DDRequest builder\",\n                    \"fieldType\": \"ENTITY\",\n                    \"entityReferenceValue\": {\n                        \"classname\": \"org.meveo.model.payments.DDRequestBuilder\",\n                        \"classnameCode\": null,\n                        \"code\": \"Sepa_STD\"\n                    },\n                    \"guiPosition\": \"tab:Configuration:0;field:2\"\n                }\n            ]\n        },\n    \"verboseReport\": true,    \n    \"followingJob\": \"SendResultsToDB\"\n}"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/job/createOrUpdate",
@@ -4679,75 +4697,6 @@
 							"path": [
 								"job",
 								"createOrUpdate"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update cacheCFT to true",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if( pm.response.code == 200 ) { \r",
-									"    tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors==null ||JSON.parse(responseBody).compilationErrors.length === 0; \r",
-									"    }"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "opencell.superadmin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "opencell.superadmin",
-									"type": "string"
-								},
-								{
-									"key": "saveHelperData",
-									"value": true,
-									"type": "boolean"
-								},
-								{
-									"key": "showPassword",
-									"value": false,
-									"type": "boolean"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"property\": \"cache.cacheCFT\",\r\n    \"value\": true\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/configurations",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"configurations"
 							]
 						}
 					},
