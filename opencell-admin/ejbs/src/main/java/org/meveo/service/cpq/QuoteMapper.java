@@ -191,7 +191,7 @@ public class QuoteMapper {
         List<org.meveo.api.dto.cpq.xml.AccountingArticle> articleLinesDiscounts = linesByAccountingArticle.keySet().stream()
                 .map(accountingArticle -> mapToArticleLineDiscount(accountingArticle, linesByAccountingArticle.get(accountingArticle), ba, mapTaxIndexes))
                 .collect(toList());
-        return new SubCategory(subCategory, articleLines, new ArrayList<>(), getTradingLanguage(ba));
+        return new SubCategory(subCategory, articleLines, articleLinesDiscounts, getTradingLanguage(ba));
     }
 
     private org.meveo.api.dto.cpq.xml.AccountingArticle mapToArticleLine(AccountingArticle accountingArticle,
@@ -199,9 +199,9 @@ public class QuoteMapper {
                                                                          org.meveo.model.billing.BillingAccount ba,
                                                                          Map<String, TaxDTO> mapTaxIndexes) {
 
-//        if (accountingArticle.getAllowanceCode() != null && DISCOUNT_ALLOWANCE_CODE.equals(accountingArticle.getAllowanceCode().getCode())) {
-//           return null;
-//        }
+        if (accountingArticle.getAllowanceCode() != null && DISCOUNT_ALLOWANCE_CODE.equals(accountingArticle.getAllowanceCode().getCode())) {
+           return null;
+        }
 
     	Optional<OpenOrder> openOrder = openOrderService.checkAvailableOpenOrderForArticle(ba, accountingArticle, new Date());
     	org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(
@@ -231,35 +231,32 @@ public class QuoteMapper {
                                                                          List<QuoteArticleLine> quoteArticleLines,
                                                                          org.meveo.model.billing.BillingAccount ba,
                                                                          Map<String, TaxDTO> mapTaxIndexes) {
+        if (accountingArticle.getAllowanceCode() != null && DISCOUNT_ALLOWANCE_CODE.equals(accountingArticle.getAllowanceCode().getCode())) {
+            Optional<OpenOrder> openOrder = openOrderService.checkAvailableOpenOrderForArticle(ba, accountingArticle, new Date());
+            org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new org.meveo.api.dto.cpq.xml.AccountingArticle(
+                    accountingArticle,
+                    quoteArticleLines,
+                    getTradingLanguage(ba),
+                    openOrder.map(OpenOrder::getOpenOrderNumber).orElse(null),
+                    openOrder.map(OpenOrder::getExternalReference).orElse(null),
+                    openOrder.map(OpenOrder::getActivationDate).orElse(null));
 
-        if (accountingArticle.getAllowanceCode() != null && !DISCOUNT_ALLOWANCE_CODE.equals(accountingArticle.getAllowanceCode().getCode())) {
-            return null;
+
+            accountingArticleDto.setQuoteLines(quoteArticleLines.stream()
+                    .map(line -> {
+                        // build currency details
+                        Map<String, TradingCurrency> currencies = new HashMap<>();
+                        line.getQuotePrices().forEach(quotePrice -> {
+                            if (StringUtils.isNotBlank(quotePrice.getCurrencyCode())) {
+                                currencies.put(quotePrice.getCurrencyCode(), currencyService.findByTradingCurrencyCode(quotePrice.getCurrencyCode()));
+                            }
+                        });
+                        return new QuoteLine(line, mapToOffer(line.getQuoteProduct() != null ? line.getQuoteProduct().getQuoteOffer() : null, mapTaxIndexes), currencies, mapTaxIndexes);
+                    })
+                    .collect(Collectors.toList()));
+            return accountingArticleDto;
         }
-
-        Optional<OpenOrder> openOrder = openOrderService.checkAvailableOpenOrderForArticle(ba, accountingArticle, new Date());
-        org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(
-                accountingArticle,
-                quoteArticleLines,
-                getTradingLanguage(ba),
-                openOrder.map(OpenOrder::getOpenOrderNumber).orElse(null),
-                openOrder.map(OpenOrder::getExternalReference).orElse(null),
-                openOrder.map(OpenOrder::getActivationDate).orElse(null));
-
-
-
-        accountingArticleDto.setQuoteLines(quoteArticleLines.stream()
-                .map(line -> {
-                    // build currency details
-                    Map<String, TradingCurrency> currencies = new HashMap<>();
-                    line.getQuotePrices().forEach(quotePrice -> {
-                        if(StringUtils.isNotBlank(quotePrice.getCurrencyCode())){
-                            currencies.put(quotePrice.getCurrencyCode(), currencyService.findByTradingCurrencyCode(quotePrice.getCurrencyCode()));
-                        }
-                    });
-                    return new QuoteLine(line,mapToOffer(line.getQuoteProduct() != null?line.getQuoteProduct().getQuoteOffer():null, mapTaxIndexes), currencies, mapTaxIndexes);
-                })
-                .collect(Collectors.toList()));
-        return accountingArticleDto;
+        return null;
     }
 
     private org.meveo.api.dto.cpq.xml.Offer mapToOffer(QuoteOffer quoteOffer, Map<String, TaxDTO> mapTaxIndexes) {

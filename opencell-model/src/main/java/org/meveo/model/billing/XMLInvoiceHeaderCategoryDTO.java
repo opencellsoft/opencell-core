@@ -32,6 +32,9 @@ public class XMLInvoiceHeaderCategoryDTO {
     private BigDecimal amountWithoutTax = ZERO;
     private BigDecimal amountWithTax = ZERO;
     private BigDecimal amountTax = ZERO;
+    private BigDecimal transactionalAmountWithoutTax = ZERO;
+    private BigDecimal transactionalAmountWithTax = ZERO;
+    private BigDecimal transactionalAmountTax = ZERO;
     private Integer sortIndex;
 
     private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
@@ -111,6 +114,31 @@ public class XMLInvoiceHeaderCategoryDTO {
         }
     }
 
+    public void addTransactionalAmountWithTax(BigDecimal amountToAdd) {
+        if (amountToAdd != null) {
+            if (transactionalAmountWithTax == null) {
+                transactionalAmountWithTax = new BigDecimal("0");
+            }
+            transactionalAmountWithTax = transactionalAmountWithTax.add(amountToAdd);
+        }
+    }
+
+    public void addTransactionalAmountWithoutTax(BigDecimal amountToAdd) {
+        if (transactionalAmountWithoutTax == null) {
+            transactionalAmountWithoutTax = new BigDecimal("0");
+        }
+        transactionalAmountWithoutTax = transactionalAmountWithoutTax.add(amountToAdd);
+    }
+
+    public void addTransactionalAmountTax(BigDecimal amountToAdd) {
+        if (amountToAdd != null) {
+            if (transactionalAmountTax == null) {
+                transactionalAmountTax = new BigDecimal("0");
+            }
+            transactionalAmountTax = transactionalAmountTax.add(amountToAdd);
+        }
+    }
+
     public List<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
         return subCategoryInvoiceAgregates;
     }
@@ -125,5 +153,29 @@ public class XMLInvoiceHeaderCategoryDTO {
 
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
+    }
+
+    public BigDecimal getTransactionalAmountWithoutTax() {
+        return transactionalAmountWithoutTax;
+    }
+
+    public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+        this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
+    }
+
+    public BigDecimal getTransactionalAmountWithTax() {
+        return transactionalAmountWithTax;
+    }
+
+    public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+        this.transactionalAmountWithTax = transactionalAmountWithTax;
+    }
+
+    public BigDecimal getTransactionalAmountTax() {
+        return transactionalAmountTax;
+    }
+
+    public void setTransactionalAmountTax(BigDecimal transactionalAmountTax) {
+        this.transactionalAmountTax = transactionalAmountTax;
     }
 }

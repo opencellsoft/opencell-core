@@ -22,7 +22,7 @@ public class SubCategory {
     @XmlElement(name = "accountingArticle")
     private List<AccountingArticle> articleLines;
     @XmlElementWrapper(name = "accountingArticlesDiscounts")
-    @XmlElement(name = "accountingArticleDiscounts")
+    @XmlElement(name = "accountingArticleDiscount")
     private List<AccountingArticle> articleLinesDiscounts;
 
     public SubCategory(InvoiceSubCategory invoiceSubCategory, List<AccountingArticle> articleLines,

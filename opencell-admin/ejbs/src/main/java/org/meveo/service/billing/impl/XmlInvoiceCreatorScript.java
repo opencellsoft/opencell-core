@@ -1264,6 +1264,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 headerCat.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
                 headerCat.addAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
                 headerCat.addAmountTax(categoryInvoiceAgregate.getAmountTax());
+                headerCat.addTransactionalAmountWithoutTax(categoryInvoiceAgregate.getTransactionalAmountWithoutTax());
+                headerCat.addTransactionalAmountWithTax(categoryInvoiceAgregate.getTransactionalAmountWithTax());
+                headerCat.addTransactionalAmountTax(categoryInvoiceAgregate.getTransactionalAmountTax());
             } else {
                 headerCat = new XMLInvoiceHeaderCategoryDTO();
                 if (invoiceCategory != null
@@ -1276,6 +1279,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
                 headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
                 headerCat.setAmountTax(categoryInvoiceAgregate.getAmountTax());
+                headerCat.setTransactionalAmountWithoutTax(categoryInvoiceAgregate.getTransactionalAmountWithoutTax());
+                headerCat.setTransactionalAmountWithTax(categoryInvoiceAgregate.getTransactionalAmountWithTax());
+                headerCat.setTransactionalAmountTax(categoryInvoiceAgregate.getTransactionalAmountTax());
                 headerCat.setSortIndex(categoryInvoiceAgregate.getInvoiceCategory() != null
                         && categoryInvoiceAgregate.getInvoiceCategory().getSortIndex() != null
                         ? categoryInvoiceAgregate.getInvoiceCategory().getSortIndex() : 0);
@@ -1295,15 +1301,31 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             category.setAttribute("label", xmlInvoiceHeaderCategoryDTO.getDescription());
             category.setAttribute("code", xmlInvoiceHeaderCategoryDTO.getCode() != null ? xmlInvoiceHeaderCategoryDTO.getCode() : "");
             category.setAttribute("sortIndex", xmlInvoiceHeaderCategoryDTO.getSortIndex() != null ? xmlInvoiceHeaderCategoryDTO.getSortIndex() + "" : "");
+
             Element amountWithoutTax = doc.createElement("amountWithoutTax");
             amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountWithoutTax())));
             category.appendChild(amountWithoutTax);
+
+            Element transactionalAmountWithoutTax = doc.createElement("transactionalAmountWithoutTax");
+            transactionalAmountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getTransactionalAmountWithoutTax())));
+            category.appendChild(transactionalAmountWithoutTax);
+
             Element amountWithTax = doc.createElement("amountWithTax");
             amountWithTax.appendChild(this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountWithTax())));
             category.appendChild(amountWithTax);
+
+            Element transactionalAmountWithTax = doc.createElement("transactionalAmountWithTax");
+            transactionalAmountWithTax.appendChild(this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getTransactionalAmountWithTax())));
+            category.appendChild(transactionalAmountWithTax);
+
             Element amountTax = doc.createElement("amountTax");
             amountTax.appendChild(this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getAmountTax())));
             category.appendChild(amountTax);
+
+            Element transactionalAmountTax = doc.createElement("transactionalAmountTax");
+            transactionalAmountTax.appendChild(this.createTextNode(doc, toPlainString(xmlInvoiceHeaderCategoryDTO.getTransactionalAmountTax())));
+            category.appendChild(transactionalAmountTax);
+
             if (xmlInvoiceHeaderCategoryDTO.getSubCategoryInvoiceAgregates() != null) {
                 Element subCategories = doc.createElement("subCategories");
                 for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : xmlInvoiceHeaderCategoryDTO.getSubCategoryInvoiceAgregates()) {
@@ -1414,9 +1436,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         for (LinkedInvoice inv : linkedInvoices) {
             result.append(prefix);
             prefix = ",";
+            String dateFormat = "MM/dd/yyyy";
+            if (inv.getInvoice().getTradingCountry() != null) {
+                dateFormat = "US".equalsIgnoreCase(inv.getInvoice().getTradingCountry().getCode()) ? "MM/dd/yyyy" : "dd/MM/yyyy";
+            }
             result.append(inv.getInvoice().getStatus() == InvoiceStatusEnum.VALIDATED ? inv.getInvoice().getInvoiceNumber() : "Draft")
                     .append(" (invoiced on ")
-                    .append(DateUtils.formatDateWithPattern(inv.getInvoice().getInvoiceDate(), paramBeanFactory.getInstance().getProperty(INVOICE_DATE_FORMAT, DEFAULT_DATE_PATTERN)))
+                    .append(DateUtils.formatDateWithPattern(inv.getInvoice().getInvoiceDate(), dateFormat))
                     .append(")");
         }
         return result.toString();
@@ -1432,7 +1458,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     private String getTaxIndexes(Tax tax, Map<String, String> mapTaxesIndexes) {
         if (CollectionUtils.isEmpty(tax.getSubTaxes())) {
-            return mapTaxesIndexes.get(tax.getCode()).replaceAll(",", "\n");
+            String taxIndex = mapTaxesIndexes.get(tax.getCode());
+            return StringUtils.isNotBlank(taxIndex) ? taxIndex.replaceAll(",", "\n") : StringUtils.EMPTY;
         } else {
             return getSubTaxesIndexes(tax.getSubTaxes(), mapTaxesIndexes);
         }
