@@ -187,6 +187,8 @@ public class CommercialOrderApi extends BaseApi {
 		order.setLabel(orderDto.getLabel());
 		if(!Strings.isEmpty(orderDto.getCode())){
 			order.setCode(orderDto.getCode());
+		} else {
+			order.setCode(customGenericEntityCodeService.getGenericEntityCode(order));
 		}
 		if(!Strings.isEmpty(orderDto.getDescription())){
 			order.setCode(orderDto.getDescription());
@@ -229,7 +231,7 @@ public class CommercialOrderApi extends BaseApi {
 			order.setAccess(access);
 		}
 		if(Strings.isEmpty(orderDto.getQuoteCode())) {
-			
+
 		}
 		order.setStatus(CommercialOrderEnum.DRAFT.toString());
 		order.setStatusDate(Calendar.getInstance().getTime());
