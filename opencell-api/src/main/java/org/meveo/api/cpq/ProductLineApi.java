@@ -9,7 +9,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.cpq.ProductLineDto;
-import org.meveo.api.dto.response.ParentListResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -68,15 +67,16 @@ public class ProductLineApi extends BaseCrudApi<ProductLine, ProductLineDto> {
 	public ProductLine create(ProductLineDto dto){
 		if(dto == null)
 			throw new MeveoApiException(PRODUCT_LINE_EMPTY);
-		if(StringUtils.isBlank(dto.getCode())) {
-			missingParameters.add("code");
-		}
 		handleMissingParameters();
 	     if (productLineService.findByCode(dto.getCode()) != null) {
 	            throw new EntityAlreadyExistsException(ProductLine.class, dto.getCode());
-	        } 
+		 }
 		ProductLine productLine = new ProductLine();
-		productLine.setCode(dto.getCode());
+		if(StringUtils.isBlank(dto.getCode())) {
+			productLine.setCode(customGenericEntityCodeService.getGenericEntityCode(productLine));
+		} else {
+			productLine.setCode(dto.getCode());
+		}
 		productLine.setDescription(dto.getDescription());
 		productLine.setLongDescription(dto.getLongDescription());
 		updateProductLineParent(productLine,dto.getParentLineCode());

@@ -317,8 +317,8 @@
 									<c:if test="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
 										<p:inputText id="#{field.dbFieldname}" value="#{customTableBean.rowValues[field.dbFieldname]}" required="#{field.valueRequired}"
 											placeholder="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" style="margin-left:5px"
-											label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="10">
-											<f:convertNumber minFractionDigits="2" disabled="#{!customTableBean.newEntity and !field.allowEdit}"/>
+											label="#{field.getDescription(customTableBean.currentLocale.ISO3Language)}" size="10" disabled="#{!customTableBean.newEntity and !field.allowEdit}">
+											<f:convertNumber minFractionDigits="2" />
 											<c:if test="#{field.minValue!=null and field.maxValue!=null}">
 												<f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}" />
 											</c:if>
@@ -360,8 +360,8 @@
 										<!-- 											<f:converter converterId="javax.faces.Long" /> -->
 										<!-- 										</p:inputText> -->
 										<p:inputText id="#{field.dbFieldname}_TXTlabel" value="#{customTableBean.rowValues[field.dbFieldname.concat('_TXTlabel')]}" disabled="true" />
-										<p:commandButton immediate="true" onclick="PF('#{field.dbFieldname}_dlg').show()" icon="ui-icon-search" type="button" />
-										<p:commandButton immediate="true" rendered="#{!field.valueRequired}" update="#{field.dbFieldname}_TXTlabel" icon="ui-icon-close">
+										<p:commandButton disabled="#{!customTableBean.newEntity and !field.allowEdit}" immediate="true" onclick="PF('#{field.dbFieldname}_dlg').show()" icon="ui-icon-search" type="button" />
+										<p:commandButton disabled="#{!customTableBean.newEntity and !field.allowEdit}" immediate="true" rendered="#{!field.valueRequired}" update="#{field.dbFieldname}_TXTlabel" icon="ui-icon-close">
 											<f:setPropertyActionListener target="#{customTableBean.rowValues[field.dbFieldname]}" value="#{null}" />
 											<f:setPropertyActionListener target="#{customTableBean.rowValues[field.dbFieldname.concat('_TXTlabel')]}" value="#{null}" />
 										</p:commandButton>

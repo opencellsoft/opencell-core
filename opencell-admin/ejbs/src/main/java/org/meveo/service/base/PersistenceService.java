@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.math.BigInteger;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -128,6 +129,9 @@ import org.meveo.service.notification.GenericNotificationService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
+
+import static java.math.BigInteger.ONE;
+import static org.meveo.jpa.EntityManagerProvider.isDBOracle;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -766,7 +770,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public BusinessEntity findBusinessEntityByCode(String code) {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "entity", null);
         queryBuilder.addCriterion("entity.code", "=", code, true);
-        return (BusinessEntity) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+        try {
+            return (BusinessEntity) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+        } catch (Exception exception) {
+            return null;
+        }
     }
     /**
      * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
@@ -1804,4 +1812,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		}
 		return queryBuilder;
 	}
+
+    public Long findNextSequenceId(String sequenceName) {
+        BigInteger nextSequenceValue = (BigInteger) getEntityManager().createNativeQuery(isDBOracle()
+                        ? "SELECT " + sequenceName +".nextval FROM dual"
+                        : "select nextval('"+ sequenceName + "')" )
+                .getSingleResult();
+        return (nextSequenceValue.add(ONE)).longValue();
+    }
 }
