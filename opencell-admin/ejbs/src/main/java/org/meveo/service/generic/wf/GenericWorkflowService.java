@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -140,7 +141,11 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
             int endIndex = genericWorkflow.getTransitions().size();
             if(!genericWorkflow.getTransitions().get(endIndex-1).getToStatus().equalsIgnoreCase(currentStatus)) {
-                int startIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst().getAsInt();
+                OptionalInt startTransitionIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst();
+                if (startTransitionIndex.isEmpty()) {
+                    return workflowInstance;
+                }
+                int startIndex = startTransitionIndex.getAsInt();
                 List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream().collect(Collectors.toList()).subList(startIndex, endIndex);
                 List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
 
