@@ -16238,4 +16238,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                   constraintName="billing_accounting_article_open_order_id_fk"/>
         <dropColumn tableName="billing_accounting_article" columnName="open_order_id" />
     </changeSet>
+
+    <changeSet id="INTRD-15501_20230413" author="ThangNguyen">
+        <addColumn tableName="billing_billing_run">
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

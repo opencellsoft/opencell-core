@@ -2753,6 +2753,7 @@
             <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
             	<constraints nullable="false" />
             </column>
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -19663,6 +19664,7 @@
     <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15146_20230406" author="ZBariki" />
     <changeSet id="#INTRD-14663_20230327" author="HatimO." />
+    <changeSet id="#INTRD-15501_20230413" author="ThangNguyen" />
     
     
     
