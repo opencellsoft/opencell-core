@@ -1624,46 +1624,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getSelectQueryAsMap(query, params);
     }
 
-    public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds,
-                                                                  AggregationConfiguration aggregationConfiguration) {
-        final int maxValue = EntityManagerProvider.isDBOracle() ? 500 :
-                getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
-        if (ratedTransactionIds.size() > maxValue) {
-            List<List<Long>> rtSubLists = partition(ratedTransactionIds, maxValue);
-            return rtSubLists
-                    .stream()
-                    .map(rtIds -> executeAggregationQuery(aggregationConfiguration, rtIds))
-                    .collect(ArrayList::new, List::addAll, List::addAll);
-        } else {
-            return executeAggregationQuery(aggregationConfiguration, ratedTransactionIds);
-        }
-    }
-
-    private List<Map<String, Object>> executeAggregationQuery(AggregationConfiguration aggregationConfiguration,
-                                                              List<Long> ratedTransactionIds) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("ids", ratedTransactionIds);
-        String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption(),
-                "usage_date ", "rt");
-        String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, "
-                + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
-                + "              sum(rt.amount_without_tax) as sum_without_tax, sum(rt.amount_with_tax) as sum_with_tax,"
-                + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price,"
-                + "              rt.offer_id, rt.service_instance_id, "
-                +                usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
-                + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "              rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
-                + "              rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax, rt.unit_amount_with_tax "
-                + "    FROM billing_rated_transaction rt WHERE rt.status='OPEN' and id in (:ids) "
-                + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
-                + "             rt.offer_id, rt.service_instance_id, " + usageDateAggregation + ",  "
-                + "             rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
-                + "             rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax, rt.unit_amount_with_tax "
-                + "    order by rt.unit_amount_without_tax desc";
-        return executeNativeSelectQuery(query, params);
-    }
-
 
     public void linkRTWithInvoiceLine(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
         for (Map.Entry<Long, List<Long>> entry : iLIdsRtIdsCorrespondence.entrySet()) {
@@ -1712,8 +1672,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		if (BRfilter!=null && !BRfilter.isEmpty()) {
         	filter=BRfilter;
         }
-		if(billingCycle!=null && !billingCycle.isDisableAggregation()) {
-			aggregationConfiguration = new AggregationConfiguration(billingCycle);
+		if(billingCycle!=null) {
+			aggregationConfiguration= billingCycle.isDisableAggregation()? null : new AggregationConfiguration(billingCycle);
 		}
         if(aggregationConfiguration!=null) {
             String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption());
@@ -1822,10 +1782,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     private String buildGroupByClause(String usageDateAggregation, AggregationConfiguration aggregationConfiguration, boolean ignoreSubscription) {
-        String ignoreSubscriptionClause = ignoreSubscription
-                ? "" : ", a.subscription.id, a.serviceInstance, a.chargeInstance.id ";
-        String ignoreOrders = aggregationConfiguration.isIgnoreOrders()
-                ? "" : ", a.subscription.order.id, a.infoOrder.order.id, a.orderNumber";
+        String ignoreSubscriptionClause = ignoreSubscription ? "" : ", a.subscription.id, a.serviceInstance, a.chargeInstance.id ";
+        String ignoreOrders = aggregationConfiguration.isIgnoreOrders() ? "" : ", a.subscription.order.id, a.infoOrder.order.id, a.orderNumber";
         String unitAmount = appProvider.isEntreprise() ? "a.unitAmountWithoutTax" : "a.unitAmountWithTax";
         String aggregateWithUnitAmount = aggregationConfiguration.isAggregationPerUnitAmount() ? "" : ", " + unitAmount;
         String useAccountingLabel = aggregationConfiguration.isUseAccountingArticleLabel() ? "" : ", a.description";
