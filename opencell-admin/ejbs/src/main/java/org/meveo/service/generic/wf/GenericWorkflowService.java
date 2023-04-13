@@ -21,7 +21,14 @@ import static org.meveo.admin.job.GenericWorkflowJob.GENERIC_WF;
 import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
 import static org.meveo.admin.job.GenericWorkflowJob.WF_INS;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -136,8 +143,6 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             if(!genericWorkflow.getTransitions().get(endIndex-1).getToStatus().equalsIgnoreCase(currentStatus)) {
                 OptionalInt startTransitionIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst();
                 if (startTransitionIndex.isEmpty()) {
-                    log.debug("No transition with {} as fromStatus. So end of workflow is reached for WFInstance {}.", currentStatus, workflowInstance);
-                    // return workflowInstance as it is
                     return workflowInstance;
                 }
                 int startIndex = startTransitionIndex.getAsInt();

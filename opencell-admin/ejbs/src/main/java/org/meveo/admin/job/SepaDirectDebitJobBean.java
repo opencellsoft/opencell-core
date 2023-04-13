@@ -166,9 +166,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder, seller, paymentOrRefundEnum);
 
 			if (CollectionUtils.isNotEmpty(ddrequestOps)) {
-				log.debug("ddrequestOps found:" + ddrequestOps.size());
-				result.setNbItemsToProcess(ddrequestOps.size());
-
+				log.debug("ddrequestOps found:" + ddrequestOps.size());				
 			} else {
 				final String msg = "ddrequestOps IS EMPTY !";
 				log.debug(msg);
@@ -190,6 +188,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						log.debug("start filterAoToPayOrRefund...");
 						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
 						log.debug("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());
+						result.setNbItemsToProcess(listAoToPay.size());
 						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
 						log.debug("end createDDRquestLot");
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
@@ -199,10 +198,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							log.debug("end generateDDRquestLotFile");
 							result.addReport(ddRequestLOT.getRejectedCause());
 							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
-							log.debug("end createPaymentsOrRefundsForDDRequestLot");
-							if (isEmpty(ddRequestLOT.getRejectedCause())) {
-								result.registerSucces();
-							}
+							log.debug("end createPaymentsOrRefundsForDDRequestLot");							
 						}
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
