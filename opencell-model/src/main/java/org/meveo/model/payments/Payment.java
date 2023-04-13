@@ -47,14 +47,7 @@ public class Payment extends AccountOperation {
      * Amount of financial expenses exluded in the amount
      */
     @Column(name = "payment_fees")
-    private BigDecimal fees = BigDecimal.ZERO;
-
-    /**
-     * Comments Text free if litigation or special conditions
-     */
-    @Type(type = "longText")
-    @Column(name = "comment_text")
-    private String comment;
+    private BigDecimal fees = BigDecimal.ZERO;    
     
     /**
      * Transactional amount of financial expenses exluded in the amount
@@ -104,20 +97,6 @@ public class Payment extends AccountOperation {
      */
     public void setFees(BigDecimal fees) {
         this.fees = fees;
-    }
-
-    /**
-     * @return the comment
-     */
-    public String getComment() {
-        return comment;
-    }
-
-    /**
-     * @param comment the comment to set
-     */
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 
 	/**
