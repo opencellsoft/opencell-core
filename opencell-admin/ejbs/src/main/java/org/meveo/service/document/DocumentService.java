@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.exception.BusinessException;

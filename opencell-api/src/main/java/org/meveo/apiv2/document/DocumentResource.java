@@ -19,7 +19,7 @@ public interface DocumentResource {
     
     @GET
     @Path("/{code}")
-    @Operation(summary = "This endpoint allows to retrieve a document information by id document",
+    @Operation(summary = "This endpoint allows to retrieve a document information by code document",
             tags = { "Document" },
             description ="retrieve and return an existing document",
             responses = {
@@ -27,8 +27,8 @@ public interface DocumentResource {
                             content = @Content(schema = @Schema(implementation = Document.class))),
                     @ApiResponse(responseCode = "404", description = "the document with code in param does not exist")
             })
-    Response getDocument(@Parameter(description = "The id here is the database primary key of the document to fetch", required = true)
-                         @PathParam("id") @NotNull Long id);
+    Response getDocument(@Parameter(description = "Get object using code for the last version of the Document", required = true)
+                         @PathParam("code") @NotNull String code);
     
     @GET
     @Path("/{code}/{version}")
