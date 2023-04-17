@@ -89,10 +89,11 @@ public class ContractService extends BusinessService<Contract>  {
 		LOGGER.info("contract({}) to be deleted", contractCode);
 		
 		final Contract contratToDelete = findByCode(contractCode);
-		if(contratToDelete == null) {
+		if (contratToDelete == null) {
 			throw new EntityDoesNotExistsException(Contract.class, contractCode);
 		}
-		if(contratToDelete.getStatus().equals(ProductStatusEnum.ACTIVE)) {
+
+		if (ContractStatusEnum.ACTIVE.getValue().equals(contratToDelete.getStatus())) {
 			LOGGER.warn("contract({}) can not be removed, because its status is active", contratToDelete.getCode());
 			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contratToDelete.getCode(), contratToDelete.getStatus().toString()));
 		}
