@@ -42,6 +42,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.Name;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.admin.impl.UserService;
@@ -277,7 +278,7 @@ public class UserApi extends BaseApi {
         if (securedEntities != null) {
             userDto.setSecuredEntities(securedEntities.stream().map(SecuredEntityDto::new).collect(Collectors.toList()));
         }
-        userDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(user));
+        userDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(user, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         return userDto;
     }
 
@@ -356,7 +357,7 @@ public class UserApi extends BaseApi {
                         userDto.setSecuredEntities(securedEntities.stream().map(SecuredEntityDto::new).collect(Collectors.toList()));
                     }
                 }
-                userDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(user));
+                userDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(user, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 result.getUsers().add(userDto);
             }
         }
