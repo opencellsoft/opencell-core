@@ -281,6 +281,7 @@ public class UserApi extends BaseApi {
         if (securedEntities != null) {
             userDto.setSecuredEntities(securedEntities.stream().map(SecuredEntityDto::new).collect(Collectors.toList()));
         }
+        userDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(user));
         return userDto;
     }
 
@@ -359,6 +360,7 @@ public class UserApi extends BaseApi {
                         userDto.setSecuredEntities(securedEntities.stream().map(SecuredEntityDto::new).collect(Collectors.toList()));
                     }
                 }
+                userDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(user));
                 result.getUsers().add(userDto);
             }
         }
