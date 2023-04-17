@@ -11862,6 +11862,29 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
+	<changeSet id="INTRD-15467_2023_04_17" author="ZBariki">
+		<insert tableName="generic_sequence">
+			<column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="version" valueNumeric="1"/>
+			<column name="code" value="MEDIA_CODE_SEQUENCE"/>
+			<column name="description" value="Media code sequence"/>
+			<column name="sequence_type" value="SEQUENCE"/>
+			<column name="sequence_size" valueNumeric="6"/>
+			<column name="current_number" valueNumeric="1"/>
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+			<column name="entity_class" value="org.meveo.model.cpq.Media"/>
+			<column name="format_el" value="#{'MED-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="sequence_id"
+					valueComputed="(SELECT id from generic_sequence where code = 'MEDIA_CODE_SEQUENCE')"/>
+		</insert>
+	</changeSet>
+
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
