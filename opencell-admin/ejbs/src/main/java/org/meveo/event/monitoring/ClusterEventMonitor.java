@@ -37,6 +37,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
@@ -91,7 +92,7 @@ public class ClusterEventMonitor implements MessageListener {
                 if (EjbUtils.getCurrentClusterNode().equals(eventDto.getSourceNode())) {
                     return;
                 }
-                log.info("Received cluster synchronization event message {}", eventDto);
+                log.info("{} Received cluster synchronization event message {}", EjbUtils.getCurrentClusterNode(), eventDto);
 
                 processClusterEvent(eventDto);
 
@@ -121,11 +122,18 @@ public class ClusterEventMonitor implements MessageListener {
                 JobLauncherEnum jobLauncher = eventDto.getAdditionalInfo() != null && eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER) != null
                         ? JobLauncherEnum.valueOf((String) eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER))
                         : null;
+
                 jobExecutionService.executeJob(jobInstanceService.findById(eventDto.getId()), null, jobLauncher, false);
+
+            } else if (eventDto.getAction() == CrudActionEnum.executeWorker) {
+                JobLauncherEnum jobLauncher = JobLauncherEnum.WORKER;
+
+                jobExecutionService.executeJob(jobInstanceService.findById(eventDto.getId()), eventDto.getAdditionalInfo(), jobLauncher, false);
 
             } else if (eventDto.getAction() == CrudActionEnum.stop) {
                 jobExecutionService.stopJobByForce(jobInstanceService.findById(eventDto.getId()), false);
 
+                // Any modify/update
             } else {
                 jobInstanceService.scheduleUnscheduleJob(eventDto.getId());
             }

@@ -386,7 +386,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
             Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
             List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
-            billingAccountsAfter = ratedTransactionService.applyInvoicingRules(RTs);
+				billingAccountsAfter = ratedTransactionService.applyInvoicingRulesForRTs(RTs);
         }
         
         List<Invoice> invoices = new ArrayList<>();

@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.ScrollableResults;
+import org.hibernate.exception.GenericJDBCException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides a one at a time access to iterator.getNext() function
@@ -19,6 +22,9 @@ public class SynchronizedIterator<T> implements Iterator<T> {
      */
     private int size;
 
+    /**
+     * Keeps track of a current position in iterator or scrollable results data source implementation
+     */
     private int position;
 
     /**
@@ -66,10 +72,16 @@ public class SynchronizedIterator<T> implements Iterator<T> {
             return iterator.next();
 
         } else if (scrollableResults != null) {
-            if (scrollableResults.next()) {
-                position++;
-                return (T) scrollableResults.get(0);
-            } else {
+            try {
+                if (scrollableResults.next()) {
+                    position++;
+                    return (T) scrollableResults.get(0);
+                } else {
+                    return null;
+                }
+            } catch (GenericJDBCException e) {
+                Logger log = LoggerFactory.getLogger(getClass());
+                log.error("Failed to scroll to the next record: {}", e.getMessage());
                 return null;
             }
 
@@ -81,7 +93,7 @@ public class SynchronizedIterator<T> implements Iterator<T> {
     /**
      * A synchronized implementation of Iterator.next(). Will return null if no more values are available
      * 
-     * @return Returns the next element, or null if no more elements are found
+     * @return Returns the next element and a position in a list, or null if no more elements are found
      */
     @SuppressWarnings("unchecked")
     public synchronized NextItem<T> nextWPosition() {

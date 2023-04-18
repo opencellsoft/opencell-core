@@ -45,7 +45,7 @@ public class RatedTransactionsAggregatedJobBean extends IteratorBasedJobBean<Agg
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWosToAggregatedRt, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWosToAggregatedRt, null, null, null);
 
         invoicingDate = null;
     }

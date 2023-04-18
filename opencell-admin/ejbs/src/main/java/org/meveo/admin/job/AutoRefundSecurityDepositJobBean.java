@@ -36,7 +36,7 @@ public class AutoRefundSecurityDepositJobBean extends BaseJobBean {
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
 		
-		FinanceSettings financeSettings = financeSettingsService.findLastOne();
+		FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
         if (financeSettings != null && !financeSettings.isAutoRefund()) {
             throw new BadRequestException("Auto refund is not allowed in general settings");
         }
