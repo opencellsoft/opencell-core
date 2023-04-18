@@ -1,6 +1,7 @@
 package org.meveo.apiv2.billing.service;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.meveo.model.billing.BillingRunStatusEnum.CANCELED;
@@ -13,8 +14,10 @@ import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.REJECTED;
 import static org.meveo.model.billing.BillingRunStatusEnum.VALIDATED;
+import static org.meveo.model.billing.RatedTransactionAction.REOPEN;
 import static org.meveo.model.jobs.JobLauncherEnum.API;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +28,12 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.RatedTransactionAction;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -82,7 +85,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
 
     @Override
     public List<BillingRun> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        return null;
+        return emptyList();
     }
 
     @Override
@@ -140,11 +143,11 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 JobInstance invoicingJob = jobInstanceService.findByCode(INVOICING_JOB_CODE);
                 invoiceLineJob.setFollowingJob(jobInstanceService.findByCode(INVOICING_JOB_CODE));
                 if(invoicingJob.getCfValues() != null) {
-                    if(invoicingJob.getCfValues().getValue("InvoicingJobV2_billingRun") != null
-                            && !((List) invoicingJob.getCfValues().getValue("InvoicingJobV2_billingRun")).isEmpty()) {
-                        ((List) invoicingJob.getCfValues().getValue("InvoicingJobV2_billingRun")).clear();
+                    if(invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS) != null
+                            && !((List) invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS)).isEmpty()) {
+                        ((List) invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS)).clear();
                     }
-                    invoicingJob.getCfValues().setValue("InvoicingJobV2_billingRun",
+                    invoicingJob.getCfValues().setValue(INVOICING_JOB_PARAMETERS,
                             asList(new EntityReferenceWrapper(BillingRun.class.getName(),
                                     null, billingRun.getReferenceCode())));
                 }
@@ -157,7 +160,8 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 if (billingRun.getStatus() == INVOICE_LINES_CREATED) {
                     billingRun.setStatus(PREVALIDATED);
                 }
-                if (billingRun.getStatus() == DRAFT_INVOICES || (billingRun.getStatus() == REJECTED && billingRunService.isBRValid(billingRun))) {
+                if (billingRun.getStatus() == DRAFT_INVOICES
+                        || (billingRun.getStatus() == REJECTED && billingRunService.isBRValid(billingRun))) {
                     billingRun.setStatus(POSTVALIDATED);
                 }
          
@@ -190,7 +194,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
         }
     }
 
-	public Optional<BillingRun> cancelBillingRun(Long billingRunId) {
+	public Optional<BillingRun> cancelBillingRun(Long billingRunId, RatedTransactionAction action) {
         BillingRun billingRun = billingRunService.findById(billingRunId);
         if (billingRun == null) {
             return empty();
@@ -202,7 +206,11 @@ public class BillingRunApiService implements ApiService<BillingRun> {
         }
         try {
             ratedTransactionService.deleteSupplementalRTs(billingRun);
-            ratedTransactionService.uninvoiceRTs(billingRun);
+            if(REOPEN == action) {
+                ratedTransactionService.uninvoiceRTs(billingRun);
+            } else {
+                ratedTransactionService.cancelRatedTransaction(billingRun);
+            }
             invoiceLineService.deleteInvoiceLines(billingRun);
             invoiceLineService.deleteByAssociatedInvoice(invoiceService.getInvoicesByBRNotValidatedInvoices(billingRun.getId()));
             rollBackAdvances(billingRun);
