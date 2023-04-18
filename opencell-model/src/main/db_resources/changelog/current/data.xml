@@ -3130,7 +3130,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importServicesJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/services/outputs"}],
@@ -3166,7 +3166,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importSubscriptionsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/subscriptions/outputs"}],
@@ -3199,7 +3199,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importAccesPointsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/accessPoints/outputs"}],
@@ -3286,7 +3286,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="description" value="Process customer payments file job"/>
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="uuid" value="ProcessCustomerPaymentsFileJob" />
@@ -7563,7 +7563,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="following_job_id" value="null" />
             <column name="uuid" value="ImportCustomerBankDetailsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values" value="null" />
             <column name="verbose_report" value="1" />
         </insert>
@@ -8231,36 +8231,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
     </changeSet>
     
-   	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE">
-   		<update tableName="crm_customer_category">
-			<column name="tax_category_id" value="-1" />
-			<where>id in (-1,-2)</where>
-		</update>
-		<update tableName="billing_tax_mapping">
-			<column name="tax_category_id" value="-1" />
-			<where>tax_category_id = -3</where>
-		</update>
-		<update tableName="billing_billing_account">
-			<column name="tax_category_id" value="-1" />
-			<where>tax_category_id = -3</where>
-		</update>
-		<update tableName="billing_tax_category">			
-			<column name="code" value="REGULAR1"/>        
-			<where>id = -3</where>
-		</update>
-		<update tableName="billing_tax_category">			
-			<column name="code" value="REGULAR"/>
-            <column name="description_i18n" value='{"FRA":"Standard","ENG":"Regular"}'/>
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="uuid" value="billing_tax_category_regular" />            
-			<where>id = -1</where>
-		</update>
-		<delete tableName="billing_tax_category">
-			<where>id = -3</where>
-		</delete>
-    </changeSet>
-
 	<changeSet id="#INTRD-10692_20221019_ajd_occ_template" author="a.rouaguebe">
 		<insert tableName="ar_occ_template">
 			<column name="id" valueSequenceNext="ar_occ_template_seq" />
@@ -9083,7 +9053,7 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="creator" value="opencell.admin" />
 			<column name="updater" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 		</insert>
 	</changeSet>
@@ -9663,7 +9633,7 @@ public class CdrMassImportScript extends GenericMassImportScript {
 			<column name="code" value="CsvImportCDR" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10577,7 +10547,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportCustomerJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10597,7 +10567,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportCustomerAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10617,7 +10587,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportPaymentMethodJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10637,7 +10607,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportBillingAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10657,7 +10627,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportUserAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -11477,7 +11447,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportSubscriptionJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -11497,7 +11467,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportServiceInstanceJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -11517,7 +11487,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportAttributeInstance" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -11537,7 +11507,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportAccessPoint" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -16504,11 +16474,17 @@ public class ValidateBRScript extends ValidateBR {
     	</update>
     </changeSet>
 
-    <changeSet id="#INTRD-13314_20230123" author="zelmeliani">
+    <changeSet id="#INTRD-13314_20230123-f" author="zelmeliani" failOnError="false">
         <update tableName="billing_tax_mapping">
             <column name="tax_category_id" value="-3"/>
             <where>tax_category_id=-1</where>
         </update>
+        <update tableName="billing_tax_mapping">
+            <column name="tax_class_id" value="-5"/>
+            <where>tax_class_id in (-1, -2)</where>
+        </update>        
+    </changeSet>
+    <changeSet id="#INTRD-13314_20230123" author="zelmeliani">        
         <update tableName="crm_customer_category">
             <column name="tax_category_id" value="-3"/>
             <where>tax_category_id=-1</where>
@@ -16521,10 +16497,6 @@ public class ValidateBRScript extends ValidateBR {
             <where>id=-1 and code = 'Tax category'</where>
         </delete>
 
-        <update tableName="billing_tax_mapping">
-            <column name="tax_class_id" value="-5"/>
-            <where>tax_class_id in (-1, -2)</where>
-        </update>
         <update tableName="cat_charge_template">
             <column name="tax_class_id" value="-5"/>
             <where>tax_class_id in (-1, -2)</where>

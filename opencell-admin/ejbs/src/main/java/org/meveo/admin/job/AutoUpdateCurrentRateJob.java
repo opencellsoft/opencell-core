@@ -48,7 +48,7 @@ public class AutoUpdateCurrentRateJob extends Job {
                 resourceMessages.getString("jobExecution.cleanAppliedRateInvoice"),
                 CustomFieldTypeEnum.BOOLEAN,
                 "tab:Configuration:0;field:0",
-                "false",
+                "false", true, null, null,
                 APPLIES_TO_NAME));
 
         return result;

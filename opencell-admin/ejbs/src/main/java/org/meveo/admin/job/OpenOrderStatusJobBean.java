@@ -26,7 +26,7 @@ public class OpenOrderStatusJobBean extends IteratorBasedJobBean<Long> {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         super.execute(jobExecutionResult, jobInstance,
-                this::initJobAndGetDataToProcess, this::processOpenOrder, null, null);
+                this::initJobAndGetDataToProcess, this::processOpenOrder, null, null, null);
     }
 
     private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {

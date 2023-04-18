@@ -525,7 +525,7 @@ public class UsageRatingService extends RatingService implements Serializable {
                     RatingResult localRatingResult = rateUsage(edr, isVirtual, true, maxDeep, currentRatingDepth + 1, reservation, true);
                     ratingResult.add(localRatingResult);
 
-                } catch (BusinessException e) {
+                } catch (Exception e) {
                     rejectEDR(edr, e, false, false);
                 }
             }

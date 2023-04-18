@@ -1,6 +1,7 @@
 package org.meveo.admin.job.accountingscheme;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -44,29 +45,15 @@ public class AccountingSchemesJob extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
 
-        result.put(CF_NB_RUNS, buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:0", "1"));
+        result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:0", "1", false, null, null, APPLIES_TO_NAME));
 
-        result.put(CF_WAITING_MILLIS, buildCF(CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:1", "0"));
+        result.put(CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:1", "0", false, null, null, APPLIES_TO_NAME));
 
-        result.put(CF_ONLYCLOSEDPERIODS, buildCF(CF_ONLYCLOSEDPERIODS, resourceMessages.getString("jobExecution.onlyClosedPeriods"),
-                CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;field:2", "false"));
+        result.put(CF_ONLYCLOSEDPERIODS, CustomFieldTemplateUtils.buildCF(CF_ONLYCLOSEDPERIODS, resourceMessages.getString("jobExecution.onlyClosedPeriods"),
+                CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;field:2", "false", false, null, null, APPLIES_TO_NAME));
 
         return result;
-    }
-
-    private CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum type,
-                                        String guiPosition, String defaultValue) {
-        CustomFieldTemplate cft = new CustomFieldTemplate();
-        cft.setCode(code);
-        cft.setAppliesTo(APPLIES_TO_NAME);
-        cft.setActive(true);
-        cft.setDescription(description);
-        cft.setFieldType(type);
-        cft.setValueRequired(false);
-        cft.setGuiPosition(guiPosition);
-        cft.setDefaultValue(defaultValue);
-        return cft;
     }
 }

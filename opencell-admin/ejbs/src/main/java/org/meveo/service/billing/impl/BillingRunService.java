@@ -1360,9 +1360,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         JobInstance jobInstance = jobInstances.get(0);
         Map<String, Object> params = new HashMap<>();
         params.put("BillingRuns", Arrays.asList(new EntityReferenceWrapper(BillingRun.class.getName(), null, billingRun.getId().toString())));
-        jobInstance.setRunTimeValues(params);
 
-        jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.API);
+        jobExecutionService.executeJob(jobInstance, params, JobLauncherEnum.API);
 
     }
 

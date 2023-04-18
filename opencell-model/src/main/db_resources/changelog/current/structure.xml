@@ -16238,4 +16238,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                   constraintName="billing_accounting_article_open_order_id_fk"/>
         <dropColumn tableName="billing_accounting_article" columnName="open_order_id" />
     </changeSet>
+
+    <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius">
+        <addColumn tableName="meveo_job_instance">
+            <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
+        </addColumn>
+        <sql>update ${db.schema.adapted}meveo_job_instance set cluster_behavior = 'RUN_IN_PARALLEL' where single_node=0</sql>
+        <dropColumn tableName="meveo_job_instance">
+            <column name="single_node" />
+        </dropColumn>
+        <addColumn tableName="job_execution">
+            <column name="parent_job_result_id" type="bigint" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
