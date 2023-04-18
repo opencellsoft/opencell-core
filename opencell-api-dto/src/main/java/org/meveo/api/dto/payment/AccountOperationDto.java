@@ -270,6 +270,9 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
 
     @Schema(description = "TransactionalCurrency")
     private String transactionalCurrency;
+    
+    @Schema(description = "Comment")
+    private String comment;
 
     /**
      * Instantiates a new account operation dto.
@@ -351,6 +354,7 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
         this.reason = accountOp.getReason();
         this.accountingExportFile = accountOp.getAccountingExportFile();
         this.accountingDate = accountOp.getAccountingDate();
+        this.comment = accountOp.getComment();
     }
 
     /**
@@ -1100,4 +1104,13 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     public void setTransactionalCurrency(String transactionalCurrency) {
         this.transactionalCurrency = transactionalCurrency;
     }
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+    
 }
