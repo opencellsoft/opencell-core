@@ -10354,7 +10354,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="following_job_id" value="null" />
             <column name="uuid" value="ImportCustomerBankDetailsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values" value="null" />
             <column name="verbose_report" value="1" />
         </insert>
@@ -11333,7 +11333,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="creator" value="opencell.admin" />
 			<column name="updater" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 		</insert>
 	</changeSet>
@@ -11362,6 +11362,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-12463_20230119" author="AbdellatifBARI" />
     <changeSet id="#INTRD-13386_20230223" author="TarikFA." />
+    <changeSet id="#INTRD-13314_20230123-f" author="zelmeliani" />
     
     <changeSet id="#INTRD-13447_20230127" author="ZBariki">
         <insert tableName="generic_sequence">

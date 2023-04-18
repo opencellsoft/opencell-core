@@ -51,7 +51,7 @@ public class AccountingResourceImpl implements AccountingResource {
         CustomerAccount customerAccount =
                 ofNullable(customerAccountService.findByCode(customerAccountCode, asList("generalClientAccount")))
                         .orElseThrow(() -> new NotFoundException("Customer account not found"));
-        FinanceSettings financeSettings = ofNullable(financeSettingsService.findLastOne())
+        FinanceSettings financeSettings = ofNullable(financeSettingsService.getFinanceSetting())
                 .orElseThrow(() -> new NotFoundException("No finance settings found"));
         AuxiliaryAccounting auxiliaryAccounting = financeSettings.getAuxiliaryAccounting();
         if(auxiliaryAccounting != null && auxiliaryAccounting.isUseAuxiliaryAccounting()) {

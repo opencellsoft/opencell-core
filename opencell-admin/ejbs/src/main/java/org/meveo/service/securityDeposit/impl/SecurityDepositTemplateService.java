@@ -97,7 +97,7 @@ public class SecurityDepositTemplateService extends BusinessService<SecurityDepo
 
     public void checkParameters(SecurityDepositTemplate securityDepositTemplate)
     {
-        FinanceSettings financeSettings = financeSettingsService.findLastOne();
+        FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
         if(financeSettings.isAutoRefund() && !securityDepositTemplate.isAllowValidityDate() && !securityDepositTemplate.isAllowValidityPeriod())
             throw new InvalidParameterException("At least allowValidityDate or allowValidityPeriod need to be checked");
         if(securityDepositTemplate.getMaxAmount()!=null && securityDepositTemplate.getMinAmount()!=null && securityDepositTemplate.getMaxAmount().compareTo(securityDepositTemplate.getMinAmount()) < 0 )

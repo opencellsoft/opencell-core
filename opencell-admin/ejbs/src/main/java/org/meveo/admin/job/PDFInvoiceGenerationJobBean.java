@@ -58,7 +58,7 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertToPdf, this::convertToPdfBatch, null, this::clearJasperReportCache);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertToPdf, this::convertToPdfBatch, null, null, this::clearJasperReportCache);
     }
 
     /**

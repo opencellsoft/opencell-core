@@ -36,7 +36,21 @@ public class ClusterEventDto implements Serializable {
      *
      */
     public enum CrudActionEnum {
-        create, update, remove, enable, disable, execute, stop;
+        create, update, remove, enable, disable,
+
+        /**
+         * Launch a job
+         */
+        execute,
+        /**
+         * Launch a job as a worker thread
+         */
+        executeWorker,
+
+        /**
+         * Stop job execution
+         */
+        stop;
     };
 
     /**

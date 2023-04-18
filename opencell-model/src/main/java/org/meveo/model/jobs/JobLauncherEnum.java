@@ -48,7 +48,12 @@ public enum JobLauncherEnum {
     /**
      * Launched from API
      */
-    API;
+    API,
+
+    /**
+     * Launched as to spread processing over cluster nodes as a worker node
+     */
+    WORKER;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();
