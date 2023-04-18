@@ -11991,6 +11991,21 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
+	<changeSet id="INTRD-15467-15458_2023_04_18" author="ZBariki">
+		<update tableName="adm_custom_generic_entity_code">
+			<column name="format_el" value="#{'CU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+			<column name="updated" valueDate="${db.current.time}"/>
+			<column name="updater" value="applicationInitializer"/>
+			<where>entity_class = 'org.meveo.model.crm.Customer'</where>
+		</update>
+		<update tableName="adm_custom_generic_entity_code">
+			<column name="format_el" value="#{'M-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+			<column name="updated" valueDate="${db.current.time}"/>
+			<column name="updater" value="applicationInitializer"/>
+			<where>entity_class = 'org.meveo.model.cpq.Media'</where>
+		</update>
+	</changeSet>
+
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
