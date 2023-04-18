@@ -2154,5 +2154,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         filters = genericRequestMapper.evaluateFilters(filters, entityClass);
         return new PaginationConfiguration(filters);
     }
-    
+
+    /**
+     * Cancel billing run associated RTs
+     *
+     * @param billingRun Billing run
+     */
+    public void cancelRatedTransaction(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("RatedTransaction.cancelRatedTransactionsByBR")
+                .setParameter("billingRunId", billingRun.getId())
+                .executeUpdate();
+    }
+
 }
