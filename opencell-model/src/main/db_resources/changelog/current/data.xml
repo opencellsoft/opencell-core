@@ -20136,4 +20136,19 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </insert>
     </changeSet>
 
+    <changeSet id="INTRD-15467-15458_2023_04_18" author="ZBariki">
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="format_el" value="#{'CU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="updated" valueDate="${db.current.time}"/>
+            <column name="updater" value="applicationInitializer"/>
+            <where>entity_class = 'org.meveo.model.crm.Customer'</where>
+        </update>
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="format_el" value="#{'M-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="updated" valueDate="${db.current.time}"/>
+            <column name="updater" value="applicationInitializer"/>
+            <where>entity_class = 'org.meveo.model.cpq.Media'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
