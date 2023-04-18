@@ -226,6 +226,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 			invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineResource.getCustomFields(), invoiceLine, false);
 			// Create Invoice Line
 			invoiceLine = invoiceLinesService.createInvoiceLine(invoiceLine);
+			invoice.getInvoiceLines().add(invoiceLine);
 			invoiceLineResource = ImmutableInvoiceLine.copyOf(invoiceLineResource)
 					.withId(invoiceLine.getId())
 					.withAmountWithoutTax(invoiceLine.getAmountWithoutTax())

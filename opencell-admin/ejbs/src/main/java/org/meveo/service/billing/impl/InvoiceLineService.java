@@ -40,6 +40,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -276,25 +277,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     /**
-     * Used for adding IL in new Invoice : we must validat that the source linkedInvoice amount are not exceeded
+     * Used for adding IL in new Invoice : we must validate that the source linkedInvoice amount are not exceeded
      * @param newInvoice new ADJ Invoice created based on Commercial invoice
      */
     public void validateAdjAmount(Invoice newInvoice) {
+        // Check global Invoice Amount
         LinkedInvoice linkedInvoice = findByLinkedInvoiceADJ(newInvoice.getId());
-
         validateAdjAmount(newInvoice.getInvoiceLines(), linkedInvoice.getInvoice());
 
-        /*BigDecimal possibleAdjAmount = linkedInvoice.getInvoice().getAmountWithTax();
+        // Check specific IL
 
-        BigDecimal sumInvoiceLines = BigDecimal.ZERO;
-
-        for (InvoiceLine invoiceLine : newInvoice.getInvoiceLines()) {
-            sumInvoiceLines = sumInvoiceLines.add(invoiceLine.getAmountWithTax());
-        }
-
-        if (sumInvoiceLines.compareTo(possibleAdjAmount) > 0) {
-            throw new BusinessException("The invoice line amount is greater than the possible adjustment value [" + possibleAdjAmount + "]");
-        }*/
     }
 
     private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
