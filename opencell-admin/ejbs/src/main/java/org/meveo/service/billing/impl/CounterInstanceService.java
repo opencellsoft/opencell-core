@@ -126,34 +126,34 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @Inject
     private MethodCallingUtils methodCallingUtils;
 
-    public CounterInstance counterInstanciation(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual) {
+    public CounterInstance counterInstanciation(ServiceInstance serviceInstance, CounterTemplate counterTemplate,ChargeInstance chargeInstance, boolean isVirtual) {
 
         CounterInstance counterInstance = null;
 
         switch (counterTemplate.getCounterLevel()) {
         case CUST:
 
-            counterInstance = instantiateCounter(customerService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer(), counterTemplate, isVirtual);
+            counterInstance = instantiateCounter(customerService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer(), counterTemplate,chargeInstance, isVirtual);
             break;
 
         case CA:
-            counterInstance = instantiateCounter(customerAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount(), counterTemplate, isVirtual);
+            counterInstance = instantiateCounter(customerAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount(), counterTemplate, chargeInstance,isVirtual);
             break;
 
         case BA:
-            counterInstance = instantiateCounter(billingAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount(), counterTemplate, isVirtual);
+            counterInstance = instantiateCounter(billingAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount(), counterTemplate, chargeInstance,isVirtual);
             break;
 
         case UA:
-            counterInstance = instantiateCounter(userAccountService, serviceInstance.getSubscription().getUserAccount(), counterTemplate, isVirtual);
+            counterInstance = instantiateCounter(userAccountService, serviceInstance.getSubscription().getUserAccount(), counterTemplate, chargeInstance,isVirtual);
             break;
 
         case SU:
-            counterInstance = instantiateCounter(subscriptionService, serviceInstance.getSubscription(), counterTemplate, isVirtual);
+            counterInstance = instantiateCounter(subscriptionService, serviceInstance.getSubscription(), counterTemplate, chargeInstance,isVirtual);
             break;
 
         case SI:
-            counterInstance = instantiateCounter(serviceInstanceService, serviceInstance, counterTemplate, isVirtual);
+            counterInstance = instantiateCounter(serviceInstanceService, serviceInstance, counterTemplate,chargeInstance, isVirtual);
             break;
         }
 
@@ -173,9 +173,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return a counter instance
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private CounterInstance instantiateCounter(BusinessService service, ICounterEntity entity, CounterTemplate counterTemplate, boolean isVirtual) {
+    private CounterInstance instantiateCounter(BusinessService service, ICounterEntity entity, CounterTemplate counterTemplate, ChargeInstance chargeInstance, boolean isVirtual) {
         CounterInstance counterInstance = new CounterInstance();
-         if (!entity.getCounters().containsKey(counterTemplate.getCode()) || !entity.getCounters().get(counterTemplate.getCode()).getChargeInstances().contains(chargeInstance)) {
+        if (!entity.getCounters().containsKey(counterTemplate.getCode()) || !entity.getCounters().get(counterTemplate.getCode()).getChargeInstances().contains(chargeInstance)) {
             counterInstance.setCounterTemplate(counterTemplate);
 
             if (entity instanceof Customer) {
@@ -191,6 +191,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             } else if (entity instanceof ServiceInstance) {
                 counterInstance.setServiceInstance((ServiceInstance) entity);
             }
+
+            counterInstance.getChargeInstances().add(chargeInstance);
 
             if (!isVirtual) {
                 create(counterInstance);
