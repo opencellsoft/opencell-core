@@ -31,7 +31,6 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.billing.impl.InvoiceMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
@@ -41,7 +40,6 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionAction;
 import org.meveo.model.filter.Filter;
@@ -231,7 +229,13 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 					.withAmountWithoutTax(invoiceLine.getAmountWithoutTax())
 					.withAmountWithTax(invoiceLine.getAmountWithTax())
 					.withAmountTax(invoiceLine.getAmountTax());
+			invoice.getInvoiceLines().add(invoiceLine);
 			result.addInvoiceLines(invoiceLineResource);
+		}
+
+		String listAdjustmentCode = paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ, ADJ_INV, ADJ_REF");
+		if (listAdjustmentCode.contains(invoice.getInvoiceType().getCode())) {
+			invoiceLinesService.validateAdjAmount(invoice);
 		}
 
 		invoiceService.calculateInvoice(invoice);
@@ -260,7 +264,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		// Populate Custom fields
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
 		// for adjustment
-		invoiceLine = invoiceLinesService.adjustment(invoiceLine);
+		invoiceLine = invoiceLinesService.adjustment(invoiceLine, invoice);
         // Update Invoice Line
 		invoiceLinesService.update(invoiceLine);
 		invoiceService.getEntityManager().flush();
@@ -476,7 +480,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
     	    invoiceService.update(invoice);
 	    }
 	    catch (Exception e) {
-	        throw new BusinessApiException("Error when creating adjustment");
+	        throw new BusinessApiException("Error when creating adjustment : " + e.getMessage());
         }
 	    
 	    adjInvoice = invoiceService.findById(adjInvoice.getId(), asList("invoiceLines", "invoiceType", "invoiceType.occTemplate", "linkedInvoices"));
