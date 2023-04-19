@@ -26,10 +26,8 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
-import static org.meveo.commons.utils.StringUtils.isBlank;
 import static org.meveo.service.base.ValueExpressionWrapper.*;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
@@ -6610,7 +6608,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
-                 LinkedInvoice linkedInvoice = new LinkedInvoice(toUpdate, invoiceTmp);
+                 LinkedInvoice linkedInvoice = new LinkedInvoice(invoiceTmp, toUpdate);
                  toUpdate.getLinkedInvoices().add(linkedInvoice);
             }
             linkedInvoiceToRemove.removeAll(invoiceResource.getListLinkedInvoices());
@@ -6761,7 +6759,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceAgregates.addAll(invoice.getInvoiceAgregates());
         }
 
-        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
+        List<InvoiceLine> invoiceLines = new ArrayList<>();
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             invoiceLines.addAll(invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds));
         }
@@ -6805,20 +6803,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
         }
-        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
-        if(isAdjustment) {
-            maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
-        }  
-        
+
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
-            if(isAdjustment) {
-                duplicateInvoiceLine = invoiceLinesService.checkAmountIL(duplicateInvoiceLine, maxIlAmountAdjList); 
-            }
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
+        }
+
+        if (isAdjustment) {
+            invoiceLinesService.validateAdjAmount(invoiceLines, invoice);
         }
 
         return duplicateInvoice;
@@ -6864,6 +6859,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Invoice adjustmentInvoice = duplicateAndUpdateInvoiceLines(invoice, invoiceLineRTs, invoiceLinesIds);
         populateAdjustmentInvoice(invoice, adjustmentInvoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
+        addLinkedInvoice(invoice, adjustmentInvoice);
 
         return adjustmentInvoice;
     }
@@ -6877,7 +6873,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceAgregates.addAll(invoice.getInvoiceAgregates());
         }
 
-        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
+        List<InvoiceLine> invoiceLines = new ArrayList<>();
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             invoiceLines.addAll(invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds));
         }
@@ -6892,18 +6888,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         updateInvoiceLinesAmountFromRatedTransactions(invoiceLineRTs, invoiceLines);
 
-        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
-        maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
-        
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
             duplicateInvoiceLine.setRatedTransactions(invoiceLine.getRatedTransactions());
-            duplicateInvoiceLine = invoiceLinesService.checkAmountIL(duplicateInvoiceLine, maxIlAmountAdjList); 
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
+
+        invoiceLinesService.validateAdjAmount(invoiceLines, invoice);
 
         return duplicateInvoice;
     }
@@ -6914,6 +6908,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Invoice adjustmentInvoice = duplicateByType(invoice, invoiceLinesIds, true);
         populateAdjustmentInvoice(invoice, adjustmentInvoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
+        addLinkedInvoice(invoice, adjustmentInvoice);
 
         return adjustmentInvoice;
     }
@@ -6954,10 +6949,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
-        LinkedInvoice linkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice, duplicatedInvoice.getAmountWithTax(), duplicatedInvoice.getTransactionalAmountWithTax(), InvoiceTypeEnum.ADJUSTMENT);
-        duplicatedInvoice.setLinkedInvoices(of(linkedInvoice));
         duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
         getEntityManager().flush();
+    }
+
+    private void addLinkedInvoice(Invoice invoice, Invoice duplicatedInvoice) {
+        LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, duplicatedInvoice, duplicatedInvoice.getAmountWithTax(), duplicatedInvoice.getTransactionalAmountWithTax(), InvoiceTypeEnum.ADJUSTMENT);
+        duplicatedInvoice.getLinkedInvoices().addAll(of(linkedInvoice));
     }
 
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
