@@ -177,6 +177,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         CounterInstance counterInstance = new CounterInstance();
         if (!entity.getCounters().containsKey(counterTemplate.getCode()) || !entity.getCounters().get(counterTemplate.getCode()).getChargeInstances().contains(chargeInstance)) {
             counterInstance.setCounterTemplate(counterTemplate);
+            counterInstance.setCode(counterTemplate.getCode()+"-"+chargeInstance.getCode());
 
             if (entity instanceof Customer) {
                 counterInstance.setCustomer((Customer) entity);
