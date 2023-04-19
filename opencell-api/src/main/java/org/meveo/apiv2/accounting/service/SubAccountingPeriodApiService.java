@@ -69,7 +69,7 @@ public class SubAccountingPeriodApiService  implements ApiService<SubAccountingP
 	}
 
 	public Optional<SubAccountingPeriod> findByNumber(Integer number, String fiscalYear) {
-		return Optional.of(subAccountingPeriodService.findByNumber(number, fiscalYear));
+		return Optional.ofNullable(subAccountingPeriodService.findByNumber(number, fiscalYear));
 	}
 
 	@Override
