@@ -270,7 +270,10 @@ public class AccountOperationApi extends BaseApi {
 
         BigDecimal lastAppliedRate = BigDecimal.ONE;
         TradingCurrency tradingCurrency = null;
-        TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
+        TradingCurrency functionalCurrency = null;
+        if(appProvider.getCurrency() != null) {
+        	functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
+        }
 
         if(transactionalcurrency != null && !StringUtils.isBlank(transactionalcurrency)){
 
@@ -283,7 +286,7 @@ public class AccountOperationApi extends BaseApi {
             Date exchangeDate = postData.getTransactionDate() != null ? postData.getTransactionDate() : new Date();
             ExchangeRate exchangeRate = getExchangeRate(tradingCurrency,transactionalcurrency,exchangeDate);
 
-            if (!functionalCurrency.equals(tradingCurrency)) {
+            if (functionalCurrency != null && !functionalCurrency.equals(tradingCurrency)) {
 
                 if (transactionalAmount != null && transactionalAmount.intValue() != 0) {
                     functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
@@ -417,6 +420,7 @@ public class AccountOperationApi extends BaseApi {
                 accountOperation.getMatchingAmounts().add(matchingAmount);
             }
         }
+        accountOperation.setComment(postData.getComment());
         return accountOperation.getId();
     }
 
