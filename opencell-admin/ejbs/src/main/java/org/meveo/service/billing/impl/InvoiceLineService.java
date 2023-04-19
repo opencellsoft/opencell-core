@@ -39,7 +39,6 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -63,6 +62,7 @@ import org.meveo.model.billing.InvoiceLineTaxModeEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.MinAmountsResult;
@@ -253,35 +253,37 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return entity;
     }
     
-    public InvoiceLine checkAmountIL(InvoiceLine invoiceLine, List<Object[]> maxIlAmountAdjList) {
-        for (Object[] maxIlAmountAdj : maxIlAmountAdjList) {            
-            Long accountingArticleId = (Long) maxIlAmountAdj[2];
-            Long taxId = (Long) maxIlAmountAdj[3];
-            BigDecimal taxRate = (BigDecimal) maxIlAmountAdj[4];
-            InvoiceLineTaxModeEnum taxMode = (InvoiceLineTaxModeEnum) maxIlAmountAdj[5];
-            
-            boolean t1 = invoiceLine.getTaxMode().equals(taxMode);
-            boolean t2 = invoiceLine.getTax().getId().equals(taxId);
-            boolean t3 = invoiceLine.getTaxRate().equals(taxRate);
-            boolean t4 = invoiceLine.getAccountingArticle().getId().equals(accountingArticleId);
-            boolean isIlFind = t1 && t2 && t3 && t4;
-            
-            if(isIlFind) {
-                BigDecimal amountWithoutTax = (BigDecimal) maxIlAmountAdj[6];
-                BigDecimal amountTax = (BigDecimal) maxIlAmountAdj[7];
-                BigDecimal amountWithTax = (BigDecimal) maxIlAmountAdj[8];
-                
-                if(invoiceLine.getAmountWithoutTax().compareTo(amountWithoutTax) == 1 
-                    || invoiceLine.getAmountTax().compareTo(amountTax) == 1 
-                    || invoiceLine.getAmountWithTax().compareTo(amountWithTax) == 1) {
-                    invoiceLine.setAmountTax(amountTax);
-                    invoiceLine.setAmountWithoutTax(amountWithoutTax);
-                    invoiceLine.setAmountWithTax(amountWithTax);
-                }
+    public void validateAdjAmount(List<InvoiceLine> invoiceLines, Invoice srcInvoice) {
+        BigDecimal adjAmountWithTax = getAdjustementAmounts(srcInvoice.getId());
+        if (adjAmountWithTax != null) {
+            if (adjAmountWithTax.compareTo(srcInvoice.getAmountWithTax()) >= 0) {
+                throw new BusinessException("One or more adjustments are already linked to the invoice");
             }
+        } else {
+            adjAmountWithTax = BigDecimal.ZERO;
         }
 
-        return invoiceLine;
+        BigDecimal possibleAdjAmount = srcInvoice.getAmountWithTax().subtract(adjAmountWithTax);
+
+        BigDecimal sumInvoiceLines = BigDecimal.ZERO;
+
+        for (InvoiceLine invoiceLine : invoiceLines) {
+            sumInvoiceLines = sumInvoiceLines.add(invoiceLine.getAmountWithTax());
+        }
+
+        if (sumInvoiceLines.compareTo(possibleAdjAmount) > 0) {
+            throw new BusinessException("The invoice line amount is greater than the possible adjustment value [" + possibleAdjAmount + "]");
+        }
+    }
+
+    /**
+     * Used for adding IL in new Invoice : we must validate that the source linkedInvoice amount are not exceeded
+     * @param newInvoice new ADJ Invoice created based on Commercial invoice
+     */
+    public void validateAdjAmount(Invoice newInvoice) {
+        // Check global Invoice Amount
+        LinkedInvoice linkedInvoice = findByLinkedInvoiceADJ(newInvoice.getId());
+        validateAdjAmount(newInvoice.getInvoiceLines(), linkedInvoice.getInvoice());
     }
 
     private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
@@ -1407,6 +1409,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return getEntityManager().createNamedQuery("InvoiceLine.getMaxIlAmountAdj").setParameter("invoiceId", id).getResultList();
     }
 
+    public BigDecimal getAdjustementAmounts(Long invoiceId) {
+        return (BigDecimal) getEntityManager().createNamedQuery("InvoiceLine.getAdjustmentAmount").setParameter("ID_INVOICE", invoiceId).getSingleResult();
+    }
+
+    public LinkedInvoice findByLinkedInvoiceADJ(Long invoiceId) {
+        return (LinkedInvoice) getEntityManager().createNamedQuery("LinkedInvoice.findByLinkedInvoiceADJ").setParameter("ID_INVOICE", invoiceId).getSingleResult();
+    }
+
     public List<BillingAccount> findBillingAccountsBy(List<Long> invoiceLinesIds) {
         final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
         if (invoiceLinesIds.size() > maxValue) {
@@ -1425,12 +1435,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .getResultList();
     }
     
-    public InvoiceLine adjustment(InvoiceLine invoiceLine) {
+    public InvoiceLine adjustment(InvoiceLine invoiceLine, Invoice invoice) {
         InvoiceType defaultAdjustement = invoiceTypeService.getDefaultAdjustement();
         InvoiceType invoiceTypeOfInvoice = invoiceLine.getInvoice().getInvoiceType();
-        if(invoiceTypeOfInvoice.equals(defaultAdjustement)) {
-            List<Object[]> maxIlAmountAdjList = getMaxIlAmountAdj(invoiceLine.getInvoice().getId());
-            invoiceLine = checkAmountIL(invoiceLine, maxIlAmountAdjList); 
+        if(invoiceTypeOfInvoice.getId().equals(defaultAdjustement.getId())) {
+            validateAdjAmount(List.of(invoiceLine), invoice);
         }
         return invoiceLine;
     }
