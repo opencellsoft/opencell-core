@@ -117,7 +117,7 @@ public class DiscountPlanInstanceApiServiceTest {
                 return result;
             }
         });
-        when(persistenceDelegate.find(any(), any(), any())).thenAnswer(new Answer<IEntity>() {
+        when(persistenceDelegate.findByIdIgnoringCache(any(), any(), any())).thenAnswer(new Answer<IEntity>() {
 
             @Override
             public IEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -160,10 +160,12 @@ public class DiscountPlanInstanceApiServiceTest {
             }
         });
         when(discountPlanService.findById(any())).thenReturn(getDiscountPlan(DiscountPlanTypeEnum.PROMO_CODE, DiscountPlanStatusEnum.ACTIVE, false));
+
     }
 
     private DiscountPlan getDiscountPlan(DiscountPlanTypeEnum type, DiscountPlanStatusEnum status, boolean nullDates) {
         DiscountPlan discountPlan = new DiscountPlan();
+        discountPlan.setId(1l);
         discountPlan.setCode("DP");
         discountPlan.setDiscountPlanType(type);
         discountPlan.setStatus(status);
@@ -180,6 +182,7 @@ public class DiscountPlanInstanceApiServiceTest {
         BillingAccount ba = Mockito.mock(BillingAccount.class);
         DiscountPlan dp = Mockito.mock(DiscountPlan.class);
         DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+        discountPlanInstance.setId(1l);
         discountPlanInstance.setApplicationCount(0L);
         discountPlanInstance.setStatus(status);
         discountPlanInstance.setStatusDate(new Date());
@@ -196,6 +199,7 @@ public class DiscountPlanInstanceApiServiceTest {
         Subscription sub = mock(Subscription.class);
         DiscountPlan dp = Mockito.mock(DiscountPlan.class);
         DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+        discountPlanInstance.setId(1l);
         discountPlanInstance.setApplicationCount(0L);
         discountPlanInstance.setStatus(status);
         discountPlanInstance.setStatusDate(new Date());

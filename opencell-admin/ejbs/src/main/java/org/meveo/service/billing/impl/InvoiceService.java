@@ -26,10 +26,8 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
-import static org.meveo.model.shared.DateUtils.setTimeToZero;
 import static org.meveo.service.base.ValueExpressionWrapper.*;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
@@ -173,6 +171,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.shared.DateUtils;
@@ -204,6 +203,7 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.script.billing.TaxScriptService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
 import org.w3c.dom.Node;
@@ -422,6 +422,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private InternationalSettingsService internationalSettingsService;
+
+    @Inject
+    private FinanceSettingsService financeSettingsService;
     
     private enum RuleValidationEnum {
         RULE_TRUE, RULE_FALSE, RULE_IGNORE
@@ -2500,9 +2503,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setCfValues(customFieldValues);
             }
             try {
-                if(invoice.getStatus().equals(InvoiceStatusEnum.DRAFT)) {
+                if (invoice.getStatus().equals(InvoiceStatusEnum.DRAFT)) {
                     invoice.assignTemporaryInvoiceNumber();
-                }else if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT) {
+                } else if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT) {
                     invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
                 }
             } catch (Exception e) {
@@ -2514,10 +2517,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (isDraft) {
                     drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate(),
                         generateInvoiceRequestDto.getLastTransactionDate());
-                }else {
+                } else {
                     drafWalletOperationIds = new ArrayList<>();
                     invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-                    update(invoice);
+                    serviceSingleton.assignInvoiceNumber(invoice);
                 }
                 produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft, drafWalletOperationIds);
             } catch (Exception e) {
@@ -5365,7 +5368,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public Invoice createBasicInvoice(BasicInvoice resource) {
         final String billingAccountCode = resource.getBillingAccountCode();
-        final BigDecimal amountWithTax = resource.getAmountWithTax();
+        final BigDecimal amountWithTax = resource.getAmountWithTax() != null ? resource.getAmountWithTax() : ZERO;
         final Date invoiceDate = resource.getInvoiceDate() != null ? resource.getInvoiceDate() : new Date();
         final String invoiceTypeCodeInput = resource.getInvoiceTypeCode();
 
@@ -5865,6 +5868,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         && (existingInvoice.getInvoiceLines() == null || existingInvoice.getInvoiceLines().isEmpty())) {
                     cleanInvoiceAggregates(existingInvoice.getId());
                     initAmounts(existingInvoice.getId());
+                    existingInvoice = refreshOrRetrieve(existingInvoice);
                 }
                 return new ArrayList<>();
             } else if (!invoiceLinesGroupsPaged.isEmpty()) {
@@ -5894,7 +5898,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if (invoiceAggregateProcessingInfo.invoice == null) {
                         if (existingInvoice != null) {
                             cleanInvoiceAggregates(existingInvoice.getId());
-                            invoiceAggregateProcessingInfo.invoice = existingInvoice;
+                            initAmounts(existingInvoice.getId());
+                            invoiceAggregateProcessingInfo.invoice = refreshOrRetrieve(existingInvoice);
                         } else {
                             // TODO check instantiateInvoice(entityToInvoice
                             invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoiceLinesGroup.getSeller().getId(), billingRun, invoiceDate, isDraft,
@@ -5979,12 +5984,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                     .setParameter("invoice", invoice)
                                     .setParameter("now", now)
                                     .setParameter("invoiceAgregateF", subCategoryAggregate)
-                                    .setParameter("ids", ids)
-                                    .executeUpdate();
-                            em.createNamedQuery("RatedTransaction.linkRTWithInvoice")
-                                    .setParameter("billingRun", billingRun)
-                                    .setParameter("invoice", invoice)
-                                    .setParameter("now", now)
                                     .setParameter("ids", ids)
                                     .executeUpdate();
                         });
@@ -6562,6 +6561,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (InvoiceStatusEnum.NEW.equals(status)) {            
             toUpdate.setStatus(InvoiceStatusEnum.DRAFT);
+            toUpdate.assignTemporaryInvoiceNumber();
         }
         if (input.getComment() != null) {
             toUpdate.setComment(input.getComment());
@@ -6608,7 +6608,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
-                 LinkedInvoice linkedInvoice = new LinkedInvoice(toUpdate, invoiceTmp);
+                 LinkedInvoice linkedInvoice = new LinkedInvoice(invoiceTmp, toUpdate);
                  toUpdate.getLinkedInvoices().add(linkedInvoice);
             }
             linkedInvoiceToRemove.removeAll(invoiceResource.getListLinkedInvoices());
@@ -6759,7 +6759,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceAgregates.addAll(invoice.getInvoiceAgregates());
         }
 
-        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
+        List<InvoiceLine> invoiceLines = new ArrayList<>();
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             invoiceLines.addAll(invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds));
         }
@@ -6803,20 +6803,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
         }
-        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
-        if(isAdjustment) {
-            maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
-        }  
-        
+
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
-            if(isAdjustment) {
-                duplicateInvoiceLine = invoiceLinesService.checkAmountIL(duplicateInvoiceLine, maxIlAmountAdjList); 
-            }
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
+        }
+
+        if (isAdjustment) {
+            invoiceLinesService.validateAdjAmount(invoiceLines, invoice);
         }
 
         return duplicateInvoice;
@@ -6862,6 +6859,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Invoice adjustmentInvoice = duplicateAndUpdateInvoiceLines(invoice, invoiceLineRTs, invoiceLinesIds);
         populateAdjustmentInvoice(invoice, adjustmentInvoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
+        addLinkedInvoice(invoice, adjustmentInvoice);
 
         return adjustmentInvoice;
     }
@@ -6875,7 +6873,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceAgregates.addAll(invoice.getInvoiceAgregates());
         }
 
-        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
+        List<InvoiceLine> invoiceLines = new ArrayList<>();
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             invoiceLines.addAll(invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds));
         }
@@ -6890,18 +6888,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         updateInvoiceLinesAmountFromRatedTransactions(invoiceLineRTs, invoiceLines);
 
-        List<Object[]> maxIlAmountAdjList = new ArrayList<Object[]>();
-        maxIlAmountAdjList = invoiceLinesService.getMaxIlAmountAdj(invoice.getId());           
-        
         for (InvoiceLine invoiceLine : invoiceLines) {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
             duplicateInvoiceLine.setRatedTransactions(invoiceLine.getRatedTransactions());
-            duplicateInvoiceLine = invoiceLinesService.checkAmountIL(duplicateInvoiceLine, maxIlAmountAdjList); 
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
+
+        invoiceLinesService.validateAdjAmount(invoiceLines, invoice);
 
         return duplicateInvoice;
     }
@@ -6912,6 +6908,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Invoice adjustmentInvoice = duplicateByType(invoice, invoiceLinesIds, true);
         populateAdjustmentInvoice(invoice, adjustmentInvoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
+        addLinkedInvoice(invoice, adjustmentInvoice);
 
         return adjustmentInvoice;
     }
@@ -6952,10 +6949,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
-        LinkedInvoice linkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice);
-        duplicatedInvoice.setLinkedInvoices(of(linkedInvoice));
         duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
         getEntityManager().flush();
+    }
+
+    private void addLinkedInvoice(Invoice invoice, Invoice duplicatedInvoice) {
+        LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, duplicatedInvoice, duplicatedInvoice.getAmountWithTax(), duplicatedInvoice.getTransactionalAmountWithTax(), InvoiceTypeEnum.ADJUSTMENT);
+        duplicatedInvoice.getLinkedInvoices().addAll(of(linkedInvoice));
     }
 
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
@@ -7028,7 +7028,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void triggersCollectionPlanLevelsJob() {
         JobInstance triggerCollectionPlanLevelsJob = jobInstanceService.findByCode("TriggerCollectionPlanLevelsJob");
-        if (triggerCollectionPlanLevelsJob != null) {
+        FinanceSettings lastOne = financeSettingsService.findLastOne();
+        if (triggerCollectionPlanLevelsJob != null && lastOne != null && lastOne.isActivateDunning()) {
             jobExecutionService.executeJob(triggerCollectionPlanLevelsJob, Collections.EMPTY_MAP, JobLauncherEnum.TRIGGER);
         }
     }
@@ -7151,9 +7152,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoicesWithAdv.get(key).add(adv);
             }
         });
-       invoicesWithAdv.keySet().forEach(inv -> {
-           applyAdvanceInvoice(inv, invoicesWithAdv.get(inv));
-       });
+       invoicesWithAdv.keySet().forEach(inv -> applyAdvanceInvoice(inv, invoicesWithAdv.get(inv)));
        return null;
    }
 

@@ -1201,7 +1201,7 @@
             <column name="pr_description" value="US Dollar" />
 
             <column name="currency_id" valueNumeric="49" />
-            <column name="symbol" value="$US"  />
+            <column name="symbol" value="$" />
             <column name="decimal_places" valueNumeric="2" />
         </insert>
         <insert tableName="billing_trading_currency">
@@ -4874,6 +4874,7 @@
                 <column name="created" valueDate="${db.current.time}" />
                 <column name="code" value="new" />
                 <column name="name" value="New" />
+                <column name="order_level" valueNumeric="0" />
         </insert>
         <insert tableName="cat_offer_template_category">
                 <column name="id" valueNumeric="-2" />
@@ -4881,6 +4882,7 @@
                 <column name="created" valueDate="${db.current.time}" />
                 <column name="code" value="standard" />
                 <column name="name" value="Standard" />
+               	<column name="order_level" valueNumeric="0" />
         </insert>
 
         <insert tableName="cat_channel">
@@ -5999,7 +6001,21 @@
             <column name="version" valueNumeric="0" />
             <column name="src_type" value="JAVA_CLASS" />
         </insert>
-    </changeSet>            
+    </changeSet>
+
+    <changeSet id="#INTRD-14750_20230331_build" author="TarikFA.">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-65" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
+            <column name="created" valueDate="2023-03-31 15:51:00.000" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="DuplicateRatedTransactionJob" />
+            <column name="code" value="DuplicateRatedTransactionJob" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="uuid" value="DuplicateRatedTransactionJob-UUID" />
+        </insert>
+    </changeSet>
 
     <changeSet id="INTRD-2698-20211028" author="AbdelkaderBouazza" />    
     <changeSet id="#INTRD-4950-20220208-script" author="MohammedSTITANE"/>
@@ -6025,6 +6041,10 @@
     <changeSet id="#4082_20190404" author="SaidRamli"/>
     <changeSet id="#5308_20200618 - Add script" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI"/>
+    <changeSet id="#INTRD-15228_20230327" author="hichamELHALOUI" />
+  	<changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI" />
+
+    <changeSet id="#INTRD-14750_20230331" author="TarikFA." />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

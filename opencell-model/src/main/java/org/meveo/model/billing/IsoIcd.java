@@ -18,6 +18,8 @@ import org.meveo.model.ObservableEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "iso_icd_seq"), })
 public class IsoIcd extends AuditableEntity {
 	
+	private static final long serialVersionUID = -8492067649913788802L;
+
 	@Column(name = "code", length = 5)
 	@Size(max = 10)
 	private String code;

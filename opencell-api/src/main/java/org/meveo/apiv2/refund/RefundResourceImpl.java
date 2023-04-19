@@ -16,7 +16,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.payment.RefundApi;
@@ -40,7 +40,7 @@ public class RefundResourceImpl implements RefundResource{
 
     @Override
     public Response refundByCard(CardRefund cardRefund) {
-        PayByCardDto payByCardDto = toPayByCardDto(cardRefund);
+        PayByCardOrSepaDto payByCardDto = toPayByCardDto(cardRefund);
         try {
             refundApi.refundByCard(payByCardDto);
             return Response.ok(new ActionStatus()).build();
@@ -90,8 +90,8 @@ public class RefundResourceImpl implements RefundResource{
 		
 	}
 
-	private PayByCardDto toPayByCardDto(CardRefund cardRefund) {
-        PayByCardDto payByCardDto = new PayByCardDto();
+	private PayByCardOrSepaDto toPayByCardDto(CardRefund cardRefund) {
+        PayByCardOrSepaDto payByCardDto = new PayByCardOrSepaDto();
         payByCardDto.setCtsAmount(cardRefund.getCtsAmount());
         payByCardDto.setCardNumber(cardRefund.getCardNumber());
         payByCardDto.setCustomerAccountCode(cardRefund.getCustomerAccountCode());

@@ -2,15 +2,11 @@ package org.meveo.admin.job;
 
 import static java.math.BigDecimal.ZERO;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
@@ -20,17 +16,13 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderLot;
@@ -39,12 +31,10 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -65,9 +55,7 @@ public class InvoiceLinesFactory {
     private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
     private ProductVersionService productVersionService = (ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
     private OrderLotService orderLotService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
-    private ChargeInstanceService chargeInstanceService = (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
     private RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
-    private WalletOperationService walletOperationService = (WalletOperationService) getServiceInterface(WalletOperationService.class.getSimpleName());
 
     private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -176,23 +164,6 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-        if (data.get("charge_instance_id") != null && invoiceLine.getAccountingArticle() == null) {
-            ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
-            Product product = serviceInstance != null ? serviceInstance.getProductVersion() != null ? invoiceLine.getServiceInstance().getProductVersion().getProduct() : null : null;
-            List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
-            Map<String, Object> attributes = fromAttributeValue(attributeValues);
-            ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findById(((Number) data.get("charge_instance_id")).longValue());
-            String[] rtIds = ofNullable((String) data.get("rated_transaction_ids"))
-                    .map(ids -> ids.split(","))
-                    .orElse(null);
-            WalletOperation walletOperation = null;
-            if(rtIds != null && rtIds.length == 1) {
-                walletOperation = walletOperationService.findWoByRatedTransactionId(Long.valueOf(rtIds[0]));
-            }
-            AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes, walletOperation)
-                    .orElseThrow(() -> new BusinessException("No accountingArticle found"));
-            invoiceLine.setAccountingArticle(accountingArticle);
-        }
         if(billingRun != null && billingRun.getBillingCycle() != null
                 && billingRun.getBillingCycle().isUseAccountingArticleLabel()
                 && invoiceLine.getAccountingArticle() != null) {
@@ -242,21 +213,6 @@ public class InvoiceLinesFactory {
             log.error("cannot parse '{}' as date", usageDate);
         }
         return null;
-    }
-
-    private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
-        if (serviceInstance == null) {
-            return Collections.emptyList();
-        }
-        return serviceInstance.getAttributeInstances().stream().map(AttributeValue.class::cast).collect(toList());
-    }
-
-    private Map<String, Object> fromAttributeValue(List<AttributeValue> attributeValues) {
-        return attributeValues
-                .stream()
-                .filter(attributeValue -> attributeValue.getAttribute().getAttributeType().getValue(attributeValue) != null)
-                .collect(toMap(key -> key.getAttribute().getCode(),
-                        value -> value.getAttribute().getAttributeType().getValue(value)));
     }
 
     private String getLanguageCode(BillingAccount billingAccount, Provider provider) {

@@ -17,6 +17,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -124,13 +125,33 @@ public class ContractItemService extends BusinessService<ContractItem> {
 	}
 
     @SuppressWarnings("unchecked")
-    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId,
+    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode,
 												  ChargeTemplate chargeTemplate, WalletOperation walletOperation) {
-        Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
-				.setParameter("contractId", contract.getId())
-				.setParameter("offerId", offer.getId())
-				.setParameter("productId", productId)
-				.setParameter("chargeTemplateId", chargeTemplate.getId());
+        ContractItem contractItem = null;
+		StringBuilder builder = new StringBuilder("select c from ContractItem c where  c.contract.id=:contractId");
+
+		if(offer != null && offer.getId() != null){
+			builder.append(" and c.offerTemplate.id=:offerId");
+		}
+		if(StringUtils.isNotBlank(productCode)){
+			builder.append(" and c.product.code=:productCode");
+		}
+		if(chargeTemplate != null && chargeTemplate.getId() != null){
+			builder.append(" and c.chargeTemplate.id=:chargeTemplate");
+		}
+
+        Query query = getEntityManager().createQuery(builder.toString());
+		query.setParameter("contractId", contract.getId());
+		if(builder.toString().contains(":offerId")){
+			query.setParameter("offerId", offer.getId());
+		}
+		if(builder.toString().contains(":productCode")){
+			query.setParameter("productCode", productCode);
+		}
+		if(builder.toString().contains(":chargeTemplate")){
+			query.setParameter("chargeTemplate", chargeTemplate.getId());
+		}
+
         List<ContractItem> applicableContractItems = query.getResultList();
 
         if (!applicableContractItems.isEmpty()) {

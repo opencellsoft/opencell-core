@@ -4,15 +4,24 @@ import static java.util.Optional.ofNullable;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.job.JobExecutionResultDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
+import org.meveo.api.job.JobApi;
 import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.apiv2.billing.DuplicateRTResult;
 import org.meveo.apiv2.billing.ProcessCdrListResult.Statistics;
 import org.meveo.apiv2.billing.ProcessingModeEnum;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.bi.impl.JobService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class RatedTransactionApiService implements ApiService<RatedTransaction> {
 
@@ -33,6 +43,13 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	
 	@Inject
 	private RatedTransactionService ratedTransactionService;
+
+	@Inject
+	private JobService jobService;
+	@Inject
+	private JobApi jobApi;
+	@Inject
+	private JobInstanceService jobInstanceService;
 
 	@Override
 	public Optional<RatedTransaction> findById(Long id) {
@@ -117,18 +134,31 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 				description, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra, usageDate);
 	}
 
-	public DuplicateRTResult duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
-			boolean returnRts) {
+	public Object duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
+			boolean returnRts, boolean startJob) {
 		DuplicateRTResult result = new DuplicateRTResult();
+		int maxLimit = ParamBean.getInstance().getPropertyAsInteger("api.ratedTransaction.massAction.limit", 10000);
+
 		if(MapUtils.isEmpty(filters)) {
 			throw new InvalidParameterException("filters is required");
 		}
-		Map<String, Object> modifiableFilters = new HashMap<>(filters);
-		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(modifiableFilters);
-		if(CollectionUtils.isEmpty(rtToDuplicate)) {
+		Long countRatedTransaction = ratedTransactionService.count(filters);
+		if(countRatedTransaction == 0) {
 			log.warn("list of rated transaction to duplicate is empty for filters : {}", filters);
 			result.getActionStatus().setMessage("list of rated transaction to duplicate is empty.");
 			return result;
+		}
+
+		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(filters);
+		if(countRatedTransaction.intValue() > maxLimit) {
+			log.info("filter for duplication has more than : " + maxLimit + ", current rated transaction from filters are : " + countRatedTransaction + ". will job be lunched ? : " + startJob);
+			ratedTransactionService.incrementPendingDuplicate(rtToDuplicate.stream().map(RatedTransaction::getId).collect(Collectors.toList()), negateAmount);
+			if(!startJob){
+				result.setActionStatus(new ActionStatus(ActionStatusEnum.WARNING, "The filter reach the max limit to duplicate, to duplicate these rated transaction please run the job 'DuplicationRatedTransactionJob'"));
+				return result;
+			}else{
+				return duplicateRatedTransactionWithJob();
+			}
 		}
 
 		List<Long> successList = new ArrayList<>();
@@ -173,6 +203,21 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 		}
 		result.getActionStatus().setMessage(String.format("Created %d rated items, %d failed", successList.size(), result.getFailIds().size()));
 		
+		return result;
+	}
+
+	public JobExecutionResultResponseDto duplicateRatedTransactionWithJob(){
+		JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
+		JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
+		List<JobInstance> instances = jobInstanceService.findByJobTemplate("DuplicateRatedTransactionJob");
+		String currentInstance = "DuplicateRatedTransactionJob";
+		if(CollectionUtils.isNotEmpty(instances)){
+			currentInstance = instances.get(0).getCode();
+		}
+		jobInstanceInfoDto.setCode(currentInstance);
+		JobExecutionResultDto jobExecution = jobApi.executeJob(jobInstanceInfoDto);
+		result.setJobExecutionResultDto(jobExecution);
+		result.getActionStatus().setMessage(jobExecution.getId() == null ? "NOTHING_TO_DO" : jobExecution.getId().toString());
 		return result;
 	}
 

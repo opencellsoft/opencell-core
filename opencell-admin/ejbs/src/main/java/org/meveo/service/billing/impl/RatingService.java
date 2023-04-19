@@ -581,8 +581,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
          WalletOperation discountedWalletOperation=null;
          
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
-    	AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
-    	bareWalletOperation.setAccountingArticle(accountingArticle);
+        AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
+        bareWalletOperation.setAccountingArticle(accountingArticle);
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
 
@@ -600,6 +600,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
             BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
+
+            BigDecimal unitPrice = appProvider.isEntreprise() ? unitPriceWithoutTax : unitPriceWithTax;
+            if (unitPrice == null) {
+                throw new BusinessException("No unit price found");
+            }
+            BigDecimal amount = bareWalletOperation.getQuantity().multiply(unitPrice);
+            bareWalletOperation.setAmountWithoutTax(amount);
+            bareWalletOperation.setAmountWithTax(amount);
 
             RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
 
@@ -644,7 +652,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     if (contract != null && bareWalletOperation.getOperationDate().compareTo(contract.getBeginDate()) >= 0
                             && bareWalletOperation.getOperationDate().compareTo(contract.getEndDate()) < 0) {
                         contractItem = contractItemService.getApplicableContractItem(contract,
-                                offerTemplate, serviceInstance.getId(), chargeTemplate, bareWalletOperation);
+                                offerTemplate, serviceInstance.getCode(), chargeTemplate, bareWalletOperation);
                     }
 
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
@@ -719,7 +727,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     	unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
                     	unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
                     }
-                    BigDecimal amount=null;
+                    amount=null;
                     BigDecimal discountRate=null;
                     PricePlanMatrixVersion ppmVersion=null;
                     PricePlanMatrixLine pricePlanMatrixLine =null;
@@ -1117,7 +1125,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (amount == null) {
             amount = walletOperation.getQuantity().multiply(unitPrice);
         }
-
         // Unit prices and unit taxes are with higher precision
         BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitPrice, unitPrice, walletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amount, amount, walletOperation.getTaxPercent(), appProvider.isEntreprise(), rounding, roundingMode.getRoundingMode());

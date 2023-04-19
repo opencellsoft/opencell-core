@@ -1,16 +1,9 @@
 package org.meveo.service.catalog.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -18,8 +11,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.criterion.MatchMode;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.api.dto.catalog.ConvertedPricePlanMatrixLineDto;
@@ -176,7 +172,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     }
 
     public Set<PricePlanMatrixValue> getPricePlanMatrixValues(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
-    	
+
         return dtoData.getPricePlanMatrixValues()
                 .stream()
                 .map(value -> {
@@ -281,36 +277,36 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     }
 
     /**
-	 * @param businessAttributes 
+     * @param businessAttributes
      * @param attributeValues
-     * @param walletOperation 
-	 */
-	private void addBusinessAttributeValues(List<Attribute> businessAttributes, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
-		businessAttributes.stream().forEach(attribute->attributeValues.add(getBusinessAttributeValue(attribute, walletOperation)));
-	}
+     * @param walletOperation
+     */
+    private void addBusinessAttributeValues(List<Attribute> businessAttributes, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
+        businessAttributes.stream().forEach(attribute->attributeValues.add(getBusinessAttributeValue(attribute, walletOperation)));
+    }
 
-	/**
-	 * @param attribute
-	 * @return
-	 */
-	private AttributeValue getBusinessAttributeValue(Attribute attribute, WalletOperation op) {
-		Object value=ValueExpressionWrapper.evaluateExpression(attribute.getElValue(), Object.class, op);
-		AttributeValue<AttributeValue> attributeValue= new AttributeValue<AttributeValue>(attribute, value);
-		return attributeValue;
-	}
+    /**
+     * @param attribute
+     * @return
+     */
+    private AttributeValue getBusinessAttributeValue(Attribute attribute, WalletOperation op) {
+        Object value=ValueExpressionWrapper.evaluateExpression(attribute.getElValue(), Object.class, op);
+        AttributeValue<AttributeValue> attributeValue= new AttributeValue<AttributeValue>(attribute, value);
+        return attributeValue;
+    }
 
-	public void removeAll(Set<PricePlanMatrixLine> linesToRemove) {
+    public void removeAll(Set<PricePlanMatrixLine> linesToRemove) {
         for (PricePlanMatrixLine l : linesToRemove) {
             remove(findById(l.getId()));
         }
     }
     
     @SuppressWarnings("unchecked")
-	public List<PricePlanMatrixLine> findByPriority(Integer priority, Integer currentVersion) {
-    	QueryBuilder builder = new QueryBuilder(PricePlanMatrixLine.class, "ppml", Arrays.asList("pricePlanMatrixVersion"));
-    	builder.addCriterion("ppml.priority", "=", priority, false);
-    	builder.addCriterion("ppml.pricePlanMatrixVersion.currentVersion", "=", currentVersion, false);
-    	return builder.getQuery(this.getEntityManager()).getResultList();
+    public List<PricePlanMatrixLine> findByPriority(Integer priority, Integer currentVersion) {
+        QueryBuilder builder = new QueryBuilder(PricePlanMatrixLine.class, "ppml", Arrays.asList("pricePlanMatrixVersion"));
+        builder.addCriterion("ppml.priority", "=", priority, false);
+        builder.addCriterion("ppml.pricePlanMatrixVersion.currentVersion", "=", currentVersion, false);
+        return builder.getQuery(this.getEntityManager()).getResultList();
     }
     
     public void updatePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
@@ -350,13 +346,13 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         ppmVersion.getLines().addAll(lines);
     }
     
-    public void updateWithoutDeletePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {  
-    	
+    public void updateWithoutDeletePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
+
         checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
         Provider provider = providerService.getProvider();
         for (PricePlanMatrixLineDto pricePlanMatrixLineDto : dtoData.getPricePlanMatrixLines()) {
-        	
-        	
+
+
             PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
             if(pricePlanMatrixLineDto.getPpmLineId() != null){
                 pricePlanMatrixLine = findById(pricePlanMatrixLineDto.getPpmLineId());
@@ -485,4 +481,117 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 Comparator.comparingInt(Map.Entry::getKey)).getKey());
     }
 
+    public List<PricePlanMatrixLine> search(Map<String, Object> searchInfo) {
+        Query query = getEntityManager().createQuery(buildQuery(searchInfo), PricePlanMatrixLine.class);
+        injectParamsIntoQuery(searchInfo, query);
+        return  query.getResultList();
+    }
+
+    private String buildQuery(Map<String, Object> searchInfo) {
+        StringBuilder queryString = new StringBuilder();
+        queryString.append("SELECT distinct ppml FROM PricePlanMatrixLine ppml");
+        queryString.append(" LEFT JOIN FETCH ppml.pricePlanMatrixValues ppmvs ");
+        queryString.append(" WHERE (LOWER(ppml.description) LIKE :description OR ppml.description is null) ");
+        if(searchInfo.containsKey("pricePlanMatrixVersion") && ((Map) searchInfo.get("pricePlanMatrixVersion")).containsKey("id")){
+            queryString.append(" AND ppml.pricePlanMatrixVersion.id = :pricePlanMatrixVersionId ");
+        }
+        if(searchInfo.containsKey("priceWithoutTax")){
+            queryString.append(" AND ppml.priceWithoutTax = :priceWithoutTax ");
+        }
+        if(searchInfo.containsKey("attributes") && !((List)searchInfo.get("attributes")).isEmpty()){
+            queryString.append(" AND EXISTS ");
+            queryString.append(appendAttributesToQuery((List<Map<String, Object>>) searchInfo.getOrDefault("attributes", Collections.EMPTY_LIST)));
+        }
+        queryString.append(" ORDER BY ppml." + searchInfo.getOrDefault("sortBy","id"));
+        queryString.append(" ");
+        queryString.append(searchInfo.getOrDefault("order","ASC"));
+
+        return queryString.toString();
+    }
+
+    private String appendAttributesToQuery(List<Map<String, Object>> attributesSearch) {
+        return attributesSearch.stream()
+                .map(stringObjectMap ->
+                        "(SELECT ppmv.id FROM PricePlanMatrixValue ppmv"+
+                                " JOIN PricePlanMatrixColumn ppmc ON ppmv.pricePlanMatrixColumn=ppmc"+
+                                " WHERE (LOWER(ppmc.code)='"
+                                + stringObjectMap.get("column").toString().toLowerCase()
+                                + "' AND "
+                                + resolveType((String) stringObjectMap.get("type"), stringObjectMap.get("value"), (String) stringObjectMap.getOrDefault("operator", "="))
+                                +"AND ppmv.id in elements(ppmvs)))")
+                .collect(Collectors.joining(" AND EXISTS "));
+    }
+
+    private String resolveType(String type, Object value, String operator) {
+
+
+        switch(type.toLowerCase()){
+            case "string":
+                return "(LOWER(ppmv.stringValue) " + formattedOperation(operator, value.toString().toLowerCase()) + " OR ppmv.stringValue IS NULL)";
+            case "long":
+                return "(ppmv.longValue " + formattedOperation(operator, value) + " OR ppmv.long_value IS NULL)";
+            case "double":
+                return "(ppmv.doubleValue " + formattedOperation(operator, Double.valueOf(value.toString()))+ " OR ppmv.doubleValue IS NULL)";
+            case "boolean":
+                return "(ppmv.booleanValue " + formattedOperation(operator, Boolean.valueOf(value.toString()))+ " OR ppmv.booleanValue IS NULL)";
+            case "date":
+                return "(ppmv.dateValue " + formattedOperation(operator, new java.sql.Date(parseDate(value).getTime()))+ " OR ppmv.dateValue IS NULL)";
+            default:
+                return "stringValue = ''";
+        }
+    }
+
+    private String formattedOperation(String operator, Object value) {
+        String operand = "";
+
+        switch(operator) {
+            case "=":
+            case "!=":
+            case ">":
+            case ">=":
+            case "<":
+            case "<=": {
+                if(value instanceof String || value instanceof java.sql.Date) {
+                    operand = operator + " '" + value + "'";
+                } else {
+                    operand = operator + " " + value;
+                }
+
+                break;
+            }
+            case "like": {
+                operand = "like '%" + value + "%'";
+                break;
+            }
+            case "in": {
+                operand = "in (" + value + ")";
+                break;
+            }
+            default:
+                operand = "= " + value;
+        }
+        return operand;
+    }
+
+    private Date parseDate(Object value) {
+        if(value instanceof String) {
+            try {
+                return ((String) value).matches("^\\d{4}-\\d{2}-\\d{2}$") ? new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(value))
+                        : new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(value));
+            } catch (ParseException e) {
+                throw new IllegalArgumentException("date attribute has not a valid filter value, hint : yyyy-MM-dd or dd/MM/yyyy");
+            }
+        }
+        return new Date((Long) value);
+    }
+
+    private void injectParamsIntoQuery(Map<String, Object> searchInfo, Query query) {
+        query.setParameter("description", MatchMode.ANYWHERE.toMatchString(((String) searchInfo.getOrDefault("description", "")).toLowerCase()));
+        if(searchInfo.containsKey("pricePlanMatrixVersion") && ((Map) searchInfo.get("pricePlanMatrixVersion")).containsKey("id")){
+            query.setParameter("pricePlanMatrixVersionId", Long.valueOf(((Map) searchInfo.get("pricePlanMatrixVersion")).getOrDefault("id", 1l)+""));
+        }
+        if(searchInfo.containsKey("priceWithoutTax")){
+            query.setParameter("priceWithoutTax", BigDecimal.valueOf(Double.valueOf(searchInfo.getOrDefault("priceWithoutTax", 0.0)+"")));
+        }
+    }
 }

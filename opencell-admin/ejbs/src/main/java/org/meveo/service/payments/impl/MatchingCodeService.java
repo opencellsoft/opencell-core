@@ -42,10 +42,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.TradingCurrency;
@@ -390,9 +392,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 matchingCode.getMatchingAmounts().add(matchingAmount);
 
                 TradingCurrency transactionalCurrency = accountOperation.getTransactionalCurrency() != null ? accountOperation.getTransactionalCurrency() : null;
-                TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
-
-                if (transactionalCurrency != null && !functionalCurrency.equals(transactionalCurrency)) {
+                TradingCurrency functionalCurrency = null;
+                Currency currency = appProvider.getCurrency();
+                if (currency != null && !StringUtils.isBlank(currency.getCurrencyCode())) {
+                    functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
+                }
+                if (transactionalCurrency != null && !transactionalCurrency.equals(functionalCurrency)) {
                     createExchangeGainLoss(accountOperation, matchingAmount, transactionalCurrency);
                 }
             }
@@ -653,11 +658,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             }
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
                 cptOccDebit++;
-                amoutDebit = amoutDebit.add(accountOperation.getTransactionalUnMatchingAmount());
+                amoutDebit = amoutDebit.add(accountOperation.getUnMatchingAmount());
             }
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
                 cptOccCredit++;
-                amoutCredit = amoutCredit.add(accountOperation.getTransactionalMatchingAmount());
+                amoutCredit = amoutCredit.add(accountOperation.getTransactionalUnMatchingAmount());
             }
         }
         if (cptOccCredit == 0) {

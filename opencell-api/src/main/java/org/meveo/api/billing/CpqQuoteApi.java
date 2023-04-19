@@ -70,12 +70,15 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
@@ -130,6 +133,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.ContractService;
@@ -258,6 +262,9 @@ public class CpqQuoteApi extends BaseApi {
     
 	@Inject
 	private ContractHierarchyHelper contractHierarchyHelper;
+
+    @Inject
+    private TaxService taxService;
     
     private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     
@@ -267,8 +274,9 @@ public class CpqQuoteApi extends BaseApi {
 	    if(StringUtils.isBlank(quoteDto.getApplicantAccountCode())) {
             missingParameters.add("applicantAccountCode");
         }
+        CpqQuote cpqQuote = new CpqQuote();
         if(StringUtils.isBlank(quoteDto.getCode())) {
-            missingParameters.add("code");
+            customGenericEntityCodeService.getGenericEntityCode(cpqQuote);
         }
         handleMissingParameters();
         
@@ -276,7 +284,6 @@ public class CpqQuoteApi extends BaseApi {
             throw new EntityAlreadyExistsException(CpqQuote.class, quoteDto.getCode());
         }
 
-        CpqQuote cpqQuote = new CpqQuote();
         cpqQuote.setCode(quoteDto.getCode());
         final BillingAccount applicantAccount = billingAccountService.findByCode(quoteDto.getApplicantAccountCode());
         if(applicantAccount == null) {
@@ -343,6 +350,7 @@ public class CpqQuoteApi extends BaseApi {
         
         quoteDto.setStatusDate(cpqQuote.getStatusDate());
         quoteDto.setId(cpqQuote.getId());
+        quoteDto.setCode(cpqQuote.getCode());
         return quoteDto;
 	}
 
@@ -601,6 +609,10 @@ public class CpqQuoteApi extends BaseApi {
             if (!quoteXmlDir.exists()) {
                 quoteXmlDir.mkdirs();
             }
+
+            TaxDetailDTO taxDetail = new TaxDetailDTO();
+            Map<String, TaxDTO> mapTaxIndexes = buildTaxesIndexes(quoteVersion, taxDetail);
+
             ScriptInstance scriptInstance = invoiceType.getCustomInvoiceXmlScriptInstance();
             if (scriptInstance != null) {
                     String quoteXmlScript = scriptInstance.getCode();
@@ -617,7 +629,7 @@ public class CpqQuoteApi extends BaseApi {
                     result.setXmlContent(xmlContent);
 
             } else {
-                String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
+                String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion, mapTaxIndexes, taxDetail));
                 xmlContent = quoteXml.getBytes(StandardCharsets.UTF_8);
                 result.setXmlContent(xmlContent);
             }
@@ -642,6 +654,59 @@ public class CpqQuoteApi extends BaseApi {
         }
 
         return result;
+    }
+
+    private Map<String, TaxDTO> buildTaxesIndexes(QuoteVersion quoteVersion, TaxDetailDTO taxDetail) {
+        Map<String, TaxDTO> mapTaxesIndexes = new HashMap<>();
+
+        List<TaxDTO> taxes = new ArrayList<>();
+        taxDetail.setTaxes(taxes);
+
+        StringBuilder vatex = new StringBuilder();
+
+        int i = 0;
+        for (QuoteArticleLine quoteArticleLine : quoteVersion.getQuoteArticleLines()) {
+            for (QuotePrice quotePrice : quoteArticleLine.getQuotePrices()) {
+                Tax tax = taxService.findTaxByPercent(quotePrice.getTaxRate());
+
+                TaxDTO taxDTO = mapTaxesIndexes.get(quotePrice.getTaxRate().toString());
+
+                if (taxDTO == null) {
+                    taxDTO = new TaxDTO();
+                    taxDTO.setTax(quotePrice.getTaxRate());
+                    taxDTO.setIndex(String.valueOf(++i));
+                    taxDTO.setPercent(String.valueOf(tax.getPercent()));
+                    taxDTO.setCode(tax.getCode());
+
+                    taxDTO.setAmountTax(taxDTO.getAmountTax().add(quotePrice.getTaxAmount()));
+                    taxDTO.setAmountWithTax(taxDTO.getAmountWithTax().add(quotePrice.getAmountWithTax()));
+                    taxDTO.setAmountWithoutTax(taxDTO.getAmountWithoutTax().add(quotePrice.getAmountWithoutTax()));
+
+                    if (tax.getUntdidVatex() != null) {
+                        if (vatex.length() > 0) {
+                            vatex.append("|");
+                        }
+                        vatex.append(tax.getUntdidVatex().getCodeName());
+                    }
+
+                    mapTaxesIndexes.put(quotePrice.getTaxRate().toString(), taxDTO);
+                } else {
+                    taxDTO.setAmountTax(taxDTO.getAmountTax().add(quotePrice.getTaxAmount()));
+                    taxDTO.setAmountWithTax(taxDTO.getAmountWithTax().add(quotePrice.getAmountWithTax()));
+                    taxDTO.setAmountWithoutTax(taxDTO.getAmountWithoutTax().add(quotePrice.getAmountWithoutTax()));
+                }
+
+                taxDetail.setTotalAmountTax(taxDetail.getTotalAmountTax().add(quotePrice.getTaxAmount()));
+                taxDetail.setTotalAmountWithTax(taxDetail.getTotalAmountWithTax().add(quotePrice.getAmountWithTax()));
+                taxDetail.setTotalAmountWithoutTax(taxDetail.getTotalAmountWithoutTax().add(quotePrice.getAmountWithoutTax()));
+
+            }
+        }
+
+        taxDetail.setVatex(vatex.toString());
+        taxDetail.setTaxes(new ArrayList<>(mapTaxesIndexes.values()));
+
+        return mapTaxesIndexes;
     }
 
 
@@ -1481,12 +1546,9 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private void validateProducts(QuoteVersion quoteVersion) {
-        if (quoteVersion.getQuoteArticleLines() != null) {
-            quoteVersion.getQuoteArticleLines()
+        if (quoteVersion.getQuoteProducts() != null) {
+            quoteVersion.getQuoteProducts()
                     .stream()
-                    .filter(Objects::nonNull)
-                    .map(QuoteArticleLine::getQuoteProduct)
-                    .filter(Objects::nonNull)
                     .map(QuoteProduct::getProductVersion)
                     .filter(Objects::nonNull)
                     .map(ProductVersion::getProduct)
@@ -1537,7 +1599,7 @@ public class CpqQuoteApi extends BaseApi {
                     .stream()
                     .map(key -> reducePrices(key, pricesPerType, quoteVersion, null, PriceLevelEnum.QUOTE))
                     .filter(Optional::isPresent)
-                    .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
+                    .map(price -> new PriceDTO(price.get(), new HashMap<>())).collect(Collectors.toList());
 
             pricesPerTaxDTO.add(new TaxPricesDto(taux, prices));
             quoteTotalAmount=prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -1582,7 +1644,7 @@ public class CpqQuoteApi extends BaseApi {
                                 .stream()
                                 .map(key -> reducePrices(key, pricesPerType, quoteArticleLine.getQuoteVersion(), quoteArticleLine.getQuoteProduct()!=null?quoteArticleLine.getQuoteProduct().getQuoteOffer():null, PriceLevelEnum.PRODUCT))
                                 .filter(Optional::isPresent)
-                                .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
+                                .map(price -> new PriceDTO(price.get(), new HashMap<>())).collect(Collectors.toList());
 
                         quoteTotalAmountBigDecimal.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
                         accountingArticlePricesDTO.setAccountingArticlePrices(prices);}
@@ -1763,7 +1825,7 @@ public class CpqQuoteApi extends BaseApi {
 			            quotePriceService.create(quotePrice);
 			            offerQuotePrices.add(quotePrice);
 			            quoteOffer.getQuotePrices().add(quotePrice);
-			            return new PriceDTO(quotePrice);
+			            return new PriceDTO(quotePrice, new HashMap<>());
 			        })
 			        .collect(Collectors.toList());
         return offerQuotePrices;
@@ -2262,7 +2324,7 @@ public class CpqQuoteApi extends BaseApi {
     	QuoteOffer offer = quoteOfferService.findById(quoteItemId);
     	if(offer == null)
     		throw new EntityDoesNotExistsException(QuoteOffer.class, quoteItemId);
-    	QuoteOfferDTO dto = new QuoteOfferDTO(offer, true, true,true);
+    	QuoteOfferDTO dto = new QuoteOfferDTO(offer, true, true,true, new HashMap<>());
     	dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(offer));
     	return dto;
     }
@@ -2361,7 +2423,7 @@ public class CpqQuoteApi extends BaseApi {
 			List<QuotePrice> quotePricesPerTax= pricesPerTax.get(taxRate);
 			log.debug("calculateTotalsPerQuote taxRate={}, quotePricesPerTax size={}",taxRate,quotePricesPerTax.size());
 			List<PriceDTO> taxPrices = quotePricesPerTax.stream()
-					.map(price -> new PriceDTO(price))
+					.map(price -> new PriceDTO(price, new HashMap<>()))
 					.collect(Collectors.toList());
 
 			taxPricesDtos.add(new TaxPricesDto(taxRate, taxPrices));

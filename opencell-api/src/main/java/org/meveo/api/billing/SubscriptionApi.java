@@ -364,7 +364,7 @@ public class SubscriptionApi extends BaseApi {
     public Subscription create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(Subscription.class.getName(), postData);
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(new Subscription()));
         }
         if (StringUtils.isBlank(postData.getUserAccount())) {
             missingParameters.add("userAccount");
@@ -2222,7 +2222,7 @@ public class SubscriptionApi extends BaseApi {
                     if (subscription.getOffer().getAllowedDiscountPlans() != null && subscription.getOffer().getAllowedDiscountPlans().contains(dp)) {
                         continue;
                     }
-                    subscriptionService.instantiateDiscountPlan(subscription, dp);
+                    serviceInstanceService.instantiateDiscountPlan(serviceToUpdate, dp, false);
                 }
             }
             removeDiscountPlanInstanceForSubscription(subscription, serviceToUpdateDto.getDiscountPlanForTermination());

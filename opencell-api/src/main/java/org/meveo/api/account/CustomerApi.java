@@ -189,17 +189,17 @@ public class CustomerApi extends AccountEntityApi {
             missingParameters.add("name.lastName");
         }
 
+        Customer customer = new Customer();
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
+        }
+
         handleMissingParameters(postData);
 
         // check if customer already exists
         if (!StringUtils.isBlank(postData.getCode()) && customerService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
-        }
-
-        Customer customer = new Customer();
-
-        if (StringUtils.isBlank(postData.getCode())) {
-            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
         }
 
         dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, associatedSeller);
@@ -363,19 +363,19 @@ public class CustomerApi extends AccountEntityApi {
         	});
         }
         
-        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getSeller())) {
+        if (!StringUtils.isBlank(postData.getSeller())) {
             Seller seller = associatedSeller != null ? associatedSeller : sellerService.findByCode(postData.getSeller());
             if (seller == null) {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
             }
             customer.setSeller(seller);
+        } else if ("".equals(postData.getSeller())){
+            customer.setSeller(null);
         } else if (isNew) {
 			customer.setSeller((customer.getParentCustomer() != null && customer.getParentCustomer().getSeller() != null)? 
 							customer.getParentCustomer().getSeller() : customer.getCustomerCategory().getDefaultSeller());
         }
-        else{
-            customer.setSeller(null);
-        }
+        
 
     }
     

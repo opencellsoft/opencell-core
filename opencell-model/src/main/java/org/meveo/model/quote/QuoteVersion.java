@@ -64,7 +64,6 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 })
 public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 
-
     /**
      * quote
      */
@@ -72,12 +71,20 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 	@JoinColumn(name = "cpq_quote_id", nullable = false, referencedColumnName = "id")
 	@NotNull
     private CpqQuote quote;
+	
+    /**
+     * quote products
+     */
+    @OneToMany(mappedBy = "quoteVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+	private List<QuoteProduct> quoteProducts=new ArrayList<QuoteProduct>();
     
 	/**
 	 * quoteVersion
 	 */
 	@Column(name = "quote_version", nullable = false)
 	private Integer quoteVersion;
+	
 	/**
 	 * status
 	 */
@@ -185,6 +192,20 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 	 */
 	public void setQuoteVersion(Integer quoteVersion) {
 		this.quoteVersion = quoteVersion;
+	}
+
+	/**
+	 * @return the quoteProducts
+	 */
+	public List<QuoteProduct> getQuoteProducts() {
+		return quoteProducts;
+	}
+
+	/**
+	 * @param quoteProducts the quoteProducts to set
+	 */
+	public void setQuoteProducts(List<QuoteProduct> quoteProducts) {
+		this.quoteProducts = quoteProducts;
 	}
 
 	/**

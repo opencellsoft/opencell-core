@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -21,13 +21,13 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.assertj.core.util.Arrays;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -124,9 +124,6 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
-
-    @EJB
-    private ReratingService reratingServiceNewTx;
 
     @Inject
     private WalletOperationService walletOperationService;
@@ -230,7 +227,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                 // In case of using custom field as additional search criteria
             } else if (cfName != null && cfValue != null) {
 
-                String sqlListWOIdsToRerateOneShotOrUsageChargeNotInvoicedByOfferAndServiceTemplateWithCF = "select wo.id from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance.chargeType=:chargeType and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate ";
+                String sqlListWOIdsToRerateOneShotOrUsageChargeNotInvoicedByOfferAndServiceTemplateWithCF = "select wo.id from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.invoiceLine is null or rt.invoiceLine.status <> org.meveo.model.billing.InvoiceLineStatusEnum.BILLED) and wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance.chargeType=:chargeType and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate ";
                 String sqlListWOIdsToRerateOneShotOrUsageChargeIncludingInvoicedByOfferAndServiceTemplateWithCF = "select wo.id from WalletOperation wo where wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance.chargeType=:chargeType and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate ";
 
                 String sql = rerateInvoiced ? sqlListWOIdsToRerateOneShotOrUsageChargeIncludingInvoicedByOfferAndServiceTemplateWithCF : sqlListWOIdsToRerateOneShotOrUsageChargeNotInvoicedByOfferAndServiceTemplateWithCF;
@@ -272,7 +269,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                 if (sameTx) {
                     reRate(woIdsToRerate, false);
                 } else {
-                    reratingServiceNewTx.reRateInNewTx(woIdsToRerate, false);
+                    methodCallingUtils.callMethodInNewTx(()->reRateInNoTx(woIdsToRerate, false));
                 }
             }
 
@@ -291,7 +288,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
             } else if (cfName != null && cfValue != null) {
 
                 String sqlListWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplateWithCF = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate";
-                String sqlListWOsInfoToRerateRecurringChargeNotInvoicedByOfferAndServiceTemplateWithCF = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate";
+                String sqlListWOsInfoToRerateRecurringChargeNotInvoicedByOfferAndServiceTemplateWithCF = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or  rt.invoiceLine is null or rt.invoiceLine.status <> org.meveo.model.billing.InvoiceLineStatusEnum.BILLED) and wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate";
 
                 String sql = rerateInvoiced ? sqlListWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplateWithCF : sqlListWOsInfoToRerateRecurringChargeNotInvoicedByOfferAndServiceTemplateWithCF;
                 sql = sql + " and " + (cfValue instanceof Long ? "bigIntFromJson" : "varcharFromJson") + "(wo.cfValues," + cfName + ")=:cfValue";
@@ -354,8 +351,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
      * @throws BusinessException business exception
      * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void reRateInNewTx(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
+    private void reRateInNoTx(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         for (Long woId : woIds) {
 
@@ -438,8 +434,8 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                 List<WalletOperation> triggerWalletOperations = walletOperationService.getEntityManager().createQuery("from WalletOperation o where o.edr.id=:edrId").setParameter("edrId", edr.getId()).getResultList();
                 if(CollectionUtils.isNotEmpty(triggerWalletOperations) && edr.getStatus() == EDRStatusEnum.RATED) {
                     WalletOperation triggerWalletOperation =  triggerWalletOperations.get(0);
-                    if(triggerWalletOperation.getRatedTransaction() != null && triggerWalletOperation.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED && 
-                            operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED) {
+                    if(triggerWalletOperation.getRatedTransaction() != null && triggerWalletOperation.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED && triggerWalletOperation.getRatedTransaction().getInvoiceLine().getStatus() == InvoiceLineStatusEnum.BILLED && 
+                            operationToRerate.getRatedTransaction() != null && (operationToRerate.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED || operationToRerate.getRatedTransaction().getInvoiceLine().getStatus() != InvoiceLineStatusEnum.BILLED )) {
                         operationToRerate.setStatus(WalletOperationStatusEnum.F_TO_RERATE);
                         operationToRerate.setRejectReason("Wallet operation [id=" + operationToRerate.getId() + "] cannot be rerated because triggered EDR [id=" + edr.getId() + "] is already billed.");
                         walletOperationService.update(operationToRerate);
@@ -475,7 +471,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                             .forEach(newEdr -> edrService.create(newEdr));
 
                 } else if (edr.getStatus() == EDRStatusEnum.RATED &&
-                        operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED) {
+                        operationToRerate.getRatedTransaction() != null && (operationToRerate.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED || operationToRerate.getRatedTransaction().getInvoiceLine().getStatus() != InvoiceLineStatusEnum.BILLED)) {
                     newWO = createNewWO(oldWOAndNewWO, operationToRerate, useSamePricePlan);
 
                     // Triggered EDRs, their WOs and RTs are CANCELLED with reason "Origin wallet operation [id={{id}}] has been rerated", and original WO is rerated
@@ -508,7 +504,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     }
 
                 } else if (edr.getStatus() == EDRStatusEnum.RATED &&
-                        operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED) {
+                        operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED && operationToRerate.getRatedTransaction().getInvoiceLine().getStatus() == InvoiceLineStatusEnum.BILLED) {
                     // Triggered EDRs, their WOs and RTs are untouched, original WO fails to rerate F_TO_RERATE with reason in error message below
                     operationToRerate.setStatus(WalletOperationStatusEnum.F_TO_RERATE);
                     operationToRerate.setRejectReason("Wallet operation [id=" + operationToRerate.getId() + "] cannot be rerated because triggered EDR [id=" + edr.getId() + "] is already billed.");

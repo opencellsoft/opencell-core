@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -455,6 +456,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         AccountOperation newAccountOperation = SerializationUtils.clone(accountOperation);
         newAccountOperation.setId(null);
+        newAccountOperation.setAccountingSchemeEntries(new HashSet<>());
         newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
         newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
         newAccountOperation.setUnMatchingAmount(amount);
@@ -595,21 +597,16 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 				}
 			// SUB ACCOUTING PERIOD ARE USED	
 			} else {
-				SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
-				if (subAccountingPeriod == null) {
-					log.warn("No sub accounting period has been defined for this accountingDate - period : {} - {}", accountOperation.getAccountingDate(), accountingPeriod);
-					rejectAccountOperation(accountOperation);
-				} else {
-					if (subAccountingPeriod.isOpen()) {
-						accountOperation.setStatus(AccountOperationStatus.POSTED);
-					} else {
-						if (action == AccountingOperationAction.FORCE) {
-							forceAccountOperation(accountOperation, accountingPeriod);
-						} else {
-							rejectAccountOperation(accountOperation);
-						}
-					}
-				}
+                SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
+                if (subAccountingPeriod != null && subAccountingPeriod.isOpen()) {
+                    accountOperation.setStatus(AccountOperationStatus.POSTED);
+                } else {
+                    if (action == AccountingOperationAction.FORCE) {
+                        forceAccountOperation(accountOperation, accountingPeriod);
+                    } else {
+                        rejectAccountOperation(accountOperation);
+                    }
+                }
 			}
 		}
 	}

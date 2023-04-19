@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.ws.rs.NotFoundException;
 
+import org.hibernate.SessionFactory;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
@@ -44,9 +45,6 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
     @Inject
     private PricePlanMatrixValueService pricePlanMatrixValueService;
     
-    @Inject
-    PricePlanMatrixColumnService pricePlanMatrixColumnService;
-
     @Inject
     private AttributeService attributeService;
 
@@ -131,7 +129,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
             boolean isRange = firstLine[i].split("\\[").length > 1 && firstLine[i].split("\\[")[1].toLowerCase().contains("range");
             if (StringUtils.isNotBlank(column) && isValidColumn(column)) {
 
-                PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnService.findByCode(column);
+                PricePlanMatrixColumn pricePlanMatrixColumn = findByCode(column);
                 if (pricePlanMatrixColumn == null) {
                     throw new NotFoundException("PricePlanMatrixColumn with code= " + column + " does not exists");
                 }
@@ -383,4 +381,19 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
         }
 		return str;
 	}
+
+    @Override
+    public void create(PricePlanMatrixColumn entity) {
+        super.create(entity);
+        getEntityManager().getEntityManagerFactory().getCache().evict(PricePlanMatrixVersion.class, entity.getPricePlanMatrixVersion().getId());
+        getEntityManager().getEntityManagerFactory().unwrap(SessionFactory.class).getCache().evictCollectionData("org.meveo.model.catalog.PricePlanMatrixVersion.columns", entity.getPricePlanMatrixVersion().getId());
+    }
+
+    @Override
+    public PricePlanMatrixColumn update(PricePlanMatrixColumn entity) {
+        entity = super.update(entity);
+        getEntityManager().getEntityManagerFactory().getCache().evict(PricePlanMatrixVersion.class, entity.getPricePlanMatrixVersion().getId());
+        getEntityManager().getEntityManagerFactory().unwrap(SessionFactory.class).getCache().evictCollectionData("org.meveo.model.catalog.PricePlanMatrixVersion.columns", entity.getPricePlanMatrixVersion().getId());
+        return entity;
+    }
 }

@@ -18,12 +18,8 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NativeExpressionFactory {
-
-    protected Logger log = LoggerFactory.getLogger(getClass());
 
     protected QueryBuilder queryBuilder;
     private String tableNameAlias;

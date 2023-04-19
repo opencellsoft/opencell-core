@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.math.BigInteger;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -63,15 +64,16 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
+import org.hibernate.CacheMode;
 import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.jpa.QueryHints;
 import org.hibernate.query.NativeQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -101,6 +103,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -118,12 +121,17 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.expressions.ExpressionFactory;
 import org.meveo.service.base.expressions.ExpressionParser;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.notification.GenericNotificationService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import static java.math.BigInteger.ONE;
+import static org.meveo.jpa.EntityManagerProvider.isDBOracle;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -408,6 +416,34 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
         }
         return e;
+    }
+
+    public E findByIdIgnoringCache(Long id, List<String> fetchFields) {
+        log.trace("Find {}/{} by id without cache hint {}", entityClass.getSimpleName(), id);
+        final Class<? extends E> productClass = getEntityClass();
+        if (fetchFields != null && !fetchFields.isEmpty()) {
+            StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
+
+            for (String fetchField : fetchFields) {
+                queryString.append(" left join fetch a." + fetchField);
+            }
+
+            queryString.append(" where a.id = :id");
+            Query query = getEntityManager().createQuery(queryString.toString()).setHint(QueryHints.HINT_CACHE_MODE, CacheMode.IGNORE);
+            query.setParameter("id", id);
+
+            List<E> results = query.getResultList();
+            E e = null;
+            if (!results.isEmpty()) {
+                e = (E) results.get(0);
+            }
+            return e;
+            
+        } else {
+            Map<String, Object> hints = new HashMap<>();
+            hints.put(QueryHints.HINT_CACHE_MODE, CacheMode.IGNORE);
+            return getEntityManager().find(entityClass, id, hints);
+        }
     }
 
     /**
@@ -734,7 +770,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public BusinessEntity findBusinessEntityByCode(String code) {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "entity", null);
         queryBuilder.addCriterion("entity.code", "=", code, true);
-        return (BusinessEntity) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+        try {
+            return (BusinessEntity) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+        } catch (Exception exception) {
+            return null;
+        }
     }
     /**
      * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
@@ -748,6 +788,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         Query query = listQueryBuilder(config).getQuery(getEntityManager());
+        if (config.isCacheable()) {
+            query.setHint("org.hibernate.cacheable", true);
+        }
         return query.getResultList();
     }
 
@@ -1093,11 +1136,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public QueryBuilder getQuery(PaginationConfiguration config) {
+    	return getQuery(config,"a", false);
+    }
+    	
+    public QueryBuilder getQuery(PaginationConfiguration config, String alias, boolean distinct) {
         Map<String, Object> filters = config.getFilters();
 
         adaptOrdering(config, filters);
         
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator());
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, alias, config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator(), distinct);
         if (filters != null && !filters.isEmpty()) {
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);
@@ -1110,7 +1157,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     filters.putAll(cfFilters);
                 }
 
-                ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, "a");
+                ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, alias);
                 filters.keySet().stream().sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                 						 .filter(key -> filters.get(key) != null && !"$OPERATOR".equalsIgnoreCase(key))
                 						 .forEach(key -> expressionFactory.addFilters(key, filters.get(key)));
@@ -1124,7 +1171,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             Filter filter = (Filter) filters.get("$FILTER");
             queryBuilder.addPaginationConfiguration(config, filter.getPrimarySelector().getAlias());
         } else {
-            queryBuilder.addPaginationConfiguration(config, "a");
+            queryBuilder.addPaginationConfiguration(config, alias);
         }
 
         // log.trace("Filters is {}", filters);
@@ -1744,5 +1791,33 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
             return map;
         };
+    }
+    
+	/**
+	 * Create Query builder from a map of filters filters : Map of filters Return :
+	 * QueryBuilder
+	 */
+	public QueryBuilder getQueryFromFilters(Map<String, Object> filters, List<String> fetchFields, boolean distinct) {
+		QueryBuilder queryBuilder;
+		String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
+		if (!StringUtils.isBlank(filterValue)) {
+			queryBuilder = new QueryBuilder(filterValue, "a",true);
+		} else {
+			FilterConverter converter = new FilterConverter(RatedTransaction.class);
+			PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
+			if (!CollectionUtils.isEmpty(fetchFields)) {
+				configuration.setFetchFields(fetchFields);
+			}
+			queryBuilder = getQuery(configuration, "a", true);
+		}
+		return queryBuilder;
+	}
+
+    public Long findNextSequenceId(String sequenceName) {
+        BigInteger nextSequenceValue = (BigInteger) getEntityManager().createNativeQuery(isDBOracle()
+                        ? "SELECT " + sequenceName +".nextval FROM dual"
+                        : "select nextval('"+ sequenceName + "')" )
+                .getSingleResult();
+        return (nextSequenceValue.add(ONE)).longValue();
     }
 }

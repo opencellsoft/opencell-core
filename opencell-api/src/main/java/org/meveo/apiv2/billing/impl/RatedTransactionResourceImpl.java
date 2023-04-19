@@ -68,6 +68,6 @@ public class RatedTransactionResourceImpl implements RatedTransactionResource {
 
 	@Override
 	public Response duplication(DuplicateRTDto duplicateRTDto) {
-		return Response.ok().entity(ratedTransactionApiService.duplication(duplicateRTDto.getFilters(), duplicateRTDto.getMode(), duplicateRTDto.getNegateAmount(), duplicateRTDto.getReturnRts())).build();
+		return Response.ok().entity(ratedTransactionApiService.duplication(duplicateRTDto.getFilters(), duplicateRTDto.getMode(), duplicateRTDto.getNegateAmount(), duplicateRTDto.getReturnRts(), duplicateRTDto.getStartJob())).build();
 	}
 }

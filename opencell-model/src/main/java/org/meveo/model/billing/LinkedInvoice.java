@@ -22,8 +22,6 @@ import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.IEntity;
 
-import static java.math.BigDecimal.ZERO;
-
 @Entity
 @Table(name = "billing_linked_invoices", uniqueConstraints = @UniqueConstraint(columnNames = { "id", "linked_invoice_id" }))
 @NamedQueries({ 
@@ -31,13 +29,11 @@ import static java.math.BigDecimal.ZERO;
     @NamedQuery(name = "LinkedInvoice.deleteAllAdjLink", query = "delete from LinkedInvoice l  where l.linkedInvoiceValue.id in (select inv.id from Invoice inv where inv.invoiceType.code = 'ADJ')"),
     @NamedQuery(name = "LinkedInvoice.deleteByInvoiceIdAndType", query = "delete from LinkedInvoice l where l.id.id = :invoiceId and l.type = (:type)"),
     @NamedQuery(name = "LinkedInvoice.find", query = "select l from LinkedInvoice l where l.id.id = :invoiceId and l.linkedInvoiceValue.id = :linkedInvoiceId"),
-    @NamedQuery(name = "LinkedInvoice.removeLinkedAdvances", query = "DELETE FROM LinkedInvoice li where li.id.id in (:invoiceIds) and li.type='ADVANCEMENT_PAYMENT'")
+    @NamedQuery(name = "LinkedInvoice.removeLinkedAdvances", query = "DELETE FROM LinkedInvoice li where li.id.id in (:invoiceIds) and li.type='ADVANCEMENT_PAYMENT'"),
+    @NamedQuery(name = "LinkedInvoice.findByLinkedInvoiceADJ", query = "SELECT li FROM LinkedInvoice li WHERE li.linkedInvoiceValue.id = :ID_INVOICE AND li.type='ADJUSTMENT'")
     
 })
-@SuppressWarnings("serial")
 public class LinkedInvoice implements IEntity, Serializable {
-
-    
 
     public static final int NB_PRECISION = 23;
     public static final int NB_DECIMALS = 12;
@@ -87,13 +83,23 @@ public class LinkedInvoice implements IEntity, Serializable {
         this.type = type;
     }
 
+    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal amount, BigDecimal transactionalAmount, InvoiceTypeEnum type) {
+        super();
+        this.id = id;
+        this.linkedInvoiceValue = linkedInvoiceValue;
+        this.transactionalAmount = transactionalAmount;
+        this.amount = amount;
+        this.type = type;
+    }
     
     public LinkedInvoice() {
         
     }
+    
     public Long getId() {
-        return this.id!=null? this.id.getId() : null;
-  }
+        return this.id!=null? this.id.getId() : null;  
+    }
+    
     public Invoice getInvoice() {
         return  this.id;
     }
