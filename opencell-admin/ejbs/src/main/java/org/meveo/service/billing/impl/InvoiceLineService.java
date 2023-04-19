@@ -285,8 +285,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         LinkedInvoice linkedInvoice = findByLinkedInvoiceADJ(newInvoice.getId());
         validateAdjAmount(newInvoice.getInvoiceLines(), linkedInvoice.getInvoice());
 
-        // Check specific IL
-
     }
 
     private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
