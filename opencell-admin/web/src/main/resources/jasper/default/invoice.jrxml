@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE3-20230411-006"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SellerDescription"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -285,6 +285,10 @@
 	<field name="sellerDescription" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/seller/@description"/>
 		<fieldDescription><![CDATA[/invoice/header/seller/@description]]></fieldDescription>
+	</field>
+	<field name="sellerLegalType" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/seller/@legalType"/>
+		<fieldDescription><![CDATA[/invoice/header/seller/@legalType]]></fieldDescription>
 	</field>
 	<field name="sellerRegNo" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/seller/@registrationNo"/>
@@ -618,11 +622,12 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 						<font fontName="Vista Sans OT Bold" size="9.6"/>
 					</textElement>
-					<textFieldExpression><![CDATA["<style isBold='true'>Opensoft</style> Europe SAD - R.C.S. Paris B 93815 "
+					<textFieldExpression><![CDATA[(($F{sellerDescription}!=null && !String.valueOf($F{sellerDescription}).isEmpty() && !String.valueOf($F{sellerDescription}).equals("null")) ? "<style isBold='true'>" + $F{sellerDescription} + "</style> - " : "") +
+(($F{sellerLegalType}!=null && !String.valueOf($F{sellerLegalType}).isEmpty() && !String.valueOf($F{sellerLegalType}).equals("null")) ? $F{sellerLegalType} : "") + 
+(($F{sellerRegNo}!=null && !String.valueOf($F{sellerRegNo}).isEmpty() && !String.valueOf($F{sellerRegNo}).equals("null")) ? "<style isBold='true'> - Reg.nr.: </style>" + $F{sellerRegNo} : "")
 +
-(($F{sellerVatNo}!=null && !String.valueOf($F{sellerVatNo}).isEmpty() && !String.valueOf($F{sellerVatNo}).equals("null")) ? "<style isBold='true'> VAT Number </style>" + $F{sellerVatNo} : "")
-+ (($F{sellerRegNo}!=null && !String.valueOf($F{sellerRegNo}).isEmpty() && !String.valueOf($F{sellerRegNo}).equals("null")) ? "<style isBold='true'> Reg.nr.: </style>" + $F{sellerRegNo} : "")
-+ " - "
+(($F{sellerVatNo}!=null && !String.valueOf($F{sellerVatNo}).isEmpty() && !String.valueOf($F{sellerVatNo}).equals("null")) ? "<style isBold='true'> - VAT Number </style>" + $F{sellerVatNo} : "")
++  " - "
 + (($F{sellerAddress1}!=null && !String.valueOf($F{sellerAddress1}).isEmpty() && !String.valueOf($F{sellerAddress1}).equals("null")) ? " " + $F{sellerAddress1} : "")
 + (($F{sellerAddress2}!=null && !String.valueOf($F{sellerAddress2}).isEmpty() && !String.valueOf($F{sellerAddress2}).equals("null")) ? " " + $F{sellerAddress2} : "")
 + (($F{sellerAddress3}!=null && !String.valueOf($F{sellerAddress3}).isEmpty() && !String.valueOf($F{sellerAddress3}).equals("null")) ? " " + $F{sellerAddress3} : "")

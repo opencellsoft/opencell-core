@@ -7,6 +7,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Seller {
     @XmlAttribute
+    private String description;
+    @XmlAttribute
+    private String legalType;
+    @XmlAttribute
     private String registrationNo;
     @XmlAttribute
     private String vatNo;
@@ -18,6 +22,8 @@ public class Seller {
             return;
         }
 
+        this.description = seller.getDescription();
+        this.legalType = seller.getLegalType();
         this.registrationNo = seller.getRegistrationNo();
         this.vatNo = seller.getVatNo();
 
@@ -43,5 +49,37 @@ public class Seller {
 
     public void setContactInformation(ContactInformation contactInformation) {
         this.contactInformation = contactInformation;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLegalType() {
+        return legalType;
+    }
+
+    public void setLegalType(String legalType) {
+        this.legalType = legalType;
+    }
+
+    public String getRegistrationNo() {
+        return registrationNo;
+    }
+
+    public void setRegistrationNo(String registrationNo) {
+        this.registrationNo = registrationNo;
+    }
+
+    public String getVatNo() {
+        return vatNo;
+    }
+
+    public void setVatNo(String vatNo) {
+        this.vatNo = vatNo;
     }
 }
