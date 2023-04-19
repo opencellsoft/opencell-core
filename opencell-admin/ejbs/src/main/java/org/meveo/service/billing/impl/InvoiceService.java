@@ -2505,9 +2505,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setCfValues(customFieldValues);
             }
             try {
-                if(invoice.getStatus().equals(InvoiceStatusEnum.DRAFT)) {
+                if (invoice.getStatus().equals(InvoiceStatusEnum.DRAFT)) {
                     invoice.assignTemporaryInvoiceNumber();
-                }else if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT) {
+                } else if (invoice.getStatus() != InvoiceStatusEnum.REJECTED && invoice.getStatus() != InvoiceStatusEnum.SUSPECT) {
                     invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
                 }
             } catch (Exception e) {
@@ -2519,10 +2519,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (isDraft) {
                     drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate(),
                         generateInvoiceRequestDto.getLastTransactionDate());
-                }else {
+                } else {
                     drafWalletOperationIds = new ArrayList<>();
                     invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-                    update(invoice);
+                    serviceSingleton.assignInvoiceNumber(invoice);
                 }
                 produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft, drafWalletOperationIds);
             } catch (Exception e) {
