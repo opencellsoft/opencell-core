@@ -42,14 +42,12 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.ApplicableEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
@@ -62,9 +60,6 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
     @Inject
     private DiscountPlanService discountPlanService;
-    
-    @Inject
-    private InvoiceLineService invoiceLineService;
 
     @Override
     public DiscountPlan create(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
@@ -101,6 +96,8 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         discountPlan.setDiscountPlanaApplicableEntities(getApplicableEntities(postData.getApplicableEntities()));
         discountPlan.setUsedQuantity(postData.getUsedQuantity());
         discountPlan.setSequence(postData.getSequence());
+        discountPlan.setApplicableOnOverriddenPrice(postData.getApplicableOnOverriddenPrice() != null ? postData.getApplicableOnOverriddenPrice() : false);
+        discountPlan.setApplicableOnDiscountedPrice(postData.getApplicableOnDiscountedPrice() != null ? postData.getApplicableOnDiscountedPrice() : false);
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlan, true);
@@ -198,8 +195,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 	        	discountPlan.setSequence(postData.getSequence());
 	        }
 
-	        
-	
+            discountPlan.setApplicableOnOverriddenPrice(postData.getApplicableOnOverriddenPrice() != null ? postData.getApplicableOnOverriddenPrice() : false);
+            discountPlan.setApplicableOnDiscountedPrice(postData.getApplicableOnDiscountedPrice() != null ? postData.getApplicableOnDiscountedPrice() : false);
+
 	        // populate customFields
 	        try {
 	            populateCustomFields(postData.getCustomFields(), discountPlan, false);
