@@ -72,6 +72,7 @@ import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
@@ -268,7 +269,12 @@ public class AccountOperationApi extends BaseApi {
 
         BigDecimal lastAppliedRate = BigDecimal.ONE;
         TradingCurrency tradingCurrency = null;
-        TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
+
+        TradingCurrency functionalCurrency = null;
+        Currency currency = appProvider.getCurrency();
+        if (currency != null && !StringUtils.isBlank(currency.getCurrencyCode())) {
+            functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
+        }
 
         if(transactionalcurrency != null && !StringUtils.isBlank(transactionalcurrency)){
 
@@ -281,7 +287,7 @@ public class AccountOperationApi extends BaseApi {
             Date exchangeDate = postData.getTransactionDate() != null ? postData.getTransactionDate() : new Date();
             ExchangeRate exchangeRate = getExchangeRate(tradingCurrency,transactionalcurrency,exchangeDate);
 
-            if (!functionalCurrency.equals(tradingCurrency)) {
+            if (!tradingCurrency.equals(functionalCurrency)) {
 
                 if (transactionalAmount != null && transactionalAmount.intValue() != 0) {
                     functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
