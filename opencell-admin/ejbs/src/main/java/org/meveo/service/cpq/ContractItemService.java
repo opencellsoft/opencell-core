@@ -131,15 +131,15 @@ public class ContractItemService extends BusinessService<ContractItem> {
 	}
 
     @SuppressWarnings("unchecked")
-    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
+    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate) {
         ContractItem contractItem = null;
 		StringBuilder builder = new StringBuilder("select c from ContractItem c where  c.contract.id=:contractId");
 
 		if(offer != null && offer.getId() != null){
 			builder.append(" and c.offerTemplate.id=:offerId");
 		}
-		if(StringUtils.isNotBlank(productCode)){
-			builder.append(" and c.product.code=:productCode");
+		if(productId != null){
+			builder.append(" and c.product.id=:productId");
 		}
 		if(chargeTemplate != null && chargeTemplate.getId() != null){
 			builder.append(" and c.chargeTemplate.id=:chargeTemplate");
@@ -149,8 +149,8 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		if(builder.toString().contains(":offerId") && offer != null){
 			query.setParameter("offerId", offer.getId());
 		}
-		if(builder.toString().contains(":productCode")){
-			query.setParameter("productCode", productCode);
+		if(builder.toString().contains(":productId")){
+			query.setParameter("productId", productId);
 		}
 		if(builder.toString().contains(":chargeTemplate") && chargeTemplate != null){
 			query.setParameter("chargeTemplate", chargeTemplate.getId());
