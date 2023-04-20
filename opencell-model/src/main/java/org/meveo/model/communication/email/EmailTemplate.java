@@ -25,6 +25,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.meveo.model.communication.MessageTemplate;
 
+import java.util.Map;
+
 @Entity
 @DiscriminatorValue("EMAIL")
 public class EmailTemplate extends MessageTemplate {
@@ -38,9 +40,13 @@ public class EmailTemplate extends MessageTemplate {
     @Column(name = "htmlcontent")
     private String htmlContent;
 
-    @Type(type = "longText")
-    @Column(name = "textcontent")
-    private String textContent;
+    @Type(type = "json")
+    @Column(name = "htmlcontent_i18n", columnDefinition = "jsonb")
+    private Map<String, String> translatedHtmlContent;
+
+    @Type(type = "json")
+    @Column(name = "subject_i18n", columnDefinition = "jsonb")
+    private Map<String, String> translatedSubject;
 
     public String getSubject() {
         return subject;
@@ -58,15 +64,24 @@ public class EmailTemplate extends MessageTemplate {
         this.htmlContent = htmlContent;
     }
 
-    public String getTextContent() {
-        return textContent;
+    public Map<String, String> getTranslatedHtmlContent() {
+        return translatedHtmlContent;
     }
 
-    public void setTextContent(String textContent) {
-        this.textContent = textContent;
+    public void setTranslatedHtmlContent(Map<String, String> translatedHtmlContent) {
+        this.translatedHtmlContent = translatedHtmlContent;
     }
 
+    public Map<String, String> getTranslatedSubject() {
+        return translatedSubject;
+    }
+
+    public void setTranslatedSubject(Map<String, String> translatedSubject) {
+        this.translatedSubject = translatedSubject;
+    }
+
+    @Override
     public String toString() {
-        return super.toString() + "\n subject:" + subject + "\n html content:" + htmlContent + "\n text content:" + textContent;
+        return super.toString() + "\n subject:" + subject + "\n html content:" + htmlContent + "\n text content:" + super.getTextContent();
     }
 }

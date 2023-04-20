@@ -31,6 +31,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class ProductToInstantiate.
@@ -56,6 +59,10 @@ public class ProductToInstantiateDto extends BaseEntityDto implements Serializab
     private Date deliveryDate;
 
     private List<OrderAttributeDto> attributeInstances = new ArrayList<OrderAttributeDto>();
+    
+
+    @Schema(description = "The custom fields")
+    protected CustomFieldsDto customFields;
 
   
     public String getProductCode() {
@@ -104,5 +111,13 @@ public class ProductToInstantiateDto extends BaseEntityDto implements Serializab
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
+
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
        
 }

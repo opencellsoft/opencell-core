@@ -23,7 +23,11 @@ public enum PriceVersionDateSettingEnum {
 	/**
 	 * status of EVENT.
 	 */
-	EVENT("EVENT");
+	EVENT("EVENT"),
+	/**
+	 * status of MANUAL.
+	 */
+	MANUAL("MANUAL");
 	
 	private PriceVersionDateSettingEnum(String value) {
 		this.value = value;

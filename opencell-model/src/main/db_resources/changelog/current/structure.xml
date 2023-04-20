@@ -2341,27 +2341,7 @@ END $$;]]>
         	<column name="updater" type="varchar(100)"/>
         </addColumn>
     </changeSet>
-        <changeSet id="#5416_20120809" author="anasseh">
-		<createTable tableName="ar_ao_payment_histories">
-			<column name="ao_id" type="bigint" />
-			<column name="history_id" type="bigint" />
-		</createTable>
-		<addForeignKeyConstraint
-			baseColumnNames="ao_id" baseTableName="ar_ao_payment_histories"
-			constraintName="fk_ao_id" deferrable="false" initiallyDeferred="false"
-			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
-			referencedTableName="ar_account_operation" />
-		<addForeignKeyConstraint
-			baseColumnNames="history_id" baseTableName="ar_ao_payment_histories"
-			constraintName="fk_histo_id" deferrable="false"
-			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-			referencedColumnNames="id" referencedTableName="ar_payment_history" />
-
-        <sql>insert into ${db.schema.adapted}ar_ao_payment_histories (ao_id,history_id)  select id,payment_history_id from ${db.schema.adapted}ar_account_operation where payment_history_id is not null</sql>
-	    <dropColumn tableName="ar_account_operation">
-            <column name="payment_history_id"></column>
-        </dropColumn>
-	</changeSet>
+        
     <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
         <addColumn tableName="billing_subscription">
             <column name="payment_method_id"  type="bigint">
@@ -2775,24 +2755,6 @@ END $$;]]>
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
     </changeSet>
-    <changeSet id="#5680_20201126" author="khalidHORRI">
-        <addColumn tableName="billing_invoice">
-            <column name="initial_collection_date" type="datetime"/>
-        </addColumn>
-        <addColumn tableName="billing_cycle">
-            <column name="collection_date_delay_el" type="varchar(2000)"/>
-        </addColumn>
-        <addColumn tableName="ar_account_operation">
-            <column name="collection_date" type="datetime"/>
-        </addColumn>
-        <addColumn tableName="billing_billing_run">
-            <column name="collection_date" type="datetime"/>
-        </addColumn>
-        <sql>
-            update ${db.schema.adapted}billing_invoice set initial_collection_date = due_date;
-            update ${db.schema.adapted}ar_account_operation set collection_date = due_date;
-        </sql>
-    </changeSet>
 
     <changeSet id="5687_20203011" author="khalidHORRI">
         <addColumn tableName="billing_cycle">
@@ -2895,14 +2857,7 @@ END $$;]]>
         <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
         <sql>update ${db.schema.adapted}billing_billing_run set skip_validation_script=0 where skip_validation_script is null</sql>
     </changeSet>
-    <changeSet id="5687_20203011" author="khalidHORRI">
-        <addColumn tableName="billing_cycle">
-            <column name="compute_dates_validation" type="${type.boolean}" defaultValueNumeric="0"/>
-        </addColumn>
-        <addColumn tableName="billing_billing_run">
-            <column name="compute_dates_validation" type="BOOLEAN"/>
-        </addColumn>
-    </changeSet>
+   
     <changeSet id="#5680_20201126" author="khalidHORRI">
         <addColumn tableName="billing_invoice">
             <column name="initial_collection_date" type="datetime"/>
@@ -6775,32 +6730,6 @@ public class OrderAdvancement extends ModuleScript {
 
     </changeSet>
 
-    <changeSet id="#20210222_540_269" author="TarikFA.">
-        <dropColumn tableName="cpq_grouped_attributes">
-            <column name="product_version_id"></column>
-        </dropColumn>
-
-        <dropColumn tableName="cpq_attribute">
-            <column name="grouped_attributes_id"></column>
-        </dropColumn>
-
-        <createTable tableName="cpq_grouped_attributes_attribute">
-            <column name="grouped_attributes" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-
-        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-        <addForeignKeyConstraint baseColumnNames="grouped_attributes" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_groupedattribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
-
-    </changeSet>
-
     <changeSet id="#20210123_540_280" author="TarikFA.">
 
         <addColumn tableName="adm_secured_entity">
@@ -7080,11 +7009,6 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
 
-    <changeSet id="#20210323-382" author="Mbarek-Ay">
-        <addColumn tableName="cpq_contract_item">
-            <column name="rate_type" type="varchar(255)"/>
-        </addColumn>
-    </changeSet>
     <changeSet id="#20220325_360" author="TarikFA.">
         <createTable tableName="cpq_commercial_order_order_lot">
             <column name="commercial_order_id" type="bigint">
@@ -7213,10 +7137,6 @@ public class OrderAdvancement extends ModuleScript {
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
     </changeSet>
 
-    <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
-        <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
-        <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
-    </changeSet>
     <changeSet id="#5884_20210119" author="MohammedELAZZOUZI">
     	<preConditions onFail="MARK_RAN">
 	       <not>
@@ -9187,6 +9107,25 @@ public class OrderAdvancement extends ModuleScript {
             <column name="validation_label" type="varchar(255)" />
     	</addColumn>
 
+        <sql>INSERT INTO ${db.schema.adapted}offer_template_attribute
+             (id, attribute_id, offer_template_id, mandatory, read_only, sequence,
+              display, default_value, validation_label, validation_pattern, validation_type)
+            SELECT nextval('offer_template_attribute_seq') as next_id,att.id as attribute_id, coa.offer_template_id,
+                    att.mandatory, att.read_only, att.sequence,
+                    att.display, att.default_value, att.validation_label, att.validation_pattern, att.validation_type
+             FROM ${db.schema.adapted}cpq_attribute att left join ${db.schema.adapted}cpq_offer_attributes coa
+                 on att.id = coa.attribute_id
+             WHERE att.id = coa.attribute_id;</sql>
+        <sql>UPDATE ${db.schema.adapted}cpq_product_version_attributes cpva
+             SET display = att.display,
+                 read_only = att.read_only,
+                 mandatory = att.mandatory,
+                 default_value = att.default_value,
+                 validation_type = att.validation_type,
+                 validation_pattern = att.validation_pattern,
+                 validation_label = att.validation_label
+                 FROM ${db.schema.adapted}cpq_attribute att
+             WHERE cpva.attribute_id = att.id;</sql>
 		<dropColumn tableName="cpq_attribute">
 			<column name="mandatory"/>
 			<column name="read_only"/>
@@ -10190,15 +10129,15 @@ from ${db.schema.adapted}account_entity ae where com_contact.id=ae.id and ae.acc
                     TO_CHAR(ao.invoice_date,'MM') AS "Mois",
                     TO_CHAR(ao.invoice_date,'DD/MM/YYYY') AS "Date facture",
                     text('HG') AS "Code comptable",
-                    ae.code AS "Client factur�",
+                    ae.code AS "Client factur?",
                     text('MAI') AS "Type article",
                     split_part(bac.code, ',', 6) AS "Famille statistique",
                     split_part(bac.code, ',', 2) AS "Article",
                     trim(TO_CHAR(ia.amount_without_tax,'9999990D00')) AS "Montant HT",
-                    trim(TO_CHAR(ia.quantity,'9999990')) AS "Qt� factur�e",
+                    trim(TO_CHAR(ia.quantity,'9999990')) AS "Qt? factur?e",
                     ao.reference AS "No facture",
-                    ao.occ_description AS "Cat�gorie facture",
-                    ao.occ_code AS "Type de pi�ce",
+                    ao.occ_description AS "Cat?gorie facture",
+                    ao.occ_code AS "Type de pi?ce",
                     text('VEN') AS "Journal"
                 FROM
                     ar_customer_account ae
@@ -13733,6 +13672,13 @@ order by date_trunc('month', i.invoice_date) DESC
 				type="${type.boolean}" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#INTRD-14340_20230228" author="HichamHANINE">
+		<addColumn tableName="ar_account_operation">
+			<column name="applied_rate" type="numeric(23, 12)" />
+			<column name="applied_rate_date" type="datetime" />
+		</addColumn>
+	</changeSet>
 
 
        <changeSet id="#20220415_M540_6609" author="Mbarek-Ay">
@@ -13989,13 +13935,6 @@ order by date_trunc('month', i.invoice_date) DESC
 
     <changeSet id="#INTRD-8706_20220812" author="TarikFA." dbms="oracle" >
     	<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice"/>
-    </changeSet>
-    <changeSet  id="#INTRD-7950_20220816" author="Abdelkader.Bouazza">
-        <update tableName="crm_provider">
-            <column name="email" value="billing@opencellsoft.com" type="varchar(100)"/>
-            <where>email is null</where>
-        </update>
-        <addNotNullConstraint tableName="crm_provider" columnName="email" columnDataType="varchar(100)"/>
     </changeSet>
 
 	<changeSet id="#INTRD-9117_20220811" author="aelmalki">
@@ -14488,6 +14427,26 @@ order by date_trunc('month', i.invoice_date) DESC
             </column>
         </addColumn>
 	</changeSet>
+
+    <changeSet id="#INTRD-10541_20221013" author="TarikFA.">
+	    <addColumn tableName="billing_linked_invoices">
+	            <column name="amount" type="numeric(23, 12)" />
+	            <column name="type" type="varchar(50)" />
+	    </addColumn>
+	    
+		<addForeignKeyConstraint constraintName="invoice_id_fk"
+                                 baseColumnNames="id"
+                                 baseTableName="billing_linked_invoices"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id" />
+                                 
+		<addForeignKeyConstraint constraintName="linked_invoice_id_fk"
+                                 baseColumnNames="linked_invoice_id"
+                                 baseTableName="billing_linked_invoices"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id" />
+    	
+    </changeSet>
 	
 	<changeSet id="#INTRD-10522_20221017_matchingCode-journal-entry" author="aelmalki">
 		<addColumn tableName="accounting_journal_entry">
@@ -14497,4 +14456,1678 @@ order by date_trunc('month', i.invoice_date) DESC
 			<column name="current_matching_code" type="varchar(255)" />
 		</addColumn>
 	</changeSet>
+    <changeSet id="#INTRD-10693_20221019-sd-adjustment" author="a.rouaguebe">
+        <addColumn tableName="security_deposit">
+            <column name="sd_adjustment_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="security_deposit"
+                                 baseColumnNames="sd_adjustment_id"
+                                 constraintName="fk_security_adjustment_invoice"
+                                 referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+
+    <changeSet id="#10629_20221018" author="zelmeliani">
+        <addColumn tableName="billing_invoice_line">
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-10673_20221025" author="AbdellatifBARI">
+        <addColumn tableName="finance_settings">
+            <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+    
+     <changeSet id="#INTRD-10957_20221026" author="Mbarek-Ay">
+        <addColumn tableName="cpq_quote_version">
+            <column name="comment" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+
+	<changeSet id="#INTRD-10577_20221020" author="HichamHANINE">
+        <addColumn tableName="meveo_script_instance_cat">
+            <column name="description_i18n" type="${type.json}">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-10768-20221108-validationrule" author="a.rouaguebe">
+        <createSequence sequenceName="billing_invoice_validation_rule_seq" startValue="1" />
+        <createTable tableName="billing_invoice_validation_rule">
+            <column name="id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="invoice_type_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="int4" />
+            <column name="valid_from" type="datetime" />
+            <column name="valid_to" type="datetime" />
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fail_status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="validation_script" type="${type.text}" />
+            <column name="validation_el" type="${type.text}" />
+        </createTable>
+    </changeSet>
+    
+    
+    <changeSet author="AndriusKarpavicius" id="#INTRD-10253_20221027" dbms="oracle">
+        <createProcedure>
+          create or replace type listagg_clob_t as object
+            ( t_varchar2 varchar2(32767)
+            , t_clob clob
+            , static function odciaggregateinitialize( sctx in out listagg_clob_t )
+              return number
+            , member function odciaggregateiterate
+                ( self in out listagg_clob_t
+                , a_val varchar2
+                )
+              return number
+            , member function odciaggregateterminate
+                ( self in out listagg_clob_t
+                , returnvalue out clob
+                , flags in number
+                )
+              return number
+            , member function odciaggregatemerge
+                ( self in out listagg_clob_t
+                , ctx2 in out listagg_clob_t
+                )
+              return number
+            );
+        </createProcedure>
+        <createProcedure>
+            create or replace type body listagg_clob_t
+                is
+                  static function odciaggregateinitialize( sctx in out listagg_clob_t )
+                  return number
+                  is
+                  begin
+                    sctx := listagg_clob_t( null, null );
+                    return odciconst.success;
+                  end;
+                --
+                  member function odciaggregateiterate
+                    ( self in out listagg_clob_t
+                    , a_val varchar2
+                    )
+                  return number
+                  is
+                    procedure add_val( p_val varchar2 )
+                    is
+                    begin
+                      if nvl( lengthb( self.t_varchar2 ), 0 ) + lengthb( p_val ) &lt;= 4000
+                -- Strange limit, the max size of self.t_varchar2 is 29993
+                -- If you exceeds this number you get ORA-22813: operand value exceeds system limits
+                -- with 29993 you get JSON-output as large 58894 bytes
+                -- with 4000 you get JSON-output as large 1063896 bytes, probably max more
+                      then
+                        if self.t_varchar2 is null then
+                          self.t_varchar2 := self.t_varchar2 || p_val;
+                        else
+                          self.t_varchar2 := self.t_varchar2 || ',' || p_val;
+                        end if;
+                      else
+                        if self.t_clob is null
+                        then
+                          dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
+                          dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
+                        else
+                          dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), ','||self.t_varchar2 );
+                        end if;
+                        self.t_varchar2 := p_val;
+                      end if;
+                    end;
+                  begin
+                    add_val( a_val );
+                    return odciconst.success;
+                  end;
+                --
+                  member function odciaggregateterminate
+                    ( self in out listagg_clob_t
+                    , returnvalue out clob
+                    , flags in number
+                    )
+                  return number
+                  is
+                  begin
+                    if self.t_clob is null
+                    then
+                      dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
+                    end if;
+                    if self.t_varchar2 is not null
+                    then
+                      dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
+                    end if;
+                    returnvalue := self.t_clob;
+                    return odciconst.success;
+                  end;
+                --
+                  member function odciaggregatemerge
+                    ( self in out listagg_clob_t
+                    , ctx2 in out listagg_clob_t
+                    )
+                  return number
+                  is
+                  begin
+                    if self.t_clob is null
+                    then
+                      dbms_lob.createtemporary( self.t_clob, true, dbms_lob.call );
+                    end if;
+                    if self.t_varchar2 is not null
+                    then
+                      dbms_lob.writeappend( self.t_clob, length( self.t_varchar2 ), self.t_varchar2 );
+                    end if;
+                    if ctx2.t_clob is not null
+                    then
+                      dbms_lob.append( self.t_clob, ctx2.t_clob );
+                      dbms_lob.freetemporary( ctx2.t_clob );
+                    end if;
+                    if ctx2.t_varchar2 is not null
+                    then
+                      dbms_lob.writeappend( self.t_clob, length( ctx2.t_varchar2 ), ctx2.t_varchar2 );
+                      ctx2.t_varchar2 := null;
+                    end if;
+                    return odciconst.success;
+                  end;
+                --
+                end;        
+        </createProcedure>
+        <createProcedure>
+            create or replace function listagg_clob( agg varchar2 )
+            return clob
+            parallel_enable aggregate using listagg_clob_t;        
+        </createProcedure>
+    </changeSet>
+    
+    <changeSet id="#INTRD-11162_20221107" author="HatimOUDAD">
+        <addColumn tableName="billing_invoice_line">
+            <column name="adjustment_status" type="varchar(50)">
+            </column>
+        </addColumn>
+    </changeSet>
+    
+   
+    
+    <changeSet id="INTRD-11433_20221110" author="AbdelmounaimAkadid">
+        <modifyDataType tableName="dwh_report_extract_execution" columnName="file_path" newDataType="varchar(256)"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-11310_20221110" author="ZBariki">
+        <renameColumn tableName="crm_provider"
+                      newColumnName="portal_message"
+                      oldColumnName="rgaa_message"
+                      columnDataType="varchar(500)"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-10683_20221107" author="AdilElJaouhari">
+        <createSequence sequenceName="meveo_script_parameter_seq"/>
+        <createTable tableName="meveo_script_parameter">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_meveo_script_parameter" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="script_instance_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="description_i18n" type="${type.json}">
+                <constraints nullable="true" />
+            </column>
+            <column name="class_name" type="varchar(255)" defaultValue="java.lang.String">
+                <constraints nullable="false" />
+            </column>
+            <column name="default_value" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+             <column name="allowed_values" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="values_separator" type="varchar(20)" defaultValue="|">
+                <constraints nullable="false" />
+            </column>
+            <column name="collection" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="meveo_script_parameter" baseColumnNames="script_instance_id"
+                                 constraintName="script_parameter_script_instance_id_fk"
+                                 referencedTableName="meveo_script_instance"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="#INTRD-8859_20220802" author="hichamELHALOUI">
+        <addColumn tableName="dwh_report_extract">
+            <column name="include_headers" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+
+    </changeSet>
+
+
+    <changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI">
+        <addColumn tableName="cpq_commercial_order">
+           <column name="billing_cycle_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_cycle_id"
+                                 constraintName="fk_cpq_commercial_order_billing_cycle"
+                                 referencedTableName="billing_cycle"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="cpq_commercial_order"
+                                 baseColumnNames="billing_run_id"
+                                 constraintName="fk_cpq_commercial_order_billing_run"
+                                 referencedTableName="billing_billing_run"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+
+    </changeSet>
+
+	<changeSet id="#INTRD-242_20221121" author="AdilElJaouhari">
+		<addColumn tableName="billing_cycle">
+			<column name="filters" type="${type.json}">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#INTRD-11780_20221128" author="AdilElJaouhari">
+	 	<addPrimaryKey columnNames="id" tableName="billing_invoice_validation_rule"/>
+        <addColumn tableName="billing_invoice">
+            <column name="invoice_validation_rule_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="billing_invoice"
+                                 baseColumnNames="invoice_validation_rule_id"
+                                 constraintName="fk_billing_invoice_validation_rule"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-12043_20221121" author="HatimOUDAD">
+		<addColumn tableName="billing_invoice_validation_rule">
+			<column name="rule_values" type="${type.json}">
+			</column>
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="INTRD-11732_20221130" author="MehdiBOURRAS">
+        <addColumn tableName="com_message_template">
+            <column name="textcontent_i18n" type="${type.json}"/>
+            <column name="subject_i18n" type="${type.json}"/>
+            <column name="htmlcontent_i18n" type="${type.json}"/>
+        </addColumn>
+    </changeSet>
+    
+	<changeSet id="INTRD_12001_20221205" author="TarikFA.">
+		<modifyDataType tableName="meveo_script_instance" columnName="description" newDataType="varchar(1000)"/>
+	</changeSet>
+
+    <changeSet id="#12201_20221212" author="zelmeliani">
+        <renameTable newTableName="billing_redirection_rule" oldTableName="cpq_billing_rule"/>
+    </changeSet>
+
+	<changeSet id="#INTR-112153_20221209_new_field" author="a.rouaguebe">
+		<addColumn tableName="cat_charge_template">
+            <column name="internal_note" type="${type.longtext}" />
+        </addColumn>
+	</changeSet>
+	
+	 <changeSet id="#2038-20221130" author="Mbarek-Ay">
+       <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
+    </changeSet>
+
+	<changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe">
+		<addColumn tableName="cpq_product">
+            <column name="agreement_date_setting" type="varchar(20)"/>
+        </addColumn>
+	</changeSet>
+	
+	<changeSet id="#INTR-12382_20221219" author="HichamHANINE">
+		<addColumn tableName="cat_offer_template">
+            <column name="sequence" type="INT4" defaultValue="0" />
+			<column name="display" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+	</changeSet>
+
+    <changeSet id="#INTRD-11841_20221214-reports" author="HichamHANINE">
+        <update tableName="meveo_script_instance">
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script.presale;
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.*;
+import static java.math.BigDecimal.ZERO;
+import static java.util.Optional.ofNullable;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
+import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory; 
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import static java.util.Arrays.asList;
+import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.api.dto.AgedReceivableDto;
+import org.meveo.model.shared.Name;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.commons.utils.EjbUtils;
+public class AgedBalanceReporting extends ReportExtractScript {
+    private static final Logger log = LoggerFactory.getLogger(AgedBalanceReporting.class);
+  	private static Provider appProvider;
+    private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface(CustomerAccountService.class.getSimpleName());
+    @Override public void execute(Map < String, Object > executeContext) throws BusinessException {
+        try {    
+          	appProvider = ((ProviderService) EjbUtils.getServiceInterface("ProviderService")).getProvider();
+          	String currencyCode = "";
+          	Map < String, Object > paramsProvider = new HashMap < String, Object > ();
+          	paramsProvider.put("code", appProvider.getCode());
+           	String queryProvider = "Select pr.currency.currencyCode, pr.id FROM Provider pr where lower(pr.code)=lower(:code)";
+			List < Object[] > rowsProvider = (List < Object[] > ) customerAccountService.executeSelectQuery(queryProvider, paramsProvider);
+          	for (Object[] row: rowsProvider) {
+                currencyCode = row[0] + "";
+            }
+          
+          	List<String> fetchFields = asList("fields");
+          	PaginationConfiguration paginationConfiguration = new PaginationConfiguration(0, 50, null, null, fetchFields, "dueDate", "DESCENDING");
+          	int numberOfPeriods = 4;
+          	String query = getAgedReceivables(null, null, new Date(), null, null, paginationConfiguration, 30, numberOfPeriods, null, null, null, null, null);
+          
+            log.debug("execute executeContext:{}", executeContext);
+            Map < String, Object > params = new HashMap < String, Object > ();
+               
+          	List < Object[] > rows = (List < Object[] > ) customerAccountService.executeSelectQuery(query, params);
+          	List<AgedReceivableDto> listAgedReceivable = buildDynamicResponse(rows, numberOfPeriods);
+            
+            log.debug("execute rows size:{}", rows == null ? null : rows.size());
+            String dirOutput = String.valueOf(executeContext.get(ReportExtractScript.DIR));
+            String filename = String.valueOf(executeContext.get(ReportExtractScript.FILENAME));
+            CsvBuilder csvBuilder = new CsvBuilder(";", false);
+            String[] header = {
+                "Customer description", "Customer", "Invoice Number",
+               	"Total current", "0_30_DAYS","30_60_DAYS","60_90_DAYS","90_DAYS",
+                "Total overdue","Total",
+                "Currency","Amount billed","Billing currency"
+            };
+            csvBuilder.appendValues(header);
+            csvBuilder.startNewLine();
+            for (AgedReceivableDto agedReceivableDto: listAgedReceivable) {
+                csvBuilder.appendValue(agedReceivableDto.getCustomerAccountDescription());
+                csvBuilder.appendValue(agedReceivableDto.getCustomerAccountCode());
+                csvBuilder.appendValue(agedReceivableDto.getInvoiceNumber());
+                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getNotYetDue()));
+                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getTotalAmountByPeriod().get(0)));
+                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getTotalAmountByPeriod().get(1)));
+                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getTotalAmountByPeriod().get(2)));
+                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getTotalAmountByPeriod().get(3)));
+                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getGeneralTotal()));
+                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getGeneralTotal()));
+                csvBuilder.appendValue(currencyCode);
+                csvBuilder.appendValue(round((BigDecimal) agedReceivableDto.getBilledAmount()));
+                csvBuilder.appendValue(agedReceivableDto.getTradingCurrency());
+              
+                csvBuilder.startNewLine();
+            }
+            csvBuilder.toFile(dirOutput + File.separator + filename);
+            log.debug("execute file generated:{}", dirOutput + File.separator + filename);
+        } catch (Exception e) {
+            log.error("Error on AgedBalanceReporting:", e);
+            throw new BusinessException(e.getMessage());
+        }
+    }
+    private String round(BigDecimal amount) {
+        if (amount == null) {
+            return "";
+        }
+        if (amount.scale() > 4) {
+            String amountAsString = "" + amount;
+            amount = new BigDecimal(amount.longValue() + "." + amountAsString.substring(amountAsString.indexOf(".") + 1).substring(0, 4));
+        }
+        amount = amount.setScale(2, RoundingMode.UP);
+        return amount.toPlainString();
+    }
+  
+  public String getAgedReceivables(String customerAccountCode, String sellerCode, Date startDate, Date startDueDate, Date endDueDate, PaginationConfiguration paginationConfiguration,
+                                             Integer stepInDays, Integer numberOfPeriods, String invoiceNumber, String customerAccountDescription, String sellerDescription, String tradingCurrency, String functionalCurrency) {        
+    	String datePattern = "yyyy-MM-dd";
+        StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate >= '")
+                .append(DateUtils.formatDateWithPattern(startDate, datePattern))
+                .append("'  then  ao.unMatchingAmount else 0 end ) as notYetDue,");
+    	if(stepInDays != null && numberOfPeriods != null) {
+    	    String alias;
+    	    int step;
+    	    if(numberOfPeriods > 1) {
+                query.append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_1_" + stepInDays + ",")
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_1_" + stepInDays + "_awt,")
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.taxAmount else 0 end ) as sum_1_" + stepInDays + "_tax,");
+                for (int iteration = 1; iteration < numberOfPeriods - 1; iteration++) {
+                    step = iteration * stepInDays;
+                    alias = "as sum_"+ (stepInDays * iteration + 1) + "_" + (step * 2);
+                    query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then ao.amountWithoutTax else 0 end ) ")
+                            .append(alias).append(" , ")
+                            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then ao.unMatchingAmount  else 0 end ) ")
+                            .append(alias).append("_awt, ")
+                            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then  ao.taxAmount else 0 end ) ")
+                            .append(alias).append("_tax, ");
+                }
+            }
+            step = numberOfPeriods > 1  ? stepInDays * (numberOfPeriods - 1) : stepInDays;
+            query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then ao.amountWithoutTax else 0 end ) as sum_" + step + "_up,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then ao.unMatchingAmount else 0 end ) as sum_" + step + "_up_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' then ao.taxAmount else 0 end ) as sum_" + step + "_up_tax,");
+        } else {
+    	    query.append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_1_30,")
+    	            .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_1_30_awt,")
+    	            .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.taxAmount else 0 end ) as sum_1_30_tax,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.amountWithoutTax  else 0 end ) as sum_31_60,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_31_60_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.taxAmount else 0 end ) as sum_31_60_tax,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_61_90,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_61_90_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.taxAmount else 0 end ) as sum_61_90_tax,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.amountWithoutTax else 0 end ) as sum_90_up,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.unMatchingAmount else 0 end ) as sum_90_up_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.taxAmount else 0 end ) as sum_90_up_tax,");
+        }
+        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ")
+                .append("from ")
+                .append(RecordedInvoice.class.getSimpleName())
+                .append(" as ao");
+        QueryBuilder qb = new QueryBuilder(query.toString());
+        qb.addSql("(ao.matchingStatus='"+MatchingStatusEnum.O+"' or ao.matchingStatus='"+MatchingStatusEnum.P+"') ");
+        qb.addSql("ao.invoice.invoiceType.excludeFromAgedTrialBalance = false");
+        ofNullable(customerAccountCode).ifPresent(ca -> qb.addSql("UPPER(ao.customerAccount.code) like '%" + customerAccountCode.toUpperCase() +"%'"));
+        ofNullable(customerAccountDescription).ifPresent(caDescription -> qb.addSql("UPPER(ao.customerAccount.description) like '%" + caDescription.toUpperCase() +"%'"));
+        ofNullable(sellerDescription).ifPresent(sDescription -> qb.addSql("UPPER(ao.seller.description) like ('%" + sDescription.toUpperCase() +"%')"));
+        ofNullable(sellerCode).ifPresent(sel -> qb.addSql("UPPER(ao.seller.code) like '%" + sellerCode.toUpperCase() +"%'"));
+        ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
+        ofNullable(tradingCurrency).ifPresent(fc -> qb.addSql("ao.invoice.tradingCurrency.currency.currencyCode = '" + fc + "'"));
+        if (startDueDate != null && endDueDate != null) {
+            qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
+                    + "' and ao.dueDate <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
+        }
+        if (DateUtils.compare(startDate, new Date()) < 0) {
+            qb.addSql("ao.invoice.status = '" + VALIDATED + "' and ao.invoice.invoiceDate <= '"
+                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), "yyyy-MM-dd HH:mm:ss") + "'");
+            qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or ao.invoice.paymentStatus = '" + PPAID + "' or ao.invoice.paymentStatus ='" + UNPAID + "')");
+        }
+        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
+        qb.addPaginationConfiguration(paginationConfiguration);
+          return qb.getSqlString();
+    }
+  
+  public List<AgedReceivableDto> buildDynamicResponse(List<Object[]> agedReceivables, int numberOfPeriods) {
+		List<AgedReceivableDto> responseDto = new  ArrayList<>();
+		for (int index = 0; index < agedReceivables.size(); index++) {
+			Object[] agedReceivable = agedReceivables.get(index);
+			AgedReceivableDto agedReceivableDto = new AgedReceivableDto();
+			agedReceivableDto.setNotYetDue((BigDecimal) agedReceivable[1]);
+			int sumIndex;
+			int startingSumIndex = 2;
+			agedReceivableDto.setNetAmountByPeriod(new ArrayList<>());
+			agedReceivableDto.setTotalAmountByPeriod(new ArrayList<>());
+			agedReceivableDto.setTaxAmountByPeriod(new ArrayList<>());
+			for (sumIndex = 0; sumIndex < numberOfPeriods; sumIndex++) {
+				agedReceivableDto.getNetAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex]);
+				agedReceivableDto.getTotalAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex + 1]);
+				agedReceivableDto.getTaxAmountByPeriod().add((BigDecimal) agedReceivable[startingSumIndex + 2]);
+				startingSumIndex += 3;
+			}
+			agedReceivableDto.setCustomerAccountName(agedReceivable[++startingSumIndex] == null ? null : getName((Name) agedReceivable[startingSumIndex]));
+			agedReceivableDto.setCustomerAccountDescription((String) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setSellerDescription((String) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setSellerCode((String) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setDueDate(agedReceivable[++startingSumIndex] == null ? null : ((Date) agedReceivable[startingSumIndex]));
+			agedReceivableDto.setTradingCurrency((String) agedReceivable[++startingSumIndex]);
+			BigDecimal generalTotal = agedReceivableDto.getTotalAmountByPeriod().stream().reduce(ZERO, BigDecimal::add);
+			agedReceivableDto.setGeneralTotal(generalTotal);
+			agedReceivableDto.setInvoiceId((Long) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setInvoiceNumber((String) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setCustomerAccountCode((String) agedReceivable[++startingSumIndex]);
+			if(agedReceivable[++startingSumIndex] != null)
+				agedReceivableDto.setBilledAmount((BigDecimal) agedReceivable[startingSumIndex]);
+			agedReceivableDto.setCustomerId((Long) agedReceivable[++startingSumIndex]);
+			responseDto.add(agedReceivableDto);
+		}
+		return responseDto;
+	}
+  
+  	private String getName(Name name) {
+		return (name.getFirstName() != null ? name.getFirstName() : "")
+				+ (name.getLastName() != null ? " " + name.getLastName() : "");
+	}
+}
+				]]>
+            </column>
+            <where>id=-12</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-12466_20222012" author="bourras">
+        <update tableName="global_settings">
+            <column name="activate_dunning" value="1"/>
+            <where>id=1</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
+    	<createSequence sequenceName="cpq_converted_price_plan_version_seq" startValue="1" />
+        <createTable tableName="cpq_converted_price_plan_version">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_converted_price_plan_version_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="price_plan_matrix_version_id" type="bigint" />
+            <column name="converted_price" type="numeric(23, 12)" />
+            <column name="trading_currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="rate" type="numeric(23, 12)" />
+            <column name="use_for_billing_accounts" type="${type.boolean}"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="#INTRD-12609_20221227_converted_ppv-fix" author="a.rouaguebe">
+    	<addColumn tableName="cpq_converted_price_plan_version">
+			 <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+		</addColumn>
+    </changeSet>
+    
+    
+
+    <changeSet id="#INTRD-12614_20221227" author="TarikFA.">
+       <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
+       <createTable tableName="cpq_converted_price_plan_matrix_line">
+       		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_converted_plan_matrix_line" />
+            </column>
+            <column name="version" type="int4" />
+
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+            <column name="converted_value" type="numeric(23, 12)" />
+            <column name="trading_currency_id" type="bigint" />
+            <column name="rate" type="numeric(23, 12)" />
+            <column name="use_for_billing_accounts" type="${type.boolean}" />
+            <column name="price_plan_matrix_line_id" type="bigint" />
+       </createTable>
+       
+        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+                                 baseColumnNames="trading_currency_id"
+                                 constraintName="fk_cpq_converted_price_plan_matrix_line_id"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+                                 
+        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+                                 baseColumnNames="price_plan_matrix_line_id"
+                                 constraintName="fk_price_plan_matrix_line_id"
+                                 referencedTableName="cpq_price_plan_matrix_line"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+       
+    </changeSet>
+
+	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari">
+		<addColumn tableName="billing_cycle">
+			<column name="priority" type="int4" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="#INTRD-12677_20221229" author="AdilElJaouhari">
+		<createTable tableName="crm_provider_order_line_type">
+			<column name="provider_id" type="bigint" />
+			<column name="order_line_type" type="varchar(20)" />
+		</createTable>
+
+		<addForeignKeyConstraint
+			baseTableName="crm_provider_order_line_type"
+			baseColumnNames="provider_id"
+			constraintName="crm_provider_order_line_type_provider_fk"
+			referencedTableName="crm_provider" referencedColumnNames="id" />
+
+		<addUniqueConstraint
+			columnNames="provider_id, order_line_type"
+			constraintName="crm_provider_order_line_type_uk"
+			tableName="crm_provider_order_line_type" />
+	</changeSet>
+	
+	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD"> 
+        <createSequence sequenceName="iso_icd_seq" startValue="1" />
+        <createTable tableName="iso_icd">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_iso_icd" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_icd_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="scheme_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        
+        <createSequence sequenceName="untdid_unit_seq" startValue="1" />
+        <createTable tableName="untdid_unit">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_unit" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="source" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_1001_invoice_code_type_seq" startValue="1" />
+        <createTable tableName="untdid_1001_invoice_code_type">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_1001_invoice_type" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_1001_code_type_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="en16931_interpretation" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_2475_vat_payment_option_seq" startValue="1" />
+        <createTable tableName="untdid_2475_vat_payment_option">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_2475_vat_payment" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+             <!-- Simple fields -->           
+            <column name="code_2005" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+             <column name="value_2005" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+             <column name="code_2475" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+             <column name="value_2475" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_4451_invoice_subject_code_seq" startValue="1" />
+        <createTable tableName="untdid_4451_invoice_subject_code">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_4451_invoice_subject" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_4451_subject_code_unique"/>
+            </column>
+
+            <!-- Simple fields -->    
+            <column name="code_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_5305_taxation_category_seq" startValue="1" />
+        <createTable tableName="untdid_5305_taxation_category">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_5305_taxation_category" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="iso_5305_taxation_category_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="semantic_model" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_vatex_seq" startValue="1" />
+        <createTable tableName="untdid_vatex">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_untdid_vatex" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_vatex_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="remark" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+            <column name="code_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <createSequence sequenceName="untdid_4461_payment_means_seq" startValue="1" />
+        <createTable tableName="untdid_4461_payment_means">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_4461_payment_means" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_4461_payment_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="usage_in_EN16931" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+            <column name="code_name" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        
+        
+        <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
+         <createTable tableName="untdid_5189_allowance_code">
+            <!-- Generic fields -->
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_5189_allowance_code" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(10)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="untdid_5189_allowance_code_unique"/>
+            </column>
+
+            <!-- Simple fields -->           
+            <column name="description" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        
+        <sql>INSERT INTO ${db.schema.adapted}untdid_5305_taxation_category(id,version,created,updated,creator,updater,code,semantic_model,name) VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, 'S', 'Standard rate', 'Standard rate');
+			INSERT INTO ${db.schema.adapted}untdid_2475_vat_payment_option(id,version,created,updated,creator,updater,code_2005,value_2005,code_2475,value_2475) VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, '3', 'Invoice document issue date time', '5', 'Date of invoice');
+		</sql>
+			
+        <addColumn tableName="billing_tax">
+            <column name="taxation_category_id" type="bigint" defaultValueNumeric="1">
+             <constraints nullable="false" />
+            </column>
+            <column name="vatex_id" type="bigint">
+            </column>
+        </addColumn>
+         <addColumn tableName="billing_invoice_type">
+            <column name="invoice_code_type_id" type="bigint">
+            </column>
+             <column name="vat_payment_option_id" type="bigint" defaultValueNumeric="1">
+             <constraints nullable="false" />
+            </column>
+        </addColumn>
+        
+        <addForeignKeyConstraint baseTableName="billing_tax"
+                                 baseColumnNames="taxation_category_id"
+                                 constraintName="fk_billing_tax_5305_taxation_category"
+                                 referencedTableName="UNTDID_5305_TAXATION_CATEGORY"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="billing_tax"
+                                 baseColumnNames="vatex_id"
+                                 constraintName="fk_billing_tax_vatex"
+                                 referencedTableName="UNTDID_VATEX"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+        <addForeignKeyConstraint baseTableName="BILLING_INVOICE_TYPE"
+                                 baseColumnNames="invoice_code_type_id"
+                                 constraintName="fk_billing_invoice_1001_invoice"
+                                 referencedTableName="UNTDID_1001_INVOICE_CODE_TYPE"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        <addForeignKeyConstraint baseTableName="BILLING_INVOICE_TYPE"
+                                 baseColumnNames="vat_payment_option_id"
+                                 constraintName="fk_billing_invoice_2475_vat"
+                                 referencedTableName="UNTDID_2475_VAT_PAYMENT_OPTION"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+        
+        
+    </changeSet>
+    
+    <changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA">
+		<addColumn tableName="billing_cycle">
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" />
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe">
+    	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
+    	<addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter" />
+    </changeSet>
+
+    <changeSet id="#INTRD-12544_20230102" author="bourras">
+        <addColumn tableName="cat_offer_template">
+            <column name="document_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="document"/>
+    </changeSet>
+
+	<changeSet id="#INTRD-12405_20221226" author="HichamHANINE">
+		<addColumn tableName="crm_provider">
+			<column name="icd_id" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="crm_seller">
+			<column name="icd_id" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="billing_billing_account">
+			<column name="icd_id" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="billing_user_account">
+			<column name="icd_id" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="ar_payment_token">
+			<column name="payment_means" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="billing_invoice_type">
+			<column name="invoice_subject_code" type="bigint"></column>
+		</addColumn>
+		<addColumn tableName="billing_accounting_article">
+			<column name="allowance_code" type="bigint"></column>
+		</addColumn>
+	
+		<addForeignKeyConstraint baseTableName="billing_billing_account"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_billing_account_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="billing_user_account"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_user_account_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="crm_seller"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_seller_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="crm_provider"
+								 baseColumnNames="icd_id"
+								 constraintName="fk_provider_icd"
+								 referencedTableName="iso_icd"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />							 
+		<addForeignKeyConstraint baseTableName="billing_invoice_type"
+								 baseColumnNames="invoice_subject_code"
+								 constraintName="fk_invoice_type_untdid_4451_invoice_subject"
+								 referencedTableName="untdid_4451_invoice_subject_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="ar_payment_token"
+								 baseColumnNames="payment_means"
+								 constraintName="fk_payment_token_untdid_4461_payment_means"
+								 referencedTableName="untdid_4461_payment_means"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<addForeignKeyConstraint baseTableName="billing_accounting_article"
+								 baseColumnNames="allowance_code"
+								 constraintName="fk_accounting_article_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+		<dropColumn tableName="untdid_4461_payment_means">
+            <column name="usage_in_EN16931"></column>
+        </dropColumn>
+        <addColumn tableName="untdid_4461_payment_means">
+			<column name="usage_in_en16931" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="#INTRD-12766_20230105" author="bourras">
+        <addColumn tableName="billing_invoice">
+            <column name="converted_invoice_balance" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
+    	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
+	      	<column name="subscription_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__cpq_attribute_instance__parent_id" tableName="cpq_attribute_instance">
+	      	<column name="parent_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__origin_billing_account" tableName="billing_rated_transaction">
+	      	<column name="origin_billing_account"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__rules_contract_id" tableName="billing_rated_transaction">
+	      	<column name="rules_contract_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
+	      	<column name="service_instance_id"/>
+	  	</createIndex>
+    </changeSet>   
+
+    <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
+      <addColumn tableName="report_query">
+        <column name="query_parameters" type="${type.json}" />
+      </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-12766_20230106" author="bourras">
+        <addColumn tableName="billing_linked_invoices">
+            <column name="converted_amount" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari">
+		<dropColumn columnName="validation_script" tableName="billing_invoice_validation_rule" />
+		<addColumn tableName="billing_invoice_validation_rule">
+			<column name="script_instance_id" type="bigint" />
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_validation_rule"
+                                 constraintName="fk_validation_rule_meveo_script_instance" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+	</changeSet>
+
+    <changeSet id="#INTRD-12781_20230116" author="zelmeliani">
+        <addColumn tableName="ar_dunning_action">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="dunning_level">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="dunning_policy">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="com_message_template">
+            <column name="type_dunning_mode" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-12799-20230113-query_report_aliases" author="a.rouaguebe">
+		<addColumn tableName="report_query">
+			<column name="aliases" type="${type.json}" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#INTRD-13031_20230118" author="AdilElJaouhari">
+		<addColumn tableName="cat_discount_plan">
+			<column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE">
+        <addColumn tableName="billing_invoice_line">
+            <column name="specific_converted_unit_price" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />			
+			<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari">
+        <modifyDataType tableName="cpq_order_offer" columnName="order_line_type" newDataType="varchar(20)" />
+    </changeSet>
+	
+	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe">
+        <addColumn tableName="report_query">
+        	<column name="advanced_query" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-13009_20230202" author="bourras">
+        <addColumn tableName="finance_settings">
+            <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI">
+        <addColumn tableName="cpq_order_product">
+            <column name="service_instance_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="cpq_order_product"
+                                 constraintName="fk_cpq_order_product_service_instance_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="billing_service_instance"/>
+    </changeSet>
+
+
+	<changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay">
+		<addColumn tableName="cpq_contract_item">
+			<column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="#INTRD-12972" author="bourras">
+        <dropNotNullConstraint tableName="cpq_contract" columnName="contract_date"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI">
+        <addColumn tableName="cat_discount_plan">
+            <column name="allowance_code_id" type="bigint">
+            </column>
+		</addColumn>
+        <update tableName="cat_discount_plan">
+			<column name="allowance_code_id" valueComputed="(SELECT id from untdid_5189_allowance_code where code = '95')"></column>
+			<where>allowance_code_id is null</where>
+		</update>
+        <addNotNullConstraint tableName="cat_discount_plan" columnName="allowance_code_id" />
+        <addForeignKeyConstraint baseTableName="cat_discount_plan"
+								 baseColumnNames="allowance_code_id"
+								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-13957-20230214" author="houdad">
+        <sql>
+        DELETE FROM untdid_unit;
+        DROP TABLE untdid_unit;
+        </sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
+        <addColumn tableName="crm_customer">
+            <column name="parent_customer_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="crm_customer" baseColumnNames="parent_customer_id"
+                                 constraintName="fk_crm_customer_parent_customer_id"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI">
+        <addColumn tableName="billing_invoice_validation_rule">
+            <column name="evaluation_mode" type="varchar(50)" defaultValue="VALIDATION">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet author="HichamHANINE" id="#INTRD-13981_20230222">
+    	<addColumn tableName="ar_matching_code">
+            <column name="converted_matching_amount_credit" type="numeric(23, 12)" />
+            <column name="converted_matching_amount_debit" type="numeric(23, 12)" />
+        </addColumn>
+        <addColumn tableName="ar_matching_amount">
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
+        </addColumn>        
+        <addColumn tableName="ar_account_operation">
+            <column name="converted_net_to_pay" type="numeric(23, 12)" />
+            <column name="converted_amount" type="numeric(23, 12)" />
+            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="converted_tax_amount" type="numeric(23, 12)" />
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
+            <column name="converted_un_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_currency" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="transactional_currency" baseTableName="ar_account_operation" constraintName="fk_account_operation_trading_currency" 
+        	deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />    
+    </changeSet>
+    
+    <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari">
+    	<dropNotNullConstraint columnName="created" tableName="billing_invoice_validation_rule"/>
+    	<dropNotNullConstraint columnName="fail_status" tableName="billing_invoice_validation_rule"/>
+        <addColumn tableName="billing_invoice_validation_rule">
+            <column name="operator" type="varchar(10)" defaultValue="OR" />
+        </addColumn>
+        <addColumn tableName="billing_invoice_validation_rule">
+            <column name="parent_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="billing_invoice_validation_rule" baseColumnNames="parent_id"
+                                 constraintName="fk_invoice_validation_rule_parent_id"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+   	<changeSet id="#INTRD-14161_20230221" author="AdilElJaouhari">
+        <renameColumn tableName="accounting_journal_entry" oldColumnName="trading_amount" newColumnName="converted_amount"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14264_20230222" author="TarikFA.">
+    	<addColumn tableName="billing_rated_transaction">
+    		<column name="origin_ratedtransaction_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
+                                 constraintName="fk_origin_ratedtransaction_id"
+                                 referencedTableName="billing_rated_transaction"
+                                 referencedColumnNames="id,status"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+     <changeSet id="#INTRD-14243_invoice_conversion" author="a.rouaguebe">
+    	<addColumn tableName="billing_invoice">
+    		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    	</addColumn>
+    	<addColumn tableName="billing_invoice_agregate">
+    		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    	</addColumn>
+    </changeSet>
+
+	<changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe">
+		<addColumn tableName="cpq_contract">
+            <column name="application_el" type="varchar(2000)" />
+		</addColumn>
+	</changeSet>
+
+    <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle">
+        <dropProcedure procedureName="listagg_clob_t" />
+        <createProcedure>
+            create or replace type listagg_clob_t as object
+            (
+                t_varchar2 VARCHAR2 (32767),
+                t_clob CLOB,
+                STATIC FUNCTION odciaggregateinitialize (sctx IN OUT listagg_clob_t)
+                    RETURN NUMBER,
+                MEMBER FUNCTION odciaggregateiterate (self    IN OUT listagg_clob_t,
+                                                      a_val          VARCHAR2)
+                    RETURN NUMBER,
+                MEMBER FUNCTION odciaggregateterminate (self          IN OUT listagg_clob_t,
+                                                        returnvalue      OUT CLOB,
+                                                        flags         IN     NUMBER)
+                    RETURN NUMBER,
+                MEMBER FUNCTION odciaggregatemerge (self   IN OUT listagg_clob_t,
+                                                    ctx2   IN OUT listagg_clob_t)
+                    RETURN NUMBER
+            );
+        </createProcedure>
+        <createProcedure>
+            CREATE OR REPLACE TYPE BODY OPENCELL."LISTAGG_CLOB_T"
+            IS
+                STATIC FUNCTION odciaggregateinitialize (sctx IN OUT listagg_clob_t)
+                    RETURN NUMBER
+                    IS
+                BEGIN
+                    sctx := listagg_clob_t (NULL, NULL);
+                    RETURN odciconst.success;
+                END;
+                member function odciaggregateiterate
+                ( self in out listagg_clob_t
+                , a_val varchar2
+                )
+                    return number
+                    is
+                    procedure add_val( p_val varchar2 )
+                        is
+                    begin
+                        if nvl( lengthb( self.t_varchar2 ), 0 ) + lengthb( p_val ) &lt;= 4000
+                        THEN
+                            IF self.t_varchar2 IS NULL
+                            THEN
+                                self.t_varchar2 := self.t_varchar2 || p_val;
+                            ELSE
+                                self.t_varchar2 := self.t_varchar2 || ',' || p_val;
+                            END IF;
+                        ELSE
+                            IF self.t_clob IS NULL
+                            THEN
+                                DBMS_LOB.createtemporary (self.t_clob, TRUE, DBMS_LOB.call);
+                                DBMS_LOB.writeappend (self.t_clob,
+                                                      LENGTH (self.t_varchar2),
+                                                      self.t_varchar2);
+                            ELSE
+                                DBMS_LOB.writeappend (self.t_clob,
+                                                      LENGTH (self.t_varchar2) + 1,
+                                                      ',' || self.t_varchar2);
+                            END IF;
+
+                            self.t_varchar2 := p_val;
+                        END IF;
+                    END;
+                BEGIN
+                    add_val (a_val);
+                    RETURN odciconst.success;
+                END;
+
+                MEMBER FUNCTION odciaggregateterminate (self          IN OUT listagg_clob_t,
+                                                        returnvalue      OUT CLOB,
+                                                        flags         IN     NUMBER)
+                    RETURN NUMBER
+                    IS
+                BEGIN
+                    IF self.t_clob IS NULL
+                    THEN
+                        DBMS_LOB.createtemporary (self.t_clob, TRUE, DBMS_LOB.call);
+
+                        IF self.t_varchar2 IS NOT NULL
+                        THEN
+                            DBMS_LOB.writeappend (self.t_clob,
+                                                  LENGTH (self.t_varchar2) ,
+                                                  self.t_varchar2);
+                        END IF;
+                    ELSE
+                        IF self.t_varchar2 IS NOT NULL
+                        THEN
+                            DBMS_LOB.writeappend (self.t_clob,
+                                                  LENGTH (self.t_varchar2) + 1,
+                                                  ',' || self.t_varchar2);
+                        END IF;
+                    END IF;
+
+                    returnvalue := self.t_clob;
+                    RETURN odciconst.success;
+                END;
+
+                MEMBER FUNCTION odciaggregatemerge (self   IN OUT listagg_clob_t,
+                                                    ctx2   IN OUT listagg_clob_t)
+                    RETURN NUMBER
+                    IS
+                BEGIN
+                    IF self.t_clob IS NULL
+                    THEN
+                        DBMS_LOB.createtemporary (self.t_clob, TRUE, DBMS_LOB.call);
+                    END IF;
+
+                    IF self.t_varchar2 IS NOT NULL
+                    THEN
+                        DBMS_LOB.writeappend (self.t_clob,
+                                              LENGTH (self.t_varchar2),
+                                              self.t_varchar2);
+                    END IF;
+
+                    IF ctx2.t_clob IS NOT NULL
+                    THEN
+                        DBMS_LOB.append (self.t_clob, ctx2.t_clob);
+                        DBMS_LOB.freetemporary (ctx2.t_clob);
+                    END IF;
+
+                    IF ctx2.t_varchar2 IS NOT NULL
+                    THEN
+                        DBMS_LOB.writeappend (self.t_clob,
+                                              LENGTH (ctx2.t_varchar2),
+                                              ctx2.t_varchar2);
+                        ctx2.t_varchar2 := NULL;
+                    END IF;
+
+                    RETURN odciconst.success;
+                END;
+            END;
+        </createProcedure>
+        <createProcedure>
+            create or replace function listagg_clob( agg varchar2 )
+                RETURN CLOB
+                PARALLEL_ENABLE
+                AGGREGATE USING listagg_clob_t;
+        </createProcedure>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14522_20230301" author="TarikFA.">
+    	<addColumn tableName="billing_subscription">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+    	<addColumn tableName="quote_offer">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+    	
+        <addForeignKeyConstraint baseTableName="quote_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+         <dropColumn tableName="quote_offer">
+         	<column name="contract_code" />
+         </dropColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-14336_20230227" author="ZBariki">
+        <addColumn tableName="cpq_contract_item">
+            <column name="application_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="billing_wallet_operation">
+            <column name="contract_line_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="billing_wallet_operation" baseColumnNames="contract_line_id"
+                                 constraintName="fk_wo_contract_line_id" referencedTableName="cpq_contract_item"
+                                 referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-14598_20230303" author="zelmeliani">
+        <addColumn tableName="finance_settings">
+            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+    
+   	<changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari">
+		<addColumn tableName="billing_invoice_line">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+		<addColumn tableName="billing_invoice_agregate">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+
+<!--  
+    <changeSet id="#INTRD-14263_20200304" author="TarikFA.">
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+-->
+
+    <changeSet id="#INTRD-14381-202303202" author="bourras" failOnError="false">
+        <addColumn tableName="billing_invoice_configuration">
+            <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
+        <addColumn tableName="crm_customer_category">
+            <column name="default_seller_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="crm_customer_category" baseColumnNames="default_seller_id"
+                                 constraintName="fk_crm_customer_category_default_seller_id"
+                                 referencedTableName="crm_seller"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+ 	<changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
+    	<addColumn tableName="cpq_order_offer">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="cpq_order_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_cpq_order_offer_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTR-14747_20230308" author="TarikFA.">
+    	<update tableName="cat_discount_plan">
+    		<column name="applicable_on_overridden_price" value="1"/>
+    		<where>applicable_on_overridden_price is null</where>
+    	</update>
+    	<update tableName="cat_discount_plan">
+    		<column name="applicable_on_discounted_price" value="1"/>
+    		<where>applicable_on_discounted_price is null</where>
+    	</update>
+    </changeSet>
+
+
+    <changeSet id="#INTRD-14811_20200310" author="TarikFA.">
+        <preConditions onFail="MARK_RAN" >
+            <and>
+                <foreignKeyConstraintExists foreignKeyName="fk_origin_ratedtransaction_id" foreignKeyTableName="billing_rated_transaction" />
+            </and>
+        </preConditions>
+        <comment>Foreign key exist !!</comment>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-14743_20230313" author="TarikFA.">
+        <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
+            <column name="event_key"/>
+        </createIndex>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14743_20230315" author="TarikFA.">
+        <sql>CREATE INDEX rt_customer_id_contract_index ON ${db.schema.adapted}cpq_contract (customer_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_billing_account_id_contract_index ON ${db.schema.adapted}cpq_contract (billing_account_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_customer_account_contract_index ON ${db.schema.adapted}cpq_contract (customer_account_id) where status='ACTIVE'</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14743_20230316" author="TarikFA.">
+        <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
+        <sql>CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql>
+    </changeSet>
+    
+   	<changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari">
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_net_to_pay" newColumnName="transactional_net_to_pay"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_raw_amount" newColumnName="transactional_raw_amount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_discount_amount" newColumnName="transactional_discount_amount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_without_tax_before_discount" newColumnName="transactional_amount_without_tax_before_discount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_invoice_balance" newColumnName="transactional_invoice_balance"/>
+		
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_unit_price" newColumnName="transactional_unit_price"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_discount_amount" newColumnName="transactional_discount_amount"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_raw_amount" newColumnName="transactional_raw_amount"/>
+		
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari">
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_net_to_pay" newColumnName="transactional_net_to_pay"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_tax_amount" newColumnName="transactional_tax_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_matching_amount" newColumnName="transactional_matching_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_un_matching_amount" newColumnName="transactional_un_matching_amount"/>
+		
+		<renameColumn tableName="billing_linked_invoices" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
+		
+		<renameColumn tableName="ar_matching_amount" oldColumnName="converted_matching_amount" newColumnName="transactional_matching_amount"/>
+		
+		<renameColumn tableName="ar_matching_code" oldColumnName="converted_matching_amount_credit" newColumnName="transactional_matching_amount_credit"/>
+		<renameColumn tableName="ar_matching_code" oldColumnName="converted_matching_amount_debit" newColumnName="transactional_matching_amount_debit"/>
+		
+        <renameColumn tableName="accounting_journal_entry" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
+        
+        <addColumn tableName="ar_account_operation">
+            <column name="transactional_payment_fees" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14597_20230324" author="TarikFA.">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
+            <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius">
+        <alterSequence sequenceName="rating_cdr_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="rating_edr_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-15146_20230406" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="billing_accounting_article"
+                                  constraintName="billing_accounting_article_open_order_id_fk"/>
+        <dropColumn tableName="billing_accounting_article" columnName="open_order_id" />
+    </changeSet>
 </databaseChangeLog>

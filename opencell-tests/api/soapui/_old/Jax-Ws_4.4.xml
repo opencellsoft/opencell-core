@@ -20214,49 +20214,6 @@ for( item in holder.getNodeValues( "//invoiceNumber" )) {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="createJob" id="1613fdfd-8d96-43de-99da-ad634668ae76">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>JobWsSoapBinding</con:interface>
-          <con:operation>create</con:operation>
-          <con:request name="createJob" id="0552be13-d4e7-43bc-8b88-a22e981f78f8">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndPoint}/JobWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:create>\r
-         <!--Optional:-->\r
-         <jobInstance jobTemplate="MeasurableQuantityAggregationJob" code="MQ_WO_AMOUNT_DAY_Job" 
-         				description="desc">\r
-            <jobCategory>DWH</jobCategory>\r
-            
-         </jobInstance>\r
-      </ws:create>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="649491cb-84df-46cb-96ac-767d93d1501b"/>
-            <con:assertion type="Simple Contains" id="f41ca429-b018-4681-bcab-915fb0218ec4" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>true</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
       <con:testStep type="request" name="Execute MQ_WO_AMOUNT_DAY_Job" id="bda64be6-9fca-4b21-b89a-94c78fe5b52b">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

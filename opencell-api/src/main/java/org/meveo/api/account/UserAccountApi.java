@@ -58,6 +58,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.IsoIcd;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -68,8 +69,10 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.IsoIcdService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -113,6 +116,12 @@ public class UserAccountApi extends AccountEntityApi {
 
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+    private IsoIcdService isoIcdService;
+
+    @Inject
+    CustomGenericEntityCodeService customGenericEntityCodeService;
 
     public UserAccount create(UserAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -125,9 +134,6 @@ public class UserAccountApi extends AccountEntityApi {
     public UserAccount create(UserAccountDto postData, boolean checkCustomFields,
                               BusinessAccountModel businessAccountModel, BillingAccount associatedBA) throws MeveoApiException, BusinessException {
 	
-        if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(UserAccount.class.getName(), postData);
-        }
         if (StringUtils.isBlank(postData.getBillingAccount())) {
             missingParameters.add("billingAccount");
         }
@@ -141,6 +147,10 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         UserAccount userAccount = new UserAccount();
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(userAccount));
+        }
 
         dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, associatedBA);
         
@@ -306,7 +316,7 @@ public class UserAccountApi extends AccountEntityApi {
                     associatedBA != null ? associatedBA : billingAccountService.findByCode(postData.getBillingAccount());
             if (billingAccount == null) {
                 throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
-            } else if (!isNew && !userAccount.getBillingAccount().equals(billingAccount)) {
+            } else if (!isNew && !userAccount.getBillingAccount().getId().equals(billingAccount.getId())) {
                 // a safeguard to allow this only if all the WO/RT have been invoiced.
                 Long countNonTreatedWO = walletOperationService.countNonTreatedWOByUA(userAccount);
                 if (countNonTreatedWO > 0) {
@@ -322,7 +332,16 @@ public class UserAccountApi extends AccountEntityApi {
             }
             userAccount.setBillingAccount(billingAccount);
         }
-
+        if (postData.getIsoICDCode() != null) {
+            IsoIcd isoIcd = isoIcdService.findByCode(postData.getIsoICDCode());
+            if (isoIcd == null) {
+                throw new EntityDoesNotExistsException(IsoIcd.class, postData.getIsoICDCode());
+            }
+            userAccount.setIcdId(isoIcd);
+        }
+        else {
+            userAccount.setIcdId(userAccount.getBillingAccount().getIcdId());
+        }
         updateAccount(userAccount, postData, checkCustomFields);
 
         if (postData.getSubscriptionDate() != null) {

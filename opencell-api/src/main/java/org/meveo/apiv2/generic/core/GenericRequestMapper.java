@@ -14,10 +14,10 @@ import org.assertj.core.util.VisibleForTesting;
 import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.generics.filter.FactoryFilterMapper;
+import org.meveo.api.generics.filter.FilterMapper;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
-import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.PersistenceService;
 
@@ -29,11 +29,23 @@ public class GenericRequestMapper {
         this.serviceFunction = serviceFunction;
     }
 
-    public PaginationConfiguration mapTo(GenericPagingAndFiltering genericPagingAndFiltering){
-        if(genericPagingAndFiltering == null){
-            return getPaginationConfiguration(ImmutableGenericPagingAndFiltering.builder().build());
+    public PaginationConfiguration mapTo(GenericPagingAndFiltering genericPagingAndFiltering) {
+        PaginationConfiguration paginationConfiguration;
+        GenericPagingAndFiltering genericPagingAndFilteringBuilt;
+
+        if (genericPagingAndFiltering == null) {
+            genericPagingAndFilteringBuilt = ImmutableGenericPagingAndFiltering.builder().build();
+            paginationConfiguration = getPaginationConfiguration(genericPagingAndFilteringBuilt);
+            setPaginationLimit(paginationConfiguration, genericPagingAndFilteringBuilt);
+        } else {
+            paginationConfiguration = getPaginationConfiguration(genericPagingAndFiltering);
+            setPaginationLimit(paginationConfiguration, genericPagingAndFiltering);
         }
-        return getPaginationConfiguration(genericPagingAndFiltering);
+        return paginationConfiguration;
+    }
+
+    private void setPaginationLimit(PaginationConfiguration paginationConfiguration, GenericPagingAndFiltering genericPagingAndFiltering) {
+        paginationConfiguration.setLimit(genericPagingAndFiltering.getLimit() != null ? genericPagingAndFiltering.getLimit().intValue() : null);
     }
 
     private PaginationConfiguration getPaginationConfiguration(GenericPagingAndFiltering genericPagingAndFiltering) {
@@ -69,7 +81,9 @@ public class GenericRequestMapper {
         return Stream.of(filters.keySet().toArray())
                 .map(key -> {
                     String keyObject = (String) key;
-                    if(!keyObject.startsWith("SQL") && !"$FILTER".equalsIgnoreCase(keyObject) && !"$OPERATOR".equalsIgnoreCase(keyObject)){
+                    if(keyObject.matches("\\$filter[0-9]+$")) {
+                    	return Collections.singletonMap(keyObject, evaluateFilters((Map<String, Object>)filters.get(key), entity));
+                    } else if(!keyObject.startsWith("SQL") && !"$FILTER".equalsIgnoreCase(keyObject) && !"$OPERATOR".equalsIgnoreCase(keyObject)){
 
                     	String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
                     	String[] fields=fieldName.split(" ");

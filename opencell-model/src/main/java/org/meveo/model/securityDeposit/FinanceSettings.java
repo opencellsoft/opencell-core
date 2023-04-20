@@ -42,6 +42,18 @@ public class FinanceSettings extends BusinessEntity {
     @JoinColumn(name = "open_order_settings_id")
     private OpenOrderSetting openOrderSetting;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "activate_dunning")
+    private boolean activateDunning = false;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "enable_billing_redirection_rules")
+    private boolean enableBillingRedirectionRules = false;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "discount_advanced_mode")
+    private boolean discountAdvancedMode = false;
+
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
 
@@ -49,13 +61,13 @@ public class FinanceSettings extends BusinessEntity {
         super();
     }
 
-    public FinanceSettings(boolean useSecurityDeposit, BigDecimal maxAmountPerSecurityDeposit, BigDecimal maxAmountPerCustomer, boolean autoRefund, boolean allowRenew,
-            boolean allowTransfer) {
+    public FinanceSettings(boolean useSecurityDeposit, BigDecimal maxAmountPerSecurityDeposit, BigDecimal maxAmountPerCustomer, boolean autoRefund, boolean activateDunning) {
         super();
         this.useSecurityDeposit = useSecurityDeposit;
         this.maxAmountPerSecurityDeposit = maxAmountPerSecurityDeposit;
         this.maxAmountPerCustomer = maxAmountPerCustomer;
         this.autoRefund = autoRefund;
+        this.activateDunning = activateDunning;
     }
 
     public boolean isUseSecurityDeposit() {
@@ -105,4 +117,28 @@ public class FinanceSettings extends BusinessEntity {
     public void setAuxiliaryAccounting(AuxiliaryAccounting auxiliaryAccounting) {
         this.auxiliaryAccounting = auxiliaryAccounting;
     }
+
+    public boolean isActivateDunning() {
+        return activateDunning;
+    }
+
+    public void setActivateDunning(boolean activateDunning) {
+        this.activateDunning = activateDunning;
+    }
+
+    public boolean isEnableBillingRedirectionRules() {
+        return enableBillingRedirectionRules;
+    }
+
+    public void setEnableBillingRedirectionRules(boolean enableBillingRedirectionRules) {
+        this.enableBillingRedirectionRules = enableBillingRedirectionRules;
+    }
+
+	public boolean isDiscountAdvancedMode() {
+		return discountAdvancedMode;
+	}
+
+	public void setDiscountAdvancedMode(boolean discountAdvancedMode) {
+		this.discountAdvancedMode = discountAdvancedMode;
+	}
 }

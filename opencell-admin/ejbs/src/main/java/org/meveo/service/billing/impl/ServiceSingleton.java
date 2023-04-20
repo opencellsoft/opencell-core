@@ -41,6 +41,7 @@ import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGatewayRumSequence;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.Sequence;
@@ -53,6 +54,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -147,6 +149,9 @@ public class ServiceSingleton {
     private JobExecutionService jobExecutionService;
     @Inject
     private JobInstanceService jobInstanceService;
+
+    @Inject
+    private FinanceSettingsService financeSettingsService;
 
     private static Map<Character, Character> mapper = Map.of('0', 'Q',
             '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
@@ -443,10 +448,12 @@ public class ServiceSingleton {
     		throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
     	}
         if(refreshExchangeRate && invoice.canBeRefreshed()) {
-            invoiceService.refreshConvertedAmounts(invoice, getExchangeRate(invoice),
+            invoiceService.refreshConvertedAmounts(invoice, invoice.getTradingCurrency().getCurrentRate(),
                     invoice.getTradingCurrency().getCurrentRateFromDate());
         }
     	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+    	invoice.setRejectedByRule(null);
+    	invoice.setRejectReason(null);
     	return assignInvoiceNumber(invoice, true);
     }
 
@@ -610,15 +617,17 @@ public class ServiceSingleton {
         		invoice = invoiceService.update(invoice);
         	}
         }
-        triggersJobs();
         return invoice;
     }
 
-    private void triggersJobs() {
-        Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob_Job", "TriggerReminderDunningLevel_Job").stream()
-                .map(jobInstanceService::findByCode)
-                .filter(Objects::nonNull)
-                .forEach(jibInstance -> jobExecutionService.executeJob(jibInstance, null, JobLauncherEnum.TRIGGER));
+    public void triggersJobs() {
+    	FinanceSettings lastOne = financeSettingsService.findLastOne();
+        if (lastOne != null && lastOne.isActivateDunning()) {
+        	Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob", "TriggerReminderDunningLevel_Job").stream()
+        	.map(jobInstanceService::findByCode)
+        	.filter(Objects::nonNull)
+        	.forEach(jibInstance -> jobExecutionService.executeJob(jibInstance, null, JobLauncherEnum.TRIGGER));
+        }
     }
 
     /**

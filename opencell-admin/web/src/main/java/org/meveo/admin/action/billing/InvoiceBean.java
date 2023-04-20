@@ -26,10 +26,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -56,6 +58,7 @@ import org.meveo.model.billing.InvoiceCategoryDTO;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
+import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -143,6 +146,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      */
     public InvoiceBean() {
         super(Invoice.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override
@@ -792,7 +796,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public Set<Invoice> getLinkedInvoices(Invoice invoice) {
         if (invoice != null) {
-            return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
+            return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoiceValue).collect(Collectors.toSet());
         }
         return null;
     }
@@ -880,11 +884,16 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public Set<Invoice> getLinkedInvoices() {
         entity = invoiceService.refreshOrRetrieve(entity);
-        return entity.getLinkedInvoices();
+        return entity.getLinkedInvoices().stream().map(LinkedInvoice::getLinkedInvoiceValue).collect(Collectors.toSet());
     }
 
     public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
-        entity.setLinkedInvoices(linkedInvoices);
+        Set<LinkedInvoice> linked = new HashSet<LinkedInvoice>();
+        for (Invoice linkedInvoice : linkedInvoices) {
+            LinkedInvoice li = new LinkedInvoice(entity, linkedInvoice);
+            linked.add(li);
+        }
+        entity.setLinkedInvoices(linked);
     }
 
     public LazyDataModel<Invoice> getDueInvoices(DunningDocument dunningDocument){

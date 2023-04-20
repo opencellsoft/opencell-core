@@ -30,18 +30,19 @@ public class Header {
     private Date validFromDate;
     @XmlElement
     private Date validToDate;
-    
-    
-    
+    @XmlElement
+    private String comment;
+	@XmlElement
+	private Date quoteVersionStartDate;
+	@XmlElement
+	private Date quoteVersionEndDate;
 
     public Header() {
     }
 
-    
-
     public Header(BillingAccount billingAccount, Contract contract, int quoteVersion, String quoteCode, Date startDate,
 			Long duration, int opportunityDuration, String customerReference, String registrationNumber,
-			Date validFromDate, Date validToDate) {
+			Date validFromDate, Date validToDate,String comment, Date quoteVersionStartDate, Date quoteVersionEndDate) {
 		super();
 		this.billingAccount = billingAccount;
 		this.contract = contract;
@@ -54,9 +55,10 @@ public class Header {
 		this.registrationNumber = registrationNumber;
 		this.validFromDate = validFromDate;
 		this.validToDate = validToDate;
+		this.comment=comment;
+		this.quoteVersionStartDate = quoteVersionStartDate;
+		this.quoteVersionEndDate = quoteVersionEndDate;
 	}
-
-
 
 	public BillingAccount getBillingAccount() {
         return billingAccount;
@@ -118,19 +120,13 @@ public class Header {
 		this.startDate = startDate;
 	}
 
-
-
 	public Long getDuration() {
 		return duration;
 	}
 
-
-
 	public void setDuration(Long duration) {
 		this.duration = duration;
 	}
-
-
 
 	/**
 	 * @return the opportunityDuration
@@ -207,5 +203,29 @@ public class Header {
 	 */
 	public void setBillingAccount(BillingAccount billingAccount) {
 		this.billingAccount = billingAccount;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public Date getQuoteVersionStartDate() {
+		return quoteVersionStartDate;
+	}
+
+	public void setQuoteVersionStartDate(Date quoteVersionStartDate) {
+		this.quoteVersionStartDate = quoteVersionStartDate;
+	}
+
+	public Date getQuoteVersionEndDate() {
+		return quoteVersionEndDate;
+	}
+
+	public void setQuoteVersionEndDate(Date quoteVersionEndDate) {
+		this.quoteVersionEndDate = quoteVersionEndDate;
 	}
 }

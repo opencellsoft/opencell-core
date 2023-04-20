@@ -169,7 +169,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 		quoteLotCode=quoteOffer.getQuoteLot()!=null?quoteOffer.getQuoteLot().getCode():null;
 		offerCode=quoteOffer.getOfferTemplate().getCode();
 		billableAccountCode=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount().getCode():null;
-		contractCode=quoteOffer.getContractCode();
+		contractCode=quoteOffer.getContract()!= null ? quoteOffer.getContract().getCode() : null;
 		discountPlanCode=quoteOffer.getDiscountPlan()!=null?quoteOffer.getDiscountPlan().getCode():null;
 		offerId = quoteOffer.getOfferTemplate().getId();
 		sequence=quoteOffer.getSequence();
@@ -185,13 +185,14 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 	
 	
 
-	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
+	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes,
+						 Map<String, TaxDTO> mapTaxIndexes) {
 		init(quoteOffer);
-		prices=calculateTotalsPerOffer(quoteOffer);
+		prices=calculateTotalsPerOffer(quoteOffer, mapTaxIndexes);
 		if(loadQuoteProduct) {
 			products=new ArrayList<QuoteProductDTO>();
 				for(QuoteProduct quoteProduct:quoteOffer.getQuoteProduct()) {
-					products.add(new QuoteProductDTO(quoteProduct,loadQuoteAttributes));
+					products.add(new QuoteProductDTO(quoteProduct,loadQuoteAttributes, mapTaxIndexes));
 				}
 		}
 		
@@ -203,7 +204,8 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 		}
 	}
 
-	private List<TaxPricesDto> calculateTotalsPerOffer(QuoteOffer quoteOffer) {
+	private List<TaxPricesDto> calculateTotalsPerOffer(QuoteOffer quoteOffer,
+													   Map<String, TaxDTO> mapTaxIndexes) {
 		quoteOffer.getQuotePrices().size();
 		List<QuotePrice> quotePrices = quoteOffer.getQuotePrices();
 		List<TaxPricesDto> taxPricesDtos =new ArrayList<>();
@@ -217,7 +219,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 			List<QuotePrice> quotePricesPerTax= pricesPerTax.get(taxRate);
 
 			List<PriceDTO> taxPrices = quotePricesPerTax.stream()
-					.map(price -> new PriceDTO(price))
+					.map(price -> new PriceDTO(price, mapTaxIndexes))
 					.collect(Collectors.toList());
 
 			taxPricesDtos.add(new TaxPricesDto(taxRate, taxPrices));

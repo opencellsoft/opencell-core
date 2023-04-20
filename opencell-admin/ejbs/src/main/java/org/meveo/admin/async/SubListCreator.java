@@ -114,6 +114,9 @@ public class SubListCreator<E> {
 
         blocToRun = listSize / nbSplits;
         modulo = listSize % nbSplits;
+       if( modulo > 0) {
+           this.blocToRun = this.blocToRun+1;
+       }
         from = 0;
         to = blocToRun;
         if (from == listSize) {

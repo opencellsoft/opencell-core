@@ -20,7 +20,10 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                 .useSecurityDeposit(entity.isUseSecurityDeposit())
                 .maxAmountPerSecurityDeposit(entity.getMaxAmountPerSecurityDeposit())
                 .maxAmountPerCustomer(entity.getMaxAmountPerCustomer())
-                .autoRefund(entity.isAutoRefund());
+                .autoRefund(entity.isAutoRefund())
+                .activateDunning(entity.isActivateDunning())
+                .enableBillingRedirectionRules(entity.isEnableBillingRedirectionRules())
+                .discountAdvancedMode(entity.isDiscountAdvancedMode());
         if(entity.getAuxiliaryAccounting() != null) {
             builder.useAuxiliaryAccounting(entity.getAuxiliaryAccounting().isUseAuxiliaryAccounting())
                     .auxiliaryAccountCodeEl(entity.getAuxiliaryAccounting().getAuxiliaryAccountCodeEl())
@@ -57,6 +60,9 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
              auxiliaryAccounting.setAuxiliaryAccountLabelEl(AUXILIARY_ACCOUNTING_DEFAULT_LABEL_EL);
          }
          financeSettings.setAuxiliaryAccounting(auxiliaryAccounting);
+         financeSettings.setActivateDunning(resource.getActivateDunning());
+         financeSettings.setEnableBillingRedirectionRules(resource.getEnableBillingRedirectionRules());
+         financeSettings.setDiscountAdvancedMode(resource.getDiscountAdvancedMode());
          return financeSettings;
     }
 }

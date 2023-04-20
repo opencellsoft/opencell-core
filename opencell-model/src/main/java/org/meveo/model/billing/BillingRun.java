@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -54,6 +53,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IReferenceEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.ReferenceIdentifierQuery;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
@@ -68,6 +68,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@ObservableEntity
 @ReferenceIdentifierQuery("BillingRun.findByIdAndBCCode")
 @CustomFieldEntity(cftCodePrefix = "BillingRun")
 @Table(name = "billing_billing_run")
@@ -314,7 +315,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Type(type = "numeric_boolean")
     @Column(name = "skip_validation_script")
-    private Boolean skipValidationScript = false;
+    private Boolean skipValidationScript = Boolean.FALSE;
 
     /**
      * EL to compute invoice.initialCollectionDate delay.
@@ -370,7 +371,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     @Type(type = "json")
     @Column(name = "filters", columnDefinition = "jsonb")
-    private Map<String, String> filters;
+    private Map<String, Object> filters;
 
     @Transient
     private List<Long> exceptionalRTIds;
@@ -425,7 +426,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     @Type(type = "numeric_boolean")
     @Column(name = "generate_ao", nullable = false)
-    private Boolean generateAO = false;
+    private Boolean generateAO = Boolean.FALSE;
     
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -840,10 +841,10 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 		return skipValidationScript.booleanValue();
 	}
 
-	public void setSkipValidationScript(boolean skipValidationScript) {
+	public void setSkipValidationScript(Boolean skipValidationScript) {
 		this.skipValidationScript = skipValidationScript;
 	}
-
+	
 	public Date getCollectionDate() {
 		return collectionDate;
 	}
@@ -902,11 +903,11 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 		this.discountApplied = discountApplied;
 	}
 
-    public Map<String, String> getFilters() {
+    public Map<String, Object> getFilters() {
         return filters;
     }
 
-    public void setFilters(Map<String, String> filters) {
+    public void setFilters(Map<String, Object> filters) {
         this.filters = filters;
     }
 
@@ -917,7 +918,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setExceptionalRTIds(List<Long> exceptionalRTIds) {
         this.exceptionalRTIds = exceptionalRTIds;
     }
-
+    
     public boolean isExceptionalBR() {
 	    return (this.filters !=null && !this.filters.isEmpty());
     }
@@ -1005,5 +1006,4 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 	public void setGenerateAO(Boolean generateAO) {
 		this.generateAO = generateAO;
 	}
-
 }

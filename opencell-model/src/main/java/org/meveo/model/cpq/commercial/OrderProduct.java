@@ -31,6 +31,7 @@ import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.ProductVersion;
@@ -80,7 +81,7 @@ public class OrderProduct extends AuditableCFEntity {
 	private BigDecimal quantity;
 
 	@OneToMany(mappedBy = "orderProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderAttribute> orderAttributes=new ArrayList<OrderAttribute>();
+	private List<OrderAttribute> orderAttributes=new ArrayList<>();
 
 	/**
 	 * discountPlan attached to this orderProduct
@@ -122,14 +123,20 @@ public class OrderProduct extends AuditableCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "instance_status", length = 10)
    	private InstanceStatusEnum status;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "service_instance_id")
+	private ServiceInstance serviceInstance;
+
+	@OneToOne(mappedBy = "orderProduct")
+	private OrderArticleLine orderArticleLine;
+
 	public void update(OrderProduct other) {
     	this.orderOffer = other.orderOffer;
     	this.order = other.order;
 		this.orderServiceCommercial = other.orderServiceCommercial;
 		this.productVersion = other.productVersion;
 		this.quantity = other.quantity;
-		this.productVersion = other.productVersion;
 		this.orderAttributes.clear();
 		this.orderAttributes.addAll(other.orderAttributes);
         this.discountPlan=other.getDiscountPlan();
@@ -138,11 +145,9 @@ public class OrderProduct extends AuditableCFEntity {
         this.productActionType=other.productActionType;
         this.terminationDate=other.terminationDate;
         this.terminationReason=other.terminationReason;
+		this.serviceInstance = other.serviceInstance;
     }
-	
-	
-	
-	
+
 	@Override
 	public ICustomFieldEntity[] getParentCFEntities() {
 		if (quoteProduct != null) {
@@ -236,9 +241,9 @@ public class OrderProduct extends AuditableCFEntity {
 	public void setOrderAttributes(List<OrderAttribute> orderAttributes) {
 		this.orderAttributes = orderAttributes;
 	}
-	
-	
-	
+
+
+
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
 	}
@@ -246,8 +251,8 @@ public class OrderProduct extends AuditableCFEntity {
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
 	}
-	
-	
+
+
 
 	public QuoteProduct getQuoteProduct() {
 		return quoteProduct;
@@ -262,7 +267,7 @@ public class OrderProduct extends AuditableCFEntity {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ Objects.hash(productVersion, quantity, order, orderOffer, orderServiceCommercial,quantity,discountPlan);
+				+ Objects.hash(productVersion, quantity, order, orderOffer, orderServiceCommercial,quantity,discountPlan, serviceInstance);
 		return result;
 	}
 	@Override
@@ -274,7 +279,8 @@ public class OrderProduct extends AuditableCFEntity {
 		OrderProduct other = (OrderProduct) obj;
 		return  Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
 				&& Objects.equals(order, other.order)
-				&& Objects.equals(orderOffer, other.orderOffer) && Objects.equals(orderServiceCommercial, other.orderServiceCommercial)  && Objects.equals(discountPlan, other.discountPlan);
+				&& Objects.equals(orderOffer, other.orderOffer) && Objects.equals(orderServiceCommercial, other.orderServiceCommercial)
+				&& Objects.equals(discountPlan, other.discountPlan) && Objects.equals(serviceInstance, other.serviceInstance);
 	}
 
 
@@ -310,12 +316,34 @@ public class OrderProduct extends AuditableCFEntity {
 	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
 	}
-	
+
 	public InstanceStatusEnum getStatus() {
 		return status;
 	}
 
 	public void setStatus(InstanceStatusEnum status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return Service instance that order product is associated to
+	 */
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
+	}
+
+	/**
+	 * @param serviceInstance Service instance that order product is associated to
+	 */
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
+	}
+
+	public OrderArticleLine getOrderArticleLine() {
+		return orderArticleLine;
+	}
+
+	public void setOrderArticleLine(OrderArticleLine orderArticleLine) {
+		this.orderArticleLine = orderArticleLine;
 	}
 }

@@ -37,6 +37,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.api.dto.billing.WalletOperationDto;
@@ -530,6 +532,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA")
         							.setParameter("newWallet", newWallet)
         							.setParameter("newUserAccount", newWallet.getUserAccount())
+                                    .setParameter("billingAccount", newWallet.getUserAccount().getBillingAccount())
         							.setParameter("subscription", subscription).executeUpdate();
     }
 
@@ -537,6 +540,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA")
         							.setParameter("newWallet", wallet)
         							.setParameter("newUserAccount", wallet.getUserAccount())
+        							.setParameter("billingAccount", wallet.getUserAccount().getBillingAccount())
         							.setParameter("subscription", subscription).executeUpdate();
     }
 
@@ -583,7 +587,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
        
         String truncateDateFunction = EntityManagerProvider.isDBOracle()?"TRUNC":"DATE";
         
-        String queryTemplate = "CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
+        String queryTemplate = "DROP VIEW IF EXISTS billing_wallet_operation_period; CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
                 + " from (select o.*, (case when (" + truncateDateFunction + "(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= " + truncateDateFunction + "(o.start_date)) then 0 else 1 end) as flag "
                 + " FROM billing_wallet_operation o WHERE o.status='OPEN' ) o ";
         
@@ -903,16 +907,33 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         getEntityManager().createNamedQuery("WalletOperation.detachWOsFromSubscription").setParameter("subscription", subscription).executeUpdate();
     }
 
-    
+
     /**
      * Get a list of wallet operations to be invoiced/converted to rated transactions up to a given date. WalletOperation.invoiceDate< date
-     * 
-     * @param invoicingDate Invoicing date
-     * @param nbToRetrieve Number of items to retrieve for processing
-     * @return A list of Wallet operation ids
+     *
+     * @param woIds WO ids
+     * @return A list of WalletOperation
      */
     public List<WalletOperation> getDiscountWalletOperation(List<Long> woIds) {
-        return getEntityManager().createNamedQuery("WalletOperation.discountWalletOperation", WalletOperation.class).setParameter("woIds", woIds).getResultList();
+        if (CollectionUtils.isEmpty(woIds)) {
+            return Collections.emptyList();
+        }
+        List<WalletOperation> wosToProcess = new ArrayList<>(woIds.size());
+
+        // Due to jpa (or maybe db limitation), we cannot pass huge ids in one query, partition it if it is more than 5000 entries
+        List<List<Long>> subWoIds = Lists.partition(woIds, 5000);
+
+        log.info("GetDiscountWalletOperation : process {} wo in {} partitions with 5000 each", woIds.size(), subWoIds.size());
+
+        subWoIds.forEach(partition -> {
+                    log.info("\t Process partition with {}", partition.size());
+                    wosToProcess.addAll(getEntityManager().createNamedQuery("WalletOperation.discountWalletOperation", WalletOperation.class)
+                            .setParameter("woIds", partition)
+                            .getResultList());
+                }
+        );
+
+        return wosToProcess;
     }
     
     /**
@@ -955,6 +976,25 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         } catch (NoResultException exception) {
             return null;
         }
+    }
+
+    public WalletOperation findByEdr(Long edrId) {
+        try {
+            return (WalletOperation) getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.edr.id = :edrId")
+                    .setParameter("edrId", edrId)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException exception) {
+            return null;
+        }
+    }
+    
+    @Override
+    public void create(WalletOperation walletOperation) throws BusinessException {
+    	if(walletOperation.getDiscountedWO()!=null) {
+    		walletOperation.setDiscountedWalletOperation(walletOperation.getDiscountedWO().getId());
+    	}
+    	super.create(walletOperation);
     }
 
 }

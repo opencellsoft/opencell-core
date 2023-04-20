@@ -194,6 +194,7 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
             reportExtract.setSqlQuery(dto.getSqlQuery());
             reportExtract.setScriptInstance(null);
         }
+        reportExtract.setIncludeHeaders(dto.isIncludeHeaders());
 
         return reportExtract;
     }

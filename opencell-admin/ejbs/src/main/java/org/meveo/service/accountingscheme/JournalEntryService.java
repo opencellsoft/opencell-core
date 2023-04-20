@@ -22,18 +22,23 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.service.securityDeposit.impl.FinanceSettingsService.AUXILIARY_ACCOUNT_CODE;
 import static org.meveo.service.securityDeposit.impl.FinanceSettingsService.AUXILIARY_ACCOUNT_LABEL;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.accountingScheme.JournalEntryDirectionEnum;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.Journal;
+import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
@@ -52,9 +57,15 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Stateless
 public class JournalEntryService extends PersistenceService<JournalEntry> {
@@ -70,6 +81,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     public static final String NAMED_QUERY_JOURNAL_ENTRY_CHECK_EXISTENCE_WITH_ACCOUNTING_CODE = "JournalEntry.checkExistenceWithAccountingCode";
     public static final String PARAM_ID_AO = "ID_AO";
     public static final String PARAM_ID_ACCOUNTING_CODE = "ID_ACCOUNTING_CODE";
+    public static final String PARAM_DIRECTION = "DIRECTION";
+    public static final String GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY = "JournalEntry.getByAccountOperationAndDirection";
 
     @Inject
     private ProviderService providerService;
@@ -274,7 +287,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             firstEntry.setTradingCurrency(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getTradingCurrency() != null
                     ? ((RecordedInvoice) ao).getInvoice().getTradingCurrency().getCurrencyCode() : null);
 
-            firstEntry.setTradingAmount(((RecordedInvoice) ao).getInvoice() != null ? ((RecordedInvoice) ao).getInvoice().getAmountWithTax() : null);            
+            firstEntry.setTransactionalAmount((ao.getTransactionalAmount() != null)?  ao.getTransactionalAmount() :
+            		(((RecordedInvoice) ao).getInvoice() != null ? ((RecordedInvoice) ao).getInvoice().getTransactionalAmountWithTax() : null));     
             
         }
         Map<String, String> accountingInfo = addAccountingInfo(customerAccount);
@@ -455,4 +469,88 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                                 .setParameter("customerAccount", customerAccount)
                                 .getSingleResult();
     }
+
+    public void assignMatchingCodeToJournalEntries(AccountOperation ao, List<JournalEntry> createdEntries) {
+        if (!(ao instanceof RecordedInvoice || ao instanceof Payment)) {
+            log.warn("AccountOperation id={}-type={} is not managed by Assigning matching code processing, Expected type : RecordedInvoice and Payment.", ao.getId(), ao.getType());
+            return;
+        }
+
+        if (ao.getStatus() != AccountOperationStatus.EXPORTED || ao.getMatchingStatus() != MatchingStatusEnum.L) {
+            log.warn("RecordedInvoice id={} does not have the expected status to assign it a 'Matching Code' for its JournalEntry [given={}-{}, expected={}-{}]",
+                    ao.getId(), ao.getStatus(), ao.getMatchingStatus(), AccountOperationStatus.EXPORTED, MatchingStatusEnum.L);
+            return;
+        }
+
+        // 1- Build map of AOS
+        //  1.1- First of all, get RecordedInvoice AOs with it JournalEntries
+        //  1.2- Get all Payment AOS, using RecordedInoice.matchingAmount.matchingCode relationship, with it JournalEntries
+        //  1.3- Add content of param createdEntries (this param is used before flushing transaction, it group all created JE with current AOJoob executed instance)
+
+        final List<JournalEntry> aoJEs = new ArrayList<>();
+        Map<Long, Integer> aoIdWithTransactionCategory = new HashMap<>();
+        Set<Long> processedMatchingAmounts = new HashSet<>();
+        AtomicBoolean isValidAo = new AtomicBoolean(true);
+
+        lookupMatchedAO(ao.getMatchingAmounts(), aoIdWithTransactionCategory, processedMatchingAmounts, isValidAo);
+
+        if (isValidAo.get()) {
+            aoIdWithTransactionCategory.forEach((aoId, transactionCategory) -> aoJEs.addAll(getEntityManager().createNamedQuery(GET_BY_ACCOUNT_OPERATION_AND_DIRECTION_QUERY)
+                    .setParameter(PARAM_ID_AO, aoId)
+                    .setParameter(PARAM_DIRECTION, JournalEntryDirectionEnum.getValue(transactionCategory))
+                    .getResultList()));
+
+            // add passed journalEntries
+            aoJEs.addAll(getJournalEntries(ao, createdEntries));
+
+            if (CollectionUtils.isNotEmpty(aoJEs) && aoJEs.size() >= aoIdWithTransactionCategory.size()
+                    && CollectionUtils.isEmpty(aoJEs.stream().filter(journalEntry -> StringUtils.isNotBlank(journalEntry.getMatchingCode())).collect(Collectors.toList()))) {
+                String matchingCode = providerService.getNextMatchingCode();
+                aoJEs.forEach(je -> {
+                            if (StringUtils.isBlank(je.getMatchingCode())) {
+                                // Peut on si on lance un exception ca sera plus claire en cas de matchingCode deja existant...a valider = ce cas ne doit pas etre possible : des JE avec code et d'autre sans liés au meme group de matching (Recorded invoice et Payment)
+                                je.setMatchingCode(matchingCode);
+                                update(je);
+                            }
+                        }
+                );
+            }
+        }
+
+    }
+
+    private List<JournalEntry> getJournalEntries(AccountOperation ao, List<JournalEntry> createdEntries) {
+        if (CollectionUtils.isEmpty(createdEntries)) {
+            return Collections.emptyList();
+        }
+        return createdEntries.stream()
+                .filter(journalEntry -> journalEntry.getDirection() == JournalEntryDirectionEnum.getValue(ao.getTransactionCategory().getId()))
+                .collect(Collectors.toList());
+    }
+
+    private void lookupMatchedAO(List<MatchingAmount> matchingAmounts, Map<Long, Integer> aoIdWithTransactionCategory, Set<Long> processedMatchingAmounts, AtomicBoolean isValidAo) {
+        Optional.ofNullable(matchingAmounts).orElse(Collections.emptyList())
+                .forEach(matchingAmount -> {
+                            if (processedMatchingAmounts.contains(matchingAmount.getId())) {
+                                return;
+                            }
+                            // get nested matching amount
+                            Optional.ofNullable(matchingAmount.getMatchingCode().getMatchingAmounts()).orElse(Collections.emptyList())
+                                    .forEach(ma -> {
+                                        processedMatchingAmounts.add(ma.getId());
+                                        AccountOperation aoFromMatching = ma.getAccountOperation();
+                                        if (aoFromMatching.getStatus() != AccountOperationStatus.EXPORTED || aoFromMatching.getMatchingStatus() != MatchingStatusEnum.L) {
+                                            log.warn("AccountOperation id={}-type={} does not have the expected status to assign it a 'Matching Code' for its JournalEntry [given={}-{}, expected={}-{}]",
+                                                    aoFromMatching.getId(), aoFromMatching.getType(), aoFromMatching.getStatus(), aoFromMatching.getMatchingStatus(), AccountOperationStatus.EXPORTED, MatchingStatusEnum.L);
+                                            isValidAo.set(false);
+                                            return; // skip process if related Recorded invoice AO (payment in our case) does not have a JournalEntry (export status still in POSTED or FAILED)
+                                        }
+                                        aoIdWithTransactionCategory.put(aoFromMatching.getId(), aoFromMatching.getTransactionCategory().getId());
+
+                                        lookupMatchedAO(aoFromMatching.getMatchingAmounts(), aoIdWithTransactionCategory, processedMatchingAmounts, isValidAo);
+                                    });
+                        }
+                );
+    }
+
 }

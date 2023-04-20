@@ -28,7 +28,10 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accountingScheme.AccountingCodeMapping;
 import org.meveo.model.admin.Seller;
@@ -140,7 +143,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			if (OperatorEnum.AND == aml.getAttributeOperator()) {
 				aml.getAttributesMapping().forEach(attributeMapping -> {
 					if (continueProcess.get()) {
-						if (checkAttribute(product, attributes, attributeMapping)) {
+						if (checkAttribute(product, walletOperation, attributes, attributeMapping)) {
 							matchedAttributesMapping.add(attributeMapping);
 						} else {
 							// for AND operator, if at least we have 1 unmatchedAttributs (else), all previous matchedAttribut shall not taken into account
@@ -152,7 +155,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			} else if (OperatorEnum.OR == aml.getAttributeOperator()) {
 				aml.getAttributesMapping().forEach(attributeMapping -> {
 					if (continueProcess.get()) {
-						if (checkAttribute(product, attributes, attributeMapping)) {
+						if (checkAttribute(product, walletOperation, attributes, attributeMapping)) {
 							matchedAttributesMapping.add(attributeMapping);
 							continueProcess.set(false);
 						}
@@ -172,14 +175,16 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			
 		});
 		if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
-			throw new ValidationException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
+			throw new RatingException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
 		}
 		AccountingArticle result = null;
 		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
 		} else {
+			ParamBean paramBean = ParamBean.getInstance();
+			String defaultArticle = paramBean.getProperty("default.article", "ART-STD");
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
-			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD", Arrays.asList("taxClass"));
+			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode(defaultArticle, Arrays.asList("taxClass"));
 		}
 		if(result != null) {
 			Hibernate.initialize(result);
@@ -272,7 +277,6 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	}
 
 	@SuppressWarnings("rawtypes")
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance, WalletOperation walletOperation) throws InvalidELException, ValidationException {
         if (chargeInstance == null) {
             return null;
@@ -445,7 +449,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	}
 
-	private boolean checkAttribute(Product product, Map<String, Object> attributes, AttributeMapping attributeMapping) {
+	private boolean checkAttribute(Product product, WalletOperation walletOperation, Map<String, Object> attributes, AttributeMapping attributeMapping) {
 		final Attribute attribute = attributeMapping.getAttribute();
 		if (attributes.get(attribute.getCode()) != null) {
 			isValidOperator(attributeMapping.getAttribute(), attributeMapping.getOperator());
@@ -468,7 +472,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 					return valueCompareCollection(attributeMapping.getOperator(), source, input);
 				case EXPRESSION_LANGUAGE:
-					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, Object.class);
+					Object result = attributeService.evaluateElExpressionAttribute(value.toString(), product, null, null, walletOperation, Object.class);
 					if (value instanceof Collection) {
 						List<String> sourceEL = Arrays.asList(attributeMapping.getAttributeValue().split(multiValuesAttributeSeparator));
 						List<Object> inputEL = (List) value;
@@ -611,5 +615,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		}
 		return true;
 	}
+	
+
+    public AccountingArticle getDefaultAccountingArticle() {
+        String articleCode = ParamBean.getInstance().getProperty("accountingArticle.advancePayment.defautl.code", "ADV-STD");
+
+        AccountingArticle accountingArticle = findByCode(articleCode);
+        if (accountingArticle == null)
+            throw new EntityDoesNotExistsException(AccountingArticle.class, articleCode);
+        return accountingArticle;
+    }
 
 }

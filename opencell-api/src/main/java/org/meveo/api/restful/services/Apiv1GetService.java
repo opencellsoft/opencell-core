@@ -72,7 +72,7 @@ public class Apiv1GetService {
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
         queryParamsMap = uriInfo.getQueryParameters();
-        GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(pagingAndFiltering);
+        GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(pagingAndFiltering,queryParamsMap);
         Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize(entityClassName) );
         GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
 

@@ -6,14 +6,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.RuleOperatorEnum;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -21,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "billing_attribute_mapping")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_attribute_mapping_seq"), })
+@Cacheable
 public class AttributeMapping extends AuditableEntity {
 
     @ManyToOne

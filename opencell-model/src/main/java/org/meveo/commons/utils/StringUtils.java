@@ -35,6 +35,7 @@ public class StringUtils {
 
     public static final String CODE_REGEX = "^[ @A-Za-z0-9_\\.\\/-]+$";
     public static final String EMPTY = "";
+    public static final String DEFAULT_MATCHING_CODE_VALUE = "A";
 
     /**
      * Checks if string is in array of strings.
@@ -349,7 +350,10 @@ public class StringUtils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static CharSequence computeNextAlphabetSequence(String current) {
+    public static String computeNextAlphabetSequence(String current) {
+        if (StringUtils.isBlank(current)){
+            return DEFAULT_MATCHING_CODE_VALUE;
+        }
         char[] currentChars = current.toCharArray();
         for (int i = currentChars.length-1; i >= 0 ; i--) {
             if(current.charAt(i) < 'Z'){
@@ -359,7 +363,17 @@ public class StringUtils {
                 }
                 return new String(currentChars);
             }
+            currentChars[i]='A';
         }
-        return current + "A";
+        return new String(currentChars) + "A";
+    }
+    
+    public static String camelcase(String strIn) {
+        String[] strList = org.apache.commons.lang3.StringUtils.split(strIn);
+        String strOut = "";
+        for(String elementStr:strList){  
+            strOut = org.apache.commons.lang3.StringUtils.join(strOut, org.apache.commons.lang3.StringUtils.capitalize(elementStr));
+        }  
+        return strOut;
     }
 }

@@ -19,6 +19,7 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -30,6 +31,7 @@ import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.CounterTemplate;
@@ -81,12 +83,11 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 
         if ((serviceUsageChargeTemplate.getAccumulatorCounterTemplates() != null && !serviceUsageChargeTemplate.getAccumulatorCounterTemplates().isEmpty()) || serviceUsageChargeTemplate.getCounterTemplate() != null) {
             for (CounterTemplate counterTemplate : serviceUsageChargeTemplate.getAccumulatorCounterTemplates()) {
-                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, isVirtual);
+                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, usageChargeInstance, isVirtual);
                 log.debug("Accumulator counter instance {} will be added to charge instance {}", counterInstance, usageChargeInstance);
-                usageChargeInstance.addAccumulatorCounterInstance(counterInstance);
             }
             if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
-                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceUsageChargeTemplate.getCounterTemplate(), isVirtual);
+                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceUsageChargeTemplate.getCounterTemplate(), usageChargeInstance, isVirtual);
                 log.debug("Counter instance {} will be added to charge instance {}", counterInstance, usageChargeInstance);
                 usageChargeInstance.setCounter(counterInstance);
             }
@@ -152,14 +153,16 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
     }
 
     /**
-     * Get a list of usage charge instances valid for a given subscription and a consumption date
+     * Get a list of usage charge instances valid for a given subscription and a date
      *
-     * @param subscriptionId Subscription identifier
-     * @param consumptionDate
+     * @param subscription Subscription
+     * @param date Date to check usage charge validity
      * @return An ordered list by priority (ascended) of usage charge instances
      */
-    public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Long subscriptionId, Object consumptionDate) {
-        return getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValidesForDateBySubscription", UsageChargeInstance.class).setParameter("subscriptionId", subscriptionId)
-            .setParameter("terminationDate", consumptionDate).getResultList();
+    public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Subscription subscription, Date date) {
+
+        return subscription.getUsageChargeInstances().stream()
+            .filter(ci -> ci.getStatus() == InstanceStatusEnum.ACTIVE || ((ci.getStatus() == InstanceStatusEnum.TERMINATED || ci.getStatus() == InstanceStatusEnum.SUSPENDED) && ci.getTerminationDate().after(date)))
+            .collect(Collectors.toList());
     }
 }

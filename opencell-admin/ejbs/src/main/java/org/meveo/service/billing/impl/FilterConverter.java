@@ -5,6 +5,7 @@ import static java.lang.Enum.valueOf;
 import static java.util.Optional.ofNullable;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.model.BusinessEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +37,9 @@ public class FilterConverter {
      * filters : Map of filters Map<String, String>
      * Return : converted map of filters Map<String, Object>
      */
-    public Map<String, Object> convertFilters(Map<String, String> filters) {
+    public Map<String, Object> convertFilters(Map<String, Object> filters) {
         Map<String, Object> convertedFilters = new HashMap<>();
-        for (Map.Entry<String, String> entry : filters.entrySet()) {
+        for (Map.Entry<String, Object> entry : filters.entrySet()) {
             String[] fieldsName = entry.getKey().split(SPLIT_REGEX);
             if (fieldsName.length == 1) {
                 convertedFilters.put(entry.getKey(), convert(targetEntity, entry, entry.getKey()));
@@ -48,10 +50,17 @@ public class FilterConverter {
         return convertedFilters;
     }
 
-    private Object convert(Class<?> entity, Map.Entry<String, String> filterEntry, String fieldName) {
+    private Object convert(Class<?> entity, Map.Entry<String, Object> filterEntry, String fieldName) {
         try {
+        	if("$OPERATOR".equalsIgnoreCase(fieldName)) {
+        		return FilterOperatorEnum.valueOf((String)filterEntry.getValue());
+        	}
+        	if(fieldName.matches("\\$filter[0-9]+$")) {
+            	return convertFilters((Map<String, Object>)filterEntry.getValue());
+            }
             if(fieldName.equalsIgnoreCase("id")) {
-                return Long.valueOf(filterEntry.getValue());
+            	Object value = filterEntry.getValue();
+        		return Long.valueOf(value.toString());
             }
             final int index = fieldName.indexOf(".");
 			if(index>0) {
@@ -63,16 +72,16 @@ public class FilterConverter {
             Field field = ofNullable(from(fieldName, entity))
                     .orElseThrow(() -> new BusinessException("No such field " + fieldName+" on entity "+entity));
             if (Number.class.isAssignableFrom(field.getType())) {
-                return toNumber(entity, fieldName, filterEntry.getValue());
+                return toNumber(entity, fieldName, (String)filterEntry.getValue());
             }
             if (field.getType().isEnum()) {
-                return valueOf((Class<Enum>) field.getType(), filterEntry.getValue().toUpperCase());
+                return valueOf((Class<Enum>) field.getType(), ((String)filterEntry.getValue()).toUpperCase());
             }
             if(field.getType().isAssignableFrom(Date.class)) {
-                return new SimpleDateFormat("yyyy-MM-dd").parse(filterEntry.getValue());
+                return new SimpleDateFormat("yyyy-MM-dd").parse((String)filterEntry.getValue());
             }
             if (Boolean.class.isAssignableFrom(field.getType()) || boolean.class.isAssignableFrom(field.getType())) {
-                return Boolean.valueOf(filterEntry.getValue());
+                return Boolean.valueOf((String)filterEntry.getValue());
             }
             return filterEntry.getValue();
         } catch (NoSuchFieldException | NoSuchMethodException | IllegalAccessException

@@ -18,6 +18,13 @@
 
 package org.meveo.api.billing;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.RatedTransactionDto;
@@ -29,12 +36,8 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.RatedTransactionService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * RatedTransactionApi : An API for Rated transaction services.
@@ -49,6 +52,8 @@ public class RatedTransactionApi extends BaseApi {
     /** The rated transaction service. */
     @Inject
     private RatedTransactionService ratedTransactionService;
+    @Inject
+    private AuditLogService auditLogService;
 
     /**
      * List Rated transactions given the filtering criteria
@@ -124,12 +129,16 @@ public class RatedTransactionApi extends BaseApi {
         List<RatedTransaction> ratedTransactions = getRatedTransactionsFromPaginationConfig(pagingAndFiltering);
 
         if (!canCancelRatedTransactions(ratedTransactions)) {
-            throw new ActionForbiddenException("Only rated transactions in statuses OPEN, REJECTED, CANCELED can be cancelled");
+            throw new InvalidParameterException("Only rated transactions in statuses OPEN, REJECTED can be cancelled");
         }
 
         List<Long> ratedTransactionsToCancel = retreiveRatedTrasactionsIdsToCancel(ratedTransactions);
 
         ratedTransactionService.cancelRatedTransactions(ratedTransactionsToCancel);
+        Date dateOperation = new Date();
+        String ids = ratedTransactionsToCancel.size() == 1 ? "id = " + ratedTransactionsToCancel.get(0).toString() : "ids " + ratedTransactionsToCancel.toString();
+        String detail = auditLogService.getDefaultMessage(RatedTransactionStatusEnum.CANCELED.name(), dateOperation, new RatedTransaction(), ids, null);
+        auditLogService.trackOperation(RatedTransactionStatusEnum.CANCELED.name(), dateOperation, new RatedTransaction(), null, detail);
 
     }
 
@@ -147,7 +156,6 @@ public class RatedTransactionApi extends BaseApi {
 
         return ratedTransactions.stream().allMatch(ratedTransaction ->
                 (ratedTransaction.getStatus().equals(RatedTransactionStatusEnum.OPEN)) ||
-                        (ratedTransaction.getStatus().equals(RatedTransactionStatusEnum.CANCELED)) ||
                         (ratedTransaction.getStatus().equals(RatedTransactionStatusEnum.REJECTED)));
 
     }

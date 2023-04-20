@@ -1,7 +1,5 @@
 package org.meveo.admin.job;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -18,13 +16,6 @@ import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.DunningCollectionPlanStatusService;
-import org.meveo.service.payments.impl.DunningLevelInstanceService;
-import org.meveo.service.payments.impl.PaymentGatewayService;
-import org.meveo.service.payments.impl.PaymentService;
-import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 
@@ -67,13 +58,12 @@ public class AutoRefundSecurityDepositJobBean extends BaseJobBean {
 	/**
 	 * Process collection plans
 	 *
-	 * @param collectionPlanId   Collection plan id to process
 	 * @param jobExecutionResult Job execution result
 	 */
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void process(SecurityDeposit securityDeposit, JobExecutionResultImpl jobExecutionResult) {
-		securityDepositService.refund(securityDeposit, "AUTO-REFUND", SecurityDepositOperationEnum.AUTO_REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.AUTO_REFUND, "AUTO-REFUND");
+		securityDepositService.refund(securityDeposit, "AUTO-REFUND", SecurityDepositOperationEnum.AUTO_REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.AUTO_REFUND, "AUTO-REFUND", null);
 	}
 
 }

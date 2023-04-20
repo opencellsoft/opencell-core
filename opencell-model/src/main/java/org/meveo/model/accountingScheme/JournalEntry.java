@@ -38,7 +38,13 @@ import java.math.BigDecimal;
         @NamedQuery(name = "JournalEntry.checkExistenceWithAccountingCode",
                 query = "SELECT COUNT(je) FROM JournalEntry je WHERE je.accountOperation.id = :ID_AO AND je.accountingCode.id = :ID_ACCOUNTING_CODE"),
         @NamedQuery(name = "JournalEntry.checkAuxiliaryCodeUniqniess",
-                query = "SELECT COUNT(je) FROM JournalEntry je WHERE je.auxiliaryAccountCode = :auxiliaryAccountCode AND je.customerAccount <> :customerAccount")
+                query = "SELECT COUNT(je) FROM JournalEntry je WHERE je.auxiliaryAccountCode = :auxiliaryAccountCode AND je.customerAccount <> :customerAccount"),
+        @NamedQuery(name = "JournalEntry.getByAccountOperationAndDirection",
+                query = "SELECT je FROM JournalEntry je WHERE je.accountOperation.id = :ID_AO AND je.direction = :DIRECTION"),
+        @NamedQuery(name = "JournalEntry.findAoWithoutMatchingCode", query = "SELECT je.accountOperation FROM JournalEntry je" +
+                " JOIN FETCH je.accountOperation.matchingAmounts ma" +
+                " WHERE je.accountOperation.matchingStatus = 'L' AND je.accountOperation.type = 'I' AND je.matchingCode IS NULL" +
+                " AND je.accountOperation.status = 'EXPORTED'")
 })
 public class JournalEntry extends AuditableEntity {
 
@@ -152,10 +158,10 @@ public class JournalEntry extends AuditableEntity {
     private String tradingCurrency; 
     
 	/**
-	 * trading amount
+	 * transactional amount
 	 */
-	@Column(name = "trading_amount")
-	private BigDecimal tradingAmount;
+	@Column(name = "transactional_amount")
+	private BigDecimal transactionalAmount;
 
     /**
      * Auxiliary account code
@@ -363,12 +369,12 @@ public class JournalEntry extends AuditableEntity {
 		this.tradingCurrency = tradingCurrency;
 	}
 
-	public BigDecimal getTradingAmount() {
-		return tradingAmount;
+	public BigDecimal getTransactionalAmount() {
+		return transactionalAmount;
 	}
 
-	public void setTradingAmount(BigDecimal tradingAmount) {
-		this.tradingAmount = tradingAmount;
+	public void setTransactionalAmount(BigDecimal transactionalAmount) {
+		this.transactionalAmount = transactionalAmount;
 	}
 
     public String getAuxiliaryAccountCode() {

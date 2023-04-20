@@ -30,6 +30,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.IsoIcd;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
@@ -63,6 +64,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
     private String prefixEl;
     private InvoiceType invoiceType;
     private InvoiceSequence invoiceSequence;
+    private IsoIcd icdId;
     private boolean editSellerSequence = false;
     
     
@@ -84,6 +86,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
     @Override
     public Seller initEntity() {
         super.initEntity();
+        this.setIcdId(entity.getIcdId());
         if (entity.getAddress() == null) {
             entity.setAddress(new Address());
         }
@@ -109,7 +112,12 @@ public class SellerBean extends CustomFieldBean<Seller> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
+        if(entity.getRegistrationNo() != null && this.getIcdId() == null) {
+            messages.error(new BundleKey("messages", "seller.icd.error"));
+            facesContext.validationFailed();
+            return "";
+        }
+        entity.setIcdId(this.getIcdId());
         return super.saveOrUpdate(killConversation);
     }
 
@@ -236,5 +244,13 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	public void setSelectedCustomerSequence(CustomerSequence selectedCustomerSequence) {
 		this.selectedCustomerSequence = selectedCustomerSequence;
 	}
+
+    public IsoIcd getIcdId() {
+        return icdId;
+    }
+
+    public void setIcdId(IsoIcd icdId) {
+        this.icdId = icdId;
+    }
 
 }

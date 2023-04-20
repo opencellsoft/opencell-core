@@ -33,13 +33,15 @@
         <hftl:dataList backingBean="#{customerAccountListBean}" sortBy="code">
             <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
-            <hftl:column label="#{messages['customerAccount.name']}" field="name" titleWithMessage="true" />
+            <hftl:column label="#{messages['customerAccount.title']}" field="name.title.description"  />
+            <hftl:column label="#{messages['customerAccount.firstName']}" field="name.firstName" titleWithMessage="true" />
+            <hftl:column label="#{messages['customerAccount.lastName']}" field="name.lastName" titleWithMessage="true" />
             <hftl:column label="#{messages['customerAccount.customer']}" field="customer.code" valueIdField="customer.id" propagateConversation="false" entityView="customerDetail"
                 objectIdParamName="customerId" />
-            <hftl:column label="#{messages['customerAccount.creditCategory']}" field="creditCategory.code" />
+            <hftl:column label="#{messages['customerAccount.creditCategory']}" sortField="creditCategory" field="creditCategory.code" />
             <hftl:column label="#{messages['tradingCountry.languageCode']}" field="tradingLanguage.language.languageCode" />
             <hftl:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency.currency.currencyCode" />
-            <hftl:column label="#{messages['customerAccount.status']}" field="status.label" isMessage="true" />
+            <hftl:column label="#{messages['customerAccount.status']}" sortField="status" field="status.label" isMessage="true" />
 
             <hftl:actionsColumn useCustomIdParam="true" permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />
         </hftl:dataList>

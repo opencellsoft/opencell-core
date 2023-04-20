@@ -17,6 +17,7 @@
  */
 package org.meveo.model.billing;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
@@ -106,14 +107,16 @@ import org.meveo.model.tax.TaxCategory;
 				+ " sum(case when ao.transactionCategory = 'DEBIT' then ao.unMatchingAmount else (-1 * ao.unMatchingAmount) end) "
 				+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc left join c.seller s "
 				+ " left join ca.paymentMethods m "
-				+ " left join ca.accountOperations ao "
+				+ " left join ca.accountOperations ao on ao.customerAccount.id=ca.id and (ao.matchingStatus in (:aoStatus) and ao.dueDate<:dueDate) "
 				+ " left join b.paymentMethod m2 "
 				+ " left join b.discountPlanInstances dpi "
-				+ " where b.id IN (:baIDs) and (m is null or m.preferred=true) and (ao is null or (ao.matchingStatus in (:aoStatus) and ao.dueDate<:dueDate))"
+				+ " where b.id IN (:baIDs) and (m is null or m.preferred=true) "
 				+ " group by b.id, s.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, m2.id, m2.paymentType"
 				+ " order by b.id"),
-        @NamedQuery(name = "BillingAccount.getCountByParent", query = "select count(*) from BillingAccount ba where ba.customerAccount=:parent") })
-public class BillingAccount extends AccountEntity  implements IInvoicingMinimumApplicable, IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
+        @NamedQuery(name = "BillingAccount.getCountByParent", query = "select count(*) from BillingAccount ba where ba.customerAccount=:parent"),
+        @NamedQuery(name = "BillingAccount.listByOpenILFromBillingRun", query = "select distinct b from InvoiceLine il join il.billingAccount b where il.billingRun=:billingRun and il.status='OPEN'"),
+		@NamedQuery(name = "BillingAccount.getCountByCreditCategory", query = "select count(*) from BillingAccount ba where ba.id=:id and ba.customerAccount.creditCategory.id in (:creditCategoryIds)") })
+public class BillingAccount extends AccountEntity implements IInvoicingMinimumApplicable, IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -243,7 +246,7 @@ public class BillingAccount extends AccountEntity  implements IInvoicingMinimumA
      */
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     @MapKey(name = "code")
-    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+    private Map<String, CounterInstance> counters = new HashMap<>();
 
     /**
      * Invoicing threshold - do not invoice for a lesser amount
@@ -374,6 +377,21 @@ public class BillingAccount extends AccountEntity  implements IInvoicingMinimumA
 
     @Transient
     private List<InvoiceLine> minInvoiceLines;
+
+    /**
+     * IsoIcd
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "icd_id")
+    private IsoIcd icdId;
+    
+    public IsoIcd getIcdId() {
+        return icdId;
+    }
+
+    public void setIcdId(IsoIcd icdId) {
+        this.icdId = icdId;
+    }
 
     public boolean isThresholdPerEntity() {
     	return thresholdPerEntity;
@@ -839,5 +857,11 @@ public class BillingAccount extends AccountEntity  implements IInvoicingMinimumA
                 .stream()
                 .filter(userAccount -> userAccount.getParentUserAccount() == null)
                 .collect(toList());
+    }
+    
+    public String getBillingAccountTradingLanguageCode() {
+        return ofNullable(tradingLanguage)
+                .map(TradingLanguage::getLanguageCode)
+                .orElse(null);
     }
 }

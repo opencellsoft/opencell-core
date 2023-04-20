@@ -246,6 +246,19 @@ public class BillingAccountDto extends AccountDto {
     @Schema(description = "The primary contact")
     private String primaryContact;
 
+    /**
+     * The iso ICD Code
+     */
+    @Schema(description = "The iso ICD Code")
+    private String isoICDCode;
+
+    public String getIsoICDCode() {
+        return isoICDCode;
+    }
+
+    public void setIsoICDCode(String isoICDCode) {
+        this.isoICDCode = isoICDCode;
+    }
 
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
@@ -333,6 +346,10 @@ public class BillingAccountDto extends AccountDto {
 
         if(e.getPrimaryContact() != null) {
             setPrimaryContact(e.getPrimaryContact().getCode());
+        }
+        
+        if(e.getIcdId() != null) {
+            setIsoICDCode(e.getIcdId().getCode());
         }
 
         // Start compatibility with pre-4.6 versions

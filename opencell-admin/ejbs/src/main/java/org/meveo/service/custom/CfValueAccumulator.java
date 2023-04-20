@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -37,6 +36,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -45,7 +45,6 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -152,7 +151,7 @@ public class CfValueAccumulator {
 
     private static int paginationSize = 200;
 
-    @Inject
+    @EJB
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
@@ -163,6 +162,9 @@ public class CfValueAccumulator {
     private EntityManagerWrapper emWrapper;
 
     @Inject
+    private MethodCallingUtils methodCallingUtils;
+
+    @Inject
     @CurrentUser
     private MeveoUser currentUser;
 
@@ -170,15 +172,7 @@ public class CfValueAccumulator {
     @ApplicationProvider
     private Provider appProvider;
 
-    @EJB
-    private CfValueAccumulator cfValueAccumulator;
-
-    protected static boolean accumulateCF = true;
-
-    @PostConstruct
-    private void init() {
-        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "false"));
-    }
+    protected static final boolean accumulateCF = ParamBeanFactory.getAppScopeInstance().getPropertyAsBoolean("accumulateCF", false);
 
     /**
      * Load Custom field entity hierarchy constructing two lists/maps - where CF values are being accumulated FROM and where TO CF values should be propagated to
@@ -459,7 +453,7 @@ public class CfValueAccumulator {
 
         // Propagate CF changes to the child entities
         if (!propagateDownCfs.isEmpty()) {
-            cfValueAccumulator.propagateCFValues(entity, propagateDownCfs);
+            methodCallingUtils.callMethodAsync(() -> propagateCFValues(entity, propagateDownCfs));
         }
     }
 
@@ -489,7 +483,7 @@ public class CfValueAccumulator {
 
         // Propagate CF changes to the child entities
         if (!propagateDownCfs.isEmpty()) {
-            cfValueAccumulator.propagateCFValues(entity, propagateDownCfs);
+            methodCallingUtils.callMethodAsync(() -> propagateCFValues(entity, propagateDownCfs));
         }
     }
 
@@ -501,8 +495,7 @@ public class CfValueAccumulator {
      * @param cfCodes Custom field codes to propagate down where key is Custom field code and value is a boolean indicating if there were any changes in periods (new, removed or
      *        period dates changed). False if there was a change in value only.
      */
-    @Asynchronous
-    public void propagateCFValues(ICustomFieldEntity entity, Map<String, Boolean> cfCodes) {
+    private void propagateCFValues(ICustomFieldEntity entity, Map<String, Boolean> cfCodes) {
 
         if (!accumulateCF) {
             return;
@@ -767,5 +760,14 @@ public class CfValueAccumulator {
 
     private EntityManager getEntityManager() {
         return emWrapper.getEntityManager();
+    }
+
+    /**
+     * Is Custom field value accumulation enabled
+     * 
+     * @return
+     */
+    public static boolean isAccumulateCf() {
+        return accumulateCF;
     }
 }

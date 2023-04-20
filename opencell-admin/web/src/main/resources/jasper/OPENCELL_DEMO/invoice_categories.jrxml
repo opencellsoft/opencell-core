@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice_categories" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EInvoice-ADJ"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Style_1" backcolor="#CCCCCC"/>
+	<style name="Text Body" mode="Opaque"/>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<bottomPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<bottomPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<bottomPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="dataset1" uuid="caf372ed-b5fb-4515-871b-63c01682a70b">
+		<queryString language="xPath">
+			<![CDATA[/invoice/amount/taxes/tax]]>
+		</queryString>
+		<field name="name" class="java.lang.String">
+			<fieldDescription><![CDATA[name]]></fieldDescription>
+		</field>
+		<field name="amountHT" class="java.lang.String">
+			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
+		</field>
+		<field name="amount" class="java.lang.String">
+			<fieldDescription><![CDATA[amount]]></fieldDescription>
+		</field>
+		<field name="percent" class="java.lang.String">
+			<fieldDescription><![CDATA[percent]]></fieldDescription>
+		</field>
+		<field name="vatex" class="java.lang.String">
+			<fieldDescription><![CDATA[vatex]]></fieldDescription>
+		</field>
+		<field name="total" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::taxes/@total]]></fieldDescription>
+		</field>
+		<field name="currencySymbol" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::invoice/amount/currencySymbol]]></fieldDescription>
+		</field>
+		<sortField name="percent"/>
+	</subDataset>
+	<subDataset name="dataset2" uuid="2c95a6f3-7268-4da8-a6b6-bfd49ec339b3">
+		<queryString language="xPath">
+			<![CDATA[/invoice/header/discounts/discount]]>
+		</queryString>
+		<field name="name" class="java.lang.String">
+			<fieldDescription><![CDATA[name]]></fieldDescription>
+		</field>
+		<field name="amountHT" class="java.lang.String">
+			<fieldDescription><![CDATA[amountHT]]></fieldDescription>
+		</field>
+		<field name="amount" class="java.lang.String">
+			<fieldDescription><![CDATA[amount]]></fieldDescription>
+		</field>
+		<field name="percent" class="java.lang.String">
+			<fieldDescription><![CDATA[percent]]></fieldDescription>
+		</field>
+		<field name="discountAmountWithoutTax" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[sum(/invoice/header/discounts/discount/@discountAmountWithoutTax)]]></fieldDescription>
+		</field>
+		<variable name="discountAmountWithoutTax_total" class="java.lang.Double" calculation="Sum">
+			<variableExpression><![CDATA[$F{discountAmountWithoutTax}]]></variableExpression>
+			<initialValueExpression><![CDATA[$F{discountAmountWithoutTax}]]></initialValueExpression>
+		</variable>
+	</subDataset>
+	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="messagePath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="xmlDateFormat" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["yyyyMMdd"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="xPath">
+		<![CDATA[/invoice/header/categories/category]]>
+	</queryString>
+	<field name="catCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/categories/category/@code]]></fieldDescription>
+	</field>
+	<field name="catLabel" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/categories/category/@label]]></fieldDescription>
+	</field>
+	<field name="catAmountWithoutTax" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/categories/category/amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="currencySymbol" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/currencySymbol]]></fieldDescription>
+	</field>
+	<field name="currencyLabel" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/currencyLabel]]></fieldDescription>
+	</field>
+	<field name="currencyRate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/currencyRate]]></fieldDescription>
+	</field>
+	<field name="total" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::taxes/@total]]></fieldDescription>
+	</field>
+	<field name="discountAmountWithoutTax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[sum(/invoice/header/discounts/discount/@discountAmountWithoutTax)]]></fieldDescription>
+	</field>
+	<sortField name="catLabel"/>
+	<group name="subCategory"/>
+	<group name="1">
+		<groupExpression><![CDATA[$F{catCode}]]></groupExpression>
+		<groupHeader>
+			<band height="44">
+				<printWhenExpression><![CDATA[$F{catAmountWithoutTax} && $F{catAmountWithoutTax}.matches("-?\\d+(\\.\\d+)?") &&
+Double.valueOf($F{catAmountWithoutTax}) != 0]]></printWhenExpression>
+				<textField>
+					<reportElement positionType="Float" x="-1" y="-15" width="220" height="20" uuid="0b054d42-0923-4816-9737-6b946e4ff863"/>
+					<box leftPadding="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Reg" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{catLabel}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="5" width="350" height="1" forecolor="#999999" uuid="0958cfc5-2a2e-43aa-a471-b7ed2cb5f8c2">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#CCCCCC"/>
+					</graphicElement>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="1" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="219" y="-14" width="123" height="20" uuid="4915e701-b4f7-4af3-956d-bbcc019ee2da"/>
+					<box rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Reg" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{catAmountWithoutTax} && $F{catAmountWithoutTax}.matches("-?\\d+(\\.\\d+)?")?
+new Double($F{catAmountWithoutTax}):0.00]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="-8" y="5" width="174" height="21" forecolor="#000000" uuid="7d5c0eb6-5bba-4eb0-a030-9906e068f959"/>
+					<box leftPadding="16"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Reg" size="10"/>
+					</textElement>
+					<text><![CDATA[Discounts]]></text>
+				</staticText>
+			</band>
+			<band height="7">
+				<printWhenExpression><![CDATA[$F{discountAmountWithoutTax}!=null]]></printWhenExpression>
+				<line>
+					<reportElement x="0" y="-19" width="350" height="1" forecolor="#999999" uuid="0958cfc5-2a2e-43aa-a471-b7ed2cb5f8c2">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#CCCCCC"/>
+					</graphicElement>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="1" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="219" y="-38" width="123" height="20" uuid="4915e701-b4f7-4af3-956d-bbcc019ee2da"/>
+					<box rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Reg" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{discountAmountWithoutTax}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="8" y="-18" width="350" height="19" forecolor="#878787" uuid="0bca7f37-3ed1-441d-bc52-b944897639b4"/>
+					<box bottomPadding="2"/>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="Vista Sans OT Reg" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(($F{currencyRate}!=null && !String.valueOf($F{currencyRate}).isEmpty() && !String.valueOf($F{currencyRate}).equals("null")) ? "Rate applied against EUR : " + $F{currencyRate} + " " + $F{currencySymbol} : "")]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="2">
+		<groupHeader>
+			<band/>
+		</groupHeader>
+	</group>
+	<columnHeader>
+		<band height="39">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="2" width="350" height="23" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="2e8b6884-3f93-416d-86a0-0230e50671bc">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="5.0" lineColor="#FF8C00"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Vista Sans OT Bold" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[My invoice / Credit note]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="190" y="3" width="158" height="19" forecolor="#FFFFFF" uuid="25323b57-0dfa-42e9-aa61-db50b3f30b6f"/>
+				<box bottomPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Price w/o tax ("+$F{currencySymbol}+")"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+</jasperReport>

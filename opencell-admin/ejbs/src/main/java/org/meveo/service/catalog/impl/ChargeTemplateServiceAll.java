@@ -18,7 +18,11 @@
 
 package org.meveo.service.catalog.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -34,6 +38,7 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
+import org.meveo.model.catalog.ConvertedPricePlanVersion;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -69,6 +74,9 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 
     @Inject
     private PricePlanMatrixLineService pricePlanMatrixLineService;
+
+    @Inject
+    private ConvertedPricePlanVersionService convertedPricePlanVersionService;
 
     @Inject
     @MeveoJpa
@@ -122,9 +130,13 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 	public ChargeTemplate duplicateCharge(ChargeTemplate chargeTemplate) {
 		//charge Template to be duplicated
 		ChargeTemplate duplicateChargeTemplate = null;
+		ChargeTemplateStatusEnum statusChargeTemplate = chargeTemplate.getStatus();
 		
 		try {
+			//set status to null to bypass the validation used in the setStatus method
+			chargeTemplate.setStatus(null);
 			duplicateChargeTemplate = (ChargeTemplate) BeanUtils.cloneBean(chargeTemplate);
+			chargeTemplate.setStatus(statusChargeTemplate);
 			
 			if(chargeTemplate.getProductCharges() != null) {
 			    List<ProductChargeTemplateMapping> listProductChargeTemplateMapping = new ArrayList<ProductChargeTemplateMapping>();
@@ -136,8 +148,6 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 			
 			duplicateChargeTemplate.setId(null);
 			duplicateChargeTemplate.setCode(findDuplicateCode(chargeTemplate));
-			//set status to null then to DRAFT to bypass the validation used in the setStatus method
-			duplicateChargeTemplate.setStatus(null);
 			duplicateChargeTemplate.setStatus(ChargeTemplateStatusEnum.DRAFT);
 
 			if(chargeTemplate.getAttributes() != null) {
@@ -178,17 +188,20 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 
 	        		List<PricePlanMatrixVersion> versionsNew = new ArrayList<PricePlanMatrixVersion>();
 	        		pricePlanMatrixNew.setVersions(versionsNew);
+	        		pricePlanMatrixNew.setContractItems(null);
+	        		pricePlanMatrixNew.setDiscountPlanItems(null);
 	        		
 	        		pricePlanMatrixService.create(pricePlanMatrixNew);
 
 	        		if(pricesVersions != null && !pricesVersions.isEmpty()) {
-		        		for(PricePlanMatrixVersion priceVersion: pricesVersions) {
+		        		for(PricePlanMatrixVersion priceVersion:pricesVersions) {
 		            		PricePlanMatrixVersion priceVersionNew = (PricePlanMatrixVersion) BeanUtils.cloneBean(priceVersion);
 		            		
 		            		priceVersionNew.setId(null);
 		            		priceVersionNew.setStatus(VersionStatusEnum.DRAFT);
 		            		priceVersionNew.setPricePlanMatrix(pricePlanMatrixNew);
-		            		
+		            		priceVersionNew.setColumns(null);
+
 		            		if(priceVersion.getColumns() != null) {
 			            		Set<PricePlanMatrixColumn> pricePlanColumns = new HashSet<>();
 			            		for(PricePlanMatrixColumn pricePlanColumn:priceVersion.getColumns()){
@@ -209,6 +222,17 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 
 		            		priceVersionNew.setPricePlanMatrix(pricePlanMatrixNew);
 		            		pricePlanMatrixVersionService.create(priceVersionNew);
+		            		
+		            		if(priceVersion.getConvertedPricePlanMatrixLines() != null) {
+                                Set<ConvertedPricePlanVersion> convertedPricePlanVersions = new HashSet<>();
+                                for(ConvertedPricePlanVersion convertedPricePlanVersion:priceVersion.getConvertedPricePlanMatrixLines()){
+                                    ConvertedPricePlanVersion convertedPricePlanVersionNew = new ConvertedPricePlanVersion(convertedPricePlanVersion);
+                                    convertedPricePlanVersionNew.setPricePlanMatrixVersion(priceVersionNew);
+                                    convertedPricePlanVersionService.create(convertedPricePlanVersionNew);
+                                    convertedPricePlanVersions.add(convertedPricePlanVersionNew);
+                                }
+                                priceVersionNew.setConvertedPricePlanMatrixLines(convertedPricePlanVersions);
+                            }
 		            	}
 	        		}
 	        	}

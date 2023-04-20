@@ -67,6 +67,7 @@ import org.meveo.model.shared.Address;
 @Table(name = "ord_order_item")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_order_item_seq"), })
+@Deprecated
 public class OrderItem extends BusinessCFEntity implements IWFEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;

@@ -4,6 +4,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.dunning.DunningSettings;
 import org.meveo.model.dunning.DunningTemplate;
 import org.meveo.model.payments.ActionChannelEnum;
 import org.meveo.service.base.BusinessService;
@@ -20,9 +21,18 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
+    @Inject
+    private DunningSettingsService dunningSettingsService;
+
     @Override
     public void create(DunningTemplate template) throws BusinessException {
         validate(template);
+        DunningSettings dunningSettings = dunningSettingsService.findLastOne();
+
+        if(dunningSettings != null && dunningSettings.getDunningMode() != null) {
+            template.setType(dunningSettings.getDunningMode());
+        }
+
         super.create(template);
     }
 

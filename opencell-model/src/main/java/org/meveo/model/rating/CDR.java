@@ -54,7 +54,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Table(name = "rating_cdr")
 @CustomFieldEntity(cftCodePrefix = "CDR")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_cdr_seq"),
-        @Parameter(name = "increment_size", value = "500") })
+        @Parameter(name = "increment_size", value = "5000") })
 @NamedQueries({ 
         @NamedQuery(name = "CDR.checkFileNameExists", query = "SELECT originBatch FROM CDR where originBatch=:fileName"), 
         @NamedQuery(name = "CDR.findByEdr", query = "from CDR where headerEDR = :edr"),
@@ -62,7 +62,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
         @NamedQuery(name = "CDR.deleteRTs", query = "delete from RatedTransaction rt where status <> 'BILLED' and rt.edr in (select e from EDR e where e.originBatch=:fileName)"),
         @NamedQuery(name = "CDR.deleteWOs", query = "delete from WalletOperation wo where wo.edr in (select e from EDR e where e.originBatch=:fileName)"),
         @NamedQuery(name = "CDR.deleteEDRs", query = "delete from EDR where originBatch=:fileName"), @NamedQuery(name = "CDR.deleteCDRs", query = "delete from CDR where originBatch=:fileName"),
-        @NamedQuery(name = "CDR.listCDRsToReprocess", query = "from CDR where Status = 'TO_REPROCESS'")
+        @NamedQuery(name = "CDR.listCDRsToReprocess", query = "from CDR where Status = 'TO_REPROCESS'"),
+        @NamedQuery(name = "CDR.checkDuplicateCDR", query = "from CDR cdr where cdr.originRecord = :originRecord")
 })
 public class CDR extends BaseEntity implements ICustomFieldEntity {
 

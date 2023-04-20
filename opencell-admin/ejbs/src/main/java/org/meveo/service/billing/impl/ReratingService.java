@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -25,6 +27,7 @@ import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -122,9 +125,6 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
-    @EJB
-    private ReratingService reratingServiceNewTx;
-
     @Inject
     private WalletOperationService walletOperationService;
 
@@ -142,6 +142,10 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+
+    @Inject
+    private UsageRatingService usageRatingService;
 
     /**
      * Re-rate service instance charges
@@ -223,7 +227,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                 // In case of using custom field as additional search criteria
             } else if (cfName != null && cfValue != null) {
 
-                String sqlListWOIdsToRerateOneShotOrUsageChargeNotInvoicedByOfferAndServiceTemplateWithCF = "select wo.id from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance.chargeType=:chargeType and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate ";
+                String sqlListWOIdsToRerateOneShotOrUsageChargeNotInvoicedByOfferAndServiceTemplateWithCF = "select wo.id from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.invoiceLine is null or rt.invoiceLine.status <> org.meveo.model.billing.InvoiceLineStatusEnum.BILLED) and wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance.chargeType=:chargeType and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate ";
                 String sqlListWOIdsToRerateOneShotOrUsageChargeIncludingInvoicedByOfferAndServiceTemplateWithCF = "select wo.id from WalletOperation wo where wo.operationDate>=:fromDate and wo.status in ('OPEN', 'TREATED') and wo.chargeInstance.chargeType=:chargeType and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate ";
 
                 String sql = rerateInvoiced ? sqlListWOIdsToRerateOneShotOrUsageChargeIncludingInvoicedByOfferAndServiceTemplateWithCF : sqlListWOIdsToRerateOneShotOrUsageChargeNotInvoicedByOfferAndServiceTemplateWithCF;
@@ -265,7 +269,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                 if (sameTx) {
                     reRate(woIdsToRerate, false);
                 } else {
-                    reratingServiceNewTx.reRateInNewTx(woIdsToRerate, false);
+                    methodCallingUtils.callMethodInNewTx(()->reRateInNoTx(woIdsToRerate, false));
                 }
             }
 
@@ -284,7 +288,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
             } else if (cfName != null && cfValue != null) {
 
                 String sqlListWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplateWithCF = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate";
-                String sqlListWOsInfoToRerateRecurringChargeNotInvoicedByOfferAndServiceTemplateWithCF = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or rt.status<>org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) and wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate";
+                String sqlListWOsInfoToRerateRecurringChargeNotInvoicedByOfferAndServiceTemplateWithCF = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo left join wo.ratedTransaction rt where (wo.ratedTransaction is null or  rt.invoiceLine is null or rt.invoiceLine.status <> org.meveo.model.billing.InvoiceLineStatusEnum.BILLED) and wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate";
 
                 String sql = rerateInvoiced ? sqlListWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplateWithCF : sqlListWOsInfoToRerateRecurringChargeNotInvoicedByOfferAndServiceTemplateWithCF;
                 sql = sql + " and " + (cfValue instanceof Long ? "bigIntFromJson" : "varcharFromJson") + "(wo.cfValues," + cfName + ")=:cfValue";
@@ -347,8 +351,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
      * @throws BusinessException business exception
      * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void reRateInNewTx(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
+    private void reRateInNoTx(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         for (Long woId : woIds) {
 
@@ -400,13 +403,13 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
      * @throws BusinessException business exception
      * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
+    @SuppressWarnings("unchecked")
     public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
         if (operationToRerate.getStatus() != WalletOperationStatusEnum.TO_RERATE) {
             return;
         }
-
         // Change related OPEN or REJECTED Rated transaction status to CANCELED
         RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
         if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED)) {
@@ -417,27 +420,60 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         List<EDR> tEdrs = getEntityManager().createNamedQuery("EDR.getByWO")
                 .setParameter("WO_IDS", List.of(operationToRerate.getId()))
                 .getResultList();
-
+        tEdrs = tEdrs.stream().filter(e -> e.getStatus() != EDRStatusEnum.CANCELLED).collect(Collectors.toList());
         WalletOperation newWO = null;
+        
 
+        // To manage case when 1 WO have more than 1 T.EDR
+        Map<Long, WalletOperation> oldWOAndNewWO = new HashMap<>();
+        boolean isEdrTreated = false;
         if (CollectionUtils.isNotEmpty(tEdrs)) {
+            
             for (EDR edr : tEdrs) {
+
+                List<WalletOperation> triggerWalletOperations = walletOperationService.getEntityManager().createQuery("from WalletOperation o where o.edr.id=:edrId").setParameter("edrId", edr.getId()).getResultList();
+                if(CollectionUtils.isNotEmpty(triggerWalletOperations) && edr.getStatus() == EDRStatusEnum.RATED) {
+                    WalletOperation triggerWalletOperation =  triggerWalletOperations.get(0);
+                    if(triggerWalletOperation.getRatedTransaction() != null && triggerWalletOperation.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED && triggerWalletOperation.getRatedTransaction().getInvoiceLine().getStatus() == InvoiceLineStatusEnum.BILLED && 
+                            operationToRerate.getRatedTransaction() != null && (operationToRerate.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED || operationToRerate.getRatedTransaction().getInvoiceLine().getStatus() != InvoiceLineStatusEnum.BILLED )) {
+                        operationToRerate.setStatus(WalletOperationStatusEnum.F_TO_RERATE);
+                        operationToRerate.setRejectReason("Wallet operation [id=" + operationToRerate.getId() + "] cannot be rerated because triggered EDR [id=" + edr.getId() + "] is already billed.");
+                        walletOperationService.update(operationToRerate);
+                        operationToRerate.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+                        ratedTransactionService.update(operationToRerate.getRatedTransaction());
+                        isEdrTreated = true;
+                        continue;
+                    }else {
+                        triggerWalletOperation.setStatus(WalletOperationStatusEnum.CANCELED);
+                        triggerWalletOperation.setRejectReason("Origin wallet operation [id= "+operationToRerateId+"}] has been rerated");
+                    }
+                    walletOperationService.update(triggerWalletOperation);
+                    
+                }
                 // if edr status is one of REJECTED, CANCELLED or OPEN => Triggered EDRs are simply CANCELLED with reason "Origin wallet operation [id={{id}}] has been rerated", and original WO is rerated
                 if (edr.getStatus() == EDRStatusEnum.REJECTED || edr.getStatus() == EDRStatusEnum.CANCELLED || edr.getStatus() == EDRStatusEnum.OPEN) {
-                    newWO = rateNewWO(operationToRerate, useSamePricePlan, operationToRerateId);
+                    newWO = createNewWO(oldWOAndNewWO, operationToRerate, useSamePricePlan);
+
                     edr.setStatus(EDRStatusEnum.CANCELLED);
                     edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
                     operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
 
-                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
+                    walletOperationService.update(operationToRerate);
+
+                    if (newWO==null) {
+                        // that mean no newWO are created, this is the cas when we have 1 WO woth more than 1 T.EDR, we skip creating of T.EDR
+                        continue;
+                    }
+
+                    // Create new T.EDRs
+                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false, true);
                     Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
                             .forEach(newEdr -> edrService.create(newEdr));
 
-                    walletOperationService.update(operationToRerate);
-
                 } else if (edr.getStatus() == EDRStatusEnum.RATED &&
-                        operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED) {
-                    newWO = rateNewWO(operationToRerate, useSamePricePlan, operationToRerateId);
+                        operationToRerate.getRatedTransaction() != null && (operationToRerate.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED || operationToRerate.getRatedTransaction().getInvoiceLine().getStatus() != InvoiceLineStatusEnum.BILLED)) {
+                    newWO = createNewWO(oldWOAndNewWO, operationToRerate, useSamePricePlan);
+
                     // Triggered EDRs, their WOs and RTs are CANCELLED with reason "Origin wallet operation [id={{id}}] has been rerated", and original WO is rerated
                     edr.setStatus(EDRStatusEnum.CANCELLED);
                     edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
@@ -445,38 +481,79 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     operationToRerate.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
                     operationToRerate.getRatedTransaction().setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
 
-                    List<EDR> newTEdrs = oneShotRatingService.instantiateTriggeredEDRs(newWO, edr, false);
-                    Optional.ofNullable(newTEdrs).orElse(Collections.emptyList())
-                            .forEach(newEdr -> edrService.create(newEdr));
-
+                    // Find rated transaction linked to T.EDR
+                    RatedTransaction linkedRT = ratedTransactionService.findByEDR(edr.getId());
+                    if(linkedRT != null) {
+                        linkedRT.setStatus(RatedTransactionStatusEnum.CANCELED);
+                        linkedRT.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
+                        ratedTransactionService.update(linkedRT);
+                    }
                     walletOperationService.update(operationToRerate);
                     ratedTransactionService.update(operationToRerate.getRatedTransaction());
+                    if (newWO==null) {
+                        // that mean no newWO are created, this is the cas when we have 1 WO woth more than 1 T.EDR, we skip creating of T.EDR
+                        continue;
+                    }
+                    // Create new T.EDRs
+                    List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(newWO, operationToRerate.getEdr(), false, false);
+                    for (EDR e : edrs) {
+                        e.setWalletOperation(newWO);
+                        e.setEventKey(edr.getEventKey());
+                        e.setEventVersion(edr.getEventVersion() != null ? edr.getEventVersion() : null);
+                        edrService.create(e);
+                    }
 
                 } else if (edr.getStatus() == EDRStatusEnum.RATED &&
-                        operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED) {
+                        operationToRerate.getRatedTransaction() != null && operationToRerate.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED && operationToRerate.getRatedTransaction().getInvoiceLine().getStatus() == InvoiceLineStatusEnum.BILLED) {
                     // Triggered EDRs, their WOs and RTs are untouched, original WO fails to rerate F_TO_RERATE with reason in error message below
                     operationToRerate.setStatus(WalletOperationStatusEnum.F_TO_RERATE);
                     operationToRerate.setRejectReason("Wallet operation [id=" + operationToRerate.getId() + "] cannot be rerated because triggered EDR [id=" + edr.getId() + "] is already billed.");
                     walletOperationService.update(operationToRerate);
 
                     return;
+                }else {
+                    newWO = createNewWO(oldWOAndNewWO, operationToRerate, useSamePricePlan);
+                    edr.setStatus(EDRStatusEnum.CANCELLED);
+                    edr.setRejectReason("Origin wallet operation [id=" + operationToRerate.getId() + "] has been rerated");
+                    if (newWO==null) {
+                        // that mean no newWO are created, this is the cas when we have 1 WO woth more than 1 T.EDR, we skip creating of T.EDR
+                        continue;
+                    }
+                    List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(newWO, operationToRerate.getEdr(), false, false);
+                    for (EDR e : edrs) {
+                        e.setWalletOperation(newWO);
+                        e.setEventKey(edr.getEventKey());
+                        e.setEventVersion(edr.getEventVersion() != null ? edr.getEventVersion() : null);
+                        edrService.create(e);
+                    }
+                    walletOperationService.update(operationToRerate);
                 }
             }
 
             getEntityManager().flush();
 
         } else {
-            rateNewWO(operationToRerate, useSamePricePlan, operationToRerateId);
+            rateNewWO(operationToRerate, useSamePricePlan);
         }
-
-        operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
+        if(!isEdrTreated)
+            operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
         operationToRerate.setUpdated(new Date());
         operationToRerate.setReratedWalletOperation(newWO);
         walletOperationService.update(operationToRerate);
 
     }
 
-    private WalletOperation rateNewWO(WalletOperation oldWO, boolean useSamePricePlan, Long operationToRerateId) {
+    private WalletOperation createNewWO(Map<Long, WalletOperation> oldWOAndNewWO, WalletOperation operationToRerate, boolean useSamePricePlan) {
+        WalletOperation newWO;
+        if (oldWOAndNewWO.get(operationToRerate.getId()) == null) {
+            newWO = rateNewWO(operationToRerate, useSamePricePlan);
+            oldWOAndNewWO.put(operationToRerate.getId(), newWO);
+            return newWO;
+        }
+        return null;
+    }
+
+    private WalletOperation rateNewWO(WalletOperation oldWO, boolean useSamePricePlan) {
         WalletOperation newWO = oneShotRatingService.rateRatedWalletOperation(oldWO, useSamePricePlan);
         create(newWO);
         return newWO;

@@ -1,6 +1,8 @@
 package org.meveo.api.dto.cpq.xml;
 
 import org.meveo.api.dto.cpq.PriceDTO;
+import org.meveo.api.dto.cpq.TaxDTO;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuoteArticleLine;
@@ -31,7 +33,8 @@ public class QuoteLine {
     
     @XmlAttribute
     private String consumer;
-    public QuoteLine(QuoteArticleLine line,Offer offer) {
+    public QuoteLine(QuoteArticleLine line,Offer offer, Map<String, TradingCurrency> currencies,
+                     Map<String, TaxDTO> mapTaxIndexes) {
         this.quantity = line.getQuantity();
         this.accountingArticleCode = line.getAccountingArticle().getCode();
         this.accountingArticleLabel = line.getAccountingArticle().getDescription(); 
@@ -45,13 +48,14 @@ public class QuoteLine {
 
 
         }
-        this.prices = aggregatePricesPerType(line.getQuotePrices());
+        this.prices = aggregatePricesPerType(line.getQuotePrices(), currencies, mapTaxIndexes);
         this.offer= offer;
         
         
     }
-    
-    private List<PriceDTO> aggregatePricesPerType(List<QuotePrice> baPrices) {
+
+    private List<PriceDTO> aggregatePricesPerType(List<QuotePrice> baPrices, Map<String, TradingCurrency> currencies,
+                                                  Map<String, TaxDTO> mapTaxIndexes) {
         Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = baPrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
@@ -60,7 +64,7 @@ public class QuoteLine {
                 .stream()
                 .map(key -> reducePrices(key, pricesPerType))
                 .filter(Optional::isPresent)
-                .map(price -> new PriceDTO(price.get()))
+                .map(price -> new PriceDTO(price.get(), currencies.get(price.get().getCurrencyCode()), mapTaxIndexes))
                 .collect(Collectors.toList());
     }
 

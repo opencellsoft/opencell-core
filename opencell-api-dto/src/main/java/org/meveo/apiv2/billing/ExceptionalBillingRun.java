@@ -54,7 +54,7 @@ public interface ExceptionalBillingRun extends Resource {
     BillingRunAutomaticActionEnum getSuspectAutoAction();
 
     @Schema(description = "Filters on RT")
-    Map<String, String> getFilters();
+    Map<String, Object> getFilters();
     
     @Nullable
     String getInvoiceType();

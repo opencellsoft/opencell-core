@@ -21,7 +21,7 @@ import org.meveo.model.admin.Seller;
  *
  */
 @Entity
-@Table(name = "cpq_billing_rule")
+@Table(name = "billing_redirection_rule")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_billing_rule_seq"), })
 @NamedQueries({

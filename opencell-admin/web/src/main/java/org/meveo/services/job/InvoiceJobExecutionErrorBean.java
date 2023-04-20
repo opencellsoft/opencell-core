@@ -34,6 +34,7 @@ import org.meveo.model.jobs.InvoiceJobExecutionError;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.job.InvoiceJobExecutionErrorService;
+import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 
 /**
@@ -75,7 +76,11 @@ public class InvoiceJobExecutionErrorBean extends BaseBean<InvoiceJobExecutionEr
 
             jobs = jobs.stream().filter(jobInstance -> {
 
-                Class entityClassForErrorLog = jobInstanceService.getJobByName(jobInstance.getJobTemplate()).getTargetEntityClass(jobInstance);
+                Class entityClassForErrorLog = null;
+                Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
+                if (job != null) {
+                    entityClassForErrorLog = job.getTargetEntityClass(jobInstance);
+                }
                 return entityClassForErrorLog != null && Invoice.class.isAssignableFrom(entityClassForErrorLog);
 
             }).collect(Collectors.toList());

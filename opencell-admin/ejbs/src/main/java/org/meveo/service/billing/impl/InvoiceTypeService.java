@@ -53,6 +53,8 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
     @Inject
     private ProviderService providerService;
+    
+    public final static String DEFAULT_ADVANCE_CODE = "ADV";
 
     /**
      * Gets the default type.
@@ -115,7 +117,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     /**
      * Gets the default deposit invoice.
      *
-     * @return the default draft
+     * @return the default deposit
      * @throws BusinessException the business exception
      */
     public InvoiceType getDefaultDeposit() throws BusinessException {
@@ -125,17 +127,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     /**
      * Gets the default draft.
      *
-     * @return the default draft
-     * @throws BusinessException the business exception
-     */
-    public InvoiceType getDefaultDraft() throws BusinessException {
-        return getDefaultType(getDraftCode());
-    }
-
-    /**
-     * Gets the default draft.
-     *
-     * @return the default draft
+     * @return the default prepaid
      * @throws BusinessException the business exception
      */
     public InvoiceType getDefaultPrepaid() throws BusinessException {
@@ -167,7 +159,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      * @return the list of adjustement codes
      */
     public List<String> getListAdjustementCode() {
-        String listAdjustmentCode = paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ");
+        String listAdjustmentCode = paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ, ADJ_INV, ADJ_REF");
         return Arrays.asList(listAdjustmentCode.split("\\s*,\\s*"));
     }
 
@@ -181,17 +173,9 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     }
     
     /**
-     * Gets the draft code.
-     *
-     * @return the draft code
-     */
-    public String getDraftCode() {
-        return paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT");
-    }
-    /**
      * Gets the deposit code.
      *
-     * @return the draft code
+     * @return the deposit code
      */
     public String getDepositCode() {
         return paramBeanFactory.getInstance().getProperty("invoiceType.depositInvoice.code", "ADV");

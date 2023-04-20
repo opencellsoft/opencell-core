@@ -47,6 +47,9 @@ public class PaginationConfiguration implements Serializable {
     /** Search filters (key = field name, value = search pattern or value). */
     private Map<String, Object> filters;
 
+    /** apply fetch to left join fetchFields */
+    private boolean doFetch = true;
+    
     /**
      * Fields that needs to be fetched when selecting (like lists or other entities).
      */
@@ -69,6 +72,14 @@ public class PaginationConfiguration implements Serializable {
     
     private JoinType joinType;
 
+
+    private Integer limit;
+
+    /**
+     * Shall query results be cached - see Hibernate query cache behavior
+     */
+    private boolean cacheable = false;
+    
     /**
      * Operator to use when building where statement
      */
@@ -82,6 +93,10 @@ public class PaginationConfiguration implements Serializable {
     public PaginationConfiguration(String sortField, SortOrder sortOrder) {
         this(null, null, null, null, null, sortField, sortOrder);
     }
+    
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Object... sortFieldsAndOrder) {
+        this(firstRow, numberOfRows, filters, fullTextFilter, true, fetchFields, sortFieldsAndOrder);
+    }
 
     /**
      * Constructor
@@ -90,15 +105,18 @@ public class PaginationConfiguration implements Serializable {
      * @param numberOfRows Number of rows to retrieve
      * @param filters Search criteria
      * @param fullTextFilter full text filter.
+     * @param doFetch fetch fields or not
      * @param fetchFields Lazy loaded fields to fetch
      * @param sortFieldsAndOrder Sort field and order repeated multiple times
      */
-    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Object... sortFieldsAndOrder) {
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, boolean doFetch, List<String> fetchFields, Object... sortFieldsAndOrder) {
         this.firstRow = firstRow;
         this.numberOfRows = numberOfRows;
         this.filters = filters;
         this.fullTextFilter = fullTextFilter;
+        this.doFetch = doFetch;
         this.fetchFields = fetchFields;
+        this.limit = numberOfRows;
 
         List<Object> sortValues = new ArrayList<Object>();
         for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
@@ -144,6 +162,12 @@ public class PaginationConfiguration implements Serializable {
      */
     public PaginationConfiguration(Map<String, Object> filters) {
         this.filters = filters;
+    }
+
+    public PaginationConfiguration(Map<String, Object> filters, List<String> fetchFields, Set<String> groupBy) {
+        this.filters = filters;
+        this.setGroupBy(groupBy);
+        this.setFetchFields(fetchFields);
     }
 
     /**
@@ -229,7 +253,15 @@ public class PaginationConfiguration implements Serializable {
         return fullTextFilter;
     }
 
-    public List<String> getFetchFields() {
+    public boolean isDoFetch() {
+		return doFetch;
+	}
+
+	public void setDoFetch(boolean doFetch) {
+		this.doFetch = doFetch;
+	}
+
+	public List<String> getFetchFields() {
         return fetchFields;
     }
 
@@ -289,4 +321,27 @@ public class PaginationConfiguration implements Serializable {
 	public void setFilterOperator(FilterOperatorEnum filterOperator) {
 		this.filterOperator = filterOperator;
 	}
+
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+	/**
+	 * @param cacheable Shall query results be cached - see Hibernate query cache behavior
+	 */
+    public void setCacheable(boolean cacheable) {
+        this.cacheable = cacheable;
+    }
+
+    /**
+     * @return Shall query results be cached - see Hibernate query cache behavior
+     */
+    public boolean isCacheable() {
+        return cacheable;
+    }	
 }

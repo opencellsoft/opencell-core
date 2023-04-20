@@ -54,7 +54,7 @@
                     <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" />
 
                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" componentWidth="50" />
-
+					<hftl:formField label="#{messages['provider.enterprise']}" field="entreprise" id="enterprise" />
                     <hftl:formField label="#{messages['provider.cdr.deduplicationKeyEL']}" field="cdrDeduplicationKeyEL" id="cdrDeduplicationKeyEL" />
                     <!-- <hftl:formField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" field="language" valueLabelField="languageCode"
 								popup="true" popupId="languagePopup" required="true" /> -->
@@ -160,23 +160,23 @@
                     <p:fieldset legend="#{messages['defaultArticleConfiguration.title']}" styleClass="clearLeft">
                     
 	                    <hftl:formField id="invoiceSubCategoryId" label="#{messages['defaultArticleConfiguration.invoiceSubCategory']}" 
-						                popup="true" popupId="invoiceSubCategoryPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultInvoiceSubCategory">
+						                popup="true" required="true" popupId="invoiceSubCategoryPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultInvoiceSubCategory">
 						</hftl:formField>
 	                    
 	                    <hftl:formField id="genericAccountingId" label="#{messages['defaultArticleConfiguration.genericAccounting']}" 
-						                popup="true" required="false" popupId="genericAccountingPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultGenericAccountingArticle">
+						                popup="true" required="true" popupId="genericAccountingPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultGenericAccountingArticle">
 						</hftl:formField>
 						
 						<hftl:formField id="discountAccountingId" label="#{messages['defaultArticleConfiguration.discountAccounting']}" 
-						                popup="true" required="false" popupId="discountAccountingPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultDiscountAccountingArticle">
+						                popup="true" required="true" popupId="discountAccountingPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultDiscountAccountingArticle">
 						</hftl:formField>
 						
 						<hftl:formField id="advancedPaymentId" label="#{messages['defaultArticleConfiguration.advancedPayment']}" 
-						                popup="true" required="false" popupId="advancedPaymentPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultAdvancedPaymentAccountingArticle">
+						                popup="true" required="true" popupId="advancedPaymentPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultAdvancedPaymentAccountingArticle">
 						</hftl:formField>
 						
 						<hftl:formField id="invoiceMinimumId" label="#{messages['defaultArticleConfiguration.invoiceMinimum']}" 
-						                popup="true" required="false" popupId="invoiceMinimumPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultInvoiceMinimumAccountingArticle">
+						                popup="true" required="true" popupId="invoiceMinimumPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultInvoiceMinimumAccountingArticle">
 						</hftl:formField>
 					</p:fieldset>
 					

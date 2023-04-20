@@ -48,7 +48,7 @@ public class BillingAccountDetailsItem {
 		}
 		this.discountPlanInstancesSummary = (String) fields[i++];
 		if (!StringUtils.isEmpty(discountPlanInstancesSummary) && discountPlanInstancesSummary.length() > 2) {
-			discountPlanSummaries = Stream.of(discountPlanInstancesSummary.split("\\,", -1))
+			discountPlanSummaries = Stream.of(discountPlanInstancesSummary.split("\\,", -1)).distinct().filter(x->x.length()>2)
 					.map(x -> new DiscountPlanSummary(x)).collect(Collectors.toList());
 		}
 		this.dueBalance = (BigDecimal) Optional.ofNullable((BigDecimal) fields[i++]).orElse(BigDecimal.ZERO);

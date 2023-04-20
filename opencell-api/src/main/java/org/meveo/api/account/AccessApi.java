@@ -83,7 +83,7 @@ public class AccessApi extends BaseApi {
         }
 
         if (accessService.isDuplicateAndOverlaps(access)) {
-            throw new MeveoApiException(MeveoApiErrorCodeEnum.DUPLICATE_ACCESS, "Duplicate subscription / access point pair.");
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.DUPLICATE_ACCESS, "Duplicate access point! Access is already linked to a sub within the same period");
         }
 
         // populate customFields

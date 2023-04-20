@@ -1,0 +1,248 @@
+{
+	"info": {
+		"_postman_id": "6b68562b-38f6-435b-9891-a85ab9563334",
+		"name": "kc_increase_token_lifetime",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12516174"
+	},
+	"item": [
+		{
+			"name": "KC Requests",
+			"item": [
+				{
+					"name": "GET KC Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Body matches access_token\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"access_token\");\r",
+									"});\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody)\r",
+									"pm.collectionVariables.set(\"access_key_kc\", jsonData.access_token);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "admin-cli",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{opencell.base}}/auth/realms/master/protocol/openid-connect/token",
+							"host": [
+								"{{opencell.base}}"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"master",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET KC Realm Parameters",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_key_kc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.base}}/auth/admin/realms/opencell",
+							"host": [
+								"{{opencell.base}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"opencell"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update realm",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_key_kc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"opencell\",\r\n    \"realm\": \"opencell\",\r\n    \"notBefore\": 0,\r\n    \"defaultSignatureAlgorithm\": \"RS256\",\r\n    \"accessTokenLifespan\": 864000,\r\n    \"accessTokenLifespanForImplicitFlow\": 864000,\r\n    \"ssoSessionIdleTimeout\": 864000,\r\n    \"ssoSessionMaxLifespan\": 864000,\r\n    \"ssoSessionIdleTimeoutRememberMe\": 864000,\r\n    \"ssoSessionMaxLifespanRememberMe\": 864000,\r\n    \"offlineSessionIdleTimeout\": 2592000,\r\n    \"offlineSessionMaxLifespan\": 5184000,\r\n    \"clientSessionIdleTimeout\": 864000,\r\n    \"clientSessionMaxLifespan\": 864000,\r\n    \"accessCodeLifespan\": 864000,\r\n    \"accessCodeLifespanUserAction\": 864000,\r\n    \"accessCodeLifespanLogin\": 864000,\r\n    \"actionTokenGeneratedByAdminLifespan\": 864000,\r\n    \"actionTokenGeneratedByUserLifespan\": 864000,\r\n    \"minimumQuickLoginWaitSeconds\": 864000,\r\n    \"oauth2DeviceCodeLifespan\": 864000,\r\n    \"attributes\": {\r\n        \"parRequestUriLifespan\": \"36000\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.base}}/auth/admin/realms/opencell",
+							"host": [
+								"{{opencell.base}}"
+							],
+							"path": [
+								"auth",
+								"admin",
+								"realms",
+								"opencell"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var token = pm.environment.get(\"access_token\");",
+					"",
+					"console.log(\"token : \" + token);",
+					"",
+					"if(!token) {",
+					"    console.log(\"token is not defined\");",
+					"    // Set some environment variables to use in the access token request. ",
+					"    var client_id = pm.environment.get(\"CLIENT_ID\");",
+					"    var client_secret = pm.environment.get(\"CLIENT_SECRET\");",
+					"    var opencell_url = pm.environment.get(\"opencell.base\");",
+					"    var username = pm.environment.get(\"opencell.username\");",
+					"    var password = pm.environment.get(\"opencell.password\");",
+					"    var CryptoJS = require(\"crypto-js\")",
+					"    // Encrypt the Client ID and Secret in base64 ",
+					"    var rawStr = CryptoJS.enc.Utf8.parse(client_id + ':' + client_secret)",
+					"    var client_cred = CryptoJS.enc.Base64.stringify(rawStr)",
+					"    // Now let's get a new oauth2 access_token and set it in a variable ",
+					"    pm.sendRequest(",
+					"        { ",
+					"            url: opencell_url + '/auth/realms/master/protocol/openid-connect/token',",
+					"            method: 'POST', ",
+					"            header: ",
+					"            { ",
+					"                //'Authorization': 'Basic ' + client_cred, ",
+					"                'Cache-Control': 'no-cache', ",
+					"                'Content-Type': 'application/x-www-form-urlencoded' ",
+					"            }, body: ",
+					"            { ",
+					"                mode: 'urlencoded', ",
+					"                urlencoded: ",
+					"                [",
+					"                    { ",
+					"                        key: \"client_id\", ",
+					"                        value: client_id ",
+					"                    }, ",
+					"                    { ",
+					"                        key: \"username\", ",
+					"                        value: username ",
+					"                    },",
+					"                    { ",
+					"                        key: \"password\", ",
+					"                        value: password ",
+					"                    },",
+					"                    { ",
+					"                        key: \"grant_type\", ",
+					"                        value: \"password\" ",
+					"                    },",
+					"                    { ",
+					"                        key: \"client_secret\", ",
+					"                        value: client_secret",
+					"                    },",
+					"                ] ",
+					"            } ",
+					"        }, ",
+					"        function (err, response) { ",
+					"            const jsonResponse = response.json(); ",
+					"            pm.environment.set(\"access_token\", jsonResponse.access_token); ",
+					"        }",
+					"        );",
+					"} else{",
+					"    console.log(\"token already exists\");",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "access_key_kc",
+			"value": ""
+		}
+	]
+}

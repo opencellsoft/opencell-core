@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Produces(MediaType.APPLICATION_JSON)
 public interface QuoteOfferResource {
 
-	 @POST
+		@POST
 	    @Path("/{quoteCode}/{quoteVersion}/{quoteItemId}/duplication")
 	    @Operation(summary = "This endpoint allows duplicate an existing quote item", 
 	    		tags = {"Quote management"}, 
@@ -27,6 +27,19 @@ public interface QuoteOfferResource {
 	                    @ApiResponse(responseCode = "404", description = "quote item doesn't existe"),
 	                    @ApiResponse(responseCode = "403", description = "Cannot move subscription") })
 	    Response duplicate(@Parameter(description = "The quote code", required = true) @PathParam("quoteCode") String quoteCode,
+	            @Parameter(description = "quote version id", required = true) @PathParam("quoteVersion") Integer quoteVersion,
+	            @Parameter(description = "quote item id") @PathParam("quoteItemId") Long quoteItemId);
+		
+		@POST
+	    @Path("/{quoteCode}/{quoteVersion}/{quoteItemId}/duplicate")
+	    @Operation(summary = "This endpoint allows duplicate an existing quote item", 
+	    		tags = {"Quote management"}, 
+	    		description = "API to duplicate an existing quote item", 
+	    		responses = {
+	                    @ApiResponse(responseCode = "200", description = "Success Returns new quote item duplicated from existing one"),
+	                    @ApiResponse(responseCode = "404", description = "quote item doesn't existe"),
+	                    @ApiResponse(responseCode = "403", description = "Cannot move subscription") })
+	    Response duplicateQuote(@Parameter(description = "The quote code", required = true) @PathParam("quoteCode") String quoteCode,
 	            @Parameter(description = "quote version id", required = true) @PathParam("quoteVersion") Integer quoteVersion,
 	            @Parameter(description = "quote item id") @PathParam("quoteItemId") Long quoteItemId);
 }

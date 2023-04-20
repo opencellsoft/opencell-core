@@ -56,7 +56,7 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 
     public MeasurementBean() {
         super(MeasuredValue.class);
-        showDeprecatedWarning();
+        showDeprecatedWarning(DEPRECATED_FEATURE);
     }
 
     /**

@@ -35,6 +35,7 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
@@ -45,9 +46,11 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.RatingResult;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -61,7 +64,9 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
@@ -71,6 +76,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.AgreementDateSettingEnum;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.payments.PaymentScheduleTemplate;
@@ -156,6 +162,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private DiscountPlanService discountPlanService;
+    
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
@@ -371,7 +380,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     public void productServiceInstanciation(ServiceInstance serviceInstance, Product product, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual) throws BusinessException {
-
         log.debug("Will instantiate service {} for subscription {} quantity {}", serviceInstance.getCode(), serviceInstance.getSubscription().getCode(), serviceInstance.getQuantity());
 
         Subscription subscription = serviceInstance.getSubscription();
@@ -399,7 +407,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         serviceInstance.setDescription(product.getDescription());
-        serviceInstance.setPriceVersionDateSetting(product.getPriceVersionDateSetting());
+        if(!PriceVersionDateSettingEnum.MANUAL.equals(serviceInstance.getPriceVersionDateSetting())) {
+            serviceInstance.setPriceVersionDateSetting(product.getPriceVersionDateSetting());
+        }
         
 		if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())) {
 			serviceInstance.setPriceVersionDate(serviceInstance.getSubscriptionDate()); 
@@ -412,10 +422,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}else if(PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
 			serviceInstance.setPriceVersionDate(null); 
 		}
+		if(PriceVersionDateSettingEnum.MANUAL == product.getPriceVersionDateSetting() && serviceInstance.getPriceVersionDate() == null) {
+			throw new BusinessApiException("mandatory field is missing");
+		}
 
         if (!isVirtual) {
             create(serviceInstance);
-            getEntityManager().flush();
         } else {
             serviceInstance.updateSubscribedTillAndRenewalNotifyDates();
         }
@@ -423,6 +435,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         subscription.getServiceInstances().add(serviceInstance);
 
         instanciateCharges(serviceInstance, product, subscriptionAmount, terminationAmount, isVirtual);
+        
+        if(CollectionUtils.isNotEmpty(product.getDiscountList())) {
+            product.getDiscountList().stream()
+                            .filter(DiscountPlan::isAutomaticApplication)
+                            .forEach(dp -> instantiateDiscountPlan(serviceInstance, dp, isVirtual));
+        }
 
     }
 
@@ -512,14 +530,16 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         checkServiceAssociatedWithOffer(serviceInstance);
-        
-        subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+
+        if (subscription.getStatus() != SubscriptionStatusEnum.ACTIVE) {
+            subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+        }
 
         if (serviceInstance.getSubscriptionDate() == null) {
             serviceInstance.setSubscriptionDate(new Date());
         }
 
-        if (serviceInstance.getEndAgreementDate() == null) {
+        if (serviceInstance.getEndAgreementDate() == null && !AgreementDateSettingEnum.MANUAL.equals(serviceInstance.getProductVersion().getProduct().getAgreementDateSetting())) {
             serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
         }
 
@@ -1223,12 +1243,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         // Accumulator counters
         for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
             if (counterInstance != null) {
-                counterInstanceService.createCounterPeriodIfMissingInSameTX(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+                counterInstanceService.createCounterPeriodIfMissingInSameTX(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance, null, null);
             }
         }
         // Standard counter
         if (chargeInstance.getCounter() != null) {
-            counterInstanceService.createCounterPeriodIfMissingInSameTX(chargeInstance.getCounter(), chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance);
+            counterInstanceService.createCounterPeriodIfMissingInSameTX(chargeInstance.getCounter(), chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance, null, null);
         }
     } 
     
@@ -1274,5 +1294,24 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new MissingParameterException("service id or code");
         }
         return serviceInstance;
+    }
+    
+    public void instantiateDiscountPlan(ServiceInstance serviceInstance, DiscountPlan discountPlan, boolean isVirtual) {
+        if(discountPlan == null) {
+            throw new BusinessException("The Discount is required for instantiation");
+        }
+        if(discountPlan.getStatus() == DiscountPlanStatusEnum.IN_USE || discountPlan.getStatus() == DiscountPlanStatusEnum.ACTIVE) {
+            Subscription sub = serviceInstance.getSubscription();
+            if(sub != null) {
+                BillingAccount billingAccount = sub.getUserAccount().getBillingAccount();
+                if(billingAccount != null) {
+                    if(CollectionUtils.isEmpty(billingAccount.getDiscountPlanInstances())) {
+                        discountPlanInstanceService.instantiateDiscountPlan(billingAccount, discountPlan, null, isVirtual);
+                    }
+                }
+            }
+           
+        }
+        
     }
 }

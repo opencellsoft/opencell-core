@@ -74,6 +74,8 @@ public class ProductChargeTemplateApi extends ChargeTemplateApi<ProductChargeTem
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(ProductChargeTemplate.class, postData.getCode());
         }
+        
+        super.checkInternalNote(chargeTemplate, postData);
 
         chargeTemplate = dtoToEntity(postData, chargeTemplate);
 

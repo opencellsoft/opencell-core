@@ -5,19 +5,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.opencellsoft</groupId>
-		<artifactId>opencell</artifactId>
-		<relativePath>../pom.xml</relativePath>
-		<version>14.0.0-SNAPSHOT</version>
-	</parent>
-	<artifactId>opencell-api</artifactId>
-	<name>Opencell API</name>
-	<properties>
-		<swagger.server.link>http://localhost:8080/opencell/api/rest</swagger.server.link>
-	</properties>
-	<dependencies>
 
+    <parent>
+        <groupId>com.opencellsoft</groupId>
+        <artifactId>opencell</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>14.2.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>opencell-api</artifactId>
+    <name>Opencell API</name>
+    <properties>
+        <swagger.server.link>http://localhost:8080/opencell/api/rest</swagger.server.link>
+    </properties>
+    <dependencies>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>

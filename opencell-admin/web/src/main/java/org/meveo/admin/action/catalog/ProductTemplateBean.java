@@ -116,6 +116,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
     public ProductTemplateBean() {
         super(ProductTemplate.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

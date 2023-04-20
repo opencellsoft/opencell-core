@@ -31,6 +31,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.admin.impl.SellerService;
@@ -67,27 +68,32 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
     private TradingCountryService tradingCountryService;
 
     @Override
-    public OneShotChargeTemplate create(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
+    public OneShotChargeTemplate create(OneShotChargeTemplateDto oneShotChargeTemplateDto) throws MeveoApiException, BusinessException {
+
+        checkOneChargeTemplateDto(oneShotChargeTemplateDto);
+
+        // check if code already exists
+        if (oneShotChargeTemplateService.findByCode(oneShotChargeTemplateDto.getCode()) != null) {
+            throw new EntityAlreadyExistsException(OneShotChargeTemplate.class, oneShotChargeTemplateDto.getCode());
+        }
+
+        OneShotChargeTemplate chargeTemplate = dtoToEntity(oneShotChargeTemplateDto, null);
+
+        oneShotChargeTemplateService.create(chargeTemplate);
+
+        return chargeTemplate;
+    }
+
+    private void checkOneChargeTemplateDto(OneShotChargeTemplateDto postData) {
 
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(OneShotChargeTemplate.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
             missingParameters.add("oneShotChargeTemplateType");
-        } 
-
-        handleMissingParametersAndValidate(postData);
-
-        // check if code already exists
-        if (oneShotChargeTemplateService.findByCode(postData.getCode()) != null) {
-            throw new EntityAlreadyExistsException(OneShotChargeTemplate.class, postData.getCode());
         }
 
-        OneShotChargeTemplate chargeTemplate = dtoToEntity(postData, null);
-
-        oneShotChargeTemplateService.create(chargeTemplate);
-
-        return chargeTemplate;
+        handleMissingParametersAndValidate(postData);
     }
 
     /**
@@ -136,6 +142,9 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getCode());
         }
+
+        // Internal note updatable only for Draft and Active Charge template
+		super.checkInternalNote(chargeTemplate, postData);
 
         chargeTemplate = dtoToEntity(postData, chargeTemplate);
 
@@ -217,4 +226,5 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
     protected BiFunction<OneShotChargeTemplate, CustomFieldsDto, OneShotChargeTemplateDto> getEntityToDtoFunction() {
         return OneShotChargeTemplateDto::new;
     }
+
 }

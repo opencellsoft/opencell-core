@@ -37,11 +37,13 @@
         <hftl:dataList label="#{messages['userAccount.title']}" backingBean="#{userAccountListBean}" sortBy="code">
             <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
-            <hftl:column label="#{messages['userAccount.name']}" field="name" />
+            <hftl:column label="#{messages['customerAccount.title']}" field="name.title.description"  />
+            <hftl:column label="#{messages['customerAccount.firstName']}" field="name.firstName" titleWithMessage="true" />
+            <hftl:column label="#{messages['customerAccount.lastName']}" field="name.lastName" titleWithMessage="true" />
             <hftl:column label="#{messages['address.address1']}" field="address.address1" />
             <hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true" />
             <hftl:column label="#{messages['billingAccount.terminationDate']}" field="terminationDate" isDate="true" />
-            <hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
+            <hftl:column label="#{messages['billingAccount.status']}" sortField="status" field="status.label" isMessage="true" />
 
             <hftl:actionsColumn useCustomIdParam="true" />
         </hftl:dataList>

@@ -17,7 +17,7 @@
  */
 
 package org.meveo.model.dwh;
-
+@Deprecated
 public enum OrientationEnum {
     vertical, horizontal
 }

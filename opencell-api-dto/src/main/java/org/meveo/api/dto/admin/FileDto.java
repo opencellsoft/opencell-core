@@ -56,6 +56,20 @@ public class FileDto {
     }
 
     /**
+     * Instantiates a new file dto.
+     *
+     * @param fileName the fileName
+     */
+    public FileDto(String fileName, Date lastModified) {
+        if (fileName.endsWith("/")) {
+            isDirectory = true;
+            fileName = fileName.substring(0, fileName.length() - 1);
+        }
+        name = fileName;
+        this.lastModified = lastModified;
+    }
+
+    /**
      * Gets the name.
      *
      * @return the name

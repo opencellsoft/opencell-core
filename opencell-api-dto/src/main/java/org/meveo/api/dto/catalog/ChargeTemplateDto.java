@@ -157,6 +157,9 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 
     private List<String> linkedAttributes;
 
+    @Schema(description = "Internal Note")
+    private String internalNote;
+
     /**
      * Instantiates a new charge template dto.
      */
@@ -215,6 +218,7 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
         if(chargeTemplate.getStatus()!=null) {
         	status=chargeTemplate.getStatus();
         }
+        internalNote = chargeTemplate.getInternalNote();
     }
 
     /**
@@ -590,4 +594,19 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 	public void setStatus(ChargeTemplateStatusEnum status) {
 		this.status = status;
 	}
+
+	/**
+	 * @return the internalNote
+	 */
+	public String getInternalNote() {
+		return internalNote;
+	}
+
+	/**
+	 * @param internalNote the internalNote to set
+	 */
+	public void setInternalNote(String internalNote) {
+		this.internalNote = internalNote;
+	}
+
 }

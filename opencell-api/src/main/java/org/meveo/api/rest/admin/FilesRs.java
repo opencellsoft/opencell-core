@@ -188,7 +188,7 @@ public interface FilesRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus suppressFile(String file);
+    ActionStatus suppressFile(@QueryParam("filePath") String filePath, String file);
 
     /**
      * Suppress the directory 
@@ -306,4 +306,29 @@ public interface FilesRs extends IBaseRs {
 	)
     ActionStatus downloadFile(@QueryParam("file") String file);
 
+
+
+	/**
+	 * Move a file or directory from a given source path to a given destination path.
+	 *
+	 * @param srcPath source path
+	 * @param destPath destination path
+	 * @return Request processing status
+	 */
+	@POST
+	@Path("/moveFileOrDirectory")
+	@Operation(
+			summary = "Move file or directory with a given source path and a given destination path. ",
+			description = "Given a source path and destination path, this API will move the content from source to destination",
+			operationId = "GET_Files_moveFileOrDirectory",
+			responses = {
+					@ApiResponse(description = " Request processing status ",
+							content=@Content(
+									schema=@Schema(
+											implementation = ActionStatus.class
+									)
+							)
+					)}
+	)
+	ActionStatus moveFileOrDirectory(@QueryParam("sourcePath") String srcPath, @QueryParam("destinationPath") String destPath);
 }

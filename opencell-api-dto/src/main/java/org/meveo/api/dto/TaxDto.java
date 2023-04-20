@@ -59,6 +59,12 @@ public class TaxDto extends BusinessEntityDto {
 
     /** Sub taxes */
     private List<TaxDto> subTaxes;
+    
+    /** untdidTaxationCategory */
+    private String taxationCategory;
+    
+    /** untdidVatexDto */
+    private String vatex;
 
     /**
      * Instantiates a new tax dto.
@@ -94,11 +100,15 @@ public class TaxDto extends BusinessEntityDto {
                     stream()
                     .map(subTax -> new TaxDto(subTax.getId()))
                     .collect(toList());
-        }
+        }        
     }
 
     public TaxDto(Long id) {
         this.id = id;
+    }
+
+    public TaxDto(Tax tax) {
+        super(tax);
     }
 
     /**
@@ -194,4 +204,23 @@ public class TaxDto extends BusinessEntityDto {
         return "TaxDto [code=" + getCode() + ", description=" + getDescription() + ", percent=" + percent + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields="
                 + customFields + "]";
     }
+
+    public String getTaxationCategory() {
+        return taxationCategory;
+    }
+
+    public void setTaxationCategory(String taxationCategory) {
+        this.taxationCategory = taxationCategory;
+    }
+
+    public String getVatex() {
+        return vatex;
+    }
+
+    public void setVatex(String vatex) {
+        this.vatex = vatex;
+    }
+
+	
+    
 }

@@ -21,10 +21,12 @@ package org.meveo.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -40,6 +42,10 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.UntdidInvoiceCodeType;
+import org.meveo.model.billing.UntdidInvoiceSubjectCode;
+import org.meveo.model.billing.UntdidTaxationCategory;
+import org.meveo.model.billing.UntdidVatPaymentOption;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -49,6 +55,10 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.billing.impl.InvoiceSequenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.UntdidInvoiceCodeTypeService;
+import org.meveo.service.billing.impl.UntdidInvoiceSubjectCodeService;
+import org.meveo.service.billing.impl.UntdidTaxationCategoryService;
+import org.meveo.service.billing.impl.UntdidVatPaymentOptionService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -88,6 +98,14 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
     @Inject
     private EmailTemplateService emailTemplateService;
 
+    @Inject
+    private UntdidInvoiceSubjectCodeService untdidInvoiceSubjectCodeService;
+    
+    @Inject
+    private UntdidInvoiceCodeTypeService untdidInvoiceCodeTypeService;
+    
+    @Inject
+    private UntdidVatPaymentOptionService untdidVatPaymentOptionService;
     /**
      * Handle parameters.
      *
@@ -171,12 +189,14 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
             entity.setCode(dto.getUpdatedCode());
         }
         
-        if(!StringUtils.isBlank(dto.getInvoiceValidationScriptCode())) {
+        if (!StringUtils.isBlank(dto.getInvoiceValidationScriptCode())) {
         	ScriptInstance invoiceValidationScript = scriptInstanceService.findByCode(dto.getInvoiceValidationScriptCode());
         	if (invoiceValidationScript == null) {
                 throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getInvoiceValidationScriptCode());
             }
         	entity.setInvoiceValidationScript(invoiceValidationScript);
+        } else if ("".equals(dto.getInvoiceValidationScriptCode())) {
+        	entity.setInvoiceValidationScript(null);
         }
 
         if (dto.getOccTemplateCode() != null) {
@@ -360,6 +380,36 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
 
         if(dto.getExcludeFromAgedTrialBalance() != null) {
         	entity.setExcludeFromAgedTrialBalance(dto.getExcludeFromAgedTrialBalance());
+        }
+        
+        if(dto.getUntdidInvoiceSubjectCode() != null) {
+            UntdidInvoiceSubjectCode invoiceSubjectCode = untdidInvoiceSubjectCodeService.getByCode(dto.getUntdidInvoiceSubjectCode());
+            if (invoiceSubjectCode == null) {
+                throw new EntityDoesNotExistsException(UntdidInvoiceSubjectCode.class, dto.getUntdidInvoiceSubjectCode());
+            }
+            entity.setInvoiceSubjectCode(invoiceSubjectCode);
+        }
+        
+        if (!StringUtils.isBlank(dto.getInvoiceCodeType())) {
+            UntdidInvoiceCodeType untdidInvoiceCodeType = untdidInvoiceCodeTypeService.getByCode(dto.getInvoiceCodeType());
+            if (untdidInvoiceCodeType == null) {
+                throw new EntityDoesNotExistsException(UntdidInvoiceCodeType.class, dto.getInvoiceCodeType());
+            }
+            entity.setUntdidInvoiceCodeType(untdidInvoiceCodeType);
+        }
+        if (!StringUtils.isBlank(dto.getVatPaymentOption())) {
+            UntdidVatPaymentOption untdidVatPaymentOption = untdidVatPaymentOptionService.getByCode(dto.getVatPaymentOption());
+            if (untdidVatPaymentOption == null) {
+                throw new EntityDoesNotExistsException(UntdidVatPaymentOption.class, dto.getVatPaymentOption());
+            }
+            entity.setUntdidVatPaymentOption(untdidVatPaymentOption);
+        }else {
+        	UntdidVatPaymentOption untdidVatPaymentOption = untdidVatPaymentOptionService.getByCode("3");
+        	entity.setUntdidVatPaymentOption(
+        	    Optional.ofNullable(untdidVatPaymentOption)
+        	        .orElseGet(() -> untdidVatPaymentOptionService.list().stream().findFirst()
+        	            .orElseThrow(() -> new EntityNotFoundException("No UntdidVatPaymentOption entities found.")))
+        	);
         }
 
         // populate customFields

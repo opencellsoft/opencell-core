@@ -23,10 +23,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.exception.*;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxCategory;
@@ -37,6 +34,8 @@ import org.meveo.service.script.ScriptInstanceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
@@ -142,12 +141,14 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
             entity.setCalendar(calendar);
         }
 
-        if (dto.getInvoiceTypeCode() != null) {
+        if (!StringUtils.isBlank(dto.getInvoiceTypeCode())) {
             InvoiceType invoiceType = invoiceTypeService.findByCode(dto.getInvoiceTypeCode());
             if (invoiceType == null) {
                 throw new EntityDoesNotExistsException(InvoiceType.class, dto.getInvoiceTypeCode());
             }
             entity.setInvoiceType(invoiceType);
+        } else if ("".equals(dto.getInvoiceTypeCode())) {
+        	entity.setInvoiceType(null);
         }
 
         if (!StringUtils.isBlank(dto.getScriptInstanceCode())) {
@@ -156,6 +157,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
                 throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getScriptInstanceCode());
             }
             entity.setScriptInstance(scriptInstance);
+        } else if ("".equals(dto.getScriptInstanceCode())) {
+        	entity.setScriptInstance(null);
         }
         
         if (!StringUtils.isBlank(dto.getBillingRunValidationScriptCode())) {
@@ -164,6 +167,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
                 throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getBillingRunValidationScriptCode());
             }
             entity.setBillingRunValidationScript(scriptInstance);
+        } else if ("".equals(dto.getBillingRunValidationScriptCode())) {
+        	entity.setBillingRunValidationScript(null);
         }
 
         entity.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
@@ -183,8 +188,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getDueDateDelay() != null && StringUtils.isBlank(dto.getDueDateDelayEL())) {
             dto.setDueDateDelayEL(dto.getDueDateDelay().toString());
         }
-        if (dto.getLastTransactionDateDelay() != null && StringUtils.isBlank(dto.getTransactionDateDelayEL())) {
-            dto.setTransactionDateDelayEL(dto.getLastTransactionDateDelay().toString());
+        if (dto.getTransactionDateDelay() != null && StringUtils.isBlank(dto.getTransactionDateDelayEL())) {
+            dto.setTransactionDateDelayEL(dto.getTransactionDateDelay().toString());
         }
         if (dto.getInvoiceDateProductionDelay() != null && StringUtils.isBlank(dto.getInvoiceDateProductionDelayEL())) {
             dto.setInvoiceDateProductionDelayEL(dto.getInvoiceDateProductionDelay().toString());
@@ -211,31 +216,68 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getInvoiceDateProductionDelayEL() != null) {
             entity.setInvoiceDateProductionDelayEL(StringUtils.isEmpty(dto.getInvoiceDateProductionDelayEL()) ? null : dto.getInvoiceDateProductionDelayEL());
         }
-        if (dto.isThresholdPerEntity() != null) {
-        	entity.setThresholdPerEntity(dto.isThresholdPerEntity());
+        if (dto.getThresholdPerEntity() != null) {
+        	entity.setThresholdPerEntity(dto.getThresholdPerEntity());
         }
-        if (dto.getInvoicingThreshold() != null) {
-            entity.setInvoicingThreshold(dto.getInvoicingThreshold());
-        }
+
+        entity.setInvoicingThreshold(dto.getInvoicingThreshold());
+
         if (dto.getReferenceDate() != null) {
             entity.setReferenceDate(dto.getReferenceDate());
         }
         if (dto.getType() != null) {
             entity.setType(dto.getType());
         }
-        if (dto.getCheckThreshold() != null) {
-            entity.setCheckThreshold(dto.getCheckThreshold());
-        }
+
+        entity.setCheckThreshold(dto.getCheckThreshold());
+
         if (dto.getSplitPerPaymentMethod() != null) {
             entity.setSplitPerPaymentMethod(dto.getSplitPerPaymentMethod());
         }
         if (dto.getCollectionDateDelayEl() != null) {
             entity.setCollectionDateDelayEl(dto.getCollectionDateDelayEl());
         }
-        if (dto.isComputeDatesAtValidation() != null) {
-            entity.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
+        if (dto.getComputeDatesAtValidation() != null) {
+            entity.setComputeDatesAtValidation(dto.getComputeDatesAtValidation());
         }
-        // populate customFields
+		if (dto.getPriority() != null) {
+			entity.setPriority(dto.getPriority());
+		}
+
+        if (dto.getFilters() == null || dto.getFilters().isEmpty()) {
+        	if (dto.getType() != null) {
+	            Map filters = new LinkedHashMap();
+	            switch (dto.getType()){
+	                case BILLINGACCOUNT: filters.put("billingAccount.billingCycle.code", dto.getCode()); entity.setFilters(filters);break;
+	                case SUBSCRIPTION: filters.put("subscription.billingCycle.code", dto.getCode()); entity.setFilters(filters); break;
+	                case ORDER: filters.put("infoOrder.order.billingCycle.code", dto.getCode()); entity.setFilters(filters); break;
+	            }
+        	}
+
+        } else {
+            entity.setFilters(dto.getFilters());
+        }
+        
+        if (dto.getDisableAggregation() != null) {
+            entity.setDisableAggregation(dto.getDisableAggregation());
+        }
+        if (dto.getUseAccountingArticleLabel() != null) {
+            entity.setUseAccountingArticleLabel(dto.getUseAccountingArticleLabel());
+        }
+        
+        entity.setDateAggregation(dto.getDateAggregation());
+        
+        if (dto.getAggregateUnitAmounts() != null) {
+            entity.setAggregateUnitAmounts(dto.getAggregateUnitAmounts());
+        }
+        if (dto.getIgnoreSubscriptions() != null) {
+            entity.setIgnoreSubscriptions(dto.getIgnoreSubscriptions());
+        }
+        if (dto.getIgnoreOrders() != null) {
+            entity.setIgnoreOrders(dto.getIgnoreOrders());
+        }
+
+       	// populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), entity, isNew, true);
 

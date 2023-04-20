@@ -89,7 +89,7 @@ public enum InvoiceStatusEnum {
 
         VALIDATED.id = 6;
         VALIDATED.label = "invoiceStatusEnum.validated";
-        VALIDATED.previousStats = Arrays.asList(new InvoiceStatusEnum[]{null, NEW, DRAFT, REJECTED});
+        VALIDATED.previousStats = Arrays.asList(new InvoiceStatusEnum[]{null, SUSPECT, NEW, DRAFT, REJECTED});
         
     }
 

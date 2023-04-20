@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
@@ -43,6 +44,7 @@ public interface Invoice extends Resource {
 	Date getProductDate();
 
 	@Schema(description = "The invoice date")
+	@Nullable
 	Date getInvoiceDate();
 
 	@Schema(description = "The status of the invoice.", example = "possible value are : "
@@ -68,15 +70,19 @@ public interface Invoice extends Resource {
 	BigDecimal getDiscount();
 
 	@Schema(description = "The amount without tax")
+	@Nullable
 	BigDecimal getAmountWithoutTax();
 
 	@Schema(description = "The amount tax")
+	@Nullable
 	BigDecimal getAmountTax();
 
 	@Schema(description = "The amount with tax")
+	@Nullable
 	BigDecimal getAmountWithTax();
 
 	@Schema(description = "The net to pay")
+	@Nullable
 	BigDecimal getNetToPay();
 
 	@Schema(description = "The payment method type", example = "possible value are: CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, PAYPAL, STRIPE, CASH")
@@ -212,6 +218,7 @@ public interface Invoice extends Resource {
 			+ "<li>ABANDONED : invoice has no payment status, no AO created.</li>"
 			+ "<li>REFUNDED : invoice has no payment status, no AO created.</li>"
 			+ "<li>DISPUTED : invoice has no payment status, no AO created.</li>")
+	@Nullable
 	InvoicePaymentStatusEnum getPaymentStatus();
 
 	@Schema(description = "The date of the payment status")
@@ -227,6 +234,7 @@ public interface Invoice extends Resource {
 	Date getEndDate();
 
 	@Schema(description = "The raw amount")
+	@Nullable
 	BigDecimal getRawAmount();
 
 	@Schema(description = "The discount rate")
@@ -234,6 +242,7 @@ public interface Invoice extends Resource {
 	BigDecimal getDiscountRate();
 
 	@Schema(description = "The discount amount")
+	@Nullable
 	BigDecimal getDiscountAmount();
 
 	@Schema(description = "Indicate if the invoice is already applied minumun")
@@ -306,4 +315,8 @@ public interface Invoice extends Resource {
 	@Schema(description = "discount amount without tax")
 	@Nullable
 	BigDecimal getDiscountAmountWithoutTax();
+
+	@Nullable
+	@Schema(description = "custom field associated to invoice")
+	CustomFieldsDto getCustomFields();
 }

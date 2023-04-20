@@ -41,10 +41,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.AuthorizationResource;
 import org.keycloak.admin.client.resource.ClientResource;
 import org.keycloak.admin.client.resource.GroupsResource;
@@ -67,14 +64,12 @@ import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 import org.keycloak.representations.idm.authorization.ScopePermissionRepresentation;
 import org.keycloak.representations.idm.authorization.ScopeRepresentation;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementAlreadyExistsException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidParameterException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
@@ -83,7 +78,10 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserGroup;
 import org.meveo.security.keycloak.AuthenticationProvider;
+import org.meveo.security.keycloak.KeycloakAdminClientConfig;
 import org.slf4j.Logger;
+import org.wildfly.security.http.oidc.OidcPrincipal;
+import org.wildfly.security.http.oidc.OidcSecurityContext;
 
 /**
  * Keycloak management services - user, api access rules and secured entities management (last two implemented as authorization resources) <br/>
@@ -140,58 +138,16 @@ public class KeycloakAdminClientService implements Serializable {
     private static final String KC_POLICY_ROLE_PREFIX = "Role ";
 
     /**
-     * Reads the configuration from system property.
-     * 
-     * @return KeycloakAdminClientConfig
-     */
-    private KeycloakAdminClientConfig loadConfig() {
-        KeycloakAdminClientConfig keycloakAdminClientConfig = new KeycloakAdminClientConfig();
-        try {
-            // override from system property.
-            // opencell.keycloak.url-internal is used for internal communication with Keycloak and
-            // opencell.keycloak.url is used for a redirect to login in a browser
-            String keycloakServerUrl = System.getProperty("opencell.keycloak.url-internal");
-            if (StringUtils.isBlank(keycloakServerUrl)) {
-                keycloakServerUrl = System.getProperty("opencell.keycloak.url");
-            }
-            if (!StringUtils.isBlank(keycloakServerUrl)) {
-                keycloakAdminClientConfig.setServerUrl(keycloakServerUrl);
-            }
-            String realm = System.getProperty("opencell.keycloak.realm");
-            if (!StringUtils.isBlank(realm)) {
-                keycloakAdminClientConfig.setRealm(realm);
-            }
-            String clientId = System.getProperty("opencell.keycloak.client");
-            if (!StringUtils.isBlank(clientId)) {
-                keycloakAdminClientConfig.setClientId(clientId);
-            }
-            String clientSecret = System.getProperty("opencell.keycloak.secret");
-            if (!StringUtils.isBlank(clientSecret)) {
-                keycloakAdminClientConfig.setClientSecret(clientSecret);
-            }
-
-            log.trace("Found keycloak configuration: {}", keycloakAdminClientConfig);
-        } catch (Exception e) {
-            log.error("Error: Loading keycloak admin configuration. " + e.getMessage());
-        }
-
-        return keycloakAdminClientConfig;
-    }
-
-    /**
      * @param keycloakAdminClientConfig keycloak admin client config.
      * @return instance of Keycloak.
      */
-    @SuppressWarnings("rawtypes")
-    private Keycloak getKeycloakClient(KeycloakAdminClientConfig keycloakAdminClientConfig) {
-        KeycloakSecurityContext session = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext();
+    @SuppressWarnings({ "unchecked" })
+    public Keycloak getKeycloakClient(KeycloakAdminClientConfig keycloakAdminClientConfig) {
 
-        KeycloakBuilder keycloakBuilder = KeycloakBuilder.builder().serverUrl(keycloakAdminClientConfig.getServerUrl()).realm(keycloakAdminClientConfig.getRealm()).grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-            .clientId(keycloakAdminClientConfig.getClientId()).clientSecret(keycloakAdminClientConfig.getClientSecret()).authorization(session.getTokenString());
+        OidcPrincipal<OidcSecurityContext> oidcPrincipal = (OidcPrincipal<OidcSecurityContext>) ctx.getCallerPrincipal();
+        String accessToken = oidcPrincipal.getOidcSecurityContext().getTokenString();
 
-        keycloakBuilder.resteasyClient(new ResteasyClientProxyBuilder().connectionPoolSize(200).maxPooledPerRoute(200).build());
-
-        return keycloakBuilder.build();
+        return AuthenticationProvider.getKeycloakClient(keycloakAdminClientConfig, accessToken);
     }
 
     /**
@@ -206,7 +162,7 @@ public class KeycloakAdminClientService implements Serializable {
         String lastName = (String) paginationConfig.getFilters().get("lastName");
         String email = (String) paginationConfig.getFilters().get("email");
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -240,7 +196,7 @@ public class KeycloakAdminClientService implements Serializable {
         String lastName = (String) paginationConfig.getFilters().get("lastName");
         String email = (String) paginationConfig.getFilters().get("email");
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -267,7 +223,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public String createUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, String providerToOverride)
             throws InvalidParameterException, ElementNotFoundException, UsernameAlreadyExistsException {
-        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, providerToOverride, false);
+        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, providerToOverride, false, null);
     }
 
     /**
@@ -284,9 +240,9 @@ public class KeycloakAdminClientService implements Serializable {
      * @throws InvalidParameterException Missing fields
      * @throws ElementNotFoundException User was not found
      */
-    public String updateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles)
+    public String updateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, Map<String, String> attributes)
             throws InvalidParameterException, ElementNotFoundException, UsernameAlreadyExistsException {
-        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, null, true);
+        return createOrUpdateUser(userName, firstName, lastName, email, password, userGroup, roles, null, true, attributes);
     }
 
     /**
@@ -306,10 +262,10 @@ public class KeycloakAdminClientService implements Serializable {
      * @throws UsernameAlreadyExistsException User with such username already exists
      * @throws ElementNotFoundException User was not found
      */
-    private String createOrUpdateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, String providerToOverride, boolean isUpdate)
+    private String createOrUpdateUser(String userName, String firstName, String lastName, String email, String password, String userGroup, Collection<String> roles, String providerToOverride, boolean isUpdate, Map<String, String> pAttributes)
             throws InvalidParameterException, ElementNotFoundException, UsernameAlreadyExistsException {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -379,9 +335,77 @@ public class KeycloakAdminClientService implements Serializable {
             user.setAttributes(attributes);
         }
 
-        // Determine user groups and validate that they exist
+        //Check if update and attributes are not empty then add the list to user object
+        if(isUpdate && pAttributes != null && !pAttributes.isEmpty()) {
+            Map<String, List<String>> attributes = user.getAttributes();
 
+            for (Map.Entry<String, String> entry : pAttributes.entrySet()) {
+                attributes.put(entry.getKey(), Arrays.asList(entry.getValue()));
+            }
+
+            user.setAttributes(attributes);
+        }
+
+        List<RoleRepresentation> rolesToAdd = checkAndBuildRoles(roles, realmResource);
+        List<GroupRepresentation> groupsToAdd = checkAndBuildGroups(userGroup, realmResource);
+
+        String userId = null;
+
+        // Update current user
+        if (isUpdate) {
+            userId = user.getId();
+            usersResource.get(userId).update(user);
+        } else {
+            // Create a new user
+            Response response = usersResource.create(user);
+
+            if (response.getStatus() != Status.CREATED.getStatusCode()) {
+                log.error("Keycloak user creation or update with http status.code={} and reason={}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
+
+                if (response.getStatus() == HttpStatus.SC_CONFLICT) {
+                    try {
+                        UserRepresentation existingUser = getUserRepresentationByUsername(usersResource, userName);
+                        log.warn("A user with username {} and id {} already exists in Keycloak", userName, existingUser.getId());
+                        throw new UsernameAlreadyExistsException(userName);
+                        // Some other field is causing a conflict
+                    } catch (ElementNotFoundException e) {
+                        throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus() + " and reason=" + response.getStatusInfo().getReasonPhrase());
+                    }
+                } else {
+                    throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus() + " and reason=" + response.getStatusInfo().getReasonPhrase());
+                }
+            }
+
+            userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+        }
+
+        log.debug("User {} created or updated in Keycloak with userId: {}", user.getUsername(), userId);
+
+        updateGroups(groupsToAdd, isUpdate, usersResource, user, userId);
+        updateRoles(rolesToAdd, isUpdate, usersResource, user, userId);
+
+        // Define password credential
+        if (password != null) {
+            CredentialRepresentation credential = new CredentialRepresentation();
+            credential.setTemporary(false);
+            credential.setType(CredentialRepresentation.PASSWORD);
+            credential.setValue(password);
+            usersResource.get(userId).resetPassword(credential);// Set password credential
+        }
+
+        return userId;
+    }
+
+    /**
+     * Check and build groups
+     * @param userGroup User Group
+     * @param realmResource {@link RealmResource}
+     * @return List of {@link GroupRepresentation}
+     */
+    private List<GroupRepresentation> checkAndBuildGroups(String userGroup, RealmResource realmResource) {
+        // Determine user groups and validate that they exist
         List<GroupRepresentation> groupsToAdd = new ArrayList<>();
+
         if (userGroup != null) {
             GroupsResource groupResource = realmResource.groups();
 
@@ -395,8 +419,19 @@ public class KeycloakAdminClientService implements Serializable {
             groupsToAdd.add(groupMatched);
         }
 
+        return groupsToAdd;
+    }
+
+    /**
+     * Check and build roles
+     * @param roles User Group
+     * @param realmResource {@link RealmResource}
+     * @return List of {@link RoleRepresentation}
+     */
+    private static List<RoleRepresentation> checkAndBuildRoles(Collection<String> roles, RealmResource realmResource) {
         // Determine roles requested and validate that they exist
         List<RoleRepresentation> rolesToAdd = new ArrayList<>();
+
         if (roles != null && !roles.isEmpty()) {
             RolesResource rolesResource = realmResource.roles();
 
@@ -410,99 +445,47 @@ public class KeycloakAdminClientService implements Serializable {
             }
         }
 
-        String userId = null;
+        return rolesToAdd;
+    }
 
-        // Update current user
+    /**
+     * Update Keycloak roles
+     * @param rolesToAdd Roles to add
+     * @param isUpdate Is update mode
+     * @param usersResource {@link org.keycloak.admin.client.resource.UserResource}
+     * @param user {@link UserRepresentation}
+     * @param userId User Id
+     */
+    private static void updateRoles(List<RoleRepresentation> rolesToAdd, boolean isUpdate, UsersResource usersResource, UserRepresentation user, String userId) {
+        // Check if the roles to add exists already in the current roles then remove it from the roles to add
         if (isUpdate) {
-
-            userId = user.getId();
-            usersResource.get(userId).update(user);
-
-            // Create a new user
-        } else {
-
-            Response response = usersResource.create(user);
-
-            if (response.getStatus() != Status.CREATED.getStatusCode()) {
-                log.error("Keycloak user creation or update with http status.code={} and reason={}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
-
-                if (response.getStatus() == HttpStatus.SC_CONFLICT) {
-                    try {
-                        UserRepresentation existingUser = getUserRepresentationByUsername(usersResource, userName);
-
-                        log.warn("A user with username {} and id {} already exists in Keycloak", userName, existingUser.getId());
-                        throw new UsernameAlreadyExistsException(userName);
-
-                        // Some other field is causing a conflict
-                    } catch (ElementNotFoundException e) {
-                        throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus() + " and reason=" + response.getStatusInfo().getReasonPhrase());
-
-                    }
-
-                } else {
-                    throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus() + " and reason=" + response.getStatusInfo().getReasonPhrase());
-                }
-            }
-
-            userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+            List<RoleRepresentation> currentRoles = usersResource.get(user.getId()).roles().realmLevel().listAll();
+            rolesToAdd.removeAll(currentRoles);
         }
+        if (!rolesToAdd.isEmpty()) {
+            usersResource.get(userId).roles().realmLevel().add(rolesToAdd);
+        }
+    }
 
-        log.debug("User {} created or updated in Keycloak with userId: {}", user.getUsername(), userId);
-
-        // ---------- Set/update user groups
-
-        // Determine new user groups to add or remove
-        List<GroupRepresentation> groupsToDelete = new ArrayList<>();
-
+    /**
+     * Update Keycloak Groups
+     * @param groupsToAdd Groups to add
+     * @param isUpdate Is update mode
+     * @param usersResource {@link org.keycloak.admin.client.resource.UserResource}
+     * @param user {@link UserRepresentation}
+     * @param userId User id
+     */
+    private void updateGroups(List<GroupRepresentation> groupsToAdd, boolean isUpdate, UsersResource usersResource, UserRepresentation user, String userId) {
+        // Check if the groups to add exists already in the current groups then remove it from the groups to add
         if (isUpdate) {
             List<GroupRepresentation> currentGroups = usersResource.get(user.getId()).groups();
-            groupsToDelete.addAll(currentGroups);
-            groupsToDelete.removeAll(groupsToAdd);
             groupsToAdd.removeAll(currentGroups);
-        }
-
-        if (!groupsToDelete.isEmpty()) {
-            for (GroupRepresentation group : groupsToDelete) {
-                usersResource.get(userId).leaveGroup(group.getId());
-            }
         }
         if (!groupsToAdd.isEmpty()) {
             for (GroupRepresentation group : groupsToAdd) {
                 usersResource.get(userId).joinGroup(group.getId());
             }
         }
-
-        // ---------- Set/update roles
-
-        // Determine new roles to add or remove
-        List<RoleRepresentation> rolesToDelete = new ArrayList<>();
-
-        if (isUpdate) {
-            List<RoleRepresentation> currentRoles = usersResource.get(user.getId()).roles().realmLevel().listAll();
-            rolesToDelete.addAll(currentRoles);
-            rolesToDelete.removeAll(rolesToAdd);
-            rolesToAdd.removeAll(currentRoles);
-        }
-
-        if (!rolesToAdd.isEmpty()) {
-            usersResource.get(userId).roles().realmLevel().add(rolesToAdd);
-        }
-        if (!rolesToDelete.isEmpty()) {
-            usersResource.get(userId).roles().realmLevel().remove(rolesToDelete);
-        }
-
-        // ---------- Define password credential
-        if (password != null) {
-            CredentialRepresentation credential = new CredentialRepresentation();
-            credential.setTemporary(false);
-            credential.setType(CredentialRepresentation.PASSWORD);
-            credential.setValue(password);
-
-            // Set password credential
-            usersResource.get(userId).resetPassword(credential);
-        }
-        return userId;
-
     }
 
     /**
@@ -512,7 +495,7 @@ public class KeycloakAdminClientService implements Serializable {
      * @throws ElementNotFoundException No user found with a given username
      */
     public void deleteUser(String username) throws ElementNotFoundException {
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         // Get realm
@@ -538,13 +521,13 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public void deleteRole(String name, boolean isClientRole) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         // Get realm
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
 
-        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientName()).get(0).getId();
         ClientResource client = realmResource.clients().get(clientId);
 
         // Find a role
@@ -573,7 +556,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public List<Role> listRoles(PaginationConfiguration paginationConfig) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         // Get realm
@@ -654,13 +637,13 @@ public class KeycloakAdminClientService implements Serializable {
             throw new InvalidParameterException("Name must be provided to create a role");
         }
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         // Get realm
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
 
-        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientName()).get(0).getId();
         ClientResource client = realmResource.clients().get(clientId);
 
         RoleResource roleResource = null;
@@ -739,7 +722,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public List<UserGroup> listGroups(PaginationConfiguration paginationConfig) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -760,7 +743,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public UserGroup findGroup(String userGroupName) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -782,13 +765,13 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public Role findRole(String roleName, boolean extendedInfo, boolean isClientRole) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         // Get realm
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
 
-        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+        String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientName()).get(0).getId();
         ClientResource client = realmResource.clients().get(clientId);
 
         // Create a role
@@ -820,7 +803,7 @@ public class KeycloakAdminClientService implements Serializable {
      */
     public User findUser(String userName, boolean extendedInfo) {
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -955,7 +938,7 @@ public class KeycloakAdminClientService implements Serializable {
 
         Map<String, Set<String>> allManagedEntities = getAPIv2ManagedClassesByPackages();
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
 
         String accessToken = ((KeycloakPrincipal) ctx.getCallerPrincipal()).getKeycloakSecurityContext().getTokenString();
 
@@ -965,10 +948,10 @@ public class KeycloakAdminClientService implements Serializable {
             // Obtain KC REST resources. Moved here from above as sometime KC gives 401 error if execution takes too long
             Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
             RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
-            String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+            String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientName()).get(0).getId();
             AuthorizationResource authResource = realmResource.clients().get(clientId).authorization();
 
-            AuthzClient authzClient = AuthenticationProvider.getKcAuthzClient();
+            AuthzClient authzClient = AuthenticationProvider.getKeycloakAuthzClient();
 
             ProtectedResource protectedResource = authzClient.protection(accessToken).resource();
 
@@ -1006,7 +989,7 @@ public class KeycloakAdminClientService implements Serializable {
                 }
 
                 // Create a resource representing a package level, a resource permission and a role based policy
-                createGenericApiAuthorizationResource(packageLevelResourceNamePrefix, packageLevelPermissionNamePrefix, packageLevelRoleNamePrefix, listUris, createUris, fudUris, keycloakAdminClientConfig.getClientId(),
+                createGenericApiAuthorizationResource(packageLevelResourceNamePrefix, packageLevelPermissionNamePrefix, packageLevelRoleNamePrefix, listUris, createUris, fudUris, keycloakAdminClientConfig.getClientName(),
                     clientId, authResource, protectedResource);
 
                 // Remove resources representing a class level, a resource permission and a role based policy
@@ -1051,7 +1034,7 @@ public class KeycloakAdminClientService implements Serializable {
                     // Update and delete
                     fudUris.add("/api/rest/v2/generic/" + entityClassForUrl + "/*");
 
-                    createGenericApiAuthorizationResource(classLevelResourceNamePrefix, classLevelPermissionNamePrefix, classLevelRoleNamePrefix, listUris, createUris, fudUris, keycloakAdminClientConfig.getClientId(),
+                    createGenericApiAuthorizationResource(classLevelResourceNamePrefix, classLevelPermissionNamePrefix, classLevelRoleNamePrefix, listUris, createUris, fudUris, keycloakAdminClientConfig.getClientName(),
                         clientId, authResource, protectedResource);
                 }
 
@@ -1310,7 +1293,7 @@ public class KeycloakAdminClientService implements Serializable {
 
         Map<String, Set<String>> allManagedEntities = getAPIv2ManagedClassesByPackages();
 
-        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
 
         int newPermissionsCreated = 0;
 
@@ -1319,7 +1302,7 @@ public class KeycloakAdminClientService implements Serializable {
             // Obtain KC REST resources. Moved here from above as sometime KC gives 401 error if execution takes too long
             Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
             RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
-            String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientId()).get(0).getId();
+            String clientId = realmResource.clients().findByClientId(keycloakAdminClientConfig.getClientName()).get(0).getId();
             ClientResource client = realmResource.clients().get(clientId);
 
             String operationSuffix = "." + accessScope.name().toLowerCase();
@@ -1438,5 +1421,26 @@ public class KeycloakAdminClientService implements Serializable {
             }
         }
         return null;
+    }
+
+    /**
+     * Get user representation by username
+     * @param username Username
+     * @return {@link UserRepresentation}
+     */
+    public UserRepresentation getUserRepresentationByUsername(String username) throws ElementNotFoundException {
+        KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
+        Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
+
+        RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
+        UsersResource usersResource = realmResource.users();
+
+        List<UserRepresentation> users = usersResource.search(username, true);
+        for (UserRepresentation userRepresentation : users) {
+            if (username.equalsIgnoreCase(userRepresentation.getUsername())) {
+                return userRepresentation;
+            }
+        }
+        throw new ElementNotFoundException("No user found with username " + username);
     }
 }

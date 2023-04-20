@@ -17,7 +17,9 @@ import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodActionLevelEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriodTypeEnum;
@@ -72,34 +74,88 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 		createSubAccountingPeriodsByType(ap, type, startDateTime, endDateTime);
 	}
 
-	private void createSubAccountingPeriodsByType(AccountingPeriod ap, SubAccountingPeriodTypeEnum type,
+	private void createSubAccountingPeriodsByType(AccountingPeriod accountingPeriod, SubAccountingPeriodTypeEnum type,
 												  LocalDateTime startDateTime, LocalDateTime endDate) {
 		final int numberOfPeriodsPerYear = type.getNumberOfPeriodsPerYear();
 		final int monthsPerPeriod = 12 / numberOfPeriodsPerYear;
 		int number = 1;
-		LocalDate now = startDateTime == null ? LocalDate.now() : startDateTime.toLocalDate();
-		int currentYear = now.getYear();
-		LocalDateTime startDatePeriod = now.withYear(currentYear).withDayOfYear(1).atStartOfDay();
-		LocalDateTime endDatePeriod = startDatePeriod.toLocalDate()
-				.plusMonths(monthsPerPeriod)
-				.minusDays(1)
-				.with(TemporalAdjusters.lastDayOfMonth())
-				.atTime(MAX);
-		while (!endDatePeriod.isAfter(endDate)) {
-			if (!endDatePeriod.isBefore(now.atTime(MAX))) {
-				createSubAccPeriod(ap, startDatePeriod, endDatePeriod, number);
-				number ++;
+
+		LocalDate fiscalYearStartDate = calculateFiscalYearDate(monthsPerPeriod,startDateTime,endDate);
+		int currentYear = fiscalYearStartDate.getYear();
+
+		LocalDateTime startDatePeriod = fiscalYearStartDate.withYear(currentYear).atStartOfDay();
+		LocalDateTime endDatePeriod = calculateInitialEndDatePeriod(monthsPerPeriod, startDatePeriod, endDate);
+        LocalDate now = LocalDate.now();
+
+		while (!endDatePeriod.isAfter(endDate) || endDatePeriod.isEqual(endDate.toLocalDate().atStartOfDay())) {
+
+			boolean isInThePast = startDatePeriod.toLocalDate().isBefore(now) && endDatePeriod.toLocalDate().isBefore(now)
+					&& !endDatePeriod.toLocalDate().equals(now);
+
+			if (!endDatePeriod.isBefore(fiscalYearStartDate.atTime(MAX)) && !isInThePast) {
+				createSubAccountingPeriod(accountingPeriod, startDatePeriod, endDatePeriod, number);
+				number++;
 			}
 			//next period
 			startDatePeriod = endDatePeriod.plusDays(1).toLocalDate().atStartOfDay();
-			endDatePeriod = startDatePeriod.toLocalDate()
-					.plusMonths(monthsPerPeriod)
-					.minusDays(1).with(TemporalAdjusters.lastDayOfMonth())
-					.atTime(MAX);
+			endDatePeriod = calculateNextEndDatePeriod(monthsPerPeriod, endDatePeriod, endDate);
 		}
 	}
 
-	private void createSubAccPeriod(AccountingPeriod ap, LocalDateTime startDate, LocalDateTime endDate, int number) {
+	private LocalDate calculateFiscalYearDate(int monthsPerPeriod, LocalDateTime startDateTime, LocalDateTime endDate) {
+
+		LocalDate lastYear = endDate.minusYears(1).toLocalDate();
+		boolean firstTime = findMaxSubAccountingPeriod() == null && monthsPerPeriod == 1 && lastYear.getMonth().getValue() < startDateTime.getMonthValue();
+
+		if (firstTime && isEndOfMonth(endDate)) {
+			return startDateTime.toLocalDate().withDayOfMonth(1);
+		}
+		if (firstTime && !isEndOfMonth(endDate)) {
+			return startDateTime.toLocalDate().withDayOfMonth(endDate.getDayOfMonth() + 1);
+		}
+		return endDate.minusYears(1).plusDays(1).toLocalDate();
+	}
+
+	private static LocalDateTime calculateNextEndDatePeriod(int monthsPerPeriod, LocalDateTime endDatePeriod, LocalDateTime endDate) {
+
+		return isEndOfMonth(endDate) ?
+
+				endDatePeriod.toLocalDate()
+						.plusMonths(monthsPerPeriod)
+						.with(TemporalAdjusters.lastDayOfMonth())
+						.atStartOfDay() :
+
+				endDatePeriod.toLocalDate()
+						.plusMonths(monthsPerPeriod)
+						.atStartOfDay();
+
+	}
+
+	private static LocalDateTime calculateInitialEndDatePeriod(int monthsPerPeriod, LocalDateTime startDatePeriod, LocalDateTime endDate) {
+
+		return isEndOfMonth(endDate) ?
+
+				startDatePeriod.toLocalDate()
+						.plusMonths(monthsPerPeriod)
+						.minusDays(1)
+						.with(TemporalAdjusters.lastDayOfMonth())
+						.atStartOfDay() :
+
+				startDatePeriod.toLocalDate()
+						.plusMonths(monthsPerPeriod)
+						.minusDays(1)
+						.atStartOfDay();
+	}
+
+	private static boolean isEndOfMonth(LocalDateTime date) {
+
+		LocalDate endDateLocalDate = date.toLocalDate();
+
+		return endDateLocalDate.withDayOfMonth(
+				date.getMonth().length(date.toLocalDate().isLeapYear())).equals(endDateLocalDate);
+	}
+
+	private void createSubAccountingPeriod(AccountingPeriod ap, LocalDateTime startDate, LocalDateTime endDate, int number) {
 		SubAccountingPeriod subAccountingPeriod = new SubAccountingPeriod();
 		subAccountingPeriod.setAccountingPeriod(ap);
 		subAccountingPeriod.setStartDate(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
@@ -157,11 +213,15 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 
 		updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, reason);
 	}
-
+	
 	public void updateSubAccountingRegularUsersStatus(String fiscalYear, String status,
 			SubAccountingPeriod subAccountingPeriod, String reason) {
 		if (subAccountingPeriod.getAccountingPeriod() == null || !subAccountingPeriod.getAccountingPeriod().getAccountingPeriodYear().equals(fiscalYear) ) {
 			throw new NotFoundException("The accounting period in fiscal year "+fiscalYear+" not found");
+		}
+		if(status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.OPEN.toString()) 
+				&& subAccountingPeriod.getAllUsersSubPeriodStatus().equals(SubAccountingPeriodStatusEnum.CLOSED)){
+			throw new ValidationException("Before the accounting period can be reopened for regular users, it must first be reopened for all users");
 		}
 		if (status.equalsIgnoreCase(SubAccountingPeriodStatusEnum.OPEN.toString())) {
 			subAccountingPeriod.setRegularUsersSubPeriodStatus(SubAccountingPeriodStatusEnum.OPEN);
@@ -247,12 +307,36 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
 	}
 	
 	public List<SubAccountingPeriod> findByAccountingPeriodAndEndDate(AccountingPeriod accountingPeriod, Date endDate) {
+        return getUsersSubPeriodWithByNameQuery(accountingPeriod, endDate, "SubAccountingPeriod.findByAPAndAfterEndDate");
+    }
+	
+	public List<SubAccountingPeriod> getRegularUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod) {     
+        return getUsersSubPeriodWithByNameQuery(accountingPeriod, "SubAccountingPeriod.getRegularUsersSubPeriodWithStatusOpen");
+    }
+	
+	public List<SubAccountingPeriod> getAllUsersSubPeriodWithStatusOpen(AccountingPeriod accountingPeriod) {
+        return getUsersSubPeriodWithByNameQuery(accountingPeriod, "SubAccountingPeriod.getAllUsersSubPeriodWithStatusOpen");
+    }
+	
+	private List<SubAccountingPeriod> getUsersSubPeriodWithByNameQuery(AccountingPeriod accountingPeriod, Date endDate, String nameQuery) {
         try {
             return getEntityManager()
-						.createNamedQuery("SubAccountingPeriod.findByAPAndAfterEndDate", entityClass)
-						.setParameter("apId", accountingPeriod.getId())
-						.setParameter("endDate", endDate, TemporalType.DATE)
-						.getResultList();
+                        .createNamedQuery(nameQuery, entityClass)
+                        .setParameter("apId", accountingPeriod.getId())
+                        .setParameter("endDate", endDate, TemporalType.DATE)
+                        .getResultList();
+        } catch (NoResultException e) {
+            log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
+            return new ArrayList<>();
+        }
+    }
+	
+	private List<SubAccountingPeriod> getUsersSubPeriodWithByNameQuery(AccountingPeriod accountingPeriod, String nameQuery) {
+        try {
+            return getEntityManager()
+                        .createNamedQuery(nameQuery, entityClass)
+                        .setParameter("apId", accountingPeriod.getId())
+                        .getResultList();
         } catch (NoResultException e) {
             log.debug("No {} of AccountingPeriod {} found", getEntityClass().getSimpleName(), accountingPeriod.getId());
             return new ArrayList<>();
@@ -279,5 +363,35 @@ public class SubAccountingPeriodService extends PersistenceService<SubAccounting
                 .setParameter("accountingPeriod", accountingPeriod)
                 .setParameter("ids", ids)
                 .getSingleResult() == 0;
+    }
+
+    public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, String status) {
+        List<SubAccountingPeriod> subAccountingPeriods = null;
+        
+            subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity);
+            for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
+                updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
+            }
+            
+            subAccountingPeriods = getRegularUsersSubPeriodWithStatusOpen(entity);
+            for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
+                updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, "");
+            }
+                   
+    }
+    
+    public void updateSubPeriodsWithStatus(AccountingPeriod entity, String fiscalYear, String status, AccountingPeriodActionLevelEnum level) {
+        List<SubAccountingPeriod> subAccountingPeriods = null;
+        if (AccountingPeriodActionLevelEnum.ALL_USERS.equals(level)) {
+            subAccountingPeriods = getAllUsersSubPeriodWithStatusOpen(entity);
+            for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
+                updateSubAccountingAllUsersStatus(fiscalYear, status, subAccountingPeriod, "");
+            }
+        } else {
+            subAccountingPeriods = getRegularUsersSubPeriodWithStatusOpen(entity);
+            for (SubAccountingPeriod subAccountingPeriod : subAccountingPeriods) {
+                updateSubAccountingRegularUsersStatus(fiscalYear, status, subAccountingPeriod, "");
+            }
+        }            
     }
 }

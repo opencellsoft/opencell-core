@@ -136,6 +136,9 @@ public class CustomFieldDto {
     @XmlElement()
     protected CustomFieldFormattedValueDto formattedValue;
 
+    /** The Url reference value. */
+    @XmlElement() protected UrlReferenceDto urlReferenceValue;
+
     /**
      * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
      * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;
@@ -507,6 +510,8 @@ public class CustomFieldDto {
                 return entityReferenceValue == null || entityReferenceValue.isEmpty();
             case CHILD_ENTITY:
                 return true; // TODO add implementation for child entity value
+                case URL:
+                    return urlReferenceValue == null ;
             }
         }
         return false;
@@ -545,6 +550,9 @@ public class CustomFieldDto {
         } else if (stringValue != null && !stringValue.isEmpty()) {
             return false;
         } else if (entityReferenceValue == null || !entityReferenceValue.isEmpty()) {
+            return false;
+        }
+        else if (urlReferenceValue != null && !urlReferenceValue.isEmpty() ){
             return false;
         }
 
@@ -715,7 +723,16 @@ public class CustomFieldDto {
         sb.append(", indexType=").append(indexType);
         sb.append(", fileValue='").append(fileValue).append('\'');
         sb.append(", formattedValue=").append(formattedValue);
+        sb.append(", urlReferenceValue=").append(urlReferenceValue);
         sb.append('}');
         return sb.toString();
+    }
+
+    public UrlReferenceDto getUrlReferenceValue() {
+        return urlReferenceValue;
+    }
+
+    public void setUrlReferenceValue(UrlReferenceDto urlReferenceValue) {
+        this.urlReferenceValue = urlReferenceValue;
     }
 }

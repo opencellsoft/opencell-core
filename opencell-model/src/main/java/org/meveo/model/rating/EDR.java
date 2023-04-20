@@ -51,7 +51,7 @@ import org.meveo.model.billing.WalletOperation;
  */
 @Entity
 @Table(name = "rating_edr")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_edr_seq"), @Parameter(name = "increment_size", value = "500") })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_edr_seq"), @Parameter(name = "increment_size", value = "5000") })
 @NamedQueries({
         @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_'),case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
 
@@ -570,8 +570,8 @@ public class EDR extends BaseEntity {
         return "EDR [id=" + id + ", subscription=" + (subscription != null ? subscription.getId() : null) + ", originBatch=" + originBatch + ", originRecord=" + originRecord + ", eventDate=" + eventDate + ", quantity="
                 + quantity + ", access=" + accessCode + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", parameter4=" + parameter4 + ", parameter5=" + parameter5
                 + ", parameter6=" + parameter6 + ", parameter7=" + parameter7 + ", parameter8=" + parameter8 + ", parameter9=" + parameter9 + ", dateParam1=" + dateParam1 + ", dateParam2=" + dateParam2 + ", dateParam3="
-                + dateParam3 + ", dateParam4=" + dateParam4 + ", dateParam5=" + dateParam5 + ", decimalParam1=" + decimalParam1 + ", dateParam2=" + dateParam2 + ", decimalParam3=" + decimalParam3 + ", dateParam4="
-                + dateParam4 + ", decimalParam5=" + decimalParam5 + ", extraParameter=" + extraParameter + ", headerEDR=" + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate="
+                + dateParam3 + ", dateParam4=" + dateParam4 + ", dateParam5=" + dateParam5 + ", decimalParam1=" + decimalParam1 + ", decimalParam2=" + decimalParam2 + ", decimalParam3=" + decimalParam3 + ", decimalParam4="
+                + decimalParam4 + ", decimalParam5=" + decimalParam5 + ", extraParameter=" + extraParameter + ", headerEDR=" + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate="
                 + updated + "]";
     }
 

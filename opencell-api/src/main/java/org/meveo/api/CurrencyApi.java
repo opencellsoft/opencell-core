@@ -40,7 +40,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -86,7 +91,11 @@ import org.meveo.service.crm.impl.ProviderService;
 @Stateless
 public class CurrencyApi extends BaseApi {
 
-	@Inject
+    private static final String EXCHANGE_RATE_DIR = "imports/exchangeRate/";
+    private static final String LINE = "Line ";
+    private static final String CFO_ROLE = "CFO";
+
+    @Inject
     private CurrencyService currencyService;
 
     @Inject
@@ -107,9 +116,6 @@ public class CurrencyApi extends BaseApi {
     @Inject
     private FilesApi filesApi;
     
-    private static final String EXCHANGE_RATE_DIR = "imports/exchangeRate/";
-    private static final String LINE = "Line ";
-
     public String getProviderRootDir() {
         return paramBeanFactory.getDefaultChrootDir();
     }
@@ -198,7 +204,7 @@ public class CurrencyApi extends BaseApi {
         tradingCurrencyService.remove(tradingCurrency);
     }
 
-    public void update(CurrencyDto postData) throws MeveoApiException, BusinessException {
+    public CurrencyDto update(CurrencyDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -225,13 +231,21 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces() == null ? 2 : postData.getDecimalPlaces());
 
         tradingCurrencyService.update(tradingCurrency);
+        return new CurrencyDto(currency);
     }
 
-    public void createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode()) && tradingCurrencyService.findByTradingCurrencyCode(postData.getCode()) != null) {
-            update(postData);
-        } else {
-            create(postData);
+    public CurrencyDto createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
+
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCode());
+        if (tradingCurrency == null) {
+            return create(postData);
+        }
+        else {
+            return update(postData);
         }
     }
 
@@ -396,9 +410,11 @@ public class CurrencyApi extends BaseApi {
         }
 
         // We can modify only the future rates
-        if (exchangeRate.getFromDate().compareTo(setTimeToZero(new Date())) <= 0) {
+        // AEL Update 09/01/2023 : Since we dont have a CFO role mapping between opencell_portal and opencell_web
+        //                         We trust Portal restrition made in https://opencellsoft.atlassian.net/browse/INTRD-6451
+        /*if (exchangeRate.getFromDate().compareTo(setTimeToZero(new Date())) <= 0 && !currentUser.hasRole(CFO_ROLE)) {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
-        }
+        }*/
 
         if (postData.getFromDate() == null) {
             throw new MissingParameterException(resourceMessages.getString("error.exchangeRate.fromDate.empty"));
@@ -410,10 +426,12 @@ public class CurrencyApi extends BaseApi {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
 
+        // Commented related to the same reason of comment line 421 "AEL Update 09/01/2023"
+        // BTW, this dubplicated check shall be removed
         // User cannot set a rate in a paste date
-        if (postData.getFromDate().before(setTimeToZero(new Date()))) {
+        /*if (postData.getFromDate().before(setTimeToZero(new Date()))) {
             throw new BusinessApiException(resourceMessages.getString("The date must not be in the past"));
-        }
+        }*/
 	}
     
     private void auditLogUpdateExchangeRate(ExchangeRate exchangeRate,

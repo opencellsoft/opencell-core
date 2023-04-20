@@ -310,16 +310,6 @@ public interface CpqQuoteRs {
             @ApiResponse(responseCode = "404", description = "Quote doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
     })
     Response duplicateQuote( @Parameter(required = true)	@PathParam("quoteCode") String quoteCode, @Parameter(required = true)	@PathParam("quoteVersion") int quoteversion);
-    /*
-    @GET
-    @Path("/quoteItem/{quoteOfferId}")
-    @Operation(summary = "Delete a quote item",
-    tags = { "Quote management" },
-    description ="",
-    responses = {
-            @ApiResponse(responseCode="200", description = "quote item is succeffully deleted",content = @Content(schema = @Schema(implementation = GetQuoteOfferDtoResponse.class)))
-    })
-    public Response findQuoteItem(@Parameter(description = "", required = true) @PathParam("quoteOfferId") Long quoteOfferId); */
 
     @POST
     @Path("/quoteVersions/{quoteCode}/{quoteVersion}/duplication")

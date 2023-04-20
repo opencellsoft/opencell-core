@@ -1,20 +1,38 @@
 package org.meveo.model.article;
 
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.persistence.*;
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.accountingScheme.*;
+import org.meveo.model.accountingScheme.AccountingCodeMapping;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.UntdidAllowanceCode;
 import org.meveo.model.tax.TaxClass;
 
 @Entity@CustomFieldEntity(cftCodePrefix = "Article")
@@ -25,6 +43,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "AccountingArticle.findByAccountingCode", query = "select a from AccountingArticle a where a.accountingCode.code = :accountingCode"),
         @NamedQuery(name = "AccountingArticle.findByTaxClassAndSubCategory", query = "select a from AccountingArticle a where a.taxClass = :taxClass and a.invoiceSubCategory = :invoiceSubCategory"),
 })
+@Cacheable
 public class AccountingArticle extends EnableBusinessCFEntity {
 
     /**
@@ -32,7 +51,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
+	@OneToOne(fetch = EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "tax_class_id")
     private TaxClass taxClass;
 
@@ -78,6 +97,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     private String columnCriteriaEL;
 
     @OneToMany(mappedBy = "accountingArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<AccountingCodeMapping> accountingCodeMappings;
     
 
@@ -87,6 +107,21 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_aggregation", nullable = false)
     private boolean ignoreAggregation;
+
+    /**
+     * UntdidPaymentMeans
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "allowance_code")
+    private UntdidAllowanceCode allowanceCode;
+    
+    public UntdidAllowanceCode getAllowanceCode() {
+        return allowanceCode;
+    }
+
+    public void setAllowanceCode(UntdidAllowanceCode allowanceCode) {
+        this.allowanceCode = allowanceCode;
+    }
 
     public AccountingArticle() {
     }
@@ -218,8 +253,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(getAccountingCode(), getAnalyticCode1(), getAnalyticCode2(), getAnalyticCode3(),
-				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(), getInvoiceType(), getInvoiceTypeEl(), getColumnCriteriaEL());
+		result = prime * result;
 		return result;
 	}
 

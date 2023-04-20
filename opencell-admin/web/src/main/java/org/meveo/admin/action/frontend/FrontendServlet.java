@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.service.crm.impl.ProviderService;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class FrontendServlet extends HttpServlet {
      */
     private static final long serialVersionUID = -3071886877749196748L;
     private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 10KB.
-    private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1 week.
+    private static final long DEFAULT_EXPIRE_TIME = 60000L; // 1H // 604800000L ..ms = 1 week.
     private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
 
     @Inject
@@ -118,8 +119,8 @@ public class FrontendServlet extends HttpServlet {
         basePath += File.separator + "frontend" + File.separator;
 
         File path = new File(basePath);
-        if (!path.exists()) {
-            path.mkdirs();
+        if (!StorageFactory.existsDirectory(path)) {
+            StorageFactory.mkdirs(path);
         }
         if (!path.isDirectory()) {
             throw new IOException("FrontendServlet path '" + basePath + "' is not a directory.");

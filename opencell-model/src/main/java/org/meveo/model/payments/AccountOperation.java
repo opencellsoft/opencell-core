@@ -70,6 +70,7 @@ import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.finance.AccountingEntry;
 
@@ -112,7 +113,11 @@ import org.meveo.model.finance.AccountingEntry;
                 " INNER JOIN SubAccountingPeriod sap ON sap.allUsersSubPeriodStatus = 'CLOSED' AND sap.startDate <= ao.accountingDate AND sap.endDate >= ao.accountingDate" +
                 " AND ao.status IN (:AO_STATUS)"),
         @NamedQuery(name = "AccountOperation.findAoByStatus", query = "SELECT ao FROM AccountOperation ao WHERE ao.status IN (:AO_STATUS)"),
-        @NamedQuery(name = "AccountOperation.findByCustomerAccount", query = "SELECT ao FROM AccountOperation ao WHERE ao.id in (:AO_IDS) AND ao.customerAccount.id = :CUSTOMERACCOUNT_ID")
+        @NamedQuery(name = "AccountOperation.findByCustomerAccount", query = "SELECT ao FROM AccountOperation ao WHERE ao.id in (:AO_IDS) AND ao.customerAccount.id = :CUSTOMERACCOUNT_ID"),
+        @NamedQuery(name = "Payment.updateReference", query = "UPDATE Payment pay set pay.reference = (select ph.externalPaymentId from PaymentHistory ph where ph.payment is not null and ph.payment.id = pay.id) where pay.reference is null"),
+        @NamedQuery(name = "Refund.updateReference", query = "UPDATE Refund re set re.reference = (select ph.externalPaymentId from PaymentHistory ph where ph.refund is not null and ph.refund.id = re.id) where re.reference is null")
+
+        
 })
 public class AccountOperation extends BusinessEntity implements ICustomFieldEntity, ISearchable, IWFEntity {
 
@@ -186,33 +191,70 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Amount with tax
      */
-    @Column(name = "amount", precision = 23, scale = 12)
+    @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amount;
 
     /**
      * Amount without tax
      */
-    @Column(name = "amount_without_tax", precision = 23, scale = 12)
+    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTax;
 
     /**
      * Tax amount
      */
-    @Column(name = "tax_amount", precision = 23, scale = 12)
+    @Column(name = "tax_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal taxAmount;
 
     /**
      * Matched amount
      */
-    @Column(name = "matching_amount", precision = 23, scale = 12)
+    @Column(name = "matching_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal matchingAmount = BigDecimal.ZERO;
 
     /**
      * Unmatched amount
      */
-    @Column(name = "un_matching_amount", precision = 23, scale = 12)
+    @Column(name = "un_matching_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unMatchingAmount = BigDecimal.ZERO;
 
+    /**
+     * Transactional Amount with tax
+     */
+    @Column(name = "transactional_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmount;
+
+    /**
+     * Transactional Amount without tax
+     */
+    @Column(name = "transactional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountWithoutTax;
+
+    /**
+     * Transactional Tax Amount
+     */
+    @Column(name = "transactional_tax_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalTaxAmount;
+
+    /**
+     * Transactional Matched Amount
+     */
+    @Column(name = "transactional_matching_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalMatchingAmount = BigDecimal.ZERO;
+
+    /**
+     * Transactional Unmatched Amount
+     */
+    @Column(name = "transactional_un_matching_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalUnMatchingAmount = BigDecimal.ZERO;
+    
+    /**
+     * Transactional currency
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "transactional_currency")
+    private TradingCurrency transactionalCurrency;
+    
     /**
      * Associated Customer account
      */
@@ -450,6 +492,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     @Column(name = "operation_number")
     private Long operationNumber;
+    
+	@Column(name = "applied_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal appliedRate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "applied_rate_date")
+    private Date appliedRateDate = new Date();
 
     public Date getDueDate() {
         return dueDate;
@@ -1042,5 +1091,77 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @PreUpdate
     protected void onUpdate() {
         auditable.setUpdated(new Date());
+    }
+
+    public BigDecimal getTransactionalAmount() {
+        return transactionalAmount != null ? amount : transactionalAmount;
+    }
+
+    public void setTransactionalAmount(BigDecimal transactionalAmount) {
+        this.transactionalAmount = transactionalAmount;
+    }
+
+    public BigDecimal getTransactionalAmountWithoutTax() {
+        return transactionalAmountWithoutTax;
+    }
+
+    public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+        this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
+    }
+
+    public BigDecimal getTransactionalTaxAmount() {
+        return transactionalTaxAmount;
+    }
+
+    public void setTransactionalTaxAmount(BigDecimal transactionalTaxAmount) {
+        this.transactionalTaxAmount = transactionalTaxAmount;
+    }
+
+    public BigDecimal getTransactionalMatchingAmount() {
+        return transactionalMatchingAmount != null ? transactionalMatchingAmount : matchingAmount;
+    }
+
+    public void setTransactionalMatchingAmount(BigDecimal transactionalMatchingAmount) {
+        if(transactionalMatchingAmount == null) {
+            this.transactionalMatchingAmount = matchingAmount;
+        }else {
+            this.transactionalMatchingAmount = transactionalMatchingAmount;
+        }
+    }
+
+    public BigDecimal getTransactionalUnMatchingAmount() {
+        return transactionalUnMatchingAmount != null ? transactionalUnMatchingAmount : unMatchingAmount;
+    }
+
+    public void setTransactionalUnMatchingAmount(BigDecimal transactionalUnMatchingAmount) {      
+        if(transactionalUnMatchingAmount == null) {
+            this.transactionalUnMatchingAmount = unMatchingAmount;
+        }else {
+            this.transactionalUnMatchingAmount = transactionalUnMatchingAmount;
+        }
+    }
+
+    public TradingCurrency getTransactionalCurrency() {
+        return transactionalCurrency;
+    }
+
+    public void setTransactionalCurrency(TradingCurrency transactionalCurrency) {
+        this.transactionalCurrency = transactionalCurrency;
+    }
+    
+    public BigDecimal getAppliedRate() {
+        return appliedRate;
+    }
+
+    public void setAppliedRate(BigDecimal appliedRate) {
+        this.appliedRate = appliedRate;
+    }
+
+    public Date getAppliedRateDate() {
+        return appliedRateDate;
+    }
+
+    public void setAppliedRateDate(Date appliedRateDate) {
+        this.appliedRateDate = appliedRateDate;
     }
 }

@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import org.immutables.value.Value;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.InvoiceLineStatusEnum;
 
@@ -274,4 +275,12 @@ public interface InvoiceLine extends Resource {
 	@Schema(description = "The Tax Accounting Code")
     @Nullable
     String getTaxAccountingCode();
+
+	@Nullable
+	@Schema(description = "custom field associated to accounting article")
+	CustomFieldsDto getCustomFields();
+	
+	@Schema(description = "The unit price currency")
+	@Nullable
+	String getUnitPriceCurrency();
 }

@@ -1,8 +1,8 @@
 package org.meveo.admin.job;
 
-import static java.util.Arrays.stream;
-
-import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.DateAggregationOption;
 
 public class AggregationConfiguration {
 
@@ -14,6 +14,38 @@ public class AggregationConfiguration {
 	private DateAggregationOption dateAggregationOption = DateAggregationOption.MONTH_OF_USAGE_DATE;
 
 	private boolean aggregationPerUnitAmount;
+	
+    private boolean useAccountingArticleLabel = false;
+    
+    private boolean ignoreSubscriptions = true;
+    
+    private boolean ignoreOrders = true;
+
+	private BillingEntityTypeEnum type = BillingEntityTypeEnum.BILLINGACCOUNT;
+
+	public boolean isUseAccountingArticleLabel() {
+		return useAccountingArticleLabel;
+	}
+
+	public void setUseAccountingArticleLabel(boolean useAccountingArticleLabel) {
+		this.useAccountingArticleLabel = useAccountingArticleLabel;
+	}
+
+	public boolean isIgnoreSubscriptions() {
+		return ignoreSubscriptions;
+	}
+
+	public void setIgnoreSubscriptions(boolean ignoreSubscriptions) {
+		this.ignoreSubscriptions = ignoreSubscriptions;
+	}
+
+	public boolean isIgnoreOrders() {
+		return ignoreOrders;
+	}
+
+	public void setIgnoreOrders(boolean ignoreOrders) {
+		this.ignoreOrders = ignoreOrders;
+	}
 
 	public AggregationConfiguration(boolean enterprise) {
 		this.enterprise = enterprise;
@@ -23,6 +55,15 @@ public class AggregationConfiguration {
 		this.enterprise = enterprise;
 		this.aggregationPerUnitAmount = AggregationPerUnitAmount;
 		this.dateAggregationOption = dateAggregationOption;
+	}
+	
+	public AggregationConfiguration(BillingCycle billingCycle) {
+		this.dateAggregationOption = billingCycle.getDateAggregation()!=null? billingCycle.getDateAggregation() : DateAggregationOption.NO_DATE_AGGREGATION;
+		this.aggregationPerUnitAmount= billingCycle.isAggregateUnitAmounts();
+		this.useAccountingArticleLabel = billingCycle.isUseAccountingArticleLabel() ;
+		this.ignoreSubscriptions = billingCycle.isIgnoreSubscriptions();
+		this.ignoreOrders = billingCycle.isIgnoreOrders();
+		this.type=billingCycle.getType();
 	}
 
 	public boolean isEnterprise() {
@@ -61,36 +102,8 @@ public class AggregationConfiguration {
 		this.aggregationPerUnitAmount = AggregationPerUnitAmount;
 	}
 
-	public enum DateAggregationOption {
-		NO_DATE_AGGREGATION("no.date.aggregation"), MONTH_OF_USAGE_DATE("month.of.usage.date"),
-		WEEK_OF_USAGE_DATE("week.of.usage.date"), DAY_OF_USAGE_DATE("day.of.usage.date");
-		private String label;
-
-		/**
-		 * 
-		 */
-		private DateAggregationOption(String label) {
-			setLabel(label);
-		}
-
-		public static DateAggregationOption fromValue(String value) {
-			return stream(DateAggregationOption.values()).filter(option -> option.name().equalsIgnoreCase(value))
-					.findFirst().orElseThrow(() -> new BusinessException());
-		}
-
-		/**
-		 * @return the label
-		 */
-		public String getLabel() {
-			return label;
-		}
-
-		/**
-		 * @param label the label to set
-		 */
-		public void setLabel(String label) {
-			this.label = label;
-		}
+	public BillingEntityTypeEnum getType() {
+		// TODO Auto-generated method stub
+		return type ;
 	}
-
 }

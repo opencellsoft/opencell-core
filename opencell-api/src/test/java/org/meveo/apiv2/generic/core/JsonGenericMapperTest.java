@@ -55,6 +55,16 @@ public class JsonGenericMapperTest {
     }
 
     @Test
+    public void should_toJson_return_the_string_representation_when_param_is_big_decimal_zero() {
+        // Given
+        Object param = BigDecimal.ZERO;
+        // When
+        String expected = jsonGenericMapper.toJson(null, BigDecimal.class, param, null);
+        // Then
+        assertThat(expected).isEqualTo("0");
+    }
+
+    @Test
     public void should_toJson_return_as_list_representation_of_ids_when_param_is_a_collection() {
         // Given
         Object param = buildCustomerList(3);
@@ -129,6 +139,7 @@ public class JsonGenericMapperTest {
         taxMapping.setSellerCountry(sellerCountry);
         taxMapping.setTax(tax);
         taxMapping.setValid(new DatePeriod(getDefaultDate(), getDefaultDate()));
+        taxMapping.setId(456l);
 
         // When
         HashSet<String> fields = new HashSet<>();
@@ -182,8 +193,11 @@ public class JsonGenericMapperTest {
         JsonGenericMapper jsonGenericMapper1 = JsonGenericMapper.Builder.getBuilder().build();
         // Given
         OfferTemplate offerTemplate = new OfferTemplate();
+        offerTemplate.setId(1l);
         OfferTemplate offerTemplate1 = new OfferTemplate();
+        offerTemplate1.setId(2l);
         OfferTemplate offerTemplate2 = new OfferTemplate();
+        offerTemplate2.setId(3l);
 
         Channel channel1 = new Channel();
         channel1.setId(1l);
@@ -213,6 +227,7 @@ public class JsonGenericMapperTest {
         JsonGenericMapper jsonGenericMapper1 = JsonGenericMapper.Builder.getBuilder().withNestedEntities(nestedEntities).build();
         // Given
         OfferTemplate offerTemplate = new OfferTemplate();
+        offerTemplate.setId(1l);
 
         Channel channel1 = new Channel();
         channel1.setId(1l);

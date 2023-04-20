@@ -116,5 +116,10 @@ public enum MeveoApiErrorCodeEnum implements ApiErrorCodeEnum {
     /**
      * Transition not executed: condition is false
      */
-    CONDITION_FALSE
+    CONDITION_FALSE,
+    
+    /**
+     * Different currencies
+     */
+    DIFFERENT_CURRENCIES
 }

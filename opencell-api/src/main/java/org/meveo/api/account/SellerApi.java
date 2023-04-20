@@ -47,6 +47,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceSequenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.IsoIcdService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 
@@ -93,6 +94,9 @@ public class SellerApi extends AccountEntityApi {
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
 
+    @Inject
+    private IsoIcdService isoIcdService;
+    
     public Seller create(SellerDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -266,9 +270,25 @@ public class SellerApi extends AccountEntityApi {
         if (postData.getVatNo() != null) {
             seller.setVatNo(postData.getVatNo());
         }
+        if (postData.getIsoICDCode() != null) {            
+            IsoIcd isoIcd = isoIcdService.findByCode(postData.getIsoICDCode());
+            if (isoIcd == null) {
+                throw new EntityDoesNotExistsException(IsoIcd.class, postData.getIsoICDCode());
+            }           
+            seller.setIcdId(isoIcd);
+        }
         if (postData.getRegistrationNo() != null) {
             seller.setRegistrationNo(postData.getRegistrationNo());
         }
+        
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getRegistrationNo()) 
+            && seller.getIcdId() == null
+            && org.apache.commons.lang3.StringUtils.isEmpty(postData.getIsoICDCode())
+        		) {
+        	IsoIcd isoIcd = isoIcdService.findByCode("0009");    
+            seller.setIcdId(isoIcd);
+        }
+        
         if (postData.getLegalText() != null) {
             seller.setLegalText(postData.getLegalText());
         }

@@ -18,6 +18,7 @@
 package org.meveo.service.admin.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -25,6 +26,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.keycloak.representations.idm.UserRepresentation;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidParameterException;
@@ -60,12 +62,16 @@ public class UserService extends PersistenceService<User> {
     @Override
     @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
     public User update(User user) throws ElementNotFoundException, InvalidParameterException {
-
         user.setUserName(user.getUserName().toUpperCase());
-
-        keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles());
-
+        keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
         return super.update(user);
+    }
+
+    @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
+    public void updateUserWithAttributes(User user, Map<String, String> attributes) throws ElementNotFoundException, InvalidParameterException {
+        user.setUserName(user.getUserName().toUpperCase());
+        keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), attributes);
+        super.update(user);
     }
 
     @Override
@@ -142,5 +148,9 @@ public class UserService extends PersistenceService<User> {
     public boolean isUserBelongsGroup(String belongsToUserGroup) {
         // TODO finish checking the hierarchy
         return belongsToUserGroup.equalsIgnoreCase(currentUser.getUserGroup());
+    }
+
+    public UserRepresentation getUserRepresentationByUsername(String username) throws ElementNotFoundException {
+        return keycloakAdminClientService.getUserRepresentationByUsername(username);
     }
 }

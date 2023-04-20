@@ -54,6 +54,7 @@ import org.meveo.model.catalog.ProductOffering;
 @Table(name = "ord_quote_item")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_quote_item_seq"), })
+@Deprecated
 public class QuoteItem extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;

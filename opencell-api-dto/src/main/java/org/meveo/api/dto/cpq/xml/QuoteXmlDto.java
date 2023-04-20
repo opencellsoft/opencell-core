@@ -7,19 +7,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class QuoteXmlDto {
 
     @XmlElement
-    private Header header;
+    private QuoteXMLHeader header;
     @XmlElement
     private Details details;
 
     public QuoteXmlDto() {
     }
 
-    public QuoteXmlDto(Header header, Details details) {
+    public QuoteXmlDto(QuoteXMLHeader header, Details details) {
         this.header = header;
         this.details = details;
     }
 
-    public Header getHeader() {
+    public QuoteXMLHeader getHeader() {
         return header;
     }
 

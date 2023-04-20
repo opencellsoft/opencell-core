@@ -20,7 +20,7 @@ public class DunningCollectionPlanJobBean extends BaseJobBean {
     @Inject
     private DunningPolicyService policyService;
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         List<DunningPolicy> policies = policyService.getPolicies(true);
         jobExecutionResult.setNbItemsToProcess(policies.size());
@@ -33,7 +33,7 @@ public class DunningCollectionPlanJobBean extends BaseJobBean {
                         eligibleInvoicesByPolicy.put(policy, eligibleInvoice);
                     }
                 }
-                policyService.processEligibleInvoice(eligibleInvoicesByPolicy);
+                policyService.processEligibleInvoice(eligibleInvoicesByPolicy, jobExecutionResult);
                 jobExecutionResult.addNbItemsCorrectlyProcessed(policies.size()
                         - jobExecutionResult.getNbItemsProcessedWithError());
             } catch (Exception exception) {

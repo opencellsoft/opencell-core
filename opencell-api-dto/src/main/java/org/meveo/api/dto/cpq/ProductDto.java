@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.model.cpq.AgreementDateSettingEnum;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -95,6 +96,9 @@ public class ProductDto extends BaseEntityDto{
     
     @Schema(description = "product model code")
     protected String productModelCode;
+
+    @Schema(description = "Agreeemnt date Setting")
+    protected AgreementDateSettingEnum agreementDateSetting;
     
     
     public ProductDto() {}
@@ -123,6 +127,7 @@ public class ProductDto extends BaseEntityDto{
     	if(p.getProductModel() != null)
     		this.productModelCode = p.getProductModel().getCode();
     	this.priceVersionDateSetting = p.getPriceVersionDateSetting();
+    	this.agreementDateSetting = p.getAgreementDateSetting();
     }
 	/**
 	 * @return the status
@@ -418,6 +423,20 @@ public class ProductDto extends BaseEntityDto{
 	public void setProductModelCode(String productModelCode) {
 		this.productModelCode = productModelCode;
 	}
-	
+
+	/**
+	 * @return the agreementDateSetting
+	 */
+	public AgreementDateSettingEnum getAgreementDateSetting() {
+		return agreementDateSetting;
+	}
+
+	/**
+	 * @param agreementDateSetting the agreementDateSetting to set
+	 */
+	public void setAgreementDateSetting(AgreementDateSettingEnum agreementDateSetting) {
+		this.agreementDateSetting = agreementDateSetting;
+	}
+
 	
 }

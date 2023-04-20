@@ -52,6 +52,7 @@ public class CrmAccountBean extends BaseBean<AccountEntity> {
      */
     public CrmAccountBean() {
         super(AccountEntity.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     /**

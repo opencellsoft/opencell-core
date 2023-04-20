@@ -1,0 +1,35 @@
+{
+	"info": {
+		"_postman_id": "ebc5263b-149a-4b89-a95c-20ac44f66c5d",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3043611"
+	},
+	"item": [
+		{
+			"name": "Pay with security deposit Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/opencell/api/rest/v2/securityDeposit/{ID}/payInvoices",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"opencell",
+						"api",
+						"rest",
+						"v2",
+						"securityDeposit",
+						"{ID}",
+						"payInvoices"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

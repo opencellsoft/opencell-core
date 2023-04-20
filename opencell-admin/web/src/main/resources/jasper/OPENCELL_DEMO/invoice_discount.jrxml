@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice_tva" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Style_1" backcolor="#CCCCCC"/>
+	<style name="Text Body" mode="Opaque"/>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<bottomPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<bottomPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<bottomPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="dataset1" uuid="caf372ed-b5fb-4515-871b-63c01682a70b">
+		<queryString language="xPath">
+			<![CDATA[/invoice/amount/taxes/tax]]>
+		</queryString>
+		<field name="name" class="java.lang.String">
+			<fieldDescription><![CDATA[name]]></fieldDescription>
+		</field>
+		<field name="amountHT" class="java.lang.String">
+			<fieldDescription><![CDATA[amountHT]]></fieldDescription>
+		</field>
+		<field name="amount" class="java.lang.String">
+			<fieldDescription><![CDATA[amount]]></fieldDescription>
+		</field>
+		<field name="percent" class="java.lang.String">
+			<fieldDescription><![CDATA[percent]]></fieldDescription>
+		</field>
+	</subDataset>
+	<subDataset name="dataset2" uuid="2c95a6f3-7268-4da8-a6b6-bfd49ec339b3">
+		<queryString language="xPath">
+			<![CDATA[/invoice/header/discounts/discount]]>
+		</queryString>
+		<field name="name" class="java.lang.String">
+			<fieldDescription><![CDATA[name]]></fieldDescription>
+		</field>
+		<field name="amountHT" class="java.lang.String">
+			<fieldDescription><![CDATA[amountHT]]></fieldDescription>
+		</field>
+		<field name="amount" class="java.lang.String">
+			<fieldDescription><![CDATA[amount]]></fieldDescription>
+		</field>
+		<field name="percent" class="java.lang.String">
+			<fieldDescription><![CDATA[percent]]></fieldDescription>
+		</field>
+		<field name="discountAmountWithoutTax" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[sum(/invoice/header/discounts/discount/@discountAmountWithoutTax)]]></fieldDescription>
+		</field>
+		<variable name="discountAmountWithoutTax_total" class="java.lang.Double" calculation="Sum">
+			<variableExpression><![CDATA[$F{discountAmountWithoutTax}]]></variableExpression>
+			<initialValueExpression><![CDATA[$F{discountAmountWithoutTax}]]></initialValueExpression>
+		</variable>
+	</subDataset>
+	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="messagePath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="xPath">
+		<![CDATA[/invoice]]>
+	</queryString>
+	<field name="customerID" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/@customerAccountCode]]></fieldDescription>
+	</field>
+	<field name="invoiceDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/invoiceDate]]></fieldDescription>
+	</field>
+	<field name="amountWithoutTax" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="amountWithTax" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/amountWithTax]]></fieldDescription>
+	</field>
+	<field name="amountTax" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/@total]]></fieldDescription>
+	</field>
+	<field name="amountWithoutTax2" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::category/amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="amountWithTax2" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::category/amountWithTax]]></fieldDescription>
+	</field>
+	<field name="code" class="java.lang.String">
+		<fieldDescription><![CDATA[@code]]></fieldDescription>
+	</field>
+	<field name="quantity" class="java.lang.Double">
+		<fieldDescription><![CDATA[quantity]]></fieldDescription>
+	</field>
+	<field name="unitPrice1" class="java.lang.String">
+		<fieldDescription><![CDATA[unitPrice1]]></fieldDescription>
+	</field>
+	<field name="amountWithTax3" class="java.lang.String">
+		<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
+	</field>
+	<field name="bil_quality" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/quality]]></fieldDescription>
+	</field>
+	<field name="bil_name" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="bil_firstname" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/firstname]]></fieldDescription>
+	</field>
+	<field name="bil_address1" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="bil_address2" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/address2]]></fieldDescription>
+	</field>
+	<field name="bil_address3" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/address3]]></fieldDescription>
+	</field>
+	<field name="bil_city" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/city]]></fieldDescription>
+	</field>
+	<field name="bil_postalCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/postalCode]]></fieldDescription>
+	</field>
+	<field name="bil_email" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/email]]></fieldDescription>
+	</field>
+	<field name="bil_bankCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/bankCode]]></fieldDescription>
+	</field>
+	<field name="bil_branchCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/branchCode]]></fieldDescription>
+	</field>
+	<field name="bil_accountNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/accountNumber]]></fieldDescription>
+	</field>
+	<field name="bil_key" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/key]]></fieldDescription>
+	</field>
+	<field name="bil_IBAN" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/IBAN]]></fieldDescription>
+	</field>
+	<field name="user_name" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/detail/userAccounts/userAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="user_address1" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="user_address2" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/address2]]></fieldDescription>
+	</field>
+	<field name="user_address3" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/address3]]></fieldDescription>
+	</field>
+	<field name="user_city" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/city]]></fieldDescription>
+	</field>
+	<field name="user_postalCode" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/postalCode]]></fieldDescription>
+	</field>
+	<field name="unitPrice2" class="java.lang.String">
+		<fieldDescription><![CDATA[unitPrice2]]></fieldDescription>
+	</field>
+	<field name="custAccountdesc" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@description]]></fieldDescription>
+	</field>
+	<field name="custAccountContractDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@externalRef2]]></fieldDescription>
+	</field>
+	<field name="custAccountquality" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/quality]]></fieldDescription>
+	</field>
+	<field name="custAccountname" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="custAccountaddress1" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="custAccountaddress2" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/address2]]></fieldDescription>
+	</field>
+	<field name="custAccountaddress3" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/address3]]></fieldDescription>
+	</field>
+	<field name="custAccountcity" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/city]]></fieldDescription>
+	</field>
+	<field name="custAccountpostalCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/postalCode]]></fieldDescription>
+	</field>
+	<field name="balance" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/balance]]></fieldDescription>
+	</field>
+	<field name="netToPay" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/netToPay]]></fieldDescription>
+	</field>
+	<field name="accountTerminated" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@accountTerminated]]></fieldDescription>
+	</field>
+	<field name="providerContactLastName" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/lastname]]></fieldDescription>
+	</field>
+	<field name="providerContactFirstName" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/firstName]]></fieldDescription>
+	</field>
+	<field name="providerContactGenericEmail" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@externalRef1]]></fieldDescription>
+	</field>
+	<field name="providerContactEmail" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/email]]></fieldDescription>
+	</field>
+	<field name="providerContactPhone" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/phone]]></fieldDescription>
+	</field>
+	<field name="bil_accountOwner" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/accountOwner]]></fieldDescription>
+	</field>
+	<field name="bilPaymentMethod" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/@type]]></fieldDescription>
+	</field>
+	<field name="invoiceNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::invoice/@number]]></fieldDescription>
+	</field>
+	<field name="label" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::category/@label]]></fieldDescription>
+	</field>
+	<field name="label2" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::subCategory/@label]]></fieldDescription>
+	</field>
+	<field name="label3" class="java.lang.String">
+		<fieldDescription><![CDATA[label]]></fieldDescription>
+	</field>
+	<field name="usageDate" class="java.lang.String">
+		<fieldDescription><![CDATA[usageDate]]></fieldDescription>
+	</field>
+	<field name="unitAmountWithoutTax" class="java.lang.String">
+		<fieldDescription><![CDATA[unitAmountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="taxPercent" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::subCategory/@taxPercent]]></fieldDescription>
+	</field>
+	<field name="labelSubCat" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::subCategory/@label]]></fieldDescription>
+	</field>
+	<field name="amountWithoutTax_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[sum(amountWithoutTax)]]></fieldDescription>
+	</field>
+	<field name="amountWithTax_total" class="java.lang.Double">
+		<fieldDescription><![CDATA[sum(amountWithTax)]]></fieldDescription>
+	</field>
+	<field name="amountWithoutTax_tva10" class="java.lang.String">
+		<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="amountHT_tva10" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/tax[@code='TAX_10']/amountHT]]></fieldDescription>
+	</field>
+	<field name="amountTax_tva10" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/tax[@code='TAX_10']/amount]]></fieldDescription>
+	</field>
+	<field name="amountHT_tva20" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/tax[@code='TAX_20']/amountHT]]></fieldDescription>
+	</field>
+	<field name="amountTax_tva20" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/tax[@code='TAX_20']/amount]]></fieldDescription>
+	</field>
+	<field name="dueDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/dueDate]]></fieldDescription>
+	</field>
+	<field name="total_tva" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/@total]]></fieldDescription>
+	</field>
+	<field name="discountAmountWithoutTax" class="java.lang.Double">
+		<fieldDescription><![CDATA[discountAmountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="adjustedInvoiceNumber" class="java.lang.Integer">
+		<fieldDescription><![CDATA[count(@adjustedInvoiceNumber)]]></fieldDescription>
+	</field>
+	<field name="currencySymbol" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/currencySymbol]]></fieldDescription>
+	</field>
+	<variable name="amountWithTax_total_1" class="java.lang.Double" resetType="Group" resetGroup="1" calculation="Sum">
+		<variableExpression><![CDATA[$F{amountWithTax_total}]]></variableExpression>
+	</variable>
+	<variable name="amountWithoutTax_total_1" class="java.lang.Double" resetType="Group" resetGroup="1" calculation="Sum">
+		<variableExpression><![CDATA[$F{amountWithoutTax_total}]]></variableExpression>
+	</variable>
+	<variable name="tax" class="java.lang.String">
+		<variableExpression><![CDATA[]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{taxPercent}]]></initialValueExpression>
+	</variable>
+	<variable name="discountAmountWithoutTax_total" class="java.lang.Double" resetType="Group" resetGroup="1" calculation="Sum">
+		<variableExpression><![CDATA[$F{discountAmountWithoutTax}]]></variableExpression>
+	</variable>
+	<group name="subCategory"/>
+	<group name="1"/>
+	<group name="2">
+		<groupHeader>
+			<band height="23">
+				<line>
+					<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="20" width="350" height="1" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#999999" uuid="647471f5-fed9-44d6-a194-0e370ca0c47d">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					</graphicElement>
+				</line>
+				<componentElement>
+					<reportElement key="" positionType="Float" isPrintRepeatedValues="false" x="230" y="0" width="115" height="19" isPrintWhenDetailOverflows="true" printWhenGroupChanges="subCategory" forecolor="#013042" uuid="07396500-520e-47ca-bfce-5b80c070bd72"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
+						<datasetRun subDataset="dataset2" uuid="aab2d9e0-a60f-4f99-9c68-e2a8473130a2">
+							<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}.dataSource("/invoice/header/discounts/discount")]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="115" uuid="0be09376-59ee-466e-8962-adeb1ede63b1">
+							<jr:tableHeader height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="0.0" lineColor="#000000"/>
+								</box>
+								<textField>
+									<reportElement x="0" y="0" width="115" height="14" isPrintWhenDetailOverflows="true" uuid="dbcd73c0-1e51-4107-8b9a-1942b35d1868"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Reg" size="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{discountAmountWithoutTax}))]]></textFieldExpression>
+								</textField>
+							</jr:tableHeader>
+							<jr:detailCell height="0" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0" lineColor="#000000"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<staticText>
+					<reportElement x="-2" y="-1" width="194" height="21" forecolor="#000000" uuid="7d5c0eb6-5bba-4eb0-a030-9906e068f959"/>
+					<box leftPadding="16"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Reg" size="10"/>
+					</textElement>
+					<text><![CDATA[Customer Discount]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+</jasperReport>

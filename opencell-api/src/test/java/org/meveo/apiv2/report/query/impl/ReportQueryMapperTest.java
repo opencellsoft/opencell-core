@@ -30,7 +30,7 @@ public class ReportQueryMapperTest {
                 .queryDescription("description")
                 .visibility(QueryVisibilityEnum.PUBLIC)
                 .targetEntity("org.meveo.model.billing.BillingAccount")
-                .fields(Arrays.asList("code", "description"))
+                .genericFields(Arrays.asList("code", "description"))
                 .build();
         ReportQuery entity = mapper.toEntity(resource);
         assertThat(entity, instanceOf(ReportQuery.class));

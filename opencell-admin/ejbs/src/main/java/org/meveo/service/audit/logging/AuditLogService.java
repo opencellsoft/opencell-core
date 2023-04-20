@@ -76,7 +76,7 @@ public class AuditLogService extends PersistenceService<AuditLog> {
         auditLog.setActor(actor);
         auditLog.setAction(operationType);
         auditLog.setParameters(parameters);
-        auditLog.setOrigin(String.valueOf(entity.getId()));
+        auditLog.setOrigin(entity.getId() != null ? String.valueOf(entity.getId()) : null);
         auditLog.setSource(source);
         create(auditLog);
     }

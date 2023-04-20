@@ -5,7 +5,7 @@
         <artifactId>opencell-admin</artifactId>
         <groupId>com.opencellsoft</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>14.0.0-SNAPSHOT</version>
+        <version>14.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>opencell-admin-web</artifactId>
     <name>Opencell Admin Web Application - Web Module</name>
@@ -360,6 +360,10 @@
             <groupId>com.opencellsoft</groupId>
             <artifactId>opencell-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.opencellsoft</groupId>
+            <artifactId>opencell-scripts</artifactId>
+        </dependency>
 
         <!-- Libraries included in JBoss -->
 
@@ -494,12 +498,6 @@
                     <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-authz-client</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- End of libraries included in Jboss -->

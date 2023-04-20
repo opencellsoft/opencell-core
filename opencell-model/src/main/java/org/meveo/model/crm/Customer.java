@@ -83,7 +83,7 @@ import org.meveo.model.payments.CustomerAccount;
         @NamedQuery(name = "Customer.getProspects", query = "select c from Customer c left join c.customerAccounts as ca left join ca.billingAccounts as ba "
                 + "left join ba.invoices as inv left join ba.usersAccounts as ua left join ua.subscriptions as sub "
                 + "where sub.id is null and inv.id is null and c.auditable.created < :creationDate")})
-public class Customer extends AccountEntity  implements IInvoicingMinimumApplicable, IWFEntity, ICounterEntity {
+public class Customer extends AccountEntity implements IInvoicingMinimumApplicable, IWFEntity, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -178,7 +178,19 @@ public class Customer extends AccountEntity  implements IInvoicingMinimumApplica
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
 
-
+    /**
+     * Parent customer 
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_customer_id")
+    private Customer parentCustomer;
+    
+    /**
+     * Children customers 
+     */
+    @OneToMany(mappedBy = "parentCustomer", fetch = FetchType.LAZY)
+    private List<Customer> childrenCustomers = new ArrayList<>();
+    
     public Date getAnonymizationDate() {
         return anonymizationDate;
     }
@@ -333,4 +345,20 @@ public class Customer extends AccountEntity  implements IInvoicingMinimumApplica
         this.checkThreshold = checkThreshold;
     }
 
+	public Customer getParentCustomer() {
+		return parentCustomer;
+	}
+
+	public void setParentCustomer(Customer parentCustomer) {
+		this.parentCustomer = parentCustomer;
+	}
+
+	public List<Customer> getChildrenCustomers() {
+		return childrenCustomers;
+	}
+
+	public void setChildrenCustomers(List<Customer> childrenCustomers) {
+		this.childrenCustomers = childrenCustomers;
+	}
+    
 }

@@ -42,6 +42,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.OrderApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.commons.utils.PersistenceUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
@@ -153,6 +154,7 @@ public class OrderBean extends CustomFieldBean<Order> {
      */
     public OrderBean() {
         super(Order.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override
@@ -258,6 +260,8 @@ public class OrderBean extends CustomFieldBean<Order> {
     public void saveOrderItem() {
 
         try {
+        	Auditable auditable = new Auditable(currentUser);
+        	selectedOrderItem.setAuditable(auditable);
             // Reconstruct product offerings - add main offering. Related product offerings are added later bellow
             selectedOrderItem.getOrderItemProductOfferings().clear();
             selectedOrderItem.getOrderItemProductOfferings().add(new OrderItemProductOffering(selectedOrderItem, selectedOrderItem.getMainOffering(), 0));

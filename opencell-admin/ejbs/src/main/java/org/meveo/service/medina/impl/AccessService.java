@@ -45,8 +45,16 @@ public class AccessService extends PersistenceService<Access> {
         return getEntityManager().createNamedQuery("Access.getAccessesByUserId", Access.class).setParameter("accessUserId", accessUserId).getResultList();
     }
 
+    /**
+     * Check if the given access is duplicated or not across
+     * all subscriptions: Over all subs, it should be only one access point with
+     * the same userId, within the same period
+     *
+     * @param access access to check
+     * @return if it's duplicated or not
+     */
     public boolean isDuplicateAndOverlaps(Access access) {
-        List<Access> accesses = retrieveAccessByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription());
+        List<Access> accesses = retrieveAllAccessByUserId(access.getAccessUserId());
         accesses.remove(access);
         if(accesses.isEmpty()){
             return false;
@@ -68,6 +76,13 @@ public class AccessService extends PersistenceService<Access> {
         query.setParameter("accessUserId", accessUserId);
         query.setParameter("subscriptionId", subscription.getId());
         return query.getResultList();
+    }
+
+    private List<Access> retrieveAllAccessByUserId(String accessUserId) {
+        return getEntityManager()
+                .createQuery("SELECT a FROM Access a WHERE a.accessUserId=:accessUserId", Access.class)
+                .setParameter("accessUserId", accessUserId)
+                .getResultList();
     }
 
     @Deprecated
@@ -150,7 +165,7 @@ public class AccessService extends PersistenceService<Access> {
 
         return getEntityManager().createNamedQuery("Access.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
     }
-    
+
     /**
      * Get a list of Accesses By subscriptionCode and code
      * 

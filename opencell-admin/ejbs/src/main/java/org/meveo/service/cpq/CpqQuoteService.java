@@ -59,6 +59,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.InternationalSettingsService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -88,10 +89,9 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 
 	@Inject
 	private EmailSender emailSender;
-	
+
 	@Inject
-	private MediaService mediaService;
-	
+	private InternationalSettingsService internationalSettingsService;
 	
 	@Inject
     @PDFGenerated
@@ -509,9 +509,14 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 
 			Map<Object, Object> params = new HashMap<>();
 			params.put("cpqQuote", quote);
-			String subject = ValueExpressionWrapper.evaluateExpression(emailTemplate.getSubject(), params, String.class);
-			String content = ValueExpressionWrapper.evaluateExpression(emailTemplate.getTextContent(), params, String.class);
-			String contentHtml = ValueExpressionWrapper.evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+			String languageCode = billableAccount.getCustomerAccount().getTradingLanguage().getLanguage().getLanguageCode();
+			String emailSubject = internationalSettingsService.resolveSubject(emailTemplate,languageCode);
+			String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate,languageCode);
+			String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate,languageCode);
+
+			String subject = ValueExpressionWrapper.evaluateExpression(emailSubject, params, String.class);
+			String content = ValueExpressionWrapper.evaluateExpression(emailContent, params, String.class);
+			String contentHtml = ValueExpressionWrapper.evaluateExpression(htmlContent, params, String.class);
 			String from = seller.getContactInformation().getEmail();
 
 			emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null, false);

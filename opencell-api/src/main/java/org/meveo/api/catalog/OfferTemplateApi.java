@@ -77,6 +77,7 @@ import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.admin.FileType;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -103,8 +104,11 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.document.Document;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
+import org.meveo.service.admin.impl.FileTypeService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
@@ -120,6 +124,7 @@ import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.document.DocumentService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -183,6 +188,15 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private CommercialRuleHeaderService commercialRuleHeaderService;
+
+    @Inject
+    private DocumentService documentService;
+
+    @Inject
+    private FileTypeService fileTypeService;
+
+    @Inject
+    CustomGenericEntityCodeService customGenericEntityCodeService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -372,10 +386,21 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
 
         offerTemplate.setBusinessOfferModel(businessOffer);
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(offerTemplate));
+        }
+
         offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setName(postData.getName());
         offerTemplate.setLongDescription(postData.getLongDescription());
+        
+        if(!LifeCycleStatusEnum.RETIRED.equals(offerTemplate.getLifeCycleStatus())) {
+            offerTemplate.setSequence(postData.getSequence());
+            offerTemplate.setDisplay(postData.isDisplay());  
+        }       
+        
         var datePeriod = new DatePeriod();
 
         datePeriod.setFrom(postData.getNewValidFrom());
@@ -407,6 +432,15 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
         if (postData.getLongDescriptionsTranslated() != null) {
             offerTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), offerTemplate.getLongDescriptionI18n()));
+        }
+
+        if (postData.getDocumentCode() != null) {
+            Document document = documentService.findByCode(postData.getDocumentCode());
+            if (document == null) {
+                throw new EntityDoesNotExistsException("The document with code " + postData.getDocumentCode() + " does not exist");
+            } else {
+                offerTemplate.setDocument(document);
+            }
         }
 
         offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
@@ -478,9 +512,22 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 templateAttribute.setValidationLabel(offerAttributeDto.getValidationLabel());
                 templateAttribute.setValidationPattern(offerAttributeDto.getValidationPattern());
                 templateAttribute.setValidationType(offerAttributeDto.getValidationType());
+                validateTemplateAttribute(templateAttribute);
                 return templateAttribute;
             }).collect(Collectors.toList()));
         }
+    }
+    
+    private void validateTemplateAttribute(OfferTemplateAttribute templateAttribute) {
+    	// A hidden mandatory field must have a default value 
+    	if (templateAttribute.isMandatory() && !templateAttribute.isDisplay() 
+         		&& (templateAttribute.getDefaultValue() == null || templateAttribute.getDefaultValue().isEmpty())) 
+         	 throw new InvalidParameterException("Default value is required for an attribute mandatory and hidden");
+
+    	// A read-only mandatory attribute must have a default value
+    	 if (templateAttribute.isMandatory() && templateAttribute.getReadOnly()
+          		&& (templateAttribute.getDefaultValue() == null || templateAttribute.getDefaultValue().isEmpty())) 
+          	 throw new InvalidParameterException("Default value is required for an attribute mandatory and read-only");
     }
 
     private void processTags(OfferTemplateDto postData, OfferTemplate offerTemplate) {

@@ -31,6 +31,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -106,6 +108,8 @@ import org.meveo.service.tax.TaxCategoryService;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
+import static java.util.Optional.ofNullable;
+
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
@@ -167,6 +171,7 @@ public class CustomerApi extends AccountEntityApi {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
+
     public Customer create(CustomerDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -177,9 +182,6 @@ public class CustomerApi extends AccountEntityApi {
 
     public Customer create(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel, Seller associatedSeller) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(Customer.class.getName(), postData);
-        }
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
         }
@@ -187,14 +189,18 @@ public class CustomerApi extends AccountEntityApi {
             missingParameters.add("name.lastName");
         }
 
+        Customer customer = new Customer();
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
+        }
+
         handleMissingParameters(postData);
 
         // check if customer already exists
-        if (customerService.findByCode(postData.getCode()) != null) {
+        if (!StringUtils.isBlank(postData.getCode()) && customerService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
         }
-
-        Customer customer = new Customer();
 
         dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, associatedSeller);
 
@@ -205,8 +211,11 @@ public class CustomerApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCode())) {
             customer.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
         }
-
+        
         customerService.create(customer);
+        
+        updateCustomerChilds(postData, customer);
+        
         customer.getAddressbook().setCustomer(customer);
         addressBookService.update(customer.getAddressbook());
 
@@ -240,8 +249,10 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, null);
-
+        
         customer = customerService.update(customer);
+        
+        updateCustomerChilds(postData, customer);
 
         return customer;
     }
@@ -278,14 +289,6 @@ public class CustomerApi extends AccountEntityApi {
                 }
                 customer.setCustomerBrand(customerBrand);
             }
-        }
-
-        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getSeller())) {
-            Seller seller = associatedSeller != null ? associatedSeller : sellerService.findByCode(postData.getSeller());
-            if (seller == null) {
-                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
-            }
-            customer.setSeller(seller);
         }
 
         updateAccount(customer, postData, checkCustomFields);
@@ -335,11 +338,55 @@ public class CustomerApi extends AccountEntityApi {
             customer.setAdditionalDetails(additionalDetails);
         }
 
-        if(postData.getIsCompany() != null)
-        {
+        if(postData.getIsCompany() != null) {
             customer.setIsCompany(postData.getIsCompany());
         }
+        
+        if (!StringUtils.isBlank(postData.getParentCustomerCode())) {
+			customer.setParentCustomer(ofNullable(customerService.findByCode(postData.getParentCustomerCode()))
+					.orElseThrow(() -> new BusinessException("No customer parent found with the given code : " + postData.getParentCustomerCode())));
+			if(!canBeLinked(customer.getParentCustomer(), customer)) {
+                throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is %s of %s", 
+                		customer.getParentCustomer().getCode(), childOrDescendant(customer.getParentCustomer(), customer), customer.getCode()));
+			}
+		} else if ("".equals(postData.getParentCustomerCode())) {
+			customer.setParentCustomer(null);
+		}
+        
+        if (postData.getChildrenCustomersCodes() != null) {
+        	customer.setChildrenCustomers(postData.getChildrenCustomersCodes().stream().map(code -> ofNullable(customerService.findByCode(code))
+					.orElseThrow(() -> new BusinessException("No customer child found with the given code : " + code))).collect(Collectors.toList()));
+        	
+        	customer.getChildrenCustomers().stream().filter(child -> !canBeLinked(customer, child)).findAny().ifPresent(child -> {
+                throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is %s of %s", 
+                		customer.getCode(), childOrDescendant(customer, child), child.getCode()));
+        	});
+        }
+        
+        if (!StringUtils.isBlank(postData.getSeller())) {
+            Seller seller = associatedSeller != null ? associatedSeller : sellerService.findByCode(postData.getSeller());
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+            }
+            customer.setSeller(seller);
+        } else if ("".equals(postData.getSeller())){
+            customer.setSeller(null);
+        } else if (isNew) {
+			customer.setSeller((customer.getParentCustomer() != null && customer.getParentCustomer().getSeller() != null)? 
+							customer.getParentCustomer().getSeller() : customer.getCustomerCategory().getDefaultSeller());
+        }
+        
+
     }
+    
+	private void updateCustomerChilds(CustomerDto postData, Customer customer) {
+		if (postData.getChildrenCustomersCodes() != null) {
+			customer.getChildrenCustomers().forEach(customerChild -> {
+				customerChild.setParentCustomer(customer);
+				customerService.update(customerChild);
+			});
+		}
+	}
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
     public CustomerDto find(String customerCode) throws MeveoApiException {
@@ -533,6 +580,10 @@ public class CustomerApi extends AccountEntityApi {
         if ((postData.isExoneratedFromTaxes() == null || !postData.isExoneratedFromTaxes()) && postData.getTaxCategoryCode() == null) {
             missingParameters.add("Exonerated from taxes or tax category code");
         }
+        
+        if (StringUtils.isBlank(postData.getDefaultSellerCode())) {
+            missingParameters.add("defaultSellerCode");
+        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -563,6 +614,13 @@ public class CustomerApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
             }
             customerCategory.setTaxCategory(taxCategory);
+        }
+        if (!StringUtils.isBlank(postData.getDefaultSellerCode())) {
+            Seller defaultSeller = sellerService.findByCode(postData.getDefaultSellerCode());
+            if (defaultSeller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getDefaultSellerCode());
+            }
+            customerCategory.setDefaultSeller(defaultSeller);
         }
 
         customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
@@ -632,6 +690,15 @@ public class CustomerApi extends AccountEntityApi {
         }
         if (postData.getLanguageDescriptions() != null) {
             customerCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+            toUpdate = true;
+        }
+        
+        if (!StringUtils.isBlank(postData.getDefaultSellerCode())) {
+            Seller defaultSeller = sellerService.findByCode(postData.getDefaultSellerCode());
+            if (defaultSeller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getDefaultSellerCode());
+            }
+            customerCategory.setDefaultSeller(defaultSeller);
             toUpdate = true;
         }
 
@@ -928,4 +995,39 @@ public class CustomerApi extends AccountEntityApi {
 
         return new ArrayList<>(customerService.filterCountersByPeriod(customer.getCounters(), date).values());
     }
+    
+	private boolean canBeLinked(Customer parent, Customer child) {
+		Customer grandParent = parent.getParentCustomer();
+		if (grandParent == null) {
+			return true;
+		}
+		if (grandParent == child) {
+			return false;
+		}
+		return canBeLinked(grandParent, child);
+	}
+	
+	private String childOrDescendant(Customer parent, Customer child) {
+		return (Objects.equals(child, parent.getParentCustomer()))? "child" : "descendant";
+	}
+	
+	@SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
+    public CustomerDto findRootParent(String customerCode) throws MeveoApiException {
+        if (StringUtils.isBlank(customerCode)) {
+            missingParameters.add("customerCode");
+        }
+        handleMissingParameters();
+
+        Customer customer = ofNullable(customerService.findByCode(customerCode)).orElseThrow(() -> new EntityDoesNotExistsException(Customer.class, customerCode));
+
+        return accountHierarchyApi.customerToDto(getRootParent(customer));
+    }
+    
+    private Customer getRootParent(Customer customer) {
+		Customer parent = customer.getParentCustomer();
+		if (parent == null) {
+			return customer;
+		}
+		return getRootParent(parent);
+	}
 }

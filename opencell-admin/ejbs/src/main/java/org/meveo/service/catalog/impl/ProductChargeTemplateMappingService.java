@@ -46,4 +46,15 @@ public class ProductChargeTemplateMappingService extends PersistenceService<Prod
         
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
+
+    public boolean checkExistenceByProductAndChargeAndCounterTemplate(String productCode, String chargeTemplateCode, String counterTemplateCode) {
+        return (Long) getEntityManager().createQuery("SELECT COUNT(ptm.id) FROM ProductChargeTemplateMapping ptm" +
+                        " WHERE ptm.product.code = :PRODUCT_CODE" +
+                        " AND ptm.chargeTemplate.code = :CHARGE_CODE" +
+                        " AND ptm.counterTemplate.code = :CT_CODE")
+                .setParameter("CT_CODE", counterTemplateCode)
+                .setParameter("PRODUCT_CODE", productCode)
+                .setParameter("CHARGE_CODE", chargeTemplateCode)
+                .getSingleResult() > 0;
+    }
 }

@@ -40,6 +40,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableCFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.UntdidPaymentMeans;
 import org.meveo.model.document.Document;
 
 /**
@@ -57,10 +58,10 @@ import org.meveo.model.document.Document;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_token_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "PaymentMethod.updatePreferredPaymentMethod", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.id <> :id and pm.customerAccount = :ca"),
-        @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred1", query = "select min(pmg.id) from PaymentMethod pmg where pmg.customerAccount.id = :caId and pmg.disabled = false"),
-        @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred2", query = "UPDATE PaymentMethod pm set pm.preferred = true where pm.customerAccount.id = :caId and pm.id =:id"),
-        @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred3", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.customerAccount.id = :caId and pm.id <>:id"),
+		@NamedQuery(name = "PaymentMethod.updatePreferredPaymentMethod", query = "UPDATE PaymentMethod pm set pm.preferred = false ,pm.auditable.updated = :dateIN where pm.id <> :id and pm.customerAccount = :ca and pm.preferred =true"),
+		@NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred1", query = "select min(pmg.id) from PaymentMethod pmg where pmg.customerAccount.id = :caId and pmg.disabled = false"),
+		@NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred2", query = "UPDATE PaymentMethod pm set pm.preferred = true ,pm.auditable.updated = :dateIN where pm.customerAccount.id = :caId and pm.id =:id"),
+		@NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred3", query = "UPDATE PaymentMethod pm set pm.preferred = false ,pm.auditable.updated = :dateIN where pm.customerAccount.id = :caId and pm.id <>:id and pm.preferred =true"),
         @NamedQuery(name = "PaymentMethod.getNumberOfPaymentMethods", query = "select count(*) from  PaymentMethod pm where pm.customerAccount.id = :caId and pm.disabled = false"),
         @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForCA", query = "select m from PaymentMethod m where m.customerAccount.id =:caId and m.preferred=true"),
         @NamedQuery(name = "PaymentMethod.listByCustomerAccount", query = "select m from PaymentMethod m inner join m.customerAccount ca where ca=:customerAccount"),
@@ -70,7 +71,8 @@ import org.meveo.model.document.Document;
                 "left join Subscription sub on sub.paymentMethod.id = pm.id " +
                 "left join BillingAccount ba on ba.paymentMethod.id = pm.id " +
                 "left join Invoice inv on inv.paymentMethod.id = pm.id where pm.id = :pmId and pm.disabled = false and inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED"),
-        @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForDDRequestItem", query = "SELECT ca.id, ca.code, ca.description, pm.class, pm.bankCoordinates.bic, pm.bankCoordinates.iban, pm.alias, pm.mandateIdentification, pm.mandateDate FROM CustomerAccount ca JOIN DDPaymentMethod pm on ca.id = pm.customerAccount.id JOIN AccountOperation ao on ca.id = ao.customerAccount.id  WHERE ao.ddRequestItem.id = :id AND pm.preferred = true ORDER BY ao.id ASC") })
+        @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForDDRequestItem", query = "SELECT ca.id, ca.code, ca.description, pm.class, pm.bankCoordinates.bic, pm.bankCoordinates.iban, pm.alias, pm.mandateIdentification, pm.mandateDate FROM CustomerAccount ca JOIN DDPaymentMethod pm on ca.id = pm.customerAccount.id JOIN AccountOperation ao on ca.id = ao.customerAccount.id  WHERE ao.ddRequestItem.id = :id AND pm.preferred = true ORDER BY ao.id ASC"),
+        @NamedQuery(name = "PaymentMethod.getNumberOfTokenId", query = "select count(*) from  PaymentMethod pm where pm.tokenId = :tokenId and pm.disabled = false")})
 public abstract class PaymentMethod extends EnableCFEntity {
 
     private static final long serialVersionUID = 8726571628074346184L;
@@ -161,6 +163,21 @@ public abstract class PaymentMethod extends EnableCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "document_id")
     private Document referenceDocument;
+    
+    /**
+     * UntdidPaymentMeans
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_means")
+    private UntdidPaymentMeans paymentMeans;
+
+    public UntdidPaymentMeans getPaymentMeans() {
+        return paymentMeans;
+    }
+
+    public void setPaymentMeans(UntdidPaymentMeans paymentMeans) {
+        this.paymentMeans = paymentMeans;
+    }
 
     /**
      * Add to deal with payment method auditing

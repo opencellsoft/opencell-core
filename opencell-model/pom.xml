@@ -5,7 +5,7 @@
         <artifactId>opencell</artifactId>
         <groupId>com.opencellsoft</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>14.0.0-SNAPSHOT</version>
+        <version>14.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>opencell-model</artifactId>
     <packaging>jar</packaging>
@@ -73,7 +73,7 @@
                     <dependency>
                         <groupId>org.postgresql</groupId>
                         <artifactId>postgresql</artifactId>
-                        <version>42.5.0</version>
+                        <version>42.5.1</version>
                     </dependency>
                     <dependency>
                         <groupId>com.oracle.database.jdbc</groupId>

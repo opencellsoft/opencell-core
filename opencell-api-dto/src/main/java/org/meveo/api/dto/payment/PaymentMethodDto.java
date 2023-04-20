@@ -221,6 +221,20 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
     protected CustomFieldsDto customFields;
 
     /**
+     * Payment Means.
+     */
+    @Schema(description = "Payment Means")
+    private String untdidPaymentMeans;
+    
+    public String getUntdidPaymentMeans() {
+        return untdidPaymentMeans;
+    }
+
+    public void setUntdidPaymentMeans(String untdidPaymentMeans) {
+        this.untdidPaymentMeans = untdidPaymentMeans;
+    }
+
+    /**
      * Default constructor.
      */
     public PaymentMethodDto() {
@@ -301,10 +315,13 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
             this.setPaymentMethodType(PaymentMethodEnum.WIRETRANSFER);
         }
         if (paymentMethod instanceof PaypalPaymentMethod) {
-            this.setPaymentMethodType(PaymentMethodEnum.PAYPAL);
+            this.setPaymentMethodType(PaymentMethodEnum.PAYPALPAYMENTLINK);
         }
         if (paymentMethod instanceof StripePaymentMethod) {
-            this.setPaymentMethodType(PaymentMethodEnum.STRIPE);
+            this.setPaymentMethodType(PaymentMethodEnum.STRIPEDIRECTLINK);
+        }
+        if (paymentMethod.getPaymentMeans() != null) {
+            this.untdidPaymentMeans = paymentMethod.getPaymentMeans().getCodeName();
         }
     }
 
@@ -351,6 +368,9 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         case CARD:
             pmEntity = new CardPaymentMethod(customerAccount, disabledBool, getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(),
                 getMonthExpiration(), getCardType());
+            if (getTokenId() != null) {
+                pmEntity.setTokenId(getTokenId());
+            }
             break;
 
         case DIRECTDEBIT:
@@ -365,10 +385,10 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         case WIRETRANSFER:
             pmEntity = new WirePaymentMethod(disabledBool, alias, preferred, customerAccount);
             break;
-        case PAYPAL:
+        case PAYPALPAYMENTLINK:
             pmEntity = new PaypalPaymentMethod(disabledBool, alias, preferred, customerAccount,userId);
             break;
-        case STRIPE:
+        case STRIPEDIRECTLINK:
             pmEntity = new StripePaymentMethod(disabledBool, alias, preferred, customerAccount,userId);
             break;   
         case CASH:
@@ -452,6 +472,31 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
                     }
                 }
                 break;
+            case CARD:
+            	
+            	if (!StringUtils.isBlank(getTokenId())) {
+                    paymentMethod.setTokenId(getTokenId());
+                }
+            	if (!StringUtils.isBlank(getMonthExpiration())) {
+            		((CardPaymentMethod) paymentMethod).setMonthExpiration(getMonthExpiration());
+                }
+            	if (!StringUtils.isBlank(getYearExpiration())) {
+            		((CardPaymentMethod) paymentMethod).setYearExpiration(getYearExpiration());
+                }  
+            	if (!StringUtils.isBlank(getCardNumber())) {
+            		((CardPaymentMethod) paymentMethod).setHiddenCardNumber(CardPaymentMethod.hideCardNumber(getCardNumber()));
+                } 
+            	if (!StringUtils.isBlank(getOwner())) {
+            		((CardPaymentMethod) paymentMethod).setOwner(getOwner());
+                }
+            	if (!StringUtils.isBlank(getCardType())) {
+            		((CardPaymentMethod) paymentMethod).setCardType(getCardType());
+                }
+            	if (!StringUtils.isBlank(getIssueNumber())) {
+            		((CardPaymentMethod) paymentMethod).setIssueNumber(getIssueNumber());
+                }
+            	
+            break; 	
             default:
                 break;
         }

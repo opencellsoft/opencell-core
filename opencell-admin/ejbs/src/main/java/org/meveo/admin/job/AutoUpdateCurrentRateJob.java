@@ -7,14 +7,23 @@ import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Stateless
 public class AutoUpdateCurrentRateJob extends Job {
+
+    private static final String APPLIES_TO_NAME = "JobInstance_AutoUpdateCurrentRateJob";
+    private static final String CF_CLEAN_APPLIED_RATE_INVOICE = "cleanAppliedRateInvoice";
 
     @Inject
     private AutoUpdateCurrentRateJobBean autoUpdateCurrentRateJobBean;
@@ -30,4 +39,19 @@ public class AutoUpdateCurrentRateJob extends Job {
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.UTILS;
     }
+
+    @Override
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<>();
+
+        result.put(CF_CLEAN_APPLIED_RATE_INVOICE, CustomFieldTemplateUtils.buildCF(CF_CLEAN_APPLIED_RATE_INVOICE,
+                resourceMessages.getString("jobExecution.cleanAppliedRateInvoice"),
+                CustomFieldTypeEnum.BOOLEAN,
+                "tab:Configuration:0;field:0",
+                "false",
+                APPLIES_TO_NAME));
+
+        return result;
+    }
+
 }

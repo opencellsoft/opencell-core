@@ -17,13 +17,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface ChargeCdrListInput extends CdrListInput {
 
     @Default
-    @Schema(description = "Rating must happen in a transaction no change performed during rating is persisted if isVirtual=true")
+    @Schema(description = "Rating must happen in a transaction no change performed during rating is persisted if isVirtual=true", name ="isVirtual")
     default boolean isVirtual() {
         return false;
     }
 
     @Default
-    @Schema(description = "Rate all TriggeredEDR created by the rating of the charge")
+    @Schema(description = "Rate all TriggeredEDR created by the rating of the charge", name ="isRateTriggeredEdr")
     default boolean isRateTriggeredEdr() {
         return false;
     }
@@ -33,26 +33,26 @@ public interface ChargeCdrListInput extends CdrListInput {
     Integer getMaxDepth();
 
     @Default
-    @Schema(description = "If true, the API will return the list of IDs of all wallet operations produced. Applies to non-virtual mode only.")
+    @Schema(description = "If true, the API will return the list of IDs of all wallet operations produced. Applies to non-virtual mode only.", name ="isReturnWalletOperations")
     default boolean isReturnWalletOperations() {
         return false;
     }
 
     @Default
-    @Schema(description = "If true, the API will return the list of details of all wallet operations produced, even if they are virtual")
+    @Schema(description = "If true, the API will return the list of details of all wallet operations produced, even if they are virtual", name ="isReturnWalletOperationDetails")
     default boolean isReturnWalletOperationDetails() {
         return false;
     }
 
 
     @Default
-    @Schema(description = "If true, the API will return the list of counter updates produced, even if they are virtual")
+    @Schema(description = "If true, the API will return the list of counter updates produced, even if they are virtual", name = "isReturnCounters")
     default boolean isReturnCounters() {
         return false;
     }
 
     @Default
-    @Schema(description = "If true, the API will automatically generate RTs")
+    @Schema(description = "If true, the API will automatically generate RTs", name = "isGenerateRTs")
     default boolean isGenerateRTs() {
         return false;
     }

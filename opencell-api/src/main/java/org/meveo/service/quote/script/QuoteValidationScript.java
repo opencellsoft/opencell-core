@@ -118,6 +118,7 @@ public class QuoteValidationScript extends ModuleScript {
 						return orderOffer;
 					}).collect(Collectors.toList());
 			order.setOffers(orderOffers);
+		    orderOffers.stream().findFirst().get().getOfferTemplate().getAllowedDiscountPlans().stream().findFirst().ifPresent(matchedDP -> order.setDiscountPlan(matchedDP));
 			commercialOrderService.update(order);
 			List<QuotePrice> quotePrices=quoteVersion.getQuotePrices().stream()
 					.filter(qp -> qp.getPriceLevelEnum()==PriceLevelEnum.QUOTE).collect(Collectors.toList());
@@ -200,6 +201,7 @@ public class QuoteValidationScript extends ModuleScript {
 		offer.setUserAccount(quoteOffer.getUserAccount());
 		offer.setOrderLineType(OfferLineTypeEnum.CREATE);
 		offer.setSubscription(quoteOffer.getSubscription());
+		offer.setContract(quoteOffer.getContract());
 		orderOfferService.create(offer);
 		LOGGER.info("quoteOffer.getQuoteAttributes() size{}",quoteOffer.getQuoteAttributes().size());
 		quoteOffer.getQuoteAttributes().forEach(quoteAttribute -> {

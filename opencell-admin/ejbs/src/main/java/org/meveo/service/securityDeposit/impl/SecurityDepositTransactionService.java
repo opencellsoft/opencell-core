@@ -19,7 +19,6 @@ public class SecurityDepositTransactionService extends BusinessService<SecurityD
     /**
      * Gets the payment methods.
      *
-     * @param billingAccount the billing account
      * @return the payment methods
      */
     @SuppressWarnings("unchecked")

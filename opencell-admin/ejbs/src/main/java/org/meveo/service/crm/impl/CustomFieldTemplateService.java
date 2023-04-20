@@ -34,7 +34,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -101,7 +100,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCache;
 
-    @EJB
+    @Inject
     private CfValueAccumulator cfValueAccumulator;
 
     @Inject
@@ -120,7 +119,16 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @PostConstruct
     private void init() {
-        useCFTCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheCFT", "true"));
+        useCFTCache = ParamBeanFactory.getAppScopeInstance().getPropertyAsBoolean("cache.cacheCFT", true);
+    }
+
+
+    public static void setCacheCFTAsTrue() {
+        useCFTCache = true;
+    }
+
+    public static void setCacheCFTAsFalse() {
+        useCFTCache = false;
     }
 
     /**
@@ -288,12 +296,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
 
         clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
-        
-        boolean reaccumulateCFValues = cfValueAccumulator.refreshCfAccumulationRules(cft);
-        if (reaccumulateCFValues) {
 
-            
-            cfValueAccumulator.cftCreated(cft);
+        if (CfValueAccumulator.isAccumulateCf()) {
+            boolean reaccumulateCFValues = cfValueAccumulator.refreshCfAccumulationRules(cft);
+            if (reaccumulateCFValues) {
+                cfValueAccumulator.cftCreated(cft);
+            }
         }
         if (updateUniqueConstraint) {
             updateConstraintByOldColumnsAndCet(oldConstraintColumns, cet, cetFields);
@@ -428,7 +436,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             }
         }
 
-        cfValueAccumulator.refreshCfAccumulationRules(cft);
+        if (CfValueAccumulator.isAccumulateCf()) {
+            cfValueAccumulator.refreshCfAccumulationRules(cft);
+        }
         clusterEventPublisher.publishEvent(cft, CrudActionEnum.remove);
     }
 
@@ -808,26 +818,26 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return
      */
     public List getReferencedEntities(CustomFieldTemplate customField, String code, Class entityClass) {
-    	
-    	// Case of encrypted customfields in DB
+
+        // Case of encrypted customfields in DB
 		if (CustomFieldJsonTypeDescriptor.TRUE_STR.equalsIgnoreCase(
 						ParamBean.getInstance().getProperty(CustomFieldJsonTypeDescriptor.ENCRYPT_CUSTOM_FIELDS_PROPERTY,
 								CustomFieldJsonTypeDescriptor.FALSE_STR)) && !StringUtils.isBlank(ParamBean.getInstance().getProperty(CustomFieldJsonTypeDescriptor.OPENCELL_SHA_KEY_PROPERTY, null))) {
-				QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
-				Query query = queryBuilder.getQuery(getEntityManager());
-				List<BusinessCFEntity> resultList = (List<BusinessCFEntity>) query.getResultList();
+            QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
+            Query query = queryBuilder.getQuery(getEntityManager());
+            List<BusinessCFEntity> resultList = (List<BusinessCFEntity>) query.getResultList();
 
-			for (BusinessCFEntity entity : resultList) {
+            for (BusinessCFEntity entity : resultList) {
 				if (entity.getCfValues() != null && entity.getCfValues().getValues() != null 
 						&& entity.getCfValues().getValues().get(customField.getCode()) != null
-						&& code.equalsIgnoreCase(((EntityReferenceWrapper)entity.getCfValues().getValues().get(customField.getCode())).getCode())) {
-					
-					return resultList;
-				}
-			}
+                        && code.equalsIgnoreCase(((EntityReferenceWrapper) entity.getCfValues().getValues().get(customField.getCode())).getCode())) {
 
-			return null;
-		}
+                    return resultList;
+                }
+            }
+
+            return null;
+        }
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
         queryBuilder.addCriterion("entityFromJson(cf_values," + customField.getCode() + ",entity)", "=", code, true);
         Query query = queryBuilder.getQuery(getEntityManager());

@@ -9,12 +9,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.catalog.service.DiscountPlanApiService;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.GenericApiPersistenceDelegate;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.apiv2.generic.services.SearchResult;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IEntity;
@@ -47,6 +50,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
@@ -73,6 +77,15 @@ public class DiscountPlanApiServiceTest {
     @Mock
     private EntityManager entityManager;
 
+    @Mock
+    private ParamBeanFactory paramBeanFactory;
+
+    @Mock
+    private ParamBean paramBean;
+
+    @Mock
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
     @Before
     public void setup() {
         when(persistenceDelegate.list(any(), any())).thenAnswer(new Answer<SearchResult>() {
@@ -87,7 +100,7 @@ public class DiscountPlanApiServiceTest {
                 return result;
             }
         });
-        when(persistenceDelegate.find(any(), any(), any())).thenAnswer(new Answer<IEntity>() {
+        when(persistenceDelegate.findByIdIgnoringCache(any(), any(), any())).thenAnswer(new Answer<IEntity>() {
 
             @Override
             public IEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -142,6 +155,7 @@ public class DiscountPlanApiServiceTest {
 
     private DiscountPlan getDiscountPlan(Integer index, DiscountPlanTypeEnum type, DiscountPlanStatusEnum status, boolean nullDates) {
         DiscountPlan discountPlan = new DiscountPlan();
+        discountPlan.setId(Long.valueOf(index));
         discountPlan.setCode("DP_" + index);
         discountPlan.setDiscountPlanType(type);
         discountPlan.setStatus(status);
@@ -158,6 +172,7 @@ public class DiscountPlanApiServiceTest {
     public void test_get_all_discount_plan() throws JsonProcessingException {
 
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
+        Mockito.when(genericPagingAndFilteringUtils.getLimit(anyInt())).thenReturn(Long.valueOf(1000));
         String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, null, null, 1L, null, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> map = objectMapper.readValue(jsonResponse, Map.class);

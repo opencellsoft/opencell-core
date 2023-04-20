@@ -38,6 +38,7 @@ public class GeneralLedgerBean extends BaseBean<GeneralLedger> {
 
     public GeneralLedgerBean() {
         super(GeneralLedger.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

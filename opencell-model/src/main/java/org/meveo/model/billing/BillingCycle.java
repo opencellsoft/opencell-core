@@ -172,14 +172,6 @@ public class BillingCycle extends BusinessCFEntity {
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
-    public boolean isThresholdPerEntity() {
-    	return thresholdPerEntity;
-	}
-
-	public void setThresholdPerEntity(boolean thresholdPerEntity) {
-		this.thresholdPerEntity = thresholdPerEntity;
-	}
-
     /**
      * if true then subscriptions are grouped by paymentMethod and billed separately.
      */
@@ -199,7 +191,7 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Column(name = "compute_dates_validation")
     @Type(type = "numeric_boolean")
-    private Boolean computeDatesAtValidation = false;
+    private boolean computeDatesAtValidation = false;
 
     /**
      * executed for each invoice, Will raise an exception if the invoice is invalid. Context will contain billingRun and invoice.
@@ -207,6 +199,51 @@ public class BillingCycle extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "billing_run_validation_script_id")
     private ScriptInstance billingRunValidationScript;
+    
+    /**
+     * Filtering option used in billing cycle.
+     */
+    @Type(type = "json")
+    @Column(name = "filters", columnDefinition = "jsonb")
+    private Map<String, Object> filters;
+    
+    /**
+     *  Higher priority macth with lowest priority value
+     */
+    @Column(name = "priority")
+    private int priority = 0;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "disable_aggregation")
+    private boolean disableAggregation = false;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "use_accounting_article_label")
+    private boolean useAccountingArticleLabel = false;
+    
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "date_aggregation")
+    private DateAggregationOption dateAggregation = DateAggregationOption.NO_DATE_AGGREGATION;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "aggregate_unit_amounts")
+    private boolean aggregateUnitAmounts = false;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_subscriptions")
+    private boolean ignoreSubscriptions = true;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_orders")
+    private boolean ignoreOrders = true;
+    
+    public boolean isThresholdPerEntity() {
+        return thresholdPerEntity;
+    }
+
+    public void setThresholdPerEntity(boolean thresholdPerEntity) {
+        this.thresholdPerEntity = thresholdPerEntity;
+    }
 
     /**
      * @return Invoicing calendar
@@ -456,11 +493,11 @@ public class BillingCycle extends BusinessCFEntity {
         this.collectionDateDelayEl = collectionDateDelayEl;
     }
 
-    public Boolean getComputeDatesAtValidation() {
+    public boolean isComputeDatesAtValidation() {
         return computeDatesAtValidation;
     }
 
-    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+    public void setComputeDatesAtValidation(boolean computeDatesAtValidation) {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
 
@@ -471,4 +508,68 @@ public class BillingCycle extends BusinessCFEntity {
 	public void setBillingRunValidationScript(ScriptInstance billingRunValidationScript) {
 		this.billingRunValidationScript = billingRunValidationScript;
 	}
+
+	public Map<String, Object> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(Map<String, Object> filters) {
+		this.filters = filters;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+	
+	public boolean isDisableAggregation() {
+        return disableAggregation;
+    }
+
+    public void setDisableAggregation(boolean disableAggregation) {
+        this.disableAggregation = disableAggregation;
+    }
+
+    public boolean isUseAccountingArticleLabel() {
+        return useAccountingArticleLabel;
+    }
+
+    public void setUseAccountingArticleLabel(boolean useAccountingArticleLabel) {
+        this.useAccountingArticleLabel = useAccountingArticleLabel;
+    }
+
+    public DateAggregationOption getDateAggregation() {
+        return dateAggregation;
+    }
+
+    public void setDateAggregation(DateAggregationOption dateAggregation) {
+        this.dateAggregation = dateAggregation;
+    }
+
+    public boolean isAggregateUnitAmounts() {
+        return aggregateUnitAmounts;
+    }
+
+    public void setAggregateUnitAmounts(boolean aggregateUnitAmounts) {
+        this.aggregateUnitAmounts = aggregateUnitAmounts;
+    }
+
+    public boolean isIgnoreSubscriptions() {
+        return ignoreSubscriptions;
+    }
+
+    public void setIgnoreSubscriptions(boolean ignoreSubscriptions) {
+        this.ignoreSubscriptions = ignoreSubscriptions;
+    }
+
+    public boolean isIgnoreOrders() {
+        return ignoreOrders;
+    }
+
+    public void setIgnoreOrders(boolean ignoreOrders) {
+        this.ignoreOrders = ignoreOrders;
+    }
 }

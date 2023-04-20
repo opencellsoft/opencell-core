@@ -31,9 +31,6 @@ public class PageAccessHandler implements Serializable {
     @Inject
     private HttpServletRequest httpRequest;
 
-    @Inject
-    private CurrentUserProvider currentUserProvider;
-
     private Map<String, Boolean> pageAccess;
 
     @PostConstruct
@@ -43,7 +40,7 @@ public class PageAccessHandler implements Serializable {
 
     /**
      * Check if outcome, as defined in faces-config.xml file, in a given scope is allowed for a current user. </br>
-     * A check in Keyckloak authorization rules is done for a URL that outcome is resolved to plus a given scope.
+     * A check in Keycloak authorization rules is done for a URL that outcome is resolved to plus a given scope.
      * 
      * @param scope A scope to match. Optional. Use GET for read and POST for update.
      * @param outcomes A list of outcomes to check.
@@ -69,7 +66,10 @@ public class PageAccessHandler implements Serializable {
                 if (navCase == null) {
                     continue;
                 }
+                
+                // Replace .xhtml with .jsf and remove any url parameters
                 String targetUrl = navCase.getToViewId(context);
+                targetUrl = targetUrl.substring(0, targetUrl.indexOf(".xhtml")) + ".jsf";
 
                 outcomesToCheck.add(outcome);
                 urlsToCheck.add(targetUrl);
@@ -81,7 +81,7 @@ public class PageAccessHandler implements Serializable {
 
         // Check outcomes/URLs that were not cached before
         if (!urlsToCheck.isEmpty()) {
-            boolean[] urlAccessible = currentUserProvider.isLinkAccesible(scope, urlsToCheck.toArray(new String[urlsToCheck.size()]));
+            boolean[] urlAccessible = CurrentUserProvider.isLinkAccesible((HttpServletRequest) context.getExternalContext().getRequest(), scope, urlsToCheck.toArray(new String[urlsToCheck.size()]));
 
             for (int i = 0; i < outcomesToCheck.size(); i++) {
                 boolean isUrlAccesible = urlAccessible[i];
@@ -99,18 +99,24 @@ public class PageAccessHandler implements Serializable {
     }
 
     /**
-     * Check if URL with a given scope is allowed for a current user in Keyckloak authorization rules.
+     * Check if URL with a given scope is allowed for a current user in Keycloak authorization rules.
      * 
      * @param scope A scope to match. Optional. Use GET for read and POST for update
      * @param url A URL to check
      * @return True if it is accessible
      */
     public boolean isURLAccesible(String scope, String url) {
+        
+        // Omit checking access for JSF resources
+        if (url.startsWith("/javax.faces.resource/")) {
+            return true;
+        }
 
         Boolean isAccessible = pageAccess.get(url + "-" + scope);
         if (isAccessible == null) {
 
-            isAccessible = currentUserProvider.isLinkAccesible(url, scope);
+            boolean[] isAccessibles = CurrentUserProvider.isLinkAccesible(httpRequest, scope, url);
+            isAccessible = isAccessibles[0];
             pageAccess.put(url + "-" + scope, isAccessible);
         }
 
@@ -121,7 +127,7 @@ public class PageAccessHandler implements Serializable {
     }
 
     /**
-     * Check if current request URL with a given scope is allowed for a current user in Keyckloak authorization rules.
+     * Check if current request URL with a given scope is allowed for a current user in Keycloak authorization rules.
      * 
      * @param scope A scope to match. Optional. Use GET for read and POST for update
      * @return True if it is accessible
@@ -132,5 +138,14 @@ public class PageAccessHandler implements Serializable {
         requestURI = requestURI.substring(requestURI.substring(1).indexOf("/") + 1);
 
         return isURLAccesible(scope, requestURI);
+    }
+
+    /**
+     * Check if current request URL with a current scope (HTTP method) is allowed for a current user in Keycloak authorization rules.
+     * 
+     * @return True if it is accessible
+     */
+    public boolean isCurrentURLAccesible() {
+        return isCurrentURLAccesible(httpRequest.getMethod());
     }
 }

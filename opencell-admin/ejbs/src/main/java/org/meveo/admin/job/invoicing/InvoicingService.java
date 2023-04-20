@@ -14,12 +14,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -68,7 +66,6 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RejectedBillingAccountService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.billing.TaxScriptService;
 
 import com.google.common.collect.Lists;
@@ -93,10 +90,8 @@ public class InvoicingService extends PersistenceService<Invoice> {
     @Inject
     private TaxScriptService taxScriptService;
     @Inject
-    private JobExecutionService jobExecutionService;
-    @Inject
     private CurrentUserProvider currentUserProvider;
-    private static final int MAX_IL_TO_UPDATE_PER_TRANSACTION = 100000;
+    private static final int MAX_IL_TO_UPDATE_PER_TRANSACTION = 10000;
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
     private Map<Long, Tax> taxes=new TreeMap<Long, Tax>();
@@ -152,7 +147,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
     }
 
 	private void validateInvoices(List<List<Invoice>> invoicesbyBA) {
-		invoicesbyBA.stream().forEach(invoices-> invoiceService.applyAutomaticInvoiceCheck(invoices, true));
+		invoicesbyBA.stream().forEach(invoices-> invoiceService.applyAutomaticInvoiceCheck(invoices, true, false));
 	}
 
 	private List<List<Invoice>> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle, JobExecutionResultImpl result) {
@@ -260,7 +255,8 @@ public class InvoicingService extends PersistenceService<Invoice> {
     private void initSubCategoryInvoiceAggregate(List<InvoicingItem> items, Invoice invoice, Map<SubCategoryInvoiceAgregate, List<InvoicingItem>> itemsBySubCategory) {
         final InvoicingItem invoicingItem = items.get(0);
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findFromMap(invoicingItem.getInvoiceSubCategoryId());
-        SubCategoryInvoiceAgregate scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, invoice.getBillingAccount(), getEntityManager().getReference(UserAccount.class, invoicingItem.getUserAccountId()), null, invoice, invoiceSubCategory.getAccountingCode());
+        UserAccount userAccount = invoicingItem.getUserAccountId()==null? null : getEntityManager().getReference(UserAccount.class, invoicingItem.getUserAccountId());
+		SubCategoryInvoiceAgregate scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, invoice.getBillingAccount(), userAccount, null, invoice, invoiceSubCategory.getAccountingCode());
         scAggregate.updateAudit(currentUser);
         addTranslatedDescription(getTradingLanguageCode(invoicingItem.getBillingAccountId()), invoiceSubCategory, scAggregate,"");
         setAggregationAmounts(items, scAggregate, invoicingItem);

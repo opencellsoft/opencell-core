@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodActionLevelEnum;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 
 import static java.util.Optional.ofNullable;
@@ -103,4 +104,17 @@ public class AccountingPeriodApiService  implements ApiService<AccountingPeriod>
 	public Optional<AccountingPeriod> generateNextAP() {
 		return Optional.of(accountingPeriodService.generateNextAP());
 	}
+
+	/**
+	 * Update the status of a fiscal year
+	 * @param entity {@link AccountingPeriod}
+	 * @param status Status
+	 * @param fiscalYear Fiscal Year
+	 * @return {@link AccountingPeriod}
+	 */
+	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear) {
+		return accountingPeriodService.updateStatus(entity, status, fiscalYear);
+
+	}
+	
 }

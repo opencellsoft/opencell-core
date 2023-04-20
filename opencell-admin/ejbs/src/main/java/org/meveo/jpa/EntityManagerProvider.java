@@ -40,6 +40,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.persistence.JsonType;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.slf4j.Logger;
+import org.slf4j.MDC;
 
 /**
  * Handles Entity manager instantiation. Based on https://www.tomas-dvorak.cz/posts/jpa-multitenancy/
@@ -54,9 +55,6 @@ public class EntityManagerProvider {
 
     @PersistenceContext(unitName = "MeveoAdmin")
     private EntityManager emfForJobs;
-
-    @Inject
-    private CurrentUserProvider currentUserProvider;
 
     @Inject
     private Logger log;
@@ -86,9 +84,14 @@ public class EntityManagerProvider {
     @RequestScoped
     @MeveoJpa
     public EntityManagerWrapper getEntityManager() {
-        String providerCode = currentUserProvider.getCurrentUserProviderCode();
+        String providerCode = CurrentUserProvider.getCurrentTenant();
 
         if (providerCode == null || !isMultiTenancyEnabled) {
+            
+            // MDC is used only in multitenany case
+            if (isMultiTenancyEnabled) {
+                MDC.remove("providerCode");
+            }
 
             // Create an container managed persistence context main provider for API and JOBs
             if (FacesContext.getCurrentInstance() == null) {
@@ -106,7 +109,9 @@ public class EntityManagerProvider {
                 return new EntityManagerWrapper(emProxy, true);
             }
         }
-
+        
+        MDC.put("providerCode", providerCode);
+        
         // log.error("AKK will get a Factory wrapper for tenant");
         // Create an application managed persistence context for a secondary tenant
         final EntityManager em = createEntityManager(providerCode);
@@ -130,42 +135,22 @@ public class EntityManagerProvider {
     }
 
     /**
-     * Get entity manager for a given provider. Entity manager produced from a entity manager factory will join a transaction.
-     * 
-     * @param providerCode Provider code
-     * @return Entity manager instance
-     */
-    public EntityManager getEntityManager(String providerCode) {
-
-        boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
-
-        if (providerCode == null || !isMultiTenancyEnabled) {
-            // log.error("Get EM by provider code = main for current user", providerCode);
-            return emfForJobs;
-        }
-
-        // log.error("Get factory by secondary tenant {} for current user", providerCode);
-        EntityManager currentEntityManager = createEntityManager(providerCode);
-
-        final EntityManager currentEntityManagerFinal = currentEntityManager;
-        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
-            currentEntityManagerFinal.joinTransaction();
-            return method.invoke(currentEntityManagerFinal, args);
-        });
-    }
-
-    /**
      * Get entity manager for use in Bean managed transactions. Entity manager produced from a entity manager factory will NOT join a transaction. Will consider a tenant that currently connected user belongs to.
      * 
      * @return Get entity manager for a given provider. Entity manager produced from a entity manager factory will join a transaction
      */
     public EntityManager getEntityManagerWoutJoinedTransactions() {
-        String providerCode = currentUserProvider.getCurrentUserProviderCode();
+        String providerCode = CurrentUserProvider.getCurrentTenant();
 
         // log.error("Produce EM for provider Without TX {}", providerCode);
 
         if (providerCode == null || !isMultiTenancyEnabled) {
 
+            // MDC is used only in multitenany case
+            if (isMultiTenancyEnabled) {
+                MDC.remove("providerCode");
+            }
+            
             // Create an container managed persistence context main provider, for API and JOBs
             if (FacesContext.getCurrentInstance() == null) {
                 return emfForJobs;
@@ -175,6 +160,8 @@ public class EntityManagerProvider {
                 return emf.createEntityManager();
             }
         }
+
+        MDC.put("providerCode", providerCode);
 
         // Create an application managed persistence context for provider
         return createEntityManager(providerCode);

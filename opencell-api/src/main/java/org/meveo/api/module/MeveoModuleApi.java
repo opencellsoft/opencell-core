@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -68,6 +70,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.VersionedEntity;
@@ -144,6 +147,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
     @Inject
     private ProductTemplateService productTemplateService;
+
+    @Inject
+    private MeveoModuleApi thisNewTX;
 
     private static JAXBContext jaxbCxt;
     private static final Logger log = LoggerFactory.getLogger(MeveoModuleApi.class);
@@ -394,8 +400,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         MeveoModule meveoModule = meveoModuleService.findByCode(moduleDto.getCode());
         boolean installed = false;
         if (meveoModule == null) {
-            create(moduleDto);
-            meveoModule = meveoModuleService.findByCode(moduleDto.getCode());
+            meveoModule = create(moduleDto);
 
         } else {
             if (!meveoModule.isDownloaded()) {
@@ -640,7 +645,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                             apiService.enableOrDisable((String) FieldUtils.readField(dto, "code", true), (Date) FieldUtils.readField(dto, "validFrom", true), (Date) FieldUtils.readField(dto, "validTo", true), true);
                         } else {
                             ApiService apiService = getApiService(entityClass, true);
-                            apiService.createOrUpdate((BusinessEntityDto) dto);
+
+                            thisNewTX.createOrUpdateApiServiceInNewTx(apiService, dto);
+
                             apiService.enableOrDisable((String) FieldUtils.readField(dto, "code", true), true);
                         }
 
@@ -681,6 +688,12 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         } else if (moduleDto instanceof BusinessProductModelDto) {
             unpackAndInstallBPMItems((BusinessProductModel) meveoModule, (BusinessProductModelDto) moduleDto);
         }
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createOrUpdateApiServiceInNewTx(ApiService apiService, BaseEntityDto dto) {
+        apiService.createOrUpdate(dto);
     }
 
     private void writeModulePicture(String filename, byte[] fileData) {

@@ -94,6 +94,7 @@ public class RefundService extends PersistenceService<Refund> {
         refund.setDescription(occTemplate.getDescription());
         refund.setType(doPaymentResponseDto.getPaymentBrand());
         refund.setTransactionCategory(occTemplate.getOccCategory());
+        refund.setJournal(occTemplate.getJournal());
         refund.setAccountCodeClientSide(doPaymentResponseDto.getCodeClientSide());
         refund.setCustomerAccount(customerAccount);
         refund.setReference(doPaymentResponseDto.getPaymentID());

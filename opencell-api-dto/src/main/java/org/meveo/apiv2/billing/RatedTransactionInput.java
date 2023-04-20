@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.annotation.Nullable;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 
@@ -48,4 +49,8 @@ public interface RatedTransactionInput extends Resource {
 
     @Nullable
 	String getParameterExtra();
+
+	@Schema(description = "Rated transaction description")
+	@Nullable
+	String getDescription();
 }

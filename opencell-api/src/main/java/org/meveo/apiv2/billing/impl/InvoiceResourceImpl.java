@@ -35,6 +35,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.InvoiceTypeRs;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.GenerateInvoiceInput;
 import org.meveo.apiv2.billing.GenerateInvoiceResult;
@@ -52,6 +53,7 @@ import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
 import org.meveo.apiv2.billing.InvoiceMatchedOperation;
 import org.meveo.apiv2.billing.InvoicePatchInput;
 import org.meveo.apiv2.billing.Invoices;
+import org.meveo.apiv2.billing.RejectReasonInput;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.billing.service.InvoiceSubTotalsApiService;
@@ -87,7 +89,10 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
 	
 	private static final InvoiceSubTotalsMapper invoiceSubTotalMapper = new InvoiceSubTotalsMapper();
-	
+
+	@Inject
+	private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
 	@Transactional
 	@Override
 	public Response getInvoice(Long id, Request request) {
@@ -108,8 +113,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Override
 	public Response getInvoices(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
-		List<Invoice> invoicesEntity = invoiceApiService.list(offset, limit, sort, orderBy, filter);
-		return buildInvoicesReturn(offset, limit, filter, request, invoicesEntity);
+		long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
+		List<Invoice> invoicesEntity = invoiceApiService.list(offset, apiLimit, sort, orderBy, filter);
+		return buildInvoicesReturn(offset, apiLimit, filter, request, invoicesEntity);
 	}
 
 	private Response buildInvoicesReturn(Long offset, Long limit, String filter, Request request,
@@ -263,11 +269,11 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		}
 		return Response.ok().entity(invoiceLinesInput).build();
 	}
-	
-	
+
+	@Transactional
 	@Override
 	public Response updateInvoiceLine(Long id, Long lineId, InvoiceLineInput invoiceLineInput) {
-		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
 		invoiceApiService.updateLine(invoice, invoiceLineInput, lineId);
 		if(invoiceLineInput.getSkipValidation() == null || !invoiceLineInput.getSkipValidation()) {
 			invoiceApiService.rebuildInvoice(invoice);
@@ -317,9 +323,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
-	public Response rejectInvoiceLine(Long id) {
+	public Response rejectInvoiceLine(Long id, RejectReasonInput invoiceLinesReject) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
-		invoiceApiService.rejectInvoice(invoice);
+		invoiceApiService.rejectInvoice(invoice, invoiceLinesReject);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}
@@ -333,9 +339,9 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
-	public Response cancelInvoice(Long id) {
+	public Response cancelInvoice(Long id, RatedTransactionAction rtAction) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
-		invoiceApiService.cancelInvoice(invoice);
+		invoiceApiService.cancelInvoice(invoice, rtAction);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}
@@ -360,6 +366,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
                 .build();
 	}
 
+	@Transactional
 	@Override
 	public Response find(String invoiceNumber, Request request) {
 		Invoice invoice = invoiceApiService.findByCode(invoiceNumber).orElseThrow(NotFoundException::new);

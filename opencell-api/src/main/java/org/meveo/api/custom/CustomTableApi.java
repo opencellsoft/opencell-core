@@ -304,7 +304,7 @@ public class CustomTableApi extends BaseApi {
         Map<String, CustomFieldTemplate> cfts = customTableService.retrieveAndValidateCfts(cet, false);
         PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, Arrays.asList("id"), pagingAndFiltering, cfts);
 
-        List<BigInteger> ids = customTableService.listAsObjects(cet.getDbTablename(), paginationConfig);
+        List<Number> ids = customTableService.listAsObjects(cet.getDbTablename(), paginationConfig);
         if (ids == null || ids.isEmpty()) {
             return 0;
         }

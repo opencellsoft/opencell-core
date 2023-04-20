@@ -32,8 +32,12 @@ import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UntdidTaxationCategory;
+import org.meveo.model.billing.UntdidVatex;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.AccountingCodeService;
+import org.meveo.service.billing.impl.UntdidTaxationCategoryService;
+import org.meveo.service.billing.impl.UntdidVatexService;
 import org.meveo.service.catalog.impl.TaxService;
 
 import javax.ejb.Stateless;
@@ -58,6 +62,12 @@ public class TaxApi extends BaseApi {
     
     @Inject
     private AccountingCodeService accountingCodeService;
+    
+    @Inject
+    private UntdidTaxationCategoryService untdidTaxationCategoryService;
+    
+    @Inject
+    private UntdidVatexService untdidVatexService;
     
     private static final String SUBTAXES_MESSAGE_EXCEPTION = "SubTaxes must contain at least two taxes";
 
@@ -90,6 +100,25 @@ public class TaxApi extends BaseApi {
                 throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
             }
             tax.setAccountingCode(accountingCode);
+        }
+        if (!StringUtils.isBlank(postData.getTaxationCategory())) {
+            UntdidTaxationCategory untdidTaxationCategory = untdidTaxationCategoryService.getByCode(postData.getTaxationCategory());
+            if (untdidTaxationCategory == null) {
+                throw new EntityDoesNotExistsException(UntdidTaxationCategory.class, postData.getTaxationCategory());
+            }
+            tax.setUntdidTaxationCategory(untdidTaxationCategory);
+        }
+        else {
+        	//taxationCategory, defaut=(S,”Standard rate”)
+        	UntdidTaxationCategory untdidTaxationCategory = untdidTaxationCategoryService.getByCode("S");
+        	tax.setUntdidTaxationCategory(untdidTaxationCategory);
+        }
+        if (!StringUtils.isBlank(postData.getVatex())) {
+            UntdidVatex untdidVatex = untdidVatexService.getByCode(postData.getVatex());
+            if (untdidVatex == null) {
+                throw new EntityDoesNotExistsException(UntdidVatex.class, postData.getVatex());
+            }
+            tax.setUntdidVatex(untdidVatex);
         }
         // populate customFields
         try {
@@ -200,7 +229,20 @@ public class TaxApi extends BaseApi {
         if (postData.getLanguageDescriptions() != null) {
             tax.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), tax.getDescriptionI18n()));
         }
-
+        if (!StringUtils.isBlank(postData.getTaxationCategory())) {
+            UntdidTaxationCategory untdidTaxationCategory = untdidTaxationCategoryService.getByCode(postData.getTaxationCategory());
+            if (untdidTaxationCategory == null) {
+                throw new EntityDoesNotExistsException(UntdidTaxationCategory.class, postData.getTaxationCategory());
+            }
+            tax.setUntdidTaxationCategory(untdidTaxationCategory);
+        }
+        if (!StringUtils.isBlank(postData.getVatex())) {
+            UntdidVatex untdidVatex = untdidVatexService.getByCode(postData.getVatex());
+            if (untdidVatex == null) {
+                throw new EntityDoesNotExistsException(UntdidVatex.class, postData.getVatex());
+            }
+            tax.setUntdidVatex(untdidVatex);
+        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), tax, true, true);
@@ -255,11 +297,11 @@ public class TaxApi extends BaseApi {
         return result;
     }
 
-    public Long createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
+    public TaxDto createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
         if(!StringUtils.isBlank(postData.getCode()) && taxService.findByCode(postData.getCode()) != null) {
-            return update(postData).getId();
+            return new TaxDto(update(postData));
         } else {
-            return create(postData).getId();
+            return new TaxDto(create(postData));
         }
     }
 

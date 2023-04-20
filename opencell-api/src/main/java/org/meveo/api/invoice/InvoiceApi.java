@@ -92,6 +92,8 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.WriteOff;
+import org.meveo.model.securityDeposit.SecurityDeposit;
+import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -264,9 +266,7 @@ public class InvoiceApi extends BaseApi {
         if (invoice.getInvoiceNumber() == null) {
             invoice = serviceSingleton.assignInvoiceNumber(invoice);
         }
-        InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
-        InvoiceTypeSellerSequence invoiceTypeSellerSequence = draftInvoiceType.getSellerSequenceByType(seller);
-        String prefix = (invoiceTypeSellerSequence != null) ? invoiceTypeSellerSequence.getPrefixEL() : "DRAFT_";
+        String prefix = "DRAFT_";
         invoice.setAlias(invoice.getInvoiceNumber());
         invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoice.getInvoiceNumber());        
         invoice.assignTemporaryInvoiceNumber();
@@ -583,19 +583,36 @@ public class InvoiceApi extends BaseApi {
         if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
+        invoiceService.recalculateDatesForValidated(invoiceId);
+        serviceSingleton.triggersJobs();
 
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
         
         //Create SD
         if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode()) && createSD) {
-            SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
-            Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
-            securityDepositService.createSD(invoice, defaultSDTemplate, count);
-
-            //Get SD Template number of instantiation and update it after creating a new SD
-            SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
-            securityDepositTemplateService.update(sdt);
+        	Optional<SecurityDeposit> osd = securityDepositService.getSecurityDepositByInvoiceId(invoice.getId());
+        	if(osd.isPresent()) {
+        		SecurityDeposit securityDeposit = osd.get();
+        		securityDeposit.setAmount(invoice.getAmountWithoutTax());
+        		securityDeposit.setBillingAccount(invoice.getBillingAccount());
+        		securityDeposit.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
+        		securityDeposit.setStatus(SecurityDepositStatusEnum.VALIDATED);
+        		securityDepositService.update(securityDeposit);
+        		
+        		//Get SD Template number of instantiation and update it after creating a new SD
+        		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(securityDeposit.getTemplate());
+        		securityDepositTemplateService.update(sdt);
+        		
+        	} else if(createSD) {
+        		SecurityDepositTemplate defaultSDTemplate = securityDepositTemplateService.getDefaultSDTemplate();
+        		Long count = securityDepositService.countPerTemplate(defaultSDTemplate);
+        		securityDepositService.createSecurityDeposit(invoice, defaultSDTemplate, count);
+        		
+        		//Get SD Template number of instantiation and update it after creating a new SD
+        		SecurityDepositTemplate sdt = invoiceService.updateSDTemplate(defaultSDTemplate);
+        		securityDepositTemplateService.update(sdt);
+        	}
         }
         
         if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
@@ -951,9 +968,6 @@ public class InvoiceApi extends BaseApi {
         if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.isDontSend()) {
             return false;
         }
-        if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.getInvoiceType().equals(invoiceTypeService.getDefaultDraft())) {
-            return false;
-        }
         if (invoiceDto.isCheckAlreadySent() && !invoice.isAlreadySent()) {
             return invoiceService.sendByEmail(invoice, mailingType, invoiceDto.getOverrideEmail());
         }
@@ -1180,8 +1194,8 @@ public class InvoiceApi extends BaseApi {
         categoryInvoiceAgregates.sort(Comparator.comparing(CategoryInvoiceAgregateDto::getCategoryInvoiceCode));
         taxAggregates.sort(Comparator.comparing(TaxInvoiceAggregateDto::getTaxCode));
 
-        for (Invoice inv : invoice.getLinkedInvoices()) {
-            listInvoiceIdToLink.add(inv.getId());
+        for (LinkedInvoice inv : invoice.getLinkedInvoices()) {
+            listInvoiceIdToLink.add(inv.getLinkedInvoiceValue().getId());
         }
 
         if (!categoryInvoiceAgregates.isEmpty()) {
@@ -1262,5 +1276,11 @@ public class InvoiceApi extends BaseApi {
     	Invoice invoice = invoiceService.findById(invoiceId);
     	if(invoice == null) throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
     	return invoiceToDto(invoiceService.duplicate(invoice), false, false, false);
+    }
+
+    public Invoice rebuildInvoice(Long invoiceId, boolean save) {
+        Invoice invoice = invoiceService.findById(invoiceId);
+        invoiceService.rebuildInvoice(invoice, save);
+        return invoice;
     }
 }

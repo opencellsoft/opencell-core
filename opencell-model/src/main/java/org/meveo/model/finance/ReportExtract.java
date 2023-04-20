@@ -66,6 +66,7 @@ import org.meveo.model.scripts.ScriptInstance;
 public class ReportExtract extends EnableBusinessCFEntity implements IImageUpload {
 
     private static final long serialVersionUID = 879663935811446632L;
+    private static final Long DEFAULT_MAXIMUM_LINE = 100L;
 
     @Column(name = "category", length = 50)
     private String category;
@@ -133,6 +134,10 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
 
     @Column(name = "maximum_line")
     private Long maximumLine;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "include_headers")
+    private boolean includeHeaders;
 
     public String getFilenameFormat() {
         return filenameFormat;
@@ -275,7 +280,7 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     }
 
     public void setMaximumLine(Long maximumLine) {
-        this.maximumLine = maximumLine;
+         this.maximumLine =  maximumLine <= 0 ? DEFAULT_MAXIMUM_LINE: maximumLine;
     }
 
     public String getDecimalSeparator() {
@@ -284,5 +289,13 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
 
     public void setDecimalSeparator(String decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
+    }
+
+    public boolean isIncludeHeaders() {
+        return includeHeaders;
+    }
+
+    public void setIncludeHeaders(boolean includeHeaders) {
+        this.includeHeaders = includeHeaders;
     }
 }

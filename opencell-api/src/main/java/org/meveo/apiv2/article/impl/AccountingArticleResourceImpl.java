@@ -15,24 +15,34 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.article.*;
 import org.meveo.apiv2.article.resource.AccountingArticleResource;
 import org.meveo.apiv2.article.service.AccountingArticleApiService;
 import org.meveo.apiv2.article.service.AccountingArticleBaseApi;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.UntdidAllowanceCode;
+import org.meveo.service.billing.impl.UntdidAllowanceCodeService;
 
 public class AccountingArticleResourceImpl implements AccountingArticleResource {
 
-    @Inject
-    private AccountingArticleApiService accountingArticleApiService;
+    @Inject private AccountingArticleApiService accountingArticleApiService;
     @Inject private AccountingArticleBaseApi accountingArticleBaseApi;
+    @Inject private UntdidAllowanceCodeService untdidAllowanceCodeService;
+
+	@Inject
+	private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+    
     private AccountingArticleMapper mapper = new AccountingArticleMapper();
 
     @Override
     public Response createAccountingArticle(org.meveo.apiv2.article.AccountingArticle accountingArticle) {
 
         AccountingArticle accountingArticleEntity = mapper.toEntity(accountingArticle);
+		accountingArticleEntity.
+				setAllowanceCode(untdidAllowanceCodeService.getByCode(accountingArticle.getAllowanceCode()));
         accountingArticleBaseApi.populateCustomFieldsForGenericApi(accountingArticle.getCustomFields(),
 				accountingArticleEntity, true);
         accountingArticleEntity = accountingArticleApiService.create(accountingArticleEntity);
@@ -45,7 +55,12 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 
 	@Override
 	public Response updateAccountingArticle(Long id, org.meveo.apiv2.article.AccountingArticle accountingArticle) {
-        AccountingArticle accountingArticleEntity = mapper.toEntity(accountingArticle);
+        AccountingArticle accountingArticleEntity = mapper.toEntity(accountingArticle);        
+        UntdidAllowanceCode untdidAllowanceCode = untdidAllowanceCodeService.getByCode(accountingArticle.getAllowanceCode());
+        if (untdidAllowanceCode == null) {
+            throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, accountingArticle.getAllowanceCode());
+        }
+        accountingArticleEntity.setAllowanceCode(untdidAllowanceCode);
         accountingArticleBaseApi.populateCustomFieldsForGenericApi(accountingArticle.getCustomFields(), accountingArticleEntity, false);
         Optional<AccountingArticle> accountingUpdated = accountingArticleApiService.update(id, accountingArticleEntity);
         return Response
@@ -117,8 +132,9 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 	}
 
 	public Response list(Long offset, Long limit, String sort, String orderBy, Map<String, Object> filter, Request request) {
-        List<AccountingArticle> accountingArticleEntities = accountingArticleApiService.list(offset, limit, sort, orderBy, filter);
-		return mapToAccountingArticlesResponse(offset, limit, filter, request, accountingArticleEntities);
+		long apiLimit = genericPagingAndFilteringUtils.getLimit(limit != null ? limit.intValue() : null);
+        List<AccountingArticle> accountingArticleEntities = accountingArticleApiService.list(offset, apiLimit, sort, orderBy, filter);
+		return mapToAccountingArticlesResponse(offset, apiLimit, filter, request, accountingArticleEntities);
 	}
 
 	private Response mapToAccountingArticlesResponse(Long offset, Long limit, Map<String, Object> filter, Request request, List<AccountingArticle> accoutnigArticleEntities) {

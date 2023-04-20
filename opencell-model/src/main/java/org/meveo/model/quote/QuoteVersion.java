@@ -158,6 +158,13 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 	private Contract contract;
 	
 	
+	 /**
+	  * comment
+	  */
+	@Column(name = "comment", length = 2000)
+	@Size(max = 2000)
+	private String comment;
+	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "cpq_quote_version_media", joinColumns = @JoinColumn(name = "cpq_quote_version_id"), inverseJoinColumns = @JoinColumn(name = "cpq_media_id"))
 	private List<Media> medias = new ArrayList<Media>();
@@ -382,6 +389,16 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 	public void setQuotePrices(List<QuotePrice> quotePrices) {
 		this.quotePrices = quotePrices;
 	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+	
+	
 	
 	
 	

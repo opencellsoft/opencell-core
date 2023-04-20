@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.model.billing.RatedTransactionAction;
 
 @Path("/billing/invoices")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -205,8 +206,8 @@ public interface InvoiceResource {
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice successfully rejected"),
 	@ApiResponse(responseCode = "403", description = "error when rejecting invoice") })
-	Response rejectInvoiceLine(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
-	
+	Response rejectInvoiceLine(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
+			@Parameter(description = "invoice reject reason", required = false) RejectReasonInput input);	
 	
 	/**
 	 * @param id
@@ -231,7 +232,8 @@ public interface InvoiceResource {
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice successfully canceled"),
 	@ApiResponse(responseCode = "403", description = "error when canceling invoice") })
-	Response cancelInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
+	Response cancelInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
+						   @Parameter(description = "This field allow to choose how to process rated transactions after invoice concellation") @QueryParam("ratedTransactionAction") RatedTransactionAction rtAction);
 	
 	@POST
 	@Operation(summary = "Create a new invoice", tags = {

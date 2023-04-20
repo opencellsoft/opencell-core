@@ -22,6 +22,9 @@ import java.util.Map;
 @Entity
 @CustomFieldEntity(cftCodePrefix = "Document")
 @Table(name = "document", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@NamedQueries({
+        @NamedQuery(name = "Document.findByFileNameAndType", query = "FROM Document document where document.fileName=:fileName AND document.fileType.id=:fileTypeId")
+})
 public class Document extends BusinessCFEntity {
     /**
      * Translated descriptions in JSON format with language code as a key and

@@ -97,7 +97,7 @@ public class ImportCustomersJobBean {
     @Inject
     private CustomerImportHistoService customerImportHistoService;
 
-    @EJB
+    @Inject
     private CustomerImportService customerImportService;
 
     @Inject

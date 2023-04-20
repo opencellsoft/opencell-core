@@ -40,11 +40,13 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
@@ -153,6 +155,18 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
+        checkAndApplyDiscount(offerTemplate, subscription);
+    }
+    
+    private void checkAndApplyDiscount(OfferTemplate offerTemplate, Subscription subscription) {
+        if(offerTemplate != null ) {
+            if(CollectionUtils.isNotEmpty(offerTemplate.getAllowedDiscountPlans())) {
+                offerTemplate.getAllowedDiscountPlans().stream()
+                                            .filter(DiscountPlan::isAutomaticApplication)
+                                            .forEach(dp -> instantiateDiscountPlan(subscription, dp));
+                                            
+            }
+        }
     }
 
     @MeveoAudit
@@ -181,6 +195,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
+        checkAndApplyDiscount(offerTemplate, subscription);
     }
 
     @MeveoAudit
@@ -518,7 +533,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public RatingResult activateInstantiatedService(Subscription sub) throws BusinessException {
         // using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
     	RatingResult ratingResult = new RatingResult();
-    	Set<DiscountPlanItem> fixedDiscountItems = new HashSet<DiscountPlanItem>();
+    	Set<DiscountPlanItem> fixedDiscountItems = new HashSet<>();
         for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
             if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
             	ratingResult = serviceInstanceService.serviceActivation(si);
@@ -702,13 +717,17 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     public Subscription instantiateDiscountPlan(Subscription entity, DiscountPlan dp) throws BusinessException {
        
+    	if(CollectionUtils.isNotEmpty(entity.getDiscountPlanInstances())) {
+    		boolean discountPlanInstancExist = entity.getDiscountPlanInstances().stream().anyMatch(discountPlanInstance -> discountPlanInstance.getDiscountPlan().getCode().equalsIgnoreCase(dp.getCode()));
+    		if(discountPlanInstancExist) return entity;
+    	}
         BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
         for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
             if (dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
                 throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
             }
         }
-        return (Subscription) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+        return (Subscription) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null, false);
     }
 
     public void terminateDiscountPlan(Subscription entity, DiscountPlanInstance dpi) throws BusinessException {
@@ -836,10 +855,14 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Subscription> findSubscriptions(BillingCycle billingCycle, Date startdate, Date endDate) {
+    public List<Subscription> findSubscriptions(BillingCycle billingCycle) {
         try {
             QueryBuilder qb = new QueryBuilder(Subscription.class, "s", null);
-            qb.addCriterionEntity("s.billingCycle.id", billingCycle.getId());
+            if(billingCycle.getFilters() != null && !billingCycle.getFilters().isEmpty()) {
+                qb.addPaginationConfiguration(new PaginationConfiguration(billingCycle.getFilters()));
+            } else {
+                qb.addCriterionEntity("s.billingCycle.id", billingCycle.getId());
+            }
             qb.addOrderCriterionAsIs("id", true);
 
             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();

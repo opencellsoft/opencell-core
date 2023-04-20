@@ -74,6 +74,17 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 					this.doubleValue=((Number)value).doubleValue();
 				}
 				break;
+				
+			case EXPRESSION_LANGUAGE:
+                if (value instanceof Boolean) {
+                    this.booleanValue = (Boolean) value;
+                } else if (value instanceof Double) {
+                    this.doubleValue = (Double) value;
+                } else {
+                    this.stringValue = value.toString();
+                }
+			    
+			    break;
 			default:
 				this.stringValue = value.toString();
 				break;
@@ -180,6 +191,24 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 				case EXPRESSION_LANGUAGE :
 				case TEXT:	return this.getStringValue();  
 				case DATE: return this.getDateValue();  
+			}
+		}
+		return null;
+	}
+
+	public Object getRealValue() {
+		if (attribute.getAttributeType() != null) {
+			if (this.getDoubleValue() != null) {
+				return this.getDoubleValue();
+			}
+			if (this.getStringValue() != null) {
+				return this.getStringValue();
+			}
+			if (this.getDateValue() != null) {
+				return this.getDateValue();
+			}
+			if (this.getBooleanValue() != null) {
+				return this.getBooleanValue();
 			}
 		}
 		return null;

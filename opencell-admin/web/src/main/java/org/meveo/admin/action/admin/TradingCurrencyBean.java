@@ -55,6 +55,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 
 	public TradingCurrencyBean() {
 		super(TradingCurrency.class);
+		showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
 	}
 
 	public List<TradingCurrency> listAll() {

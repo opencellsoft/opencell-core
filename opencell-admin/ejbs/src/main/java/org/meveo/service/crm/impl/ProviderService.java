@@ -22,7 +22,11 @@ import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -34,6 +38,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.TenantCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
@@ -77,7 +82,7 @@ public class ProviderService extends PersistenceService<Provider> {
     static boolean useTenantCache = true;
 
     @PostConstruct
-    private void init() {
+    private void initialize() {
         useTenantCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheTenant", "true"));
     }
 
@@ -173,8 +178,10 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setCurrency(provider.getCurrency() != null ? provider.getCurrency() : null);
         appProvider.setCountry(provider.getCountry() != null ? provider.getCountry() : null);
         appProvider.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
+        appProvider.setIcdId(provider.getIcdId() != null ? provider.getIcdId() : null);
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
+        appProvider.setOrderLineTypes(provider.getOrderLineTypes());
         appProvider.setCfValues(provider.getCFValuesCopy());
 
         tenantCacheContainerProvider.addUpdateTenant(provider, true);
@@ -244,4 +251,25 @@ public class ProviderService extends PersistenceService<Provider> {
     public void updateCustomerNumberSequence(GenericSequence genericSequence) throws BusinessException {
         serviceSingleton.updateCustomerNumberSequence(genericSequence);
     }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public String getNextMatchingCode() {
+        Provider provider = findById(Provider.CURRENT_PROVIDER_ID, true);
+
+        String nextMathingCode = StringUtils.computeNextAlphabetSequence(provider.getCurrentMatchingCode());
+
+        provider.setCurrentMatchingCode(nextMathingCode);
+        updateNoCheck(provider);
+
+        return nextMathingCode;
+    }
+
+    public void resetMatchingCode() {
+        Provider provider = findById(Provider.CURRENT_PROVIDER_ID, true);
+        provider.setCurrentMatchingCode(StringUtils.DEFAULT_MATCHING_CODE_VALUE);
+        updateNoCheck(provider);
+    }
+
 }

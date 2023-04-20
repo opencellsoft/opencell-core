@@ -3,20 +3,14 @@ package org.meveo.apiv2.provider;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
-import org.meveo.api.dto.ProviderDto;
-import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.PaymentPlanPolicy;
 
 import javax.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,7 +42,9 @@ public interface Provider {
     @Nullable String getEmail();
     @Nullable Integer getMaximumDelay();
     @Nullable Integer getMaximumDeferralPerInvoice();
-    @Nullable String getRgaaMessage();
+    @Nullable String getPortalMessage();
+    @Nullable String getCurrentMatchingCode();
+    @Nullable String getIsoICDCode();
     
     @Nullable
     Map<String, Long> getCurrency();
@@ -82,6 +78,9 @@ public interface Provider {
     
     @Nullable
     Set<String> getPaymentMethods();
+    
+    @Nullable
+    Set<String> getOrderLineTypes();
 
 
     default org.meveo.model.crm.Provider toEntity() {
@@ -185,8 +184,11 @@ public interface Provider {
         if (this.getMaximumDeferralPerInvoice() != null) {
             provider.setMaximumDeferralPerInvoice(this.getMaximumDeferralPerInvoice());
         }
-        if (this.getRgaaMessage() != null) {
-            provider.setRgaaMessage(this.getRgaaMessage());
+        if (this.getPortalMessage() != null) {
+            provider.setPortalMessage(this.getPortalMessage());
+        }
+        if (this.getCurrentMatchingCode() != null) {
+            provider.setCurrentMatchingCode(this.getCurrentMatchingCode());
         }
         
         if (this.getInvoiceConfiguration() != null) {

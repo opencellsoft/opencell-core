@@ -38,6 +38,29 @@ import org.slf4j.LoggerFactory;
 /**
  * Implements job logic to iterate over data and process one item at a time, checking if job is still running and update job progress in DB periodically
  * 
+ * <pre>
+ * If queue-size is specified it will queue tasks untill queue is filled before a new thread is created. It acts as a buffer to not create new tasks immediately.
+ * 
+ * E.g. core-threads=10, queue-size=5, max-thread-pool=20
+ * 
+ * tasks received = threads running
+ * 1   = 10
+ * 10 = 10
+ * 11 = 10
+ * 14 = 10
+ * 15 = 10
+ * 16 = 16
+ * 19 = 16
+ * 20 = 16
+ * 21 = 20
+ * 25 = 20
+ * 26 = should be 26, but task is rejected as max-pool-size is reached
+ * 
+ * If we just specify core-threads=20, queue-size=300 we will never see more than 20 threads if run less than 300 users in paralel.
+ * 
+ * So have to keep queue-size very small - so new tasks will keep using up new threads if  none are available.
+ * </pre>
+ * 
  * @author Andrius Karpavicius
  */
 @Stateless

@@ -20,6 +20,7 @@ package org.meveo.api.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 
@@ -175,7 +177,7 @@ public class BillingCycleDto extends BusinessEntityDto {
     /**
      * To decide whether or not dates should be recomputed at invoice validation.
      */
-    private boolean computeDatesAtValidation;
+    private Boolean computeDatesAtValidation;
 
     /**
      *
@@ -186,6 +188,23 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     @XmlElement
     private String billingRunValidationScriptCode;
+    
+    private Map<String, Object> filters;
+    
+    @XmlElement
+    private Integer priority;
+    
+    private Boolean disableAggregation;
+    
+    private Boolean useAccountingArticleLabel;
+    
+    private DateAggregationOption dateAggregation;
+    
+    private Boolean aggregateUnitAmounts;
+    
+    private Boolean ignoreSubscriptions;
+    
+    private Boolean ignoreOrders;
 
     public String getLastTransactionDateDelayEL() {
 		return lastTransactionDateDelayEL;
@@ -203,13 +222,9 @@ public class BillingCycleDto extends BusinessEntityDto {
 		this.billingRunValidationScriptCode = billingRunValidationScriptCode;
 	}
 
-	public Boolean getThresholdPerEntity() {
-		return thresholdPerEntity;
-	}
-
     private List<LanguageDescriptionDto> languageDescriptions;
 
-    public Boolean isThresholdPerEntity() {
+    public Boolean getThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
 
@@ -263,8 +278,16 @@ public class BillingCycleDto extends BusinessEntityDto {
             }
             languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(billingCycleEntity.getDescriptionI18n());
             collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
-            computeDatesAtValidation = billingCycleEntity.getComputeDatesAtValidation() == null ? null : billingCycleEntity.getComputeDatesAtValidation();
+            computeDatesAtValidation = billingCycleEntity.isComputeDatesAtValidation();
             billingRunValidationScriptCode=billingCycleEntity.getBillingRunValidationScript()!=null?billingCycleEntity.getBillingRunValidationScript().getCode():null;
+            filters = billingCycleEntity.getFilters();
+            priority = billingCycleEntity.getPriority();
+            disableAggregation = billingCycleEntity.isDisableAggregation();
+            useAccountingArticleLabel = billingCycleEntity.isUseAccountingArticleLabel();
+            dateAggregation = billingCycleEntity.getDateAggregation();
+            aggregateUnitAmounts = billingCycleEntity.isAggregateUnitAmounts();
+            ignoreSubscriptions = billingCycleEntity.isIgnoreSubscriptions();
+            ignoreOrders = billingCycleEntity.isIgnoreOrders();
         }
     }
 
@@ -371,7 +394,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      * @return A delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate value.
      *         BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
-    public Integer getLastTransactionDateDelay() {
+    public Integer getTransactionDateDelay() {
         return transactionDateDelay;
     }
 
@@ -379,7 +402,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      * @param transactionDateDelay A delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate
      *        value. BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
-    public void setLastTransactionDateDelay(Integer transactionDateDelay) {
+    public void setTransactionDateDelay(Integer transactionDateDelay) {
         this.transactionDateDelay = transactionDateDelay;
     }
 
@@ -508,9 +531,17 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     @Override
     public String toString() {
-        return "BillingCycleDto [code=" + getCode() + ", description=" + getDescription() + ", billingTemplateName=" + billingTemplateName + ", invoiceDateDelay=" + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay
-                + ", dueDateDelayEL=" + dueDateDelayEL + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay + ", transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar
-                + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode=" + invoiceTypeCode + ", customFields=" + customFields + ", referenceDate=" + referenceDate + "]";
+        return "BillingCycleDto [billingTemplateName=" + billingTemplateName + ", billingTemplateNameEL=" + billingTemplateNameEL + ", invoiceDateDelay=" + invoiceDateDelay
+                + ", invoiceDateDelayEL=" + invoiceDateDelayEL + ", dueDateDelay=" + dueDateDelay + ", dueDateDelayEL=" + dueDateDelayEL + ", invoiceDateProductionDelay="
+                + invoiceDateProductionDelay + ", invoiceDateProductionDelayEL=" + invoiceDateProductionDelayEL + ", transactionDateDelay=" + transactionDateDelay
+                + ", lastTransactionDateDelayEL=" + lastTransactionDateDelayEL + ", lastTransactionDateEL=" + lastTransactionDateEL + ", calendar=" + calendar
+                + ", invoicingThreshold=" + invoicingThreshold + ", splitPerPaymentMethod=" + splitPerPaymentMethod + ", invoiceTypeCode=" + invoiceTypeCode + ", invoiceTypeEl="
+                + invoiceTypeEl + ", customFields=" + customFields + ", type=" + type + ", referenceDate=" + referenceDate + ", scriptInstanceCode=" + scriptInstanceCode
+                + ", checkThreshold=" + checkThreshold + ", collectionDateDelayEl=" + collectionDateDelayEl + ", computeDatesAtValidation=" + computeDatesAtValidation
+                + ", thresholdPerEntity=" + thresholdPerEntity + ", billingRunValidationScriptCode=" + billingRunValidationScriptCode + ", filters=" + filters + ", priority="
+                + priority + ", disableAggregation=" + disableAggregation + ", useAccountingArticleLabel=" + useAccountingArticleLabel + ", dateAggregation=" + dateAggregation
+                + ", aggregateUnitAmounts=" + aggregateUnitAmounts + ", ignoreSubscriptions=" + ignoreSubscriptions + ", ignoreOrders=" + ignoreOrders + ", languageDescriptions="
+                + languageDescriptions + "]";
     }
 
     /**
@@ -649,7 +680,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      *
      * @return
      */
-    public Boolean isComputeDatesAtValidation() {
+    public Boolean getComputeDatesAtValidation() {
         return computeDatesAtValidation;
     }
 
@@ -660,5 +691,69 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
         this.computeDatesAtValidation = computeDatesAtValidation;
+    }
+
+	public Map<String, Object> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(Map<String, Object> filters) {
+		this.filters = filters;
+	}
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
+
+    public Boolean getDisableAggregation() {
+        return disableAggregation;
+    }
+
+    public void setDisableAggregation(Boolean disableAggregation) {
+        this.disableAggregation = disableAggregation;
+    }
+
+    public Boolean getUseAccountingArticleLabel() {
+        return useAccountingArticleLabel;
+    }
+
+    public void setUseAccountingArticleLabel(Boolean useAccountingArticleLabel) {
+        this.useAccountingArticleLabel = useAccountingArticleLabel;
+    }
+
+    public DateAggregationOption getDateAggregation() {
+        return dateAggregation;
+    }
+
+    public void setDateAggregation(DateAggregationOption dateAggregation) {
+        this.dateAggregation = dateAggregation;
+    }
+
+    public Boolean getAggregateUnitAmounts() {
+        return aggregateUnitAmounts;
+    }
+
+    public void setAggregateUnitAmounts(Boolean aggregateUnitAmounts) {
+        this.aggregateUnitAmounts = aggregateUnitAmounts;
+    }
+
+    public Boolean getIgnoreSubscriptions() {
+        return ignoreSubscriptions;
+    }
+
+    public void setIgnoreSubscriptions(Boolean ignoreSubscriptions) {
+        this.ignoreSubscriptions = ignoreSubscriptions;
+    }
+
+    public Boolean getIgnoreOrders() {
+        return ignoreOrders;
+    }
+
+    public void setIgnoreOrders(Boolean ignoreOrders) {
+        this.ignoreOrders = ignoreOrders;
     }
 }

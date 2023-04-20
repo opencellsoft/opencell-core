@@ -72,7 +72,7 @@ import org.meveo.model.crm.IInvoicingMinimumApplicable;
         @NamedQuery(name = "UserAccount.getUserAccountsWithMinAmountELNotNullByUA", query = "select u from UserAccount u where u.minimumAmountEl is not null AND u.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND u=:userAccount"),
         @NamedQuery(name = "UserAccount.getMinimumAmountUsed", query = "select u.minimumAmountEl from UserAccount u where u.minimumAmountEl is not null"),
         @NamedQuery(name = "UserAccount.getCountByParent", query = "select count(*) from UserAccount ua where ua.billingAccount=:parent") })
-public class UserAccount extends AccountEntity  implements IInvoicingMinimumApplicable, IWFEntity, ICounterEntity, ISearchable {
+public class UserAccount extends AccountEntity implements IInvoicingMinimumApplicable, IWFEntity, ICounterEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -158,6 +158,21 @@ public class UserAccount extends AccountEntity  implements IInvoicingMinimumAppl
     @Type(type = "numeric_boolean")
     @Column(name = "is_consumer")
     private Boolean isConsumer=Boolean.TRUE;
+
+    /**
+     * IsoIcd
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "icd_id")
+    private IsoIcd icdId;
+    
+    public IsoIcd getIcdId() {
+        return icdId;
+    }
+
+    public void setIcdId(IsoIcd icdId) {
+        this.icdId = icdId;
+    }
 
     public BillingAccount getBillingAccount() {
         return billingAccount;

@@ -1,8 +1,8 @@
 package org.meveo.api.restful.filter;
 
-import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
+import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,7 +27,7 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        httpClient = new ResteasyClientBuilder().build();
+        httpClient = new ResteasyClientBuilderImpl().build();
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 
         if ( httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION) != null ) {

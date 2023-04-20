@@ -12,17 +12,14 @@ import java.util.stream.Stream;
 
 import javax.persistence.criteria.JoinType;
 
+import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NativeExpressionFactory {
-
-    protected Logger log = LoggerFactory.getLogger(getClass());
 
     protected QueryBuilder queryBuilder;
     private String tableNameAlias;
@@ -34,7 +31,7 @@ public class NativeExpressionFactory {
     }
 
     public void addFilters(String key, Object value) {
-    	if(key.endsWith(".id")) {
+    	if(key.endsWith(".id") || key.equals("id")) {
         	Object ids = (value instanceof Collection)? ((Collection)value).stream().map(x->Long.parseLong(x.toString())).collect(Collectors.toList()):Long.parseLong(value.toString());
             checkOnCondition(key, ids, new ExpressionParser(key.split(" ")));
     	} else {
@@ -106,13 +103,30 @@ public class NativeExpressionFactory {
                 queryBuilder.addSearchWildcardOrIgnoreCasFilters(tableNameAlias, exp.getAllFields(), value);
                 break;
             default: {
-                if (key.startsWith(PersistenceService.SEARCH_SQL)) {
+            	if (key.matches("^\\$filter[0-9]+$")) {
+            		Map<String, Object> nestedFilterItems = (Map<String, Object>) value;
+                    FilterOperatorEnum operator;
+                    if(nestedFilterItems.getOrDefault("$operator", FilterOperatorEnum.AND) instanceof String) {
+                        operator = FilterOperatorEnum.valueOf((String) nestedFilterItems.getOrDefault("$operator", FilterOperatorEnum.AND));
+                    } else {
+                        operator = (FilterOperatorEnum) nestedFilterItems.getOrDefault("$operator", FilterOperatorEnum.AND);
+                    }
+            		queryBuilder.startNestedFilter(operator);
+                    nestedFilterItems.keySet().stream()
+	                    						.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
+	                    						.filter(orItemKey -> nestedFilterItems.get(orItemKey) != null && !"$OPERATOR".equalsIgnoreCase(orItemKey))
+	                    						.forEach(orItemKey -> addFilters(orItemKey, nestedFilterItems.get(orItemKey)));
+            		queryBuilder.endNestedFilter();
+                } else if (key.startsWith(PersistenceService.SEARCH_SQL)) {
                     queryBuilder.addSearchSqlFilters(value);
                 } else if (key.startsWith(PersistenceService.SEARCH_OR)) {
                     queryBuilder.startOrClause();
 
                     Map<String, Object> orClauseItems = (Map<String, Object>) value;
-                    orClauseItems.keySet().stream().filter(orItemKey -> orClauseItems.get(orItemKey) != null).forEach(orItemKey -> addFilters(orItemKey, orClauseItems.get(orItemKey)));
+                    orClauseItems.keySet().stream()
+                    						.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
+                    						.filter(orItemKey -> orClauseItems.get(orItemKey) != null)
+                    						.forEach(orItemKey -> addFilters(orItemKey, orClauseItems.get(orItemKey)));
 
                     queryBuilder.endOrClause();
 
@@ -120,7 +134,10 @@ public class NativeExpressionFactory {
                 	queryBuilder.startOrClause();
                 	queryBuilder.setJoinType(JoinType.LEFT);
                 	Map<String, Object> orClauseItems = Stream.of(key.split(" ")).skip(1).collect(Collectors.toMap(s -> s, s -> value));
-                	orClauseItems.keySet().stream().filter(orItemKey -> orClauseItems.get(orItemKey) != null).forEach(orItemKey -> addFilters(orItemKey, orClauseItems.get(orItemKey)));
+                	orClauseItems.keySet().stream()
+            								.sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
+            								.filter(orItemKey -> orClauseItems.get(orItemKey) != null)
+            								.forEach(orItemKey -> addFilters(orItemKey, orClauseItems.get(orItemKey)));
                 	queryBuilder.endOrClause();
 
                 } else if (value instanceof String && PersistenceService.SEARCH_IS_NULL.equals(value)) {

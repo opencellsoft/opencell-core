@@ -32,6 +32,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.cpq.order.InvoicingPlanService;
 
 /**
@@ -44,6 +45,9 @@ public class InvoicingPlanApi extends BaseCrudApi<InvoicingPlan, InvoicingPlanDt
 	@Inject
 	private InvoicingPlanService invoicingPlanService;
 
+	@Inject
+	CustomGenericEntityCodeService customGenericEntityCodeService;
+
 	/**
 	 * Creates a new InvoicingPlan entity.
 	 * 
@@ -54,22 +58,21 @@ public class InvoicingPlanApi extends BaseCrudApi<InvoicingPlan, InvoicingPlanDt
 	 */
 	public InvoicingPlan create(InvoicingPlanDto postData) throws MeveoApiException, BusinessException {
 
-		String invoicingPlanCode = postData.getCode();
-
-		if (StringUtils.isBlank(invoicingPlanCode)) {
-			missingParameters.add("invoicingPlanCode");
+		InvoicingPlan invoicingPlan = new InvoicingPlan();
+		if(StringUtils.isBlank(postData.getCode())) {
+			postData.setCode(customGenericEntityCodeService.getGenericEntityCode(invoicingPlan));
 		}
-
 		handleMissingParametersAndValidate(postData);
 
-		InvoicingPlan invoicingPlan = invoicingPlanService.findByCode(invoicingPlanCode);
-
-		if (invoicingPlan != null) {
-			throw new EntityAlreadyExistsException(InvoicingPlan.class, invoicingPlanCode);
+		String invoicingPlanCode = postData.getCode();
+		if(!StringUtils.isBlank(invoicingPlanCode)){
+			InvoicingPlan existingInvoicingPlan = invoicingPlanService.findByCode(invoicingPlanCode);
+			if (existingInvoicingPlan != null) {
+				throw new EntityAlreadyExistsException(InvoicingPlan.class, invoicingPlanCode);
+			}
 		}
 
-		invoicingPlan = new InvoicingPlan();
-		invoicingPlan.setCode(invoicingPlanCode);
+		invoicingPlan.setCode(StringUtils.isBlank(invoicingPlanCode) ? customGenericEntityCodeService.getGenericEntityCode(invoicingPlan): invoicingPlanCode);
 		invoicingPlan.setDescription(postData.getDescription());
 		populateCustomFields(postData.getCustomFields(), invoicingPlan, true);
 

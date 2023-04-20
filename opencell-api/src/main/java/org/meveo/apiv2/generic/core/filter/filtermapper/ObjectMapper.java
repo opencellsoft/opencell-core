@@ -8,8 +8,8 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
-import org.meveo.apiv2.generic.core.filter.FilterMapper;
+import org.meveo.api.generics.filter.FactoryFilterMapper;
+import org.meveo.api.generics.filter.FilterMapper;
 import org.meveo.model.BaseEntity;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;

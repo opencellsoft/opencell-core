@@ -34,11 +34,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.QueryHint;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -56,6 +58,7 @@ import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.model.document.Document;
 
 /**
  * @author Edward P. Legaspi, Andrius Karpavicius
@@ -165,7 +168,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @JoinTable(name = "cpq_offer_template_media", joinColumns = @JoinColumn(name = "offer_template_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
     private List<Media> medias = new ArrayList<Media>();
 
-    @OneToMany(mappedBy = "targetOfferTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "targetOfferTemplate", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
 
@@ -207,6 +210,51 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Column(name = "generate_quote_edr_per_product")
     private boolean generateQuoteEdrPerProduct;
     
+    /**
+    * Display
+    */
+    @Type(type = "numeric_boolean")
+    @Column(name = "display")
+    @NotNull
+    private boolean display;
+    
+    /**
+     * sequence for Offer Template and attribute
+     */
+    @Column(name = "sequence")
+    protected Integer sequence = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "document_id")
+    private Document document;
+    
+    /**
+     * @return the display
+     */
+    public boolean isDisplay() {
+        return display;
+    }
+    
+    /**
+     * @param display the display to set
+     */
+    public void setDisplay(boolean display) {
+        this.display = display;
+    }
+
+    /**
+     * @return the sequence
+     */
+    public Integer getSequence() {
+        return sequence;
+    }
+    
+    /**
+     * @param sequence the sequence to set
+     */
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "offerTemplate", orphanRemoval = true)
     private List<OfferTemplateAttribute> offerAttributes = new ArrayList<>();
@@ -628,7 +676,13 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     public void setGenerateQuoteEdrPerProduct(boolean generateQuoteEdrPerProduct) {
         this.generateQuoteEdrPerProduct = generateQuoteEdrPerProduct;
     }
-    
-    
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
     
 }

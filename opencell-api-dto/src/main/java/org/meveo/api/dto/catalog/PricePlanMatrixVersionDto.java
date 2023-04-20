@@ -90,7 +90,7 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     public PricePlanMatrixVersionDto() {
     }
 
-    public PricePlanMatrixVersionDto(PricePlanMatrixVersion pricePlanMatrixVersion) {
+    public PricePlanMatrixVersionDto(PricePlanMatrixVersion pricePlanMatrixVersion, boolean returnPricePlanMatrixLine) {
     	this.id = pricePlanMatrixVersion.getId();
         setLabel(pricePlanMatrixVersion.getLabel());
         setMatrix(pricePlanMatrixVersion.isMatrix());
@@ -99,15 +99,17 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());
         setValidity(pricePlanMatrixVersion.getValidity());
-        setPrice(pricePlanMatrixVersion.getPrice());
+        setPrice(pricePlanMatrixVersion.isMatrix()? BigDecimal.ZERO : pricePlanMatrixVersion.getPrice());
         setAmountWithoutTax(pricePlanMatrixVersion.getAmountWithoutTax());
         setAmountWithTax(pricePlanMatrixVersion.getAmountWithTax());
         setPriceEL(pricePlanMatrixVersion.getPriceEL());
         setPriority(pricePlanMatrixVersion.getPriority());
-        if (pricePlanMatrixVersion.getLines() != null && !pricePlanMatrixVersion.getLines().isEmpty()) {
-            lines = pricePlanMatrixVersion.getLines().stream()
-                    .map(PricePlanMatrixLineDto::new)
-                    .collect(Collectors.toSet());
+        if (returnPricePlanMatrixLine) {
+            if (pricePlanMatrixVersion.getLines() != null && !pricePlanMatrixVersion.getLines().isEmpty()) {
+                lines = pricePlanMatrixVersion.getLines().stream()
+                        .map(PricePlanMatrixLineDto::new)
+                        .collect(Collectors.toSet());
+            }
         }
         if (pricePlanMatrixVersion.getColumns() != null && !pricePlanMatrixVersion.getColumns().isEmpty()) {
             columns = pricePlanMatrixVersion.getColumns().stream()

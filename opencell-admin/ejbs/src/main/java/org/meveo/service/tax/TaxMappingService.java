@@ -340,6 +340,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return Tax to apply
      * @throws NoTaxException Unable to determine a tax
      */
+    @Deprecated
     public TaxInfo determineTax(TaxClass taxClass, Seller seller, BillingAccount billingAccount, UserAccount userAccount, Date date, boolean checkExoneration, boolean ignoreNoTax) throws NoTaxException {
         return determineTax(taxClass, seller, billingAccount, userAccount, date, null, checkExoneration, ignoreNoTax, null);
     }
@@ -376,10 +377,10 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                 TaxCategory taxCategory = getTaxCategory(billingAccount);
                 taxInfo.taxCategory = taxCategory;
 
-                TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date);
+                TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date, walletoperation);
 
                 if (taxMapping.getTaxEL() != null) {
-                    tax = evaluateTaxExpression(taxMapping.getTaxEL(), seller, billingAccount, taxCategory, taxClass, date);
+                    tax = evaluateTaxExpression(taxMapping.getTaxEL(), seller, billingAccount, taxCategory, taxClass, date, walletoperation);
 
                 } else if (taxMapping.getTaxScript() != null) {
 
@@ -444,7 +445,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @throws InvalidParameterException Parameters for best tax mapping lookup are insufficient
      * @throws IncorrectChargeTemplateException No tax mapping matched
      */
-    private TaxMapping findBestTaxMappingMatch(TaxCategory taxCategory, TaxClass taxClass, Seller seller, BillingAccount billingAccount, Date applicationDate)
+    private TaxMapping findBestTaxMappingMatch(TaxCategory taxCategory, TaxClass taxClass, Seller seller, BillingAccount billingAccount, Date applicationDate , WalletOperation walletOperation)
             throws InvalidParameterException, IncorrectChargeTemplateException {
         if (seller == null) {
             throw new InvalidParameterException("Seller is mandatory for finding a tax mapping");
@@ -457,7 +458,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             .setParameter("sellerCountry", sellersCountry).setParameter("buyerCountry", buyersCountry).setParameter("applicationDate", applicationDate).getResultList();
 
         for (TaxMapping taxMapping : taxMappings) {
-            if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate)) {
+            if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate, walletOperation)) {
                 return taxMapping;
             }
         }
@@ -485,13 +486,13 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @throws InvalidELException Failed to evaluate EL expression
      * @throws ElementNotFoundException Tax that was resolved from EL expression was not found
      */
-    private Tax evaluateTaxExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date) throws InvalidELException, ElementNotFoundException {
+    private Tax evaluateTaxExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date, WalletOperation walletOperation) throws InvalidELException, ElementNotFoundException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date);
+        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date, walletOperation);
 
         String taxCode = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         if (taxCode != null) {
@@ -514,16 +515,17 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param taxCategory Tax category
      * @param taxClass Tax class
      * @param date Date
+     * @param walletOperation WalletOperation
      * @return true/false True if expression is matched
      * @throws InvalidELException Failed to evaluate EL expression
      */
-    private boolean evaluateBooleanExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date) throws InvalidELException {
+    private boolean evaluateBooleanExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date, WalletOperation walletOperation) throws InvalidELException {
 
         if (StringUtils.isBlank(expression)) {
             return true;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date);
+        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date, walletOperation);
 
         return ValueExpressionWrapper.evaluateToBoolean(expression, userMap);
 
@@ -538,9 +540,10 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param taxCategory Tax category
      * @param taxClass Tax class
      * @param date Date
+     * @param walletOperation WalletOperation
      * @return A map of variables
      */
-    private Map<Object, Object> constructElContext(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date) {
+    private Map<Object, Object> constructElContext(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date, WalletOperation walletOperation) {
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
 
@@ -565,6 +568,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_TAX_CLASS) >= 0) {
             userMap.put(ValueExpressionWrapper.VAR_TAX_CLASS, taxClass);
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_WALLET_OPERATION) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_WALLET_OPERATION, walletOperation);
         }
 
         return userMap;

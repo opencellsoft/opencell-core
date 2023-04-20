@@ -280,28 +280,30 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 	}
 
 	@Override
-    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
-        String returnUrl = hostedCheckoutInput.getReturnUrl();
-        String walletUrl = paramBean().getProperty(WALLET_HOSTED_CHECK_OUT_URL_PROPERTY, "changeIt");
+	public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)
+			throws BusinessException {
+		String returnUrl = hostedCheckoutInput.getReturnUrl();
+		String walletUrl = paramBean().getProperty(WALLET_HOSTED_CHECK_OUT_URL_PROPERTY, "changeIt");
 
-        PaymentHostedCheckoutResponseDto response = new PaymentHostedCheckoutResponseDto();
-        PaymentHostedCheckoutResponseDto.Result result = response.getResult();
+		PaymentHostedCheckoutResponseDto response = new PaymentHostedCheckoutResponseDto();
+		PaymentHostedCheckoutResponseDto.Result result = response.getResult();
 
-        result.setHostedCheckoutUrl(walletUrl);
-        result.setHostedCheckoutVersion(paramBean().getProperty(PAYPAGE_INTERFACE_VERSION_PROPERTY,"HP_2.39"));
-        result.setReturnUrl(returnUrl);
+		result.setHostedCheckoutUrl(walletUrl);
+		result.setHostedCheckoutVersion(paramBean().getProperty(PAYPAGE_INTERFACE_VERSION_PROPERTY, "HP_2.39"));
+		result.setReturnUrl(returnUrl);
 
-        CustomerAccount ca = customerAccountService().findById(hostedCheckoutInput.getCustomerAccountId());
+		CustomerAccount ca = customerAccountService().findById(hostedCheckoutInput.getCustomerAccountId());
 
-        String merchantWalletId = ca.getId() + "_" + (ca.getCardPaymentMethods(false).size() + 1);
-        
-        String transactionReference = System.currentTimeMillis()+"R"+((int )(Math.random() * 1000 + 1))+"CA"+ca.getId();
-        
-        if(hostedCheckoutInput.isOneShotPayment()) {
-        	transactionReference = "oneShot"+transactionReference;
+		String merchantWalletId = ca.getId() + "_" + (ca.getCardPaymentMethods(false).size() + 1);
+
+		String transactionReference = System.currentTimeMillis() + "R" + ((int) (Math.random() * 1000 + 1)) + "CA"
+				+ ca.getId();
+
+		if (hostedCheckoutInput.isOneShotPayment()) {
+			transactionReference = "oneShot" + transactionReference;
 		}
 
-        String data ="amount="+hostedCheckoutInput.getAmount()+
+		String data ="amount="+hostedCheckoutInput.getAmount()+
         		"|authenticationData.authentAmount="+hostedCheckoutInput.getAuthenticationAmount()+
         		"|currencyCode="+hostedCheckoutInput.getCurrencyCode()+
         		"|merchantId="+paymentGateway.getMarchandId() +
@@ -317,36 +319,34 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
                 "|merchantWalletId=" + merchantWalletId +
                 "|keyVersion=" + paymentGateway.getWebhooksKeyId()+
                 "|sealAlgorithm="+paramBean().getProperty(SEAL_ALGORITHM_PROPERTY,"HMAC-SHA-256");
-                
-        		
 
+		if (!StringUtils.isBlank(hostedCheckoutInput.getVariant())) {
+			data += "|templateName=" + hostedCheckoutInput.getVariant();
+		}
 
-        if (!StringUtils.isBlank(hostedCheckoutInput.getVariant())) {
-            data += "|templateName=" + hostedCheckoutInput.getVariant();
-        }
+		if (!StringUtils.isBlank(hostedCheckoutInput.getAutomaticReturnUrl())) {
+			data += "|automaticResponseUrl=" + hostedCheckoutInput.getAutomaticReturnUrl();
+		}
 
-        if (!StringUtils.isBlank(hostedCheckoutInput.getAutomaticReturnUrl())) {
-            data += "|automaticResponseURL=" + hostedCheckoutInput.getAutomaticReturnUrl();
-        }
+		if (!StringUtils.isBlank(hostedCheckoutInput.getReturnContext())) {
+			data += "|returnContext=" + hostedCheckoutInput.getReturnContext();
+		}
 
-        if (!StringUtils.isBlank(hostedCheckoutInput.getReturnContext())) {
-            data += "|returnContext=" + hostedCheckoutInput.getReturnContext();
-        }
+		if (!StringUtils.isBlank(hostedCheckoutInput.getAdvancedOptions())) {
+			data += "|" + hostedCheckoutInput.getAdvancedOptions();
+		}
 
-        if (!StringUtils.isBlank(hostedCheckoutInput.getAdvancedOptions())) {
-            data += "|" + hostedCheckoutInput.getAdvancedOptions();
-        }
+		result.setData(data);
 
-        result.setData(data);
-
-        try {
-            result.setSeal(SealCalculator.calculate(data, paymentGateway.getWebhooksSecretKey()).toLowerCase());
-        } catch (SealCalculationException e) {
-            throw new BusinessException("Seal couldn't be calculated for merchantId=" + paymentGateway.getMarchandId(), e);
-        }
-
-        return response;
-    }
+		try {
+			result.setSeal(SealCalculator.calculate(data, paymentGateway.getWebhooksSecretKey()).toLowerCase());
+		} catch (SealCalculationException e) {
+			throw new BusinessException("Seal couldn't be calculated for merchantId=" + paymentGateway.getMarchandId(),
+					e);
+		}
+        log.info("getHostedCheckoutUrl data:{} seal:{}",data,result.getSeal());
+		return response;
+	}
 
     @Override
     public String createInvoice(Invoice invoice) throws BusinessException {
@@ -547,7 +547,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
 	@Override
 	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	@Override

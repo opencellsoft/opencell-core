@@ -28,6 +28,7 @@ import org.meveo.api.dto.PropertyDto;
 import org.meveo.commons.utils.ParamBean;
 
 import com.google.gson.Gson;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
 /**
  * @author Wassim Drira
@@ -47,6 +48,15 @@ public class ConfigurationApi extends BaseApi {
         ParamBean paramBean = paramBeanFactory.getInstance();
         paramBean.setProperty(property, value);
         paramBean.saveProperties();
+
+        if (property.equals("cache.cacheCFT")) {
+            if (value.equals("false")) {
+                CustomFieldTemplateService.setCacheCFTAsFalse();
+            }
+            else if (value.equals("true")) {
+                CustomFieldTemplateService.setCacheCFTAsTrue();
+            }
+        }
     }
 
     public void setProperties(List<PropertyDto> properties) {

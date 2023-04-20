@@ -20,7 +20,6 @@ package org.meveo.admin.parse.csv;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,6 +27,7 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -36,6 +36,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import org.meveo.admin.exception.InvalidELException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
@@ -59,16 +60,19 @@ import org.slf4j.LoggerFactory;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MEVEOCdrReader implements ICdrCsvReader {
 
-    static MessageDigest messageDigest = null;
-    static {
-        try {
-            messageDigest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            Logger log = LoggerFactory.getLogger(MEVEOCdrReader.class);
-            log.error("No message digest of type MD5", e);
-        }
-    }
-
+    private static final ThreadLocal<MessageDigest> messageDigest = new ThreadLocal<MessageDigest>() {
+        @Override
+        protected MessageDigest initialValue() {
+            try {
+                return MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e) {
+                Logger log = LoggerFactory.getLogger(MEVEOCdrReader.class);
+                log.error("No message digest of type MD5", e);
+                return null;
+            }
+        }        
+    };
+    
     private String batchName;
     private String username;
     private CDR_ORIGIN_ENUM origin;
@@ -85,7 +89,7 @@ public class MEVEOCdrReader implements ICdrCsvReader {
             totalNumberOfRecords = FileUtils.countLines(cdrFile);
         } catch (IOException e) {
         }
-        fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));
+        fileReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StorageFactory.getInputStream(cdrFile))));
     }
 
     @Override
@@ -170,17 +174,16 @@ public class MEVEOCdrReader implements ICdrCsvReader {
      */
     private String getOriginRecord(String cdr) {
 
-        if (messageDigest != null) {
-            synchronized (messageDigest) {
-                messageDigest.reset();
-                messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
-                final byte[] resultByte = messageDigest.digest();
-                StringBuffer sb = new StringBuffer();
-                for (int i = 0; i < resultByte.length; ++i) {
-                    sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
-                }
-                return sb.toString();
+        MessageDigest md = messageDigest.get();
+        if (md != null) {
+            md.reset();
+            md.update(cdr.getBytes(Charset.forName("UTF8")));
+            final byte[] resultByte = md.digest();
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < resultByte.length; ++i) {
+                sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
             }
+            return sb.toString();
         }
 
         return null;

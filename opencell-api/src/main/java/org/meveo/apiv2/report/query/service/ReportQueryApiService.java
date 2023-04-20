@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,9 +24,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
@@ -34,6 +37,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.apiv2.report.VerifyQueryInput;
 import org.meveo.commons.utils.EjbUtils;
@@ -45,6 +49,7 @@ import org.meveo.model.report.query.ReportQuery;
 import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.FilterConverter;
 import org.meveo.service.report.ReportQueryService;
@@ -60,11 +65,14 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     @CurrentUser
     private MeveoUser currentUser;
 
+    @Inject
+    @Named
+    private NativePersistenceService nativePersistenceService;
+
     private List<String> fetchFields = asList("fields");
 
     private static final Pattern pattern = Pattern.compile("^[a-zA-Z]+\\((.*?)\\)");
     
-
     private static final int EXECUTE = 1;
     private static final int READ = 2;
     private static final int UPDATE = 3;
@@ -120,7 +128,12 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     	checkPermissionExist();
         Class<?> targetEntity = getEntityClass(entity.getTargetEntity());
         try {
-        	String generatedQuery=generateQuery(entity, targetEntity);
+        	String generatedQuery;
+        	if(entity.getAdvancedQuery() != null) {
+        		generatedQuery = nativePersistenceService.generatedAdvancedQuery(entity).getSqlString();
+        	} else {
+        		generatedQuery = generateQuery(entity, targetEntity);
+        	}
             entity.setGeneratedQuery(generatedQuery);
             reportQueryService.create(entity, currentUser.getUserName());
             return entity;
@@ -134,27 +147,30 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         PersistenceService persistenceService =
                 (PersistenceService) getServiceInterface(targetEntity.getSimpleName());
         QueryBuilder queryBuilder;
+        List<String> nestedEntities = entity.getFields().stream().filter(e -> e.contains(".")).map(e -> e.substring(0, e.lastIndexOf("."))).distinct().collect(Collectors.toList());
         if (entity.getFilters() != null) {
             Map<String, Object> filters = new FilterConverter(targetEntity).convertFilters(entity.getFilters());
-            queryBuilder = persistenceService.getQuery(new PaginationConfiguration(filters));
+            queryBuilder = persistenceService.getQuery(new PaginationConfiguration(null, null, filters, null, false, nestedEntities));
         } else {
-            queryBuilder = persistenceService.getQuery(new PaginationConfiguration(null));
+            queryBuilder = persistenceService.getQuery(new PaginationConfiguration(null, null, null, null, false, nestedEntities));
         }
         String generatedQuery;
         if (entity.getFields() != null && !entity.getFields().isEmpty()) {
-            generatedQuery = addFields(queryBuilder.getSqlString(), entity.getFields(), entity.getSortBy());
+            generatedQuery = addFields(queryBuilder.getSqlString(false), entity.getFields(), entity.getSortBy(), entity.getAliases());
         } else {
             generatedQuery = queryBuilder.getSqlString();
         }
+//        entity.setFilters(queryBuilder.getParams());
+        entity.setQueryParameters(queryBuilder.getParams());
         if(entity.getSortBy() != null) {
             StringBuilder sortOptions = new StringBuilder(" order by ")
                     .append(!entity.getSortBy().isBlank() ? ("a." + entity.getSortBy()) : "a.id")
                     .append(" ")
                     .append(entity.getSortOrder() != null ? entity.getSortOrder().getLabel()
                             : SortOrderEnum.ASCENDING.getLabel());
-            return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ").replaceAll("_\\d+", "") + sortOptions;
+            return generatedQuery + sortOptions;
         }
-        return generatedQuery.replaceAll("\\s*\\blower\\b\\s*", " ").replaceAll("_\\d+", "");
+        return generatedQuery;
     }
     
     @SuppressWarnings("rawtypes")
@@ -172,20 +188,33 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         return persistenceService;
     }
 
-    private String addFields(String query, List<String> fields, String sortBy) {
+    private String addFields(String query, List<String> fields, String sortBy, Map<String, String> aliases) {
         Set<String> groupByField = new TreeSet<>();
         List<String> aggFields = new ArrayList<>();
+        Set<String> fetchJoins = new HashSet<>();
         StringBuilder queryField = new StringBuilder();
+        if(aliases == null) {
+        	aliases = new HashMap<>();
+        }
         for (String field : fields) {
             Matcher matcher = pattern.matcher(field);
             if(matcher.find()) {
                 queryField.append(field);
+                if(aliases.containsKey(field)) {
+                	queryField.append(" as ").append(aliases.get(field));
+                }
                 aggFields.add(field);
                 if (sortBy != null && sortBy.isBlank()) {
                     groupByField.add("id");
                 }
             } else {
                 queryField.append("a." + field);
+                if(aliases.containsKey(field)) {
+                	queryField.append(" as ").append(aliases.get(field));
+                }
+                if(field.contains(".")) {
+                	fetchJoins.add(field.substring(0, field.indexOf(".")));
+                }
             }
             queryField.append(" ,");
         }
@@ -223,8 +252,15 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         entity.setFilters(toUpdate.getFilters());
         entity.setSortBy(toUpdate.getSortBy());
         entity.setSortOrder(toUpdate.getSortOrder());
+        entity.setAdvancedQuery(toUpdate.getAdvancedQuery());
+        entity.setAliases(toUpdate.getAliases());
         try {
-        	String generatedQuery=generateQuery(entity, targetEntity);
+        	String generatedQuery;
+        	if(entity.getAdvancedQuery() != null) {
+        		generatedQuery = nativePersistenceService.generatedAdvancedQuery(entity).getSqlString();
+        	} else {
+        		generatedQuery = generateQuery(entity, targetEntity);
+        	}
             entity.setGeneratedQuery(generatedQuery);
             return of(reportQueryService.update(entity));
         } catch (Exception exception) {
@@ -287,7 +323,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
      * @param async execution type; by default false true : asynchronous execution false : synchronous execution
      * @param emails 
      */
-    public Optional<Object> execute(Long queryId, boolean async, boolean sendNotification, List<String> emails) {
+    public Optional<Object> execute(Long queryId, boolean async, boolean sendNotification, List<String> emails, UriInfo uriInfo) {
     	checkPermissionExist();
         ReportQuery query = findById(queryId).orElseThrow(() ->
                 new NotFoundException("Query with id " + queryId + " does not exists"));
@@ -299,7 +335,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         Class<?> targetEntity = getEntityClass(query.getTargetEntity());
         Optional<Object> result;
         if (async) {
-            reportQueryService.executeAsync(query, targetEntity, currentUser, sendNotification, emails);
+            reportQueryService.executeAsync(query, targetEntity, currentUser, sendNotification, emails, uriInfo);
             result = of("Accepted");
         } else {
             result = of(reportQueryService.execute(query, targetEntity));
@@ -357,7 +393,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     }
 
     public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter, String query) {
-    	checkPermissionExist();
+        checkPermissionExist();
         Map<String, Object> filters = query != null ? buildFilters(query) : new HashMap<>();
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), filters, filter, fetchFields, orderBy, sort != null ? SortOrder.valueOf(sort) : null);

@@ -8,7 +8,6 @@ import org.meveo.api.dto.ImportFileTypeDto;
 import org.meveo.api.dto.ImportTypesEnum;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.admin.impl.FileImportForm;
-import org.meveo.api.rest.admin.impl.FileUploadForm;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
@@ -22,7 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -74,51 +72,10 @@ public class MassImportApi {
         return fileTypes;
     }
 
-    public List<ImportFileTypeDto> uploadMassImportFile(FileUploadForm massImportForm) {
-        if (StringUtils.isBlank(massImportForm.getData())) {
-            throw new MissingParameterException("fileToImport");
-        }
-
-        List<ImportFileTypeDto> fileTypes = new ArrayList<>();
-        try {
-            String tempDir = getProviderRootDir() + File.separator + TEMP_DIR;
-            Path tempPath = Paths.get(tempDir);
-
-            if (Files.exists(tempPath)) {
-                FileUtils.deleteDirectory(new File(tempDir));
-            }
-            Files.createDirectories(tempPath);
-
-            String importTempDir = TEMP_DIR + massImportForm.getFilename();
-            FlatFile flatFile = filesApi.uploadFile(massImportForm.getData(), importTempDir, massImportForm.getFileFormat());
-
-            File[] files = new File(tempDir).listFiles();
-            fileTypes = detectFileType(files);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return fileTypes;
-    }
-
-    public void importMassFile(List<ImportFileTypeDto> filesType) {
-        try {
-            String tempDir = getProviderRootDir() + File.separator + TEMP_DIR;
-
-            moveFiles(filesType);
-            FileUtils.deleteDirectory(new File(tempDir));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
     private ImportTypesEnum getImportType(String importFilePath) {
         ImportTypesEnum importType = null;
         try {
-            String line = Files.readAllLines(Paths.get(importFilePath)).get(2);
+            String line = Files.readAllLines(Paths.get(importFilePath)).get(1);
             String type = line.split(";")[0].replace("\"", "");
             if(!EnumUtils.isValidEnum(ImportTypesEnum.class, type)) {
                 return ImportTypesEnum.UNKNOWN;
@@ -159,7 +116,7 @@ public class MassImportApi {
                 if(fileTypeDto != null && fileTypeDto.getFileType() != ImportTypesEnum.UNKNOWN) {
                     String toPath = getProviderRootDir() + File.separator
                             + ImportTypesEnum.valueOf(fileTypeDto.getFileType().toString()).path + File.separator + file.getName();
-
+                    Files.createDirectories(Paths.get(toPath));
                     Files.move(Paths.get(file.getPath()), Paths.get(toPath), StandardCopyOption.REPLACE_EXISTING);
                 }
 

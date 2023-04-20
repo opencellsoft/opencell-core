@@ -31,6 +31,7 @@ import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.order.Order;
@@ -47,6 +48,9 @@ public class OrderApiService implements ApiService<Order> {
     private OrderService orderService;
     @Inject
     private OrderItemApiService orderItemService;
+
+    @Inject
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     @PostConstruct
     public void initService(){

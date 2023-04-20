@@ -23,6 +23,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -33,6 +34,7 @@ import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -41,6 +43,9 @@ import org.meveo.service.securityDeposit.impl.SecurityDepositTransactionService;
 
 public class AccountOperationApiService implements ApiService<AccountOperation> {
 
+    @Inject
+    protected ResourceBundle resourceMessages;
+    
 	@Inject
 	private org.meveo.service.payments.impl.AccountOperationService accountOperationService;
 
@@ -212,22 +217,27 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			MatchingReturnObject matchingResult = new MatchingReturnObject();
 			List<PartialMatchingOccToSelect> partialMatchingOcc = new ArrayList<>();
 			matchingResult.setPartialMatchingOcc(partialMatchingOcc);
+			if(aos.size()>0) {
+			    TradingCurrency theFirstTradingCurrency = aos.get(0).getTransactionalCurrency();
+			    for (AccountOperation accountOperation : aos) {
+			        if(theFirstTradingCurrency != accountOperation.getTransactionalCurrency()) {
+	                    throw new BusinessApiException(resourceMessages.getString("accountOperation.error.sameCurrency"));
+                    }
+	                Long aoId = accountOperation.getId();
+	                if (aoId.equals(creditAoId)) {
+	                    // process only DEBIT AO
+	                    continue;
+	                }
+	                MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
+	                        List.of(creditAoId, aoId), aoId);
 
-			for (Long aoId : aoIds) {
-				if (aoId.equals(creditAoId)) {
-					// process only DEBIT AO
-					continue;
-				}
-				MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
-						List.of(creditAoId, aoId), aoId);
+	                if (matchingResult.getPartialMatchingOcc() != null) {
+	                    partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());
+	                }
 
-				if (matchingResult.getPartialMatchingOcc() != null) {
-					partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());
-				}
-
-				matchingResult.setOk(unitaryResult.isOk());
-
-			}
+	                matchingResult.setOk(unitaryResult.isOk());
+	            }
+			}			
 
 			if (partialMatchingOcc.isEmpty()) {
 				// Reload AO to get updated MatchingStatus
@@ -251,7 +261,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			return matchingResult;
 
 		} catch (Exception e) {
-			throw new BusinessApiException("Matching action is failed : " + e.getMessage());
+			throw new BusinessApiException(e.getMessage());
 		}
 	}
 

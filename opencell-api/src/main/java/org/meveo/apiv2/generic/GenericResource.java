@@ -149,7 +149,9 @@ public interface GenericResource {
                     @ApiResponse(responseCode = "404", description = "the full list of entities not found",
                             content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
-    Response getRelatedFieldsAndTypesOfEntity( @Parameter(description = "The entity name", required = true) @PathParam("entityName") String entityName );
+    Response getRelatedFieldsAndTypesOfEntity( @Parameter(description = "The entity name", required = true) @PathParam("entityName") String entityName,
+    										   @Parameter(description = "Filter keyword", required = true) @QueryParam("filter") String filter,
+    										   @Parameter(description = "Depth of nested entities", required = true) @QueryParam("depth") Long depth);
 
     @POST
     @Path("/export/{entityName}/{fileFormat}")
@@ -161,11 +163,12 @@ public interface GenericResource {
             responses = {
                     @ApiResponse(responseCode="200", description = "paginated results successfully exported"),
                     @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
-    })
+            })
     Response export(
-                    @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
-                    @Parameter(description = "file format", required = true) @PathParam("fileFormat") String fileFormat,
-                    @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig) throws ClassNotFoundException;
+            @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
+            @Parameter(description = "file format", required = true) @PathParam("fileFormat") String fileFormat,
+            @Parameter(description = "Locale") @QueryParam("locale") String locale,
+            @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig) throws ClassNotFoundException;
 
 
 }

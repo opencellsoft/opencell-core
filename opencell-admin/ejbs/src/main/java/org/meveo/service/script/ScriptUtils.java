@@ -128,4 +128,35 @@ public abstract class ScriptUtils {
         return parameters;
     }
 
+    /**
+     * Convert Comparison operator to an sql or java operator
+     * @param comparison operator
+     * @param toSql or toJava
+     * @return sql Comparison operator
+     */
+    public static String buildOperator(String operator, boolean toSql) {
+		String operatorExpression;
+		switch (operator) {
+		case "<":
+            operatorExpression = "<";
+            break;
+		case "≤":
+            operatorExpression = "<=";
+            break;
+		case "=":
+            operatorExpression = toSql? "=" : "==";
+            break;
+		case "≠":
+			operatorExpression = toSql? "<>" : "!=";
+			break;
+		case "≥":
+			operatorExpression = ">=";
+			break;
+		default:
+			operatorExpression = ">";
+			break;
+		}
+		return operatorExpression;
+	}
+
 }

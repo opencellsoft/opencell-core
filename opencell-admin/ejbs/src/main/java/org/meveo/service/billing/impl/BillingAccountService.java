@@ -37,6 +37,7 @@ import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -289,18 +290,22 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * Find billing accounts.
      *
      * @param billingCycle the billing cycle
-     * @param startdate the startdate
+     * @param startDate the start date
      * @param endDate the end date
      * @return the list
      */
     @SuppressWarnings("unchecked")
-    public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
+    public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startDate, Date endDate) {
         try {
             QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
-            qb.addCriterionEntity("b.billingCycle.id", billingCycle.getId());
+            if(billingCycle.getFilters() != null && !billingCycle.getFilters().isEmpty()) {
+                qb.addPaginationConfiguration(new PaginationConfiguration(billingCycle.getFilters()));
+            } else {
+                qb.addCriterionEntity("b.billingCycle.id", billingCycle.getId());
+            }
 
-            if (startdate != null) {
-                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
+            if (startDate != null) {
+                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startDate);
             }
 
             if (endDate != null) {
@@ -520,7 +525,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 }
             }
         }
-        return (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+        return (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null, false);
         }else {
         	 throw new BusinessException("DiscountPlan " + dp.getCode() + " of type " + dp.getDiscountPlanType() +" is not allowed to be applied to BillingAccount.");
         }
@@ -553,6 +558,26 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             throw new BusinessException("Cannot delete this billing account , because is still referenced");
     }
     
+    public long getCountByCreditCategory(Long baId, List<Long> creditCategoryIds) {
+        return getEntityManager().createNamedQuery("BillingAccount.getCountByCreditCategory", Long.class)
+        		.setParameter("id", baId)
+        		.setParameter("creditCategoryIds", creditCategoryIds)
+        		.getSingleResult();
+    }
+    
+    public Date getDateCustomerAge(Long baId, String referenceDate) {
+    	String query = "select referenceDate from BillingAccount ba where ba.id=:id";
+        return getEntityManager().createQuery(query.replace("referenceDate", referenceDate), Date.class)
+        		.setParameter("id", baId)
+        		.getSingleResult();
+    }
+
+	public List<? extends IBillableEntity> findBillingAccountsToInvoice(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("BillingAccount.listByOpenILFromBillingRun", BillingAccount.class)
+		.setParameter("billingRun", billingRun)
+		.getResultList();
+	}
+	
 	public boolean isExonerated(BillingAccount ba, Boolean customerCategoryExoneratedFromTaxes, String exonerationTaxEl) {
 		if (customerCategoryExoneratedFromTaxes.booleanValue()) {
 			return true;

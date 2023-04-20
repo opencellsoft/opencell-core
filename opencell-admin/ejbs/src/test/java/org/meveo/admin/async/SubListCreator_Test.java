@@ -22,62 +22,101 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class SubListCreator_Test {
 
-    @Test
-    public void testExportTransformation() {
+    private List<Long> valuesToSplit;
 
-        List<Long> valuesToSplit = new ArrayList<>();
+    @Before
+    public void initDataSet()
+    {
+        valuesToSplit = new ArrayList<>();
         for (long i = 0L; i < 45L; i++) {
             valuesToSplit.add(i);
         }
+    }
 
-        // Test fixed paging size
+
+    @Test
+    public void test_whenItemsPerSplit_andBigListIsNull() {
         SubListCreator<Long> subList = new SubListCreator<>(10, null);
         Assert.assertFalse(subList.isHasNext());
+    }
 
-        subList = new SubListCreator<>(10, new ArrayList<Long>());
+@Test
+    public void test_whenNbrSplits_andBigListIsNull() {
+        SubListCreator<Long> subList = new SubListCreator<>(null, 10);
         Assert.assertFalse(subList.isHasNext());
+    }
 
-        subList = new SubListCreator<>(-1, valuesToSplit);
-        for (int i = 0; i < 45; i++) {
+    @Test
+    public void test_whenItemsPerSplit_andBigListIsEmpty() {
+        SubListCreator<Long> subList = new SubListCreator<>(10, new ArrayList<>());
+        Assert.assertFalse(subList.isHasNext());
+    }
+
+@Test
+    public void test_whenNbrSplits_andBigListIsEmpty() {
+        SubListCreator<Long> subList = new SubListCreator<>( new ArrayList<>(), 10);
+        Assert.assertFalse(subList.isHasNext());
+    }
+
+    @Test
+    public void test_nbrSplits_isNegative() {
+        SubListCreator<Long> subList  = new SubListCreator<>(valuesToSplit, -1);
+        Assert.assertEquals(45, subList.getNextWorkSet().size());
+        Assert.assertFalse(subList.isHasNext());
+    }
+
+    @Test
+    public void test_itemsPerSplit_isNegative() {
+        SubListCreator<Long> subList = new SubListCreator<>(-1, valuesToSplit);
+        for(int i=0;i < valuesToSplit.size(); i++) {
             Assert.assertEquals(1, subList.getNextWorkSet().size());
         }
         Assert.assertFalse(subList.isHasNext());
+    }
 
-        subList = new SubListCreator<>(10, valuesToSplit);
-        for (int i = 0; i < 4; i++) {
-            Assert.assertEquals(10, subList.getNextWorkSet().size());
+        @Test
+        public void test_bigList_nonDivisiblePer_itemsPerSplit() {
+
+        SubListCreator<Long> subList = new SubListCreator<>(10, valuesToSplit);
+        for(int i = 0; i < 4; i++){
+           Assert.assertEquals(10, subList.getNextWorkSet().size());
         }
         Assert.assertEquals(5, subList.getNextWorkSet().size());
         Assert.assertFalse(subList.isHasNext());
+        }
 
-        subList = new SubListCreator<>(50, valuesToSplit);
+        @Test
+        public void test_bigList_nonDivisiblePer_nbrSplits() {
+
+        SubListCreator<Long> subList = new SubListCreator<>(valuesToSplit, 4);
+        for(int i= 0; i < 3; i++)
+        {
+         Assert.assertEquals(12, subList.getNextWorkSet().size());
+        }
+        Assert.assertEquals(9, subList.getNextWorkSet().size());
+        Assert.assertFalse(subList.isHasNext());
+        }
+
+
+
+         @Test
+        public void test_itemsPerSplit_biggerThan_bigList() {
+
+        SubListCreator<Long> subList = new SubListCreator<>(50, valuesToSplit);
         Assert.assertEquals(45, subList.getNextWorkSet().size());
         Assert.assertFalse(subList.isHasNext());
 
-        // Test fixed number of runs
+        }
 
-        subList = new SubListCreator<>(null, 10);
-        Assert.assertFalse(subList.isHasNext());
+        @Test
+        public void test_FairDivision_perNbrSplits() {
 
-        subList = new SubListCreator<>(new ArrayList<Long>(), 10);
-        Assert.assertFalse(subList.isHasNext());
-
-        subList = new SubListCreator<>(valuesToSplit, -1);
-        Assert.assertEquals(45, subList.getNextWorkSet().size());
-        Assert.assertFalse(subList.isHasNext());
-
-        subList = new SubListCreator<>(valuesToSplit, 4);
-        Assert.assertEquals(11, subList.getNextWorkSet().size());
-        Assert.assertEquals(11, subList.getNextWorkSet().size());
-        Assert.assertEquals(11, subList.getNextWorkSet().size());
-        Assert.assertEquals(12, subList.getNextWorkSet().size());
-        Assert.assertFalse(subList.isHasNext());
-
-        subList = new SubListCreator<>(valuesToSplit, 5);
+        SubListCreator<Long> subList = new SubListCreator<>(valuesToSplit, 5);
         Assert.assertEquals(9, subList.getNextWorkSet().size());
         Assert.assertEquals(9, subList.getNextWorkSet().size());
         Assert.assertEquals(9, subList.getNextWorkSet().size());
@@ -85,5 +124,24 @@ public class SubListCreator_Test {
         Assert.assertEquals(9, subList.getNextWorkSet().size());
         Assert.assertFalse(subList.isHasNext());
 
-    }
+        }
+
+        @Test
+        public void test_FairDivision_perItemsPerSplit() {
+
+        SubListCreator<Long> subList = new SubListCreator<>(9, valuesToSplit);
+        Assert.assertEquals(9, subList.getNextWorkSet().size());
+        Assert.assertEquals(9, subList.getNextWorkSet().size());
+        Assert.assertEquals(9, subList.getNextWorkSet().size());
+        Assert.assertEquals(9, subList.getNextWorkSet().size());
+        Assert.assertEquals(9, subList.getNextWorkSet().size());
+        Assert.assertFalse(subList.isHasNext());
+
+        }
+
+
+
+
+
+
 }

@@ -61,7 +61,7 @@ public class DiscountPlanInstanceServiceTest {
         });
         BillingAccount ba = mock(BillingAccount.class);
         DiscountPlan dp = getDiscountPlan(DiscountPlanTypeEnum.OFFER, DiscountPlanStatusEnum.DRAFT, false);
-        discountPlanInstanceService.instantiateDiscountPlan(ba, dp, null);
+        discountPlanInstanceService.instantiateDiscountPlan(ba, dp, null, false);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class DiscountPlanInstanceServiceTest {
         });
         BillingAccount ba = mock(BillingAccount.class);
         DiscountPlan dp = getDiscountPlan(DiscountPlanTypeEnum.OFFER, DiscountPlanStatusEnum.ACTIVE, false);
-        ba = (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(ba, dp, null);
+        ba = (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(ba, dp, null, false);
         assertNotNull(ba);
     }
 
@@ -95,7 +95,7 @@ public class DiscountPlanInstanceServiceTest {
         offerTemplate.setAllowedDiscountPlans(List.of(offerDiscountPlan));
         subscription.setOffer(offerTemplate);
         DiscountPlan dp = getDiscountPlan(DiscountPlanTypeEnum.PROMO_CODE, DiscountPlanStatusEnum.ACTIVE, false);
-        discountPlanInstanceService.instantiateDiscountPlan(subscription, dp, null);
+        discountPlanInstanceService.instantiateDiscountPlan(subscription, dp, null, false);
 
     }
 
@@ -114,7 +114,7 @@ public class DiscountPlanInstanceServiceTest {
         offerTemplate.setAllowedDiscountPlans(List.of(offerDiscountPlan));
         subscription.setOffer(offerTemplate);
         DiscountPlan dp = getDiscountPlan(DiscountPlanTypeEnum.PROMO_CODE, DiscountPlanStatusEnum.ACTIVE, false);
-        IDiscountable discountable = discountPlanInstanceService.instantiateDiscountPlan(subscription, dp, null);
+        IDiscountable discountable = discountPlanInstanceService.instantiateDiscountPlan(subscription, dp, null, false);
         assertNotNull(discountable);
         assertEquals(discountable.getClass(), Subscription.class);
 
@@ -134,7 +134,7 @@ public class DiscountPlanInstanceServiceTest {
         BillingAccount ba = mock(BillingAccount.class);
         DiscountPlan dp = getDiscountPlan(DiscountPlanTypeEnum.OFFER, DiscountPlanStatusEnum.ACTIVE, false);
         dp.setApplicationFilterEL("#{true}");
-        IDiscountable discountable = discountPlanInstanceService.instantiateDiscountPlan(ba, dp, null);
+        IDiscountable discountable = discountPlanInstanceService.instantiateDiscountPlan(ba, dp, null, false);
         assertNotNull(discountable);
     }
 
@@ -151,7 +151,7 @@ public class DiscountPlanInstanceServiceTest {
         });
         BillingAccount ba = mock(BillingAccount.class);
         DiscountPlan dp = getDiscountPlan(DiscountPlanTypeEnum.OFFER, DiscountPlanStatusEnum.ACTIVE, false);
-        IDiscountable discountable = discountPlanInstanceService.instantiateDiscountPlan(ba, dp, null);
+        IDiscountable discountable = discountPlanInstanceService.instantiateDiscountPlan(ba, dp, null, false);
     }
 
     @Test(expected = BusinessException.class)
@@ -170,7 +170,7 @@ public class DiscountPlanInstanceServiceTest {
         discountPlanInstance.setDiscountPlan(dp);
         ba.setDiscountPlanInstances(List.of(discountPlanInstance));
         dp.setIncompatibleDiscountPlans(List.of(dp));
-        IDiscountable discountable = discountPlanInstanceService.instantiateDiscountPlan(ba, dp, null);
+        IDiscountable discountable = discountPlanInstanceService.instantiateDiscountPlan(ba, dp, null, false);
     }
 
     private DiscountPlan getDiscountPlan(DiscountPlanTypeEnum type, DiscountPlanStatusEnum status, boolean nullDates) {

@@ -28,6 +28,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.AccessDeniedException;
@@ -213,5 +214,10 @@ public class CDRService extends PersistenceService<CDR> {
 
     public boolean isCDRExistByOriginRecord(String originRecord) {
     	return getEntityManager().createNamedQuery("CDR.findByOrginRecord").setParameter("originRecord", originRecord).getResultList().size() > 0;
+    }
+    
+    public boolean checkDuplicateCDR(String originRecord) {
+        var cdrs = getEntityManager().createNamedQuery("CDR.checkDuplicateCDR").setParameter("originRecord", originRecord).getResultList();
+        return CollectionUtils.isNotEmpty(cdrs);
     }
 }

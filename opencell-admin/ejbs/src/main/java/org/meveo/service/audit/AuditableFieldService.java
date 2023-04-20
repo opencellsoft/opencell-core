@@ -213,6 +213,7 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
         if (changedEntities != null && !changedEntities.isEmpty()) {
             // Add fields change history
             createFieldsHistory(changedEntities);
+            getEntityManager().flush();
 
             // Fire fields updated events.
             fireChangedFieldsEvents(changedEntities);
@@ -304,6 +305,5 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
         auditableField.setPreviousState(previousState);
         auditableField.setCurrentState(currentState);
         create(auditableField);
-        getEntityManager().flush();
     }
 }

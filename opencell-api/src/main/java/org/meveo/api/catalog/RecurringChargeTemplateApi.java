@@ -101,6 +101,8 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
         }
+        
+        super.checkInternalNote(chargeTemplate, postData);
 
         chargeTemplate = dtoToEntity(postData, chargeTemplate);
 

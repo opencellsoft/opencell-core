@@ -47,9 +47,11 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -236,11 +238,10 @@ public class InvoicingJobBean extends BaseJobBean {
             billingRunService.applyThreshold(billingRun.getId());
             rejectBAWithoutBillableTransactions(billingRun, jobExecutionResult);
 
-            BillingRunStatusEnum nextStatus = BillingRunStatusEnum.POSTINVOICED;
+            BillingRunStatusEnum nextStatus = BillingRunStatusEnum.POSTINVOICED;            
             if (!billingRunService.isBillingRunValid(billingRun)) {
                 nextStatus = BillingRunStatusEnum.REJECTED;
             }
-
             billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, nextStatus, null);
 
             ranAnotherStage = true;
@@ -272,7 +273,7 @@ public class InvoicingJobBean extends BaseJobBean {
         return jobExecutionResult;
     }
 
-    private QueryBuilder fromFilters(Map<String, String> filters) {
+    private QueryBuilder fromFilters(Map<String, Object> filters) {
         QueryBuilder queryBuilder;
         String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
         if (!StringUtils.isBlank(filterValue)) {
@@ -316,7 +317,8 @@ public class InvoicingJobBean extends BaseJobBean {
         // NOTE: invoice by order is also included here as there is no FK between Order and RT
         if ((billingCycle == null || billingCycle.getType() == BillingEntityTypeEnum.ORDER
                 || minAmountForAccounts.isMinAmountCalculationActivated()) && !billingRun.isExceptionalBR()) {
-            List<IBillableEntity> entities = (List<IBillableEntity>) billingRunService.getEntitiesToInvoice(billingRun);
+            // TODO check how we can pass v11process
+            List<IBillableEntity> entities = (List<IBillableEntity>) billingRunService.getEntitiesToInvoice(billingRun, true);
 
             totalEntityCount = entities != null ? entities.size() : 0;
 

@@ -41,7 +41,7 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 					.discountPlan(buildById(entity.getDiscountPlan()))
 					.tradingLanguage(buildById(entity.getTradingLanguage())).quote(buildById(entity.getQuote()))
 					.paymentMethod(buildById(entity.getPaymentMethod()))
-					.listLinkedInvoices(entity.getLinkedInvoices() == null ? null : entity.getLinkedInvoices().stream().map(x -> x.getId()).collect(toList()))
+					.listLinkedInvoices(entity.getLinkedInvoices() == null ? null : entity.getLinkedInvoices().stream().map(x -> x.getLinkedInvoiceValue().getId()).collect(toList()))
 					.invoiceLines(buildInvoiceLines(entity.getInvoiceLines()))
 					.subscription(buildById(entity.getSubscription())).order(buildById(entity.getOrder())).build();
 		} catch (Exception e) {

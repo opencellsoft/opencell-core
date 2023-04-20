@@ -111,6 +111,6 @@ public class StringUtilsTest {
         //When
         nextSequence = StringUtils.computeNextAlphabetSequence(current);
         //Then
-        assertThat(nextSequence).isEqualTo("ZZZA");
+        assertThat(nextSequence).isEqualTo("AAAA");
     }
 }

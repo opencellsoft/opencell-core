@@ -537,6 +537,35 @@
 			"value": "2020-03-11",
 			"type": "default",
 			"enabled": true
+		},
+		{
+			"key": "performance_CDR_PER_DAY",
+			"value": "300",
+			"enabled": true
+		},
+		{
+			"key": "performance_CDR_DAYS",
+			"value": "1",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "performance_MINUTES_BETWEEN_CDRS",
+			"value": "1",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "performance_NR_OF_CDR_FILES",
+			"value": "1",
+			"type": "text",
+			"enabled": true
+		},
+		{
+			"key": "NB_CUST",
+			"value": "300000",
+			"type": "default",
+			"enabled": true
 		}
 	],
 	"name": "Globals",

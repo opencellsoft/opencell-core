@@ -23,7 +23,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
 
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.security.CurrentUser;
@@ -54,9 +53,7 @@ public class CurrentUserProducer {
     @Named("currentUser")
     @CurrentUser
     public MeveoUser getCurrentUser() {
-        String providerCode = currentUserProvider.getCurrentUserProviderCode();
-        EntityManager em = entityManagerProvider.getEntityManager(providerCode);
-        MeveoUser meveoUser = currentUserProvider.getCurrentUser(providerCode, em);
+        MeveoUser meveoUser = currentUserProvider.getCurrentUser();
 
         return meveoUser;
     }

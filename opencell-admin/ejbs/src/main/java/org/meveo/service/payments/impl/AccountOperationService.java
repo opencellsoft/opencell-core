@@ -25,10 +25,11 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -37,6 +38,7 @@ import javax.inject.Inject;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -238,6 +240,12 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         create(aop);
         return aop.getId();
 
+    }
+
+    public Long createAndReturnReference(AccountOperation accountOperation) {
+        fillOperationNumber(accountOperation);
+        super.create(accountOperation);
+        return accountOperation.getId();
     }
 
     /**
@@ -448,6 +456,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         AccountOperation newAccountOperation = SerializationUtils.clone(accountOperation);
         newAccountOperation.setId(null);
+        newAccountOperation.setAccountingSchemeEntries(new HashSet<>());
         newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
         newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
         newAccountOperation.setUnMatchingAmount(amount);
@@ -569,7 +578,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		}
 		
 		String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountOperation.getAccountingDate()));
-		AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(fiscalYear);
+		AccountingPeriod accountingPeriod = accountingPeriodService.findOpenAccountingPeriodByDate(accountOperation.getAccountingDate());
 		if (accountingPeriod == null) {
 			rejectAccountOperation(accountOperation);
 			log.warn("No accounting period has been defined for this year : {}", fiscalYear);
@@ -588,21 +597,16 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 				}
 			// SUB ACCOUTING PERIOD ARE USED	
 			} else {
-				SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
-				if (subAccountingPeriod == null) {
-					log.warn("No sub accounting period has been defined for this accountingDate - period : {} - {}", accountOperation.getAccountingDate(), accountingPeriod);
-					rejectAccountOperation(accountOperation);
-				} else {
-					if (subAccountingPeriod.isOpen()) {
-						accountOperation.setStatus(AccountOperationStatus.POSTED);
-					} else {
-						if (action == AccountingOperationAction.FORCE) {
-							forceAccountOperation(accountOperation, accountingPeriod);
-						} else {
-							rejectAccountOperation(accountOperation);
-						}
-					}
-				}
+                SubAccountingPeriod subAccountingPeriod = subAccountingPeriodService.findByAccountingPeriod(accountingPeriod, accountOperation.getAccountingDate());
+                if (subAccountingPeriod != null && subAccountingPeriod.isOpen()) {
+                    accountOperation.setStatus(AccountOperationStatus.POSTED);
+                } else {
+                    if (action == AccountingOperationAction.FORCE) {
+                        forceAccountOperation(accountOperation, accountingPeriod);
+                    } else {
+                        rejectAccountOperation(accountOperation);
+                    }
+                }
 			}
 		}
 	}
@@ -793,6 +797,25 @@ public class AccountOperationService extends PersistenceService<AccountOperation
                 .setParameter("AO_IDS", aoIds)
                 .setParameter("CUSTOMERACCOUNT_ID", customerAccountId)
                 .getResultList();
+
+    }
+
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<AccountOperation> findAoWithoutMatchingCode() {
+        List<AccountOperation> results =  getEntityManager().createNamedQuery("JournalEntry.findAoWithoutMatchingCode")
+                .getResultList();
+
+        // fetch lazies needed join
+        Optional.ofNullable(results).orElse(Collections.emptyList())
+                .forEach(recordedInvoice -> recordedInvoice.getMatchingAmounts().forEach(matchingAmount -> {
+                            Optional.ofNullable(matchingAmount.getMatchingCode().getMatchingAmounts()).orElse(Collections.emptyList())
+                                    .forEach(ma -> {
+                                        ma.getAccountOperation().getMatchingAmounts().size();
+                                    });
+                                }));
+
+        return results;
 
     }
 }

@@ -135,6 +135,10 @@ public class ContactApi extends BaseApi {
             missingParameters.add("email");
         }
 
+        if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
+            missingParameters.add("AddressBookContacts");
+        }
+
         handleMissingParameters();
 
         if ((postData.getContactInformation() != null && !StringUtils.isBlank(postData.getContactInformation().getEmail()))){
@@ -191,13 +195,25 @@ public class ContactApi extends BaseApi {
             throw new BusinessException("addressBook with id " + addressBookServiceById.getId() + " has already a main contact assigned.");
         }
     }
+    private void checkMainContactExistance(AddressBookContactDto abcDto, AddressBook addressBookServiceById, Contact contact) {
+        List<AddressBookContact> mainContact = addressBookContactService.getMainContact(addressBookServiceById.getId());
+        if (abcDto.getMainContact() && !mainContact.isEmpty() && !isTheSameAddressBook(mainContact, contact)) {
+            throw new BusinessException("addressBook with id " + addressBookServiceById.getId() + " has already a main contact assigned.");
+        }
+    }
+
+    private boolean isTheSameAddressBook(List<AddressBookContact> mainContact, Contact contact) {
+        return mainContact.stream()
+                .filter(x -> x.getMainContact())
+                .anyMatch(x -> x.getContact().getId() == contact.getId());
+    }
 
     public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
 
         if ((postData.getContactInformation() == null || StringUtils.isBlank(postData.getContactInformation().getEmail())) && StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("email or code");
         }
-
+        
         handleMissingParameters();
 
         String code = null;
@@ -220,46 +236,22 @@ public class ContactApi extends BaseApi {
 
     private void updateContactAddressBook(Contact contact, Set<AddressBookContactDto> addressBookContacts) {
         if(addressBookContacts != null && !addressBookContacts.isEmpty()){
+        	contact.getAddressBookContacts().clear();
             addressBookContacts.stream()
                     .forEach(abcDto -> {
                         if(abcDto.getAddressBook() == null || abcDto.getAddressBook().get("id") == null){
-                            new BusinessException("addressBook contact id is required to assigne contact to an address book");
+                           throw new BusinessException("addressBook contact id is required to assigne contact to an address book");
                         }
                         AddressBook addressBookServiceById = addressBookService.findById(abcDto.getAddressBook().get("id"));
                         if(addressBookServiceById == null){
                             throw new EntityDoesNotExistsException("addressBook with id "+abcDto.getAddressBook().get("id")+" does not exist");
                         }
-                        checkMainContactExistance(abcDto, addressBookServiceById);
-                        // update existing
-                        if(abcDto.getId() != null){
-                            AddressBookContact addressBookContact = addressBookContactService.findById(abcDto.getId());
-                            if(addressBookContact == null){
-                                throw new EntityDoesNotExistsException("addressBookContact with id "+abcDto.getId()+" does not exist");
-                            }
-                            addressBookContact.setContact(contact);
-                            if(abcDto.getPosition() != null){
-                                addressBookContact.setPosition(abcDto.getPosition());
-                            }
-                            if(abcDto.getMainContact() != null){
-                                addressBookContact.setMainContact(abcDto.getMainContact());
-                            }
-                            addressBookContactService.update(addressBookContact);
-                        } else {
-                            AddressBookContact addressBookContact = new AddressBookContact(addressBookServiceById, contact, abcDto.getPosition(), abcDto.getMainContact());
-                            addressBookContactService.create(addressBookContact);
-                        }
+                        checkMainContactExistance(abcDto, addressBookServiceById, contact);
+                        
+                        AddressBookContact addressBookContact = new AddressBookContact(addressBookServiceById, contact, abcDto.getPosition(), abcDto.getMainContact());
+                        addressBookContactService.create(addressBookContact);
+                        
                     });
-            List<AddressBookContact> abcs = addressBookContactService.findByContact(contact);
-            abcs.stream()
-                    .filter(abc -> addressBookContacts.stream()
-                            .filter(addressBookContactDto -> abc.getId() != null && abc.getId().equals(addressBookContactDto.getId()))
-                            .filter(addressBookContactDto -> abc.getAddressBook() != null
-                                    && addressBookContactDto.getAddressBook() != null
-                                    && abc.getAddressBook().getId().equals(addressBookContactDto.getAddressBook().get("id"))
-                            ).findFirst()
-                            .isEmpty())
-                    .forEach(abc -> addressBookContactService.remove(abc.getId()));
-
         }
     }
 
@@ -481,7 +473,7 @@ public class ContactApi extends BaseApi {
             missingParameters.add("email or code");
             // missingParameters.add("code");
         }
-
+        
         handleMissingParameters();
 
         String code = null;
@@ -494,6 +486,9 @@ public class ContactApi extends BaseApi {
         Contact contact = contactService.findByCode(code);
 
         if (contact == null) {
+        	if(postData.getAddressBookContacts() == null || postData.getAddressBookContacts().isEmpty()){
+                missingParameters.add("AddressBookContacts");
+            }
             return create(postData);
         } else {
             return update(postData);

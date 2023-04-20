@@ -55,8 +55,11 @@ import org.meveo.model.quote.QuoteVersion;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
 @NamedQueries({
-    @NamedQuery(name = "CommercialOrder.getOrderIdsUsingCharge", query = "select op.order.id from OrderProduct op where op.order.status not in('CANCELED','VALIDATED','COMPLETED') and op.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode)")
-    })
+		@NamedQuery(name = "CommercialOrder.getOrderIdsUsingCharge", query = "select op.order.id from OrderProduct op where op.order.status not in('CANCELED','VALIDATED','COMPLETED') and op.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode)"),
+		@NamedQuery(name = "CommercialOrder.listByCodeOrExternalId", query = "select co from CommercialOrder co where co.code IN :code OR co.externalReference IN :code order by co.id"),
+		@NamedQuery(name = "CommercialOrder.findByCodeOrExternalId", query = "select co from CommercialOrder co left join fetch co.billingRun where co.code = :code OR co.externalReference = :code "),
+		@NamedQuery(name = "CommercialOrder.findWithInvoicingPlan", query = "select co from CommercialOrder co where co.invoicingPlan is not null")
+})
 public class CommercialOrder extends BusinessCFEntity implements IBillableEntity  {
 
 
@@ -87,6 +90,12 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 		this.access = copy.access;
 		this.userAccount = copy.userAccount;
 		this.salesPersonName = copy.salesPersonName;
+		this.billingCycle = copy.billingCycle;
+		this.billingRun = copy.billingRun;
+		this.totalInvoicingAmountWithoutTax = copy.totalInvoicingAmountWithoutTax;
+		this.totalInvoicingAmountWithTax = copy.totalInvoicingAmountWithTax;
+		this.totalInvoicingAmountTax = copy.totalInvoicingAmountTax;
+		this.minInvoiceLines = copy.minInvoiceLines;
 	}
 
 	/**
@@ -230,6 +239,47 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
     @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
+
+	    /**
+     * Billing cycle when invoicing by order
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_cycle_id")
+    private BillingCycle billingCycle;
+
+    /**
+     * Last billing run that processed this order
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run_id")
+    private BillingRun billingRun;
+
+	/**
+     * Rated transactions to reach minimum amount per invoice
+     */
+    @Transient
+    private List<RatedTransaction> minRatedTransactions;
+
+    /**
+     * Total invoicing amount without tax
+     */
+    @Transient
+    private BigDecimal totalInvoicingAmountWithoutTax;
+
+    /**
+     * Total invoicing amount with tax
+     */
+    @Transient
+    private BigDecimal totalInvoicingAmountWithTax;
+
+    /**
+     * Total invoicing tax amount
+     */
+    @Transient
+    private BigDecimal totalInvoicingAmountTax;
+
+    @Transient
+    private List<InvoiceLine> minInvoiceLines;
 	
     
     @Override
@@ -675,81 +725,72 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 	}
 
 	@Override
+	public BillingCycle getBillingCycle() {
+		return billingCycle;
+	}
+
+	public void setBillingCycle(BillingCycle billingCycle) {
+		this.billingCycle = billingCycle;
+	}
+
+	@Override
 	public BillingRun getBillingRun() {
-		// TODO Auto-generated method stub
-		return null;
+		return billingRun;
 	}
 
 	@Override
 	public void setBillingRun(BillingRun billingRun) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		// TODO Auto-generated method stub
-		
+		this.billingRun = billingRun;
 	}
 
 	@Override
 	public List<RatedTransaction> getMinRatedTransactions() {
-		// TODO Auto-generated method stub
-		return null;
+		return minRatedTransactions;
+	}
+
+	@Override
+	public void setMinRatedTransactions(List<RatedTransaction> minRatedTransactions) {
+		this.minRatedTransactions = minRatedTransactions;
 	}
 
 	@Override
 	public BigDecimal getTotalInvoicingAmountWithoutTax() {
-		// TODO Auto-generated method stub
-		return null;
+		return totalInvoicingAmountWithoutTax;
 	}
 
 	@Override
 	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
-		// TODO Auto-generated method stub
-		
+		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
 	}
 
 	@Override
 	public BigDecimal getTotalInvoicingAmountWithTax() {
-		// TODO Auto-generated method stub
-		return null;
+		return totalInvoicingAmountWithTax;
 	}
 
 	@Override
 	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
-		// TODO Auto-generated method stub
-		
+		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
 	}
 
 	@Override
 	public BigDecimal getTotalInvoicingAmountTax() {
-		// TODO Auto-generated method stub
-		return null;
+		return totalInvoicingAmountTax;
 	}
 
 	@Override
 	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public BillingCycle getBillingCycle() {
-		// TODO Auto-generated method stub
-		return null;
+		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
 	}
 
 	@Override
 	public List<InvoiceLine> getMinInvoiceLines() {
-		// TODO Auto-generated method stub
-		return null;
+		return minInvoiceLines;
 	}
 
 	@Override
-	public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
-		// TODO Auto-generated method stub
-		
+	public void setMinInvoiceLines(List<InvoiceLine> minInvoiceLines) {
+		this.minInvoiceLines = minInvoiceLines;
 	}
 
 	/**

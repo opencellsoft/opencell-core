@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice_detail" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="169c5323-2cc3-4a80-bb5b-169e57c4a4d9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Webinar-Issue"/>
+	<queryString language="xPath">
+		<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
+	</queryString>
+	<field name="useraccount_code" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/@code]]></fieldDescription>
+	</field>
+	<field name="taxCode_line" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="@taxCode"/>
+		<fieldDescription><![CDATA[@taxCode]]></fieldDescription>
+	</field>
+	<field name="label_line" class="java.lang.String">
+		<fieldDescription><![CDATA[label]]></fieldDescription>
+	</field>
+	<field name="articleCodeLine" class="java.lang.String">
+		<fieldDescription><![CDATA[article/@code]]></fieldDescription>
+	</field>
+	<field name="articleLabelLine" class="java.lang.String">
+		<fieldDescription><![CDATA[article/@label]]></fieldDescription>
+	</field>
+	<field name="sortIndex" class="java.lang.String">
+		<fieldDescription><![CDATA[@sortIndex]]></fieldDescription>
+	</field>
+	<field name="customerID" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/@customerAccountCode]]></fieldDescription>
+	</field>
+	<field name="invoiceDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/invoiceDate]]></fieldDescription>
+	</field>
+	<field name="code" class="java.lang.String">
+		<fieldDescription><![CDATA[@code]]></fieldDescription>
+	</field>
+	<field name="quantity" class="java.lang.Double">
+		<fieldDescription><![CDATA[sum(quantity)]]></fieldDescription>
+	</field>
+	<field name="amountWithoutTax" class="java.lang.Double">
+		<fieldDescription><![CDATA[sum(amountWithoutTax)]]></fieldDescription>
+	</field>
+	<field name="amountWithTax3" class="java.lang.String">
+		<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
+	</field>
+	<field name="bil_quality" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/quality]]></fieldDescription>
+	</field>
+	<field name="bil_name" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="bil_firstname" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/firstname]]></fieldDescription>
+	</field>
+	<field name="bil_address1" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="bil_address2" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/address2]]></fieldDescription>
+	</field>
+	<field name="bil_address3" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/address3]]></fieldDescription>
+	</field>
+	<field name="bil_city" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/city]]></fieldDescription>
+	</field>
+	<field name="bil_postalCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/postalCode]]></fieldDescription>
+	</field>
+	<field name="bil_email" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/email]]></fieldDescription>
+	</field>
+	<field name="bil_bankCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/bankCode]]></fieldDescription>
+	</field>
+	<field name="bil_branchCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/branchCode]]></fieldDescription>
+	</field>
+	<field name="bil_accountNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/accountNumber]]></fieldDescription>
+	</field>
+	<field name="bil_key" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/key]]></fieldDescription>
+	</field>
+	<field name="bil_IBAN" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/IBAN]]></fieldDescription>
+	</field>
+	<field name="user_name" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/detail/userAccounts/userAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="user_address1" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="user_address2" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/address2]]></fieldDescription>
+	</field>
+	<field name="user_address3" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/address3]]></fieldDescription>
+	</field>
+	<field name="user_city" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/city]]></fieldDescription>
+	</field>
+	<field name="user_postalCode" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/postalCode]]></fieldDescription>
+	</field>
+	<field name="unitPrice2" class="java.lang.String">
+		<fieldDescription><![CDATA[unitPrice2]]></fieldDescription>
+	</field>
+	<field name="custAccountdesc" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@description]]></fieldDescription>
+	</field>
+	<field name="custAccountContractDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@externalRef2]]></fieldDescription>
+	</field>
+	<field name="custAccountquality" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/quality]]></fieldDescription>
+	</field>
+	<field name="custAccountname" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="custAccountaddress1" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="custAccountaddress2" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/address2]]></fieldDescription>
+	</field>
+	<field name="custAccountaddress3" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/address3]]></fieldDescription>
+	</field>
+	<field name="custAccountcity" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/city]]></fieldDescription>
+	</field>
+	<field name="custAccountpostalCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/postalCode]]></fieldDescription>
+	</field>
+	<field name="balance" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/balance]]></fieldDescription>
+	</field>
+	<field name="netToPay" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/netToPay]]></fieldDescription>
+	</field>
+	<field name="accountTerminated" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@accountTerminated]]></fieldDescription>
+	</field>
+	<field name="providerContactLastName" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/lastname]]></fieldDescription>
+	</field>
+	<field name="providerContactFirstName" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/firstName]]></fieldDescription>
+	</field>
+	<field name="providerContactGenericEmail" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@externalRef1]]></fieldDescription>
+	</field>
+	<field name="providerContactEmail" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/email]]></fieldDescription>
+	</field>
+	<field name="providerContactPhone" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/phone]]></fieldDescription>
+	</field>
+	<field name="bil_accountOwner" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/accountOwner]]></fieldDescription>
+	</field>
+	<field name="bilPaymentMethod" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/@type]]></fieldDescription>
+	</field>
+	<field name="invoiceNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::invoice/@number]]></fieldDescription>
+	</field>
+	<field name="label" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::category/@label]]></fieldDescription>
+	</field>
+	<field name="label2" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::subCategory/@label]]></fieldDescription>
+	</field>
+	<field name="unitAmountWithoutTax" class="java.lang.String">
+		<fieldDescription><![CDATA[unitAmountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="taxPercent" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::subCategory/@taxPercent]]></fieldDescription>
+	</field>
+	<field name="labelSubCat" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::subCategory/@label]]></fieldDescription>
+	</field>
+	<field name="unit" class="java.lang.String">
+		<fieldDescription><![CDATA[unit]]></fieldDescription>
+	</field>
+	<field name="usageDate" class="java.lang.String">
+		<fieldDescription><![CDATA[usageDate]]></fieldDescription>
+	</field>
+	<field name="param1" class="java.lang.String">
+		<fieldDescription><![CDATA[@param1]]></fieldDescription>
+	</field>
+	<field name="useraccount_description" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/@description]]></fieldDescription>
+	</field>
+	<field name="periodStartDate" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="@periodStartDate"/>
+		<fieldDescription><![CDATA[@periodStartDate]]></fieldDescription>
+	</field>
+	<field name="taxPercentLine" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="@taxPercent"/>
+		<fieldDescription><![CDATA[@taxPercent]]></fieldDescription>
+	</field>
+	<field name="periodEndDate" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="@periodEndDate"/>
+		<fieldDescription><![CDATA[@periodEndDate]]></fieldDescription>
+	</field>
+	<field name="currencySymbol" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/currencySymbol]]></fieldDescription>
+	</field>
+	<field name="amountWithTax" class="java.lang.String">
+		<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
+	</field>
+	<field name="amountTax" class="java.lang.String">
+		<fieldDescription><![CDATA[amountTax]]></fieldDescription>
+	</field>
+	<variable name="quantity" class="java.lang.Double" resetType="Group" resetGroup="2" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantity}]]></variableExpression>
+	</variable>
+	<variable name="sortIndex" class="java.lang.Integer">
+		<variableExpression><![CDATA["".equals($F{sortIndex})?Integer.MAX_VALUE:Integer.valueOf($F{sortIndex})]]></variableExpression>
+	</variable>
+	<group name="1">
+		<groupExpression><![CDATA[$F{useraccount_code}]]></groupExpression>
+	</group>
+	<group name="2">
+		<groupExpression><![CDATA[$F{label_line}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<textField>
+					<reportElement x="69" y="-39" width="222" height="37" uuid="aebac6ee-7be4-4a44-9230-ee3968716f66"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{articleLabelLine}.substring(0, 1).toUpperCase() + $F{articleLabelLine}.substring(1) + "\n" +
+$F{periodStartDate} + ($F{periodEndDate}.isEmpty() ? "" : " - " + $F{periodEndDate}) + "\n" +
+$F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></textFieldExpression>
+				</textField>
+				<textField pattern="MMM-yy" isBlankWhenNull="true">
+					<reportElement x="12" y="-39" width="55" height="37" uuid="a3729a4b-61ce-4e22-8dc7-177cd79b03e2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{articleCodeLine}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="2" isBlankWhenNull="true">
+					<reportElement x="288" y="-39" width="62" height="37" uuid="e0af6223-26d1-4cfa-a956-382e45a88ded"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($V{quantity}))]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="350" y="-39" width="85" height="37" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{unitAmountWithoutTax}))]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="440" y="-39" width="85" height="37" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithTax}))]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="528" y="-39" width="45" height="37" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{taxCode_line}.replaceAll(',', '\n')]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="11" y="-1" width="565" height="1" forecolor="#999999" uuid="3b4bb476-6f45-44a1-9025-a797860912ec"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineStyle="Dotted" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="62">
+			<line>
+				<reportElement x="11" y="23" width="565" height="1" forecolor="#CCCCCC" uuid="49fddbb7-327b-4080-b5d7-05bd11bed13d"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Dotted" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<rectangle radius="10">
+				<reportElement x="8" y="5" width="567" height="19" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="1f23291e-f854-4b53-8326-5562746d2015"/>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Opaque" x="67" y="7" width="220" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="a6e092f0-f4a9-4674-acc9-66c444e25cda">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="5.0" lineColor="#FF8C00"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Details]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="11" y="7" width="55" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="5b637f66-8a7f-46c5-a73d-e751a229b349">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="5.0" lineColor="#FF8C00"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[#]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="288" y="7" width="62" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="d267e7f4-148f-495f-9cb6-78eff02fdf09">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="5.0" lineColor="#FF8C00"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quantity]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="350" y="7" width="90" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="dcd6fd15-92b2-41db-91d2-266dea66f220">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="5.0" lineColor="#FF8C00"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Price w/o tax"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="440" y="7" width="88" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="5.0" lineColor="#FF8C00"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total with tax"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="528" y="7" width="45" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="5.0" lineColor="#FF8C00"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["VAT"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

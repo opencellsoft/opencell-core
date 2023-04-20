@@ -27,7 +27,7 @@ public class FilterConverterTest {
 
     @Test
     public void shouldConvertFiltersToTargetTypes() {
-        Map<String, String> filters = new HashMap<>();
+        Map<String, Object> filters = new HashMap<>();
         filters.put("code", "code_test");
         filters.put("id", "1");
         filters.put("unitAmountWithTax", "20.23");
@@ -46,7 +46,7 @@ public class FilterConverterTest {
 
     @Test
     public void shouldConvertFiltersWithOperatorsToTargetTypes() {
-        Map<String, String> filters = new HashMap<>();
+        Map<String, Object> filters = new HashMap<>();
         filters.put("criteriaLike code", "code_test");
         filters.put("fromRange unitAmountWithTax", "20.23");
         filters.put("ne status", "PROCESSED");
@@ -61,7 +61,7 @@ public class FilterConverterTest {
 
     @Test
     public void shouldConvertFiltersToTargetTypesWithSameValues() {
-        Map<String, String> filters = new HashMap<>();
+        Map<String, Object> filters = new HashMap<>();
         filters.put("criteriaLike code", "code_test");
         filters.put("fromRange unitAmountWithTax", "20.23");
         filters.put("ne status", "PROCESSED");

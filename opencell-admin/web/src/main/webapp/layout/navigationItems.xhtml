@@ -5,7 +5,7 @@
 
 	<p:submenu id="admin" label="#{messages['menu.configuration']}">
 		<p:menuitem id="provider" outcome="providerSelfDetail" value="#{messages['menu.appConfiguration']}" />
-		<p:menuitem id="providerContacts" outcome="providerContacts" value="#{messages['menu.providerContacts']}" />
+		<p:menuitem id="providerContacts" outcome="providerContacts" value="#{messages['menu.providerContacts']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
 		<p:submenu id="security" label="#{messages['menu.security']}">
 			<p:menuitem id="users" value="#{messages['menu.users']}" outcome="users" />
 			<p:menuitem id="roles" value="#{messages['menu.userRoles']}" outcome="roles" />
@@ -17,23 +17,23 @@
 			<p:menuitem id="customerBrands" outcome="customerBrands" value="#{messages['menu.customerBrands']}" />
 			<p:menuitem id="customerCategories" outcome="customerCategories" value="#{messages['menu.customerCategories']}" />
 			<p:menuitem id="creditCategories" outcome="creditCategories" value="#{messages['menu.creditCategories']}" />
-			<p:menuitem id="occTemplates" outcome="occTemplates" value="#{messages['menu.occTemplates']}" />
+			<p:menuitem id="occTemplates" outcome="occTemplates" value="#{messages['menu.occTemplates']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
 		</p:submenu>
 		<p:submenu id="trading" label="#{messages['menu.trading']}">
 			<p:menuitem id="tradingLanguages" outcome="tradingLanguages" value="#{messages['menu.comLanguages']}" />
-			<p:menuitem id="tradingCurrencies" outcome="tradingCurrencies" value="#{messages['menu.tradingCurrencies']}" />
+			<p:menuitem id="tradingCurrencies" outcome="tradingCurrencies" value="#{messages['menu.tradingCurrencies']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
 			<p:menuitem id="tradingCountries" outcome="tradingCountries" value="#{messages['menu.tradingCountries']}" />
 			<p:menuitem id="multiLanguageFields" outcome="multiLanguageFields" value="#{messages['menu.multiLanguageFields']}" />
 			<p:menuitem id="emailTemplates" outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />
 		</p:submenu>
 		<p:menuitem outcome="calendars" id="calendars" value="#{messages['menu.calendars']}" />
 		<p:submenu id="invoicingconfig" label="#{messages['menu.invoicing']}">
-			<p:menuitem id="billingCycles" outcome="billingCycles" value="#{messages['menu.billingCycles']}" />
+			<p:menuitem id="billingCycles" outcome="billingCycles" value="#{messages['menu.billingCycles']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
 			<p:submenu id="taxes" label="#{messages['menu.taxes']}">
 				<p:menuitem id="taxCategories" outcome="taxCategories" value="#{messages['menu.taxCategories']}" />
 				<p:menuitem id="taxClasses" outcome="taxClasses" value="#{messages['menu.taxClasses']}" />
 				<p:menuitem id="taxMapping" outcome="taxMappings" value="#{messages['menu.taxMappings']}" />
-				<p:menuitem id="taxRates" outcome="taxes" value="#{messages['menu.taxRates']}" />
+				<p:menuitem id="taxRates" outcome="taxes" value="#{messages['menu.taxRates']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
 			</p:submenu>
 			<p:menuitem id="invoiceCategories" outcome="invoiceCategories" value="#{messages['menu.invoiceCategories']}" />
 			<p:menuitem id="invoiceSubCategories" outcome="invoiceSubCategories" value="#{messages['menu.invoiceSubCategories']}" />
@@ -56,7 +56,7 @@
 			<p:menuitem id="offerTemplateCategories" outcome="offerTemplateCategories" value="#{messages['menu.offerTemplateCategories']}" />
 		</p:submenu>
 		<p:submenu id="serviceManagement" label="#{messages['menu.catalog.serviceManagement']}">
-			<p:menuitem id="serviceTemplates" outcome="serviceTemplates" value="#{messages['menu.serviceTemplates']}" />
+			<p:menuitem id="serviceTemplates" outcome="serviceTemplates" value="#{messages['menu.serviceTemplates']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
 			<p:submenu id="charges" label="#{messages['menu.charges']}">
 				<p:menuitem id="chargeTemplates" outcome="chargeTemplates" value="#{messages['menu.chargeTemplates']}" />
 				<p:menuitem id="recurringChargeTemplate" outcome="recurringChargeTemplates" value="#{messages['menu.recurringChargeTemplates']}" />
@@ -65,21 +65,21 @@
 			</p:submenu>
 			<p:menuitem id="counterTemplates" outcome="counterTemplates" value="#{messages['menu.counterTemplates']}" />
 		</p:submenu>
-		<p:submenu id="productManagement" label="#{messages['menu.catalog.productManagement']}">
+		<p:submenu id="productManagement" label="#{messages['menu.catalog.productManagement']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}">
 			<p:menuitem id="productTemplates" outcome="productTemplates" value="#{messages['menu.productTemplates']}" />
 			<p:menuitem id="productChargeTemplates" outcome="productChargeTemplates" value="#{messages['menu.productChargeTemplates']}" />
 			<p:menuitem id="bundleTemplates" outcome="bundleTemplates" value="#{messages['menu.bundleTemplates']}" />
 		</p:submenu>
 		<p:menuitem id="triggeredEdrTemplates" outcome="triggeredEdrTemplates" value="#{messages['menu.triggeredEdrTemplates']}" />
 		<p:menuitem id="walletTemplates" outcome="walletTemplates" value="#{messages['menu.wallets']}" />
-		<p:submenu id="models" label="#{messages['menu.catalog.models']}">
+		<p:submenu id="models" label="#{messages['menu.catalog.models']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}">
 			<p:menuitem id="businessOfferModels" outcome="businessOfferModels" value="#{messages['menu.businessOffers']}" />
 			<p:menuitem id="businessServiceModels" outcome="businessServiceModels" value="#{messages['menu.businessServiceModels']}" />
 			<p:menuitem id="businessProductModels" outcome="businessProductModels" value="#{messages['menu.businessProductModels']}" />
 		</p:submenu>
 		<p:submenu id="pricePlanMatrixes_menu" label="#{messages['menu.pricePlanMatrixes']}">
 			<p:menuitem id="pricePlanMatrixes" outcome="pricePlanMatrixes" value="#{messages['menu.pricePlanMatrixes']}" />
-			<p:menuitem id="discountPlans" outcome="discountPlans" value="#{messages['menu.discountPlans']}" />
+			<p:menuitem id="discountPlans" outcome="discountPlans" value="#{messages['menu.discountPlans']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
 		</p:submenu>
 	</p:submenu>
 
@@ -98,13 +98,13 @@
 		<p:menuitem id="customerAccounts" outcome="customerAccounts" value="#{messages['menu.customerAccounts']}" />
 		<p:menuitem id="billingAccounts" outcome="billingAccounts" value="#{messages['menu.billingAccounts']}" />
 		<p:menuitem id="userAccounts" outcome="userAccounts" value="#{messages['menu.userAccounts']}" />
-		<p:menuitem id="crmAccounts" outcome="crmAccounts" value="#{messages['menu.crmAccounts']}" />
+		<p:menuitem id="crmAccounts" outcome="crmAccounts" value="#{messages['menu.crmAccounts']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
 		<p:menuitem id="subscriptions" outcome="subscriptions" value="#{messages['menu.subscriptions']}" />
 		<p:menuitem id="accessPoints" outcome="access" value="#{messages['menu.accessPoints']}" />
 		<p:menuitem id="businessAccountModels" outcome="businessAccountModels" value="#{messages['menu.businessAccountModels']}" />
 	</p:submenu>
 
-	<p:submenu id="orderAndQuotes" label="#{messages['menu.ordersAndQuotes']}">
+	<p:submenu id="orderAndQuotes" label="#{messages['menu.ordersAndQuotes']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}">
 		<p:menuitem id="quotes" outcome="quotes" value="#{messages['menu.quotes']}" />
 		<p:menuitem id="orders" outcome="orders" value="#{messages['menu.orders']}" />
 	</p:submenu>
@@ -124,12 +124,12 @@
 			<p:menuitem id="walletOperations" outcome="walletOperations" value="#{messages['menu.walletOperations']}" />
 			<p:menuitem id="ratedTransactions" outcome="ratedTransactions" value="#{messages['menu.ratedTransactions']}" />
 		</p:submenu>
-		<p:submenu id="billingRun" label="#{messages['menu.billingRun']}">
+		<p:submenu id="billingRun" label="#{messages['menu.billingRun']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}">
 			<p:menuitem id="billingRuns" outcome="billingRuns" value="#{messages['menu.billingRuns']}" />
 			<p:menuitem id="billingRunDetail" outcome="billingRunDetail" value="#{messages['menu.globalExecution']}" />
 			<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing" value="#{messages['menu.exceptionalInvoicing']}" />
 		</p:submenu>
-		<p:submenu id="invoice" label="#{messages['menu.invoice']}">
+		<p:submenu id="invoice" label="#{messages['menu.invoice']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}">
 			<p:menuitem id="invoices" outcome="invoices" value="#{messages['menu.invoices']}" />
 			<p:menuitem id="aggregateInvoices" outcome="invoiceAggregatedDetail" value="#{messages['menu.invoice.createAggregated']}" />
 			<p:menuitem id="detailedInvoices" outcome="detailedInvoiceDetail" value="#{messages['menu.invoice.createDetailed']}" />
@@ -163,22 +163,23 @@
 
 	<p:submenu id="finance" label="#{messages['menu.finance']}">
 		<p:menuitem id="chartOfAccounts" outcome="accountingCodes" value="#{messages['menu.chartOfAccounts']}" />
-		<p:menuitem id="generalLedgers" outcome="generalLedgers" value="#{messages['menu.generalLedgers']}" />
-		<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />
-		<p:menuitem id="revenueSchedules" outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" />
+		<p:menuitem id="generalLedgers" outcome="generalLedgers" value="#{messages['menu.generalLedgers']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
+		<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
+		<p:menuitem id="revenueSchedules" outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}"/>
 		<p:menuitem id="reportExtracts" outcome="reportExtracts" value="#{messages['menu.reportExtracts']}" />
 		<p:menuitem id="reportExtractHistories" outcome="reportExtractHistories" value="#{messages['menu.reportExtractHistories']}" />
-		<p:menuitem id="accountingWritings" outcome="accountingEntries" value="#{messages['menu.accountingEntry']}" />
+		<p:menuitem id="accountingWritings" outcome="accountingEntries" value="#{messages['menu.accountingEntry']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}" />
 	</p:submenu>
 
-	<p:submenu id="reporting" label="#{messages['menu.reporting']}">
+	<p:submenu id="reporting" label="#{messages['menu.reporting']}" rendered="#{currentUser.hasRoles('show_obsolete_legacy')}">
 		<p:menuitem id="measurableQuantities" value="#{messages['menu.measurableQuantities']}" outcome="measurableQuantities" />
 		<p:menuitem id="measuredValues" value="#{messages['menu.measuredValues']}" outcome="measuredValueDetail" />
 		<p:menuitem id="charts" value="#{messages['menu.charts']}" outcome="charts" />
 		<p:menuitem id="dataCollectors" value="#{messages['menu.dataCollector']}" outcome="dataCollectors" />
 	</p:submenu>
 
-	<p:submenu id="customEntities" label="#{messages['menu.customEntities']}" rendered="#{currentUser.hasRoles(customEntityTemplateBean.getAllPermissions())}">
+	<p:submenu id="customEntities" label="#{messages['menu.customEntities']}" rendered="#{currentUser.hasRoles(customEntityTemplateBean.getAllPermissions()) and
+		customEntityTemplateBean.listSortedByName() != null and !customEntityTemplateBean.listSortedByName().isEmpty() and currentUser.hasRoles(customEntityTemplateBean.getAllPermissions())}">
 		<c:set var="cetIndex" value="0" />
 		<c:forEach items="#{customEntityTemplateBean.listSortedByName()}" var="cet">
 			<p:menuitem id="cet_#{cetIndex}" outcome="#{cet.storeAsTable?'customTables':'customEntities'}" value="#{cet.name}" rendered="#{currentUser.hasRoles(cet.readPermission,cet.modifyPermission,'ReadAllCE','ModifyAllCE')}">

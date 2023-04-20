@@ -52,6 +52,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -455,6 +456,13 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     private Long period;
 
     /**
+     * Associated accounting article id.
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_article_id")
+    private AccountingArticle accountingArticle;
+
+    /**
      * Constructor
      */
     public WalletOperationPeriod() {
@@ -763,7 +771,8 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
         result.setCreated(created);
         result.setUpdated(updated);
         result.setTaxClass(taxClass);
-
+        result.setAccountingCode(accountingCode);
+        result.setAccountingArticle(accountingArticle);
         return result;
     }
 
@@ -1108,5 +1117,13 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
 
     public void setPeriod(Long period) {
         this.period = period;
+    }
+
+    public AccountingArticle getAccountingArticle() {
+        return accountingArticle;
+    }
+
+    public void setAccountingArticle(AccountingArticle accountingArticle) {
+        this.accountingArticle = accountingArticle;
     }
 }

@@ -29,7 +29,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.FileUtils;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.admin.FileFormat;
@@ -114,36 +114,39 @@ public class MediationJob extends Job {
             mappingConf = fileFormat.getConfigurationTemplate();
             recordName = fileFormat.getRecordName();
         } else {
-            meteringDir = meteringDir + "imports" + File.separator + "metering" + File.separator;
+            meteringDir = meteringDir + parambean.getProperty("metering.imports.rootdir", "imports/metering/");
+            if (!meteringDir.substring(meteringDir.length() - 1).contentEquals(File.separator)) {
+                meteringDir = meteringDir + File.separator;
+            }
             inputDir = meteringDir + "input";
             outputDir = meteringDir + "output";
             rejectDir = meteringDir + "reject";
             archiveDir = meteringDir + "archive";
         }
         File f = new File(inputDir);
-        if (!f.exists()) {
-            f.mkdirs();
+        if (!StorageFactory.existsDirectory(f)) {
+            StorageFactory.mkdirs(f);
         }
         f = new File(outputDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("outputDir {} not exist", outputDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("outputDir {} creation ok", outputDir);
         }
         f = new File(rejectDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("rejectDir {} not exist", rejectDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("rejectDir {} creation ok", rejectDir);
         }
         f = new File(archiveDir);
-        if (!f.exists()) {
+        if (!StorageFactory.existsDirectory(f)) {
             log.debug("archiveDir {} not exist", archiveDir);
-            f.mkdirs();
+            StorageFactory.mkdirs(f);
             log.debug("archiveDir {} creation ok", archiveDir);
         }
-
-        File[] files = FileUtils.listFiles(inputDir, cdrExtensions);
+        String sortingOption = (String) this.getParamOrCFValue(jobInstance, CF_SORTING_OPTION);
+        File[] files = StorageFactory.listFiles(inputDir, cdrExtensions, sortingOption);
         if (files == null || files.length == 0) {
             log.debug("There is no file in {} with extension {} to by processed by Mediation {} job", inputDir, cdrExtensions, result.getJobInstance().getCode());
             return result;
@@ -155,7 +158,7 @@ public class MediationJob extends Job {
             }
 
             // File might have been processed by another mediation job, so continue with a next file
-            if (!file.exists()) {
+            if (!StorageFactory.exists(file)) {
                 continue;
             }
 
@@ -267,6 +270,21 @@ public class MediationJob extends Job {
         batchSize.setDefaultValue("1000");
         batchSize.setGuiPosition("tab:Configuration:0;field:6");
         result.put(batchSize.getCode(), batchSize);
+
+        CustomFieldTemplate processingOrder = new CustomFieldTemplate();
+        processingOrder.setCode(CF_SORTING_OPTION);
+        processingOrder.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
+        processingOrder.setActive(true);
+        processingOrder.setDefaultValue(SortingFilesEnum.ALPHA.name());
+        processingOrder.setDescription(resourceMessages.getString("flatFile.processingOrder"));
+        processingOrder.setFieldType(CustomFieldTypeEnum.LIST);
+        processingOrder.setValueRequired(false);
+        Map<String, String> listValuesProcessingOrder = new HashMap();
+        listValuesProcessingOrder.put(SortingFilesEnum.ALPHA.name(), resourceMessages.getString("flatFile.alphabeticFileNameOrder"));
+        listValuesProcessingOrder.put(SortingFilesEnum.CREATION_DATE.name(), resourceMessages.getString("flatFile.creationDateFileOrder"));
+        processingOrder.setListValues(listValuesProcessingOrder);
+        processingOrder.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:7");
+        result.put(CF_SORTING_OPTION, processingOrder);
 
         return result;
     }

@@ -116,6 +116,14 @@ public class Tax extends BusinessCFEntity implements I18nDescripted {
     @JoinTable(name = "billing_tax_composition",
             joinColumns = @JoinColumn(name = "main_tax_id"), inverseJoinColumns = @JoinColumn(name = "sub_tax_id"))
     private List<Tax> subTaxes;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "taxation_category_id")
+    private UntdidTaxationCategory untdidTaxationCategory;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vatex_id")
+    private UntdidVatex untdidVatex;
 
     public Tax() {
 
@@ -220,4 +228,21 @@ public class Tax extends BusinessCFEntity implements I18nDescripted {
         }
         return true;
     }
+
+	public UntdidTaxationCategory getUntdidTaxationCategory() {
+		return untdidTaxationCategory;
+	}
+
+	public void setUntdidTaxationCategory(UntdidTaxationCategory untdidTaxationCategory) {
+		this.untdidTaxationCategory = untdidTaxationCategory;
+	}
+
+	public UntdidVatex getUntdidVatex() {
+		return untdidVatex;
+	}
+
+	public void setUntdidVatex(UntdidVatex untdidVatex) {
+		this.untdidVatex = untdidVatex;
+	}
+    
 }

@@ -60,6 +60,7 @@ import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.BeanUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -67,6 +68,7 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.IsoIcd;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingCountry;
@@ -91,6 +93,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.IsoIcdService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -133,6 +136,9 @@ public class BillingAccountApi extends AccountEntityApi {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
+    @Inject
+    private IsoIcdService isoIcdService;
+    
     @Inject
     private CustomerAccountService customerAccountService;
 
@@ -594,6 +600,19 @@ public class BillingAccountApi extends AccountEntityApi {
         		titleService.create(title);
         	billingAccount.setLegalEntityType(title);
         }
+        
+        if (postData.getIsoICDCode() != null) {
+            IsoIcd isoIcd = isoIcdService.findByCode(postData.getIsoICDCode());
+            if (isoIcd == null) {
+                throw new EntityDoesNotExistsException(IsoIcd.class, postData.getIsoICDCode());
+            }
+            billingAccount.setIcdId(isoIcd);
+        }
+        else {
+            if(providerService.getProvider() != null) {
+                billingAccount.setIcdId(providerService.getProvider().getIcdId());
+            }            
+        }
 
         // Update payment method information in a customer account.
         // ONLY used to handle deprecated billingAccountDto.paymentMethod and billingAccountDto.bankCoordinates fields. Use
@@ -891,6 +910,7 @@ public class BillingAccountApi extends AccountEntityApi {
 
                     } else if (postData.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
 
+                        paymentMethod = PersistenceUtils.initializeAndUnproxy(paymentMethod);
                         if (postData.getBankCoordinates().getIban() != null && ((DDPaymentMethod) paymentMethod).getBankCoordinates() != null
                                 && postData.getBankCoordinates().getIban().equals(((DDPaymentMethod) paymentMethod).getBankCoordinates().getIban())) {
                             found = true;

@@ -13,6 +13,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.payments.PaymentMethod;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,6 +51,7 @@ public class GenericModule extends SimpleModule {
         addDeserializer(PaymentMethod.class, new PaymentDeserializer());
         addDeserializer(Calendar.class, new CalendarDeserializer());
         addSerializer(Date.class, new SqlDateSerializer(Date.class));
+        addSerializer(BigDecimal.class, new BigDecimalSerializer());
         addKeyDeserializer(Tax.class, new KeyDeserializer() {
             @Override
             public Object deserializeKey(String key, DeserializationContext ctxt)

@@ -49,6 +49,9 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
     @Schema(description = "Indicate if the price plan matrix column is a range")
     private Boolean isRange;
 
+    @Schema(description = "Price plan matrix identifier")
+    private Long id;
+
     public PricePlanMatrixColumnDto() {
     }
 
@@ -65,6 +68,7 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
         this.type = pricePlanMatrixColumn.getType();
         this.elValue = pricePlanMatrixColumn.getElValue();
         this.isRange = pricePlanMatrixColumn.getRange();
+        this.id = pricePlanMatrixColumn.getId();
     }
 
     public String getCode() {
@@ -145,5 +149,13 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
 
     public void setRange(Boolean range) {
         isRange = range;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -72,6 +73,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.InvalidReferenceException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -89,10 +91,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.crm.custom.*;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
@@ -132,9 +131,13 @@ public abstract class BaseApi {
 
 	protected static final String DEFAULT_SORT_ORDER_ID = "id";
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected static Logger log = LoggerFactory.getLogger(BaseApi.class);
 
     private static final int limitDefaultValue = 100;
+
+    private static final String API_LIST_MAX_LIMIT_KEY = "api.list.maxLimit";
+
+    private static final String API_LIST_DEFAULT_LIMIT = "api.list.defaultLimit";
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -183,10 +186,13 @@ public abstract class BaseApi {
     private AuditableFieldService auditableFieldService;
 
     @Inject
-    private CustomGenericEntityCodeService customGenericEntityCodeService;
+    protected CustomGenericEntityCodeService customGenericEntityCodeService;
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     protected ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
@@ -525,7 +531,7 @@ public abstract class BaseApi {
             // Validate that value is valid (min/max, regexp). When
             // value is a list or a map, check separately each value
             if (!isEmpty && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN
-                    || cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY)) {
+                    || cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY || cft.getFieldType() == CustomFieldTypeEnum.URL)) {
 
                 List valuesToCheck = new ArrayList<>();
 
@@ -621,6 +627,27 @@ public abstract class BaseApi {
                         // requires.
                         ((CustomEntityInstanceDto) valueToCheck).setCetCode(CustomFieldTemplate.retrieveCetCode(cft.getEntityClazz()));
                         customEntityInstanceApi.validateEntityInstanceDto((CustomEntityInstanceDto) valueToCheck);
+                    }
+                    else if (cft.getFieldType() == CustomFieldTypeEnum.URL)
+                    {
+                        if (cft.getMaxValue() == null) {
+                            cft.setMaxValue(CustomFieldTemplate.DEFAULT_MAX_LENGTH_URL);
+                        }
+
+                        UrlReferenceWrapper urlValue = (UrlReferenceWrapper) valueToCheck;
+                        if(urlValue.getUrl() == null) { urlValue.setUrl("");}
+
+                         if (urlValue.getUrl().length() > cft.getMaxValue()) {
+                            throw new InvalidParameterException("This URL is not allowed a length longer than "+cft.getMaxValue());
+
+                        }
+
+
+                        if( (cft.getRegExp()!= null && !cft.getRegExp().isEmpty() && !urlValue.getUrl().matches(cft.getRegExp()))
+                                || (cft.getRegExp()== null && !urlValue.containsValidURL()) ) {
+
+                            throw new InvalidParameterException("Wrong URL format. URL should match regular expression " + (cft.getRegExp() == null ? "": cft.getRegExp()) );
+                        }
                     }
                 }
             }
@@ -755,6 +782,9 @@ public abstract class BaseApi {
             // } else {
             // Other type values that are of some other DTO type (e.g.
             // CustomEntityInstanceDto for child entity type) are not converted
+        }
+        else if(cfDto.getUrlReferenceValue() != null){
+            return cfDto.getUrlReferenceValue().toWrapper();
         }
         return null;
     }
@@ -1292,13 +1322,11 @@ public abstract class BaseApi {
     }
 
     private PaginationConfiguration initPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
-        Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
+
+        int limit = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT, limitDefaultValue);
         if (pagingAndFiltering != null) {
-            if (pagingAndFiltering.getLimit() != null) {
-                limit = pagingAndFiltering.getLimit();
-            } else {
-                pagingAndFiltering.setLimit(limit);
-            }
+            limit = (int) genericPagingAndFilteringUtils.getLimit(pagingAndFiltering.getLimit());
+            pagingAndFiltering.setLimit(limit);
         }
 
         // Commented out as regular API and customTable API has a different meaning of fields parameter - in customTableApi it will return only those fields, whereas in regularAPI
@@ -1311,13 +1339,11 @@ public abstract class BaseApi {
     }
 
     private PaginationConfiguration initPaginationConfigurationMultiSort(String defaultSortBy, String defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
-        Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
+
+        int limit = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT, limitDefaultValue);
         if (pagingAndFiltering != null) {
-            if (pagingAndFiltering.getLimit() != null) {
-                limit = pagingAndFiltering.getLimit();
-            } else {
-                pagingAndFiltering.setLimit(limit);
-            }
+            limit = (int) genericPagingAndFilteringUtils.getLimit(pagingAndFiltering.getLimit());
+            pagingAndFiltering.setLimit(limit);
         }
 
         // Commented out as regular API and customTable API has a different meaning of fields parameter - in customTableApi it will return only those fields, whereas in regularAPI
@@ -1836,7 +1862,7 @@ public abstract class BaseApi {
     
     protected <T extends Enum<T>> List<String> allStatus(Class<T> enums, String paramBeanName, String defaultValueForParamBean){
     	
-		final List<String> allStatus = new ArrayList<String>();
+		final List<String> allStatus = new ArrayList<>();
 		for(T status:enums.getEnumConstants()) {
 			allStatus.add(status.toString().toLowerCase());
 		}

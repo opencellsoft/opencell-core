@@ -275,10 +275,9 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
         				continue;
         		}
-        		if(discountPlanItem.isApplyByArticle() && discountPlanItem.getTargetAccountingArticle()!=null
-        				&& discountPlanItem.getTargetAccountingArticle().size()>0) {
+        		if(discountPlanItem.isApplyByArticle()) {
         			//this DP item will be handled as a percentage dp, so a discount WO/IL will be created on the product level and linked to the discounted WO/IL
-        			isFixedDpItemIncluded=DiscountPlanItemTypeEnum.PERCENTAGE.equals(discountPlanItemType);
+        			isFixedDpItemIncluded=discountPlanItemType != null ? DiscountPlanItemTypeEnum.PERCENTAGE == discountPlanItemType : DiscountPlanItemTypeEnum.PERCENTAGE == discountPlanItem.getDiscountPlanItemType();
         			if(!isFixedDpItemIncluded) {
         				continue;
         			}
@@ -337,10 +336,10 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         return accountingArticle;
     }
 
-    public BigDecimal getFixedDiscountSumByDP(long discountPlanId) {
-        return (BigDecimal) getEntityManager().createNamedQuery("DiscountPlanItem.getFixedDiscountPlanItemsByDP")
+    public List<DiscountPlanItem> getFixedDiscountPlanItemsByDP(long discountPlanId) {
+        return getEntityManager().createNamedQuery("DiscountPlanItem.getFixedDiscountPlanItemsByDP",DiscountPlanItem.class)
                 .setParameter("discountPlanId", discountPlanId)
-                .getSingleResult();
+                .getResultList();
     }
     
     public void setDisountPlanItemSequence(DiscountPlanItem dpi) {
@@ -353,6 +352,20 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     			dpi.setSequence(sequence+1);
     	}
     }
+
+    public List<DiscountPlanItem> findBySequence(Long discountPlanId, Integer currentSequence){
+        if(discountPlanId == null || currentSequence == null) {
+            log.warn("The discount plan and sequence must not be null");
+            return Collections.emptyList();
+        }
+
+        List<DiscountPlanItem> discountPlanItems = getEntityManager().createNamedQuery("DiscountPlanItem.findBySequence")
+                .setParameter("discountPlanId", discountPlanId)
+                .setParameter("sequence", currentSequence).getResultList();
+        return discountPlanItems;
+    }
+
+
     	
     
 }

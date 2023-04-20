@@ -119,7 +119,8 @@ public class WebHookNotifier {
         HttpURLConnection conn = null;
 
         try {
-            String url = webHook.getHttpProtocol().name().toLowerCase() + "://" + webHook.getHost().replace("http://", "");
+        	String host = evaluate(webHook.getHost(), entityOrEvent, context);
+        	String url = webHook.getHttpProtocol().name().toLowerCase() + "://" + host.replace("http://", "");
             if (webHook.getPort() != null) {
                 url += ":" + webHook.getPort();
             }
@@ -136,16 +137,18 @@ public class WebHookNotifier {
                 paramQuery += sep + URLEncoder.encode(paramKey, "UTF-8") + "=" + URLEncoder.encode(params.get(paramKey), "UTF-8");
                 sep = "&";
             }
-            log.debug("paramQuery={}", paramQuery);
+            if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
             url += "?" + paramQuery;
-
-            log.debug("webhook url: {}", url);
+            }
+            log.info("webhook url: {} , paramQuery={}", url,paramQuery);
             URL obj = new URL(url);
             conn = (HttpURLConnection) obj.openConnection();
 
             Map<String, String> headers = evaluateMap(webHook.getHeaders(), entityOrEvent, context);
-            if (!StringUtils.isBlank(webHook.getUsername()) && !headers.containsKey("Authorization")) {
-                byte[] bytes = Base64.encodeBase64((webHook.getUsername() + ":" + webHook.getPassword()).getBytes());
+            String username = evaluate(webHook.getUsername(), entityOrEvent, context);
+            String password = evaluate(webHook.getPassword(), entityOrEvent, context);
+            if (!StringUtils.isBlank(username) && !headers.containsKey("Authorization")) {
+                byte[] bytes = Base64.encodeBase64((username + ":" + password).getBytes());
                 headers.put("Authorization", "Basic " + new String(bytes));
             }
 

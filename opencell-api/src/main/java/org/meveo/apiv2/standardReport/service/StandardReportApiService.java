@@ -12,20 +12,14 @@ import javax.ws.rs.*;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.billing.impl.*;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 public class StandardReportApiService implements ApiService<RecordedInvoice> {
 
-
 	@Inject
     private RecordedInvoiceService recordedInvoiceService;
-    
-    @Inject
-    private CustomerAccountService customerAccountService;
 
     @Inject
 	private InvoiceService invoiceService;
@@ -34,10 +28,10 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 
     public List<Object[]> list(Long offset, Long limit, String sort, String orderBy, String customerAccountCode,
 							   Date startDate, Date startDueDate, Date endDueDate, String customerAccountDescription,
-							   String sellerDescription, String sellerCode,
-							   String invoiceNumber, Integer stepInDays, Integer numberOfPeriods, String tradingCurrency) {
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
-                limit.intValue(), null, null, fetchFields, orderBy, sort);
+							   String sellerDescription, String sellerCode, String invoiceNumber, Integer stepInDays,
+							   Integer numberOfPeriods, String tradingCurrency, String functionalCurrency) {
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset != null
+				? offset.intValue() : null, limit.intValue() , null, null, fetchFields, orderBy, sort);
         if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
 			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
 		}
@@ -57,13 +51,27 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 		}
 
 		try {
-			return recordedInvoiceService.getAgedReceivables(customerAccountCode, sellerCode, startDate, startDueDate, endDueDate,
-					paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber, customerAccountDescription, sellerDescription, tradingCurrency);
+			return recordedInvoiceService.getAgedReceivables(customerAccountCode, sellerCode, startDate, startDueDate,
+					endDueDate, paginationConfiguration, stepInDays, numberOfPeriods, invoiceNumber,
+					customerAccountDescription, sellerDescription, tradingCurrency, functionalCurrency);
+		} catch (Exception exception) {
+			throw new BusinessApiException("Error occurred when listing aged balance report : " + exception.getMessage());
+		}
+    }
+
+	/**
+	 * Get all aged receivables
+	 * @return List of object
+	 */
+	public List<Object[]> getAll(Date startDate) {
+		try {
+			return recordedInvoiceService.getAgedReceivables(null, null, startDate, null, null,
+					null, null, null, null, null, null, null, null);
 		} catch (Exception exception) {
 			throw new BusinessApiException("Error occurred when listing aged balance report : " + exception.getMessage());
 
 		}
-    }
+	}
 
 	@Override
 	public List<RecordedInvoice> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -117,8 +125,20 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 	 * @param customerAccountCode
 	 * @return Count of aged receivables
 	 */
-	public Long getCountAgedReceivables(String customerAccountCode) {
-		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-        return recordedInvoiceService.getCountAgedReceivables(customerAccount);
+	public Long getCountAgedReceivables(String customerAccountCode, String customerAccountDescription, String sellerCode, String sellerDescription, String invoiceNumber, String tradingCurrency, 
+			Date startDueDate, Date endDueDate, Date startDate) {
+		if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
+			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
+		}
+
+		if (startDueDate != null && endDueDate != null && startDueDate.after(endDueDate)) {
+			throw new BadRequestException("End due date must be after start due date");
+		}
+
+		if (startDueDate != null && endDueDate == null) {
+			endDueDate = startDueDate;
+		}
+		
+        return recordedInvoiceService.getCountAgedReceivables(customerAccountCode, customerAccountDescription, sellerCode, sellerDescription, invoiceNumber, tradingCurrency, startDueDate, endDueDate, startDate);
 	}
 }

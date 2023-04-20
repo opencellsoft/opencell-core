@@ -13,7 +13,7 @@ public class DiscountPlanSummary {
 	 * @param x
 	 */
 	public DiscountPlanSummary(String x) {
-		final String[] split = x.split("\\|");
+		final String[] split = x.split("|");
 		this.discountPlanId = Long.parseLong(split[0]);
 		if (split.length > 1) {
 			this.startDate = DateUtils.parseDefaultDate(split[1]);
