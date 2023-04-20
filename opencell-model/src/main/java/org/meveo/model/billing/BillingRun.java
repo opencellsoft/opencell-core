@@ -918,7 +918,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setExceptionalRTIds(List<Long> exceptionalRTIds) {
         this.exceptionalRTIds = exceptionalRTIds;
     }
-
+    
     public boolean isExceptionalBR() {
 	    return (this.filters !=null && !this.filters.isEmpty());
     }

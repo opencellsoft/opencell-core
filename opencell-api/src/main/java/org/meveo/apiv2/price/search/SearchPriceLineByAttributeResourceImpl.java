@@ -1,6 +1,5 @@
 package org.meveo.apiv2.price.search;
 
-
 import org.hibernate.criterion.MatchMode;
 import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -110,7 +109,16 @@ public class SearchPriceLineByAttributeResourceImpl implements SearchPriceLineBy
     private Map<String, Object> buildResponse(List<PricePlanMatrixLine> resultList, int limit, int offset, String sortBy, String order) {
         Map<String, Object> response = new HashMap<>();
         response.put("total", resultList.size());
-        List<PricePlanMatrixLine> pricePlanMatrixLines = ((resultList.size() + offset) <= limit) || (limit + offset > resultList.size()) ? resultList : resultList.subList(offset, limit + offset);
+        List<PricePlanMatrixLine> pricePlanMatrixLines = new ArrayList<>();
+
+        if(offset + limit <= resultList.size()) {
+        	pricePlanMatrixLines = resultList.subList(offset, limit + offset);        	
+        } 
+        
+        if(offset + limit > resultList.size()) {
+        	pricePlanMatrixLines = resultList.subList(offset, resultList.size());        	
+        } 
+        
         for(PricePlanMatrixLine pricePlanMatrixLine: pricePlanMatrixLines) {
            PricePlanMatrixVersion pricePlanMatrixVersion = new PricePlanMatrixVersion();
            pricePlanMatrixVersion.setId(pricePlanMatrixLine.getPricePlanMatrixVersion().getId());

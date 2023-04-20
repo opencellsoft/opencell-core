@@ -28,6 +28,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.model.billing.WalletOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,10 +90,10 @@ public class ContractService extends BusinessService<Contract>  {
 		LOGGER.info("contract({}) to be deleted", contractCode);
 		
 		final Contract contratToDelete = findByCode(contractCode);
-		if(contratToDelete == null) {
+		if (contratToDelete == null) {
 			throw new EntityDoesNotExistsException(Contract.class, contractCode);
 		}
-		if(contratToDelete.getStatus().equals(ProductStatusEnum.ACTIVE)) {
+		if (ContractStatusEnum.ACTIVE.equals(contratToDelete.getStatus())) {
 			LOGGER.warn("contract({}) can not be removed, because its status is active", contratToDelete.getCode());
 			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contratToDelete.getCode(), contratToDelete.getStatus().toString()));
 		}
@@ -166,11 +167,13 @@ public class ContractService extends BusinessService<Contract>  {
 		
 	}
 
-	 public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount) {
+	 public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
 	    	try {
 				return getEntityManager().createNamedQuery("Contract.findByAccounts")
 						.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
-						.setParameter("customerAccountId",customerAccount.getId()).setFlushMode(FlushModeType.COMMIT).getResultList();
+						.setParameter("customerAccountId",customerAccount.getId())
+						.setParameter("operationDate", bareWalletOperation.getOperationDate())
+						.setFlushMode(FlushModeType.COMMIT).getResultList();
 	    	} catch (NoResultException e) {
 	            return null;
 	        }

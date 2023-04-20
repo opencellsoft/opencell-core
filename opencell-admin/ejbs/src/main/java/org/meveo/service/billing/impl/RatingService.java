@@ -611,7 +611,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             BillingAccount billingAccount = bareWalletOperation.getBillingAccount();
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
             Customer customer = customerAccount.getCustomer();
-            List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount);
+            List<Contract> contracts = contractService.getContractByAccount(customer, billingAccount, customerAccount, bareWalletOperation);
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise())
                     || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
 
@@ -726,7 +726,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     	unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
                     }
 
-                    BigDecimal amount=null;
+                    BigDecimal amount= BigDecimal.ZERO;
                     BigDecimal discountRate=null;
                     PricePlanMatrixVersion ppmVersion=null;
                     PricePlanMatrixLine pricePlanMatrixLine =null;

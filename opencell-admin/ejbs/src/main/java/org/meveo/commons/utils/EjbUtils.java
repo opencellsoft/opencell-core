@@ -117,8 +117,7 @@ public class EjbUtils {
             }
 
         } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(EjbUtils.class);
-            log.debug("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());
+            logger.debug("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());
         }
         return null;
     }
