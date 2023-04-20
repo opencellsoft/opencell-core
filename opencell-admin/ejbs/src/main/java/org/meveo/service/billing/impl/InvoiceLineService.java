@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -229,16 +230,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if(entity.getValueDate()!=null) {
             date=entity.getValueDate();
         }
-        BillingAccount billingAccount=entity.getBillingAccount();
-        Seller seller=null;
-        if(invoice!=null) {
-         seller=invoice.getSeller()!=null?invoice.getSeller():seller;
-         billingAccount=invoice.getBillingAccount();
-        }
+        BillingAccount billingAccount = getBillingAccount(invoice, entity);
+        Seller seller = getSeller(invoice, entity, billingAccount);
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
-        if(seller==null) {
-             seller=entity.getCommercialOrder()!=null?entity.getCommercialOrder().getSeller():billingAccount.getCustomerAccount().getCustomer().getSeller();
-        }
         if (accountingArticle != null && entity.getTax() == null) {
              seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
@@ -301,6 +295,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         BigDecimal invoiceLineDiscountAmount = BigDecimal.ZERO;
         for (DiscountPlanItem discountPlanItem : discountItems) {
         	InvoiceLine discountInvoice = new InvoiceLine(invoiceLine, invoice);
+            discountInvoice.setAccountingArticle(discountPlanItem.getAccountingArticle());
         	discountInvoice.setStatus(invoiceLine.getStatus());
             if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
                 invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountPlanItem.getDiscountValue());
@@ -952,22 +947,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     /**
      * Get Invoice Line to update
      * @param invoice Invoice to update
-     * @param invoiceLineResource Invoice Line Resource to update {@link org.meveo.apiv2.billing.InvoiceLine}
      * @param invoiceLineId Invoice Line Id
      * @return Invoice Line to update {@link InvoiceLine}
      */
-    public InvoiceLine getInvoiceLineForUpdate(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
-        InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-		final InvoiceStatusEnum status = invoice.getStatus();
-        if(VALIDATED.equals(status)) {
-        	return invoiceLine;
-        }else {
-            invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
-        }
-        return invoiceLine;
-    }
-
-	private InvoiceLine findInvoiceLine(Invoice invoice, Long invoiceLineId) {
+	public InvoiceLine findInvoiceLine(Invoice invoice, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findById(invoiceLineId);
 		if(!invoice.equals(invoiceLine.getInvoice())) {
 			throw new BusinessException("invoice line with ID "+invoiceLineId+" is not related to invoice with id:"+invoice.getId());
@@ -1441,5 +1424,69 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             validateAdjAmount(List.of(invoiceLine), invoice);
         }
         return invoiceLine;
+    }
+
+    private BillingAccount getBillingAccount(Invoice invoice, InvoiceLine invoiceLine) {
+        BillingAccount billingAccount = invoiceLine.getBillingAccount();
+        if (invoice != null) {
+            billingAccount = invoice.getBillingAccount();
+        }
+        return billingAccount;
+    }
+
+    private Seller getSeller(Invoice invoice, InvoiceLine invoiceLine, BillingAccount billingAccount) {
+        Seller seller = null;
+        if (invoice != null) {
+            seller = invoice.getSeller();
+        }
+        if (seller == null && invoiceLine.getCommercialOrder() != null) {
+            seller = invoiceLine.getCommercialOrder().getSeller();
+        }
+        if (seller == null) {
+            seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+        }
+        return seller;
+    }
+
+    private void addDiscountPlanInvoice(InvoiceLine invoiceLine, DiscountPlan discountPlan) {
+        if (discountPlan != null && invoiceLine.getAmountWithoutTax() != null && invoiceLine.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0) {
+            Invoice invoice = invoiceLine.getInvoice();
+            BillingAccount billingAccount = getBillingAccount(invoice, invoiceLine);
+            Seller seller = getSeller(invoice, invoiceLine, billingAccount);
+            addDiscountPlanInvoice(discountPlan, invoiceLine, billingAccount, invoice, invoiceLine.getAccountingArticle(), seller);
+        }
+    }
+
+    private void updateDsicountPlan(InvoiceLine invoiceLine, org.meveo.apiv2.billing.InvoiceLine resource, DiscountPlan oldDiscountPlan) {
+        if (invoiceLine.getInvoice() != null && invoiceLine.getInvoice().getStatus() != VALIDATED) {
+            String oldDiscountPlanCode = oldDiscountPlan != null ? oldDiscountPlan.getCode() : null;
+            // if there is a new discount plan (it can be null also), remove the discount invoice line if exists.
+            if (!StringUtils.isBlank(oldDiscountPlanCode) && !oldDiscountPlanCode.equalsIgnoreCase(resource.getDiscountPlanCode())) {
+                List<Long> discountedInvoiceLineIds = getDiscountLines(invoiceLine.getId());
+                if (!discountedInvoiceLineIds.isEmpty()) {
+                    remove(discountedInvoiceLineIds.stream().collect(Collectors.toSet()));
+                    invoiceLine.setDiscountAmount(BigDecimal.ZERO);
+                }
+                invoiceLine.setDiscountPlan(null);
+            }
+            // add the new discount plan.
+            if (!StringUtils.isBlank(resource.getDiscountPlanCode()) && !resource.getDiscountPlanCode().equalsIgnoreCase(oldDiscountPlanCode)) {
+                DiscountPlan newDiscountPlan = (DiscountPlan) tryToFindByEntityClassAndCode(DiscountPlan.class, resource.getDiscountPlanCode());
+                invoiceLine.setDiscountPlan(newDiscountPlan);
+                addDiscountPlanInvoice(invoiceLine, newDiscountPlan);
+            }
+        }
+    }
+
+    /**
+     * Update Invoice Line
+     *
+     * @param invoiceLine  Invoice Line to update {@link InvoiceLine}
+     * @param resource     Invoice Line input {@link org.meveo.apiv2.billing.InvoiceLine}
+     * @param discountPlan Invoice Line dsicount plan {@link DiscountPlan}
+     */
+    public void updateInvoiceLine(InvoiceLine invoiceLine, org.meveo.apiv2.billing.InvoiceLine resource, DiscountPlan discountPlan) {
+        updateDsicountPlan(invoiceLine, resource, discountPlan);
+        update(invoiceLine);
     }
 }
