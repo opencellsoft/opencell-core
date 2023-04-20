@@ -175,18 +175,13 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private CounterInstance instantiateCounter(BusinessService service, ICounterEntity entity, CounterTemplate counterTemplate, ChargeInstance chargeInstance, boolean isVirtual) {
         CounterInstance counterInstance = new CounterInstance();
-        log.info("instantiateCounter chargeInstance={}",chargeInstance.getCode());
-        
-        entity.getCounters().forEach((key, value) -> {
-            log.info("instantiateCounter ci code={}, chg instances size={}",key, value.getChargeInstances().size());
-        });
+        log.debug("instantiateCounter chargeInstance={}",chargeInstance.getCode());
         
         if (!entity.getCounters().containsKey(counterTemplate.getCode()) || !entity.getCounters().get(counterTemplate.getCode()).getChargeInstances().contains(chargeInstance)) {
             counterInstance.setCounterTemplate(counterTemplate);
             counterInstance.setCode(counterTemplate.getCode()+"-"+chargeInstance.getCode());
-            counterInstance.setDescription(counterTemplate.getDescription()+" - "+chargeInstance.getCode());
             
-            log.info("instantiateCounter step2 chargeInstance={}, counterInstance={}",chargeInstance.getCode(),counterInstance.getCode());
+            log.debug("instantiateCounter step2 chargeInstance={}, counterInstance={}",chargeInstance.getCode(),counterInstance.getCode());
             if (entity instanceof Customer) {
                 counterInstance.setCustomer((Customer) entity);
             } else if (entity instanceof CustomerAccount) {
