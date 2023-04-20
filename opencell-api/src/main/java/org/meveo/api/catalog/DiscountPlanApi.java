@@ -96,8 +96,8 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         discountPlan.setDiscountPlanaApplicableEntities(getApplicableEntities(postData.getApplicableEntities()));
         discountPlan.setUsedQuantity(postData.getUsedQuantity());
         discountPlan.setSequence(postData.getSequence());
-        discountPlan.setApplicableOnOverriddenPrice(postData.getApplicableOnOverriddenPrice() != null ? postData.getApplicableOnOverriddenPrice() : false);
-        discountPlan.setApplicableOnDiscountedPrice(postData.getApplicableOnDiscountedPrice() != null ? postData.getApplicableOnDiscountedPrice() : false);
+        discountPlan.setApplicableOnOverriddenPrice(postData.isApplicableOnOverriddenPrice());
+        discountPlan.setApplicableOnDiscountedPrice(postData.isApplicableOnDiscountedPrice());
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlan, true);
@@ -195,8 +195,8 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 	        	discountPlan.setSequence(postData.getSequence());
 	        }
 
-            discountPlan.setApplicableOnOverriddenPrice(postData.getApplicableOnOverriddenPrice() != null ? postData.getApplicableOnOverriddenPrice() : false);
-            discountPlan.setApplicableOnDiscountedPrice(postData.getApplicableOnDiscountedPrice() != null ? postData.getApplicableOnDiscountedPrice() : false);
+            discountPlan.setApplicableOnOverriddenPrice(postData.isApplicableOnOverriddenPrice());
+            discountPlan.setApplicableOnDiscountedPrice(postData.isApplicableOnDiscountedPrice());
 
 	        // populate customFields
 	        try {
