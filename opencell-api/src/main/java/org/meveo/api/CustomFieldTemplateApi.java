@@ -560,6 +560,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (dto.getFieldsEL() != null) {
             cft.setFieldsEL(dto.getFieldsEL());
         }
+        cft.setAnonymizeGdpr(dto.isAnonymize());
         return cft;
 
     }
