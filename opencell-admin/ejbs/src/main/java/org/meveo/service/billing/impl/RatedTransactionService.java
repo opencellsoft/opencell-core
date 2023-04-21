@@ -1789,12 +1789,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id",
                     "useSpecificPriceConversion as use_specific_price_conversion",
-                    "SUM(a.convertedUnitAmountWithoutTax) as converted_unit_amount_without_tax",
-                    "SUM(a.convertedUnitAmountTax) as converted_unit_amount_tax",
-                    "SUM(a.convertedUnitAmountWithTax) as converted_unit_amount_with_tax",
-                    "SUM(a.convertedAmountWithoutTax) as sum_converted_amount_without_tax", 
-                    "SUM(a.convertedAmountTax) as sum_converted_amount_tax",
-                    "SUM(a.convertedAmountWithTax) as sum_converted_amount_with_tax"));
+                    "convertedUnitAmountWithoutTax as converted_unit_amount_without_tax",
+                    "convertedUnitAmountTax as converted_unit_amount_tax",
+                    "convertedUnitAmountWithTax as converted_unit_amount_with_tax",
+                    "convertedAmountWithoutTax as sum_converted_amount_without_tax", 
+                    "convertedAmountTax as sum_converted_amount_tax",
+                    "convertedAmountWithTax as sum_converted_amount_with_tax"));
         }
         if(BILLINGACCOUNT != type || (BILLINGACCOUNT == type && !ignoreSubscription)) {
             fieldToFetch.add("subscription.id as subscription_id");
@@ -1879,34 +1879,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 null, getEntityCondition(be), null, false, lastTransactionDate);
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
     }
-
-	/**
-	 * @param billableEntity
-	 * @param pageSize
-	 * @param pageIndex
-	 * @return
-	 */
-	public List<RatedTransaction> getRatedTransactionHavingEmptyAccountingArticle(IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
-		QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt ", "rt");
-		if (billableEntity instanceof Subscription) {
-        	qb.addCriterion("rt.subscription.id ", "=", billableEntity.getId(), false);
-        } else if (billableEntity instanceof BillingAccount) {
-        	qb.addCriterion("rt.billingAccount.id ", "=", billableEntity.getId(), false);
-        } else if (billableEntity instanceof Order) {
-        	qb.addCriterion("orderNumber ","=", ((Order) billableEntity).getOrderNumber(), false);
-        }
-        	qb.addSql(" rt.status='OPEN' and accountingArticle is null ");
-        try {
-            final Query query = qb.getQuery(getEntityManager());
-            if(pageIndex!=null && pageSize!=null) {
-            	query.setMaxResults(pageSize).setFirstResult(pageIndex * pageSize);
-            }
-			return query.getResultList();
-        } catch (NoResultException e) {
-        	log.error(e.getMessage());
-            return null;
-        }
-	}
 
 	public List<BillingAccount> applyInvoicingRules(List<RatedTransaction> rTs) {
         List<BillingAccount> billingAccounts = null;
