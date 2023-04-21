@@ -56,7 +56,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
@@ -69,6 +69,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.generics.GenericRequestMapper;
 import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -208,6 +209,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private MinAmountService minAmountService;
 
     @Inject
+    private ParamBeanFactory paramBeanFactory;
+
+    @Inject
     private AccountingArticleService accountingArticleService;
 
     @Inject
@@ -266,7 +270,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public void createRatedTransactions(IBillableEntity entityToInvoice, Date uptoInvoicingDate) {
         List<WalletOperation> walletOps = walletOperationService.listToRate(entityToInvoice, uptoInvoicingDate);
 
-        EntityManager em = getEntityManager();
+//        EntityManager em = getEntityManager();
 
         Date now = new Date();
         for (WalletOperation walletOp : walletOps) {
@@ -1698,6 +1702,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate
      * @param invoiceDate
      * @param filter
+     * @param pageSize 
+     * @param pageIndex 
      * @return
      */
     public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
@@ -1765,14 +1771,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
                     "min(a.startDate) as start_date", "max(a.endDate) as end_date",
                     "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id",
-                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id",
-                    "useSpecificPriceConversion as use_specific_price_conversion",
-                    "SUM(a.convertedUnitAmountWithoutTax) as converted_unit_amount_without_tax",
-                    "SUM(a.convertedUnitAmountTax) as converted_unit_amount_tax",
-                    "SUM(a.convertedUnitAmountWithTax) as converted_unit_amount_with_tax",
-                    "SUM(a.convertedAmountWithoutTax) as sum_converted_amount_without_tax", 
-                    "SUM(a.convertedAmountTax) as sum_converted_amount_tax",
-                    "SUM(a.convertedAmountWithTax) as sum_converted_amount_with_tax"));
+                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
         } else {
             fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
                     "billingAccount.id as billing_account__id", "accountingCode.id as accounting_code_id",
@@ -1781,14 +1780,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "startDate as start_date", "endDate as end_date", "orderNumber as order_number", "taxPercent as tax_percent",
                     "tax.id as tax_id", "infoOrder.order.id as order_id", "infoOrder.productVersion.id as product_version_id",
                     "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id",
-                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id",
-                    "useSpecificPriceConversion as use_specific_price_conversion",
-                    "convertedUnitAmountWithoutTax as converted_unit_amount_without_tax",
-                    "convertedUnitAmountTax as converted_unit_amount_tax",
-                    "convertedUnitAmountWithTax as converted_unit_amount_with_tax",
-                    "convertedAmountWithoutTax as sum_converted_amount_without_tax", 
-                    "convertedAmountTax as sum_converted_amount_tax",
-                    "convertedAmountWithTax as sum_converted_amount_with_tax"));
+                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
         }
         if(BILLINGACCOUNT != type || (BILLINGACCOUNT == type && !ignoreSubscription)) {
             fieldToFetch.add("subscription.id as subscription_id");
@@ -1849,7 +1841,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return " group by a.billingAccount.id, a.accountingCode.id" + useAccountingLabel + aggregateWithUnitAmount + ","
                 + " a.offerTemplate, " + usageDateAggregation + ignoreSubscriptionClause
                 + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.productVersion.id "
-                + ", a.accountingArticle.id, a.discountedRatedTransaction, a.useSpecificPriceConversion";
+                + ", a.accountingArticle.id, a.discountedRatedTransaction";
     }
 
     private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
@@ -1874,7 +1866,35 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
     }
 
-    public List<BillingAccount> applyInvoicingRules(List<RatedTransaction> rTs) {
+	/**
+	 * @param billableEntity
+	 * @param pageSize
+	 * @param pageIndex
+	 * @return
+	 */
+	public List<RatedTransaction> getRatedTransactionHavingEmptyAccountingArticle(IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
+		QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt ", "rt");
+		if (billableEntity instanceof Subscription) {
+        	qb.addCriterion("rt.subscription.id ", "=", billableEntity.getId(), false);
+        } else if (billableEntity instanceof BillingAccount) {
+        	qb.addCriterion("rt.billingAccount.id ", "=", billableEntity.getId(), false);
+        } else if (billableEntity instanceof Order) {
+        	qb.addCriterion("orderNumber ","=", ((Order) billableEntity).getOrderNumber(), false);
+        }
+        	qb.addSql(" rt.status='OPEN' and accountingArticle is null ");
+        try {
+            final Query query = qb.getQuery(getEntityManager());
+            if(pageIndex!=null && pageSize!=null) {
+            	query.setMaxResults(pageSize).setFirstResult(pageIndex * pageSize);
+            }
+			return query.getResultList();
+        } catch (NoResultException e) {
+        	log.error(e.getMessage());
+            return null;
+        }
+	}
+
+	public List<BillingAccount> applyInvoicingRules(List<RatedTransaction> rTs) {
         List<BillingAccount> billingAccounts = null;
         if (rTs.size() !=0) {
             List<Long> ratedTransactionIds = rTs.stream().map(RatedTransaction::getId).collect(toList());
@@ -2154,5 +2174,4 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         filters = genericRequestMapper.evaluateFilters(filters, entityClass);
         return new PaginationConfiguration(filters);
     }
-    
 }

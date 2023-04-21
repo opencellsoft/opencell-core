@@ -50,7 +50,6 @@ import javax.ejb.EJB;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
@@ -792,7 +791,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (config.isCacheable()) {
             query.setHint("org.hibernate.cacheable", true);
         }
-        return query.setFlushMode(FlushModeType.AUTO).getResultList();
+        return query.getResultList();
     }
 
     public QueryBuilder listQueryBuilder(PaginationConfiguration config) {
@@ -1752,24 +1751,39 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return notifications != null && !notifications.isEmpty();
     }
 
-
-
     /**
      * Execute a HQL select query
      *
      * @param hqlQuery HQL query to execute
      * @param params Parameters to pass
+     * @param pageSize 
+     * @param pageIndex 
      * @return A map of values retrieved
      */
-    public List<Map<String, Object>> getSelectQueryAsMap(String hqlQuery, Map<String, Object> params) {
-        TypedQuery<Tuple> query = getEntityManager().createQuery(hqlQuery, Tuple.class);
+    public List<Map<String, Object>> getSelectQueryAsMap(String hqlQuery, Map<String, Object> params){
+    	return getSelectQueryAsMap(hqlQuery, params, null, null);
+    }
 
+    
+    /**
+     * Execute a HQL select query
+     *
+     * @param hqlQuery HQL query to execute
+     * @param params Parameters to pass
+     * @param pageSize 
+     * @param pageIndex 
+     * @return A map of values retrieved
+     */
+    public List<Map<String, Object>> getSelectQueryAsMap(String hqlQuery, Map<String, Object> params, Integer pageSize, Integer pageIndex) {
+        TypedQuery<Tuple> query = getEntityManager().createQuery(hqlQuery, Tuple.class);
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.entrySet()) {
                 query.setParameter(entry.getKey(), entry.getValue());
             }
         }
-
+        if(pageIndex!=null && pageSize!=null) {
+        	query.setMaxResults(pageSize).setFirstResult(pageIndex * pageSize);
+        }
         return query.getResultStream().map(mapTuplesAsMap()).collect(Collectors.toList());
     }
 

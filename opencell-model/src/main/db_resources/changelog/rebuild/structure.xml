@@ -10818,6 +10818,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="subscription_id" type="bigint"/>
+            <column name="user_account_id" type="bigint"></column>
             <column name="service_instance_id" type="bigint"/>
             <column name="offer_template_id" type="bigint"/>
             <column name="order_lot_id" type="bigint"/>
@@ -19638,6 +19639,11 @@
 			baseColumnNames="trading_currency_id" 
 			baseTableName="billing_rated_transaction" />
     </changeSet>
+    
+    <changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+	</changeSet>
     
    	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA."/>
    	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA."/>

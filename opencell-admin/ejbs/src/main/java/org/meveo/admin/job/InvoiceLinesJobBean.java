@@ -10,7 +10,6 @@ import static org.meveo.model.billing.BillingRunStatusEnum.CREATING_INVOICE_LINE
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +17,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -63,6 +64,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     
     @Inject
     private BillingRunExtensionService billingRunExtensionService;
+    
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug(" Running for with parameter={}", jobInstance.getParametres());
@@ -102,16 +105,14 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         int billableEntitiesSize=0;
                         final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", billingRunService.SHORT_MAX_VALUE);
                         if (billingAccountsIDs.size() > maxValue) {
-                            List<Long> ids = new ArrayList<>();
                             List<List<Long>> invoiceLineIdsSubList = partition(billingAccountsIDs, maxValue);
                             invoiceLineIdsSubList.forEach(subIdsList -> processInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration,
-                            		billingRun, nbRuns, waitingMillis, maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, ids));
+                            		billingRun, nbRuns, waitingMillis, maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, subIdsList));
                         } else {
                         	processInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration, billingRun, nbRuns, waitingMillis,
 									maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, billingAccountsIDs);
                         }
                         
-                        billingRunService.update(billingRun);
                         billingRunExtensionService.updateBillingRunStatistics(billingRun, basicStatistics, billableEntitiesSize, INVOICE_LINES_CREATED);
             		    result.setNbItemsCorrectlyProcessed(basicStatistics.getCount());
                         billingRunService.updateBillingRunJobExecution(billingRun, result);
@@ -124,7 +125,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
             log.error(format("Failed to run invoice lines job: %s", exception));
         }
     }
-
 
 	private int processInvoiceLinesGeneration(JobExecutionResultImpl result, JobInstance jobInstance,
 			AggregationConfiguration aggregationConfiguration, BillingRun billingRun, Long nbRuns, Long waitingMillis,
@@ -139,12 +139,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     
     
     /**
-         * @param waitingMillis
     	 * @param waitingMillis
          * @param jobInstance 
     	 * @param nbRuns
-         * @param jobInstance
-         * @param nbRuns 
     	 */
     	private void assignAccountingArticleIfMissingInRTs(JobExecutionResultImpl result, List<? extends IBillableEntity> billableEntities,
     			Long maxInvoiceLinesPerTransaction, Long waitingMillis, JobInstance jobInstance, Long nbRuns) {
