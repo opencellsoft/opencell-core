@@ -8125,7 +8125,7 @@
 			
 			
 
-				
+
 		]]>
 		</sql>
 	</changeSet>
@@ -8737,7 +8737,7 @@
     </changeSet>
     
     <changeSet id="INTRD_1985_20210923_data" author="TarikFA.">
-    
+
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
         	<column name="code" value="org.meveo.service.script.OrderValidationScript" />
@@ -8761,8 +8761,8 @@
             <column name="sequence_size" valueNumeric="9" />
             <column name="current_number" valueNumeric="0" />
         </insert>
-        
-        
+
+
 		<insert tableName="adm_custom_generic_entity_code">
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
 			<column name="entity_class" value="QuoteOffer" />
@@ -8771,7 +8771,7 @@
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="sequence_id" valueSequenceCurrent="bill_seq_invoice_seq" />
 		</insert>
-        
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}" />
@@ -8943,7 +8943,7 @@
 			<column name="description_i18n" value='{"FR":"Action de recouvrement","EN":"Dunning action"}'/>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="INTRD-2634_20211027" author="YoussefIZEM">
         <insert tableName="com_message_template">
             <column name="media" value="DUNNING_MEDIA" />
@@ -10060,7 +10060,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	</changeSet>
 	<changeSet id="#INTRD-1166_20211110_Business_attributes" author="MohammedELAZZOUZI"/>
 	<changeSet id="INTRD-2849_20211110" author="TarikRabeh"></changeSet>
-	
+
 	<changeSet id="#INTRD-2961_20211109-add-status-color_code" author="AmineBENAICHA" />
 
 	<changeSet id="#INTRD-2962_20211110" author="AmineBENAICHA">
@@ -11040,7 +11040,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	</changeSet>
 	
 	<changeSet id="INTRD_11783_20221201_compate_invoice_amount" author="a.rouaguebe">
-    
+
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
         	<column name="code" value="org.meveo.service.script.CompareInvoiceAmount" />
@@ -11098,11 +11098,11 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="collection" valueNumeric="0" />
 		</insert>
     </changeSet>
-    
-    
-	
+
+
+
 	<changeSet id="INTRD_12001_20221205_rebuild" author="TarikFA.">
-    
+
        <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
         	<column name="code" value="org.meveo.service.script.CompareOfferAmount" />
@@ -11132,7 +11132,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="collection" valueNumeric="1" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmount')" />
 		</insert>
-		
+
 		<insert tableName="meveo_script_parameter">
 			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
 			<column name="version" valueNumeric="0" />
@@ -11174,7 +11174,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferAmount')" />
 		</insert>
     </changeSet>
-    
+
     <changeSet id="INTRD-12266_20221214_rebuild" author="aeljaouhari">
        <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -11206,8 +11206,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCreditCategory')" />
 		</insert>
     </changeSet>
-    
-    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">    
+
+    <changeSet id="INTRD-12103_20221215_rebuild" author="HichamHANINE">
        	<insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
         	<column name="code" value="org.meveo.service.script.CompareOfferLinesAmount" />
@@ -11277,7 +11277,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount')" />
 		</insert>
     </changeSet>
-    
+
     <changeSet id="INTRD-12267_20221219_rebuild" author="aeljaouhari">
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -11338,7 +11338,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateCustomerAge')" />
 		</insert>
     </changeSet>
-    
+
     <changeSet id="INTRD-12268_20221221_rebuild" author="aeljaouhari">
         <insert tableName="meveo_script_instance">
         	<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -11371,7 +11371,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAge')" />
 		</insert>
-	
+
 		<insert tableName="meveo_script_parameter">
 			<column name="id" valueSequenceNext="meveo_script_parameter_seq" />
 			<column name="version" valueNumeric="0" />
@@ -11398,8 +11398,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="collection" valueNumeric="0" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.validation.ValidateSubscriptionAge')" />
 		</insert>
-    </changeSet> 
-    
+    </changeSet>
+
     <changeSet id="#INTRD-12677_20221230_rebuild" author="aeljaouhari">
 		<insert tableName="crm_provider_order_line_type">
 			<column name="provider_id" valueNumeric="1" />
@@ -11429,7 +11429,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="description_i18n" value='{"FR":"Découpage facture","EN":"Invoice split"}'/>
 		</insert>
 	</changeSet>
-	
+
 
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
@@ -13965,6 +13965,68 @@ public class SubscriptionJobNotification extends Script {
 			<column name="params_key" value="category"/>
 		</insert>
 	</changeSet>
+
+    <changeSet id="#INTRD-5882__23-03-2022" author="Mohammed_ELAZZOUZI">
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="waitingMillis"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Waiting before next launch (ms)"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="nbRuns"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Number of parallel execution"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="-1"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="maxInvoiceLinesPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Maximum of maxInvoiceLines generated per transaction"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="maxBAsPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoicingJobV2"/>
+            <column name="description" value="commit interval"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
+
+    </changeSet>
 
 	<changeSet id="#OUTRD-63-SUB_20220926-scripts" author="Ilham-Chafik">
 		<update tableName="meveo_script_instance">
@@ -16868,7 +16930,7 @@ public class CdrFlatFileImportScript extends Script {
 			<where>code='org.meveo.service.script.CdrFlatFileImportScript'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-12891_20230105" author="aeljaouhari">
 		<insert tableName="meveo_script_instance_cat">
 			<column name="id" valueNumeric="-6" />
@@ -17163,12 +17225,12 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 	<changeSet id="#INTRD-13968" author="houdad"/>
 	<changeSet id="#INTRD-13967_20230217" author="houdad"/>
     <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
-	
+
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
-    
-    
-    
+
+
+
 </databaseChangeLog>

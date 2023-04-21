@@ -2341,7 +2341,7 @@ END $$;]]>
         	<column name="updater" type="varchar(100)"/>
         </addColumn>
     </changeSet>
-      
+
     <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
         <addColumn tableName="billing_subscription">
             <column name="payment_method_id"  type="bigint">
@@ -7131,7 +7131,7 @@ public class OrderAdvancement extends ModuleScript {
         <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
         <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
     </changeSet>
-    
+
     <changeSet id="#5884_20210119" author="MohammedELAZZOUZI">
     	<preConditions onFail="MARK_RAN">
 	       <not>
@@ -15285,7 +15285,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
          <createTable tableName="untdid_5189_allowance_code">
             <!-- Generic fields -->
@@ -15363,7 +15363,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </changeSet>
     
 
-    
+
     <changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA">
 		<addColumn tableName="billing_cycle">
             <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
@@ -15384,7 +15384,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe">
     	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
     	<addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter" />
@@ -15402,7 +15402,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         	<column name="query_parameters" type="${type.json}" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
     	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
 	      	<column name="subscription_id"/>
@@ -15419,14 +15419,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
 	      	<column name="service_instance_id"/>
 	  	</createIndex>
-    </changeSet>   
+    </changeSet>
 
     <changeSet id="#INTRD-12766_20230106" author="bourras">
         <addColumn tableName="billing_linked_invoices">
             <column name="converted_amount" type="numeric(23, 12)"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari">
 		<dropColumn columnName="validation_script" tableName="billing_invoice_validation_rule" />
 		<addColumn tableName="billing_invoice_validation_rule">
@@ -15437,7 +15437,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe">
         <addColumn tableName="report_query">
         	<column name="advanced_query" type="${type.json}" />
@@ -15529,7 +15529,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             </column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari">
         <dropNotNullConstraint tableName="billing_tax" columnName="taxation_category_id"/>
     </changeSet>
@@ -15543,7 +15543,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id"
                                  referencedTableName="billing_service_instance"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay">
 		<addColumn tableName="cpq_contract_item">
 			<column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
@@ -15553,7 +15553,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
     <changeSet id="#INTRD-12972" author="bourras">
         <dropNotNullConstraint tableName="cpq_contract" columnName="contract_date"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13957-20230214" author="houdad">
         <sql>
         DELETE FROM untdid_unit;
@@ -15721,7 +15721,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 AGGREGATE USING listagg_clob_t;
         </createProcedure>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14743_20230313" author="TarikFA.">
         <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
             <column name="event_key"/>
@@ -15752,12 +15752,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
-   
+
     <changeSet id="#INTRD-15233_20230425" author="AndriusKarpavicius">
         <sql>CREATE INDEX cpq_contract_item_code_index ON ${db.schema.adapted}cpq_contract_item(lower(code));</sql>
         <sql>CREATE INDEX cpq_contract_item_contract_index ON ${db.schema.adapted}cpq_contract_item(cpq_contract_id);</sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius">
         <dropIndex tableName="rating_cdr" indexName="rating_cdr_index"/>
         <sql>CREATE INDEX rating_cdr_ob_index ON ${db.schema.adapted}rating_cdr(origin_batch)</sql>
@@ -15765,7 +15765,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropIndex tableName="rating_edr" indexName="rating_edr_index"/>
         <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_record)</sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius">
         <sql>CREATE INDEX rating_edr_wo_index ON ${db.schema.adapted}rating_edr(wallet_operation_id)</sql>
     </changeSet>
@@ -15775,5 +15775,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
-    
+
+    <changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_invoice_line">
+            <column name="user_account_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+    </changeSet>
+
 </databaseChangeLog>

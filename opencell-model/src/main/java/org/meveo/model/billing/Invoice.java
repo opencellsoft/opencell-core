@@ -146,7 +146,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED"),
         @NamedQuery(name = "Invoice.countSuspectByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.SUSPECT"),
         @NamedQuery(name = "Invoice.getInvoiceTypeANDRecordedInvoiceID", query = "select inv.invoiceType.code, inv.recordedInvoice.id from Invoice inv where inv.id =:id"),
-        @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0, inv.convertedAmountTax =0, inv.convertedAmountWithTax = 0, inv.convertedAmountWithoutTax = 0, inv.convertedNetToPay = 0, inv.convertedAmountWithoutTaxBeforeDiscount = 0, inv.convertedDiscountAmount = 0, inv.convertedRawAmount = 0 where inv.id = :invoiceId"),
+        @NamedQuery(name = "Invoice.initAmounts", query = "UPDATE Invoice inv set inv.amount = 0, inv.amountTax = 0, inv.amountWithTax = 0, inv.amountWithoutTax = 0, inv.netToPay = 0, inv.discountAmount = 0, inv.amountWithoutTaxBeforeDiscount = 0, inv.transactionalAmountTax =0, inv.transactionalAmountWithTax = 0, inv.transactionalAmountWithoutTax = 0, inv.transactionalNetToPay = 0, inv.transactionalAmountWithoutTaxBeforeDiscount = 0, inv.transactionalDiscountAmount = 0, inv.transactionalRawAmount = 0 where inv.id = :invoiceId"),
         @NamedQuery(name = "Invoice.loadByBillingRunNotValidatedInvoices", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId AND inv.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED "),
         @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId"),
         @NamedQuery(name = "Invoice.findLinkedInvoicesByIdAndType", query = "SELECT inv.invoiceNumber, inv.invoiceDate, linkedinv.amount FROM Invoice inv inner join LinkedInvoice linkedinv on inv.id = linkedinv.linkedInvoiceValue.id where linkedinv.id.id = :invoiceId and inv.invoiceType.code =: invoiceTypeCode"),
@@ -670,7 +670,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Type(type = "numeric_boolean")
     @Column(name = "dunning_collection_plan_triggered")
     private boolean dunningCollectionPlanTriggered;
-    
+    @Transient
+  	private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates;
+
     /**
      * The exchange rate that converted amounts of the invoice.
      */
@@ -683,6 +685,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_applied_rate_date")
     private Date lastAppliedRateDate = new Date();
+    @Transient
+  	private Date nextInvoiceDate;
 
     /**
      * Converted amount without tax
@@ -854,26 +858,16 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
                 }
             }
         }
-        BigDecimal appliedRate = getAppliedRate();
-        this.convertedAmountTax = this.amountTax != null
-                ? this.amountTax.multiply(appliedRate) : ZERO;
-        this.convertedAmountWithoutTax = this.amountWithoutTax != null
-                ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
-        this.convertedAmountWithTax = this.amountWithTax != null
-                ? this.amountWithTax.multiply(appliedRate) : ZERO;
-        this.convertedDiscountAmount = this.discountAmount != null
-                ? this.discountAmount.multiply(appliedRate) : ZERO;
-        this.convertedNetToPay = this.netToPay != null
-                ? this.netToPay.multiply(appliedRate) : ZERO;
-        this.convertedRawAmount = this.rawAmount != null
-                ? this.rawAmount.multiply(appliedRate) : ZERO;
-        this.convertedAmountWithoutTaxBeforeDiscount =
-                this.amountWithoutTaxBeforeDiscount != null
-                        ? this.amountWithoutTaxBeforeDiscount.multiply(appliedRate) : ZERO;
 
-        if (this.convertedInvoiceBalance != null) {
-            this.invoiceBalance = this.convertedInvoiceBalance.divide(appliedRate,2, RoundingMode.HALF_UP);
-        }
+        BigDecimal appliedRate = getAppliedRate();
+		setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
+		setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
+		setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
+		setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
+		setTransactionalNetToPay(toTransactional(netToPay, appliedRate));
+		setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
+		setTransactionalAmountWithoutTaxBeforeDiscount(toTransactional(amountWithoutTaxBeforeDiscount, appliedRate));
+		setTransactionalInvoiceBalance(toTransactional(invoiceBalance, appliedRate));
     }
 
     public String getInvoiceNumber() {
@@ -1829,7 +1823,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return convertedAmountWithoutTax;
     }
 
-    public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
+    public void setTransactionalAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
         this.convertedAmountWithoutTax = convertedAmountWithoutTax;
     }
 
@@ -1924,6 +1918,41 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return this.lastAppliedRate != null && !this.lastAppliedRate.equals(ZERO) ? this.lastAppliedRate : ONE;
     }
 
+    /**
+	 * @param invoiceSCAs
+	 * @return
+	 */
+	public void setSubCategoryInvoiceAgregate(Set<SubCategoryInvoiceAgregate> invoiceSCAs) {
+		this.subCategoryInvoiceAgregates = invoiceSCAs;
+	}
+
+	/**
+	 * @param invoiceSCAs
+	 * @return
+	 */
+	public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregate() {
+		return this.subCategoryInvoiceAgregates;
+	}
+
+	public void setNextInvoiceDate(Date nextInvoiceDate) {
+		this.nextInvoiceDate = nextInvoiceDate;
+	}
+
+	/**
+	 * @return
+	 */
+	public Date getNextInvoiceDate() {
+		return nextInvoiceDate;
+	}
+
+	/**
+	 * set all invoice amounts to 0
+	 */
+	public void initAmounts() {
+		this.amountTax=BigDecimal.ZERO;
+		this.amountWithTax=BigDecimal.ZERO;
+		this.amountWithoutTax=BigDecimal.ZERO;
+	}
 
     public BigDecimal getInvoiceBalance() {
         return invoiceBalance;

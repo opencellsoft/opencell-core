@@ -102,6 +102,7 @@ public class QueryBuilder {
     private int nbCriteriaInOrClause;
 
     private Map<String, JoinWrapper> innerJoins = new HashMap<>();
+    
     private Set<InnerJoin> rootInnerJoins = new HashSet<>();
 
     protected PaginationConfiguration paginationConfiguration;
@@ -131,7 +132,7 @@ public class QueryBuilder {
 		this.joinType = joinType;
 	}
 
-	public Class<?> getEntityClass() {
+    public Class<?> getEntityClass() {
         return clazz;
     }
 
@@ -223,16 +224,16 @@ public class QueryBuilder {
         this(sql, null, false);
     }
     
-    public QueryBuilder(String sql, String alias) {
-    	this(sql, alias, false);
-	}
-
     /**
      * Constructor.
      * 
      * @param sql Sql
      * @param alias Alias of a main table
      */
+    public QueryBuilder(String sql, String alias) {
+    	this(sql, alias, false);
+	}
+
     public QueryBuilder(String sql, String alias, boolean distinct) {
         q = new StringBuilder(sql);
         initQueryBuilder(sql, alias);
@@ -242,7 +243,6 @@ public class QueryBuilder {
 		q = new StringBuilder(sql);
         this.alias = alias;
         params = new HashMap<String, Object>();
-        hasOneOrMoreCriteria = false;
         if (sql.toLowerCase().contains("where")) {
             hasOneOrMoreCriteria = true;
         }
@@ -264,7 +264,6 @@ public class QueryBuilder {
         this.inOrClause = qb.inOrClause;
         this.nbCriteriaInOrClause = qb.nbCriteriaInOrClause;
     }
-    
     
 	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType) {
 		this.clazz = clazz;

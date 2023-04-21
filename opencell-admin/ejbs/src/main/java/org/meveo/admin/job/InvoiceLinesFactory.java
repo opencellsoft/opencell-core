@@ -22,6 +22,7 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
@@ -35,6 +36,7 @@ import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -56,7 +58,7 @@ public class InvoiceLinesFactory {
     private ProductVersionService productVersionService = (ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
     private OrderLotService orderLotService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
     private RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
-
+    private UserAccountService userAccountService = (UserAccountService) getServiceInterface(UserAccountService.class.getSimpleName());
     private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
     private InvoiceLineService invoiceLineService =
@@ -86,6 +88,7 @@ public class InvoiceLinesFactory {
         ofNullable(data.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, ((Number)id).longValue())));
         ofNullable(data.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, ((Number)id).longValue())));
         ofNullable(data.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, ((Number)id).longValue())));
+        ofNullable(data.get("user_account_id")).ifPresent(id -> invoiceLine.setUserAccount(userAccountService.getEntityManager().getReference(UserAccount.class, id)));
         ofNullable(data.get("offer_id")).ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.getEntityManager().getReference(OfferTemplate.class, ((Number)id).longValue())));
         ofNullable(data.get("order_id")).ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, ((Number)id).longValue())));
         ofNullable(data.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.getEntityManager().getReference(ProductVersion.class, ((Number)id).longValue())));
@@ -94,8 +97,7 @@ public class InvoiceLinesFactory {
         ofNullable(data.get("article_id")).ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.getEntityManager().getReference(AccountingArticle.class, (Number)id)));
         log.debug("discounted_Ratedtransaction_id={},{}",data.get("discounted_ratedtransaction_id"),iLIdsRtIdsCorrespondence.size());
         if(data.get("discounted_ratedtransaction_id")!=null) {
-        	Long discountedILId =
-                    iLIdsRtIdsCorrespondence.get(((Number)data.get("discounted_ratedtransaction_id")).longValue());
+        	Long discountedILId = iLIdsRtIdsCorrespondence.get(((Number)data.get("discounted_ratedtransaction_id")).longValue());
         		log.debug("discountedRatedTransaction discountedILId={}",discountedILId);
         		if(discountedILId!=null) {
         			InvoiceLine discountedIL = invoiceLineService.findById(discountedILId);

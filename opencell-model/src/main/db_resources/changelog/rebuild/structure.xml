@@ -3695,7 +3695,7 @@
             <column name="description_i18n" type="${type.json}" />
             <column name="composite" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="taxation_category_id" type="bigint" />
-			<column name="vatex_id" type="bigint" /> 
+			<column name="vatex_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-195">
@@ -10763,6 +10763,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="subscription_id" type="bigint"/>
+            <column name="user_account_id" type="bigint"></column>
             <column name="service_instance_id" type="bigint"/>
             <column name="offer_template_id" type="bigint"/>
             <column name="order_lot_id" type="bigint"/>
@@ -19361,7 +19362,7 @@
 
 	<changeSet id="#INTR-12382_20221219" author="HichamHANINE" />
 	<changeSet id="#INTRD-12677_20221229" author="AdilElJaouhari" />
-	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" /> 
+	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" />
 	<changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA" />
 	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" />
     <changeSet id="#INTRD-12544_20230102" author="bourras"/>
@@ -19388,6 +19389,11 @@
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15501_20230413" author="ThangNguyen" />
+
+    <changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+    </changeSet>
     
     
     

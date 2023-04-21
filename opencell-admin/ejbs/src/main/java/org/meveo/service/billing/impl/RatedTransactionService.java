@@ -55,6 +55,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
@@ -65,6 +66,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -207,6 +209,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private MinAmountService minAmountService;
 
     @Inject
+    private ParamBeanFactory paramBeanFactory;
+
+    @Inject
     private AccountingArticleService accountingArticleService;
 
     @Inject
@@ -227,7 +232,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private DiscountPlanItemService discountPlanItemService;
-    
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
      *
@@ -271,7 +276,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public void createRatedTransactions(IBillableEntity entityToInvoice, Date uptoInvoicingDate) {
         List<WalletOperation> walletOps = walletOperationService.listToRate(entityToInvoice, uptoInvoicingDate);
 
-        EntityManager em = getEntityManager();
+//        EntityManager em = getEntityManager();
 
         Date now = new Date();
         for (WalletOperation walletOp : walletOps) {
@@ -1560,7 +1565,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountWithoutTax(amounts[0]);
         ratedTransaction.setAmountWithTax(amounts[1]);
         ratedTransaction.setAmountTax(amounts[2]);
-        
+
 
         if(param1 != null) {
             ratedTransaction.setParameter1(param1);
@@ -1663,6 +1668,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param aggregationConfiguration
      * @param be
      * @param lastTransactionDate
+     * @param invoiceDate
+     * @param pageSize
+     * @param pageIndex
      * @return
      */
     public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
@@ -1862,6 +1870,7 @@ log.info("final query here {}", query);
                 + " a.offerTemplate, " + usageDateAggregation + ignoreSubscriptionClause
                 + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.productVersion.id "
                 + ", a.accountingArticle.id, a.discountedRatedTransaction";
+                + ", a.accountingArticle.id, a.discountedRatedTransaction";
     }
 
     private Map<String, String> buildMapToInvoiceLineTable(AggregationConfiguration aggregationConfiguration) {
@@ -1932,7 +1941,35 @@ log.info("final query here {}", query);
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
     }
 
-    public List<BillingAccount> applyInvoicingRules(List<RatedTransaction> rTs) {
+	/**
+	 * @param billableEntity
+	 * @param pageSize
+	 * @param pageIndex
+	 * @return
+	 */
+	public List<RatedTransaction> getRatedTransactionHavingEmptyAccountingArticle(IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
+		QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt ", "rt");
+		if (billableEntity instanceof Subscription) {
+        	qb.addCriterion("rt.subscription.id ", "=", billableEntity.getId(), false);
+        } else if (billableEntity instanceof BillingAccount) {
+        	qb.addCriterion("rt.billingAccount.id ", "=", billableEntity.getId(), false);
+        } else if (billableEntity instanceof Order) {
+        	qb.addCriterion("orderNumber ","=", ((Order) billableEntity).getOrderNumber(), false);
+        }
+        	qb.addSql(" rt.status='OPEN' and accountingArticle is null ");
+        try {
+            final Query query = qb.getQuery(getEntityManager());
+            if(pageIndex!=null && pageSize!=null) {
+            	query.setMaxResults(pageSize).setFirstResult(pageIndex * pageSize);
+            }
+			return query.getResultList();
+        } catch (NoResultException e) {
+        	log.error(e.getMessage());
+            return null;
+        }
+	}
+
+	public List<BillingAccount> applyInvoicingRules(List<RatedTransaction> rTs) {
         List<BillingAccount> billingAccounts = null;
         if (rTs.size() !=0) {
             List<Long> ratedTransactionIds = rTs.stream().map(RatedTransaction::getId).collect(toList());
@@ -1960,7 +1997,7 @@ log.info("final query here {}", query);
                 boolean isApply = false;
                 for(RatedTransaction rt : lstRatedTransaction) {
                     if(rt.getRulesContract() != null) {
-                        List<BillingRule> billingRules = billingRulesService.findAllBillingRulesByBillingAccountAndContract(billingAccount, rt.getRulesContract());                
+                        List<BillingRule> billingRules = billingRulesService.findAllBillingRulesByBillingAccountAndContract(billingAccount, rt.getRulesContract());
                         isApply = false;
                         for(BillingRule billingRule : billingRules) { 
                             if(!isApply) {

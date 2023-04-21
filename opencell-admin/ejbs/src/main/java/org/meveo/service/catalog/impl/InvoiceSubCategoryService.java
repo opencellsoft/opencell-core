@@ -20,6 +20,9 @@ package org.meveo.service.catalog.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -40,7 +43,10 @@ import org.meveo.service.base.ValueExpressionWrapper;
  */
 @Stateless
 public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategory> {
+	
+	private Map<Long, InvoiceSubCategory> invoiceSubCategoryMap = new TreeMap<Long, InvoiceSubCategory>();
 
+	
     @SuppressWarnings("unchecked")
     public List<InvoiceSubCategory> findByInvoiceCategory(InvoiceCategory invoiceCategory) {
         QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
@@ -84,6 +90,7 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         super.create(subCat);
         // Needed to refresh InvoiceCategory as InvoiceCategory.invoiceSubCategories field as it is cached
         refresh(subCat.getInvoiceCategory());
+        invoiceSubCategoryMap.put(subCat.getId(),subCat);
     }
 
     @Override
@@ -91,6 +98,7 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         subCat = super.update(subCat);
         // Needed to refresh InvoiceCategory as InvoiceCategory.invoiceSubCategories field as it is cached
         refresh(subCat.getInvoiceCategory());
+        invoiceSubCategoryMap.put(subCat.getId(),subCat);
         return subCat;
     }
 
@@ -99,5 +107,20 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         super.remove(subCat);
         // Needed to remove from InvoiceCategory.invoiceSubCategories field as it is cached
         subCat.getInvoiceCategory().getInvoiceSubCategories().remove(subCat);
+        if(invoiceSubCategoryMap.containsKey(subCat.getId())) {
+        	invoiceSubCategoryMap.remove(subCat.getId());
+        }
     }
+
+	/**
+	 * @param invoiceSubCategoryId
+	 * @return
+	 */
+	public InvoiceSubCategory findFromMap(long invoiceSubCategoryId) {
+		if(invoiceSubCategoryMap.isEmpty()) {
+	        List<InvoiceSubCategory> invoiceSubCategories = getEntityManager().createNamedQuery("InvoiceSubCategory.listWithCategory").getResultList();
+			invoiceSubCategoryMap = invoiceSubCategories.stream().collect(Collectors.toMap(InvoiceSubCategory::getId, Function.identity()));
+		}
+		return invoiceSubCategoryMap.get(invoiceSubCategoryId);
+	}
 }

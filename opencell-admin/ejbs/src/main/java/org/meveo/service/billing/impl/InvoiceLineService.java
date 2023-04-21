@@ -16,7 +16,6 @@ import static org.meveo.commons.utils.ParamBean.getInstance;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -38,7 +37,6 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -148,10 +146,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private SellerService sellerService;
-    
-    @Inject
-	private BillingRunService billingRunService;
-    
+
     @Inject
     private DiscountPlanItemService discountPlanItemService;
     
@@ -237,21 +232,22 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         if (accountingArticle != null && entity.getTax() == null) {
              seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
-         }
+        }
+
         super.create(entity);
         
         if(!isDuplicated && entity.getDiscountPlan() != null && entity.getAmountWithoutTax().compareTo(BigDecimal.ZERO)>0 ) {
         	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount,invoice, accountingArticle, seller);
         }
-		
+
 		return entity;
     }
-    
+
     private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
     	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount,invoice!=null?invoice.getInvoiceDate():null);
     	if(isDiscountApplicable) {
     		List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discount, null, null, accountingArticle, 
-    				null, invoice!=null?invoice.getInvoiceDate():null);
+    				null, invoice!=null?invoice.getInvoiceDate():new Date());
             BigDecimal invoiceLineDiscountAmount = addDiscountPlanInvoiceLine(discountItems, entity, invoice, billingAccount, seller);
             entity.setDiscountAmount(invoiceLineDiscountAmount);
     	}
@@ -271,9 +267,10 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                         taxPercent = taxInfo.tax.getPercent();
                 }
                 BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(invoiceLine.getUnitPrice(), discountPlanItem,invoiceLine.getProduct(), Collections.emptyList());
-                if(discountAmount != null) {
-                	invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountAmount);
+                if(discountAmount == null || discountAmount == BigDecimal.ZERO) {
+                	continue;
         	  	}
+		invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountAmount);
                 BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceLineDiscountAmount, invoiceLineDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                 var quantity = invoiceLine.getQuantity();
                 discountInvoice.setUnitPrice(invoiceLineDiscountAmount);
@@ -596,11 +593,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 			final Subscription subscription = serviceInstance.getSubscription();
 			if(subscription!=null) {
 				invoiceLine.setSubscription(subscription);
+				invoiceLine.setUserAccount(subscription.getUserAccount());
 			}
         }
         if (entity instanceof Subscription) {
             final Subscription subscription = (Subscription) entity;
 			invoiceLine.setSubscription(subscription);
+            invoiceLine.setUserAccount(subscription.getUserAccount());
+        }
+        if (entity instanceof UserAccount) {
+            invoiceLine.setUserAccount((UserAccount) entity);
         }
         if (billableEntity instanceof Subscription) {
             invoiceLine.setSubscription((Subscription) billableEntity);
@@ -812,7 +814,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 throw new BusinessException("accountingArticleCode should be 'ART_SECURITY_DEPOSIT'");
             }
         }
-        
+
         return invoiceLine;
     }
 
@@ -1102,6 +1104,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             }
             invoiceLines.add(invoiceLine);
         }
+        basicStatistics.setCount(groupedRTs.size());
         return basicStatistics;
     }
 
@@ -1111,6 +1114,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @param billingRun
 	 * @param be billableEntity
 	 * @param basicStatistics
+	 * @param pageSize
+	 * @return
 	 * @return
 	 */
     @JpaAmpNewTx

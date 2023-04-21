@@ -5576,7 +5576,7 @@ Opencell team.
 			<where> policy_condition_target='IsCompany'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-3262_20211123" author="YoussefIZEM">
 		<update tableName="dunning_collection_plan_statuses">
 			<column name="status">ACTIVE</column>
@@ -5599,7 +5599,7 @@ Opencell team.
 			<where>status = 'Stop'</where>
 		</update>
 	</changeSet>
-	
+
     <changeSet id="INTRD-2756_20211110" author="Mohammed_ELAZZOUZI">
 		<insert tableName="meveo_job_instance">
 			<column name="id"  valueSequenceNext="meveo_job_instance_seq" />
@@ -15455,18 +15455,18 @@ public class CdrFlatFileImportScript extends Script {
 			INSERT INTO ${db.schema.adapted}untdid_5189_allowance_code(id,version,created,updated,creator,updater,code,description) VALUES (18, 0, now(), NULL, 'opencell.admin', NULL, '104', 'Standard');
 			INSERT INTO ${db.schema.adapted}untdid_5189_allowance_code(id,version,created,updated,creator,updater,code,description) VALUES (19, 0, now(), NULL, 'opencell.admin', NULL, '105', 'Yearly turnover');	
 			
-			
+
 		]]>
 		</sql>
 		</changeSet>
 		
 		<changeSet id="#INTRD-12085_20221221" author="HatimOUDAD">
 	
-				
+
 				<update tableName="billing_tax">
 					<column name="vatex_id" value="57" />
 					<where> tax_percentage = 0</where>
-				</update>
+				</update>					
 				
 				<update tableName="billing_invoice_type">
 					<column name="invoice_code_type_id" value="30" />
@@ -15495,7 +15495,7 @@ public class CdrFlatFileImportScript extends Script {
 				</update>
 			
 		</changeSet>
-		
+
 	<changeSet id="#INTRD-12546_20221230" author="aeljaouhari">
 		<insert tableName="meveo_script_instance_cat">
 			<column name="id" valueNumeric="-5"/>
@@ -16442,7 +16442,7 @@ public class ValidateBRScript extends ValidateBR {
             </column>
         </insert>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13379_20230127" author="aeljaouhari">
 		<update tableName="meveo_script_instance">
 			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. If offer list is empty, then all invoice lines will be tested regardless of their offer. For invoice to be valid, all invoice lines must pass the test. Only offer actually present on invoice will be tested."/>
@@ -16476,8 +16476,8 @@ public class ValidateBRScript extends ValidateBR {
                     valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
         </insert>
     </changeSet>
-    
-    <changeSet id="#INTRD-13122_20220111" author="HichamHANINE">	
+
+    <changeSet id="#INTRD-13122_20220111" author="HichamHANINE">
 		<update tableName="billing_invoice_type">
 			<column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
 			<where>code in ('COM','ADJ_INV', 'ADJ_REF', 'ADJ', 'SECURITY_DEPOSIT', 'ADV')</where>
@@ -16485,12 +16485,12 @@ public class ValidateBRScript extends ValidateBR {
 
 		<update tableName="billing_accounting_article">
 			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
-		</update>		
-	
+		</update>
+
 		<update tableName="ar_payment_token">
 			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '10')"></column>
 			<where>token_type = 'CASH'</where>
-		</update>		
+		</update>
 		<update tableName="ar_payment_token">
 			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '20')"></column>
 			<where>token_type = 'CHECK'</where>
@@ -16520,15 +16520,15 @@ public class ValidateBRScript extends ValidateBR {
         <delete tableName="meveo_job_instance">
             <where>code='DWH_Job_CHURN'</where>
         </delete>
-    </changeSet>	
-    
+    </changeSet>
+
     <changeSet id="#INTRD-13717_20230202" author="aeljaouhari">
     	<update tableName="meveo_script_parameter">
 			<column name="mandatory" valueNumeric="0" />
 			<where>script_instance_id in (SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount') and code = 'offers'</where>
 		</update>
 	</changeSet>
-	
+
 
 	<changeSet id="#INTRD-13967_20230215" author="houdad">
 		<update tableName="adm_currency">
@@ -16567,7 +16567,7 @@ public class ValidateBRScript extends ValidateBR {
 			<column name="currency_code" value="ZWL" />
 			<where> id = 167</where>
 		</update>
-		
+
 		<insert tableName="adm_currency">
             <column name="id" valueNumeric="-168" />
             <column name="created" valueDate="2023-02-15 00:04:03.53" />
@@ -16889,15 +16889,15 @@ public class ValidateBRScript extends ValidateBR {
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="XI" />
-		            <column name="description" value="United Kingdom (Northern Ireland)" />					
+		            <column name="description" value="United Kingdom (Northern Ireland)" />
 					<column name="currency_id" valueNumeric="65" />
 					<column name="language_id" valueNumeric="2" />
 		</insert>
 		</changeSet>
-	
+
 
 	<changeSet id="#INTRD-13957_20230213" author="houdad">
-    	 
+
         <sql>
         DELETE FROM ${db.schema.adapted}CAT_UNIT_OF_MEASURE;
         INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-1, 0, 'opencell.admin', NULL, '10', now(), NULL, 'group', 'group', NULL, 1, NULL);
@@ -19078,6 +19078,67 @@ public class ValidateBRScript extends ValidateBR {
             <column name="event_type_filter" value="STARTED" />
             <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
         </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-5882__23-03-2022" author="Mohammed_ELAZZOUZI">
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="waitingMillis"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Waiting before next launch (ms)"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="nbRuns"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Number of parallel execution"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="maxInvoiceLinesPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Maximum of maxInvoiceLines generated per transaction"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="maxBAsPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoicingJobV2"/>
+            <column name="description" value="commit interval"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>
