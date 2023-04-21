@@ -783,7 +783,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.tradingCurrency = copy.tradingCurrency;
 		this.tradingLanguage = copy.tradingLanguage;
 		this.tradingCountry = copy.tradingCountry;
-		this.alias = copy.alias;
 		this.iban = copy.iban;
 		this.isDetailedInvoice = copy.isDetailedInvoice;
 		this.discountRate = copy.discountRate;
@@ -795,6 +794,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.seller = copy.seller;
 		this.invoiceType = copy.invoiceType;
 
+		this.alias = null;
 		this.quote = null;
 		this.commercialOrder = null;
 		this.status = InvoiceStatusEnum.NEW;
