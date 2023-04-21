@@ -1759,7 +1759,14 @@ log.info("final query here {}", query);
                     "startDate as start_date", "endDate as end_date", "orderNumber as order_number", "taxPercent as tax_percent",
                     "tax.id as tax_id", "infoOrder.order.id as order_id", "infoOrder.productVersion.id as product_version_id",
                     "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id",
-                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
+                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id",
+                    "useSpecificPriceConversion as use_specific_price_conversion",
+                    "convertedUnitAmountWithoutTax as converted_unit_amount_without_tax",
+                    "convertedUnitAmountTax as converted_unit_amount_tax",
+                    "convertedUnitAmountWithTax as converted_unit_amount_with_tax",
+                    "convertedAmountWithoutTax as sum_converted_amount_without_tax",
+                    "convertedAmountTax as sum_converted_amount_tax",
+                    "convertedAmountWithTax as sum_converted_amount_with_tax"));
         }
 
         if (incrementalInvoiceLines) {
@@ -1939,34 +1946,6 @@ log.info("final query here {}", query);
 
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
     }
-
-	/**
-	 * @param billableEntity
-	 * @param pageSize
-	 * @param pageIndex
-	 * @return
-	 */
-	public List<RatedTransaction> getRatedTransactionHavingEmptyAccountingArticle(IBillableEntity billableEntity, Integer pageSize, Integer pageIndex) {
-		QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt ", "rt");
-		if (billableEntity instanceof Subscription) {
-        	qb.addCriterion("rt.subscription.id ", "=", billableEntity.getId(), false);
-        } else if (billableEntity instanceof BillingAccount) {
-        	qb.addCriterion("rt.billingAccount.id ", "=", billableEntity.getId(), false);
-        } else if (billableEntity instanceof Order) {
-        	qb.addCriterion("orderNumber ","=", ((Order) billableEntity).getOrderNumber(), false);
-        }
-        	qb.addSql(" rt.status='OPEN' and accountingArticle is null ");
-        try {
-            final Query query = qb.getQuery(getEntityManager());
-            if(pageIndex!=null && pageSize!=null) {
-            	query.setMaxResults(pageSize).setFirstResult(pageIndex * pageSize);
-            }
-			return query.getResultList();
-        } catch (NoResultException e) {
-        	log.error(e.getMessage());
-            return null;
-        }
-	}
 
 	public List<BillingAccount> applyInvoicingRules(List<RatedTransaction> rTs) {
         List<BillingAccount> billingAccounts = null;

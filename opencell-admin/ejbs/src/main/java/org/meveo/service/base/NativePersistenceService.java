@@ -1547,7 +1547,7 @@ public class NativePersistenceService extends BaseService {
      * @return DB Table name prefixed with a schema name
      */
     public String addCurrentSchema(String tableName) {
-        String currentproviderCode = currentUser.getProviderCode();
+    	String currentproviderCode = CurrentUserProvider.getCurrentTenant();
         return addCurrentSchema(tableName, currentproviderCode);
     }
 
