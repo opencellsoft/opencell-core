@@ -607,6 +607,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
 
             BigDecimal unitPrice = appProvider.isEntreprise() ? unitPriceWithoutTax : unitPriceWithTax;
+
             RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
 
             PricePlanMatrix pricePlan = null;
@@ -725,7 +726,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     	unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
                     	unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
                     }
-                    BigDecimal amount= BigDecimal.ZERO;
+                    BigDecimal amount=null;
                     BigDecimal discountRate=null;
                     PricePlanMatrixVersion ppmVersion=null;
                     PricePlanMatrixLine pricePlanMatrixLine =null;
@@ -1123,6 +1124,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (amount == null) {
             amount = walletOperation.getQuantity().multiply(unitPrice);
         }
+
         walletOperation.setAmountWithoutTax(amount);
         walletOperation.setAmountWithTax(amount);
         AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
@@ -1130,7 +1132,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         // Determine and set tax if it was not set before.
         // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
         if (walletOperation.getTax() == null) {
-
             TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
             if(taxInfo==null) {
                 throw new BusinessException("No tax found for the chargeInstance "+ walletOperation.getChargeInstance().getCode());

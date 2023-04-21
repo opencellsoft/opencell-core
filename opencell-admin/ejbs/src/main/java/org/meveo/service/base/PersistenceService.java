@@ -17,6 +17,9 @@
  */
 package org.meveo.service.base;
 
+import static java.math.BigInteger.ONE;
+import static org.meveo.jpa.EntityManagerProvider.isDBOracle;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,6 +53,7 @@ import javax.ejb.EJB;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
@@ -129,9 +133,6 @@ import org.meveo.service.notification.GenericNotificationService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
-
-import static java.math.BigInteger.ONE;
-import static org.meveo.jpa.EntityManagerProvider.isDBOracle;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -791,7 +792,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (config.isCacheable()) {
             query.setHint("org.hibernate.cacheable", true);
         }
-        return query.getResultList();
+        return query.setFlushMode(FlushModeType.AUTO).getResultList();
     }
 
     public QueryBuilder listQueryBuilder(PaginationConfiguration config) {

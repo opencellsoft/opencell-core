@@ -21,7 +21,6 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -124,7 +123,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.nullifyInvoicePDFFileNames", query = "update Invoice inv set inv.pdfFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.portInvoiceReport", query = "select inv.amountWithTax, inv.amountWithoutTax, inv.amountTax, inv.paymentMethodType, pm.yearExpiration, pm.monthExpiration, ba.electronicBilling from Invoice inv inner join inv.billingAccount ba left join inv.paymentMethod pm where inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.deleteByBR", query = "delete from Invoice inv where inv.billingRun.id=:billingRunId AND inv.status <> 'VALIDATED'"),
-        @NamedQuery(name = "Invoice.moveToBRByIds", query = "update Invoice inv set inv.billingRun=:billingRun where inv.id in (:invoiceIds)"),
+        @NamedQuery(name = "Invoice.moveToBRByIds", query = "update Invoice inv set inv.billingRun=:billingRun, inv.status=org.meveo.model.billing.InvoiceStatusEnum.DRAFT where inv.id in (:invoiceIds)"),
         @NamedQuery(name = "Invoice.moveToBR", query = "update Invoice inv set inv.billingRun=:nextBR where inv.billingRun.id=:billingRunId and inv.status in(:statusList)"),
         @NamedQuery(name = "Invoice.deleteByStatusAndBR", query = "delete from Invoice inv where inv.status in(:statusList) and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.findByStatusAndBR", query = "from Invoice inv where inv.status in (:statusList) and inv.billingRun.id=:billingRunId"),
@@ -151,7 +150,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.loadByBillingRun", query = "SELECT inv.id FROM Invoice inv WHERE inv.billingRun.id = :billingRunId"),
         @NamedQuery(name = "Invoice.findLinkedInvoicesByIdAndType", query = "SELECT inv.invoiceNumber, inv.invoiceDate, linkedinv.amount FROM Invoice inv inner join LinkedInvoice linkedinv on inv.id = linkedinv.linkedInvoiceValue.id where linkedinv.id.id = :invoiceId and inv.invoiceType.code =: invoiceTypeCode"),
         @NamedQuery(name = "Invoice.findInvoiceEligibleAdv", query = "select bi, adv from Invoice bi inner join  BillingAccount bba on bi.billingAccount.id = bba.id inner join Invoice adv on adv.billingAccount.id = bba.id inner join InvoiceType  it on it.id = adv.invoiceType.id"
-                + " where bi.billingRun.id = :billingRunId and it.code = 'ADV' and adv.status = 'VALIDATED' and adv.invoiceBalance > 0 and bi.status in ('DRAFT', 'REJECTED', 'SUSPECT') and adv.tradingCurrency.id = bi.tradingCurrency.id order by bi.id, adv.auditable.created, adv.invoiceBalance"),
+                + " where bi.billingRun.id = :billingRunId and it.code = 'ADV' and adv.status = 'VALIDATED' and adv.invoiceBalance > 0 and bi.status in ('DRAFT', 'REJECTED', 'SUSPECT') and adv.tradingCurrency.id = bi.tradingCurrency.id  order by bi.id, adv.auditable.created, adv.invoiceBalance"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvOrder", query = "select inv from Invoice inv  where  (inv.commercialOrder is null or inv.commercialOrder=:commercialOrder) and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId and inv.tradingCurrency.id =:tradingCurrencyId order by inv.commercialOrder, inv.auditable.created ASC"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithoutOrder", query = "select inv from Invoice inv  where  inv.commercialOrder is null  and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithOrder", query = "select inv from Invoice inv  where  inv.commercialOrder=:commercialOrder and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
@@ -763,14 +762,17 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     @Column(name = "transactional_invoice_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal transactionalInvoiceBalance;
+
+    @Column(name = "use_specific_price_conversion")
+    @Type(type = "numeric_boolean")
+    private boolean useSpecificPriceConversion = false;
     
     @Column(name = "conversion_from_billing_currency")
     @Type(type = "numeric_boolean")
     private boolean conversionFromBillingCurrency = false;
-
+    
     public Invoice() {
 	}
-
 
     public Invoice(Invoice copy) {
 		this.billingAccount = copy.billingAccount;
@@ -862,16 +864,19 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
                 }
             }
         }
-		
-        BigDecimal appliedRate = getAppliedRate();
-		setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
-		setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
-		setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
-		setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
-		setTransactionalNetToPay(toTransactional(netToPay, appliedRate));
-		setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
-		setTransactionalAmountWithoutTaxBeforeDiscount(toTransactional(amountWithoutTaxBeforeDiscount, appliedRate));
-		setTransactionalInvoiceBalance(toTransactional(invoiceBalance, appliedRate));
+
+		if (!this.useSpecificPriceConversion) {
+			BigDecimal appliedRate = getAppliedRate();
+			setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
+			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
+			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
+			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
+			setTransactionalNetToPay(toTransactional(netToPay, appliedRate));
+			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
+			setTransactionalAmountWithoutTaxBeforeDiscount(toTransactional(amountWithoutTaxBeforeDiscount, appliedRate));
+			setTransactionalInvoiceBalance(toTransactional(invoiceBalance, appliedRate));
+		}
+        
     }
 
     public String getInvoiceNumber() {
@@ -1021,6 +1026,33 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         }
         if (amountToAdd != null) {
             amountTax = amountTax.add(amountToAdd);
+        }
+    }
+
+    public void addTransactionalAmountWithTax(BigDecimal amountToAdd) {
+        if (transactionalAmountWithTax == null) {
+        	transactionalAmountWithTax = ZERO;
+        }
+        if (amountToAdd != null) {
+        	transactionalAmountWithTax = transactionalAmountWithTax.add(amountToAdd);
+        }
+    }
+
+    public void addTransactionalAmountWithoutTax(BigDecimal amountToAdd) {
+        if (transactionalAmountWithoutTax == null) {
+        	transactionalAmountWithoutTax = ZERO;
+        }
+        if (amountToAdd != null) {
+        	transactionalAmountWithoutTax = transactionalAmountWithoutTax.add(amountToAdd);
+        }
+    }
+
+    public void addTransactionalAmountTax(BigDecimal amountToAdd) {
+        if (transactionalAmountTax == null) {
+        	transactionalAmountTax = ZERO;
+        }
+        if (amountToAdd != null) {
+        	transactionalAmountTax = transactionalAmountTax.add(amountToAdd);
         }
     }
 
@@ -1827,56 +1859,56 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return transactionalAmountWithoutTax;
     }
 
-    public void setTransactionalAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
-        this.transactionalAmountWithoutTax = convertedAmountWithoutTax;
+    public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+        this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
     }
 
     public BigDecimal getTransactionalAmountWithTax() {
         return transactionalAmountWithTax;
     }
 
-    public void setTransactionalAmountWithTax(BigDecimal convertedAmountWithTax) {
-        this.transactionalAmountWithTax = convertedAmountWithTax;
+    public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+        this.transactionalAmountWithTax = transactionalAmountWithTax;
     }
 
     public BigDecimal getTransactionalAmountTax() {
         return transactionalAmountTax;
     }
 
-    public void setTransactionalAmountTax(BigDecimal convertedAmountTax) {
-        this.transactionalAmountTax = convertedAmountTax;
+    public void setTransactionalAmountTax(BigDecimal transactionalAmountTax) {
+        this.transactionalAmountTax = transactionalAmountTax;
     }
 
     public BigDecimal getTransactionalNetToPay() {
         return transactionalNetToPay;
     }
 
-    public void setTransactionalNetToPay(BigDecimal convertedNetToPay) {
-        this.transactionalNetToPay = convertedNetToPay;
+    public void setTransactionalNetToPay(BigDecimal transactionalNetToPay) {
+        this.transactionalNetToPay = transactionalNetToPay;
     }
 
     public BigDecimal getTransactionalRawAmount() {
         return transactionalRawAmount;
     }
 
-    public void setTransactionalRawAmount(BigDecimal convertedRawAmount) {
-        this.transactionalRawAmount = convertedRawAmount;
+    public void setTransactionalRawAmount(BigDecimal transactionalRawAmount) {
+        this.transactionalRawAmount = transactionalRawAmount;
     }
 
     public BigDecimal getTransactionalDiscountAmount() {
         return transactionalDiscountAmount;
     }
 
-    public void setTransactionalDiscountAmount(BigDecimal convertedDiscountAmount) {
-        this.transactionalDiscountAmount = convertedDiscountAmount;
+    public void setTransactionalDiscountAmount(BigDecimal transactionalDiscountAmount) {
+        this.transactionalDiscountAmount = transactionalDiscountAmount;
     }
 
     public BigDecimal getTransactionalAmountWithoutTaxBeforeDiscount() {
         return transactionalAmountWithoutTaxBeforeDiscount;
     }
 
-    public void setTransactionalAmountWithoutTaxBeforeDiscount(BigDecimal convertedAmountWithoutTaxBeforeDiscount) {
-        this.transactionalAmountWithoutTaxBeforeDiscount = convertedAmountWithoutTaxBeforeDiscount;
+    public void setTransactionalAmountWithoutTaxBeforeDiscount(BigDecimal transactionalAmountWithoutTaxBeforeDiscount) {
+        this.transactionalAmountWithoutTaxBeforeDiscount = transactionalAmountWithoutTaxBeforeDiscount;
     }
 
     public PaymentPlan getPaymentPlan() {
@@ -1978,10 +2010,26 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public BigDecimal getTransactionalInvoiceBalance() {
         return transactionalInvoiceBalance;
     }
-    public void setTransactionalInvoiceBalance(BigDecimal convertedInvoiceBalance) {
-        this.transactionalInvoiceBalance = convertedInvoiceBalance;
+    public void setTransactionalInvoiceBalance(BigDecimal transactionalInvoiceBalance) {
+        this.transactionalInvoiceBalance = transactionalInvoiceBalance;
     }
-    
+
+
+	/**
+	 * @return the useSpecificPriceConversion
+	 */
+	public boolean isUseSpecificPriceConversion() {
+		return useSpecificPriceConversion;
+	}
+
+
+	/**
+	 * @param useSpecificPriceConversion the useSpecificPriceConversion to set
+	 */
+	public void setUseSpecificPriceConversion(boolean useSpecificPriceConversion) {
+		this.useSpecificPriceConversion = useSpecificPriceConversion;
+	}
+
 	public boolean isConversionFromBillingCurrency() {
 		return conversionFromBillingCurrency;
 	}
@@ -1989,8 +2037,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
 		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
 	}
-    
+	
 	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
 		return amount != null ? amount.multiply(rate) : ZERO;
 	}
+
 }

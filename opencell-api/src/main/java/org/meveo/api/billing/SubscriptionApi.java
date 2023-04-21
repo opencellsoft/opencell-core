@@ -2222,7 +2222,7 @@ public class SubscriptionApi extends BaseApi {
                     if (subscription.getOffer().getAllowedDiscountPlans() != null && subscription.getOffer().getAllowedDiscountPlans().contains(dp)) {
                         continue;
                     }
-                    subscriptionService.instantiateDiscountPlan(subscription, dp);
+                    serviceInstanceService.instantiateDiscountPlan(serviceToUpdate, dp, false);
                 }
             }
             removeDiscountPlanInstanceForSubscription(subscription, serviceToUpdateDto.getDiscountPlanForTermination());
@@ -3375,7 +3375,6 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setCode(product.getCode());
                 serviceInstance.setProductVersion(pVersion);
             }
-
             // add attributes
             for (AttributeInstanceDto attributeInstanceDto : postData.getAttributes()) {
                 AttributeInstance attributeInstance = new AttributeInstance();

@@ -1353,7 +1353,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                             subCatInvoiceAgregate.getInvoiceSubCategory() != null && subCatInvoiceAgregate.getInvoiceSubCategory().getSortIndex() != null
                                     ? subCatInvoiceAgregate.getInvoiceSubCategory().getSortIndex().toString()
                                     : "");
-                    subCategory.setAttribute("allowanceCode", subCatInvoiceAgregate.getDiscountPlanItem() != null && subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan() != null && subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode() != null ? subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode().getCode() : "");
                     if (subCatInvoiceAgregate.getAmountsByTax() != null && !subCatInvoiceAgregate.getAmountsByTax().isEmpty()) {
                         Element amountsByTaxXml = doc.createElement("amountsByTax");
                         subCategory.appendChild(amountsByTaxXml);
@@ -1406,7 +1405,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             discount.setAttribute("discountAmountTax", toPlainString(subCategoryInvoiceAgregate.getAmountTax()));
             discount.setAttribute("discountTransactionalAmountTax", toPlainString(subCategoryInvoiceAgregate.getTransactionalAmountTax()));
             discount.setAttribute("discountPercent", toPlainString(subCategoryInvoiceAgregate.getDiscountPercent()));
-            discount.setAttribute("allowanceCode", subCategoryInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode() != null ? subCategoryInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode().getCode() : "");
             discounts.appendChild(discount);
         }
         return discounts;
@@ -1754,6 +1752,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element sellerTag = doc.createElement("seller");
         sellerTag.setAttribute("code", seller.getCode());
         sellerTag.setAttribute("description", getDefaultIfNull(seller.getDescription(), ""));
+        sellerTag.setAttribute("legalType", getDefaultIfNull(seller.getLegalType(), ""));
         sellerTag.setAttribute("vatNo", getDefaultIfNull(seller.getVatNo(), ""));
         sellerTag.setAttribute("registrationNo", getDefaultIfNull(seller.getRegistrationNo(), ""));
         addCustomFields(seller, doc, sellerTag);
@@ -2420,7 +2419,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         subCategory.setAttribute("amountTax", toPlainString(subCatInvoiceAgregate.getAmountTax()));
         subCategory.setAttribute("transactionalAmountTax", toPlainString(subCatInvoiceAgregate.getTransactionalAmountTax()));
         subCategory.setAttribute("sortIndex", (invoiceSubCat.getSortIndex() != null) ? invoiceSubCat.getSortIndex() + "" : "");
-        subCategory.setAttribute("allowanceCode", subCatInvoiceAgregate.getDiscountPlanItem() != null && subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan() != null && subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode() != null ? subCatInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode().getCode() : "");
         Collections.sort(ratedTransactions, InvoiceCategoryComparatorUtils.getRatedTransactionComparator());
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             if ((ratedTransaction.getInvoiceAgregateF().getId() != null && !ratedTransaction.getInvoiceAgregateF().getId().equals(subCatInvoiceAgregate.getId()))
@@ -2735,6 +2733,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         article.appendChild(this.createTextNode(doc, ""));
         article.setAttribute("code", invoiceLine.getAccountingArticle() != null ? invoiceLine.getAccountingArticle().getCode() : "");
         article.setAttribute("label", invoiceLine.getAccountingArticle() != null ? invoiceLine.getAccountingArticle().getDescription() : "");
+        article.setAttribute("allowanceCode", invoiceLine.getAccountingArticle() != null && invoiceLine.getAccountingArticle().getAllowanceCode() != null ? invoiceLine.getAccountingArticle().getAllowanceCode().getCode() : "");
         line.appendChild(article);
         if (invoiceLine.getUnitPrice() != null) {
             Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
@@ -3170,7 +3169,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         subCategory.setAttribute("transactionalAmountTax", toPlainString(subCatInvoiceAggregate.getTransactionalAmountTax()));
         subCategory.setAttribute("sortIndex", (invoiceSubCat!= null && invoiceSubCat.getSortIndex() != null)
                 ? invoiceSubCat.getSortIndex() + "" : "");
-        subCategory.setAttribute("allowanceCode", subCatInvoiceAggregate.getDiscountPlanItem() != null && subCatInvoiceAggregate.getDiscountPlanItem().getDiscountPlan() != null && subCatInvoiceAggregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode() != null ? subCatInvoiceAggregate.getDiscountPlanItem().getDiscountPlan().getAllowanceCode().getCode() : "");
         for (InvoiceLine invoiceLine : invoiceLines) {
             if ((invoiceLine.getInvoiceAggregateF() != null && invoiceLine.getInvoiceAggregateF().getId() != null
                     && !invoiceLine.getInvoiceAggregateF().getId().equals(subCatInvoiceAggregate.getId()))

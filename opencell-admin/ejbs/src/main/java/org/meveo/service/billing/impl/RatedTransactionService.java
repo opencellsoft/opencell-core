@@ -1771,7 +1771,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
                     "min(a.startDate) as start_date", "max(a.endDate) as end_date",
                     "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id",
-                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
+                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id",
+                    "useSpecificPriceConversion as use_specific_price_conversion",
+                    "SUM(a.convertedUnitAmountWithoutTax) as converted_unit_amount_without_tax",
+                    "SUM(a.convertedUnitAmountTax) as converted_unit_amount_tax",
+                    "SUM(a.convertedUnitAmountWithTax) as converted_unit_amount_with_tax",
+                    "SUM(a.convertedAmountWithoutTax) as sum_converted_amount_without_tax", 
+                    "SUM(a.convertedAmountTax) as sum_converted_amount_tax",
+                    "SUM(a.convertedAmountWithTax) as sum_converted_amount_with_tax"));
         } else {
             fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
                     "billingAccount.id as billing_account__id", "accountingCode.id as accounting_code_id",
@@ -1780,7 +1787,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "startDate as start_date", "endDate as end_date", "orderNumber as order_number", "taxPercent as tax_percent",
                     "tax.id as tax_id", "infoOrder.order.id as order_id", "infoOrder.productVersion.id as product_version_id",
                     "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id",
-                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
+                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id",
+                    "useSpecificPriceConversion as use_specific_price_conversion",
+                    "SUM(a.convertedUnitAmountWithoutTax) as converted_unit_amount_without_tax",
+                    "SUM(a.convertedUnitAmountTax) as converted_unit_amount_tax",
+                    "SUM(a.convertedUnitAmountWithTax) as converted_unit_amount_with_tax",
+                    "SUM(a.convertedAmountWithoutTax) as sum_converted_amount_without_tax", 
+                    "SUM(a.convertedAmountTax) as sum_converted_amount_tax",
+                    "SUM(a.convertedAmountWithTax) as sum_converted_amount_with_tax"));
         }
         if(BILLINGACCOUNT != type || (BILLINGACCOUNT == type && !ignoreSubscription)) {
             fieldToFetch.add("subscription.id as subscription_id");
@@ -1841,7 +1855,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return " group by a.billingAccount.id, a.accountingCode.id" + useAccountingLabel + aggregateWithUnitAmount + ","
                 + " a.offerTemplate, " + usageDateAggregation + ignoreSubscriptionClause
                 + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.productVersion.id "
-                + ", a.accountingArticle.id, a.discountedRatedTransaction";
+                + ", a.accountingArticle.id, a.discountedRatedTransaction, a.useSpecificPriceConversion";
     }
 
     private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
@@ -2174,4 +2188,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         filters = genericRequestMapper.evaluateFilters(filters, entityClass);
         return new PaginationConfiguration(filters);
     }
+
+    /**
+     * Cancel billing run associated RTs
+     *
+     * @param billingRun Billing run
+     */
+    public void cancelRatedTransaction(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("RatedTransaction.cancelRatedTransactionsByBR")
+                .setParameter("billingRunId", billingRun.getId())
+                .executeUpdate();
+    }
+
 }

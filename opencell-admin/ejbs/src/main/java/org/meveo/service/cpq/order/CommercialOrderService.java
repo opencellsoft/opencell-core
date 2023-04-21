@@ -92,15 +92,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 	@Inject
 	private ProductService productService;
-	@Inject
-	private OrderProductService orderProductService;
-
-	@Override
-	public void create(CommercialOrder entity) throws BusinessException {
-		if(StringUtils.isBlank(entity.getCode()))
-			entity.setCode(UUID.randomUUID().toString());
-		super.create(entity);
-	}
 	
 	public CommercialOrder findByOrderNumer(String orderNumber) throws  BusinessException{
 		QueryBuilder queryBuilder = new QueryBuilder(CommercialOrder.class, "co");

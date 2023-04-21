@@ -1546,12 +1546,9 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private void validateProducts(QuoteVersion quoteVersion) {
-        if (quoteVersion.getQuoteArticleLines() != null) {
-            quoteVersion.getQuoteArticleLines()
+        if (quoteVersion.getQuoteProducts() != null) {
+            quoteVersion.getQuoteProducts()
                     .stream()
-                    .filter(Objects::nonNull)
-                    .map(QuoteArticleLine::getQuoteProduct)
-                    .filter(Objects::nonNull)
                     .map(QuoteProduct::getProductVersion)
                     .filter(Objects::nonNull)
                     .map(ProductVersion::getProduct)
