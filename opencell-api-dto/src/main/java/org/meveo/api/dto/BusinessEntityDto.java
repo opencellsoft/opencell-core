@@ -56,6 +56,14 @@ public class BusinessEntityDto extends AuditableEntityDto implements IEntityDto 
     protected String code;
 
     /**
+     * Composit tax : exemple 5%, 10%; 25%
+     */
+    @XmlAttribute(required = true)
+    @NotNull
+    @Schema(description = "The composite rate %")
+    protected String compositeRate;
+
+    /**
      * The description
      */
     @XmlAttribute()
@@ -159,4 +167,11 @@ public class BusinessEntityDto extends AuditableEntityDto implements IEntityDto 
         this.description = description;
     }
 
+    public String getCompositeRate() {
+        return compositeRate;
+    }
+
+    public void setCompositeRate(String compositeRate) {
+        this.compositeRate = compositeRate;
+    }
 }
