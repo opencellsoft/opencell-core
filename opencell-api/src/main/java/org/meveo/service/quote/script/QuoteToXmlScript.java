@@ -122,7 +122,9 @@ public class QuoteToXmlScript extends ModuleScript {
         PaymentMethod paymentMethod=new PaymentMethod(bac.getPaymentMethod(),entityToDtoConverter.getCustomFieldsDTO(bac.getPaymentMethod()));
         
         BillingAccount billingAccount = new BillingAccount(bac,paymentMethod,entityToDtoConverter.getCustomFieldsDTO(bac));
-        Customer customer = new Customer(bac.getCustomerAccount().getCustomer());
+        Customer customer = new Customer(bac.getCustomerAccount().getCustomer(),
+                bac.getCustomerAccount().getTradingCurrency(),
+                bac.getCustomerAccount().getTradingLanguage());
         Seller seller = new Seller(bac.getSeller());
 
         org.meveo.model.cpq.contract.Contract contract = quoteVersion.getContract();
