@@ -116,10 +116,10 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.deleteByBillingRunNotValidatedInvoices", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId AND (il.invoice.id IS NULL OR il.invoice.id in (select il2.invoice.id from InvoiceLine il2 where il2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED))"),
 		@NamedQuery(name = "InvoiceLine.linkToInvoice", query = "UPDATE InvoiceLine il set il.status=org.meveo.model.billing.InvoiceLineStatusEnum.BILLED, il.invoice=:invoice, il.invoiceAggregateF=:invoiceAgregateF where il.id in :ids"),
         @NamedQuery(name = "InvoiceLine.getInvoicingItems", query = 
-    	"select il.billingAccount.id, il.accountingArticle.invoiceSubCategory.id, il.userAccount.id, il.tax.id, sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax), count(il.id), (string_agg(cast(il.id as text),',')) "
+    	"select il.billingAccount.id, il.accountingArticle.invoiceSubCategory.id, il.userAccount.id, il.tax.id, il.invoiceGroupingKey, sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax), count(il.id), (string_agg(cast(il.id as text),',')) "
     		+ " FROM InvoiceLine il "
     		+ " WHERE il.billingRun.id=:billingRunId AND il.billingAccount.id IN (:ids) AND il.status='OPEN' "
-    		+ " group by il.billingAccount.id, il.accountingArticle.invoiceSubCategory.id, il.userAccount.id, il.tax.id "
+    		+ " group by il.billingAccount.id, il.accountingArticle.invoiceSubCategory.id, il.userAccount.id, il.tax.id, il.invoiceGroupingKey "
     		+ " order by il.billingAccount.id"),
 		@NamedQuery(name = "InvoiceLine.listDiscountLines", query = "SELECT il.id from InvoiceLine il WHERE il.discountedInvoiceLine.id = :invoiceLineId "),
 		@NamedQuery(name = "InvoiceLine.findByInvoiceAndIds", query = "SELECT il from InvoiceLine il WHERE il.invoice = :invoice and il.id in (:invoiceLinesIds)"),
@@ -423,6 +423,23 @@ public class InvoiceLine extends AuditableCFEntity {
 	@Size(max = 255)
 	private String openOrderNumber;
     
+	/**
+	 * Invoice Grouping Key
+	 */
+	@Column(name = "invoice_grouping_key")
+	@Size(max = 255)
+	private String invoiceGroupingKey;
+	
+	@Transient
+	private Long sellerId;
+
+	@Transient
+	private Long invoiceTypeId;
+
+	@Transient
+	private Long paymentMethodId;
+	
+	
 	public InvoiceLine() {
 	}
 
@@ -892,7 +909,13 @@ public class InvoiceLine extends AuditableCFEntity {
 		this.openOrderNumber = openOrderNumber;
 	}
 	
-	
+	public String getInvoiceGroupingKey() {
+		return invoiceGroupingKey;
+	}
+
+	public void setInvoiceGroupingKey(String invoiceGroupingKey) {
+		this.invoiceGroupingKey = invoiceGroupingKey;
+	}
 
 	public Integer getSequence() {
 		return sequence;
@@ -1015,5 +1038,29 @@ public class InvoiceLine extends AuditableCFEntity {
 	 */
 	public void setUserAccount(UserAccount userAccount) {
 		this.userAccount = userAccount;
+	}
+
+	public Long getSellerId() {
+		return sellerId;
+	}
+
+	public void setSellerId(Long sellerId) {
+		this.sellerId = sellerId;
+	}
+
+	public Long getInvoiceTypeId() {
+		return invoiceTypeId;
+	}
+
+	public void setInvoiceTypeId(Long invoiceTypeId) {
+		this.invoiceTypeId = invoiceTypeId;
+	}
+
+	public Long getPaymentMethodId() {
+		return paymentMethodId;
+	}
+
+	public void setPaymentMethodId(Long paymentMethodId) {
+		this.paymentMethodId = paymentMethodId;
 	}
 }

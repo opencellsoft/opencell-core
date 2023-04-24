@@ -86,14 +86,14 @@ public class InvoiceLinesFactory {
      * @param openOrderNumber
      * @return new InvoiceLine
      */
-    public InvoiceLine create(Map<String, Object> data, Map<Long, Long> iLIdsRtIdsCorrespondence,
+    public InvoiceLine create(Map<String, Object> data, Map<Long, InvoiceLine> iLIdsRtIdsCorrespondence,
                               AggregationConfiguration configuration, JobExecutionResultImpl result,
                               Provider appProvider, BillingRun billingRun, String openOrderNumber) throws BusinessException {
         return initInvoiceLine(data, iLIdsRtIdsCorrespondence,
                 appProvider, billingRun, configuration, openOrderNumber);
     }
 
-    private InvoiceLine initInvoiceLine(Map<String, Object> data, Map<Long, Long> iLIdsRtIdsCorrespondence,
+    private InvoiceLine initInvoiceLine(Map<String, Object> data, Map<Long, InvoiceLine> iLIdsRtIdsCorrespondence,
                                         Provider appProvider, BillingRun billingRun,
                                         AggregationConfiguration configuration, String openOrderNumber) {
         InvoiceLine invoiceLine = new InvoiceLine();
@@ -108,12 +108,15 @@ public class InvoiceLinesFactory {
         ofNullable(data.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, ((Number)id).longValue())));
         ofNullable(data.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, ((Number)id).longValue())));
         ofNullable(data.get("article_id")).ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.getEntityManager().getReference(AccountingArticle.class, (Number)id)));
+        ofNullable(data.get("seller_id")).ifPresent(id -> invoiceLine.setSellerId((Long) id));
+        ofNullable(data.get("invoice_type_id")).ifPresent(id -> invoiceLine.setInvoiceTypeId((Long) id));
+        ofNullable(data.get("method_payment_id")).ifPresent(id -> invoiceLine.setPaymentMethodId((Long) id));
         log.debug("discounted_Ratedtransaction_id={},{}",data.get("discounted_ratedtransaction_id"),iLIdsRtIdsCorrespondence.size());
         if(data.get("discounted_ratedtransaction_id")!=null) {
-        	Long discountedILId=iLIdsRtIdsCorrespondence.get((Long) data.get("discounted_ratedtransaction_id"));
-        		log.debug("discountedRatedTransaction discountedILId={}",discountedILId);
-        		if(discountedILId!=null) {
-        			InvoiceLine discountedIL = invoiceLineService.findById(discountedILId);
+        	InvoiceLine discountedIL=iLIdsRtIdsCorrespondence.get((Long) data.get("discounted_ratedtransaction_id"));
+        		log.debug("discountedRatedTransaction discountedIL={}",discountedIL);
+        		if(discountedIL!=null) {
+//        			InvoiceLine discountedIL = invoiceLineService.findById(discountedILId);
             		invoiceLine.setDiscountedInvoiceLine(discountedIL);
             		String[] splitrtId = rtID.split(",");
             		for (String id : splitrtId) {

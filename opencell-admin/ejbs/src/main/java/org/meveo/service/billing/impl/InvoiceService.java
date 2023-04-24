@@ -2588,7 +2588,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 AggregationConfiguration configuration = new AggregationConfiguration(appProvider.isEntreprise());
                 List<InvoiceLine> invoiceLines = new ArrayList<>();
                 invoiceLinesService.createInvoiceLines(groupedRTs, configuration,
-                        null, null, invoiceLines, generateInvoiceRequestDto.getOpenOrderCode());
+                        null, null, invoiceLines, generateInvoiceRequestDto.getOpenOrderCode(), entity);
                 invoices = createAggregatesAndInvoiceUsingIL(entity, null, filter, null, invoiceDate,
                         firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft,
                         !generateInvoiceRequestDto.getSkipValidation(), false, invoiceLines,
@@ -5558,7 +5558,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoiceTypeCode;   
     }
     
-    private PaymentMethod resolvePMethod(BillingAccount billingAccount, BillingCycle billingCycle, PaymentMethod defaultPaymentMethod, InvoiceLine invoiceLine) {
+    public PaymentMethod resolvePMethod(BillingAccount billingAccount, BillingCycle billingCycle, PaymentMethod defaultPaymentMethod, InvoiceLine invoiceLine) {
         if (BillingEntityTypeEnum.SUBSCRIPTION.equals(billingCycle.getType()) || (BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) && billingCycle.isSplitPerPaymentMethod())) {
             if (invoiceLine.getSubscription() != null
                     && Objects.nonNull(invoiceLine.getSubscription().getPaymentMethod())) {
@@ -6050,7 +6050,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     @SuppressWarnings("unchecked")
-    private List<InvoiceLinesGroup> executeBCScriptWithInvoiceLines(BillingRun billingRun, InvoiceType invoiceType, List<InvoiceLine> invoiceLines, IBillableEntity entity, String scriptInstanceCode,
+    public List<InvoiceLinesGroup> executeBCScriptWithInvoiceLines(BillingRun billingRun, InvoiceType invoiceType, List<InvoiceLine> invoiceLines, IBillableEntity entity, String scriptInstanceCode,
             PaymentMethod paymentMethod) throws BusinessException {
         HashMap<String, Object> context = new HashMap<>();
         context.put(Script.CONTEXT_ENTITY, entity);

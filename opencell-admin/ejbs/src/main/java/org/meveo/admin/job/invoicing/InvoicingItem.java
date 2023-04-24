@@ -15,6 +15,7 @@ public class InvoicingItem {
 	private Long invoiceSubCategoryId;
 	private Long userAccountId;
 	private Long taxId;
+	private String invoiceGroupingKey;
 	private BigDecimal amountWithoutTax = BigDecimal.ZERO;
 	private BigDecimal amountTax = BigDecimal.ZERO;
 	private BigDecimal amountWithTax = BigDecimal.ZERO;
@@ -27,6 +28,7 @@ public class InvoicingItem {
 		this.invoiceSubCategoryId = (Long) fields[i++];
 		this.userAccountId = (Long) fields[i++];
 		this.taxId = (Long) fields[i++];
+		this.invoiceGroupingKey = (String) fields[i++];
 		this.amountWithoutTax = (BigDecimal) fields[i++];
 		this.amountWithTax = (BigDecimal) fields[i++];
 		this.amountTax = (BigDecimal) fields[i++];
@@ -108,6 +110,13 @@ public class InvoicingItem {
 		this.taxId = taxId;
 	}
 
+	public String getInvoiceGroupingKey() {
+		return invoiceGroupingKey;
+	}
+
+	public void setInvoiceGroupingKey(String invoiceGroupingKey) {
+		this.invoiceGroupingKey = invoiceGroupingKey;
+	}
 
 	public void addAmounts(InvoiceAgregate discountAggregate) {
 		this.count = this.count + discountAggregate.getItemNumber();
