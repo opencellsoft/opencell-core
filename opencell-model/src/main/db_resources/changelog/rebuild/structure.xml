@@ -3394,6 +3394,7 @@
             <column name="reject_reason" type="varchar(4000)" />
             <column name="origin_billing_account" type="bigint" />
             <column name="rules_contract_id" type="bigint" />
+            <column name="discounted_amount" type="numeric(23,12)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
