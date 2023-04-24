@@ -16,6 +16,7 @@ import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -266,7 +267,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
 
         if (sumInvoiceLines.compareTo(possibleAdjAmount) > 0) {
-            throw new BusinessException("The invoice line amount is greater than the possible adjustment value [" + possibleAdjAmount + "]");
+            throw new BusinessException("The selected invoice line amount is greater than the possible remaining amount on invoice : " + new DecimalFormat("0.00").format(possibleAdjAmount));
         }
     }
 
