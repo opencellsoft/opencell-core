@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="EPE3-20230411-006"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Disc-Emmaneul"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -263,8 +263,8 @@
 	<field name="total" class="java.lang.String">
 		<fieldDescription><![CDATA[ancestor::taxes/@total]]></fieldDescription>
 	</field>
-	<field name="discountAmountWithoutTax" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[sum(/invoice/header/discounts/discount/@discountAmountWithoutTax)]]></fieldDescription>
+	<field name="discountAmountWithoutTax" class="java.lang.Double">
+		<fieldDescription><![CDATA[sum(/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line/article[@allowanceCode='95']/ancestor::line/transactionalAmountWithoutTax)]]></fieldDescription>
 	</field>
 	<variable name="totalAmountWithoutTax" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{catAmountWithoutTax}]]></variableExpression>
