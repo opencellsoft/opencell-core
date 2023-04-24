@@ -472,7 +472,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
         }
 	    
 	    if (invoice.getInvoiceType().getOccTemplate().getOccCategory() != OperationCategoryEnum.DEBIT) {
-	        throw new ForbiddenException("occCategory must equal DEBIT as invoice type");
+	        throw new ForbiddenException("You cannot make a credit note over another");
         }
 	    
 	    if (invoiceLinesToReplicate.getGlobalAdjustment() == null) {
