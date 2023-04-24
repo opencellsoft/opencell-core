@@ -56,7 +56,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
@@ -69,6 +69,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.generics.GenericRequestMapper;
 import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -211,6 +212,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private MinAmountService minAmountService;
 
     @Inject
+    private ParamBeanFactory paramBeanFactory;
+
+    @Inject
     private AccountingArticleService accountingArticleService;
 
     @Inject
@@ -275,7 +279,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public void createRatedTransactions(IBillableEntity entityToInvoice, Date uptoInvoicingDate) {
         List<WalletOperation> walletOps = walletOperationService.listToRate(entityToInvoice, uptoInvoicingDate);
 
-        EntityManager em = getEntityManager();
+//        EntityManager em = getEntityManager();
 
         Date now = new Date();
         for (WalletOperation walletOp : walletOps) {
@@ -1712,6 +1716,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate
      * @param invoiceDate
      * @param filter
+     * @param pageSize 
+     * @param pageIndex 
      * @return
      */
     public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
@@ -1888,7 +1894,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
     }
 
-    public List<BillingAccount> applyInvoicingRules(List<RatedTransaction> rTs) {
+	public List<BillingAccount> applyInvoicingRules(List<RatedTransaction> rTs) {
         List<BillingAccount> billingAccounts = null;
         if (rTs.size() !=0) {
             List<Long> ratedTransactionIds = rTs.stream().map(RatedTransaction::getId).collect(toList());
