@@ -54,6 +54,9 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -461,6 +464,28 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
+
+    /**
+     * Associated discount plan id.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id")
+    private DiscountPlan discountPlan;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "discount_plan_type", length = 50)
+    private DiscountPlanItemTypeEnum discountPlanType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_item_id")
+    private DiscountPlanItem discountPlanItem;
+
+    /**The amount after discount**/
+    @Column(name = "discounted_amount")
+    private BigDecimal discountedAmount;
+
+    @Column(name = "discount_value")
+    private BigDecimal discountValue;
 
     /**
      * Constructor
@@ -1125,5 +1150,45 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
 
     public void setAccountingArticle(AccountingArticle accountingArticle) {
         this.accountingArticle = accountingArticle;
+    }
+
+    public DiscountPlan getDiscountPlan() {
+        return discountPlan;
+    }
+
+    public void setDiscountPlan(DiscountPlan discountPlan) {
+        this.discountPlan = discountPlan;
+    }
+
+    public DiscountPlanItemTypeEnum getDiscountPlanType() {
+        return discountPlanType;
+    }
+
+    public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+        this.discountPlanType = discountPlanType;
+    }
+
+    public DiscountPlanItem getDiscountPlanItem() {
+        return discountPlanItem;
+    }
+
+    public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+        this.discountPlanItem = discountPlanItem;
+    }
+
+    public BigDecimal getDiscountedAmount() {
+        return discountedAmount;
+    }
+
+    public void setDiscountedAmount(BigDecimal discountedAmount) {
+        this.discountedAmount = discountedAmount;
+    }
+
+    public BigDecimal getDiscountValue() {
+        return discountValue;
+    }
+
+    public void setDiscountValue(BigDecimal discountValue) {
+        this.discountValue = discountValue;
     }
 }
