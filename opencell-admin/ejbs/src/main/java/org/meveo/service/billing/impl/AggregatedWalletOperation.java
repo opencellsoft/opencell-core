@@ -21,6 +21,9 @@ package org.meveo.service.billing.impl;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.*;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
@@ -183,6 +186,11 @@ public class AggregatedWalletOperation {
 	private List<Long> walletOperationsIds;
 	private AccountingArticle accountingArticle;
 	private AccountingCode accountingCode;
+	private DiscountPlan discountPlan;
+	private DiscountPlanItemTypeEnum discountPlanType;
+	private DiscountPlanItem discountPlanItem;
+	private BigDecimal discountedAmount;
+	private BigDecimal discountValue;
 
 	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax, InvoiceSubCategory invoiceSubCategory, Object id,
 									 BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax,
@@ -602,5 +610,45 @@ public class AggregatedWalletOperation {
 
 	public void setAccountingCode(AccountingCode accountingCode) {
 		this.accountingCode = accountingCode;
+	}
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+
+	public DiscountPlanItemTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	public void setDiscountPlanType(DiscountPlanItemTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
+	}
+
+	public DiscountPlanItem getDiscountPlanItem() {
+		return discountPlanItem;
+	}
+
+	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+		this.discountPlanItem = discountPlanItem;
+	}
+
+	public BigDecimal getDiscountedAmount() {
+		return discountedAmount;
+	}
+
+	public void setDiscountedAmount(BigDecimal discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+
+	public BigDecimal getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(BigDecimal discountValue) {
+		this.discountValue = discountValue;
 	}
 }

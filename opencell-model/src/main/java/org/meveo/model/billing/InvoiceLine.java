@@ -48,9 +48,11 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.commercial.OrderLot;
+import org.meveo.model.cpq.commercial.OrderOffer;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.commercial.*;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
 /** 
@@ -97,7 +99,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.sumPositiveILByBillingRun", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax),il.subscription.id, il.commercialOrder.id, il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id FROM InvoiceLine il where il.billingRun.id=:billingRunId and il.amountWithoutTax > 0 and il.status='BILLED' group by il.subscription.id, il.commercialOrder.id, il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
 		@NamedQuery(name = "InvoiceLine.unInvoiceByInvoiceIds", query = "update InvoiceLine il set il.status='OPEN', il.auditable.updated = :now , il.billingRun= null, il.invoice=null where il.invoice.id IN (:invoiceIds) and orderOffer is not null"),
 		@NamedQuery(name = "InvoiceLine.cancelByInvoiceIds", query = "update InvoiceLine il set il.status='CANCELED', il.auditable.updated = :now, il.billingRun= null, il.invoice=null WHERE il.invoice.id IN (:invoicesIds) and orderOffer is null"),
-	   @NamedQuery(name = "InvoiceLine.listToInvoiceByCommercialOrder", query = "FROM InvoiceLine il where il.commercialOrder.id=:commercialOrderId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+	    @NamedQuery(name = "InvoiceLine.listToInvoiceByCommercialOrder", query = "FROM InvoiceLine il where il.commercialOrder.id=:commercialOrderId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByCommercialOrderAndBR", query = "FROM InvoiceLine il where il.commercialOrder.id=:commercialOrderId AND il.status='OPEN' AND il.billingRun.id=:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.BillingAccountByILIds",
 				query = "SELECT ba FROM BillingAccount ba WHERE ba.id IN (SELECT distinct il.billingAccount.id FROM InvoiceLine il WHERE il.id in (:ids))"),
@@ -112,6 +114,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.listByBillingRun", query = "SELECT il.id FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.deleteByBillingRun", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId"),
 		@NamedQuery(name = "InvoiceLine.listByBillingRunNotValidatedInvoices", query = "SELECT il.id FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId and il.invoice.status <> 'VALIDATED'"),
+		@NamedQuery(name = "InvoiceLine.getBAsHavingOpenILsByBR", query = "SELECT DISTINCT il.billingAccount.id FROM InvoiceLine il WHERE il.billingRun.id=:billingRunId AND il.status='OPEN'"),
 		@NamedQuery(name = "InvoiceLine.deleteByBillingRunNotValidatedInvoices", query = "DELETE from InvoiceLine il WHERE il.billingRun.id =:billingRunId AND (il.invoice.id IS NULL OR il.invoice.id in (select il2.invoice.id from InvoiceLine il2 where il2.invoice.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED))"),
 		@NamedQuery(name = "InvoiceLine.listDiscountLines", query = "SELECT il.id from InvoiceLine il WHERE il.discountedInvoiceLine.id = :invoiceLineId "),
 		@NamedQuery(name = "InvoiceLine.findByInvoiceAndIds", query = "SELECT il from InvoiceLine il WHERE il.invoice = :invoice and il.id in (:invoiceLinesIds)"),
@@ -119,6 +122,13 @@ import org.meveo.model.cpq.offer.QuoteOffer;
         @NamedQuery(name = "InvoiceLine.moveToQuarantineBRByInvoiceIds", query = "update InvoiceLine il set il.billingRun=:billingRun where il.invoice.id in (:invoiceIds)"),
         @NamedQuery(name = "InvoiceLine.listByAssociatedInvoice", query = "SELECT il.id FROM InvoiceLine il where il.invoice.id in (:invoiceIds)"),
         @NamedQuery(name = "InvoiceLine.sumAmountByOpenOrderNumberAndBA", query = "SELECT SUM(il.amountWithTax) FROM InvoiceLine il WHERE il.status = 'BILLED' AND il.openOrderNumber = :openOrderNumber AND il.billingAccount.id = :billingAccountId"),
+		@NamedQuery(name = "InvoiceLine.linkToInvoice", query = "UPDATE InvoiceLine il set il.status=org.meveo.model.billing.InvoiceLineStatusEnum.BILLED, il.invoice=:invoice, il.invoiceAggregateF=:invoiceAgregateF where il.id in :ids"),
+        @NamedQuery(name = "InvoiceLine.getInvoicingItems", query = 
+    	"select il.billingAccount.id, il.accountingArticle.invoiceSubCategory.id, il.userAccount.id, il.tax.id, sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax), count(il.id), (string_agg(cast(il.id as text),',')) "
+    		+ " FROM InvoiceLine il "
+    		+ " WHERE il.billingRun.id=:billingRunId AND il.billingAccount.id IN (:ids) AND il.status='OPEN' "
+    		+ " group by il.billingAccount.id, il.accountingArticle.invoiceSubCategory.id, il.userAccount.id, il.tax.id "
+    		+ " order by il.billingAccount.id"),
         @NamedQuery(name = "InvoiceLine.findByIdsAndAdjustmentStatus", query = "SELECT il from InvoiceLine il left join fetch il.invoice i left join fetch i.invoiceType WHERE adjustment_status = :status and il.id in (:invoiceLinesIds)"),
         @NamedQuery(name = "InvoiceLine.findByIdsAndOtherAdjustmentStatus", query = "SELECT il from InvoiceLine il  left join fetch il.invoice i left join fetch i.invoiceType WHERE adjustment_status <> :status and il.id in (:invoiceLinesIds)"),
         @NamedQuery(name = "InvoiceLine.findByAdjustmentStatus", query = "SELECT il from InvoiceLine il left join fetch il.invoice WHERE adjustment_status = :status"),
@@ -134,7 +144,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
                 + " AND il.tax.id = ilAdj.tax.id AND il.taxRate = ilAdj.taxRate AND il.taxMode = ilAdj.taxMode) WHERE bli.id.id in (:invoiceId) "
                 + " GROUP BY bli.id.id, il.accountingArticle.id, il.tax.id, il.taxRate, il.taxMode, bli.linkedInvoiceValue.id "),
 		@NamedQuery(name = "InvoiceLine.sumAmountsDiscountByBillingAccount", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax), il.subscription.id, il.commercialOrder.id ,il.invoice.id ,il.billingAccount.id,  il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"
-                + " from  InvoiceLine il  where il.billingRun.id=:billingRunId and il.discountPlanItem is not null group by il.subscription.id, il.commercialOrder.id , il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id")
+                + " from  InvoiceLine il  where il.billingRun.id=:billingRunId and il.discountPlanItem is not null group by il.subscription.id, il.commercialOrder.id , il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
+		@NamedQuery(name = "InvoiceLine.getAdjustmentAmount", query = "SELECT SUM(li.amount) FROM Invoice i JOIN i.linkedInvoices li WHERE i.id= :ID_INVOICE and li.type = 'ADJUSTMENT'"),
 	})
 public class InvoiceLine extends AuditableCFEntity {
 
@@ -322,6 +333,13 @@ public class InvoiceLine extends AuditableCFEntity {
 	@JoinColumn(name = "discounted_invoice_line")
 	private InvoiceLine discountedInvoiceLine;
 	
+    /**
+     * User account associated to invoice line
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
+	
 	@Enumerated(EnumType.STRING)
     @Column(name = "tax_mode", nullable = false)
     @NotNull
@@ -430,6 +448,7 @@ public class InvoiceLine extends AuditableCFEntity {
 		this.productVersion = copy.productVersion;
 		this.orderLot = copy.orderLot;
 		this.taxRecalculated = copy.taxRecalculated;
+		this.userAccount = copy.userAccount;
 		this.taxMode = copy.taxMode;
 		this.status = InvoiceLineStatusEnum.OPEN;
 		this.adjustmentStatus = copy.adjustmentStatus;
@@ -758,10 +777,24 @@ public class InvoiceLine extends AuditableCFEntity {
 		this.discountedInvoiceLine = discountedInvoiceLine;
 	}
 
+	/**
+	 * @return the userAccount
+	 */
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+
+	/**
+	 * @param userAccount the userAccount to set
+	 */
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+
 	public BigDecimal getDiscountValue() {
 		return discountValue;
 	}
-
+	
 	public void setDiscountValue(BigDecimal discountValue) {
 		this.discountValue = discountValue;
 	}
@@ -845,7 +878,7 @@ public class InvoiceLine extends AuditableCFEntity {
 	public void setOpenOrderNumber(String openOrderNumber) {
 		this.openOrderNumber = openOrderNumber;
 	}
-
+	
 	public Integer getSequence() {
 		return sequence;
 	}
