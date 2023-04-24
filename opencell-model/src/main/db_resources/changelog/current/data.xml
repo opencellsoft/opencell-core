@@ -20858,5 +20858,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>entity_class = 'org.meveo.model.cpq.Media'</where>
         </update>
     </changeSet>
+	
+	<changeSet id="INTRD-15222_20230424" author="aelmalki" failOnError="false">
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" valueComputed="(select id from billing_invoice_type where code = 'ADJ')"/>
+            <column name="applies_to_id" valueComputed="(select id from billing_invoice_type where code = 'COMMERCIAL_ORDER')"/>
+        </insert>
+    </changeSet>
 
 </databaseChangeLog>

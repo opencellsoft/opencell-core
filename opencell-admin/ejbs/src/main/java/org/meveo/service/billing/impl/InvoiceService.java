@@ -5033,7 +5033,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
                 LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, invoiceTmp);
-                invoice.getLinkedInvoices().add(linkedInvoice);
+                if (!invoiceTmp.getLinkedInvoices().contains(linkedInvoice)) {
+                    invoice.getLinkedInvoices().add(linkedInvoice);
+                }
             }
         }
 
@@ -5070,7 +5072,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
                 LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, invoiceTmp);
-                invoice.getLinkedInvoices().add(linkedInvoice);
+                if (!invoiceTmp.getLinkedInvoices().contains(linkedInvoice)) {
+                    invoice.getLinkedInvoices().add(linkedInvoice);
+                }
             }
         }
 
@@ -6692,8 +6696,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
-                 LinkedInvoice linkedInvoice = new LinkedInvoice(invoiceTmp, toUpdate);
-                 toUpdate.getLinkedInvoices().add(linkedInvoice);
+                LinkedInvoice linkedInvoice = new LinkedInvoice(invoiceTmp, toUpdate);
+                if (!invoiceTmp.getLinkedInvoices().contains(linkedInvoice)) {
+                    toUpdate.getLinkedInvoices().add(linkedInvoice);
+                }
+
             }
             linkedInvoiceToRemove.removeAll(invoiceResource.getListLinkedInvoices());
             for(Long invoiceId : linkedInvoiceToRemove) {
