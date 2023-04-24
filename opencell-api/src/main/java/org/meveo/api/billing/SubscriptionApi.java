@@ -2220,8 +2220,6 @@ public class SubscriptionApi extends BaseApi {
             }
             serviceInstanceService.update(serviceToUpdate);
             if(CollectionUtils.isNotEmpty(serviceToUpdateDto.getDiscountPlanForTermination())){
-               /* List<Long> planDiscountIds = discountPlanService.findByCodes(serviceToUpdateDto.getDiscountPlanForTermination()).stream().map(DiscountPlan::getId).collect(Collectors.toList());
-                discountPlanInstanceService.removeByServiceInstanceAndDiscountCode(serviceToUpdateDto.getId(), planDiscountIds);*/
                 serviceToUpdateDto.getDiscountPlanForTermination().forEach(discountPlanCode -> {
                     DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
                     if(discountPlan != null) {
