@@ -431,6 +431,76 @@
             <column name="creator" value="OPENCELL.ADMIN"/>
         </insert>
     </changeSet>
+    
+    <changeSet id="#INTRD-5830_20220324" author="aelmalki">
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="Default Journal entry builder, from AccountOperation"/>
+            <column name="created" valueDate="${db.current.time}" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="#INTRD-5955_20220324" author="aelmalki">
+        <insert tableName="ar_accounting_scheme">
+            <column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="Dual entry scheme" />
+            <column name="description" value="Default Accounting Scheme"/>
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript')"/>
+            <column name="long_description_i18n"><![CDATA[{"FRA":"<p>Ce schéma produit 2 lignes d'écriture:</p><ul><li>Une ligne pour le compte et le sens définis sur le type d'opération de de compte</li><li>Une ligne pour le compte de contrepartie défini sur le type d'opération de compte, mais avec un sens opposé</li></ul>","ENG":"<p>This scheme produces 2 accounting entries:</p><ul><li>An entry for the accounting code and the direction defined on the account operation type</li><li>An entry for the contra account defined on the account operation, type but with the opposite direction</li></ul>"}]]></column>
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="#INTRD-5992_20220329" author="aelmalki">
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="Invoice accounting scheme script"/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
+        </insert>
+        <insert tableName="ar_accounting_scheme">
+            <column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="Invoice and Credit Note" />
+            <column name="description" value="Invoice accounting scheme"/>
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')"/>
+            <column name="long_description_i18n"><![CDATA[{"FRA":"<p>Ce schéma produit des lignes d'écritures pour une facture ou un avoir (ci-dessous \"document\") :</p><ul><li>Une ligne unique pour le total TTC du document, sur le compte client (de la catégorie de client ou à défaut du type d'opération de compte).</li></ul><p class=\"ql-indent-1\">Le sens est celui de l'opération de compte (pour une facture : DEBIT, pour un avoir : CREDIT).</p><ul><li>Des lignes de contrepartie (au moins une) pour les montants HT pour les comptes de revenus, en utilisant les codes comptables des articles liés aux lignes du document.</li></ul><p class=\"ql-indent-1\">Le sens est l'opposé de celui du type d'opération (pour une facture : CREDIT, pour un avoir : DEBIT).</p><ul><li>S'il y a lieu, des lignes pour les montants des différentes taxes appliquées au document, en utilisant les codes comptables de ces taxes.</li></ul><p class=\"ql-indent-1\">Le sens est l'opposé de celui du type d'opération (pour une facture : CREDIT, pour un avoir : DEBIT).</p>","ENG":"<p>This scheme produces entries for an invoice or credit note (here after \"document\"):</p><ul><li>A single entry with the document total amount with tax using the customer accounting code (from the customer category, or if not set from the account operation type). </li></ul><p class=\"ql-indent-1\">Line direction is the one from the account operation type (for invoice: DEBIT, for credit note: CREDIT).</p><ul><li>\"Contra\" entries (at least one) with the amounts without tax for revenue accounts, using the accounting codes from the article linked to the document lines. </li></ul><p class=\"ql-indent-1\">Line direction is the opposite of direction set on the account operation type (for invoices: CREDIT, for credit note: DEBIT).</p><ul><li>\"Contra\" entries (if applies) with the tax amounts for the different taxes applied on the document, using the accounting codes from these taxes.</li></ul><p class=\"ql-indent-1\">Line direction is the opposite of direction set on the account operation type (for invoices: CREDIT, for credit note: DEBIT).</p>"}]]></column>
+        </insert>
+    </changeSet>
+
+    
+    
+    <changeSet id="#INTRD-6638_20220422-scripts" author="aelmalki">
+        <!-- Add Payment Script -->
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="Payment Journal entry builder, from AccountOperation"/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
+        </insert>
+
+        <!-- Add Scheme -->
+        <insert tableName="ar_accounting_scheme">
+            <column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="Payment entry scheme" />
+            <column name="description" value="Payment Accounting Scheme"/>
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')"/>
+        </insert>
+    </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-occTemplatesDEMO">
         <insert tableName="ar_occ_template">
@@ -870,6 +940,68 @@
             <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='531100000')" />
             <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419000000')" />
             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+        </insert>
+    </changeSet>
+    
+    <changeSet id="#INTRD-10692_20221019_ajd_occ_template" author="a.rouaguebe">
+		<insert tableName="ar_occ_template">
+			<column name="id"  valueNumeric="-71"  />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="ADJ_SD" />
+			<column name="description" value="Adjustment to refund security deposit" />
+			<column name="occ_category" value="CREDIT" />
+			<column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='165000000')" />
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+			<column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="#INTRD-10772_20221025_ajd_occ_template" author="e.bourras">
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-72" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="updated" valueDate="${db.current.time}" />
+			<column name="code" value="PAY_SD"/>
+			<column name="occ_category" value="CREDIT" /><column name="manual_creation_enabled" value="0"/>
+			<column name="journal_id" valueComputed="(SELECT id FROM journal where code = 'SAL')"/>
+			<column name="manual_creation_enabled" value="0"/>
+			<column name="description" value="Payment by security deposit" />
+			<column name="accounting_code_id" valueComputed="(select id from public.billing_accounting_code where code = '411000000')"/>
+			<column name="contra_accounting_code_id" valueComputed="(select id from public.billing_accounting_code where code = '165000000')"/>
+			<column name="accounting_scheme_id" valueComputed="(select id from ar_accounting_scheme where code = 'Dual entry scheme')"/>
+		</insert>
+	</changeSet>
+	
+	<changeSet id="#INTRD-14786_20230309" author="bourras">
+        <insert tableName="ar_occ_template">
+            <column name="id" valueNumeric="-73" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="code" value="XCH_GAIN" />
+            <column name="description" value="Exchange gain" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='766000000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+        </insert>
+        <insert tableName="ar_occ_template">
+            <column name="id" valueNumeric="-74" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="code" value="XCH_LOSS" />
+            <column name="description" value="Exchange loss" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='666000000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
     </changeSet>
     
@@ -5247,79 +5379,6 @@
         </insert>
     </changeSet>
     
-    
-    
-
-
-    <changeSet id="#INTRD-5830_20220324" author="aelmalki">
-        <insert tableName="meveo_script_instance">
-            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="code" value="org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript" />
-            <column name="src_type" value="JAVA_CLASS" />
-            <column name="description" value="Default Journal entry builder, from AccountOperation"/>
-            <column name="created" valueDate="${db.current.time}" />
-        </insert>
-    </changeSet>
-
-    <changeSet id="#INTRD-5955_20220324" author="aelmalki">
-        <insert tableName="ar_accounting_scheme">
-            <column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="Dual entry scheme" />
-            <column name="description" value="Default Accounting Scheme"/>
-            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.DefaultAccountingSchemeScript')"/>
-            <column name="long_description_i18n"><![CDATA[{"FRA":"<p>Ce schéma produit 2 lignes d'écriture:</p><ul><li>Une ligne pour le compte et le sens définis sur le type d'opération de de compte</li><li>Une ligne pour le compte de contrepartie défini sur le type d'opération de compte, mais avec un sens opposé</li></ul>","ENG":"<p>This scheme produces 2 accounting entries:</p><ul><li>An entry for the accounting code and the direction defined on the account operation type</li><li>An entry for the contra account defined on the account operation, type but with the opposite direction</li></ul>"}]]></column>
-        </insert>
-    </changeSet>
-
-
-    <changeSet id="#INTRD-5992_20220329" author="aelmalki">
-        <insert tableName="meveo_script_instance">
-            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="code" value="org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript" />
-            <column name="src_type" value="JAVA_CLASS" />
-            <column name="description" value="Invoice accounting scheme script"/>
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
-        </insert>
-        <insert tableName="ar_accounting_scheme">
-            <column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="Invoice and Credit Note" />
-            <column name="description" value="Invoice accounting scheme"/>
-            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.InvoiceAccountingSchemeScript')"/>
-            <column name="long_description_i18n"><![CDATA[{"FRA":"<p>Ce schéma produit des lignes d'écritures pour une facture ou un avoir (ci-dessous \"document\") :</p><ul><li>Une ligne unique pour le total TTC du document, sur le compte client (de la catégorie de client ou à défaut du type d'opération de compte).</li></ul><p class=\"ql-indent-1\">Le sens est celui de l'opération de compte (pour une facture : DEBIT, pour un avoir : CREDIT).</p><ul><li>Des lignes de contrepartie (au moins une) pour les montants HT pour les comptes de revenus, en utilisant les codes comptables des articles liés aux lignes du document.</li></ul><p class=\"ql-indent-1\">Le sens est l'opposé de celui du type d'opération (pour une facture : CREDIT, pour un avoir : DEBIT).</p><ul><li>S'il y a lieu, des lignes pour les montants des différentes taxes appliquées au document, en utilisant les codes comptables de ces taxes.</li></ul><p class=\"ql-indent-1\">Le sens est l'opposé de celui du type d'opération (pour une facture : CREDIT, pour un avoir : DEBIT).</p>","ENG":"<p>This scheme produces entries for an invoice or credit note (here after \"document\"):</p><ul><li>A single entry with the document total amount with tax using the customer accounting code (from the customer category, or if not set from the account operation type). </li></ul><p class=\"ql-indent-1\">Line direction is the one from the account operation type (for invoice: DEBIT, for credit note: CREDIT).</p><ul><li>\"Contra\" entries (at least one) with the amounts without tax for revenue accounts, using the accounting codes from the article linked to the document lines. </li></ul><p class=\"ql-indent-1\">Line direction is the opposite of direction set on the account operation type (for invoices: CREDIT, for credit note: DEBIT).</p><ul><li>\"Contra\" entries (if applies) with the tax amounts for the different taxes applied on the document, using the accounting codes from these taxes.</li></ul><p class=\"ql-indent-1\">Line direction is the opposite of direction set on the account operation type (for invoices: CREDIT, for credit note: DEBIT).</p>"}]]></column>
-        </insert>
-    </changeSet>
-
-    
-    
-    <changeSet id="#INTRD-6638_20220422-scripts" author="aelmalki">
-        <!-- Add Payment Script -->
-        <insert tableName="meveo_script_instance">
-            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="code" value="org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript" />
-            <column name="src_type" value="JAVA_CLASS" />
-            <column name="description" value="Payment Journal entry builder, from AccountOperation"/>
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
-        </insert>
-
-        <!-- Add Scheme -->
-        <insert tableName="ar_accounting_scheme">
-            <column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="Payment entry scheme" />
-            <column name="description" value="Payment Accounting Scheme"/>
-            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.PaymentAccountingSchemeScript')"/>
-        </insert>
-    </changeSet>   
     
     <changeSet id="INTRD-12266_20221214_rebuild" author="aeljaouhari">
         <insert tableName="meveo_script_instance">

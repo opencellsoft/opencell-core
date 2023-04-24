@@ -8233,7 +8233,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
     
 	<changeSet id="#INTRD-10692_20221019_ajd_occ_template" author="a.rouaguebe">
 		<insert tableName="ar_occ_template">
-			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="id" valueNumeric="-71" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
@@ -8272,7 +8272,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
 	<changeSet id="#INTRD-10772_20221025_ajd_occ_template" author="e.bourras">
 		<insert tableName="ar_occ_template">
-			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="id" valueNumeric="-72" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="updated" valueDate="${db.current.time}" />
@@ -20315,7 +20315,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
     <changeSet id="#INTRD-14786_20230309" author="bourras">
         <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
+            <column name="id" valueNumeric="-73" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
@@ -20328,7 +20328,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
         <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
+            <column name="id" valueNumeric="-74" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
