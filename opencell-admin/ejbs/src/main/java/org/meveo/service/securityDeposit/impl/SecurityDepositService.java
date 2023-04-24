@@ -112,7 +112,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     }
 
     public void checkParameters(SecurityDeposit securityDeposit, SecurityDepositInput securityDepositInput) {
-        FinanceSettings financeSettings = financeSettingsService.findLastOne();
+        FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
         if (!financeSettings.isAutoRefund() && (securityDepositInput.getValidityDate() != null || securityDepositInput.getValidityPeriod() != null || securityDepositInput.getValidityPeriodUnit() != null)) {
             throw new InvalidParameterException("the option 'Allow auto refund' need to be checked");
         }

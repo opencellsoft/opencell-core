@@ -16225,7 +16225,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
     <changeSet id="#INTRD-14966_20230329" author="HatimO.">
         <addUniqueConstraint columnNames="code, document_version" constraintName="document_code_version_key" tableName="document" />
     </changeSet>
-    
+
     <changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
      	<addColumn tableName="billing_invoice_line">
             <column name="user_account_id" type="bigint"></column>
@@ -16250,6 +16250,19 @@ public class AgedBalanceReporting extends ReportExtractScript {
     <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
         <addColumn tableName="billing_rated_transaction">
             <column name="discounted_amount" type="numeric(23,12)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius">
+        <addColumn tableName="meveo_job_instance">
+            <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
+        </addColumn>
+        <sql>update ${db.schema.adapted}meveo_job_instance set cluster_behavior = 'RUN_IN_PARALLEL' where single_node=0</sql>
+        <dropColumn tableName="meveo_job_instance">
+            <column name="single_node" />
+        </dropColumn>
+        <addColumn tableName="job_execution">
+            <column name="parent_job_result_id" type="bigint" />
         </addColumn>
     </changeSet>
 

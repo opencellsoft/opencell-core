@@ -7112,7 +7112,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void triggersCollectionPlanLevelsJob() {
         JobInstance triggerCollectionPlanLevelsJob = jobInstanceService.findByCode("TriggerCollectionPlanLevelsJob");
-        FinanceSettings lastOne = financeSettingsService.findLastOne();
+        FinanceSettings lastOne = financeSettingsService.getFinanceSetting();
         if (triggerCollectionPlanLevelsJob != null && lastOne != null && lastOne.isActivateDunning()) {
             jobExecutionService.executeJob(triggerCollectionPlanLevelsJob, Collections.EMPTY_MAP, JobLauncherEnum.TRIGGER);
         }

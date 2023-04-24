@@ -35,12 +35,13 @@ import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.billing.WalletOperationNative;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -54,7 +55,7 @@ import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
  * @author Andrius Karpavicius
  */
 @Stateless
-public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperation> {
+public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperationNative> {
 
     private static final long serialVersionUID = -2740290205290535899L;
 
@@ -85,7 +86,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultsetAndBindRTs);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::bindRTs);
     }
 
     /**
@@ -94,7 +95,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of Wallet operation Ids to convert to Rated transactions
      */
-    private Optional<Iterator<WalletOperation>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+    private Optional<Iterator<WalletOperationNative>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
@@ -133,12 +134,12 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         }
 
         statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
-        scrollableResults = statelessSession.createNamedQuery("WalletOperation.listConvertToRTs").setParameter("maxId", maxId).setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun)
+        scrollableResults = statelessSession.createNamedQuery("WalletOperationNative.listConvertToRTs").setParameter("maxId", maxId).setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun)
             .setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
 
         hasMore = nrOfRecords >= processNrInJobRun;
 
-        return Optional.of(new SynchronizedIterator<WalletOperation>(scrollableResults, nrOfRecords.intValue()));
+        return Optional.of(new SynchronizedIterator<WalletOperationNative>(scrollableResults, nrOfRecords.intValue()));
     }
 
     /**
@@ -147,10 +148,12 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param walletOperations Wallet operations
      * @param jobExecutionResult Job execution result
      */
-    private void convertWoToRTBatch(List<WalletOperation> walletOperations, JobExecutionResultImpl jobExecutionResult) {
-        List<RatedTransaction> lstRatedTransaction = ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
+    private void convertWoToRTBatch(List<WalletOperationNative> walletOperations, JobExecutionResultImpl jobExecutionResult) {
+
+        List<Long> rtIds = ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
+
         if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
-            ratedTransactionService.applyInvoicingRules(lstRatedTransaction);
+            ratedTransactionService.applyInvoicingRules(rtIds);
         }
     }
 
@@ -159,15 +162,23 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     }
 
     /**
-     * Close data resultset and bridge discount Rated transactions
+     * Close data resultset
      * 
-     * @param jobExecutionResult
+     * @param jobExecutionResult Job execution result
      */
-    private void closeResultsetAndBindRTs(JobExecutionResultImpl jobExecutionResult) {
+    private void closeResultset(JobExecutionResultImpl jobExecutionResult) {
         scrollableResults.close();
         statelessSession.close();
+    }
 
-        if (nrOfRecords.intValue() > 0) {
+    /**
+     * Bridge discount Rated transactions
+     * 
+     * @param jobExecutionResult Job execution result
+     */
+    private void bindRTs(JobExecutionResultImpl jobExecutionResult) {
+
+        if (jobExecutionResult.getJobLauncherEnum() != JobLauncherEnum.WORKER && jobExecutionResult.getStatus() != JobExecutionResultStatusEnum.CANCELLED && nrOfRecords != null && nrOfRecords.intValue() > 0) {
             ratedTransactionService.bridgeDiscountRTs(minId, maxId);
         }
     }

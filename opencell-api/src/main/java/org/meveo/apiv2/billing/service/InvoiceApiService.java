@@ -407,7 +407,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
             List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
 			if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
-				billingAccountsAfter = ratedTransactionService.applyInvoicingRules(RTs);
+				billingAccountsAfter = ratedTransactionService.applyInvoicingRulesForRTs(RTs);
 			}
         }
         

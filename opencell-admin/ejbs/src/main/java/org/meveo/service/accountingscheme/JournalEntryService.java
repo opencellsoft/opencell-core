@@ -331,7 +331,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     }
 
     private Map<String, String> addAccountingInfo(CustomerAccount customerAccount) {
-        FinanceSettings financeSettings = financeSettingsService.findLastOne();
+        FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
         if(financeSettings != null) {
             AuxiliaryAccounting auxiliaryAccounting = financeSettings.getAuxiliaryAccounting();
             if(auxiliaryAccounting != null && auxiliaryAccounting.isUseAuxiliaryAccounting()) {

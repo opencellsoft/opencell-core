@@ -621,7 +621,7 @@ public class ServiceSingleton {
     }
 
     public void triggersJobs() {
-    	FinanceSettings lastOne = financeSettingsService.findLastOne();
+    	FinanceSettings lastOne = financeSettingsService.getFinanceSetting();
         if (lastOne != null && lastOne.isActivateDunning()) {
         	Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob", "TriggerReminderDunningLevel_Job").stream()
         	.map(jobInstanceService::findByCode)
