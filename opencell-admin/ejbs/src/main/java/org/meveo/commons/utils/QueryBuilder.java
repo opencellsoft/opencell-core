@@ -243,6 +243,7 @@ public class QueryBuilder {
 		q = new StringBuilder(sql);
         this.alias = alias;
         params = new HashMap<String, Object>();
+        hasOneOrMoreCriteria = false;
         if (sql.toLowerCase().contains("where")) {
             hasOneOrMoreCriteria = true;
         }

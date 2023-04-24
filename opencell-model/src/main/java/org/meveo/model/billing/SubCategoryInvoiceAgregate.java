@@ -695,7 +695,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     }
     
     @Transient
-    private List<Long> ilIDs=new ArrayList<Long>();
+    private List<Long> ilIDs=new ArrayList<>();
     public void addILs(List<Long> ilIDs) {
     	this.ilIDs.addAll(ilIDs);
     }
