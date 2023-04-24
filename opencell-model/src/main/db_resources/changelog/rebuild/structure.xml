@@ -3426,6 +3426,7 @@
 			<column name="trading_currency_id" type="bigint" />
             <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
             <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
+            <column name="discounted_amount" type="numeric(23,12)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
