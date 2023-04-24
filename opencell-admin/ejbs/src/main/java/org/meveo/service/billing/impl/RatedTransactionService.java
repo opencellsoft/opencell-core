@@ -107,6 +107,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.cpq.AttributeValue;
@@ -127,6 +128,8 @@ import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.catalog.impl.DiscountPlanItemService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -222,6 +225,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     @Named
     private NativePersistenceService nativePersistenceService;
+
+    @Inject
+    private DiscountPlanService discountPlanService;
+
+    @Inject
+    private DiscountPlanItemService discountPlanItemService;
     
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -530,6 +539,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAccountingCode(accountingCodeService.refreshOrRetrieve(aggregatedWo.getAccountingCode()));
         ratedTransaction.setOfferTemplate(offerTemplateService.refreshOrRetrieve(aggregatedWo.getOfferTemplate()));
         ratedTransaction.setServiceInstance(serviceInstanceService.refreshOrRetrieve(aggregatedWo.getServiceInstance()));
+        ratedTransaction.setDiscountPlan(discountPlanService.refreshOrRetrieve(aggregatedWo.getDiscountPlan()));
+        ratedTransaction.setDiscountPlanType(aggregatedWo.getDiscountPlanType());
+        ratedTransaction.setDiscountPlanItem(discountPlanItemService.refreshOrRetrieve(aggregatedWo.getDiscountPlanItem()));
+        ratedTransaction.setDiscountedAmount(aggregatedWo.getDiscountedAmount());
+        ratedTransaction.setDiscountValue(aggregatedWo.getDiscountValue());
 
         return ratedTransaction;
     }
