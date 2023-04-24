@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="152"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="WM-Quote-Name"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Issue-WAFA-15435"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -258,7 +258,10 @@
 			<fieldDescription><![CDATA[amountTax]]></fieldDescription>
 		</field>
 		<field name="country" class="java.lang.String">
-			<fieldDescription><![CDATA[ancestor::quote/header/customer/address/country]]></fieldDescription>
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+		<field name="lang" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/customer/@lang]]></fieldDescription>
 		</field>
 	</subDataset>
 	<subDataset name="quoteTva" uuid="ae6f28c9-d044-41f4-93d3-220849f67ab4">
@@ -288,7 +291,10 @@
 			<fieldDescription><![CDATA[currencySymbol]]></fieldDescription>
 		</field>
 		<field name="country" class="java.lang.String">
-			<fieldDescription><![CDATA[ancestor::quote/header/customer/address/country]]></fieldDescription>
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+		<field name="lang" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/customer/@lang]]></fieldDescription>
 		</field>
 	</subDataset>
 	<subDataset name="ba_prices" uuid="5584035b-3f01-4c5b-b63f-2bc9582f7d4a">
@@ -396,7 +402,10 @@
 			<fieldDescription><![CDATA[ancestor::quoteLine/@quantity]]></fieldDescription>
 		</field>
 		<field name="country" class="java.lang.String">
-			<fieldDescription><![CDATA[ancestor::quote/header/customer/address/country]]></fieldDescription>
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+		<field name="lang" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/customer/@lang]]></fieldDescription>
 		</field>
 	</subDataset>
 	<subDataset name="discountsFooter" uuid="f4a51d10-a40b-44a8-ab1f-124785a429d2">
@@ -465,7 +474,10 @@
 			<fieldDescription><![CDATA[ancestor::quoteLine/@quantity]]></fieldDescription>
 		</field>
 		<field name="country" class="java.lang.String">
-			<fieldDescription><![CDATA[ancestor::quote/header/customer/address/country]]></fieldDescription>
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+		<field name="lang" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/customer/@lang]]></fieldDescription>
 		</field>
 	</subDataset>
 	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
@@ -595,7 +607,10 @@
 	</field>
 	<field name="country" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/address/country"/>
-		<fieldDescription><![CDATA[/quote/header/billingAccount/address/country]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/billingAccount/@country]]></fieldDescription>
+	</field>
+	<field name="lang" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::quote/header/customer/@lang]]></fieldDescription>
 	</field>
 	<field name="countryName" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/address/countryName"/>
@@ -1134,7 +1149,7 @@
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<paragraph rightIndent="5"/>
 									</textElement>
-									<textFieldExpression><![CDATA[(($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{discountValue}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{discountValue})))) + ($F{discountPlanType}!=null &&  $F{discountPlanType}.equals("PERCENTAGE") ? "%" : "")]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format($F{recurrenceDuration}!=null ? new Double($F{quantity}) * new Double($F{recurrenceDuration}) : new Double($F{quantity}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{recurrenceDuration}!=null ? new Double($F{quantity}) * new Double($F{recurrenceDuration}) : new Double($F{quantity}))))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
