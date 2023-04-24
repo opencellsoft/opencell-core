@@ -19,14 +19,7 @@
 package org.meveo.api.billing;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -2225,8 +2218,18 @@ public class SubscriptionApi extends BaseApi {
                     serviceInstanceService.instantiateDiscountPlan(serviceToUpdate, dp, false);
                 }
             }
-            removeDiscountPlanInstanceForSubscription(subscription, serviceToUpdateDto.getDiscountPlanForTermination());
             serviceInstanceService.update(serviceToUpdate);
+            if(CollectionUtils.isNotEmpty(serviceToUpdateDto.getDiscountPlanForTermination())){
+               /* List<Long> planDiscountIds = discountPlanService.findByCodes(serviceToUpdateDto.getDiscountPlanForTermination()).stream().map(DiscountPlan::getId).collect(Collectors.toList());
+                discountPlanInstanceService.removeByServiceInstanceAndDiscountCode(serviceToUpdateDto.getId(), planDiscountIds);*/
+                serviceToUpdateDto.getDiscountPlanForTermination().forEach(discountPlanCode -> {
+                    DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
+                    if(discountPlan != null) {
+                        serviceToUpdate.getDiscountPlanInstances().removeIf(dp -> dp.getDiscountPlan() != null &&  dp.getDiscountPlan().getId().equals(discountPlan.getId()));
+                    }
+                });
+
+            }
         }
     }
 
