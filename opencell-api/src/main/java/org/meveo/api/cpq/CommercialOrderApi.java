@@ -1396,10 +1396,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		if(orderOffer.getProducts() != null)  {
 			orderOffer.getProducts()
 					.stream()
-					.filter(orderProduct -> orderProduct.getOrderArticleLine() != null)
+					.filter(orderProduct -> orderProduct.getOrderArticleLines() != null)
 					.forEach(orderProduct -> {
-						orderProduct.getOrderArticleLine().setOrderProduct(null);
-						orderProduct.setOrderArticleLine(null);
+						orderProduct.getOrderArticleLines().forEach(a -> a.setOrderProduct(null));
+						orderProduct.getOrderArticleLines().clear();
 					});
 		}
     	orderOfferService.remove(orderOffer);
