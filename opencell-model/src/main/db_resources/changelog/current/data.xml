@@ -20287,7 +20287,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	
 	<changeSet id="#INTRD-14126_20230307" author="aelmalki">
         <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
+            <column name="id" valueNumeric="-75" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />

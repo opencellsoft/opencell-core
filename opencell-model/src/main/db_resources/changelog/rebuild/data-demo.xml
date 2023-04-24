@@ -1005,6 +1005,23 @@
         </insert>
     </changeSet>
     
+    
+	<changeSet id="#INTRD-14126_20230307" author="aelmalki">
+        <insert tableName="ar_occ_template">
+            <column name="id" valueNumeric="-75" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="code" value="CAN_SD" />
+            <column name="description" value="Cancel security deposit" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='165000000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+        </insert>
+    </changeSet>
+    
     <changeSet author="AndriusKarpavicius" id="rebuild-data-calendarDEMO">
         <insert tableName="cat_calendar">
             <column name="cal_type" value="YEARLY" />
