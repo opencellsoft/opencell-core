@@ -5599,7 +5599,7 @@ Opencell team.
 			<where> policy_condition_target='IsCompany'</where>
 		</update>
 	</changeSet>
-
+	
     <changeSet id="INTRD-2756_20211110" author="Mohammed_ELAZZOUZI">
 		<insert tableName="meveo_job_instance">
 			<column name="id"  valueSequenceNext="meveo_job_instance_seq" />
@@ -15455,8 +15455,8 @@ public class CdrFlatFileImportScript extends Script {
 			INSERT INTO ${db.schema.adapted}untdid_5189_allowance_code(id,version,created,updated,creator,updater,code,description) VALUES (18, 0, now(), NULL, 'opencell.admin', NULL, '104', 'Standard');
 			INSERT INTO ${db.schema.adapted}untdid_5189_allowance_code(id,version,created,updated,creator,updater,code,description) VALUES (19, 0, now(), NULL, 'opencell.admin', NULL, '105', 'Yearly turnover');	
 			
-
-				
+			
+			
 		]]>
 		</sql>
 		</changeSet>
@@ -16569,50 +16569,7 @@ public class ValidateBRScript extends ValidateBR {
             </column>
         </insert>
     </changeSet>
-    <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI">
-        <update tableName="meveo_script_instance">
-            <column name="description" value="Invoice amount will be compared to provided amount using the selected operator."/>
-			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné.","ENG":"Invoice amount will be compared to provided amount using the selected operator."}'/>
-			<where>code = 'org.meveo.service.script.CompareInvoiceAmount'</where>
-        </update>
-        <update tableName="meveo_script_instance">
-            <column name="description" value="Amount invoiced for each offer in the list will be compared to the provided value using the selected operator If offer list is empty, then rule will be ignored. Only offer actually present on invoice will be tested."/>
-            <column name="description_i18n">
-				<![CDATA[{"FRA":"<p>Le montant facturé pour chacune des offres dans la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Si la liste des offres est vide, alors la règle sera ignorée.</p><p>Seules les offres effectivement présentes sur la facture seront testées.</p>","ENG":"<p>Amount invoiced for each offer in the list will be compared to the provided value using the selected operator</p><p>If offer list is empty, then rule will be ignored.</p><p>Only offer actually present on invoice will be tested.</p>"}]]>
-			</column>
-            <where>code = 'org.meveo.service.script.CompareOfferAmount'</where>
-        </update>
-        <update tableName="meveo_script_instance">
-            <column name="description" value="The customer's (customer account actually) credit category must not be in the provided list for the rule to pass. If customer's credit category is in the list, the rule will fail. If credit category list is empty, then rule will be ignored."/>
-            <column name="description_i18n">
-				<![CDATA[{"ENG":"<p>The customer's (customer account actually) credit category must not be in the provided list for the rule to pass.</p><p>If customer's credit category is in the list, the rule will fail.</p><p>If credit category list is empty, then rule will be ignored.</p>","FRA":"<p>Le catégorie de crédit du client (customer account) ne doit pas être dans la liste fournie pour que la règle passe.</p><p>Si la catégorie de crédit du client est dans la liste, la règle va échouer.</p><p>Si la liste de catégories de crédit est vide, la règle sera ignorée.</p>"}]]>
-			</column>
-            <where>code = 'org.meveo.service.script.validation.ValidateCreditCategory'</where>
-        </update>
-        <update tableName="meveo_script_instance">
-            <column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. Only offer from the list actually present on invoice will be tested. If offer list is empty, then all invoice lines will be tested regardless of their offer. For the test to pass, all tested invoice lines must pass the test."/>
-			<column name="description_i18n">
-				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>Only offer from the list actually present on invoice will be tested</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For the test to pass, all tested invoice lines must pass the test.</p>",
-				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Seule les offres de la liste effectivement présentes sur la facture seront testées.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que le teste passe, toutes les lignes de facture testées doivent passer le test.</p>"}]]>
-			</column>
-            <where>code = 'org.meveo.service.script.CompareOfferLinesAmount'</where>
-        </update>
-        <update tableName="meveo_script_instance">
-            <column name="description" value="The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days. Age is computed at invoice date."/>
-            <column name="description_i18n">
-				<![CDATA[{"ENG":"<p>The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge du client (Customer/Groupe, Customer Account/Compte payeur, Billing account/Compte de facturation) est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
-			</column>
-            <where>code = 'org.meveo.service.script.validation.ValidateCustomerAge'</where>
-        </update>
-        <update tableName="meveo_script_instance">
-            <column name="description" value="The invoice’s subscriptions age is compared to a provided number of days. Age is computed at invoice date."/>
-            <column name="description_i18n">
-				<![CDATA[{"ENG":"<p>The invoice’s subscriptions age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge de la souscription est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
-			</column>
-            <where>code = 'org.meveo.service.script.validation.ValidateSubscriptionAge'</where>
-        </update>
-    </changeSet>
-
+    
     <changeSet id="#INTRD-13379_20230127" author="aeljaouhari">
 		<update tableName="meveo_script_instance">
 			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. If offer list is empty, then all invoice lines will be tested regardless of their offer. For invoice to be valid, all invoice lines must pass the test. Only offer actually present on invoice will be tested."/>
@@ -16646,7 +16603,7 @@ public class ValidateBRScript extends ValidateBR {
                     valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
         </insert>
     </changeSet>
-
+    
     <changeSet id="#INTRD-13375_20230131" author="aeljaouhari">
     	<insert tableName="com_message_template">
 			<column name="media" value="EMAIL" />
@@ -16681,7 +16638,7 @@ Company Signature
                 ]]>
 			</column>
 		</insert>
-
+		
 		<insert tableName="com_message_template">
 			<column name="media" value="EMAIL" />
 			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
@@ -16719,43 +16676,15 @@ Your name and surname
 			</column>
 		</insert>
 	</changeSet>
-
-    <changeSet id="INTRD-13608_20230130" author="HichamELHALOUI" >
-         <update tableName="meveo_job_instance">
-             <column name="following_job_id" value="null" />
-            <where>following_job_id  in (select id from meveo_job_instance where code='DWH_Job_CHURN')</where>
-        </update>
-        <delete tableName="job_execution">
-	        <where>job_instance_id  in (select id from meveo_job_instance where code='DWH_Job_CHURN')</where>
-	    </delete>
-        <delete tableName="meveo_job_instance">
-            <where>code='DWH_Job_CHURN'</where>
-        </delete>
-    </changeSet>
-
-    <changeSet id="INTRD-12782_20230131" author="zelmeliani">
-        <update tableName="ar_dunning_action">
-            <column name="type" value="INVOICE_LEVEL" />
-        </update>
-        <update tableName="dunning_level">
-            <column name="type" value="INVOICE_LEVEL" />
-        </update>
-        <update tableName="dunning_policy">
-            <column name="type" value="INVOICE_LEVEL" />
-        </update>
-        <update tableName="com_message_template">
-            <column name="type_dunning_mode" value="INVOICE_LEVEL" />
-            <where>media = 'DUNNING_MEDIA'</where>
-        </update>
-    </changeSet>
-
-    <changeSet id="#INTRD-13717_20230202" author="aeljaouhari">
+	
+	<changeSet id="#INTRD-13717_20230202" author="aeljaouhari">
     	<update tableName="meveo_script_parameter">
 			<column name="mandatory" valueNumeric="0" />
 			<where>script_instance_id in (SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareOfferLinesAmount') and code = 'offers'</where>
 		</update>
 	</changeSet>
 	
+
 	<changeSet id="#INTRD-13762_20230206" author="aelmalki">
 		<update tableName="meveo_script_instance">
 			<column name="script">
@@ -16855,620 +16784,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='org.meveo.service.script.demo.CustomGatewayPaymentScript'</where>
 		</update>
 	</changeSet>
-
-    <changeSet id="#INTRD-11208_20230131" author="zelmeliani">
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-11" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B+5" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello, </p>
-                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have debit of #{customerAccount balance} #{currencySymbol}.</p>
-                    <p>
-                        Please take necessary steps to insure payments of your last(s) invoice(s). <br>
-                        You
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-12" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +10" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello, </p>
-                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccount balance} #{currencySymbol}).</p>
-                    <p>
-                        Please take contact with us to clear the situation.<br>
-                        If you have already done a payment, you can discard this email.
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-13" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +20" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello, </p>
-                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccount balance} #{currencySymbol}).</p>
-                    <p>
-                        Please take contact with us to clear the situation.<br>
-                        If you have already done a payment, you can discard this email.
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-14" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +30" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello, </p>
-                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccount balance} #{currencySymbol}).</p>
-                    <p>As it seems we were not able to clear the situation, the services you have with us have been suspended.</p>
-                    <p>If you have already done a payment, please contact us so that we can re-activate your services.</p>
-                    <p>If you have any additional question, please contact our services.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-15" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +1" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have debit of #{customerAccount balance} #{currencySymbol}.</p>
-                    <p>
-                        Please take necessary steps to insure payments of your last(s) invoice(s). <br>
-                        You
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-16" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +5" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccount balance} #{currencySymbol}).</p>
-                    <p>
-                        Please take contact with us to clear the situation.<br>
-                        If you have already done a payment, you can discard this email.
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-17" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +10" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccount balance} #{currencySymbol}).</p>
-                    <p>
-                        Please take contact with us to clear the situation.<br>
-                        If you have already done a payment, you can discard this email.
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-18" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +15" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccount balance} #{currencySymbol}).</p>
-                    <p>As it seems we were not able to clear the situation, the services you have with us have been suspended.</p>
-                    <p>If you have already done a payment, please contact us so that we can re-activate your services.</p>
-                    <p>If you have any additional question, please contact our services.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-19" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +5fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Bonjour,</p>
-                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccount balance} #{currencySymbol}.</p>
-                    <p>Nous vous invitons a faire le nécessaires pour assurer le paiement de votre (vos) dernière(s) facture(s).</p>
-                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
-                    <p>Meilleures salutations,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-20" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +10fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Bonjour,</p>
-                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccount balance} #{currencySymbol}).</p>
-                    <p>Merci de prendre contact avec nous pour échanger sur la situation.</p>
-                    <p>Si vous avez déjà effectué un paiement, veuillez ne pas prendre cet e-mail en considération.</p>
-                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
-                    <p>Meilleures salutations,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-21" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +20fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Bonjour,</p>
-                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccount balance} #{currencySymbol}).</p>
-                    <p>Merci de prendre contact avec nous pour éclaircir la situation.</p>
-                    <p>Si vous avez déjà effectué un paiement, vous pouvez ne pas prendre compte de cet e-mail.</p>
-                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
-                    <p>Meilleures salutations,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-22" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +30fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Bonjour,</p>
-                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccount balance} #{currencySymbol}).</p>
-                    <p>La situation ne s’étant pas régler à l’amiable, l’ensemble des services que vous avez avec nous ont été suspendus.</p>
-                    <p>Si vous avez déjà effectué un paiement, veuillez nous contacter afin que nous puissions réactiver vos services.</p>
-                    <p>Si vous avez des questions supplémentaires, veuillez contacter nos services.</p>
-                    <p>Meilleures salutations,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-23" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +1fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccount balance} #{currencySymbol}.</p>
-                    <p>Nous vous invitons a faire le nécessaires pour assurer le paiement de votre (vos) dernière(s) facture(s).</p>
-                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
-                    <p>Meilleures salutations,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-24" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +5fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccount balance} #{currencySymbol}).</p>
-                    <p>Merci de prendre contact avec nous pour échanger sur la situation.</p>
-                    <p>Si vous avez déjà effectué un paiement, veuillez ne pas prendre cet e-mail en considération.</p>
-                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
-                    <p>Meilleures salutations,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-25" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +10fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccount balance} #{currencySymbol}).</p>
-                    <p>Merci de prendre contact avec nous pour éclaircir la situation.</p>
-                    <p>Si vous avez déjà effectué un paiement, vous pouvez ne pas prendre compte de cet e-mail.</p>
-                    <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
-                    <p>Meilleures salutations,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-26" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +15fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Bonjour #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccount balance} #{currencySymbol}).</p>
-                    <p>La situation ne s’étant pas régler à l’amiable, l’ensemble des services que vous avez avec nous ont été suspendus.</p>
-                    <p>Si vous avez déjà effectué un paiement, veuillez nous contacter afin que nous puissions réactiver vos services.</p>
-                    <p>Si vous avez des questions supplémentaires, veuillez contacter nos services.</p>
-                    <p>Meilleures salutations,</p>
-                ]]>
-            </column>
-        </insert>
-    </changeSet>
-    
-    <changeSet id="#INTRD-13074_20230214" author="zelmeliani">
-    	<insert tableName="ar_customer_balance">
-    		<column name="id" value="-1"/>
-		    <column name="version" value="0" />
-		    <column name="created" valueDate="${db.current.time}" />
-		    <column name="creator" value="applicationInitializer" />
-		    <column name="code" value="default_customer_balance" />
-		    <column name="description" value="Default Customer Balance" />
-		    <column name="default_balance" value="1" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_ADV')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_CASH')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PPL_INSTALLMENT')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PPL_CREATION')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_WIRE')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_CASH')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_BATCH')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_STP')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_PAL')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'CRD_TRS')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'DBT_TRS')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_CRD')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'EXP_WRT')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_TIP')" /> 
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_CRN')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_DIS')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_REB')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_RDD')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_RCR')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_CRD')" /> 
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_10')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_20')" /> 
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_05')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_00')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_CRD')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'ADJ_INV')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'ADJ_REF')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_STD')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'INV_FEE')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_DEP')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'RND_INC')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'RND_EXP')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_DDT')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_CHK')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_REC')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_NID')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_TIP')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_DDT')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_CHK')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_DDT')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_TIP')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_CHK')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'PAY_SD')" />
-		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
-		</insert>
-    </changeSet>
-
-    <changeSet id="#INTRD-13957_20230213" author="houdad">
+	
+	<changeSet id="#INTRD-13957_20230213" author="houdad">
+    	 
         <sql>
         DELETE FROM ${db.schema.adapted}CAT_UNIT_OF_MEASURE;
         INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-1, 0, 'opencell.admin', NULL, '10', now(), NULL, 'group', 'group', NULL, 1, NULL);
@@ -19635,9 +18953,10 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		INSERT INTO ${db.schema.adapted}CAT_UNIT_OF_MEASURE (id,version,creator,updater,code,created,updated,symbol,description,description_i18n,multiplicator,parent_id) VALUES (-2162, 0, 'opencell.admin', NULL, 'XZZ', now(), NULL, 'Mutually defined ', 'Mutually defined ', NULL, 1, NULL);   
 		        
         </sql>
-        </changeSet>
-        
-        <changeSet id="#INTRD-13967_20230215" author="houdad">
+	</changeSet>
+	
+
+	<changeSet id="#INTRD-13967_20230215" author="houdad">
 		<update tableName="adm_currency">
 			<column name="currency_code" value="AFN" />
 			<where> id = 1</where>
@@ -19875,7 +19194,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		            <column name="system_currency" valueNumeric="1" />
 		</insert>
 	</changeSet>
-	
 	<changeSet id="#INTRD-13967_20230217" author="houdad">
 		<update tableName="adm_currency">
 			<column name="description_en" value="Rouble biélorussie" />
@@ -19883,6 +19201,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 	
+	
+
 	<changeSet id="#INTRD-13968" author="houdad">
 	<insert tableName="adm_country">
             <column name="id" valueNumeric="-238" />
@@ -20049,11 +19369,48 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='FR-Invoice'</where>
 		</update>
 	</changeSet>
-
-    <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI">
-        <update tableName="adm_notification">
-            <column name="event_type_filter" value="STARTED" />
-            <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
+	
+	<changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI">
+        <update tableName="meveo_script_instance">
+            <column name="description" value="Invoice amount will be compared to provided amount using the selected operator."/>
+			<column name="description_i18n" value='{"FRA":"Le montant de la facture sera comparé au montant indiqué en utilisant l’opérateur sélectionné.","ENG":"Invoice amount will be compared to provided amount using the selected operator."}'/>
+			<where>code = 'org.meveo.service.script.CompareInvoiceAmount'</where>
+        </update>
+        <update tableName="meveo_script_instance">
+            <column name="description" value="Amount invoiced for each offer in the list will be compared to the provided value using the selected operator If offer list is empty, then rule will be ignored. Only offer actually present on invoice will be tested."/>
+            <column name="description_i18n">
+				<![CDATA[{"FRA":"<p>Le montant facturé pour chacune des offres dans la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Si la liste des offres est vide, alors la règle sera ignorée.</p><p>Seules les offres effectivement présentes sur la facture seront testées.</p>","ENG":"<p>Amount invoiced for each offer in the list will be compared to the provided value using the selected operator</p><p>If offer list is empty, then rule will be ignored.</p><p>Only offer actually present on invoice will be tested.</p>"}]]>
+			</column>
+            <where>code = 'org.meveo.service.script.CompareOfferAmount'</where>
+        </update>
+        <update tableName="meveo_script_instance">
+            <column name="description" value="The customer's (customer account actually) credit category must not be in the provided list for the rule to pass. If customer's credit category is in the list, the rule will fail. If credit category list is empty, then rule will be ignored."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>The customer's (customer account actually) credit category must not be in the provided list for the rule to pass.</p><p>If customer's credit category is in the list, the rule will fail.</p><p>If credit category list is empty, then rule will be ignored.</p>","FRA":"<p>Le catégorie de crédit du client (customer account) ne doit pas être dans la liste fournie pour que la règle passe.</p><p>Si la catégorie de crédit du client est dans la liste, la règle va échouer.</p><p>Si la liste de catégories de crédit est vide, la règle sera ignorée.</p>"}]]>
+			</column>
+            <where>code = 'org.meveo.service.script.validation.ValidateCreditCategory'</where>
+        </update>
+        <update tableName="meveo_script_instance">
+            <column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. Only offer from the list actually present on invoice will be tested. If offer list is empty, then all invoice lines will be tested regardless of their offer. For the test to pass, all tested invoice lines must pass the test."/>
+			<column name="description_i18n">
+				<![CDATA[{"ENG":"<p>Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator.</p><p>Only offer from the list actually present on invoice will be tested</p><p>If offer list is empty, then all invoice lines will be tested regardless of their offer.</p><p>For the test to pass, all tested invoice lines must pass the test.</p>",
+				"FRA":"<p>Le montant de chaque ligne de facture provenant d’une offre de la liste sera comparé à la valeur indiquée, en utilisant l’opérateur sélectionné.</p><p>Seule les offres de la liste effectivement présentes sur la facture seront testées.</p><p>Si la liste des offres est vide, alors toutes les lignes de facture seront testées, quelle que soit leur offre.</p><p>Pour que le teste passe, toutes les lignes de facture testées doivent passer le test.</p>"}]]>
+			</column>
+            <where>code = 'org.meveo.service.script.CompareOfferLinesAmount'</where>
+        </update>
+        <update tableName="meveo_script_instance">
+            <column name="description" value="The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days. Age is computed at invoice date."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>The invoice’s customer (Customer/Group, Customer Account/Payer, Billing account) age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge du client (Customer/Groupe, Customer Account/Compte payeur, Billing account/Compte de facturation) est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
+			</column>
+            <where>code = 'org.meveo.service.script.validation.ValidateCustomerAge'</where>
+        </update>
+        <update tableName="meveo_script_instance">
+            <column name="description" value="The invoice’s subscriptions age is compared to a provided number of days. Age is computed at invoice date."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>The invoice’s subscriptions age is compared to a provided number of days.</p><p>Age is computed at invoice date.</p>","FRA":"<p>L’âge de la souscription est comparé au nombre de jours indiqué.</p><p>L'âge est calculé à la date de facture.</p>"}]]>
+			</column>
+            <where>code = 'org.meveo.service.script.validation.ValidateSubscriptionAge'</where>
         </update>
     </changeSet>
     
@@ -20080,7 +19437,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         <column name="description" value="Featured"/>
         <column name="tag_type_id" value="-1" />
     </insert>
-	
 	<update tableName="crm_customer">
 		<column name="customer_category_id" valueComputed="(SELECT id FROM crm_customer_category WHERE code = 'CLIENT')" />
 		<where>customer_category_id = (SELECT id FROM crm_customer_category WHERE code = 'PROSPECT')</where>
@@ -20088,7 +19444,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
     <delete tableName="crm_customer_category">
         <where>code='PROSPECT'</where>
     </delete>
-	
     <insert tableName="crm_customer_category">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
@@ -20109,6 +19464,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
                 <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
                 <column name="tax_category_id" valueNumeric="-3" />
     </insert>
+     <delete tableName="ar_credit_category">
+        <where>code in ('PART_M', 'PART_C')</where>
+    </delete>
      <update tableName="billing_invoice_cat">
 			<column name="description" value="Security Deposit" />
 			<where> code = 'ICAT_SECURITY_DEPOSIT'</where>
@@ -20156,7 +19514,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="legal_entity_type_id" valueComputed="(SELECT id FROM adm_title WHERE code = 'CIE')" />
 			<where>legal_entity_type_id = (SELECT id FROM adm_title WHERE code = 'ASSOC')</where>
 		</update>
-		
+
         <delete tableName="adm_title">
             <where>code = 'ASSOC'</where>
         </delete>
@@ -20248,12 +19606,18 @@ public class CustomGatewayPaymentScript extends PaymentScript{
     
     
 
-    <changeSet id="#INTRD-13867_20230301" author="AbdellatifBARI">
-        <delete tableName="meveo_job_instance">
-            <where>job_category = 'DWH'</where>
-        </delete>
+	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+    <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
+        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
 
+    <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI">
+        <update tableName="adm_notification">
+            <column name="event_type_filter" value="STARTED" />
+            <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
+        </update>
+    </changeSet>
+    
     <changeSet id="#INTRD-14042_20230227" author="aeljaouhari">
 		<insert tableName="meveo_script_instance">
 			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -20285,7 +19649,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		<update tableName="ar_occ_template">
 			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code='No accounting entry')" />
 			<where> accounting_scheme_id is null</where>
-		</update>
+		</update>		
 	</changeSet>
     <changeSet id="#INTRD-14433_20230306" author="hichamELHALOUI">
         <update tableName="meveo_script_parameter">
@@ -20296,7 +19660,19 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
 
-   	<changeSet id="INTRD-12103_20221215" author="HichamHANINE">
+    <changeSet id="#INTRD-13867_20230301" author="AbdellatifBARI">
+        <delete tableName="meveo_job_instance">
+            <where>job_category = 'DWH'</where>
+        </delete>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14555_20230303" author="aeljaouhari">
+        <update tableName="crm_customer_category">
+            <column name="default_seller_id" valueComputed="(SELECT min(id) FROM crm_seller WHERE code = 'MAIN_SELLER' OR id >= 1)" />
+        </update>
+    </changeSet>
+
+    <changeSet id="INTRD-12103_20221215" author="HichamHANINE">
       <update tableName="meveo_script_instance">
 			<column name="description" value="Amount of each invoice line coming from offers in the list will be compared to the provided value using the selected operator. Only offer from the list actually present on invoice will be tested. If offer list is empty, then all invoice lines will be tested regardless of their offer. For the test to pass, all tested invoice lines must pass the test."/>
 			<column name="description_i18n">
@@ -20306,40 +19682,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
           <where>code = 'org.meveo.service.script.CompareOfferLinesAmount' </where>
       </update>
     </changeSet>
-    
-   	<changeSet id="#INTRD-14555_20230303" author="aeljaouhari">
-        <update tableName="crm_customer_category">
-            <column name="default_seller_id" valueComputed="(SELECT min(id) FROM crm_seller WHERE code = 'MAIN_SELLER' OR id >= 1)" />
-        </update>
-    </changeSet>
-	
-	<changeSet id="#INTRD-14126_20230307" author="aelmalki">
-        <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="code" value="CAN_SD" />
-            <column name="description" value="Cancel security deposit" />
-            <column name="occ_category" value="CREDIT" />
-            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
-            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='165000000')" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
-            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
-        </insert>
-    </changeSet>
-	
-	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308">
-		<update tableName="ar_account_operation">
-			<column name="converted_amount" valueComputed="amount"/>
-			<column name="converted_amount_without_tax" valueComputed="amount_without_tax"/>
-			<column name="converted_tax_amount" valueComputed="tax_amount"/>
-			<column name="converted_matching_amount" valueComputed="matching_amount"/>
-			<column name="converted_un_matching_amount" valueComputed="un_matching_amount"/>
-			<column name="transactional_currency" valueComputed="(SELECT id FROM billing_trading_currency btc where currency_id = (SELECT currency_id from crm_provider where id = 1))"></column>
-			<where>transactional_currency is null</where>
-		</update>
-	</changeSet>
 
     <changeSet id="#INTRD-14786_20230309" author="bourras">
         <insert tableName="ar_occ_template">
@@ -20369,8 +19711,20 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
     </changeSet>
-    
-    <changeSet author="houdad" id="#INTRD-15126_20230322">
+	
+	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308">
+		<update tableName="ar_account_operation">
+			<column name="converted_amount" valueComputed="amount"/>
+			<column name="converted_amount_without_tax" valueComputed="amount_without_tax"/>
+			<column name="converted_tax_amount" valueComputed="tax_amount"/>
+			<column name="converted_matching_amount" valueComputed="matching_amount"/>
+			<column name="converted_un_matching_amount" valueComputed="un_matching_amount"/>
+			<column name="transactional_currency" valueComputed="(SELECT id FROM billing_trading_currency btc where currency_id = (SELECT currency_id from crm_provider where id = 1))"></column>
+			<where>transactional_currency is null</where>
+		</update>
+	</changeSet>
+	
+	<changeSet author="houdad" id="#INTRD-15126_20230322">
 		<update tableName="ar_payment_token">
 			<column name="token_type" value="PAYPALPAYMENTLINK"/>
 			<where> token_type ='PAYPAL'</where>
@@ -20387,21 +19741,21 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>currency_id=49</where>
 		</update>
 	</changeSet>
-	
-	<changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI">
+
+    <changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI">
         <update tableName="cat_offer_template_category">
-            <column name="order_level" valueNumeric="0" />
-            <where> id in (-1, -2)</where>
+                <column name="order_level" valueNumeric="0" />
+                <where> id in (-1, -2)</where>
         </update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-15228_20230327" author="hichamELHALOUI">
 		<update tableName="adm_currency">
 			<column name="symbol" value="$" />
 			<where> currency_code = 'USD'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-15186_20230328" author="zelmeliani">  
         <sql>SELECT setval('iso_icd_seq', 208, true)</sql> 
         <sql>SELECT setval('untdid_5189_allowance_code_seq', 19, true)</sql> 
@@ -20412,7 +19766,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         <sql>SELECT setval('untdid_vatex_seq', 57, true)</sql> 
         <sql>SELECT setval('untdid_2475_vat_payment_option_seq', 3, true)</sql> 
     </changeSet>
-
     <changeSet id="#INTRD-14750_20230331" author="TarikFA.">
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-65" />
@@ -20796,6 +20149,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="updater" value="applicationInitializer"/>
             <where>entity_class = 'org.meveo.model.cpq.Media'</where>
         </update>
+    </changeSet>
+	
+	 <changeSet id="INTRD-15222_20230424" author="aelmalki" failOnError="false">
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" valueComputed="(select id from billing_invoice_type where code = 'ADJ')"/>
+            <column name="applies_to_id" valueComputed="(select id from billing_invoice_type where code = 'COMMERCIAL_ORDER')"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>
