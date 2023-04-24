@@ -241,7 +241,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
         final InvoicingItem invoicingItem = items.get(0);
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findFromMap(invoicingItem.getInvoiceSubCategoryId());
         UserAccount userAccount = invoicingItem.getUserAccountId()==null? null : getEntityManager().getReference(UserAccount.class, invoicingItem.getUserAccountId());
-		SubCategoryInvoiceAgregate scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, invoice.getBillingAccount(), userAccount, null, invoice, invoiceSubCategory.getAccountingCode());
+		SubCategoryInvoiceAgregate scAggregate = new SubCategoryInvoiceAgregate(getEntityManager().getReference(InvoiceSubCategory.class, invoicingItem.getInvoiceSubCategoryId()), invoice.getBillingAccount(), userAccount, null, invoice, invoiceSubCategory.getAccountingCode());
         scAggregate.updateAudit(currentUser);
         addTranslatedDescription(getTradingLanguageCode(invoicingItem.getBillingAccountId()), invoiceSubCategory, scAggregate,"");
         setAggregationAmounts(items, scAggregate, invoicingItem);
