@@ -35,16 +35,7 @@ public class DocumentService extends BusinessService<Document> {
         entity.setCategory(getDocumentCateory(entity));
 
         if(Objects.isNull(entity.getDocumentVersion())){
-        	Integer documentVersion = 0 ;
-        	
-            try {
-	        	Document document = findByCodeAndLastVersion(entity.getCode());
-	        	documentVersion = document.getDocumentVersion()+1;
-        	} catch (NoResultException e) {
-        		documentVersion = 0;
-        	}
-
-        	entity.setDocumentVersion(documentVersion);
+            entity.setDocumentVersion(getDocumentVersion(entity));
         	entity.setFileName(entity.getCode() + "_" + entity.getDocumentVersion() + "_" + entity.getFileName());
         }
 
@@ -126,4 +117,24 @@ public class DocumentService extends BusinessService<Document> {
                 .setParameter("version", version)
                 .getSingleResult();
     }
+    
+    /**
+	 * Get Document Version using code
+	 * @param pDocument {@link Document}
+	 * @return Document version
+	 */
+	private synchronized Integer getDocumentVersion(Document pDocument) {
+		Integer documentVersion = 0 ;
+		
+		if(Objects.isNull(pDocument.getDocumentVersion())){
+          	try {
+	        	Document document = findByCodeAndLastVersion(pDocument.getCode());
+	        	documentVersion = document.getDocumentVersion()+1;
+        	} catch (NoResultException e) {
+        		documentVersion = 0;
+        	}
+        }
+		
+		return documentVersion;
+	}
 }
