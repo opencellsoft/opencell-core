@@ -163,7 +163,7 @@ public class CDRService extends PersistenceService<CDR> {
         if(StringUtils.isBlank(fileName)) {
             throw new BusinessException("Please provide a correct file name!");
         }
-        List<String> cdrs = getEntityManager().createNamedQuery("CDR.checkFileNameExists").setParameter("fileName", fileName).getResultList();
+        List<String> cdrs = getEntityManager().createNamedQuery("CDR.checkFileNameExists").setParameter("fileName", fileName).setMaxResults(1).getResultList();
         if(cdrs == null || cdrs.isEmpty()) {
             throw new BusinessException("File ["+ fileName + "] not found in RATING_CDR Table");
         }
