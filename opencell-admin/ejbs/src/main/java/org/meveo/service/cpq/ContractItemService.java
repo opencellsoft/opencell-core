@@ -146,13 +146,14 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		}
         Query query = getEntityManager().createQuery(builder.toString());
 		query.setParameter("contractId", contract.getId());
-		if(builder.toString().contains(":offerId") && offer != null){
+		
+		if(offer != null && offer.getId() != null){
 			query.setParameter("offerId", offer.getId());
 		}
-		if(builder.toString().contains(":productId")){
+		if(productId != null){
 			query.setParameter("productId", productId);
 		}
-		if(builder.toString().contains(":chargeTemplate") && chargeTemplate != null){
+		if(chargeTemplate != null && chargeTemplate.getId() != null){
 			query.setParameter("chargeTemplate", chargeTemplate.getId());
 		}
 
@@ -160,7 +161,8 @@ public class ContractItemService extends BusinessService<ContractItem> {
 
         if (!applicableContractItems.isEmpty()) {
             if (applicableContractItems.size() > 1) {
-                log.error("Contract " + contract.getCode() + "has more than one item ");
+                log.error("Contract " + contract.getCode() + "has more than one item matching offer {}, product {} and chargeTemplate {}", offer != null ? offer.getId() : null, productId,
+                    chargeTemplate != null ? chargeTemplate.getId() : null);
 
             } else {
                 contractItem = applicableContractItems.get(0);

@@ -38,11 +38,6 @@ import org.meveo.model.cpq.Product;
 @Table(name = "cpq_contract_item", uniqueConstraints = { @UniqueConstraint(columnNames = {"code"})})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_contract_item_seq")})
-@NamedQueries({
-	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c where  c.contract.id=:contractId "
-			+ " and (c.offerTemplate is null or c.offerTemplate.id=:offerId) "
-			+ " and (c.product is null or c.product.id=:productId) and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId)",
-			hints = {@QueryHint(name = "org.hibernate.cacheable", value = "true")}) })
 public class ContractItem extends EnableBusinessCFEntity {
 
 	/**
