@@ -65,7 +65,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     /**
-     * Stores a list of processed EDR's. Key format: &lt;originBatch&gt;_&lt;originRecord&gt;, value: 0 (no meaning, only keys are used)
+     * Stores a list of processed EDR's. Key format: originRecord, value: 0 (no meaning, only keys are used)
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-edr-cache")
     private Cache<CacheKeyStr, Boolean> edrCache;
@@ -128,19 +128,18 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Check if EDR exists already for a given originBatch and originRecord.
+     * Check if EDR exists already for a given originRecord.
      * 
-     * @param originBatch Origin batch
      * @param originRecord Origin record
      * @return True if EDR is cached
      */
-    public Boolean getEdrDuplicationStatus(String originBatch, String originRecord) {
+    public Boolean getEdrDuplicationStatus(String originRecord) {
 
-        return edrCache.get(new CacheKeyStr(currentUser.getProviderCode(), originBatch + '_' + originRecord));
+        return edrCache.get(new CacheKeyStr(currentUser.getProviderCode(), originRecord));
     }
 
     /**
-     * Set to cache that EDR with a given originBatch and originRecord already exists.
+     * Set to cache that EDR with a given originRecord already exists.
      * 
      * @param originRecord Origin record
      * @return Is EDR is cached - True if EDR was already in cache before
