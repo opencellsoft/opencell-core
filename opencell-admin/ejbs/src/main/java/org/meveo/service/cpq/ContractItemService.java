@@ -140,16 +140,17 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		}
 
         Query query = getEntityManager().createQuery(builder.toString());
-		query.setParameter("contractId", contract.getId());
-		if(builder.toString().contains(":offerId")){
-			query.setParameter("offerId", offer.getId());
-		}
-		if(builder.toString().contains(":productId")){
-			query.setParameter("productId", productId);
-		}
-		if(builder.toString().contains(":chargeTemplate")){
-			query.setParameter("chargeTemplate", chargeTemplate.getId());
-		}
+        
+        query.setParameter("contractId", contract.getId());
+        if (offer != null && offer.getId() != null) {
+            query.setParameter("offerId", offer.getId());
+        }
+        if (productId != null) {
+            query.setParameter("productId", productId);
+        }
+        if (chargeTemplate != null && chargeTemplate.getId() != null) {
+            query.setParameter("chargeTemplate", chargeTemplate.getId());
+        }
 
         List<ContractItem> applicableContractItems = query.getResultList();
 
