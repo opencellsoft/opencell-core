@@ -78,7 +78,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         try {
             DDRequestBuilder ddRequestBuilder = null;
