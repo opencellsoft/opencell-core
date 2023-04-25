@@ -139,7 +139,6 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		articleMappingLines.forEach(aml -> {
 			List<AttributeMapping> matchedAttributesMapping = new ArrayList<>();
 			List<AttributeMapping> attributesMapping = aml.getAttributesMapping();
-			if (!attributesMapping.isEmpty()) {
 				AtomicBoolean continueProcess = new AtomicBoolean(true);
 				if (OperatorEnum.AND == aml.getAttributeOperator()) {
 					attributesMapping.forEach(attributeMapping -> {
@@ -173,7 +172,6 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
 					}
 				}
-			}
 		});
 		if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
 			throw new RatingException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
