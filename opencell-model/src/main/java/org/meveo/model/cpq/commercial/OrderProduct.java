@@ -343,7 +343,7 @@ public class OrderProduct extends AuditableCFEntity {
 		return orderArticleLines;
 	}
 
-	public void setOrderArticleLines(List<OrderArticleLine> orderArticleLine) {
+	public void setOrderArticleLines(List<OrderArticleLine> orderArticleLines) {
 		this.orderArticleLines = orderArticleLines;
 	}
 }
