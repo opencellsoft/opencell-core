@@ -131,7 +131,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
     
 	private Future<String> processInvoicingItems(BillingRun billingRun, BillingCycle billingCycle, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, JobExecutionResultImpl result) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        List<List<Invoice>> invoicesbyBA = processData(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic, billingCycle, result);
+        List<List<Invoice>> invoicesbyBA = generateInvoices(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic, billingCycle, result);
         if(!CollectionUtils.isEmpty(invoicesbyBA)) {
         	validateInvoices(invoicesbyBA);
             writeInvoicingData(billingRun, isFullAutomatic, invoicesbyBA, billingCycle);
@@ -141,7 +141,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	private void validateInvoices(List<List<Invoice>> invoicesbyBA) {
 		invoicesbyBA.stream().forEach(invoices-> invoiceService.applyAutomaticInvoiceCheck(invoices, true, false));
 	}
-	private List<List<Invoice>> processData(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle, JobExecutionResultImpl result) {
+	private List<List<Invoice>> generateInvoices(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle, JobExecutionResultImpl result) {
         List<List<Invoice>> invoicesByBA = new ArrayList<List<Invoice>>();
         List<Invoice> invoices;
         for (BillingAccountDetailsItem billingAccountDetailsItem : invoicingItemsList) {
