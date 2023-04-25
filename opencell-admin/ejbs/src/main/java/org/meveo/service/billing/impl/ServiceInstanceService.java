@@ -1304,11 +1304,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             Subscription sub = serviceInstance.getSubscription();
             if(sub != null) {
                 BillingAccount billingAccount = sub.getUserAccount().getBillingAccount();
-                if(billingAccount != null) {
-                    if(CollectionUtils.isEmpty(billingAccount.getDiscountPlanInstances())) {
-                        discountPlanInstanceService.instantiateDiscountPlan(billingAccount, discountPlan, null, isVirtual);
+                for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
+                    if (discountPlan.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
+                        throw new BusinessException("DiscountPlan " + discountPlan.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
                     }
                 }
+				discountPlanInstanceService.instantiateDiscountPlan(serviceInstance, discountPlan, null, isVirtual);
             }
            
         }

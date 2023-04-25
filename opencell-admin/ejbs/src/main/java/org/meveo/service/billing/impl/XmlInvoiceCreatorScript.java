@@ -1752,6 +1752,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element sellerTag = doc.createElement("seller");
         sellerTag.setAttribute("code", seller.getCode());
         sellerTag.setAttribute("description", getDefaultIfNull(seller.getDescription(), ""));
+        sellerTag.setAttribute("legalType", getDefaultIfNull(seller.getLegalType(), ""));
         sellerTag.setAttribute("vatNo", getDefaultIfNull(seller.getVatNo(), ""));
         sellerTag.setAttribute("registrationNo", getDefaultIfNull(seller.getRegistrationNo(), ""));
         addCustomFields(seller, doc, sellerTag);

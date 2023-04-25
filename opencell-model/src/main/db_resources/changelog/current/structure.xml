@@ -16133,4 +16133,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                   constraintName="billing_accounting_article_open_order_id_fk"/>
         <dropColumn tableName="billing_accounting_article" columnName="open_order_id" />
     </changeSet>
+
+    <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="discounted_amount" type="numeric(23,12)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

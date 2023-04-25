@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
@@ -51,7 +50,6 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 5.0
  * 
  */
-@Stateless
 public class CdrEdrProcessingCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = 1435137623784514994L;

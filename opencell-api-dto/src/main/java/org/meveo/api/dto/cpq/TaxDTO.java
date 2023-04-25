@@ -3,13 +3,22 @@ package org.meveo.api.dto.cpq;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BusinessEntityDto;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import java.math.BigDecimal;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TaxDTO extends BusinessEntityDto {
 
+    /**
+     * Composit tax : exemple 5%, 10%; 25%
+     */
+    @XmlAttribute(required = true)
+    @NotNull
+    @Schema(description = "The composite rate %")
+    protected String compositeRate;
     @Schema(description = "tax percent")
     private String percent;
     @Schema(description = "tax amount")
@@ -79,5 +88,13 @@ public class TaxDTO extends BusinessEntityDto {
 
     public void setVatex(String vatex) {
         this.vatex = vatex;
+    }
+
+    public String getCompositeRate() {
+        return compositeRate;
+    }
+
+    public void setCompositeRate(String compositeRate) {
+        this.compositeRate = compositeRate;
     }
 }

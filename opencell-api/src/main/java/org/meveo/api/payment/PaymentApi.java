@@ -168,12 +168,14 @@ public class PaymentApi extends BaseApi {
 			transactionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrencyCode);
 			checkTransactionalCurrency(transactionalcurrencyCode, transactionalCurrency);
 
-			ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, transactionalCurrency, paymentDto.getTransactionDate());
 			transactionalAmount = paymentDto.getAmount();
 
-			if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency) && !Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
-				functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
-				lastApliedRate = exchangeRate.getExchangeRate();
+			if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency)) {
+				ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, functionalCurrency, paymentDto.getTransactionDate());
+				if (!Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
+					functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
+					lastApliedRate = exchangeRate.getExchangeRate();
+				}
 			}
 
 		}

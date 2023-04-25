@@ -134,7 +134,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
                 + " AND il.tax.id = ilAdj.tax.id AND il.taxRate = ilAdj.taxRate AND il.taxMode = ilAdj.taxMode) WHERE bli.id.id in (:invoiceId) "
                 + " GROUP BY bli.id.id, il.accountingArticle.id, il.tax.id, il.taxRate, il.taxMode, bli.linkedInvoiceValue.id "),
 		@NamedQuery(name = "InvoiceLine.sumAmountsDiscountByBillingAccount", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax), il.subscription.id, il.commercialOrder.id ,il.invoice.id ,il.billingAccount.id,  il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"
-                + " from  InvoiceLine il  where il.billingRun.id=:billingRunId and il.discountPlanItem is not null group by il.subscription.id, il.commercialOrder.id , il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id")
+                + " from  InvoiceLine il  where il.billingRun.id=:billingRunId and il.discountPlanItem is not null group by il.subscription.id, il.commercialOrder.id , il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
+		@NamedQuery(name = "InvoiceLine.getAdjustmentAmount", query = "SELECT SUM(li.amount) FROM Invoice i JOIN i.linkedInvoices li WHERE i.id= :ID_INVOICE and li.type = 'ADJUSTMENT'"),
 	})
 public class InvoiceLine extends AuditableCFEntity {
 

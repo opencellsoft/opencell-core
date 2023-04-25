@@ -3416,6 +3416,7 @@
     		<column name="origin_ratedtransaction_id" type="bigint" />
             <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
             <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
+            <column name="discounted_amount" type="numeric(23,12)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -19579,7 +19580,8 @@
     <changeSet id="#INTRD-15146_20230406" author="ZBariki" />
     <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-14966_20230329" author="HatimO."/>
-    
+    <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

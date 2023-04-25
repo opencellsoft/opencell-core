@@ -138,41 +138,40 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
 		articleMappingLines.forEach(aml -> {
 			List<AttributeMapping> matchedAttributesMapping = new ArrayList<>();
-			aml.getAttributesMapping().size();
-			AtomicBoolean continueProcess = new AtomicBoolean(true);
-			if (OperatorEnum.AND == aml.getAttributeOperator()) {
-				aml.getAttributesMapping().forEach(attributeMapping -> {
-					if (continueProcess.get()) {
-						if (checkAttribute(product, walletOperation, attributes, attributeMapping)) {
-							matchedAttributesMapping.add(attributeMapping);
-						} else {
-							// for AND operator, if at least we have 1 unmatchedAttributs (else), all previous matchedAttribut shall not taken into account
-							matchedAttributesMapping.clear();
-							continueProcess.set(false);
+			List<AttributeMapping> attributesMapping = aml.getAttributesMapping();
+				AtomicBoolean continueProcess = new AtomicBoolean(true);
+				if (OperatorEnum.AND == aml.getAttributeOperator()) {
+					attributesMapping.forEach(attributeMapping -> {
+						if (continueProcess.get()) {
+							if (checkAttribute(product, walletOperation, attributes, attributeMapping)) {
+								matchedAttributesMapping.add(attributeMapping);
+							} else {
+								// for AND operator, if at least we have 1 unmatchedAttributs (else), all previous matchedAttribut shall not taken into account
+								matchedAttributesMapping.clear();
+								continueProcess.set(false);
+							}
 						}
-					}
-				});
-			} else if (OperatorEnum.OR == aml.getAttributeOperator()) {
-				aml.getAttributesMapping().forEach(attributeMapping -> {
-					if (continueProcess.get()) {
-						if (checkAttribute(product, walletOperation, attributes, attributeMapping)) {
-							matchedAttributesMapping.add(attributeMapping);
-							continueProcess.set(false);
+					});
+				} else if (OperatorEnum.OR == aml.getAttributeOperator()) {
+					attributesMapping.forEach(attributeMapping -> {
+						if (continueProcess.get()) {
+							if (checkAttribute(product, walletOperation, attributes, attributeMapping)) {
+								matchedAttributesMapping.add(attributeMapping);
+								continueProcess.set(false);
+							}
 						}
-					}
-				});
-			}
-			
-			Set<Attribute> matchedAttributes = matchedAttributesMapping.stream().map(AttributeMapping::getAttribute).collect(Collectors.toSet());
-			//fullMatch
-			if(aml.getAttributesMapping().size() >= matchedAttributesMapping.size() && (matchedAttributes.size() == attributes.keySet().size())) {
-				attributeMappingLineMatch.addFullMatch(aml);
-			}else{
-				if (!(aml.getAttributesMapping().size() > 0 && matchedAttributesMapping.size() == 0)) {
-					attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+					});
 				}
-			}
-			
+
+				Set<Attribute> matchedAttributes = matchedAttributesMapping.stream().map(AttributeMapping::getAttribute).collect(Collectors.toSet());
+				//fullMatch
+				if (attributesMapping.size() >= matchedAttributesMapping.size() && (matchedAttributes.size() == attributes.keySet().size())) {
+					attributeMappingLineMatch.addFullMatch(aml);
+				} else {
+					if (!(attributesMapping.size() > 0 && matchedAttributesMapping.size() == 0)) {
+						attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+					}
+				}
 		});
 		if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
 			throw new RatingException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
