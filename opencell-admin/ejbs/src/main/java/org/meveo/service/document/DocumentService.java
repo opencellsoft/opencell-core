@@ -119,7 +119,7 @@ public class DocumentService extends BusinessService<Document> {
 	 * @param pDocument {@link Document}
 	 * @return Document version
 	 */
-	private Integer getDocumentVersion(Document pDocument) {
+	private synchronized Integer getDocumentVersion(Document pDocument) {
 		Integer documentVersion = 0 ;
 		
 		if(Objects.isNull(pDocument.getDocumentVersion())){
