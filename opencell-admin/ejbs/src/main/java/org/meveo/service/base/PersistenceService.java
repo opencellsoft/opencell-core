@@ -52,6 +52,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.persistence.CacheRetrieveMode;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import javax.persistence.Id;
@@ -442,7 +443,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             
         } else {
             Map<String, Object> hints = new HashMap<>();
-            hints.put(QueryHints.HINT_CACHE_MODE, CacheMode.IGNORE);
+            hints.put("javax.persistence.cache.retrieveMode", CacheRetrieveMode.BYPASS);
             return getEntityManager().find(entityClass, id, hints);
         }
     }
