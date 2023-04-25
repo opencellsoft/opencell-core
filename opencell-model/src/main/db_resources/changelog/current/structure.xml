@@ -15745,4 +15745,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000"/>
         <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000"/>
     </changeSet>
+
+    <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="discounted_amount" type="numeric(23,12)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
