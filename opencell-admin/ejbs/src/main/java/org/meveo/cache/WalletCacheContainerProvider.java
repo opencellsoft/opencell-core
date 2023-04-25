@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
@@ -58,6 +59,7 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 5.0
  * 
  */
+@Stateless
 public class WalletCacheContainerProvider implements Serializable { 
 
     private static final long serialVersionUID = -4969288143287203121L;
