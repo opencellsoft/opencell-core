@@ -290,6 +290,7 @@ public class ParamBean {
                     result = true;
                 }
             }
+            loadDefaultProperties();
         } catch (IOException e1) {
             log.error("Impossible to create :" + _propertyFile);
         }finally {
@@ -299,6 +300,10 @@ public class ParamBean {
         // + ", portability.defaultDelay="
         // + getProperty("portability.defaultDelay"));
         valid = result;
+    }
+
+    private void loadDefaultProperties() {
+        getPropertyAsInteger("api.ratedTransaction.massAction.limit", 10000);
     }
 
     /**

@@ -50,7 +50,7 @@ public class ResumeDunningCollectionPlanJob extends Job {
     }
 
     public void checkActivateDunning(JobExecutionResultImpl result) {
-        FinanceSettings lastOne = financeSettingsService.findLastOne();
+        FinanceSettings lastOne = financeSettingsService.getFinanceSetting();
         if (lastOne != null && !lastOne.isActivateDunning()) {
             result.registerError("The action is not possible, GlobalSettings.activateDunning is disabled");
             throw new BusinessApiException("The action is not possible, GlobalSettings.activateDunning is disabled");

@@ -50,7 +50,6 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.UntdidAllowanceCodeService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
@@ -65,9 +64,6 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
     @Inject
     private DiscountPlanService discountPlanService;
     
-    @Inject
-    private InvoiceLineService invoiceLineService;
-
     @Inject
     private UntdidAllowanceCodeService untdidAllowanceCodeService;
 
@@ -115,9 +111,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         discountPlan.setDiscountPlanaApplicableEntities(getApplicableEntities(postData.getApplicableEntities()));
         discountPlan.setUsedQuantity(postData.getUsedQuantity());
         discountPlan.setSequence(postData.getSequence());
-        if (postData.getAutomaticApplication() != null) {
-            discountPlan.setAutomaticApplication(postData.getAutomaticApplication());
-        }
+        discountPlan.setAutomaticApplication(postData.getAutomaticApplication() != null ? postData.getAutomaticApplication() : false);
+        discountPlan.setApplicableOnOverriddenPrice(postData.isApplicableOnOverriddenPrice());
+        discountPlan.setApplicableOnDiscountedPrice(postData.isApplicableOnDiscountedPrice());
         checkDiscountPlanAutomaticApplication(discountPlan);
         
         // populate customFields
@@ -226,8 +222,10 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             if (postData.getSequence() != null) {
                 discountPlan.setSequence(postData.getSequence());
             }
-            discountPlan.setApplicableOnDiscountedPrice(postData.getApplicableOnDiscountedPrice());
-            discountPlan.setApplicableOnOverriddenPrice(postData.getApplicableOnOverriddenPrice());
+
+            discountPlan.setAutomaticApplication(postData.getAutomaticApplication() != null ? postData.getAutomaticApplication() : false);
+            discountPlan.setApplicableOnOverriddenPrice(postData.isApplicableOnOverriddenPrice());
+            discountPlan.setApplicableOnDiscountedPrice(postData.isApplicableOnDiscountedPrice());
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), discountPlan, false);
@@ -250,11 +248,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (postData.getApplicationLimit() != null) {
             discountPlan.setApplicationLimit(postData.getApplicationLimit());
         }
-        
-        if (postData.getAutomaticApplication() != null) {
-            discountPlan.setAutomaticApplication(postData.getAutomaticApplication());
-        }
-        
+
         checkDiscountPlanAutomaticApplication(discountPlan);
         
         discountPlan = discountPlanService.update(discountPlan);

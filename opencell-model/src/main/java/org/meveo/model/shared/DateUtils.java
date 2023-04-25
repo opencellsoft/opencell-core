@@ -1264,6 +1264,10 @@ public class DateUtils {
             return calendar.getCode() + " #" + priority + " value:" + value;
         }
     }
+    
+    public static Date parseDefaultDate(String dateValue) {
+    	return parseDateWithPattern(dateValue, DATE_PATTERN);
+    }
 
     public static Date fromLocalDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());

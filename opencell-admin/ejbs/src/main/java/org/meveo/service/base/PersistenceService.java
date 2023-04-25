@@ -17,6 +17,9 @@
  */
 package org.meveo.service.base;
 
+import static java.math.BigInteger.ONE;
+import static org.meveo.jpa.EntityManagerProvider.isDBOracle;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -130,9 +133,6 @@ import org.meveo.service.notification.GenericNotificationService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
-
-import static java.math.BigInteger.ONE;
-import static org.meveo.jpa.EntityManagerProvider.isDBOracle;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -1752,24 +1752,39 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return notifications != null && !notifications.isEmpty();
     }
 
-
-
     /**
      * Execute a HQL select query
      *
      * @param hqlQuery HQL query to execute
      * @param params Parameters to pass
+     * @param pageSize 
+     * @param pageIndex 
      * @return A map of values retrieved
      */
-    public List<Map<String, Object>> getSelectQueryAsMap(String hqlQuery, Map<String, Object> params) {
-        TypedQuery<Tuple> query = getEntityManager().createQuery(hqlQuery, Tuple.class);
+    public List<Map<String, Object>> getSelectQueryAsMap(String hqlQuery, Map<String, Object> params){
+    	return getSelectQueryAsMap(hqlQuery, params, null, null);
+    }
 
+    
+    /**
+     * Execute a HQL select query
+     *
+     * @param hqlQuery HQL query to execute
+     * @param params Parameters to pass
+     * @param pageSize 
+     * @param pageIndex 
+     * @return A map of values retrieved
+     */
+    public List<Map<String, Object>> getSelectQueryAsMap(String hqlQuery, Map<String, Object> params, Integer pageSize, Integer pageIndex) {
+        TypedQuery<Tuple> query = getEntityManager().createQuery(hqlQuery, Tuple.class);
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.entrySet()) {
                 query.setParameter(entry.getKey(), entry.getValue());
             }
         }
-
+        if(pageIndex!=null && pageSize!=null) {
+        	query.setMaxResults(pageSize).setFirstResult(pageIndex * pageSize);
+        }
         return query.getResultStream().map(mapTuplesAsMap()).collect(Collectors.toList());
     }
 

@@ -18,7 +18,7 @@ public class DuplicateRatedTransactionJobBean extends IteratorBasedJobBean<Rated
     private RatedTransactionService ratedTransactionService;
     @Override
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::processRatedTransactionToDuplicate, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::processRatedTransactionToDuplicate, null, null, null);
     }
     private Optional<Iterator<RatedTransaction>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
         return Optional.of(new SynchronizedIterator<RatedTransaction>(ratedTransactionService.getEntityManager().createNamedQuery("RatedTransaction.findPendingOrNegateDuplicated").getResultList()));
