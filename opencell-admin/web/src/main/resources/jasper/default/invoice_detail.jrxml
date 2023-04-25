@@ -298,7 +298,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithoutTax})))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(Double.valueOf($V{quantity})*new Double($F{amountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(Double.valueOf($V{quantity})*new Double($F{amountWithoutTax})))]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="528" y="-39" width="45" height="37" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c">
@@ -406,7 +406,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Unite price"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Unit price"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="440" y="7" width="88" height="16" forecolor="#030303" backcolor="#F2F4F5" uuid="6faa18df-c9c4-41b9-9679-3586cdd1561f">
