@@ -196,28 +196,33 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			agedReceivableDto.setSum31To60((BigDecimal) agedList[6]);
 			agedReceivableDto.setSum61To90((BigDecimal)agedList[9]);
 			agedReceivableDto.setSum90Up((BigDecimal)agedList[12]);
-			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedList[14]);
-			agedReceivableDto.setCustomerAccountName(agedList[15] == null ? null : getName((Name) agedList[15]));
-			agedReceivableDto.setCustomerAccountDescription((String) agedList[16]);
-			agedReceivableDto.setSellerDescription((String) agedList[17]);
-			agedReceivableDto.setSellerCode((String) agedList[18]);
-			agedReceivableDto.setDueDate(agedList[19] == null ? null : ((Date) agedList[19]));
-			agedReceivableDto.setTradingCurrency((String) agedList[20]);
-			agedReceivableDto.setInvoiceId((Long) agedList[21]);
-			agedReceivableDto.setInvoiceNumber((String) agedList[22]);
-			agedReceivableDto.setCustomerAccountCode((String) agedList[24]);
+			if(agedList[27] instanceof DunningLevelEnum) {
+				agedReceivableDto.setDunningLevel((DunningLevelEnum) agedList[27]);
+			}
+			
+			if(agedList[28] != null && agedList[28] instanceof Name) {
+				agedReceivableDto.setCustomerAccountName(getName((Name) agedList[28]));				
+			}
+			agedReceivableDto.setCustomerAccountDescription((String) agedList[29]);
+			agedReceivableDto.setSellerDescription((String) agedList[30]);
+			agedReceivableDto.setSellerCode((String) agedList[31]);
+			agedReceivableDto.setDueDate(agedList[32] == null ? null : ((Date) agedList[32]));
+			agedReceivableDto.setTradingCurrency((String) agedList[33]);
+			agedReceivableDto.setInvoiceId((Long) agedList[34]);
+			agedReceivableDto.setInvoiceNumber((String) agedList[35]);
+			agedReceivableDto.setCustomerAccountCode((String) agedList[37]);
 
 			agedReceivableDto.setGeneralTotal(((BigDecimal)agedList[3]).add((BigDecimal)agedList[6]).add((BigDecimal)agedList[9]).add((BigDecimal)agedList[12]));
 			agedReceivableDto.setNetAmountByPeriod(asList((BigDecimal) agedList[2], (BigDecimal) agedList[5], (BigDecimal) agedList[8], (BigDecimal) agedList[11]));
 			agedReceivableDto.setTotalAmountByPeriod(asList((BigDecimal) agedList[3], (BigDecimal) agedList[6], (BigDecimal) agedList[9], (BigDecimal) agedList[12]));
 			agedReceivableDto.setTaxAmountByPeriod(asList((BigDecimal) agedList[4], (BigDecimal) agedList[7], (BigDecimal) agedList[10], (BigDecimal) agedList[13]));
 
-			if(agedList[25] == null)
-				agedReceivableDto.setBilledAmount((BigDecimal) agedList[23]);
+			if(agedList[38] == null)
+				agedReceivableDto.setBilledAmount((BigDecimal) agedList[36]);
 			else
-				agedReceivableDto.setBilledAmount((BigDecimal) agedList[25]);
+				agedReceivableDto.setBilledAmount((BigDecimal) agedList[38]);
 
-			agedReceivableDto.setCustomerId((Long) agedList[26]);
+			agedReceivableDto.setCustomerId((Long) agedList[39]);
 			agedReceivableDto.setFuncCurrency(ofNullable(appProvider.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
 			dtoList.add(agedReceivableDto);
 		}
