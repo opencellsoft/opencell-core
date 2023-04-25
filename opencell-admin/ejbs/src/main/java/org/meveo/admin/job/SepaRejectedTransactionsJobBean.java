@@ -25,15 +25,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -42,98 +39,111 @@ import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.slf4j.Logger;
 
 /**
- * The Class SepaRejectedTransactionsJobBean consume sepa/paynum or any custom rejected files (ddRequest file callBacks).
+ * The Class SepaRejectedTransactionsJobBean consume sepa/paynum or any custom
+ * rejected files (ddRequest file callBacks).
  * 
  * @author anasseh
  * @lastModifiedVersion 5.2
  * 
  */
 @Stateless
-public class SepaRejectedTransactionsJobBean {
+public class SepaRejectedTransactionsJobBean extends BaseJobBean {
 
-    /** The log. */
-    @Inject
-    private Logger log;
+	/** The log. */
+	@Inject
+	private Logger log;
 
-    /** The ddRequestLotService service. */
-    @Inject
-    private DDRequestLOTService ddRequestLotService;
+	/** The ddRequestLotService service. */
+	@Inject
+	private DDRequestLOTService ddRequestLotService;
 
-    /** The file name. */
-    String fileName;
+	
+	/** The output dir. */
+	String outputDir;
 
-    /** The output dir. */
-    String outputDir;
+	/** The output file writer. */
+	PrintWriter outputFileWriter;
 
-    /** The output file writer. */
-    PrintWriter outputFileWriter;
+	/** The reject dir. */
+	String rejectDir;
 
-    /** The reject dir. */
-    String rejectDir;
+	/** The archive dir. */
+	String archiveDir;
 
-    /** The archive dir. */
-    String archiveDir;
+	/** The reject file writer. */
+	PrintWriter rejectFileWriter;
 
-    /** The reject file writer. */
-    PrintWriter rejectFileWriter;
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void execute(JobExecutionResultImpl result, JobInstance jobInstance, File file,
+			DDRequestBuilderInterface ddRequestBuilderInterface, String inputDir) throws BusinessException {
 
-    @JpaAmpNewTx
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance, File file, DDRequestBuilderInterface ddRequestBuilderInterface, String inputDir)
-            throws BusinessException {
-        File currentFile = null;
-        try {
-            outputDir = inputDir + File.separator + "output";
-            rejectDir = inputDir + File.separator + "reject";
-            archiveDir = inputDir + File.separator + "archive";
-            File f = new File(outputDir);
-            if (!f.exists()) {
-                log.debug("outputDir {} not exist", outputDir);
-                f.mkdirs();
-                log.debug("outputDir {} creation ok", outputDir);
-            }
-            f = new File(rejectDir);
-            if (!f.exists()) {
-                log.debug("rejectDir {} not exist", rejectDir);
-                f.mkdirs();
-                log.debug("rejectDir {} creation ok", rejectDir);
-            }
-            f = new File(archiveDir);
-            if (!f.exists()) {
-                log.debug("saveDir {} not exist", archiveDir);
-                f.mkdirs();
-                log.debug("saveDir {} creation ok", archiveDir);
-            }
-            fileName = file.getName();
-            log.debug(file.getName() + " in progress");
-            currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
-            OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
-            operationCategory = OperationCategoryEnum.valueOf(((String) jobInstance.getCfValue("RejectSepaJob_creditOrDebit")).toUpperCase());
-            DDRejectFileInfos ddRejectFileInfos = null;
-            if (operationCategory == OperationCategoryEnum.CREDIT) {
-                ddRejectFileInfos = ddRequestBuilderInterface.processSDDRejectedFile(currentFile);
-            } else {
-                ddRejectFileInfos = ddRequestBuilderInterface.processSCTRejectedFile(currentFile);
-            }
+		Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "RejectSepaJob_nbRuns", -1L);
+		if (nbRuns == -1) {
+			nbRuns = (long) Runtime.getRuntime().availableProcessors();
+		}
+		Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "RejectSepaJob_waitingMillis", 0L);
 
-            ddRequestLotService.processRejectFile(ddRejectFileInfos);
+		File currentFile = null;
+		String fileName = file.getName();
+		try {
+			outputDir = inputDir + File.separator + "output";
+			rejectDir = inputDir + File.separator + "reject";
+			archiveDir = inputDir + File.separator + "archive";
+			File f = new File(outputDir);
+			if (!f.exists()) {
+				log.debug("outputDir {} not exist", outputDir);
+				f.mkdirs();
+				log.debug("outputDir {} creation ok", outputDir);
+			}
+			f = new File(rejectDir);
+			if (!f.exists()) {
+				log.debug("rejectDir {} not exist", rejectDir);
+				f.mkdirs();
+				log.debug("rejectDir {} creation ok", rejectDir);
+			}
+			f = new File(archiveDir);
+			if (!f.exists()) {
+				log.debug("saveDir {} not exist", archiveDir);
+				f.mkdirs();
+				log.debug("saveDir {} creation ok", archiveDir);
+			}
+			log.info(file.getName() + " in progress");
+			currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
+			OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
+			operationCategory = OperationCategoryEnum
+					.valueOf(((String) jobInstance.getCfValue("RejectSepaJob_creditOrDebit")).toUpperCase());
 
-            FileUtils.moveFile(archiveDir, currentFile, fileName);
-            log.debug("Processing " + file.getName() + " done");
-            result.registerSucces();
-            result.setNbItemsCorrectlyProcessed(ddRejectFileInfos.getNbItemsOk());
-            result.setNbItemsProcessedWithError(ddRejectFileInfos.getNbItemsKo());
-            result.addReport(ddRejectFileInfos.formatErrorsReport());
-            
-        } catch (Exception e) {
-            result.registerError(e.getMessage());
-            log.error("Processing " + file.getName() + " failed", e);
-            FileUtils.moveFile(rejectDir, currentFile, fileName);
-        } finally {
-            if (currentFile != null) {
-                currentFile.delete();
-            }
-        }
-    }
+			DDRejectFileInfos ddRejectFileInfos = null;
+			
+			if (operationCategory == OperationCategoryEnum.CREDIT) {
+				ddRejectFileInfos =  ddRequestBuilderInterface.processSDDRejectedFile(currentFile);
+			} else {
+				ddRejectFileInfos =  ddRequestBuilderInterface.processSCTRejectedFile(currentFile);
+			}
+			log.info("ddRejectFileInfos nbOk:{} nbKO:{} errors:{}",ddRejectFileInfos.getNbItemsOk(),ddRejectFileInfos.getNbItemsKo(),ddRejectFileInfos.formatErrorsReport());
+			result.addNbItemsProcessedWithError(ddRejectFileInfos.getNbItemsKo());
+			if(!StringUtils.isBlank(ddRejectFileInfos.formatErrorsReport())) {
+				result.addReport(fileName+" : "+ ddRejectFileInfos.formatErrorsReport());
+			}
+			if (ddRejectFileInfos.getNbItemsOk() > 0 || ddRejectFileInfos.isTheDDRequestFileWasRejected()) {
+				ddRequestLotService.processRejectFile(ddRejectFileInfos, result);
+				FileUtils.moveFile(archiveDir, currentFile, fileName);
+				log.info("Processing " + file.getName() + " done");
+				result.addReport("Processing " + fileName + " done");
+				result.addNbItemsCorrectlyProcessed(ddRejectFileInfos.getNbItemsOk());
+			} else {
+				log.error("Processing " + file.getName() + " failed");
+				FileUtils.moveFile(rejectDir, currentFile, fileName);				
+			}
+
+		} catch (Exception e) {
+			result.registerError(fileName+" :" +e.getMessage());			
+			log.error("Processing " + file.getName() + " failed", e);
+			FileUtils.moveFile(rejectDir, currentFile, fileName);
+		} finally {
+			if (currentFile != null) {
+				currentFile.delete();
+			}
+		}
+	}
 }
