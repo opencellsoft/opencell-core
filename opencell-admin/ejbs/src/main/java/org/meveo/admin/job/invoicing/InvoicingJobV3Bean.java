@@ -108,21 +108,12 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
 		paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
 		List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
-		validateBRList(billingRuns, result);
 		return billingRuns;
 	}
 	private List<Long> extractBRIds(List<EntityReferenceWrapper> billingRunWrappers) {
 		return billingRunWrappers.stream().map(br -> Long.valueOf(br.getCode().split("/")[0])).collect(toList());
 	}
-	private void validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {
-		if (billingRuns == null || billingRuns.isEmpty()) {
-			return;
-		}
-		List<BillingRun> excludedBRs = billingRuns.stream().filter(br -> br.getStatus() != INVOICE_LINES_CREATED).collect(toList());
-		excludedBRs.forEach(br -> result.registerWarning(format("BillingRun[id={%d}] has been ignored. Only Billing runs with status=INVOICE_LINES_CREATED can be processed", br.getId())));
-		result.setNbItemsProcessedWithWarning(excludedBRs.size());
-		billingRuns.removeAll(excludedBRs);
-	}
+
 	private void executeBillingRun(BillingRun billingRun, JobInstance jobInstance, JobExecutionResultImpl result,
 			ScriptInstance billingRunValidationScript) {
 		boolean prevalidatedAutomaticPrevBRStatus = false;
