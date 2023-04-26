@@ -4808,7 +4808,13 @@
 			<column name="vat_payment_option_id" value="1" />
 		</insert>	
 	</changeSet>
-
+	
+	<changeSet id="INTRD-15222_20230424" author="aelmalki">
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" valueComputed="(select id from billing_invoice_type where code = 'ADJ')"/>
+            <column name="applies_to_id" valueComputed="(select id from billing_invoice_type where code = 'COMMERCIAL_ORDER')"/>
+        </insert>
+    </changeSet>
     
     <changeSet id="#OUTRD-49_20220913" author="HamzaBiadi">
         <insert tableName="crm_custom_field_tmpl">
