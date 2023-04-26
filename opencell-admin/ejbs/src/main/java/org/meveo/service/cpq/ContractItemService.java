@@ -127,30 +127,31 @@ public class ContractItemService extends BusinessService<ContractItem> {
     @SuppressWarnings("unchecked")
     public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId,
 												  ChargeTemplate chargeTemplate, WalletOperation walletOperation) {
-        ContractItem contractItem = null;
+        
 		StringBuilder builder = new StringBuilder("select c from ContractItem c where  c.contract.id=:contractId");
 
-		if(offer != null && offer.getId() != null){
-			builder.append(" and c.offerTemplate.id=:offerId");
-		}
-		if(productId != null){
-			builder.append(" and c.product.id=:productId");
-		}
-		if(chargeTemplate != null && chargeTemplate.getId() != null){
-			builder.append(" and c.chargeTemplate.id=:chargeTemplate");
-		}
+        if (offer != null && offer.getId() != null) {
+            builder.append(" and c.offerTemplate.id=:offerId");
+        }
+        if (productId != null) {
+            builder.append(" and c.product.id=:productId");
+        }
+        if (chargeTemplate != null && chargeTemplate.getId() != null) {
+            builder.append(" and c.chargeTemplate.id=:chargeTemplate");
+        }
 
         Query query = getEntityManager().createQuery(builder.toString());
-		query.setParameter("contractId", contract.getId());
-		if(builder.toString().contains(":offerId")){
-			query.setParameter("offerId", offer.getId());
-		}
-		if(builder.toString().contains(":productCode")){
-			query.setParameter("productId", productId);
-		}
-		if(builder.toString().contains(":chargeTemplate")){
-			query.setParameter("chargeTemplate", chargeTemplate.getId());
-		}
+        
+        query.setParameter("contractId", contract.getId());
+        if (offer != null && offer.getId() != null) {
+            query.setParameter("offerId", offer.getId());
+        }
+        if (productId != null) {
+            query.setParameter("productId", productId);
+        }
+        if (chargeTemplate != null && chargeTemplate.getId() != null) {
+            query.setParameter("chargeTemplate", chargeTemplate.getId());
+        }
         List<ContractItem> applicableContractItems = query.getResultList();
 
         if (!applicableContractItems.isEmpty()) {
