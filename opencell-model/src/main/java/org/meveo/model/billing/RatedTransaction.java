@@ -663,10 +663,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
   	private Integer sequence;
 
     @Column(name = "pending_duplicates")
-    private Integer pendingDuplicates;
+    private Integer pendingDuplicates = 0;
 
     @Column(name = "pending_duplicates_to_negate")
-    private Integer pendingDuplicatesToNegate;
+    private Integer pendingDuplicatesToNegate = 0;
     
     public RatedTransaction() {
         super();
