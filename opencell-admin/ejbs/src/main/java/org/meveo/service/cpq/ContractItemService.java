@@ -131,28 +131,29 @@ public class ContractItemService extends BusinessService<ContractItem> {
 	}
 
     @SuppressWarnings("unchecked")
-    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
+    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate) {
         ContractItem contractItem = null;
 		StringBuilder builder = new StringBuilder("select c from ContractItem c where  c.contract.id=:contractId");
 
 		if(offer != null && offer.getId() != null){
 			builder.append(" and c.offerTemplate.id=:offerId");
 		}
-		if(StringUtils.isNotBlank(productCode)){
-			builder.append(" and c.product.code=:productCode");
+		if(productId != null){
+			builder.append(" and c.product.id=:productId");
 		}
 		if(chargeTemplate != null && chargeTemplate.getId() != null){
 			builder.append(" and c.chargeTemplate.id=:chargeTemplate");
 		}
         Query query = getEntityManager().createQuery(builder.toString());
 		query.setParameter("contractId", contract.getId());
-		if(builder.toString().contains(":offerId") && offer != null){
+		
+		if(offer != null && offer.getId() != null){
 			query.setParameter("offerId", offer.getId());
 		}
-		if(builder.toString().contains(":productCode")){
-			query.setParameter("productCode", productCode);
+		if(productId != null){
+			query.setParameter("productId", productId);
 		}
-		if(builder.toString().contains(":chargeTemplate") && chargeTemplate != null){
+		if(chargeTemplate != null && chargeTemplate.getId() != null){
 			query.setParameter("chargeTemplate", chargeTemplate.getId());
 		}
 
@@ -160,7 +161,8 @@ public class ContractItemService extends BusinessService<ContractItem> {
 
         if (!applicableContractItems.isEmpty()) {
             if (applicableContractItems.size() > 1) {
-                log.error("Contract " + contract.getCode() + "has more than one item ");
+                log.error("Contract " + contract.getCode() + "has more than one item matching offer {}, product {} and chargeTemplate {}", offer != null ? offer.getId() : null, productId,
+                    chargeTemplate != null ? chargeTemplate.getId() : null);
 
             } else {
                 contractItem = applicableContractItems.get(0);
@@ -170,9 +172,9 @@ public class ContractItemService extends BusinessService<ContractItem> {
     }
     
     @SuppressWarnings("unchecked")
-    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
+    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate) {
         for (Contract contract : contracts) {
-            ContractItem contractItem = getApplicableContractItem(contract, offer, productCode, chargeTemplate);
+            ContractItem contractItem = getApplicableContractItem(contract, offer, productId, chargeTemplate);
             if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
                 return contract;
             };
