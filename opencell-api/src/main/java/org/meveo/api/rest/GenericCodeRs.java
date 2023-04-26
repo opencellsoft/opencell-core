@@ -136,4 +136,28 @@ public interface GenericCodeRs extends IBaseRs {
 				)}
 	)
     ActionStatus createSequence(SequenceDto sequenceDto);
+
+
+	/**
+	 * Create or update generic code
+	 *
+	 * @param genericCodeDto
+	 * @return ActionStatus status of the API web service response
+	 */
+	@POST
+	@Path("/createOrUpdate")
+	@Operation(
+			summary = "Create or update generic code",
+			description = "Create  or update",
+			operationId = "POST_GenericCode_create_or_update",
+			responses = {
+					@ApiResponse(description = "ActionStatus response",
+							content = @Content(
+									schema = @Schema(
+											implementation = ActionStatus.class
+									)
+							)
+					)}
+	)
+	ActionStatus createOrUpdate(GenericCodeDto genericCodeDto);
 }
