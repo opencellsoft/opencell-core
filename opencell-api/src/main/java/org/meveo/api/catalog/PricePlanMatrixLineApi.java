@@ -177,7 +177,7 @@ public class PricePlanMatrixLineApi extends BaseApi {
             case INTEGER:
             case DATE:
             case LIST_NUMERIC: {
-                return Arrays.asList("=", "!=", "<", ">", "<=", ">=").contains(operator.toLowerCase());
+                return Arrays.asList("=", "!=", "<", ">", "<=", ">=", "between").contains(operator.toLowerCase());
             }
             case LIST_MULTIPLE_TEXT:
             case LIST_MULTIPLE_NUMERIC: {
