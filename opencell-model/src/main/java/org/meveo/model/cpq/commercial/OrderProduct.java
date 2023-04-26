@@ -128,8 +128,8 @@ public class OrderProduct extends AuditableCFEntity {
 	@JoinColumn(name = "service_instance_id")
 	private ServiceInstance serviceInstance;
 
-	@OneToOne(mappedBy = "orderProduct")
-	private OrderArticleLine orderArticleLine;
+	@OneToMany(mappedBy = "orderProduct", fetch = FetchType.LAZY)
+	private List<OrderArticleLine> orderArticleLines;
 
 	public void update(OrderProduct other) {
     	this.orderOffer = other.orderOffer;
@@ -339,11 +339,11 @@ public class OrderProduct extends AuditableCFEntity {
 		this.serviceInstance = serviceInstance;
 	}
 
-	public OrderArticleLine getOrderArticleLine() {
-		return orderArticleLine;
+	public List<OrderArticleLine> getOrderArticleLines() {
+		return orderArticleLines;
 	}
 
-	public void setOrderArticleLine(OrderArticleLine orderArticleLine) {
-		this.orderArticleLine = orderArticleLine;
+	public void setOrderArticleLines(List<OrderArticleLine> orderArticleLines) {
+		this.orderArticleLines = orderArticleLines;
 	}
 }
