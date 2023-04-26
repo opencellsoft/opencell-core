@@ -327,4 +327,15 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
             return null;
         }
     }
+
+	public AccountingPeriod findOpenAccountingPeriod() {
+		try {
+			return getEntityManager().createNamedQuery("AccountingPeriod.findOpenAP", entityClass)
+					.setMaxResults(1)
+					.getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No open {} found", getEntityClass().getSimpleName());
+			return null;
+		}
+	}
 }
