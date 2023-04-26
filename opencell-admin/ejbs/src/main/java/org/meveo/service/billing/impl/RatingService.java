@@ -607,6 +607,18 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
             RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
 
+            // Determine and set tax if it was not set before.
+            // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
+            if (bareWalletOperation.getTax() == null) {
+                TaxInfo taxInfo = taxMappingService.determineTax(bareWalletOperation);
+                if (taxInfo == null) {
+                    throw new BusinessException("No tax found for the chargeInstance " + chargeInstance.getCode());
+                }
+                bareWalletOperation.setTaxClass(taxInfo.taxClass);
+                bareWalletOperation.setTax(taxInfo.tax);
+                bareWalletOperation.setTaxPercent(taxInfo.tax.getPercent());
+            }
+            
             PricePlanMatrix pricePlan = null;
             // Unit price was not overridden
             BillingAccount billingAccount = bareWalletOperation.getBillingAccount();
@@ -647,8 +659,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                     if (contract != null && bareWalletOperation.getOperationDate().compareTo(contract.getBeginDate()) >= 0
                             && bareWalletOperation.getOperationDate().compareTo(contract.getEndDate()) < 0) {
-                        contractItem = contractItemService.getApplicableContractItem(contract,
-                                offerTemplate, serviceInstance.getCode(), chargeTemplate, bareWalletOperation);
+                        contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getProductVersion() != null ? serviceInstance.getProductVersion().getProduct().getId() : null,
+                            chargeTemplate, bareWalletOperation);
                     }
 
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
