@@ -244,6 +244,15 @@ public class DDRejectFileInfos {
 		}
 		return report;
 	}
+
+	@Override
+	public String toString() {
+		return "DDRejectFileInfos [fileName=" + fileName + ", ddRequestLotId=" + ddRequestLotId
+				+ ", theDDRequestFileWasRejected=" + theDDRequestFileWasRejected + ", returnStatusCode="
+				+ returnStatusCode + ", listInvoiceRefsRejected=" + listInvoiceRefsRejected + ", nbItemsOk=" + nbItemsOk
+				+ ", nbItemsKo=" + nbItemsKo + ", listErrors=" + listErrors + "]";
+	}
+	
     
     
 }
