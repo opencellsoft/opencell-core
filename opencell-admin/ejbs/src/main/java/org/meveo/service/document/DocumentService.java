@@ -33,8 +33,6 @@ public class DocumentService extends BusinessService<Document> {
     public void create(Document entity) throws BusinessException {
     	entity.setFileType(getFileTypeByIdOrCode(entity));
         entity.setCategory(getDocumentCateory(entity));
-        entity.setDocumentVersion(getDocumentVersion(entity)); 	
-        entity.setFileName(entity.getCode() + "_" + entity.getDocumentVersion() + "_" + entity.getFileName());
 
         if(Objects.nonNull(entity.getLinkedAccountEntity())){
             AccountEntity accountEntity = accountEntitySearchService.findById(entity.getLinkedAccountEntity().getId());
@@ -49,8 +47,8 @@ public class DocumentService extends BusinessService<Document> {
         if(Objects.isNull(entity.getCreationDate())){
             entity.setCreationDate(new Date());
         }
-        
-        super.create(entity);
+
+        getDocumentVersionAndPersistCurrentDocument(entity);
     }
 
     public Document findByFileNameAndType(String fileName, Long fileTypeId) {
@@ -119,7 +117,7 @@ public class DocumentService extends BusinessService<Document> {
 	 * @param pDocument {@link Document}
 	 * @return Document version
 	 */
-	private synchronized Integer getDocumentVersion(Document pDocument) {
+	private synchronized void getDocumentVersionAndPersistCurrentDocument(Document pDocument) {
 		Integer documentVersion = 0 ;
 		
 		if(Objects.isNull(pDocument.getDocumentVersion())){
@@ -131,6 +129,8 @@ public class DocumentService extends BusinessService<Document> {
         	}
         }
 		
-		return documentVersion;
+		pDocument.setDocumentVersion(documentVersion);
+		pDocument.setFileName(pDocument.getCode() + "_" + pDocument.getDocumentVersion() + "_" + pDocument.getFileName());		
+		super.create(pDocument);
 	}
 }
