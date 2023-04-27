@@ -580,11 +580,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	 RatingResult ratingResult = new RatingResult();
          WalletOperation discountedWalletOperation=null;
         boolean seperateDiscount = false;
-        BigDecimal amount=null;
-        BigDecimal discountRate=null;
+        BigDecimal amount=BigDecimal.ZERO;
+        BigDecimal discountRate=BigDecimal.ZERO;
+        BigDecimal unitPriceWithoutTax = BigDecimal.ZERO;
         PricePlanMatrixVersion ppmVersion=null;
         PricePlanMatrixLine pricePlanMatrixLine =null;
-        BigDecimal unitPriceWithoutTax = null;
 
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
         // Let charge template's rating script handle all the rating
