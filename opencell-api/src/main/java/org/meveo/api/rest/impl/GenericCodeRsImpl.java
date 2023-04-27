@@ -19,10 +19,12 @@
 package org.meveo.api.rest.impl;
 
 import static java.util.Optional.ofNullable;
+import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
 
 import org.meveo.api.custom.GenericCodeApi;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.custom.GenericCodeDto;
 import org.meveo.api.dto.custom.GenericCodeResponseDto;
 import org.meveo.api.dto.custom.GetGenericCodeResponseDto;
@@ -84,6 +86,20 @@ public class GenericCodeRsImpl extends BaseRs implements GenericCodeRs {
 		ActionStatus result = new ActionStatus(SUCCESS, "");
 		try {
 			genericCodeApi.createSequence(sequenceDto);
+		} catch (Exception exception) {
+			processException(exception, result);
+		}
+		return result;
+	}
+
+	@Override
+	public ActionStatus createOrUpdate(GenericCodeDto input) {
+		ActionStatus result = new ActionStatus();
+		try {
+			GenericCodeDto genericCodeDto = genericCodeApi.createOrUpdate(input);
+			result.setEntityId(genericCodeDto.getId());
+			result.setEntityCode(genericCodeDto.getEntityClass());
+			result.setStatus(SUCCESS);
 		} catch (Exception exception) {
 			processException(exception, result);
 		}
