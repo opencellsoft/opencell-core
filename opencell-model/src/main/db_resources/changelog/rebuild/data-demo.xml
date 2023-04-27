@@ -4694,6 +4694,7 @@
         <update tableName="ar_occ_template">
             <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='701000000')" />
             <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='445710000')" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
             <where> code IN ('INV_STD', 'INV_CRN')</where>
         </update>
     </changeSet>
