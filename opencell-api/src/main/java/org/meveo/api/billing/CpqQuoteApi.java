@@ -1832,7 +1832,7 @@ public class CpqQuoteApi extends BaseApi {
                 if(StringUtils.isBlank(quotePrice.getRecurrencePeriodicity()) && recChargeTemplate != null && recChargeTemplate.getCalendar() != null){
                     quotePrice.setRecurrencePeriodicity(recChargeTemplate.getCalendar().getDescription());
                 }
-                overrideAmounts(quotePrice, recurrenceDuration);
+                overrideAmounts(quotePrice, recurrenceDuration, wo);
             } 
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():wo.getAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
@@ -1862,13 +1862,15 @@ public class CpqQuoteApi extends BaseApi {
         return offerQuotePrices;
     }
 
-    private void overrideAmounts(QuotePrice quotePrice, Long recurrenceDuration) {
-        quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
-        quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
+    private void overrideAmounts(QuotePrice quotePrice, Long recurrenceDuration, WalletOperation walletOperation) {
+    	BigDecimal coeff = quotePrice.getQuantity().add(walletOperation.getServiceInstance().getQuantity().multiply(BigDecimal.valueOf(recurrenceDuration - 1)));
+    	
+        quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().divide(quotePrice.getQuantity()).multiply(coeff));
+        quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().divide(quotePrice.getQuantity()).multiply(coeff));
         quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount() != null ?
-                quotePrice.getAmountWithoutTaxWithoutDiscount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
+                quotePrice.getAmountWithoutTaxWithoutDiscount().divide(quotePrice.getQuantity()).multiply(coeff) : null);
         quotePrice.setTaxAmount(quotePrice.getTaxAmount() != null ?
-                quotePrice.getTaxAmount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
+                quotePrice.getTaxAmount().divide(quotePrice.getQuantity()).multiply(coeff) : null);
     }
 
     private Integer getDurationTerminInMonth(Attribute durationOrQuantityAttribute, Integer defaultValue, QuoteOffer quoteOffer, QuoteProduct quoteProduct) {
