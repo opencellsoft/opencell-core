@@ -286,7 +286,7 @@ public class AccountOperationApi extends BaseApi {
                         " is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
             }
 
-            if (!functionalCurrency.equals(tradingCurrency)) {
+            if (!tradingCurrency.equals(functionalCurrency)) {
             	
                 Date exchangeDate = postData.getTransactionDate() != null ? postData.getTransactionDate() : new Date();
                 ExchangeRate exchangeRate = getExchangeRate(tradingCurrency,transactionalcurrency,exchangeDate);
