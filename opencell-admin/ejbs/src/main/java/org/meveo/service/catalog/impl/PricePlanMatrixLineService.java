@@ -532,13 +532,16 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 return "(ppmv.longValue " + formattedOperation(operator, value) + " OR ppmv.long_value IS NULL)";
             case "double":
                 if("=".equals(operator)){
-                    rangeType = "(ppmc.isRange = true and ppmv.fromDoubleValue <=" + Double.valueOf(value.toString())+ "'  and ppmv.toDoubleValue >="+ Double.valueOf(value.toString());
-                    rangeType +=  " OR (ppmv.doubleValue " + formattedOperation(operator, Double.valueOf(value.toString()))+ " OR ppmv.doubleValue IS NULL)))";
+                    rangeType = "(ppmc.isRange = true and ppmv.fromDoubleValue <=" + Double.valueOf(value.toString())+ "  and ppmv.toDoubleValue >="+ Double.valueOf(value.toString());
+                    rangeType +=  " OR (ppmv.doubleValue " + formattedOperation(operator, Double.valueOf(value.toString()))+ " OR ppmv.doubleValue IS NULL))";
                     return rangeType;
                 }else if("!=".equals(operator)){
-                    rangeType = "(ppmc.isRange = true and ppmv.toDoubleValue <" + Double.valueOf(value.toString())+ "'  and ppmv.fromDoubleValue >"+ Double.valueOf(value.toString());
-                    rangeType +=  " OR (ppmv.doubleValue " + formattedOperation(operator, Double.valueOf(value.toString()))+ " OR ppmv.doubleValue IS NULL)))";
+                    rangeType = "(ppmc.isRange = true and ppmv.toDoubleValue <" + Double.valueOf(value.toString())+ "  and ppmv.fromDoubleValue >"+ Double.valueOf(value.toString());
+                    rangeType +=  " OR (ppmv.doubleValue " + formattedOperation(operator, Double.valueOf(value.toString()))+ " OR ppmv.doubleValue IS NULL))";
                     return rangeType;
+                }
+                if(operator.contentEquals("BETWEEN")){
+                    return "(ppmv.doubleValue " + formattedOperation(operator, value.toString())+ " OR ppmv.doubleValue IS NULL)";
                 }
                 return "(ppmv.doubleValue " + formattedOperation(operator, Double.valueOf(value.toString()))+ " OR ppmv.doubleValue IS NULL)";
             case "boolean":
@@ -549,7 +552,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                     rangeType +=  " OR (ppmc.isRange = false and (ppmv.dateValue " + formattedOperation(operator, new java.sql.Date(parseDate(value).getTime()))+ " OR ppmv.dateValue IS NULL)))";
                     return rangeType;
                 }else if("!=".equals(operator)){
-                    rangeType = "(ppmc.isRange = true and ppmv.toDateValue <'" +  new java.sql.Date(parseDate(value).getTime())+ "'  and ppmv.fromDateValue >'"+ new java.sql.Date(parseDate(value).getTime()) + "'";
+                    rangeType = "(ppmc.isRange = true and ppmv.toDateValue <'" +  new java.sql.Date(parseDate(value).getTime())+ "'  or ppmv.fromDateValue >'"+ new java.sql.Date(parseDate(value).getTime()) + "'";
                     rangeType +=  " OR (ppmc.isRange = false and (ppmv.dateValue " + formattedOperation(operator, new java.sql.Date(parseDate(value).getTime()))+ " OR ppmv.dateValue IS NULL)))";
                     return rangeType;
                 }
@@ -583,6 +586,17 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             }
             case "in": {
                 operand = "in (" + value + ")";
+                break;
+            }
+            case "BETWEEN" : {
+                if(Objects.isNull(value)){
+                    throw  new BusinessException("The operator BETWEEN can n ot have a null value");
+                }
+                String[] values = value.toString().split(";");
+                if(values.length < 2 ){
+                    throw  new BusinessException("The operator BETWEEN must have 2 values");
+                }
+                operand = "between " + values[0] + " AND " + values[1];
                 break;
             }
             default:

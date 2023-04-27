@@ -579,7 +579,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 					offer.setDiscountPlan(orderOffer.getDiscountPlan());
 					offer.setDeliveryDate(orderOffer.getDeliveryDate());
 					offer.setUserAccount(orderOffer.getUserAccount());
-					offer.setOrderLineType(OfferLineTypeEnum.CREATE);
+					offer.setOrderLineType(orderOffer.getOrderLineType());
 					orderOfferService.create(offer);
 					offer.setProducts(orderOffer.getProducts().stream()
 							.map(orderProduct -> duplicateProduct(orderProduct, offer))
