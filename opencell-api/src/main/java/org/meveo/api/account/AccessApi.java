@@ -121,6 +121,11 @@ public class AccessApi extends BaseApi {
         access.setStartDate(postData.getStartDate());
         access.setEndDate(postData.getEndDate());
 
+        // check if the AP with new dates isn't duplicated in other subs
+        if (accessService.isDuplicateAndOverlaps(access)) {
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.DUPLICATE_ACCESS, "Duplicate access point! Access is already linked to a sub within the same period");
+        }
+
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), access, false);
