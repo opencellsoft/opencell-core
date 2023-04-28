@@ -162,9 +162,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                                 }
                                 for (WalletOperation wo : wos) {
                                     boolean oldChargeTriggerdNext = isChargeHasTriggeredNexCharge(wo, edr);
-                                    for (WalletOperation woToRetate : rating.getWalletOperations()) {
-                                        boolean newChargeTriggerdNext = isChargeHasTriggeredNexCharge(woToRetate, edr);
-                                        torerateWalletOperation(wo, woToRetate, edr);
+                                    for (WalletOperation woToRerate : rating.getWalletOperations()) {
+                                        boolean newChargeTriggerdNext = isChargeHasTriggeredNexCharge(woToRerate, edr);
+                                        torerateWalletOperation(wo, woToRerate, edr);
                                         if (oldChargeTriggerdNext && newChargeTriggerdNext) {
                                             break;
                                         }
@@ -206,45 +206,54 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         return triggerNextCharge;
     }
 
-    private void torerateWalletOperation(WalletOperation wo, WalletOperation woToRetate, EDR edr) {
-        wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
-        wo.setEdr(edr);
-        wo.setAccountingArticle(woToRetate.getAccountingArticle());
-        wo.setAccountingCode(woToRetate.getAccountingCode());
-        wo.setAmountTax(woToRetate.getAmountTax());
-        wo.setAmountWithoutTax(woToRetate.getAmountWithoutTax());
-        wo.setAmountWithTax(woToRetate.getAmountWithTax());
-        wo.setBillingAccount(woToRetate.getBillingAccount());
-        wo.setChargeInstance(woToRetate.getChargeInstance());
-        wo.setChargeMode(woToRetate.getChargeMode());
-        wo.setParameter1(woToRetate.getParameter1());
-        wo.setParameter2(woToRetate.getParameter2());
-        wo.setParameter3(woToRetate.getParameter3());
-        wo.setParameterExtra(woToRetate.getParameterExtra());
-        wo.setTax(woToRetate.getTax());
-        wo.setTaxClass(woToRetate.getTaxClass());
-        wo.setTaxPercent(woToRetate.getTaxPercent());
-        wo.setUnitAmountTax(woToRetate.getUnitAmountTax());
-        wo.setUnitAmountWithTax(woToRetate.getUnitAmountWithTax());
-        wo.setUnitAmountWithoutTax(woToRetate.getUnitAmountWithoutTax());
-        wo.setSubscriptionDate(woToRetate.getSubscriptionDate());
-        wo.setInvoiceSubCategory(woToRetate.getInvoiceSubCategory());
-        wo.setUserAccount(woToRetate.getUserAccount());
-        wo.setType(woToRetate.getType());
-        wo.setSubscription(woToRetate.getSubscription());
-        wo.setCurrency(woToRetate.getCurrency());
-        wo.setCounter(woToRetate.getCounter());
-        wo.setDescription(woToRetate.getDescription());
-        wo.setInputUnitDescription(woToRetate.getInputUnitDescription());
-        wo.setInputUnitOfMeasure(woToRetate.getInputUnitOfMeasure());
-        wo.setInputQuantity(woToRetate.getInputQuantity());
-        wo.setQuantity(woToRetate.getQuantity());
-        wo.setCode(woToRetate.getCode());
-        walletOperationService.update(wo);
-        if (wo.getRatedTransaction() != null) {
-            wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
-            ratedTransactionService.update(wo.getRatedTransaction());
-        }
+    private void torerateWalletOperation(WalletOperation wo, WalletOperation woToRerate, EDR edr) {
+    	if(woToRerate.getDiscountValue()==null) {
+    		List<WalletOperation> discountWos=walletOperationService.findByDiscountedWo(wo.getId());
+    		for(WalletOperation wallet:discountWos) {
+    			if(!wallet.getStatus().equals(WalletOperationStatusEnum.CANCELED) ) {
+    				wallet.setStatus(WalletOperationStatusEnum.CANCELED);
+    				walletOperationService.update(wallet);
+    			}	
+    		}
+    		wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
+    		wo.setEdr(edr);
+    		wo.setAccountingArticle(woToRerate.getAccountingArticle());
+    		wo.setAccountingCode(woToRerate.getAccountingCode());
+    		wo.setAmountTax(woToRerate.getAmountTax());
+    		wo.setAmountWithoutTax(woToRerate.getAmountWithoutTax());
+    		wo.setAmountWithTax(woToRerate.getAmountWithTax());
+    		wo.setBillingAccount(woToRerate.getBillingAccount());
+    		wo.setChargeInstance(woToRerate.getChargeInstance());
+    		wo.setChargeMode(woToRerate.getChargeMode());
+    		wo.setParameter1(woToRerate.getParameter1());
+    		wo.setParameter2(woToRerate.getParameter2());
+    		wo.setParameter3(woToRerate.getParameter3());
+    		wo.setParameterExtra(woToRerate.getParameterExtra());
+    		wo.setTax(woToRerate.getTax());
+    		wo.setTaxClass(woToRerate.getTaxClass());
+    		wo.setTaxPercent(woToRerate.getTaxPercent());
+    		wo.setUnitAmountTax(woToRerate.getUnitAmountTax());
+    		wo.setUnitAmountWithTax(woToRerate.getUnitAmountWithTax());
+    		wo.setUnitAmountWithoutTax(woToRerate.getUnitAmountWithoutTax());
+    		wo.setSubscriptionDate(woToRerate.getSubscriptionDate());
+    		wo.setInvoiceSubCategory(woToRerate.getInvoiceSubCategory());
+    		wo.setUserAccount(woToRerate.getUserAccount());
+    		wo.setType(woToRerate.getType());
+    		wo.setSubscription(woToRerate.getSubscription());
+    		wo.setCurrency(woToRerate.getCurrency());
+    		wo.setCounter(woToRerate.getCounter());
+    		wo.setDescription(woToRerate.getDescription());
+    		wo.setInputUnitDescription(woToRerate.getInputUnitDescription());
+    		wo.setInputUnitOfMeasure(woToRerate.getInputUnitOfMeasure());
+    		wo.setInputQuantity(woToRerate.getInputQuantity());
+    		wo.setQuantity(woToRerate.getQuantity());
+    		wo.setCode(woToRerate.getCode());
+    		walletOperationService.update(wo);
+    		if (wo.getRatedTransaction() != null) {
+    			wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+    			ratedTransactionService.update(wo.getRatedTransaction());
+    		}
+    	}
     }
 
     @SuppressWarnings("unchecked")
@@ -257,7 +266,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                     triggeredEdr.setStatus(EDRStatusEnum.CANCELLED);
                     RatingResult ratingResult = usageRatingService.rateChargeAndInstantiateTriggeredEDRs(walletOperation.getChargeInstance(), edr.getEventDate(), edr.getQuantity(), null, null, null, null, null, null,
                         edr, null, false, true);
-                    List<WalletOperation> walletOperations = walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId").setParameter("edrId", triggeredEdr.getId())
+                    List<WalletOperation> walletOperations = walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId and discountValue = null").setParameter("edrId", triggeredEdr.getId())
                         .getResultList();
                     if (CollectionUtils.isNotEmpty(walletOperations)) {
                         WalletOperation trigWallet = walletOperations.get(0);
