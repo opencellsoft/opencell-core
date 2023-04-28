@@ -21,6 +21,9 @@ public enum ColumnTypeEnum {
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case LIST_MULTIPLE_TEXT:
                 case LIST_TEXT: {
+                    if (isNullOrContainsEmptyString(attributeValue.getStringValue())) {
+                        return false;
+                    }
                     return Stream.of(attributeValue.getStringValue().split(multiValuesAttributeSeparator))
                             .anyMatch(value -> value.equals(pricePlanMatrixValue.getStringValue()));
                 }
@@ -95,7 +98,6 @@ public enum ColumnTypeEnum {
                 case LIST_NUMERIC:
                 case NUMERIC: {
                     {
-
                         if (isNullOrContainsEmptyString(passedAttributeValue)) {
                             return false;
                         }
@@ -197,7 +199,7 @@ public enum ColumnTypeEnum {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
             if (attributeValue.getStringValue() == null || StringUtils.isEmpty(pricePlanMatrixValue.getStringValue())) {
-                return true;
+                return false;
             }
             return attributeValue.getStringValue().equalsIgnoreCase(pricePlanMatrixValue.getStringValue());
         }
