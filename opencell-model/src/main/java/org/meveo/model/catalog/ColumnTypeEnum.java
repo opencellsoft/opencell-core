@@ -21,6 +21,9 @@ public enum ColumnTypeEnum {
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case LIST_MULTIPLE_TEXT:
                 case LIST_TEXT: {
+                    if (isNullOrContainsEmptyString(attributeValue.getStringValue())) {
+                        return false;
+                    }
                     return Stream.of(attributeValue.getStringValue().split(multiValuesAttributeSeparator))
                             .anyMatch(value -> value.equals(pricePlanMatrixValue.getStringValue()));
                 }
@@ -95,8 +98,7 @@ public enum ColumnTypeEnum {
                 case LIST_NUMERIC:
                 case NUMERIC: {
                     {
-
-                        if (passedAttributeValue == null) {
+                        if (isNullOrContainsEmptyString(passedAttributeValue)) {
                             return false;
                         }
                         BigDecimal value = pricePlanMatrixValue.getDoubleValue() != null ? BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()) : BigDecimal.valueOf(pricePlanMatrixValue.getLongValue());
@@ -104,7 +106,7 @@ public enum ColumnTypeEnum {
                     }
                 }
                 case LIST_MULTIPLE_NUMERIC: {
-                    if (attributeValue.getStringValue() == null) {
+                    if (isNullOrContainsEmptyString(attributeValue.getStringValue())) {
                         return false;
                     }
                     return Stream.of(pricePlanMatrixValue.getStringValue().split(multiValuesAttributeSeparator))
@@ -197,7 +199,7 @@ public enum ColumnTypeEnum {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
             if (attributeValue.getStringValue() == null || StringUtils.isEmpty(pricePlanMatrixValue.getStringValue())) {
-                return true;
+                return false;
             }
             return attributeValue.getStringValue().equalsIgnoreCase(pricePlanMatrixValue.getStringValue());
         }
@@ -221,4 +223,8 @@ public enum ColumnTypeEnum {
     public abstract boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue);
 
     public abstract boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue);
+
+    private static boolean isNullOrContainsEmptyString(Object value) {
+        return value == null || (value instanceof String && ((String) value).isEmpty());
+    }
 }
