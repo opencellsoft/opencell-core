@@ -997,5 +997,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     	}
     	super.create(walletOperation);
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<WalletOperation> findByDiscountedWo(Long discountedWalletOperation) {
+    	List<WalletOperation> result = new ArrayList<>();
+        try {
+        	result=getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.discountedWalletOperation = :discountedWalletOperation")
+                    .setParameter("discountedWalletOperation", discountedWalletOperation)
+                    .getResultList();
+        } catch (NoResultException exception) {
+        	return Collections.emptyList();
+        }
+        return result;
+    }
 
 }
