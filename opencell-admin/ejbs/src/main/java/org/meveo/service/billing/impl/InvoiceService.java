@@ -1736,12 +1736,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             
             if (!sourceFile.exists()) {
                 VirtualFile vfDir = VFS
-                    .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/invoice");
+                    .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default");
                 log.info("default jaspers path : {}", vfDir.getPathName());
                 URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                 sourceFile = new File(vfPath.getPath());
                 if (!sourceFile.exists()) {
-                    throw new BusinessException("A default embedded jasper PDF report " + sourceFile.getAbsolutePath() + "for invoice is missing..");
+                    throw new BusinessException("A default embedded jasper PDF report [" + sourceFile.getAbsolutePath() + "] for invoice is missing..");
                 }
             }
 
