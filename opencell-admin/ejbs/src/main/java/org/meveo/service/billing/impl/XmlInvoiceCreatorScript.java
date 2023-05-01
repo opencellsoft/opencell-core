@@ -1839,6 +1839,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             Element ics = doc.createElement("ics");
             Element iban = doc.createElement("iban");
             Element bic = doc.createElement("bic");
+            Element name = doc.createElement("name");
             String bankIcs = appBankCoordinates.getIcs();
             Text icsTxt = this.createTextNode(doc, bankIcs != null ? bankIcs : "");
             ics.appendChild(icsTxt);
@@ -1848,9 +1849,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             String bankBic = appBankCoordinates.getBic();
             Text bicTxt = this.createTextNode(doc, bankBic != null ? bankBic : "");
             bic.appendChild(bicTxt);
+            String bankName = appBankCoordinates.getBankName();
+            Text nameTxt = this.createTextNode(doc, bankName != null ? bankName : "");
+            name.appendChild(nameTxt);
             bankCoordinates.appendChild(ics);
             bankCoordinates.appendChild(iban);
             bankCoordinates.appendChild(bic);
+            bankCoordinates.appendChild(name);
             providerTag.appendChild(bankCoordinates);
         }
         return providerTag;
