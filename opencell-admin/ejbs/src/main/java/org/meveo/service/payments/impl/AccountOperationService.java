@@ -581,6 +581,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             return;
         }
 
+        // Recalculate the accounting date
+        accountOperation.setAccountingDate(null);
         Date accountingDate = getAccountingDate(accountOperation);
         if (accountingDate == null) {
             rejectAccountOperation(accountOperation);
@@ -589,14 +591,13 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         }
         accountOperation.setAccountingDate(accountingDate);
 
-        String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountOperation.getAccountingDate()));
-        AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(fiscalYear);
+        AccountingPeriod accountingPeriod = accountingPeriodService.findAccountingPeriodByDate(accountOperation.getAccountingDate());
 
         // If the accountingPeriod not found or it's closed.
         if (accountingPeriod == null || (accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.CLOSED &&
                 accountingPeriod.getAccountingOperationAction() != AccountingOperationAction.FORCE)) {
             rejectAccountOperation(accountOperation);
-            log.warn("No accounting period has been defined for this year : {}", fiscalYear);
+            log.warn("No accounting period has been defined for this date : {}", accountOperation.getAccountingDate());
             return;
         } else if (accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.CLOSED) {
             accountingPeriod = accountingPeriodService.findOpenAccountingPeriod();
