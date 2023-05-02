@@ -6791,6 +6791,7 @@
                 <constraints nullable="false" />
             </column>
 		    <column name="invoice_subject_code" type="bigint" />
+		    <column name="description_i18n" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
@@ -19680,6 +19681,7 @@
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-15841_20230502" author="AdilElJaouhari" />
     
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

@@ -4606,7 +4606,8 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="code" value="SECURITY_DEPOSIT" />
-			<column name="description" value="Security Deposit" />
+			<column name="description" value="Security deposit"/>
+			<column name="description_i18n" value='{"FRA":"Dépôt de garantie","ENG":"Security deposit"}'/>
 			<column name="invoice_sequence_id" valueNumeric="-6" />
 			<column name="occ_template_id" valueNumeric="-52" />
 			<column name="uuid" value="InvoiceType-SECURITY_DEPOSIT" />
@@ -4750,7 +4751,8 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
 			<column name="code" value='ADJ_REF' />
-			<column name="description" value='Refundable adjustment' />
+			<column name="description" value="Refundable credit note"/>
+			<column name="description_i18n" value='{"FRA":"Avoir remboursable","ENG":"Refundable credit note"}'/>
             <column name="invoice_sequence_id" valueComputed="(SELECT id from billing_seq_invoice where code = 'ADJ')" />
             <column name="occ_template_id" value="-26" />
             <column name="matching_auto" valueNumeric="0" />
@@ -4767,7 +4769,8 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
 			<column name="code" value='ADJ_INV' />
-			<column name="description" value='Adjustment on invoice' />
+			<column name="description" value="Credit note on invoice"/>
+			<column name="description_i18n" value='{"FRA":"Avoir sur facture","ENG":"Credit note on invoice"}'/>
             <column name="invoice_sequence_id" valueComputed="(SELECT id from billing_seq_invoice where code = 'ADJ')" />
             <column name="occ_template_id" value="-27" />
             <column name="matching_auto" valueNumeric="0" />
@@ -4802,7 +4805,8 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="code" value="COMMERCIAL_ORDER" />
-			<column name="description" value="Commercial order" />
+			<column name="description" value="Commercial order"/>
+			<column name="description_i18n" value='{"FRA":"Commande","ENG":"Commercial order"}'/>
 			<column name="invoice_sequence_id" valueNumeric="-9" />
 			<column name="occ_template_id" valueNumeric="-25" />
 			<column name="uuid" value="InvoiceType-COMMERCIAL_ORDER" />

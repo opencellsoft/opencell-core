@@ -8605,10 +8605,10 @@
            <column name="version" valueNumeric="0" />
            <column name="created" valueDate="2021-02-03 00:00:00.000" />
            <column name="code" value="ADV" />
-			<column name="description" value="Call for advance payment" />
+		   <column name="description" value="Call for advance payment"/>
+		   <column name="description_i18n" value='{"FRA":"Appel de payment d&apos;avance","ENG":"Call for advance payment"}'/>
            <column name="creator" value="OPENCELL.ADMIN" />
-           <column name="invoice_sequence_id"
-				   valueComputed="(SELECT id from billing_seq_invoice where code = 'ADV')" />
+           <column name="invoice_sequence_id" valueComputed="(SELECT id from billing_seq_invoice where code = 'ADV')" />
            <column name="occ_templ_negative_id" value="-40" />
            <column name="matching_auto" valueNumeric="0" />
            <column name="prefix_el" value="ADV" />
@@ -8660,7 +8660,8 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="code" value="COM" />
-            <column name="description" value="Commercial invoice" />
+            <column name="description" value="Invoice" />
+            <column name="description_i18n" value='{"FRA":"Facture","ENG":"Invoice"}'/>
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="invoice_sequence_id"
 					valueComputed="(SELECT id from billing_seq_invoice where code = 'COM')" />
@@ -8677,7 +8678,8 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="code" value="ADJ" />
-            <column name="description" value="Manual adjustment" />
+            <column name="description" value="Credit note"/>
+			<column name="description_i18n" value='{"FRA":"Avoir","ENG":"Credit note"}'/>
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="invoice_sequence_id"
 					valueComputed="(SELECT id from billing_seq_invoice where code = 'ADJ')" />
@@ -8693,7 +8695,8 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="code" value="QUOTE" />
-            <column name="description" value="Quote" />
+            <column name="description" value="Quote"/>
+			<column name="description_i18n" value='{"FRA":"Devis","ENG":"Quote"}'/>
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="invoice_sequence_id"
 					valueComputed="(SELECT id from billing_seq_invoice where code = 'QUOTE')" />
@@ -11999,6 +12002,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<where>entity_class = 'org.meveo.model.cpq.Media'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
+	
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
