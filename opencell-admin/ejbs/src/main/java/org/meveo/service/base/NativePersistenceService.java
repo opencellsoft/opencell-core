@@ -1596,7 +1596,7 @@ public class NativePersistenceService extends BaseService {
         List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>());
         if (isAggregationQueries(genericPagingAndFilter.getGenericFields())) {
             searchConfig.setFetchFields(genericFields);
-            qb = this.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
+            qb = this.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null, null, null);
         } else if (isCustomFieldQuery(genericPagingAndFilter.getGenericFields())) {
             searchConfig.setFetchFields(genericFields);
             qb = this.getQuery(entityClass.getCanonicalName(), searchConfig, null);
