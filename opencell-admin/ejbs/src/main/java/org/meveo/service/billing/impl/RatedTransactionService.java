@@ -1870,7 +1870,6 @@ log.info("final query here {}", query);
                 + " a.offerTemplate, " + usageDateAggregation + ignoreSubscriptionClause
                 + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.productVersion.id "
                 + ", a.accountingArticle.id, a.discountedRatedTransaction";
-                + ", a.accountingArticle.id, a.discountedRatedTransaction";
     }
 
     private Map<String, String> buildMapToInvoiceLineTable(AggregationConfiguration aggregationConfiguration) {
