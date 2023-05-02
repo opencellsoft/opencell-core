@@ -41,7 +41,7 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
         Object[] objects= new Object[1];
         objects[0]="5,dd,11".split(",");
-        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null)).thenReturn(queryBuilder);
+        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null, null, null)).thenReturn(queryBuilder);
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("SUM(id)", "code", "field2"));
@@ -54,7 +54,7 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
         Object[] objects= new Object[1];
         objects[0]="3,dd".split(",");
-        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null)).thenReturn(queryBuilder);
+        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null, null, null)).thenReturn(queryBuilder);
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("AVG(id)", "code"));
@@ -67,7 +67,7 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
         Object[] objects= new Object[1];
         objects[0]="4,dd,11".split(",");
-        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null)).thenReturn(queryBuilder);
+        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null, null, null)).thenReturn(queryBuilder);
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("COUNT(id)", "code", "field2"));
@@ -80,7 +80,7 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
         Object[] objects= new Object[1];
         objects[0]="1,dd,11".split(",");
-        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null)).thenReturn(queryBuilder);
+        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null, null, null)).thenReturn(queryBuilder);
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("MIN(id)", "code", "field2"));
@@ -93,7 +93,7 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
         Object[] objects= new Object[1];
         objects[0]="5,dd,11".split(",");
-        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null)).thenReturn(queryBuilder);
+        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null, null, null)).thenReturn(queryBuilder);
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("MAX(id)", "code", "field2"));
@@ -106,7 +106,7 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
         Double[] objects= new Double[1];
         objects[0]=5.;
-        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null)).thenReturn(queryBuilder);
+        Mockito.when(nativePersistenceService.getAggregateQuery(Seller.class.getCanonicalName(), searchConfig, null, null, null)).thenReturn(queryBuilder);
         Mockito.when(queryBuilder.find(entityManager)).thenReturn(Arrays.asList(objects));
         fetchFieldsSet = new LinkedHashSet<>();
         fetchFieldsSet.addAll(Arrays.asList("AVG(id)"));
