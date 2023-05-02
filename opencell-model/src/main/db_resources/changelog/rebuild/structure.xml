@@ -8883,6 +8883,9 @@
             </column>
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="document_version" type="int4" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>    
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-416">           
@@ -19579,8 +19582,8 @@
     <changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari" />
     <changeSet id="#INTRD-14597_20230324" author="TarikFA." />
     <changeSet id="#INTRD-15146_20230406" author="ZBariki" />
-
     <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-14966_20230329" author="HatimO."/>
     <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI" />
     <changeSet id="#INTRD-15233_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
