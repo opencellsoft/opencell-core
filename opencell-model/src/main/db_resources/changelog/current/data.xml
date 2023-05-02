@@ -20837,5 +20837,48 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="applies_to_id" valueComputed="(select id from billing_invoice_type where code = 'COMMERCIAL_ORDER')"/>
         </insert>
     </changeSet>
+    
+    <changeSet id="INTRD-15841_20230502" author="aeljaouhari">
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Invoice"/>
+			<column name="description_i18n" value='{"FRA":"Facture","ENG":"Invoice"}'/>
+			<where>code = 'COM'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Credit note"/>
+			<column name="description_i18n" value='{"FRA":"Avoir","ENG":"Credit note"}'/>
+			<where>code = 'ADJ'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Quote"/>
+			<column name="description_i18n" value='{"FRA":"Devis","ENG":"Quote"}'/>
+			<where>code = 'QUOTE'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Call for advance payment"/>
+			<column name="description_i18n" value='{"FRA":"Appel de payment d&apos;avance","ENG":"Call for advance payment"}'/>
+			<where>code = 'ADV'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Security deposit"/>
+			<column name="description_i18n" value='{"FRA":"Dépôt de garantie","ENG":"Security deposit"}'/>
+			<where>code = 'SECURITY_DEPOSIT'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Refundable credit note"/>
+			<column name="description_i18n" value='{"FRA":"Avoir remboursable","ENG":"Refundable credit note"}'/>
+			<where>code = 'ADJ_REF'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Credit note on invoice"/>
+			<column name="description_i18n" value='{"FRA":"Avoir sur facture","ENG":"Credit note on invoice"}'/>
+			<where>code = 'ADJ_INV'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Commercial order"/>
+			<column name="description_i18n" value='{"FRA":"Commande","ENG":"Commercial order"}'/>
+			<where>code = 'COMMERCIAL_ORDER'</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
