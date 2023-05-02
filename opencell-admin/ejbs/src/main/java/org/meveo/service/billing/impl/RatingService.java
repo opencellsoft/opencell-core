@@ -593,6 +593,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         BigDecimal unitPriceWithoutTax = BigDecimal.ZERO;
         PricePlanMatrixVersion ppmVersion=null;
         PricePlanMatrixLine pricePlanMatrixLine =null;
+        ContractItem contractItem = null;
 
     	ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
         // Let charge template's rating script handle all the rating
@@ -645,7 +646,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-                ContractItem contractItem = null;
                 if (contract != null && serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
                     Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null ? bareWalletOperation.getSubscription().getContract() : null : null;
@@ -790,6 +790,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
 
         if (seperateDiscount) {
+        	//Get PricePlanMatrixVersion if the value if ppmVersion is always null
+        	if(ppmVersion == null && contractItem != null && contractItem.getPricePlan() != null) {
+        		ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(contractItem.getPricePlan().getId(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
+        	}
             discountedWalletOperation=rateDiscountedWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,discountRate,ppmVersion,pricePlanMatrixLine);
         }
 
