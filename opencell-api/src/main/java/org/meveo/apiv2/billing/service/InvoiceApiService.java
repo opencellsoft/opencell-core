@@ -468,6 +468,12 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	    if (invoice.getStatus() != InvoiceStatusEnum.VALIDATED) {
             throw new ForbiddenException("Invoice should be Validated");
         }
+
+		String invoiceType = invoice.getInvoiceType() != null ? invoice.getInvoiceType().getCode() : "";
+		boolean invoiceTypeForbidden = asList("ADJ", "ADJ_INV", "ADJ_REF").contains(invoiceType);
+		if(invoiceTypeForbidden) {
+			throw new ForbiddenException("You cannot create ADJ from another ADJ invoice");
+		}
 	    
 	    if (invoice.getInvoiceType().getOccTemplate().getOccCategory() != OperationCategoryEnum.DEBIT) {
 	        throw new ForbiddenException("You cannot make a credit note over another");
@@ -476,7 +482,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	    if (invoiceLinesToReplicate.getGlobalAdjustment() == null) {
             throw new MissingParameterException("globalAdjustment");
         }
-	    
+
 	    try {
 	        adjInvoice = invoiceService.createAdjustment(invoice, invoiceLinesToReplicate);
 
