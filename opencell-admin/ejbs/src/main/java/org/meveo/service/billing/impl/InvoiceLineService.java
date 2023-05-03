@@ -1070,6 +1070,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             if (incrementalInvoiceLines && groupedRT.get("invoice_line_id") != null) {
                 Long invoiceLineId = (Long) groupedRT.get("invoice_line_id");
                 invoiceLine = linesFactory.update(groupedRT, configuration, appProvider, billingRun, invoiceLineId);
+                basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
+                basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
+                basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
                 update(invoiceLine);
                 commit();
                 associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
