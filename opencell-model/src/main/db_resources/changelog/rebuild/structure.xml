@@ -18258,6 +18258,25 @@
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+
+    <changeSet author="ZBariki" id="#INTRD-14287_20230503-rebuild">
+        <createProcedure>
+            create or replace function _check_duplicated_RT_id()
+                returns trigger as
+                $$
+            begin
+                if exists (select count(id) from billing_rated_transaction where billing_rated_transaction.id = new.id having count(id)>1 ) then
+                    raise exception 'Duplicated billing_rated_transaction.id: %', new.id;
+            end if;
+            return new;
+            end;
+            $$ language plpgsql;
+
+            create  trigger _check_duplicate_RT_id_trig
+                after insert on billing_rated_transaction
+                for each row execute procedure _check_duplicated_RT_id();
+        </createProcedure>
+    </changeSet>
     
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
@@ -19588,6 +19607,7 @@
     <changeSet id="#INTRD-15233_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>
+    <changeSet author="ZBariki" id="#INTRD-14287_20230503" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
