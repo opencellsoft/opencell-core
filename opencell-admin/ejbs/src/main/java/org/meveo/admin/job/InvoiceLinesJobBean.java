@@ -9,8 +9,8 @@ import static org.meveo.commons.utils.ParamBean.getInstance;
 import static org.meveo.model.billing.BillingRunStatusEnum.CREATING_INVOICE_LINES;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -34,6 +34,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -81,9 +82,11 @@ public class InvoiceLinesJobBean extends BaseJobBean {
             List<Long> billingRunIds = billingRunWrappers != null ? billingRunWrappers.stream()
                     .map(br -> valueOf(br.getCode().split("/")[0]))
                     .collect(toList()) : emptyList();
+            // look for billing runs with status NEW or OPEN (case of incrementalInvoiceLines)
+            List<BillingRunStatusEnum> billingRunStatus = Arrays.asList(NEW, OPEN);
             Map<String, Object> filters = new HashedMap();
             if (billingRunIds.isEmpty()) {
-                filters.put("status", NEW);
+                filters.put("inList status", billingRunStatus);
             } else {
                 filters.put("inList id", billingRunIds);
             }
@@ -118,7 +121,15 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 									maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, billingAccountsIDs);
                         }
 
-                        billingRunExtensionService.updateBillingRunStatistics(billingRun, basicStatistics, billableEntitiesSize, INVOICE_LINES_CREATED);
+                        // in case of incrementalInvoiceLines, update status of billing run as OPEN, and ready to update
+                        // existing invoice lines with new upcoming RTs
+                        if (billingRun.getIncrementalInvoiceLines()) {
+                            billingRunExtensionService.updateBillingRunStatistics(billingRun, basicStatistics, billableEntitiesSize, OPEN);
+                        }
+                        // otherwise, update directly status of billing run as INVOICE_LINES_CREATED
+                        else {
+                            billingRunExtensionService.updateBillingRunStatistics(billingRun, basicStatistics, billableEntitiesSize, INVOICE_LINES_CREATED);
+                        }
             		    result.setNbItemsCorrectlyProcessed(basicStatistics.getCount());
                         billingRunService.updateBillingRunJobExecution(billingRun, result);
 
@@ -176,7 +187,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 
     private long validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {
         List<BillingRun> excludedBRs = billingRuns.stream()
-                .filter(br -> br.getStatus() != NEW)
+                .filter(br -> br.getStatus() != NEW && (br.getStatus() != OPEN || ! br.getIncrementalInvoiceLines()))
                 .collect(toList());
         excludedBRs.forEach(br -> result.registerWarning(format("BillingRun[id={%d}] has been ignored", br.getId())));
         billingRuns.removeAll(excludedBRs);
