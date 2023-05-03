@@ -16333,4 +16333,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			
     </changeSet>
     
+  	<changeSet id="#INTRD-15841_20230502" author="AdilElJaouhari">
+        <addColumn tableName="billing_invoice_type">
+            <column name="description_i18n" type="${type.json}"></column>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
