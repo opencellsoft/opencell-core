@@ -576,6 +576,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 					OrderOffer offer = new OrderOffer();
 					offer.setOrder(duplicatedOrder);
 					offer.setOfferTemplate(orderOffer.getOfferTemplate());
+					offer.setSubscription(orderOffer.getSubscription());
 					offer.setDiscountPlan(orderOffer.getDiscountPlan());
 					offer.setDeliveryDate(orderOffer.getDeliveryDate());
 					offer.setUserAccount(orderOffer.getUserAccount());
