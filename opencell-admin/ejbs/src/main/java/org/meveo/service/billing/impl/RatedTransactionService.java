@@ -1681,7 +1681,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			aggregationConfiguration = new AggregationConfiguration(billingCycle);
 		}
         if(aggregationConfiguration!=null) {
-log.info("aggregationConfiguration getGroupedRTsWithAggregation here {}", aggregationConfiguration);
             String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption());
             String unitAmount = appProvider.isEntreprise() ? "unitAmountWithoutTax" : "unitAmountWithTax";
             String unitAmountField = aggregationConfiguration.isAggregationPerUnitAmount() ? "SUM(a.unitAmountWithoutTax)" : unitAmount;
@@ -1700,8 +1699,6 @@ log.info("aggregationConfiguration getGroupedRTsWithAggregation here {}", aggreg
                 query = query.replace("a.ivl.", "ivl.");
                 query = query + ", ivl.id";
             }
-
-log.info("final query here {}", query);
 
             return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
         } else {
@@ -1756,6 +1753,12 @@ log.info("final query here {}", query);
 
         if (incrementalInvoiceLines) {
             fieldToFetch.add("ivl.id as invoice_line_id");
+            fieldToFetch.add("ivl.amountWithoutTax as amount_without_tax");
+            fieldToFetch.add("ivl.amountWithTax as amount_with_tax");
+            fieldToFetch.add("ivl.taxRate as tax_rate");
+            fieldToFetch.add("ivl.quantity as accumulated_quantity");
+            fieldToFetch.add("ivl.validity.from as begin_date");
+            fieldToFetch.add("ivl.validity.to as end_date");
         }
 
         if (BILLINGACCOUNT != type || !ignoreSubscription) {

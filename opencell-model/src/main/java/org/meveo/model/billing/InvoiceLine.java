@@ -124,7 +124,11 @@ import org.meveo.model.cpq.offer.QuoteOffer;
         @NamedQuery(name = "InvoiceLine.findByIdsAndInvoiceType", query = "SELECT il from InvoiceLine il left join fetch il.invoice i left join fetch i.invoiceType WHERE i.invoiceType.code = :invoiceType and il.id in (:invoiceLinesIds)"),
         @NamedQuery(name = "InvoiceLine.updateForAdjustment", query = "UPDATE InvoiceLine il set adjustment_status=:status, il.auditable.updated = :now  where il.id in :ids"),
 		@NamedQuery(name = "InvoiceLine.sumAmountsDiscountByBillingAccount", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax), il.subscription.id, il.commercialOrder.id ,il.invoice.id ,il.billingAccount.id,  il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"
-                + " from  InvoiceLine il  where il.billingRun.id=:billingRunId and il.discountPlanItem is not null group by il.subscription.id, il.commercialOrder.id , il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id")
+                + " from  InvoiceLine il  where il.billingRun.id=:billingRunId and il.discountPlanItem is not null group by il.subscription.id, il.commercialOrder.id , il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
+		@NamedQuery(name = "InvoiceLine.updateByIncrementalMode", query = "UPDATE InvoiceLine il SET " +
+				"il.amountWithoutTax=:amountWithoutTax, il.amountWithTax=:amountWithTax, " +
+				"il.amountTax=:amountTax, il.quantity=:quantity, il.validity.from=:beginDate, " +
+				"il.validity.to=:endDate, il.auditable.updated=:now WHERE il.id = :id")
 	})
 public class InvoiceLine extends AuditableCFEntity {
 
@@ -311,7 +315,7 @@ public class InvoiceLine extends AuditableCFEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "discounted_invoice_line")
 	private InvoiceLine discountedInvoiceLine;
-	
+
 	@Enumerated(EnumType.STRING)
     @Column(name = "tax_mode", nullable = false)
     @NotNull
@@ -827,8 +831,8 @@ public class InvoiceLine extends AuditableCFEntity {
 	public void setOpenOrderNumber(String openOrderNumber) {
 		this.openOrderNumber = openOrderNumber;
 	}
-	
-	
+
+
 
 	public Integer getSequence() {
 		return sequence;
