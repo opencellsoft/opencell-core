@@ -187,63 +187,20 @@ public class InvoiceLinesFactory {
     }
 
     /**
-     * @param data        map of ratedTransaction
-     * @param configuration aggregation configuration
-     * @param billingRun
      * @param invoiceLineId id of invoice line to be updated
-     * @return InvoiceLine updated
+     * @param amounts amount of tax, amount with tax, amount without tax
+     * @param quantity quantity
+     * @param beginDate beginDate
+     * @param endDate endDate
      */
-    public InvoiceLine update(Map<String, Object> data, AggregationConfiguration configuration,
-                              Provider appProvider, BillingRun billingRun, Long invoiceLineId) throws BusinessException {
-        InvoiceLine invoiceLine = invoiceLineService.getEntityManager()
-                .createNamedQuery("InvoiceLine.findById", InvoiceLine.class).setParameter("id", invoiceLineId).getSingleResult();
-log.info("invoiceLine to be updated here {}, with amountWithoutTax {}, with amountWithTax {}, with amountTax {}",
-        invoiceLine, invoiceLine.getAmountWithoutTax(), invoiceLine.getAmountWithTax(), invoiceLine.getAmountTax());
-
-log.info("sum_without_tax here {}, with sum_with_tax {}",
-        data.get("sum_without_tax"), data.get("sum_with_tax"));
-
-        BigDecimal taxPercent = invoiceLine.getTax() != null ? invoiceLine.getTax().getPercent() : (BigDecimal) data.get("tax_percent");
-        BigDecimal amountWithoutTax = ofNullable((BigDecimal) data.get("sum_without_tax")).orElse(ZERO).add(invoiceLine.getAmountWithoutTax());
-
-log.info("amountWithoutTax here {}", amountWithoutTax);
-        BigDecimal amountWithTax = ofNullable((BigDecimal) data.get("sum_with_tax")).orElse(ZERO).add(invoiceLine.getAmountWithTax());
-log.info("amountWithTax here {}", amountWithTax);
-log.info("taxPercent here {}", taxPercent);
-log.info("appProvider.isEntreprise here {}", appProvider.isEntreprise());
-log.info("appProvider.getRounding here {}", appProvider.getRounding());
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, appProvider.isEntreprise(), appProvider.getRounding(),
-                appProvider.getRoundingMode().getRoundingMode());
-        invoiceLine.setAmountWithoutTax(amounts[0]);
-        invoiceLine.setAmountWithTax(amounts[1]);
-        invoiceLine.setAmountTax(amounts[2]);
-
-        boolean isEnterprise = configuration.isEnterprise();
-        invoiceLine.setRawAmount(isEnterprise ? amountWithoutTax : amountWithTax);
-        if(data.get("subscription_id") != null) {
-            Subscription subscription = subscriptionService.getEntityManager().getReference(Subscription.class, ((Number) data.get("subscription_id")).longValue());
-            invoiceLine.setSubscription(subscription);
-            if(data.get("commercial_order_id") != null) {
-                invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, ((Number) data.get("commercial_order_id")).longValue()));
-            }
-        }
-        if(billingRun != null && billingRun.getBillingCycle() != null
-                && billingRun.getBillingCycle().isUseAccountingArticleLabel()
-                && invoiceLine.getAccountingArticle() != null) {
-            String languageCode = getLanguageCode(invoiceLine.getBillingAccount(), appProvider);
-            Map<String, String> descriptionsI18N = invoiceLine.getAccountingArticle().getDescriptionI18nNotNull();
-            invoiceLine.setLabel(ofNullable(descriptionsI18N.get(languageCode))
-                    .orElse(invoiceLine.getAccountingArticle().getDescription()));
-        } else {
-            String label = StringUtils.EMPTY;
-            if (data.get("label") != null) {
-                label = (String) data.get("label");
-            } else if (invoiceLine.getAccountingArticle() != null && invoiceLine.getAccountingArticle().getDescription() != null) {
-                label = invoiceLine.getAccountingArticle().getDescription();
-            }
-            invoiceLine.setLabel(label);
-        }
-        return invoiceLine;
+    public void update(Long invoiceLineId, BigDecimal[] amounts, BigDecimal quantity, Date beginDate,
+                       Date endDate) throws BusinessException {
+        invoiceLineService.getEntityManager()
+                .createNamedQuery("InvoiceLine.updateByIncrementalMode")
+                .setParameter("id", invoiceLineId).setParameter("amountWithoutTax", amounts[0])
+                .setParameter("amountWithTax", amounts[1]).setParameter("amountTax", amounts[2])
+                .setParameter("quantity", quantity).setParameter("beginDate", beginDate)
+                .setParameter("endDate", endDate).setParameter("now", new Date()).executeUpdate();
     }
 
     /**

@@ -1771,6 +1771,12 @@ log.info("final query here {}", query);
 
         if (incrementalInvoiceLines) {
             fieldToFetch.add("ivl.id as invoice_line_id");
+            fieldToFetch.add("ivl.amountWithoutTax as amount_without_tax");
+            fieldToFetch.add("ivl.amountWithTax as amount_with_tax");
+            fieldToFetch.add("ivl.taxRate as tax_rate");
+            fieldToFetch.add("ivl.quantity as accumulated_quantity");
+            fieldToFetch.add("ivl.validity.from as begin_date");
+            fieldToFetch.add("ivl.validity.to as end_date");
         }
 
         if (BILLINGACCOUNT != type || !ignoreSubscription) {
