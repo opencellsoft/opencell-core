@@ -22,7 +22,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.*;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -32,6 +44,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.I18nDescripted;
 import org.meveo.model.ObservableEntity;
 
 /**
@@ -56,8 +69,9 @@ import org.meveo.model.ObservableEntity;
         @NamedQuery(name = "Tax.getTaxByCode", query = "from Tax t where t.code=:code ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "Tax.getTaxByPercent", query = "from Tax t where t.percent=:percent "),
         @NamedQuery(name = "Tax.getTaxByRateAndAccountingCodeNull", query = "from Tax t where t.percent=:percent  and t.accountingCode is null"),
+        @NamedQuery(name = "Tax.getAllTaxes", query = "from Tax t left join fetch t.accountingCode"),
         @NamedQuery(name = "Tax.getTaxByRateAndAccountingCode", query = "from Tax t where t.percent=:percent and t.accountingCode=:accountingCode ")})
-public class Tax extends BusinessCFEntity {
+public class Tax extends BusinessCFEntity implements I18nDescripted {
     private static final long serialVersionUID = 1L;
 
     /**
