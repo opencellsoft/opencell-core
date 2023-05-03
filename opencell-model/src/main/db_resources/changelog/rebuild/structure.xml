@@ -18370,6 +18370,25 @@
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_unmatching_code" />
     </changeSet>
 
+    <changeSet author="ZBariki" id="#INTRD-14287_20230503-rebuild">
+        <createProcedure>
+            create or replace function _check_duplicated_RT_id()
+                returns trigger as
+                $$
+            begin
+                if exists (select count(id) from billing_rated_transaction where billing_rated_transaction.id = new.id having count(id)>1 ) then
+                    raise exception 'Duplicated billing_rated_transaction.id: %', new.id;
+            end if;
+            return new;
+            end;
+            $$ language plpgsql;
+
+            create  trigger _check_duplicate_RT_id_trig
+                after insert on billing_rated_transaction
+                for each row execute procedure _check_duplicated_RT_id();
+        </createProcedure>
+    </changeSet>
+
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -19730,8 +19749,8 @@
     <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15841_20230502" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-15664-20230501" author="aelmalki"  />
+    <changeSet author="ZBariki" id="#INTRD-14287_20230503" />
 
-    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

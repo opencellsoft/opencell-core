@@ -16338,5 +16338,24 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="description_i18n" type="${type.json}"></column>
         </addColumn>
     </changeSet>
+
+    <changeSet author="ZBariki" id="#INTRD-14287_20230503">
+        <createProcedure>
+            create or replace function _check_duplicated_RT_id()
+                returns trigger as
+                $$
+            begin
+                if exists (select count(id) from billing_rated_transaction where billing_rated_transaction.id = new.id having count(id)>1 ) then
+                    raise exception 'Duplicated billing_rated_transaction.id: %', new.id;
+                end if;
+                return new;
+            end;
+            $$ language plpgsql;
+
+            create  trigger _check_duplicate_RT_id_trig
+                after insert on billing_rated_transaction
+                for each row execute procedure _check_duplicated_RT_id();
+        </createProcedure>
+    </changeSet>
     
 </databaseChangeLog>
