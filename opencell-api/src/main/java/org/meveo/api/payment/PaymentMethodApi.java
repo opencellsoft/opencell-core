@@ -122,9 +122,6 @@ public class PaymentMethodApi extends BaseApi {
         
         if (paymentMethodDto.getUntdidPaymentMeans() != null) {
             UntdidPaymentMeans untdidPaymentMeans = untdidPaymentMeansService.getByCode(paymentMethodDto.getUntdidPaymentMeans());
-            if (untdidPaymentMeans == null) {
-                throw new EntityDoesNotExistsException(UntdidPaymentMeans.class, paymentMethodDto.getUntdidPaymentMeans());
-            }
             paymentMethod.setPaymentMeans(untdidPaymentMeans);
         }
 

@@ -3716,9 +3716,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="description_i18n" type="${type.json}" />
             <column name="composite" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="taxation_category_id" type="bigint" >            
-            	<constraints nullable="false" />
-			</column>
+            <column name="taxation_category_id" type="bigint" />
 			<column name="vatex_id" type="bigint" />
         </createTable>
     </changeSet>
@@ -19588,6 +19586,7 @@
     <changeSet id="#INTRD-15233_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>
+	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
