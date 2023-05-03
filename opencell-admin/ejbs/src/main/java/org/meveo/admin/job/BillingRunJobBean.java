@@ -82,6 +82,7 @@ public class BillingRunJobBean extends BaseJobBean {
         Date lastTransactionDateFromCF = (Date) this.getParamOrCFValue(jobInstance, "BillingRunJob_lastTransactionDate");
         Date invoiceDateFromCF = (Date) this.getParamOrCFValue(jobInstance, "BillingRunJob_invoiceDate");
         String billingCycleTypeId = (String) this.getParamOrCFValue(jobInstance, "BillingRunJob_billingRun_Process");
+        Boolean incrementalInvoiceLines = (Boolean) this.getParamOrCFValue(jobInstance, "BillingRunJob_incrementalInvoiceLines");
 
         List<String> billingCyclesCode = Collections.emptyList();
         if (billingCyclesCf != null) {
@@ -141,6 +142,9 @@ public class BillingRunJobBean extends BaseJobBean {
                 } else {
                     billingRun.setLastTransactionDate(billingRun.getProcessDate());
                 }
+
+                billingRun.setIncrementalInvoiceLines(incrementalInvoiceLines);
+
                 billingRunService.create(billingRun);
                 result.registerSucces();
             }
