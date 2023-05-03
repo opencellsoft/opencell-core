@@ -80,6 +80,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	
 	private List<String> fieldToFetch = asList("invoiceLines");
 
+	@Inject
+	private InvoiceTypeService invoiceTypeService;
+
 	@Override
 	public List<Invoice> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, null, null, null);
@@ -467,7 +470,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
         }
 
 		String invoiceType = invoice.getInvoiceType() != null ? invoice.getInvoiceType().getCode() : "";
-		boolean invoiceTypeForbidden = new InvoiceTypeService().getListAdjustementCode().contains(invoiceType);
+		boolean invoiceTypeForbidden = invoiceTypeService.getListAdjustementCode().contains(invoiceType);
 		if(invoiceTypeForbidden) {
 			throw new ForbiddenException("You cannot create ADJ from another ADJ invoice");
 		}
