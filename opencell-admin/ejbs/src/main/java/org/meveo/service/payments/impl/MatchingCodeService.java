@@ -189,7 +189,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 }
                 // Functional Amounts
                 if (functionalCreditAmount.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
-                    functionalAmountToMatch = accountOperation.getMatchingAmount();
+                    functionalAmountToMatch = accountOperation.getUnMatchingAmount();
                     functionalCreditAmount = functionalCreditAmount.subtract(functionalAmountToMatch);
 
                 } else {
@@ -269,8 +269,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             }
 
             if (0 != amountToMatch.longValue()) {
-                accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(functionalAmountToMatch));
-                accountOperation.setTransactionalMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
+                // add baseMatchingAmount to avoid having TransactionalMatchingAmount = MatchingAmount * 2
+                BigDecimal baseMatchingAmount = accountOperation.getMatchingAmount();
+                accountOperation.setMatchingAmount(baseMatchingAmount.add(functionalAmountToMatch));
+                accountOperation.setTransactionalMatchingAmount(baseMatchingAmount.add(amountToMatch));
                 accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(functionalAmountToMatch));
                 accountOperation.setTransactionalUnMatchingAmount(accountOperation.getTransactionalUnMatchingAmount().subtract(amountToMatch));
                 accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
@@ -548,8 +550,13 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 if (operation instanceof RecordedInvoice && ((RecordedInvoice) operation).getPaymentScheduleInstanceItem() != null) {
                     paymentScheduleInstanceItem = ((RecordedInvoice) operation).getPaymentScheduleInstanceItem();
                 }
-                operation.setUnMatchingAmount(operation.getUnMatchingAmount().add(matchingAmount.getMatchingAmount()));
-                operation.setMatchingAmount(operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount()));
+                BigDecimal baseUnMatchingAmount = operation.getUnMatchingAmount();
+                BigDecimal calculatedMatchingAmount = operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount());
+                BigDecimal calculatedUnMatchingAmount = baseUnMatchingAmount.add(matchingAmount.getMatchingAmount());
+                operation.setUnMatchingAmount(calculatedUnMatchingAmount);
+                operation.setTransactionalUnMatchingAmount(calculatedUnMatchingAmount);
+                operation.setMatchingAmount(calculatedMatchingAmount);
+                operation.setTransactionalMatchingAmount(calculatedMatchingAmount);
                 if (ZERO.compareTo(operation.getMatchingAmount()) == 0) {
                     operation.setMatchingStatus(MatchingStatusEnum.O);
                     if (operation instanceof RecordedInvoice) {
