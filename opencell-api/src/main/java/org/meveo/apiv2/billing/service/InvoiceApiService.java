@@ -46,10 +46,7 @@ import org.meveo.model.billing.RatedTransactionAction;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.service.billing.impl.InvoiceLineService;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.LinkedInvoiceService;
-import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
@@ -470,7 +467,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
         }
 
 		String invoiceType = invoice.getInvoiceType() != null ? invoice.getInvoiceType().getCode() : "";
-		boolean invoiceTypeForbidden = asList("ADJ", "ADJ_INV", "ADJ_REF").contains(invoiceType);
+		boolean invoiceTypeForbidden = new InvoiceTypeService().getListAdjustementCode().contains(invoiceType);
 		if(invoiceTypeForbidden) {
 			throw new ForbiddenException("You cannot create ADJ from another ADJ invoice");
 		}
