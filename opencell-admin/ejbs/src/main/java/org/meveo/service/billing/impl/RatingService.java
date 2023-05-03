@@ -1333,9 +1333,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws BusinessException business exception
      * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public WalletOperation rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
+    public RatingResult rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         WalletOperation operation = walletOperationToRerate.getUnratedClone();
+        RatingResult ratingResult = new RatingResult();
         PricePlanMatrix priceplan = operation.getPriceplan();
         WalletInstance wallet = operation.getWallet();
         UserAccount userAccount = wallet.getUserAccount();
@@ -1371,11 +1372,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             operation.setUnitAmountTax(null);
             operation.setChargeMode(ChargeApplicationModeEnum.RERATING);
 
-            rateBareWalletOperation(operation, null, null, priceplan == null || priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),
+            ratingResult= rateBareWalletOperation(operation, null, null, priceplan == null || priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),
                 priceplan != null ? priceplan.getTradingCurrency() : null, false);
         }
 
-        return operation;
+        return ratingResult;
     }
 
     /**
