@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto.billing;
 
+import static org.meveo.api.dto.LanguageDescriptionDto.convertMultiLanguageFromMapOfValues;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -125,6 +128,8 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     private String invoiceCodeType;
     
     private String vatPaymentOption;
+    
+    private List<LanguageDescriptionDto> languageDescriptions;
 
     /**
      * Instantiates a new invoice type dto.
@@ -167,6 +172,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         if (invoiceType.getUntdidInvoiceCodeType() != null) {
             this.untdidInvoiceSubjectCode = invoiceType.getUntdidInvoiceCodeType().getCode();
         }
+        languageDescriptions = convertMultiLanguageFromMapOfValues(invoiceType.getDescriptionI18n());
     }
 
     /**
@@ -512,6 +518,12 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.vatPaymentOption = vatPaymentOption;
     }
 	
-	
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 	
 }
