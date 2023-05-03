@@ -689,6 +689,19 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
             amountsByTax.put(invoiceLine.getTax(), subcategoryInvoiceAgregate);
         }
     }
+    
+    public String getCategoryAggKey() {
+    	return ""+(this.userAccount==null?"":this.userAccount.getId())+this.invoiceSubCategory.getInvoiceCategory().getId();
+    }
+    
+    @Transient
+    private List<Long> ilIDs=new ArrayList<>();
+    public void addILs(List<Long> ilIDs) {
+    	this.ilIDs.addAll(ilIDs);
+    }
+    public List<Long> getIlIDs() {
+    	return this.ilIDs;
+    }
 
     /**
      * Set cumulative amounts by tax

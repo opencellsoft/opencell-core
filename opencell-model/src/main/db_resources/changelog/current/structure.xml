@@ -16120,6 +16120,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+     	<addColumn tableName="billing_invoice_line">
+            <column name="user_account_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+   	</changeSet> 
 
     <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius">
         <alterSequence sequenceName="rating_cdr_seq" incrementBy="5000"/>
