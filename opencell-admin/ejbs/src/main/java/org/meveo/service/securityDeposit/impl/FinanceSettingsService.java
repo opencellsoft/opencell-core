@@ -6,10 +6,12 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.ParamBeanFactory.getAppScopeInstance;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -20,9 +22,6 @@ import org.meveo.model.securityDeposit.AuxiliaryAccounting;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.payments.impl.OCCTemplateService;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Stateless
 public class FinanceSettingsService extends BusinessService<FinanceSettings> {
@@ -35,10 +34,14 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
     private static final String OCC_CODE_KEY = "accountOperationsGenerationJob.occCode";
     private static final String OCC_DEFAULT_CODE = "INV_STD";
 
+    // Use FINANCE_SETTING_ID to remember the finance setting and look it up by ID next time. A value of -1 indicate that there is no finance setting in the database.
+    private static Long FINANCE_SETTING_ID = null;
+    
     @Override
     public void create(FinanceSettings entity) throws BusinessException {
         checkParameters(entity);
         super.create(entity);
+        FINANCE_SETTING_ID = entity.getId();
     }
 
     @Override
@@ -57,21 +60,32 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
     }
 
     /**
-     * Returns active finance settings
+     * Get an active Finance Setting - there should be only one in the system. Use FINANCE_SETTING_ID to remember the finance setting and look it up by ID next time.
      *
-     * @return FinanceSettings
+     * @return Mediation setting
      */
-    public FinanceSettings findLastOne() {
-        try {
-            TypedQuery<FinanceSettings> query =
-                    getEntityManager()
-                            .createQuery("from FinanceSettings f order by f.id desc", entityClass)
-                            .setMaxResults(1);
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            log.debug("No {} found", getEntityClass().getSimpleName());
+    public FinanceSettings getFinanceSetting() {
+        FinanceSettings financeSetting = null;
+
+        // No finance setting was looked up yet
+        if (FINANCE_SETTING_ID == null) {
+            List<FinanceSettings> financeSettings = getEntityManager().createQuery("from FinanceSettings f order by f.id desc", FinanceSettings.class).setMaxResults(1).getResultList();
+            if (financeSettings.isEmpty()) {
+                FINANCE_SETTING_ID = -1L;
             return null;
         }
+            financeSetting = financeSettings.get(0);
+            FINANCE_SETTING_ID = financeSetting.getId();
+
+            // Finance setting was looked up and does not exist
+        } else if (FINANCE_SETTING_ID < 0) {
+            return null;
+
+            // Finance setting was looked up and exists - find by ID
+        } else {
+            financeSetting = findById(FINANCE_SETTING_ID);
+    }
+        return financeSetting;
     }
 
     /**

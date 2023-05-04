@@ -10507,7 +10507,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="following_job_id" value="null" />
             <column name="uuid" value="ImportCustomerBankDetailsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values" value="null" />
             <column name="verbose_report" value="1" />
         </insert>
@@ -11477,7 +11477,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="creator" value="opencell.admin" />
 			<column name="updater" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 		</insert>
 	</changeSet>
@@ -11489,6 +11489,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="script">
 				<![CDATA[
 package org.meveo.service.script;
+    <changeSet id="#INTRD-13314_20230123-f" author="zelmeliani" />
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12057,7 +12058,7 @@ public class CdrMassImportScript extends GenericMassImportScript {
 			<column name="code" value="CsvImportCDR" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13697,7 +13698,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="code" value="massImportCustomerJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13717,7 +13718,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="code" value="massImportCustomerAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13737,7 +13738,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="code" value="massImportPaymentMethodJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13757,7 +13758,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="code" value="massImportBillingAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13777,7 +13778,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="code" value="massImportUserAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13871,7 +13872,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportSubscriptionJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -13891,7 +13892,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportServiceInstanceJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -13911,7 +13912,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportAttributeInstance" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -13931,7 +13932,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportAccessPoint" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">

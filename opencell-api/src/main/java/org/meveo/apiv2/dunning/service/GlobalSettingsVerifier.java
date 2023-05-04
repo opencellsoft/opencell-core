@@ -19,7 +19,7 @@ public class GlobalSettingsVerifier {
      * @throws BusinessApiException in case dunning is disabled
      */
     public void checkActivateDunning() {
-        FinanceSettings settings = financeSettingsService.findLastOne();
+        FinanceSettings settings = financeSettingsService.getFinanceSetting();
         if(settings != null && !settings.isActivateDunning()) {
             throw new BusinessApiException("The action is not possible, FinanceSettings.activateDunning is disabled");
         }

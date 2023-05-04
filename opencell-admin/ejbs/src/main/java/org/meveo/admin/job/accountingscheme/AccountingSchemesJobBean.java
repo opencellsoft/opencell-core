@@ -47,7 +47,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::executeScript, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::executeScript, null, null, null);
     }
 
     private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
