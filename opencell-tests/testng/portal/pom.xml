@@ -4,7 +4,7 @@
 	<groupId>com.opencellsoft.testng</groupId>
 	<artifactId>testng-auto</artifactId>
 	<packaging>jar</packaging>
-	<version>11.1.1-382_689140f</version>
+	<version>11.1.1-382-f172478</version>
 	<name>testng-auto</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
