@@ -9623,7 +9623,7 @@
             </column>
 
         </createTable>
-        <addUniqueConstraint columnNames="current_version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
+        <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
 
     <changeSet id="rebuild-str-tbl-448" author="TarikF">
@@ -12718,7 +12718,7 @@
         <addUniqueConstraint columnNames="charge_id,attribute_id" constraintName="cpq_attribute_charge_pkey" tableName="cpq_attribute_charge" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-546">
-        <addUniqueConstraint columnNames="code,ppm_version_id" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+        <addUniqueConstraint columnNames="ppm_version_id,code" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
     </changeSet>
     <changeSet author="ZBariki" id="rebuild-str-uk-547">
         <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
