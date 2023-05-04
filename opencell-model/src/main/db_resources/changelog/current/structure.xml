@@ -16338,5 +16338,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="description_i18n" type="${type.json}"></column>
         </addColumn>
     </changeSet>
+
+	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari">
+        <dropNotNullConstraint tableName="billing_tax" columnName="taxation_category_id"/>
+    </changeSet>
     
 </databaseChangeLog>
