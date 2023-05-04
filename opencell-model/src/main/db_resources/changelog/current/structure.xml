@@ -15745,6 +15745,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000"/>
         <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-15733_20230426" author="AndriusKarpavicius">
+        <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
+        <sql>CREATE INDEX billing_redirection_rule_contract_index  ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>
+        <dropUniqueConstraint tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+        <addUniqueConstraint columnNames="ppm_version_id,code" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+        <dropUniqueConstraint tableName="cpq_price_plan_version" constraintName="cpq_price_plan_version_UNIC"/>
+        <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
+    </changeSet>
 
     <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
         <addColumn tableName="billing_rated_transaction">

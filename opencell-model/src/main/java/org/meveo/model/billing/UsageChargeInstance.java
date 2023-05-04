@@ -72,6 +72,13 @@ public class UsageChargeInstance extends ChargeInstance {
     private int priority = 1;
 
     /**
+     * Charge template/definition that charge was instantiated from
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "charge_template_id", insertable = false, updatable = false)
+    private UsageChargeTemplate usageChargeTemplate;
+    
+    /**
      * Instantiate Usage charge instance
      */
     public UsageChargeInstance() {
@@ -94,6 +101,7 @@ public class UsageChargeInstance extends ChargeInstance {
         String chargeRatingUnitDescription = usageChargeTemplate.getRatingUnitDescription();
 		this.ratingUnitDescription = chargeRatingUnitDescription==null || chargeRatingUnitDescription.length()<20?chargeRatingUnitDescription:chargeRatingUnitDescription.substring(0,20);
         this.priority = usageChargeTemplate.getPriority();
+        this.usageChargeTemplate = usageChargeTemplate;
     }
 
     public CounterInstance getCounter() {
@@ -123,5 +131,13 @@ public class UsageChargeInstance extends ChargeInstance {
     @Override
     public ChargeMainTypeEnum getChargeMainType() {
         return ChargeMainTypeEnum.USAGE;
+    }
+    
+    public UsageChargeTemplate getUsageChargeTemplate() {
+        return usageChargeTemplate;
+    }
+    
+    public void setUsageChargeTemplate(UsageChargeTemplate usageChargeTemplate) {
+        this.usageChargeTemplate = usageChargeTemplate;
     }
 }
