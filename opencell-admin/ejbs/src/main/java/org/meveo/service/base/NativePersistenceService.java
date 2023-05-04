@@ -971,6 +971,10 @@ public class NativePersistenceService extends BaseService {
 
     }
 
+    public QueryBuilder getAggregateQuery(String tableName, PaginationConfiguration config, Long id) {
+        return getAggregateQuery(tableName, config, id, null, null);
+    }
+
     public QueryBuilder getAggregateQuery(String tableName, PaginationConfiguration config, Long id, String extraCondition,
                                           String leftJoinClause) {
         tableName = addCurrentSchema(tableName);
@@ -1596,7 +1600,7 @@ public class NativePersistenceService extends BaseService {
         List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>());
         if (isAggregationQueries(genericPagingAndFilter.getGenericFields())) {
             searchConfig.setFetchFields(genericFields);
-            qb = this.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null, null, null);
+            qb = this.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
         } else if (isCustomFieldQuery(genericPagingAndFilter.getGenericFields())) {
             searchConfig.setFetchFields(genericFields);
             qb = this.getQuery(entityClass.getCanonicalName(), searchConfig, null);
