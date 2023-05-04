@@ -1050,7 +1050,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (pricePlan == null) {
             throw new NoPricePlanException("No price plan matched to rate WO for charge code " + bareWalletOperation.getCode());
         }
-log.error("AKK found {} active PP, matched id={}", chargePricePlans.size(),pricePlan.getId());
+
         return em.getReference(PricePlanMatrix.class, pricePlan.getId());
     }
     
