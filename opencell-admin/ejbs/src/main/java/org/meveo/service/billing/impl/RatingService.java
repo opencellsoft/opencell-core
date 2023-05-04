@@ -1767,7 +1767,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         discountWalletOperation.setPricePlanMatrixVersion(ppmVersion);
         discountWalletOperation.setPriceplan(ppmVersion!=null?ppmVersion.getPricePlanMatrix():null);
         discountWalletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
-
+        discountWalletOperation.setParameter1(bareWalletOperation.getParameter1());
+    	discountWalletOperation.setParameter2(bareWalletOperation.getParameter2());
+    	discountWalletOperation.setParameter3(bareWalletOperation.getParameter3());
+    	
         accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, discountWalletOperation);
         if(defaultArticle.equalsIgnoreCase(accountingArticle.getCode())) {
             accountingArticle=bareWalletOperation.getAccountingArticle();
