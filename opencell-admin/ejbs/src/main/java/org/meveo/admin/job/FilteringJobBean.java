@@ -83,7 +83,7 @@ public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::applyScriptOnEntity, null, this::finalizeScript);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::applyScriptOnEntity, null, null, this::finalizeScript);
 
         scriptInterface = null;
         scriptContext = null;

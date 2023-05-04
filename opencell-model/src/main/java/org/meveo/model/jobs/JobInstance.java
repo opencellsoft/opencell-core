@@ -61,8 +61,7 @@ import org.meveo.model.report.query.QueryScheduler;
 @CustomFieldEntity(cftCodePrefix = "JobInstance", cftCodeFields = "jobTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "meveo_job_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
 @NamedQueries({ @NamedQuery(name = "JobInstance.listByTemplate", query = "SELECT ji FROM JobInstance ji where ji.jobTemplate=:jobTemplate order by ji.code"),
         @NamedQuery(name = "JobInstance.findByJobTemplate", query = "select ji FROM JobInstance ji WHERE ji.jobTemplate=:jobTemplate") })
 public class JobInstance extends EnableBusinessCFEntity {
@@ -126,12 +125,11 @@ public class JobInstance extends EnableBusinessCFEntity {
     private String runOnNodes;
 
     /**
-     * Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time.
+     * Job execution behavior when running in a clustered environment
      */
-    @Type(type = "numeric_boolean")
-    @Column(name = "single_node", nullable = false)
-    @NotNull
-    private boolean limitToSingleNode = true;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cluster_behavior", length = 25, nullable = false)
+    private JobClusterBehaviorEnum clusterBehavior;
 
     /** The include invoices without amount. */
     @Type(type = "numeric_boolean")
@@ -303,21 +301,17 @@ public class JobInstance extends EnableBusinessCFEntity {
     }
 
     /**
-     * Checks if is limit to single node.
-     *
-     * @return true, if is limit to single node
+     * @return Job execution behavior when running in a clustered environment
      */
-    public boolean isLimitToSingleNode() {
-        return limitToSingleNode;
+    public JobClusterBehaviorEnum getClusterBehavior() {
+        return clusterBehavior;
     }
 
     /**
-     * Sets the limit to single node.
-     *
-     * @param limitToSingleNode the new limit to single node
+     * @param clusterBehavior Job execution behavior when running in a clustered environment
      */
-    public void setLimitToSingleNode(boolean limitToSingleNode) {
-        this.limitToSingleNode = limitToSingleNode;
+    public void setClusterBehavior(JobClusterBehaviorEnum clusterBehavior) {
+        this.clusterBehavior = clusterBehavior;
     }
 
     /*
@@ -415,9 +409,16 @@ public class JobInstance extends EnableBusinessCFEntity {
     }
 
     /**
-     * @param runTimeValues the runTimeValues to set
+     * @param runTimeValues Runtime parameters to set
      */
     public void setRunTimeValues(Map<String, Object> runTimeValues) {
+        this.runTimeValues = runTimeValues;
+    }
+
+    /**
+     * @param runTimeParameters Runtime parameters to append
+     */
+    public void addRunTimeValues(Map<String, Object> runTimeParameters) {
         this.runTimeValues = runTimeValues;
     }
 

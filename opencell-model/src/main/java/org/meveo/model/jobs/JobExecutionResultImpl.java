@@ -32,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -58,7 +59,7 @@ import org.meveo.model.NotifiableEntity;
         @NamedQuery(name = "JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", query = "select count(*) FROM JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
         @NamedQuery(name = "JobExecutionResult.purgeHistoryByDateAndJobInstance", query = "delete JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
         @NamedQuery(name = "JobExecutionResult.updateProgress", query = "update JobExecutionResultImpl set endDate=:endDate, nbItemsToProcess=:nbItemsToProcess, nbItemsCorrectlyProcessed=:nbItemsCorrectlyProcessed, nbItemsProcessedWithError=:nbItemsProcessedWithError, nbItemsProcessedWithWarning=:nbItemsProcessedWithWarning, report=:report, status=:status where id=:id"),
-        @NamedQuery(name = "JobExecutionResult.cancelAllRunningJobs", query = "update JobExecutionResultImpl je set je.status='CANCELLED', je.endDate=NOW(), je.report='job cancelled due to the server was shutdwon in the middle of job execution' where je.status = 'RUNNING'") })
+        @NamedQuery(name = "JobExecutionResult.cancelAllRunningJobs", query = "update JobExecutionResultImpl je set je.status='CANCELLED', je.endDate=NOW(), je.report='job cancelled due to the server was shutdown in the middle of job execution' where je.status = 'RUNNING'") })
 
 public class JobExecutionResultImpl extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
@@ -108,6 +109,12 @@ public class JobExecutionResultImpl extends BaseEntity {
     @Column(name = "nb_error")
     private long nbItemsProcessedWithError;
 
+    @Column(name = "parent_job_result_id")
+    private Long parentJobExecutionResult;
+
+    @OneToMany(mappedBy = "parentJobExecutionResult", fetch = FetchType.LAZY)
+    private List<JobExecutionResultImpl> workerJobExecutionResults = new ArrayList<>();
+
     /**
      * Job execution status
      */
@@ -146,6 +153,21 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     @Transient
     private boolean moreToProcess = false;
+
+    @Transient
+    private Date cumulativeEndDate;
+
+    @Transient
+    private long cumulativeNbItemsCorrectlyProcessed = -1L;
+
+    @Transient
+    private long cumulativeNbItemsProcessedWithWarning = -1L;
+
+    @Transient
+    private long cumulativeNbItemsProcessedWithError = -1L;
+
+    @Transient
+    private JobExecutionResultStatusEnum cumulativeStatus;
 
     /**
      * Constructor
@@ -533,6 +555,136 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     public void setMoreToProcess(boolean moreToProcess) {
         this.moreToProcess = moreToProcess;
+    }
+
+    /**
+     * @return Parent job execution result
+     */
+    public Long getParentJobExecutionResult() {
+        return parentJobExecutionResult;
+    }
+
+    /**
+     * @param parentJobExecutionResult Parent job execution result
+     */
+    public void setParentJobExecutionResult(Long parentJobExecutionResult) {
+        this.parentJobExecutionResult = parentJobExecutionResult;
+    }
+
+    /**
+     * @return Execution results from worker jobs in other cluster nodes
+     */
+    public List<JobExecutionResultImpl> getWorkerJobExecutionResults() {
+        return workerJobExecutionResults;
+    }
+
+    /**
+     * @return All execution results - main plus worker job/thread execution results
+     */
+    public List<JobExecutionResultImpl> getCumulativeJobExecutionResults() {
+        ArrayList<JobExecutionResultImpl> allResults = new ArrayList<JobExecutionResultImpl>();
+        allResults.add(this);
+        allResults.addAll(workerJobExecutionResults);
+
+        return allResults;
+    }
+
+    /**
+     * @param workerJobExecutionResults Execution results from worker jobs in other cluster nodes
+     */
+    public void setWorkerJobExecutionResults(List<JobExecutionResultImpl> workerJobExecutionResults) {
+        this.workerJobExecutionResults = workerJobExecutionResults;
+    }
+
+    public Date getCumulativeStartDate() {
+        return startDate;
+    }
+
+    public Date getCumulativeEndDate() {
+        if (cumulativeEndDate == null) {
+            cumulativeEndDate = endDate;
+
+            if (endDate != null) {
+                for (JobExecutionResultImpl workerJob : workerJobExecutionResults) {
+                    if (workerJob.getEndDate() == null) {
+                        return null;
+                    } else if (cumulativeEndDate.before(workerJob.getEndDate())) {
+                        cumulativeEndDate = workerJob.getEndDate();
+                    }
+                }
+            }
+        }
+        return cumulativeEndDate;
+    }
+
+    /**
+     * Get a total number of items correctly processed between the main and other worker jobs/threads
+     * 
+     * @return A total number of items correctly processed
+     */
+    public long getCumulativeNbItemsCorrectlyProcessed() {
+        if (cumulativeNbItemsCorrectlyProcessed == -1L) {
+            cumulativeNbItemsCorrectlyProcessed = nbItemsCorrectlyProcessed;
+
+            for (JobExecutionResultImpl workerJob : workerJobExecutionResults) {
+                cumulativeNbItemsCorrectlyProcessed = cumulativeNbItemsCorrectlyProcessed + workerJob.getNbItemsCorrectlyProcessed();
+            }
+        }
+
+        return cumulativeNbItemsCorrectlyProcessed;
+    }
+
+    /**
+     * Get a total number of items processed with warning between the main and other worker jobs/threads
+     * 
+     * @return A total number of items processed with warning
+     */
+    public long getCumulativeNbItemsProcessedWithWarning() {
+        if (cumulativeNbItemsProcessedWithWarning == -1L) {
+            cumulativeNbItemsProcessedWithWarning = nbItemsProcessedWithWarning;
+
+            for (JobExecutionResultImpl workerJob : workerJobExecutionResults) {
+                cumulativeNbItemsProcessedWithWarning = cumulativeNbItemsProcessedWithWarning + workerJob.getNbItemsProcessedWithWarning();
+            }
+        }
+        return cumulativeNbItemsProcessedWithWarning;
+    }
+
+    /**
+     * Get a total number of items processed with error between the main and other worker jobs/threads
+     * 
+     * @return A total number of items processed with error
+     */
+    public long getCumulativeNbItemsProcessedWithError() {
+        cumulativeNbItemsProcessedWithError = nbItemsProcessedWithError;
+
+        for (JobExecutionResultImpl workerJob : workerJobExecutionResults) {
+            cumulativeNbItemsProcessedWithError = cumulativeNbItemsProcessedWithError + workerJob.getNbItemsProcessedWithError();
+        }
+
+        return cumulativeNbItemsProcessedWithError;
+    }
+
+    /**
+     * Get a total number of items processed between the main and other worker jobs/threads
+     * 
+     * @return A total number of items processed
+     */
+    public long getCumulativeNbItemsProcessed() {
+        return getCumulativeNbItemsCorrectlyProcessed() + getCumulativeNbItemsProcessedWithWarning() + getCumulativeNbItemsProcessedWithError();
+    }
+
+    /**
+     * @return Job execution status
+     */
+    public JobExecutionResultStatusEnum getCumulativeStatus() {
+        cumulativeStatus = status;
+
+        for (JobExecutionResultImpl workerJob : workerJobExecutionResults) {
+            cumulativeStatus = cumulativeStatus.getStatusWithHigherPriority(workerJob.getStatus());
+        }
+
+        return cumulativeStatus;
     }
 
     @Override

@@ -1697,7 +1697,7 @@
             <column name="following_job_id" value="NULL"/>
             <column name="uuid" value="2c72550b-4e79-4dab-a8bd-df8499abd25b"/>
             <column name="run_on_nodes" value="NULL"/>
-            <column name="single_node" valueNumeric="1"/>
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE"/>
             <column name="cf_values" value="{&quot;PaymentJob_creditOrDebit&quot;:[{&quot;string&quot;:&quot;Credit&quot;}],&quot;waitingMillis&quot;:[{&quot;long&quot;:0}],&quot;PaymentJob_matchingAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;PaymentJob_cardOrDD&quot;:[{&quot;string&quot;:&quot;CARD&quot;}],&quot;PaymentJob_createAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;nbRuns&quot;:[{&quot;long&quot;:1}],&quot;PaymentJob_AOorCA&quot;:[{&quot;string&quot;:&quot;CA&quot;}]}"/>
             <column name="exclude_inv_without_amount" valueNumeric="0"/>
         </insert>
@@ -1718,7 +1718,7 @@
             <column name="following_job_id" value="NULL"/>
             <column name="uuid" value="a4bb9554-85f3-4c0a-8f62-438fec7bdac2"/>
             <column name="run_on_nodes" value="NULL"/>
-            <column name="single_node" valueNumeric="1"/>
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE"/>
             <column name="cf_values" value="{&quot;PaymentJob_creditOrDebit&quot;:[{&quot;string&quot;:&quot;Debit&quot;}],&quot;waitingMillis&quot;:[{&quot;long&quot;:0}],&quot;PaymentJob_matchingAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;PaymentJob_cardOrDD&quot;:[{&quot;string&quot;:&quot;CARD&quot;}],&quot;PaymentJob_createAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;nbRuns&quot;:[{&quot;long&quot;:1}],&quot;PaymentJob_AOorCA&quot;:[{&quot;string&quot;:&quot;CA&quot;}]}"/>
             <column name="exclude_inv_without_amount" valueNumeric="0"/>
         </insert>   
@@ -1867,7 +1867,7 @@
             <column name="description" value="Process customer payments file job"/>
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="uuid" value="ProcessCustomerPaymentsFileJob" />

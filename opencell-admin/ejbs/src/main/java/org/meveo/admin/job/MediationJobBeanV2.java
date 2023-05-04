@@ -83,7 +83,7 @@ public class MediationJobBeanV2 extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::processCDR, this::processCDRBatch, this::hasMore, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::processCDR, this::processCDRBatch, this::hasMore, null, null);
     }
 
     public static Throwable getRootCause(Throwable e) {
