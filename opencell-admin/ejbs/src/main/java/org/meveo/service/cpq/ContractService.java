@@ -4,6 +4,7 @@ import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
@@ -167,15 +169,22 @@ public class ContractService extends BusinessService<Contract>  {
 		
 	}
 
-	 public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
-	    	try {
-				return getEntityManager().createNamedQuery("Contract.findByAccounts")
-						.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
-						.setParameter("customerAccountId",customerAccount.getId())
-						.setParameter("operationDate", bareWalletOperation.getOperationDate())
-						.setFlushMode(FlushModeType.COMMIT).getResultList();
-	    	} catch (NoResultException e) {
-	            return null;
-	        }
-	    }
+
+	public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
+		return this.getContractByAccount(Arrays.asList(customer.getId()), billingAccount, customerAccount, bareWalletOperation);
+	}
+
+	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
+		try {
+			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
+					.setParameter("customerId", customersID).setParameter("billingAccountId", billingAccount.getId())
+					.setParameter("customerAccountId",customerAccount.getId())
+					.setParameter("operationDate", bareWalletOperation.getOperationDate()).getResultList();
+
+
+			return contracts;
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 }
