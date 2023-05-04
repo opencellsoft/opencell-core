@@ -615,6 +615,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+
+    /**The amount after discount**/
+    @Column(name = "discounted_amount")
+    private BigDecimal discountedAmount;
     
     @ManyToOne
     @JoinColumn(name = "rules_contract_id")
@@ -632,10 +636,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
   	private Integer sequence;
 
     @Column(name = "pending_duplicates")
-    private Integer pendingDuplicates;
+    private Integer pendingDuplicates = 0;
 
     @Column(name = "pending_duplicates_to_negate")
-    private Integer pendingDuplicatesToNegate;
+    private Integer pendingDuplicatesToNegate = 0;
     
     public RatedTransaction() {
         super();
@@ -792,6 +796,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountPlanItem = walletOperation.getDiscountPlanItem();
         this.discountPlanType = walletOperation.getDiscountPlanType();
         this.discountValue = walletOperation.getDiscountValue();
+        this.discountedAmount = walletOperation.getDiscountedAmount();
         this.sequence = walletOperation.getSequence();
         this.rulesContract = walletOperation.getRulesContract();
     }
@@ -848,6 +853,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountPlanItem = rateTransactionToDuplicate.getDiscountPlanItem();
         this.discountPlanType = rateTransactionToDuplicate.getDiscountPlanType();
         this.discountValue = rateTransactionToDuplicate.getDiscountValue();
+        this.discountedAmount = rateTransactionToDuplicate.getDiscountedAmount();
         this.sequence = rateTransactionToDuplicate.getSequence();
         this.rulesContract = rateTransactionToDuplicate.getRulesContract();
         this.pendingDuplicates = 0;
@@ -1634,6 +1640,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
 		this.discountPlanItem = discountPlanItem;
 	}
+
+    public BigDecimal getDiscountedAmount() {
+        return discountedAmount;
+    }
+
+    public void setDiscountedAmount(BigDecimal discountedAmount) {
+        this.discountedAmount = discountedAmount;
+    }
 
 	public OrderInfo getInfoOrder() {
 		return infoOrder;

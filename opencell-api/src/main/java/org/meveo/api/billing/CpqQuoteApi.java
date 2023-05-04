@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,7 +62,6 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
@@ -70,8 +70,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -105,8 +103,6 @@ import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
@@ -677,6 +673,8 @@ public class CpqQuoteApi extends BaseApi {
                     taxDTO.setIndex(String.valueOf(++i));
                     taxDTO.setPercent(String.valueOf(tax.getPercent()));
                     taxDTO.setCode(tax.getCode());
+                    taxDTO.setCompositeRate(getTaxCompositeRate(tax,
+                            quoteVersion.getQuote().getBillableAccount().getTradingCountry().getCode()));
 
                     taxDTO.setAmountTax(taxDTO.getAmountTax().add(quotePrice.getTaxAmount()));
                     taxDTO.setAmountWithTax(taxDTO.getAmountWithTax().add(quotePrice.getAmountWithTax()));
@@ -707,6 +705,39 @@ public class CpqQuoteApi extends BaseApi {
         taxDetail.setTaxes(new ArrayList<>(mapTaxesIndexes.values()));
 
         return mapTaxesIndexes;
+    }
+
+    private String getTaxCompositeRate(Tax tax, String country) {
+        if (!tax.isComposite() || org.apache.commons.collections.CollectionUtils.isEmpty(tax.getSubTaxes())) {
+            return StringUtils.EMPTY;
+        } else {
+            return getSubTaxesCompositeRate(tax.getSubTaxes(), country);
+        }
+    }
+
+    private String getSubTaxesCompositeRate(List<Tax> subTaxes, String country) {
+        if (org.apache.commons.collections.CollectionUtils.isEmpty(subTaxes)) {
+            return StringUtils.EMPTY;
+        }
+
+        final StringBuilder result = new StringBuilder();
+
+        String prefix = "";
+        for (Tax subTax : subTaxes) {
+            result.append(prefix);
+            prefix = ",";
+
+            if (org.apache.commons.collections.CollectionUtils.isNotEmpty(subTax.getSubTaxes())) {
+                result.append(getSubTaxesCompositeRate(subTax.getSubTaxes(), country));
+            } else {
+                if("FR".equalsIgnoreCase(country) || "UK".equalsIgnoreCase(country)) {
+                    result.append(new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(subTax.getPercent())).append("%");
+                } else {
+                    result.append(new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(subTax.getPercent())).append("%");
+                }
+            }
+        }
+        return result.toString();
     }
 
 
@@ -1801,7 +1832,7 @@ public class CpqQuoteApi extends BaseApi {
                 if(StringUtils.isBlank(quotePrice.getRecurrencePeriodicity()) && recChargeTemplate != null && recChargeTemplate.getCalendar() != null){
                     quotePrice.setRecurrencePeriodicity(recChargeTemplate.getCalendar().getDescription());
                 }
-                overrideAmounts(quotePrice, recurrenceDuration);
+                overrideAmounts(quotePrice, recurrenceDuration, wo);
             } 
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():wo.getAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
@@ -1831,13 +1862,15 @@ public class CpqQuoteApi extends BaseApi {
         return offerQuotePrices;
     }
 
-    private void overrideAmounts(QuotePrice quotePrice, Long recurrenceDuration) {
-        quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
-        quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
+    private void overrideAmounts(QuotePrice quotePrice, Long recurrenceDuration, WalletOperation walletOperation) {
+    	BigDecimal coeff = quotePrice.getQuantity().add(walletOperation.getServiceInstance().getQuantity().multiply(BigDecimal.valueOf(recurrenceDuration - 1)));
+    	
+        quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().divide(quotePrice.getQuantity()).multiply(coeff));
+        quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().divide(quotePrice.getQuantity()).multiply(coeff));
         quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount() != null ?
-                quotePrice.getAmountWithoutTaxWithoutDiscount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
+                quotePrice.getAmountWithoutTaxWithoutDiscount().divide(quotePrice.getQuantity()).multiply(coeff) : null);
         quotePrice.setTaxAmount(quotePrice.getTaxAmount() != null ?
-                quotePrice.getTaxAmount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
+                quotePrice.getTaxAmount().divide(quotePrice.getQuantity()).multiply(coeff) : null);
     }
 
     private Integer getDurationTerminInMonth(Attribute durationOrQuantityAttribute, Integer defaultValue, QuoteOffer quoteOffer, QuoteProduct quoteProduct) {
@@ -2217,6 +2250,9 @@ public class CpqQuoteApi extends BaseApi {
         }
         if(quoteOffer.getQuoteVersion().getDiscountPlan() != null) {
         	createDiscountPlanInstance(quoteOffer.getQuoteVersion().getDiscountPlan(), subscription,null);
+        }
+        if(quoteOffer.getOfferTemplate().getAllowedDiscountPlans() != null) {
+        	quoteOffer.getOfferTemplate().getAllowedDiscountPlans().stream().filter(DiscountPlan::isAutomaticApplication).forEach(dp -> createDiscountPlanInstance(dp, subscription,null));
         }
         subscription.setContract(quoteOffer.getContract() != null ? quoteOffer.getContract() : quoteOffer.getQuoteVersion().getContract() != null ? quoteOffer.getQuoteVersion().getContract() : null);
         

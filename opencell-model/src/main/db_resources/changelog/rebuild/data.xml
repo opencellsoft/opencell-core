@@ -8549,6 +8549,7 @@
             <column name="description" value="Standard invoice sub-item" />
             <column name="occ_category" value="DEBIT" />
 			<column name="manual_creation_enabled" value="0"/>
+			 <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-40" />
@@ -8558,8 +8559,35 @@
             <column name="description" value="Invoice - credit note sub-item" />
             <column name="occ_category" value="CREDIT" />
 			<column name="manual_creation_enabled" value="0"/>
+			 <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
         </insert>
     </changeSet>
+    
+    
+	<changeSet id="#INTRD-14042_20230227" author="aeljaouhari">
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.accountingscheme.NoAccountingEntryScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+			<column name="description" value="This accounting scheme doesn’t produce any accounting entry. Use it on account operation type that should not be exported to accounting."/>
+            <column name="description_i18n">
+				<![CDATA[{"ENG":"<p>This accounting scheme doesn’t produce any accounting entry.</p><p>Use it on account operation type that should not be exported to accounting.</p>","FRA":"<p>Ce schéma comptable ne produit aucune écriture comptable.</p><p>Utilisez le pour les types d’opérations de compte qui ne doivent pas être exportés vers la comptabilité.</p>"}]]>
+			</column>
+			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
+		</insert>
+		<insert tableName="ar_accounting_scheme">
+			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="No accounting entry" />
+			<column name="description" value="No accounting entry"/>
+			<column name="long_description_i18n" value='{"FRA":"Pas d&apos;écriture comptable","ENG":"No accounting entry"}'/>
+			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.NoAccountingEntryScript')"/>
+		</insert>	
+	</changeSet>
     
     <changeSet id="INTRD-11152_20221102_data" author="TarikFA.">
          <insert tableName="ar_occ_template">
@@ -8569,6 +8597,7 @@
 			<column name="code" value="INV_ADV" />
 			<column name="description" value="Call for advance payment" />
 			<column name="occ_category" value="DEBIT" />
+			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'No accounting entry')" />
 		</insert>
         <insert tableName="billing_invoice_type">
            <column name="id" valueNumeric="-5" />
@@ -10665,22 +10694,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="currency_id" valueComputed="(SELECT currency_id from crm_provider where id = 1)"></column>
 		</insert>
 	</changeSet>
-
-	<changeSet id="#INTRD-10692_20221019_ajd_occ_template" author="a.rouaguebe">
-		<insert tableName="ar_occ_template">
-			<column name="id" valueSequenceNext="ar_occ_template_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="applicationInitializer" />
-			<column name="code" value="ADJ_SD" />
-			<column name="description" value="Adjustment to refund security deposit" />
-			<column name="occ_category" value="CREDIT" />
-			<column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
-			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='165000000')" />
-			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
-			<column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
-		</insert>
-	</changeSet>
+	
 	
 	 <changeSet id="#9811_10102022" author="Mbarek-Ay">
 	<insert tableName="meveo_job_instance">
@@ -10830,22 +10844,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
-	<changeSet id="#INTRD-10772_20221025_ajd_occ_template" author="e.bourras">
-		<insert tableName="ar_occ_template">
-			<column name="id" valueSequenceNext="ar_occ_template_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="updated" valueDate="${db.current.time}" />
-			<column name="code" value="PAY_SD"/>
-			<column name="occ_category" value="CREDIT" /><column name="manual_creation_enabled" value="0"/>
-			<column name="journal_id" valueComputed="(SELECT id FROM journal where code = 'SAL')"/>
-			<column name="manual_creation_enabled" value="0"/>
-			<column name="description" value="Payment by security deposit" />
-			<column name="accounting_code_id" valueComputed="(select id from public.billing_accounting_code where code = '411000000')"/>
-			<column name="contra_accounting_code_id" valueComputed="(select id from public.billing_accounting_code where code = '165000000')"/>
-			<column name="accounting_scheme_id" valueComputed="(select id from ar_accounting_scheme where code = 'Dual entry scheme')"/>
-		</insert>
-	</changeSet>
 
 	<changeSet id="#INTRD-11328_20221110" author="aelmalki">
 		<insert tableName="crm_custom_field_tmpl">
@@ -11457,64 +11455,13 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-7049_20220509" author="TarikRabeh" />
 	<changeSet id="#INTRD-13867_20230220" author="aeljaouhari" />
 	
-	<changeSet id="#INTRD-14042_20230227" author="aeljaouhari">
-		<insert tableName="meveo_script_instance">
-			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="org.meveo.service.script.accountingscheme.NoAccountingEntryScript" />
-			<column name="src_type" value="JAVA_CLASS" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="description" value="This accounting scheme doesn’t produce any accounting entry. Use it on account operation type that should not be exported to accounting."/>
-            <column name="description_i18n">
-				<![CDATA[{"ENG":"<p>This accounting scheme doesn’t produce any accounting entry.</p><p>Use it on account operation type that should not be exported to accounting.</p>","FRA":"<p>Ce schéma comptable ne produit aucune écriture comptable.</p><p>Utilisez le pour les types d’opérations de compte qui ne doivent pas être exportés vers la comptabilité.</p>"}]]>
-			</column>
-			<column name="script_instance_cat_id" valueComputed="(SELECT id FROM meveo_script_instance_cat WHERE code='ACCOUNTING_SCHEMES')" />
-		</insert>
-		<insert tableName="ar_accounting_scheme">
-			<column name="id" valueSequenceNext="ar_accounting_scheme_seq" />
-			<column name="version" valueNumeric="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="No accounting entry" />
-			<column name="description" value="No accounting entry"/>
-			<column name="long_description_i18n" value='{"FRA":"Pas d&apos;écriture comptable","ENG":"No accounting entry"}'/>
-			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.NoAccountingEntryScript')"/>
-		</insert>	
-	</changeSet>
     <changeSet id="#INTRD-14433_20230306" author="hichamELHALOUI" />
 
 	<changeSet id="#INTRD-14555_20230303" author="aeljaouhari" />
 	<changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
     <changeSet id="#INTRD-13867_20230301" author="AbdellatifBARI" />
 
-    <changeSet id="#INTRD-14786_20230309" author="bourras">
-        <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="code" value="XCH_GAIN" />
-            <column name="description" value="Exchange gain" />
-            <column name="occ_category" value="DEBIT" />
-            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
-            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='766000000')" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
-            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
-        </insert>
-        <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="code" value="XCH_LOSS" />
-            <column name="description" value="Exchange loss" />
-            <column name="occ_category" value="CREDIT" />
-            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='411000000')" />
-            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='666000000')" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
-            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
-        </insert>
-    </changeSet>
+    
 	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
 	<changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI" />
 	<changeSet id="#INTRD-15191_20230328" author="aelmalki" />

@@ -1090,6 +1090,14 @@ public class WalletOperationNative extends BaseEntity {
         this.discountPlanItemId = discountPlanItemId;
     }
 
+    public BigDecimal getDiscountedAmount() {
+        return discountedAmount;
+    }
+    
+    public void setDiscountedAmount(BigDecimal discountedAmount) {
+        this.discountedAmount = discountedAmount;
+    }
+    
     public Integer getSequence() {
         return sequence;
     }

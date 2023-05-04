@@ -66,9 +66,7 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	 */
 	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear) {
 	    AccountingPeriodStatusEnum accountingPeriodStatus = AccountingPeriodStatusEnum.valueOf(status);
-        if(entity.isUseSubAccountingCycles() && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
-			throw new ValidationException("the accounting period " + fiscalYear + " has sub-accounting periods option activated");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
+        if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
 			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
 		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
 			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
@@ -318,6 +316,18 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		}
 	}
 
+	public AccountingPeriod findAccountingPeriodByDate(Date date) {
+		try {
+			return getEntityManager().createNamedQuery("AccountingPeriod.findAPByDate", entityClass)
+					.setParameter("date", date)
+					.setMaxResults(1)
+					.getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No {} of AccountingPeriodYear {} found", getEntityClass().getSimpleName(), date);
+			return null;
+		}
+	}
+
 	public AccountingPeriod findOpenAccountingPeriodByDate(Date date) {
         try {
             return getEntityManager().createNamedQuery("AccountingPeriod.findOpenAPByDate", entityClass)
@@ -329,4 +339,15 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
             return null;
         }
     }
+
+	public AccountingPeriod findOpenAccountingPeriod() {
+		try {
+			return getEntityManager().createNamedQuery("AccountingPeriod.findOpenAP", entityClass)
+					.setMaxResults(1)
+					.getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No open {} found", getEntityClass().getSimpleName());
+			return null;
+		}
+	}
 }

@@ -38,6 +38,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.google.common.collect.Lists;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
@@ -987,6 +988,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         } catch (NoResultException exception) {
             return null;
         }
+    }
+    @SuppressWarnings("unchecked")
+    public List<WalletOperation> findByDiscountedWo(Long discountedWalletOperation) {
+    	List<WalletOperation> result = new ArrayList<>();
+        try {
+        	result=getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.discountedWalletOperation = :discountedWalletOperation")
+                    .setParameter("discountedWalletOperation", discountedWalletOperation)
+                    .getResultList();
+        } catch (NoResultException exception) {
+        	return Collections.emptyList();
+        }
+        return result;
     }
     
     @Override

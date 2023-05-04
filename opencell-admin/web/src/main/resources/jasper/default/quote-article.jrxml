@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="152"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="WM-Quote-Name"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="WAFA-AMOUT-0"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -258,7 +258,10 @@
 			<fieldDescription><![CDATA[amountTax]]></fieldDescription>
 		</field>
 		<field name="country" class="java.lang.String">
-			<fieldDescription><![CDATA[ancestor::quote/header/customer/address/country]]></fieldDescription>
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+		<field name="lang" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/customer/@lang]]></fieldDescription>
 		</field>
 	</subDataset>
 	<subDataset name="quoteTva" uuid="ae6f28c9-d044-41f4-93d3-220849f67ab4">
@@ -288,7 +291,10 @@
 			<fieldDescription><![CDATA[currencySymbol]]></fieldDescription>
 		</field>
 		<field name="country" class="java.lang.String">
-			<fieldDescription><![CDATA[ancestor::quote/header/customer/address/country]]></fieldDescription>
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+		<field name="lang" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/customer/@lang]]></fieldDescription>
 		</field>
 	</subDataset>
 	<subDataset name="ba_prices" uuid="5584035b-3f01-4c5b-b63f-2bc9582f7d4a">
@@ -393,10 +399,14 @@
 			<fieldDescription><![CDATA[ancestor::quoteLine/@accountingArticleLabel]]></fieldDescription>
 		</field>
 		<field name="quantity" class="java.lang.Double">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="ancestor::quoteLine/@quantity"/>
 			<fieldDescription><![CDATA[ancestor::quoteLine/@quantity]]></fieldDescription>
 		</field>
 		<field name="country" class="java.lang.String">
-			<fieldDescription><![CDATA[ancestor::quote/header/customer/address/country]]></fieldDescription>
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+		<field name="lang" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/customer/@lang]]></fieldDescription>
 		</field>
 	</subDataset>
 	<subDataset name="discountsFooter" uuid="f4a51d10-a40b-44a8-ab1f-124785a429d2">
@@ -422,13 +432,13 @@
 			<property name="net.sf.jasperreports.xpath.field.expression" value="amountWithTax"/>
 			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
 		</field>
-		<field name="unitPriceWithoutTax" class="java.lang.Double">
+		<field name="unitPriceWithoutTax" class="java.lang.String">
 			<fieldDescription><![CDATA[unitPriceWithoutTax]]></fieldDescription>
 		</field>
-		<field name="amountWithoutTax" class="java.lang.Double">
+		<field name="amountWithoutTax" class="java.lang.String">
 			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
 		</field>
-		<field name="taxAmount" class="java.lang.Double">
+		<field name="taxAmount" class="java.lang.String">
 			<fieldDescription><![CDATA[taxAmount]]></fieldDescription>
 		</field>
 		<field name="discountValue" class="java.lang.Double">
@@ -461,11 +471,14 @@
 		<field name="accountingArticleLabel" class="java.lang.String">
 			<fieldDescription><![CDATA[ancestor::quoteLine/@accountingArticleLabel]]></fieldDescription>
 		</field>
-		<field name="quantity" class="java.lang.Double">
+		<field name="quantity" class="java.lang.String">
 			<fieldDescription><![CDATA[ancestor::quoteLine/@quantity]]></fieldDescription>
 		</field>
 		<field name="country" class="java.lang.String">
-			<fieldDescription><![CDATA[ancestor::quote/header/customer/address/country]]></fieldDescription>
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+		<field name="lang" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/customer/@lang]]></fieldDescription>
 		</field>
 	</subDataset>
 	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
@@ -537,7 +550,7 @@
 	<field name="billingAccountCode" class="java.lang.String">
 		<fieldDescription><![CDATA[@billingAccountCode]]></fieldDescription>
 	</field>
-	<field name="quantity" class="java.lang.String">
+	<field name="quantity" class="java.lang.Double">
 		<fieldDescription><![CDATA[/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/quantity]]></fieldDescription>
 	</field>
 	<field name="billingAccountCode2" class="java.lang.String">
@@ -595,7 +608,10 @@
 	</field>
 	<field name="country" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/address/country"/>
-		<fieldDescription><![CDATA[/quote/header/billingAccount/address/country]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/billingAccount/@country]]></fieldDescription>
+	</field>
+	<field name="lang" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::quote/header/customer/@lang]]></fieldDescription>
 	</field>
 	<field name="countryName" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/address/countryName"/>
@@ -734,6 +750,9 @@
 	</field>
 	<field name="totalAmountWithTax" class="java.lang.Double">
 		<fieldDescription><![CDATA[/quote/header/taxDetail/totalAmountWithTax]]></fieldDescription>
+	</field>
+	<field name="discountArticle" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticlesDiscounts/accountingArticleDiscount/@label]]></fieldDescription>
 	</field>
 	<group name="1">
 		<groupExpression><![CDATA[]]></groupExpression>
@@ -902,13 +921,13 @@
 									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="73" height="30" uuid="5ff454c7-b406-4060-829b-24731bc1ab1d">
+									<reportElement x="0" y="0" width="73" height="30" isRemoveLineWhenBlank="true" uuid="5ff454c7-b406-4060-829b-24731bc1ab1d">
 										<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 									</reportElement>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<paragraph rightIndent="5"/>
 									</textElement>
-									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format($F{recurrenceDuration}!=null ? new Double($F{quantity}) * new Double($F{recurrenceDuration}) : new Double($F{quantity}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{recurrenceDuration}!=null ? new Double($F{quantity}) * new Double($F{recurrenceDuration}) : new Double($F{quantity}))))]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format($F{recurrenceDuration}!=null ? new Double($F{amountWithoutTax}) / new Double($F{unitPriceWithoutTax}) : new Double($F{amountWithoutTax}) / new Double($F{unitPriceWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{recurrenceDuration}!=null ? new Double($F{amountWithoutTax}) / new Double($F{unitPriceWithoutTax}) : new Double($F{amountWithoutTax}) / new Double($F{unitPriceWithoutTax}))))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -1041,6 +1060,7 @@
 	<group name="2">
 		<groupHeader>
 			<band height="56">
+				<printWhenExpression><![CDATA[$F{discountArticle} != null]]></printWhenExpression>
 				<componentElement>
 					<reportElement key="table 6" x="16" y="16" width="565" height="31" isRemoveLineWhenBlank="true" uuid="0f5df9a2-3ebf-4f3f-a780-4fcc2c7a9cb0">
 						<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
@@ -1134,7 +1154,7 @@
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<paragraph rightIndent="5"/>
 									</textElement>
-									<textFieldExpression><![CDATA[(($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{discountValue}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{discountValue})))) + ($F{discountPlanType}!=null &&  $F{discountPlanType}.equals("PERCENTAGE") ? "%" : "")]]></textFieldExpression>
+									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format($F{recurrenceDuration}!=null ? new Double($F{quantity}) * new Double($F{recurrenceDuration}) : new Double($F{quantity}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{recurrenceDuration}!=null ? new Double($F{quantity}) * new Double($F{recurrenceDuration}) : new Double($F{quantity}))))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>

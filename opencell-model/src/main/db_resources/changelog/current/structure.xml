@@ -16113,6 +16113,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-14663_20230327" author="HatimO.">
+        <addColumn tableName="document">
+            <column name="document_version" type="int4" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius">
         <alterSequence sequenceName="rating_cdr_seq" incrementBy="5000"/>
         <alterSequence sequenceName="rating_edr_seq" incrementBy="5000"/>
@@ -16139,4 +16147,30 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+</databaseChangeLog>
+
+    <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="discounted_amount" type="numeric(23,12)" />
+        </addColumn>
+    </changeSet>
+
+   
+    <changeSet id="#INTRD-15233_20230425" author="AndriusKarpavicius">
+        <sql>CREATE INDEX cpq_contract_item_code_index ON ${db.schema.adapted}cpq_contract_item(lower(code));</sql>
+        <sql>CREATE INDEX cpq_contract_item_contract_index ON ${db.schema.adapted}cpq_contract_item(cpq_contract_id);</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius">
+        <dropIndex tableName="rating_cdr" indexName="rating_cdr_index"/>
+        <sql>CREATE INDEX rating_cdr_ob_index ON ${db.schema.adapted}rating_cdr(origin_batch)</sql>
+        <sql>CREATE INDEX rating_cdr_or_index ON ${db.schema.adapted}rating_cdr(origin_record)</sql>
+        <dropIndex tableName="rating_edr" indexName="rating_edr_index"/>
+        <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_record)</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius">
+        <sql>CREATE INDEX rating_edr_wo_index ON ${db.schema.adapted}rating_edr(wallet_operation_id)</sql>
+    </changeSet>
+    
 </databaseChangeLog>
