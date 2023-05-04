@@ -105,7 +105,7 @@ public class DocumentResourceImpl implements DocumentResource {
     public Response updateDocumentFile(String code, String encodedDocumentFile) {
         Optional.ofNullable(documentService.findByCodeAndLastVersion(code)).ifPresentOrElse(document ->
                 documentFileService.updateFile(document, Base64.getDecoder().decode(encodedDocumentFile)), () -> new NotFoundException("document with code "+code+" does not exist."));
-        return Response.noContent().build();
+        return Response.ok().build();
     }
 
     @Override
