@@ -35,10 +35,11 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         if (postData.getFromDate() == null) {
             throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.fromDate.empty"));
         } 
-        // User cannot set a rate in a paste date
-        if (postData.getFromDate().before(DateUtils.setTimeToZero(new Date()))) {
-            throw new MeveoApiException(resourceMessages.getString("The date must not be in the past"));
-        }               
+        // Only user having CFO role can set a rate in a paste date
+        // Since we don't have a CFO role mapping between opencell_portal and opencell_web, we desactive this control waiting the US https://opencellsoft.atlassian.net/browse/INTRD-12218
+        /*if (postData.getFromDate().before(DateUtils.setTimeToZero(new Date())) && !currentUser.hasRole("CFO")) {
+            throw new MeveoApiException(resourceMessages.getString("error.exchangeRate.fromDate.future"));
+        }*/              
         
         if (postData.getExchangeRate() != null) {
             if (postData.getExchangeRate().compareTo(BigDecimal.ZERO) <= 0) {
