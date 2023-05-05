@@ -538,4 +538,11 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		customFieldEntity = invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), customFieldEntity, false);
         return invoiceService.updateValidatedInvoice(invoice, invoiceResource.getComment(), customFieldEntity.getCfValues());
     }
+	
+	/**
+	 * @param invoice
+	 */
+	public void setInvoiceExchangeRate(Invoice invoice, BigDecimal exchangeRate) {
+		invoiceService.refreshConvertedAmounts(invoice, exchangeRate, new Date());
+	}
 }

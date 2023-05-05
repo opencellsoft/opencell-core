@@ -44,6 +44,7 @@ import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoiceMatchedOperation;
 import org.meveo.apiv2.billing.ImmutableInvoiceSubTotals;
 import org.meveo.apiv2.billing.ImmutableInvoices;
+import org.meveo.apiv2.billing.InvoiceExchangeRateInput;
 import org.meveo.apiv2.billing.InvoiceInput;
 import org.meveo.apiv2.billing.InvoiceLineInput;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
@@ -537,4 +538,11 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
         return invoice;
     }
+    
+	@Override
+	public Response setCustomRate(Long id, InvoiceExchangeRateInput input) {
+		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		invoiceApiService.setInvoiceExchangeRate(invoice, input.getExchangeRate());
+		return Response.ok().build();
+	}
 }
