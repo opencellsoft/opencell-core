@@ -89,6 +89,7 @@ import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.apiv2.payments.resource.PaymentPlanResourceImpl;
+import org.meveo.apiv2.payments.resource.PaymentResourceImpl;
 import org.meveo.apiv2.quote.impl.QuoteOfferResourceImpl;
 import org.meveo.apiv2.rating.impl.WalletOperationResourceImpl;
 import org.meveo.apiv2.refund.RefundResourceImpl;
@@ -153,7 +154,8 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
                 InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
                 ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class, InvoiceValidationRulesResourceImpl.class, InternationalSettingsResourceImpl.class,
-                CustomTableResourceImpl.class, CustomerBalanceResourceImpl.class, FileTypeResourceImpl.class, DocumentCategoryResourceImpl.class, ElectronicInvoicingResourceImpl.class)
+                CustomTableResourceImpl.class, CustomerBalanceResourceImpl.class, FileTypeResourceImpl.class, DocumentCategoryResourceImpl.class, 
+                ElectronicInvoicingResourceImpl.class,PaymentResourceImpl.class)
                 .collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
