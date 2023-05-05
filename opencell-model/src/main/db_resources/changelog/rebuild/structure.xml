@@ -6793,6 +6793,7 @@
                 <constraints nullable="false" />
             </column>
 		    <column name="invoice_subject_code" type="bigint" />
+			<column name="description_i18n" type="${type.json}"></column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
