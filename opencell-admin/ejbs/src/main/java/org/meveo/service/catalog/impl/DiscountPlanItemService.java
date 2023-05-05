@@ -28,9 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -44,7 +41,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
@@ -64,8 +60,8 @@ import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.InvoiceLineService;
+import org.meveo.service.billing.impl.PricePlanSelectionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 
 /**
@@ -83,7 +79,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 	
 	@Inject
-    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
+	private PricePlanSelectionService pricePlanSelectionService;
 	
 	@Inject
 	PricePlanMatrixService pricePlanMatrixService;
@@ -168,7 +164,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         	PricePlanMatrix pricePlan = discountPlanItem.getPricePlanMatrix();
         	PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlan.getCode());
         	if(ppmVersion!=null && product!=null) {
-        		PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion,attributeValues);
+                PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePriceLine(ppmVersion, attributeValues);
         		computedDiscount=pricePlanMatrixLine.getPriceWithoutTax();
         	} 
         		

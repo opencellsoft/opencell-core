@@ -10911,6 +10911,9 @@
 			<column name="value_el" type="varchar(255)" />
             <column name="description" type="varchar(255)"/>
             <column name="value" type="numeric(23, 12)" />
+            <column name="accuracy" type="int" defaultValueNumeric="0">
+                 <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-492" author="NabilOUACHI">
@@ -19396,6 +19399,7 @@
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>    
     <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-15938_20230503" author="AndriusKarpavcius"/>    
     
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

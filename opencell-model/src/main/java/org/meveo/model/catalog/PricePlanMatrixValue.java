@@ -11,7 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -27,7 +29,10 @@ import org.meveo.model.cpq.AttributeValue;
 @Cacheable
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_value_sq"), })
-@NamedQuery(name="PricePlanMatrixValue.findByPricePlanMatrixLine", query = "select p from PricePlanMatrixValue p where p.pricePlanMatrixLine=:pricePlanMatrixLine")
+@NamedQueries({
+        @NamedQuery(name = "PricePlanMatrixValue.findByPricePlanMatrixLine", query = "select p from PricePlanMatrixValue p where p.pricePlanMatrixLine=:pricePlanMatrixLine"),
+        @NamedQuery(name = "PricePlanMatrixValue.findByPPVersionForRating", query = "select new org.meveo.model.catalog.PricePlanMatrixValueForRating(pv.pricePlanMatrixColumn.attribute.id, pv.pricePlanMatrixColumn.type, pl.id, pv.longValue, pv.doubleValue, pv.stringValue, pv.dateValue, pv.fromDateValue, pv.toDateValue, pv.fromDoubleValue, pv.toDoubleValue, pv.booleanValue) from PricePlanMatrixValue pv join pv.pricePlanMatrixLine pl where pl.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId order by pl.priority, pl.ratingAccuracy", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
 public class PricePlanMatrixValue extends BaseEntity {
 
 	private static final long serialVersionUID = -2339904876547686701L;
@@ -169,15 +174,15 @@ public class PricePlanMatrixValue extends BaseEntity {
         this.toDoubleValue = toDoubleValue;
     }
 
-    public boolean match(Set<AttributeValue> attributesValue) {
-        return attributesValue.stream()
-                .anyMatch( attributeValue -> attributeValue.getAttribute().equals(pricePlanMatrixColumn.getAttribute())
-                        && pricePlanMatrixColumn.getType().valueMatch(this, attributeValue));
-    }
-
-    public boolean matchWithAllValues() {
-        return pricePlanMatrixColumn.getType().matchWithAllValues(this);
-    }
+//    public boolean match(Set<AttributeValue> attributesValue) {
+//        return attributesValue.stream()
+//                .anyMatch( attributeValue -> attributeValue.getAttribute().equals(pricePlanMatrixColumn.getAttribute())
+//                        && pricePlanMatrixColumn.getType().valueMatch(this, attributeValue));
+//    }
+//
+//    public boolean matchWithAllValues() {
+//        return pricePlanMatrixColumn.getType().matchWithAllValues(this);
+//    }
 
     @Override
     public boolean equals(Object o) {

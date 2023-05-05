@@ -15801,4 +15801,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-15938_20230503" author="AndriusKarpavcius">
+        <addColumn tableName="cpq_price_plan_matrix_line">
+            <column name="accuracy" type="int" defaultValueNumeric="0">
+                 <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>update ${db.schema.adapted}cpq_price_plan_matrix_line set accuracy = (select count(*) from ${db.schema.adapted}cpq_price_plan_matrix_value where ppml_id=cpq_price_plan_matrix_line.id)</sql>
+    </changeSet>
+    
 </databaseChangeLog>
