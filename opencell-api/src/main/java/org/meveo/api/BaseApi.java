@@ -630,7 +630,7 @@ public abstract class BaseApi {
                         }
 
 
-                        if (!urlValue.getUrl().isEmpty() && ((cft.getRegExp()!= null && !cft.getRegExp().isEmpty() && !urlValue.getUrl().matches(cft.getRegExp()))
+                        if (StringUtils.isNotBlank(urlValue.getUrl()) && ((cft.getRegExp()!= null && !cft.getRegExp().isEmpty() && !urlValue.getUrl().matches(cft.getRegExp()))
                                 || (cft.getRegExp()== null && !urlValue.containsValidURL()))) {
 
                             throw new InvalidParameterException("Wrong URL format. URL should match regular expression " + (cft.getRegExp() == null ? "": cft.getRegExp()) );
