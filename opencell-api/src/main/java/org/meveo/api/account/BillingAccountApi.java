@@ -618,6 +618,10 @@ public class BillingAccountApi extends AccountEntityApi {
             }            
         }
 
+        if (StringUtils.isNotBlank(postData.getExemptionReason())) {
+            billingAccount.setExemptionReason(postData.getExemptionReason());
+        }
+
         // Update payment method information in a customer account.
         // ONLY used to handle deprecated billingAccountDto.paymentMethod and billingAccountDto.bankCoordinates fields. Use
         createOrUpdatePaymentMethodInCA(postData, billingAccount);
