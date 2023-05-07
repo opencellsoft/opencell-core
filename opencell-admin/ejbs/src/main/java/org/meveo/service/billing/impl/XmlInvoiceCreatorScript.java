@@ -789,6 +789,24 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return addressTag;
     }
 
+    protected Element createBATaxationCategorySection(Document doc, BillingAccount billingAccount) {
+        if (billingAccount != null && billingAccount.getTaxCategory() != null) {
+            Element taxationCategoryTag = doc.createElement("taxationCategory");
+
+            if (billingAccount.getTaxCategory().getUntdidTaxationCategory() != null) {
+                taxationCategoryTag.setAttribute("code", billingAccount.getTaxCategory().getUntdidTaxationCategory().getCode());
+            }
+
+            if (StringUtils.isNotBlank(billingAccount.getExemptionReason())) {
+                taxationCategoryTag.setAttribute("taxationCategoryReason", billingAccount.getExemptionReason());
+            }
+
+            return taxationCategoryTag;
+        }
+
+        return null;
+    }
+
     /**
      * Create invoice/header/[customer,customerAccount,billingAccount, userAccount]/name DOM element
      *
@@ -1682,6 +1700,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element addressTag = createAddressSection(doc, billingAccount, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (addressTag != null) {
             billingAccountTag.appendChild(addressTag);
+        }
+        Element taxationCategorySection = createBATaxationCategorySection(doc, billingAccount);
+        if (taxationCategorySection != null) {
+            billingAccountTag.appendChild(taxationCategorySection);
         }
         return billingAccountTag;
     }
