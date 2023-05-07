@@ -41,6 +41,7 @@ import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
@@ -574,6 +575,11 @@ public class ContractApi extends BaseApi{
 						contractItem.setContractRateType(ci.getContractRateType());
 						contractItem.setContract(entityToSave);
 						contractItem.updateAudit(currentUser);
+
+						if(ci.getPricePlan() != null) {
+							contractItem.setPricePlan(duplicatePricePlan(contractItem.getCode(), ci.getPricePlan()));
+						}
+
 						return contractItem;
 					})
 					.collect(Collectors.toList());
@@ -581,10 +587,25 @@ public class ContractApi extends BaseApi{
 		}
 
 		entityToSave.setCfValues(contractToDuplicate.getCFValuesCopy());
-
 		contractService.create(entityToSave);
 
-
 		return entityToSave.getId();
+	}
+
+	private PricePlanMatrix duplicatePricePlan(String newContractItemCode, PricePlanMatrix pricePlanMatrix) {
+		PricePlanMatrix duplicate = new PricePlanMatrix(pricePlanMatrix);
+		duplicate.setCode(pricePlanMatrixService.findDuplicateCode(pricePlanMatrix));
+		duplicate.setEventCode(newContractItemCode);
+		duplicate.setVersion(0);
+		duplicate.setVersions(new ArrayList<>());
+
+		pricePlanMatrixService.create(duplicate);
+
+		pricePlanMatrix.getVersions().forEach(ppv -> {
+			PricePlanMatrixVersion duplicatedPPMV = pricePlanMatrixVersionService.duplicate(ppv, duplicate, ppv.getValidity(), VersionStatusEnum.DRAFT, ppv.getPriceVersionType(), false, ppv.getCurrentVersion());
+			duplicate.getVersions().add(duplicatedPPMV);
+		});
+
+		return duplicate;
 	}
 }

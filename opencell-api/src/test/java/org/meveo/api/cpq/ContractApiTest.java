@@ -17,14 +17,14 @@ import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.cpq.ContractService;
-import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,19 +46,13 @@ public class ContractApiTest {
     private ContractApi contractApi;
 
     @Mock
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+
+    @Mock
+    private PricePlanMatrixService pricePlanMatrixService;
+
+    @Mock
     private ContractService contractService;
-
-    @Mock
-    private SellerService sellerService;
-
-    @Mock
-    private CustomerService customerService;
-
-    @Mock
-    private CustomerAccountService customerAccountService;
-
-    @Mock
-    private BillingAccountService billingAccountService;
 
     @Mock
     private MeveoUser currentUser = new MeveoUser() {
@@ -72,19 +66,15 @@ public class ContractApiTest {
 
         Seller seller = new Seller();
         seller.setCode("TEST-SELLER");
-//        when(sellerService.findByCode("TEST-SELLER")).thenReturn(seller);
 
         Customer customer = new Customer();
         customer.setCode("TEST-CUSTOMER");
-//        when(customerService.findByCode("TEST-CUSTOMER")).thenReturn(customer);
 
         CustomerAccount customerAccount = new CustomerAccount();
         customer.setCode("TEST-CA");
-//        when(customerAccountService.findByCode("TEST-CUSTOMER")).thenReturn(customerAccount);
 
         BillingAccount billingAccount = new BillingAccount();
         billingAccount.setCode("TEST-BA");
-//        when(billingAccountService.findByCode("TEST-BA")).thenReturn(billingAccount);
 
         OfferTemplate offerTemplate = new OfferTemplate();
         offerTemplate.setCode("TEST-OT");
@@ -136,17 +126,27 @@ public class ContractApiTest {
         // Price Plan
         PricePlanMatrix pricePlan = new PricePlanMatrix();
         pricePlan.setCode("PPM-CODE");
+        pricePlan.setEventCode(ciSource.getCode());
         PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
+        ppmv.setLabel("PV_01");
         ppmv.setVersion(1);
+        ppmv.setPriceVersionType(PriceVersionTypeEnum.FIXED);
 
         PricePlanMatrixLine ppml = new PricePlanMatrixLine();
         ppml.setDescription("PPML Description");
-
         ppmv.setLines(Set.of(ppml));
 
         pricePlan.setVersions(List.of(ppmv));
-
         ciSource.setPricePlan(pricePlan);
+
+        when(pricePlanMatrixService.findDuplicateCode(pricePlan)).thenReturn(pricePlan.getCode()+"-COPY");
+
+        PricePlanMatrixVersion duplicatedPPMV = new PricePlanMatrixVersion(ppmv);
+        duplicatedPPMV.setStatus(VersionStatusEnum.DRAFT);
+        duplicatedPPMV.setPriceVersionType(ppmv.getPriceVersionType());
+
+        when(pricePlanMatrixVersionService.duplicate(any(PricePlanMatrixVersion.class), any(PricePlanMatrix.class), any(), any(VersionStatusEnum.class), any(PriceVersionTypeEnum.class), anyBoolean()))
+                .thenReturn(duplicatedPPMV);
 
         when(contractService.findByCode(contractCode)).thenReturn(source);
 
@@ -216,6 +216,14 @@ public class ContractApiTest {
         assertThat(ciToCheck.getApplicationEl()).isEqualTo(ciSource.getApplicationEl());
         assertThat(ciToCheck.isSeparateDiscount()).isEqualTo(ciSource.isSeparateDiscount());
 
+        // check priceplan
+        assertThat(ciToCheck.getPricePlan()).isNotNull();
+        PricePlanMatrix ppmToCheck = ciToCheck.getPricePlan();
+        assertThat(ppmToCheck.getCode()).isEqualTo(pricePlan.getCode()+"-COPY");
+        assertThat(ppmToCheck.getEventCode()).isEqualTo(ciToCheck.getCode());
+        assertThat(ppmToCheck.getVersions()).isNotEmpty();
+        assertThat(ppmToCheck.getVersions().size()).isEqualTo(pricePlan.getVersions().size());
+        assertThat(ppmToCheck.getVersions().get(0).getStatus()).isEqualTo(VersionStatusEnum.DRAFT);
 
 
     }
