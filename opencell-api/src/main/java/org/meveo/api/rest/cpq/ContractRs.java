@@ -219,5 +219,17 @@ public interface ContractRs extends IBaseRs {
     		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
     })
 	Response getContractLine(@Parameter(description = "contract item code", required = true) @PathParam("contractItemCode")  String contractItemCode);
-	
+
+	@POST
+	@Path("/{contractCode}/duplicate")
+	@Operation(summary = "Duplicate a Contract by contracCode parameter",
+				description = "Duplicate a Contract by contracCode parameter",
+				tags = { "Contract" },
+				responses = {
+					@ApiResponse(responseCode = "200", description = "The contract has been successfully duplicated"),
+					@ApiResponse(responseCode = "404", description = "Contract with code=contractcode does not exists ",
+						content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))
+					)
+				})
+	Response duplicateContract(@Parameter(description = "Contract Code", required = true) @PathParam("contractCode") String contractCode);
 }
