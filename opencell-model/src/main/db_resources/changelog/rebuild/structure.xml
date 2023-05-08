@@ -8673,6 +8673,7 @@
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
+			<column name="untdid_taxation_category_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
         </createTable>
     </changeSet>
