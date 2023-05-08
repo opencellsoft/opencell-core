@@ -145,7 +145,7 @@ public class ContractApiTest {
         duplicatedPPMV.setStatus(VersionStatusEnum.DRAFT);
         duplicatedPPMV.setPriceVersionType(ppmv.getPriceVersionType());
 
-        when(pricePlanMatrixVersionService.duplicate(any(PricePlanMatrixVersion.class), any(PricePlanMatrix.class), any(), any(VersionStatusEnum.class), any(PriceVersionTypeEnum.class), anyBoolean()))
+        when(pricePlanMatrixVersionService.duplicate(any(PricePlanMatrixVersion.class), any(PricePlanMatrix.class), any(), any(VersionStatusEnum.class), any(PriceVersionTypeEnum.class), anyBoolean(), anyInt()))
                 .thenReturn(duplicatedPPMV);
 
         when(contractService.findByCode(contractCode)).thenReturn(source);
@@ -223,6 +223,7 @@ public class ContractApiTest {
         assertThat(ppmToCheck.getEventCode()).isEqualTo(ciToCheck.getCode());
         assertThat(ppmToCheck.getVersions()).isNotEmpty();
         assertThat(ppmToCheck.getVersions().size()).isEqualTo(pricePlan.getVersions().size());
+        assertThat(ppmToCheck.getVersions().get(0).getStatus()).isEqualTo(VersionStatusEnum.DRAFT);
 
 
     }
