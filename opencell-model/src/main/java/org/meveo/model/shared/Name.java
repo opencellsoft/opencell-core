@@ -28,6 +28,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 
 import org.meveo.commons.encryption.PersonnalDataEncryptor;
+import org.meveo.commons.utils.StringUtils;
 
 /**
  * Name
@@ -113,7 +114,7 @@ public class Name implements Serializable, Cloneable {
     }
 
     public void anonymize(String code) {
-        setFirstName(code);
-        setLastName(code);
+        setFirstName(StringUtils.isNotBlank(firstName) ? code : firstName);
+        setLastName(StringUtils.isNotBlank(lastName) ? code : lastName);
     }
 }

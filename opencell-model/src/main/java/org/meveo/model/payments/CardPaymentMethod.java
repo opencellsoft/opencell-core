@@ -32,6 +32,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -182,12 +183,12 @@ public class CardPaymentMethod extends PaymentMethod {
     @Override
     public void anonymize(String code) {
         super.anonymize(code);
-        setOwner(code);
+        setOwner(StringUtils.isNotBlank(owner) ? code : owner);
         setMonthExpiration(1);
         setYearExpiration(0);
-        setCardNumber(code.substring(0,16));
+        setCardNumber(StringUtils.isNotBlank(cardNumber) ? code.substring(0,16) : cardNumber);
         setCardType(null);
-        setIssueNumber(code);
+        setIssueNumber(StringUtils.isNotBlank(issueNumber) ? code : issueNumber);
     }
 
     @Override

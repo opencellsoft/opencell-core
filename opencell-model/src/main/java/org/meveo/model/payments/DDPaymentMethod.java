@@ -28,6 +28,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 
 /**
@@ -112,8 +113,8 @@ public class DDPaymentMethod extends PaymentMethod {
 	
 	public void anonymize(String code) {
 	    super.anonymize(code);
-	    setMandateIdentification(code);
-	    setMandateDate(new Date(0));
+	    setMandateIdentification(StringUtils.isNotBlank(mandateIdentification) ? code : mandateIdentification);
+	    setMandateDate(mandateDate != null ? new Date(0) : null);
 	    if(bankCoordinates != null) {
 	        bankCoordinates.anonymize(code);
 	    }
