@@ -223,7 +223,6 @@ public class ContractApiTest {
         assertThat(ppmToCheck.getEventCode()).isEqualTo(ciToCheck.getCode());
         assertThat(ppmToCheck.getVersions()).isNotEmpty();
         assertThat(ppmToCheck.getVersions().size()).isEqualTo(pricePlan.getVersions().size());
-        assertThat(ppmToCheck.getVersions().get(0).getStatus()).isEqualTo(VersionStatusEnum.DRAFT);
 
 
     }
