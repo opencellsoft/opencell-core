@@ -187,7 +187,10 @@ public class ContractApi extends BaseApi{
 			throw new BusinessApiException(String.format(CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN, format.format(dto.getEndDate()), format.format(dto.getBeginDate())));
 		}
 		//get the current contract
-		Contract contract = contractService.findByCode(dto.getCode());
+		Contract contract = contractService.findById(dto.getId());
+		if (contract == null) {
+			contract = contractService.findByCode(dto.getCode());
+		}
 		if(contract == null)
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
 		//check the status of the contract
