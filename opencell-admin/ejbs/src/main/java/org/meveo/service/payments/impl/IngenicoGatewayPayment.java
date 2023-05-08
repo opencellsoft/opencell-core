@@ -50,6 +50,7 @@ import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.PaymentGatewayClass;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,11 +113,16 @@ import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.PayoutRef
 import com.ingenico.connect.gateway.sdk.java.domain.token.ApproveTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenResponse;
+import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.ContactDetailsToken;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.CustomerToken;
+import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.CustomerTokenWithContactDetails;
+import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.Debtor;
+import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.MandateSepaDirectDebitWithoutCreditor;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.PersonalInformationToken;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.PersonalNameToken;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCard;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardData;
+import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenSepaDirectDebitWithoutCreditor;
 
 /**
  * The Class IngenicoGatewayPayment.
@@ -149,23 +155,19 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * Connect.
      */
     private void connect() {
-    	try {
-	        ParamBean paramBean = paramBean();
-	        //Init properties
-	        paramBean.getProperty("connect.api.authorizationType", "V1HMAC");
-	        paramBean.getProperty("connect.api.connectTimeout", "5000");
-	        paramBean.getProperty("connect.api.endpoint.host", CHANGE_IT);
-	        paramBean.getProperty("connect.api.endpoint.scheme", CHANGE_IT);
-	        paramBean.getProperty("connect.api.integrator", "");
-	        paramBean.getProperty("connect.api.socketTimeout", "300000");
-	        CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
-	        communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
-	        communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
-	        client = Factory.createClient(communicatorConfiguration);
-	        marshaller = DefaultMarshaller.INSTANCE;
-    	}catch (Exception e) {
-			throw new BusinessException("Make sure you have a valid account on Ingenico, and it is well configured on Opencell.");
-		}
+        ParamBean paramBean = paramBean();
+        //Init properties
+        paramBean.getProperty("connect.api.authorizationType", "V1HMAC");
+        paramBean.getProperty("connect.api.connectTimeout", "5000");
+        paramBean.getProperty("connect.api.endpoint.host", CHANGE_IT);
+        paramBean.getProperty("connect.api.endpoint.scheme", CHANGE_IT);
+        paramBean.getProperty("connect.api.integrator", "");
+        paramBean.getProperty("connect.api.socketTimeout", "300000");
+        CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
+        communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
+        communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
+        client = Factory.createClient(communicatorConfiguration);
+        marshaller = DefaultMarshaller.INSTANCE;
     }
 
     private ParamBean paramBean() {
