@@ -275,7 +275,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 }
             }
 
-            if (0 != amountToMatch.longValue()) {
+            if (0 != amountToMatch.doubleValue()) {
                 // add baseMatchingAmount to avoid having TransactionalMatchingAmount = MatchingAmount * 2
                 BigDecimal baseMatchingAmount = accountOperation.getMatchingAmount();
                 accountOperation.setMatchingAmount(baseMatchingAmount.add(functionalAmountToMatch));
@@ -386,7 +386,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 
             }
 
-            if(0 != amountToMatch.longValue()) {
+            if(0 != amountToMatch.doubleValue()) {
                 accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(functionalAmountToMatch));
                 accountOperation.setTransactionalMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
 
