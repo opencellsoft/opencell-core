@@ -6,6 +6,12 @@ import java.util.Set;
 
 import org.meveo.model.cpq.AttributeValue;
 
+/**
+ * A DTO style class for use in rating that synthetize PricePlanMatrixValue entity with additional data from PricePlanMatrixColumn and PricePlanLine entities.
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
 public class PricePlanMatrixValueForRating implements Serializable {
 
     private static final long serialVersionUID = -3841571425197748532L;
@@ -14,7 +20,9 @@ public class PricePlanMatrixValueForRating implements Serializable {
 
     private ColumnTypeEnum pricePlanMatrixColumnType;
 
-    private long pricePlanMatrixLine;
+    private long pricePlanMatrixLineId;
+
+    private boolean defaultLine;
 
     private Long longValue;
 
@@ -37,12 +45,30 @@ public class PricePlanMatrixValueForRating implements Serializable {
     public PricePlanMatrixValueForRating() {
     }
 
-    public PricePlanMatrixValueForRating(Long attributeId, ColumnTypeEnum pricePlanMatrixColumnType, Long pricePlanMatrixLine, Long longValue, Double doubleValue, String stringValue, Date dateValue, Date fromDateValue,
-            Date toDateValue, Double fromDoubleValue, Double toDoubleValue, Boolean booleanValue) {
+    /**
+     * Constructor
+     * 
+     * @param attributeId An attribute ID, corresponding to a Price plan matrix column definition
+     * @param pricePlanMatrixColumnType Price plan matrix column type
+     * @param pricePlanMatrixLineId Price plan matrix line ID
+     * @param defaultLine Is this a default line
+     * @param longValue Price plan matrix value - Long value
+     * @param doubleValue Price plan matrix value - Double value
+     * @param stringValue Price plan matrix value - String value
+     * @param dateValue Price plan matrix value - Date value
+     * @param fromDateValue Price plan matrix value - Date range from value
+     * @param toDateValue Price plan matrix value - Date range to value
+     * @param fromDoubleValue Price plan matrix value - Double range from value
+     * @param toDoubleValue Price plan matrix value - Double range to value
+     * @param booleanValue Price plan matrix value - boolean value
+     */
+    public PricePlanMatrixValueForRating(Long attributeId, ColumnTypeEnum pricePlanMatrixColumnType, Long pricePlanMatrixLineId, boolean defaultLine, Long longValue, Double doubleValue, String stringValue,
+            Date dateValue, Date fromDateValue, Date toDateValue, Double fromDoubleValue, Double toDoubleValue, Boolean booleanValue) {
 
         this.attributeId = attributeId;
         this.pricePlanMatrixColumnType = pricePlanMatrixColumnType;
-        this.pricePlanMatrixLine = pricePlanMatrixLine;
+        this.pricePlanMatrixLineId = pricePlanMatrixLineId;
+        this.defaultLine = defaultLine;
         this.longValue = longValue;
         this.doubleValue = doubleValue;
         this.stringValue = stringValue;
@@ -94,12 +120,12 @@ public class PricePlanMatrixValueForRating implements Serializable {
         this.stringValue = stringValue;
     }
 
-    public long getPricePlanMatrixLine() {
-        return pricePlanMatrixLine;
+    public long getPricePlanMatrixLineId() {
+        return pricePlanMatrixLineId;
     }
 
-    public void setPricePlanMatrixLine(long pricePlanMatrixLine) {
-        this.pricePlanMatrixLine = pricePlanMatrixLine;
+    public void setPricePlanMatrixLineId(long pricePlanMatrixLineId) {
+        this.pricePlanMatrixLineId = pricePlanMatrixLineId;
     }
 
     public Date getDateValue() {
@@ -163,6 +189,10 @@ public class PricePlanMatrixValueForRating implements Serializable {
      * @return True if value match
      */
     public boolean isMatch(Set<AttributeValue> attributesValue) {
+
+        if (defaultLine) {
+            return true;
+        }
         return attributesValue.stream().anyMatch(attributeValue -> attributeValue.getAttribute().getId().longValue() == attributeId && pricePlanMatrixColumnType.valueMatch(this, attributeValue));
     }
 }

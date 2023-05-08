@@ -829,7 +829,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     }
                 }
             } else {
-                PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePriceLine(ppmVersion, wo);
+                PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(ppmVersion, wo);
                 if(pricePlanMatrixLine!=null) {
                     wo.setPricePlanMatrixLine(pricePlanMatrixLine);
                     if(appProvider.isEntreprise()) {

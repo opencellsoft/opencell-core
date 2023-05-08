@@ -164,7 +164,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         	PricePlanMatrix pricePlan = discountPlanItem.getPricePlanMatrix();
         	PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlan.getCode());
         	if(ppmVersion!=null && product!=null) {
-                PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePriceLine(ppmVersion, attributeValues);
+                PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(ppmVersion, attributeValues);
         		computedDiscount=pricePlanMatrixLine.getPriceWithoutTax();
         	} 
         		

@@ -331,7 +331,7 @@ public class PricePlanSelectionService implements Serializable {
     public PricePlanMatrixLine determinePricePlanLine(PricePlanMatrix pricePlan, WalletOperation bareWalletOperation) throws NoPricePlanException {
         PricePlanMatrixVersion ppmVersion = getPublishedVersionValidForDate(pricePlan.getId(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
         if (ppmVersion != null) {
-            PricePlanMatrixLine ppLine = determinePriceLine(ppmVersion, bareWalletOperation);
+            PricePlanMatrixLine ppLine = determinePricePlanLine(ppmVersion, bareWalletOperation);
             if (ppLine != null) {
                 return ppLine;
             }
@@ -348,7 +348,7 @@ public class PricePlanSelectionService implements Serializable {
      * @throws NoPricePlanException No price plan line was matched
      */
     @SuppressWarnings("rawtypes")
-    public PricePlanMatrixLine determinePriceLine(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws NoPricePlanException {
+    public PricePlanMatrixLine determinePricePlanLine(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws NoPricePlanException {
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
         if (chargeInstance.getServiceInstance() == null) {
             return null;
@@ -359,7 +359,7 @@ public class PricePlanSelectionService implements Serializable {
         addBusinessAttributeValues(pricePlanMatrixVersion.getColumns().stream().filter(column -> AttributeCategoryEnum.BUSINESS.equals(column.getAttribute().getAttributeCategory())).map(column -> column.getAttribute())
             .collect(Collectors.toList()), attributeValues, walletOperation);
 
-        return determinePriceLine(pricePlanMatrixVersion, attributeValues);
+        return determinePricePlanLine(pricePlanMatrixVersion, attributeValues);
     }
 
     /**
@@ -371,8 +371,8 @@ public class PricePlanSelectionService implements Serializable {
      * @throws NoPricePlanException No matching price line was found
      */
     @SuppressWarnings("rawtypes")
-    public PricePlanMatrixLine determinePriceLine(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues) throws NoPricePlanException {
-        PricePlanMatrixLine ppLine = determinePriceLineOptional(pricePlanMatrixVersion, attributeValues);
+    public PricePlanMatrixLine determinePricePlanLine(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues) throws NoPricePlanException {
+        PricePlanMatrixLine ppLine = determinePricePlanLineOptional(pricePlanMatrixVersion, attributeValues);
         if (ppLine == null) {
             throw new NoPricePlanException("No price match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion()
                     + ") using attributes : " + attributeValues);
@@ -388,7 +388,7 @@ public class PricePlanSelectionService implements Serializable {
      * @return A matched price matrix line or NULL if no line was matched
      */
     @SuppressWarnings("rawtypes")
-    public PricePlanMatrixLine determinePriceLineOptional(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues) {
+    public PricePlanMatrixLine determinePricePlanLineOptional(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues) {
 
         EntityManager em = getEntityManager();
 
@@ -411,7 +411,7 @@ public class PricePlanSelectionService implements Serializable {
             Long matchedPlId = null;
             for (PricePlanMatrixValueForRating ppValue : ppValues) {
                 // A new price plan Line
-                if (lastPLId != ppValue.getPricePlanMatrixLine()) {
+                if (lastPLId != ppValue.getPricePlanMatrixLineId()) {
                     // All values were matched in the Last Price plan line
                     if (lastPLId > 0 && allMatch) {
                         matchedPlId = lastPLId;
@@ -419,7 +419,7 @@ public class PricePlanSelectionService implements Serializable {
                     } else {
                         allMatch = true;
                     }
-                    lastPLId = ppValue.getPricePlanMatrixLine();
+                    lastPLId = ppValue.getPricePlanMatrixLineId();
 
                 } else if (!allMatch) {
                     continue;

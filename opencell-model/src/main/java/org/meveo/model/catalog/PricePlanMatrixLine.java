@@ -67,7 +67,6 @@ public class PricePlanMatrixLine extends AuditableEntity {
     private BigDecimal value;
 
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
 
     @Column(name = "priority")
