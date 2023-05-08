@@ -293,7 +293,9 @@ public class DefaultNotificationService {
                     context.putAll(executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context,false,true,false));
                 }
                if( emailNotifier.sendEmail(emailNotification, entityOrEvent, context, lastCurrentUser)) {
-            	   executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context,false,false,true);
+                   if (notif.getScriptInstance() != null) {
+                       executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context, false, false, true);
+                   }
                }
 
             } else if (notif instanceof WebHook) {
