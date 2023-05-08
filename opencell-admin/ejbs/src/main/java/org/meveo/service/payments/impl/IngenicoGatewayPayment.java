@@ -155,23 +155,19 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * Connect.
      */
     private void connect() {
-    	try {
-	        ParamBean paramBean = paramBean();
-	        //Init properties
-	        paramBean.getProperty("connect.api.authorizationType", "V1HMAC");
-	        paramBean.getProperty("connect.api.connectTimeout", "5000");
-	        paramBean.getProperty("connect.api.endpoint.host", CHANGE_IT);
-	        paramBean.getProperty("connect.api.endpoint.scheme", CHANGE_IT);
-	        paramBean.getProperty("connect.api.integrator", "");
-	        paramBean.getProperty("connect.api.socketTimeout", "300000");        
-	        CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
-	        communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
-	        communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
-	        client = Factory.createClient(communicatorConfiguration);
-	        marshaller = DefaultMarshaller.INSTANCE;
-    	}catch (Exception e) {
-			throw new BusinessException("Make sure you have a valid account on Ingenico, and it is well configured on Opencell.");
-		}
+        ParamBean paramBean = paramBean();
+        //Init properties
+        paramBean.getProperty("connect.api.authorizationType", "V1HMAC");
+        paramBean.getProperty("connect.api.connectTimeout", "5000");
+        paramBean.getProperty("connect.api.endpoint.host", CHANGE_IT);
+        paramBean.getProperty("connect.api.endpoint.scheme", CHANGE_IT);
+        paramBean.getProperty("connect.api.integrator", "");
+        paramBean.getProperty("connect.api.socketTimeout", "300000");        
+        CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
+        communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
+        communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
+        client = Factory.createClient(communicatorConfiguration);
+        marshaller = DefaultMarshaller.INSTANCE;
     }
 
     private ParamBean paramBean() {
