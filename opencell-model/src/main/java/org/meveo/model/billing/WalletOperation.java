@@ -100,7 +100,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.billingRun.id=:brId"),
 
         @NamedQuery(name = "WalletOperation.getConvertToRTsSummary", query = "SELECT count(*), max(o.id), min(o.id) FROM WalletOperation o WHERE o.status='OPEN'"),
-        @NamedQuery(name = "WalletOperation.listConvertToRTs", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and o.id<=:maxId"),
+        // @NamedQuery(name = "WalletOperation.listConvertToRTs", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and o.id<=:maxId"),
         @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) order by unitAmountWithoutTax desc"),
         @NamedQuery(name = "WalletOperation.listToRateByBA", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.billingAccount=:billingAccount"),
         @NamedQuery(name = "WalletOperation.listToRateBySubscription", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.subscription=:subscription"),
@@ -330,21 +330,21 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_1")
+    @Column(name = "parameter_1", length = 255)
     @Size(max = 255)
     private String parameter1;
 
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_2")
+    @Column(name = "parameter_2", length = 255)
     @Size(max = 255)
     private String parameter2;
 
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_3")
+    @Column(name = "parameter_3", length = 255)
     @Size(max = 255)
     private String parameter3;
 
@@ -379,7 +379,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Offer code
      */
-    @Column(name = "offer_code")
+    @Column(name = "offer_code", length = 255)
     @Size(max = 255, min = 1)
     protected String offerCode;
 
@@ -616,7 +616,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @Column(name = "discounted_amount")
    	private BigDecimal discountedAmount;
     
-    /**The amount after discount**/
+    /**Filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence**/
     @Column(name = "sequence")
    	private Integer sequence;
 

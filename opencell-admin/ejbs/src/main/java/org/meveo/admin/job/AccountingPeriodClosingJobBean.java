@@ -65,8 +65,7 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess,
-                null, this::closeSubAccountingPeriods, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::closeSubAccountingPeriods, null, null, null);
     }
 
     /**

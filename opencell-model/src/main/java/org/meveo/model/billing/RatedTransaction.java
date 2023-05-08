@@ -189,7 +189,8 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.detachFromInvoices", query = "UPDATE RatedTransaction r SET r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceLine=null, r.invoiceAgregateF=null WHERE r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice.id IN (:ids)) "),
         @NamedQuery(name = "RatedTransaction.reopenRatedTransactions", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null, r.invoiceLine=null where r.id IN (:rtIds)"),
         @NamedQuery(name = "RatedTransaction.updatePendingDuplicate", query = "update RatedTransaction r set r.pendingDuplicates= r.pendingDuplicates + :pendingDuplicates, r.pendingDuplicatesToNegate= r.pendingDuplicatesToNegate + :pendingDuplicatesToNegate where r.id in (:rtI)"),
-        @NamedQuery(name = "RatedTransaction.findPendingOrNegateDuplicated", query = "Select r from RatedTransaction r where r.pendingDuplicates > 0 or r.pendingDuplicatesToNegate > 0")
+        @NamedQuery(name = "RatedTransaction.findPendingOrNegateDuplicated", query = "Select r from RatedTransaction r where r.pendingDuplicates > 0 or r.pendingDuplicatesToNegate > 0"),
+        @NamedQuery(name = "RatedTransaction.findForAppyInvoicingRuleByIds", query = "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) AND  rt.status = 'OPEN' and rt.rulesContract is not null")
         })
 
 @NamedNativeQueries({
@@ -226,26 +227,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Origin Billing account associated to rated transaction
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "origin_billing_account")
     private BillingAccount originBillingAccount;
     
-    public BillingAccount getOriginBillingAccount() {
-        return originBillingAccount;
-    }
-
-    public void setOriginBillingAccount(BillingAccount originBillingAccount) {
-        this.originBillingAccount = originBillingAccount;
-    }
-
-    public String getRejectReason() {
-        return rejectReason;
-    }
-
-    public void setRejectReason(String rejectReason) {
-        this.rejectReason = rejectReason;
-    }
-
     /**
      * User account associated to rated transaction
      */
@@ -992,6 +977,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         return billingAccount.getId();
     }
 
+    public BillingAccount getOriginBillingAccount() {
+        return originBillingAccount;
+    }
+
+    public void setOriginBillingAccount(BillingAccount originBillingAccount) {
+        this.originBillingAccount = originBillingAccount;
+    }
+    
     /**
      * @return User account associated to rated transaction
      */
@@ -1038,6 +1031,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.code = code;
     }
 
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
+    
     public String getDescription() {
         return description;
     }

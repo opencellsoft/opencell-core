@@ -1758,7 +1758,7 @@
             <column name="following_job_id" value="NULL"/>
             <column name="uuid" value="2c72550b-4e79-4dab-a8bd-df8499abd25b"/>
             <column name="run_on_nodes" value="NULL"/>
-            <column name="single_node" valueNumeric="1"/>
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE"/>
             <column name="cf_values" value="{&quot;PaymentJob_creditOrDebit&quot;:[{&quot;string&quot;:&quot;Credit&quot;}],&quot;waitingMillis&quot;:[{&quot;long&quot;:0}],&quot;PaymentJob_matchingAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;PaymentJob_cardOrDD&quot;:[{&quot;string&quot;:&quot;CARD&quot;}],&quot;PaymentJob_createAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;nbRuns&quot;:[{&quot;long&quot;:1}],&quot;PaymentJob_AOorCA&quot;:[{&quot;string&quot;:&quot;CA&quot;}]}"/>
             <column name="exclude_inv_without_amount" valueNumeric="0"/>
         </insert>
@@ -1779,7 +1779,7 @@
             <column name="following_job_id" value="NULL"/>
             <column name="uuid" value="a4bb9554-85f3-4c0a-8f62-438fec7bdac2"/>
             <column name="run_on_nodes" value="NULL"/>
-            <column name="single_node" valueNumeric="1"/>
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE"/>
             <column name="cf_values" value="{&quot;PaymentJob_creditOrDebit&quot;:[{&quot;string&quot;:&quot;Debit&quot;}],&quot;waitingMillis&quot;:[{&quot;long&quot;:0}],&quot;PaymentJob_matchingAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;PaymentJob_cardOrDD&quot;:[{&quot;string&quot;:&quot;CARD&quot;}],&quot;PaymentJob_createAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;nbRuns&quot;:[{&quot;long&quot;:1}],&quot;PaymentJob_AOorCA&quot;:[{&quot;string&quot;:&quot;CA&quot;}]}"/>
             <column name="exclude_inv_without_amount" valueNumeric="0"/>
         </insert>   
@@ -1928,7 +1928,7 @@
             <column name="description" value="Process customer payments file job"/>
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="uuid" value="ProcessCustomerPaymentsFileJob" />
@@ -4839,7 +4839,7 @@
             <column name="code" value="massImportCustomerJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -4859,7 +4859,7 @@
             <column name="code" value="massImportCustomerAccountJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -4879,7 +4879,7 @@
             <column name="code" value="massImportPaymentMethodJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -4899,7 +4899,7 @@
             <column name="code" value="massImportBillingAccountJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -4919,7 +4919,7 @@
             <column name="code" value="massImportUserAccountJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -5116,7 +5116,7 @@
             <column name="code" value="massImportSubscriptionJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
@@ -5146,7 +5146,7 @@
             <column name="code" value="massImportServiceInstanceJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
@@ -5176,7 +5176,7 @@
             <column name="code" value="massImportAttributeInstance" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
@@ -5206,7 +5206,7 @@
             <column name="code" value="massImportAccessPoint" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values"><![CDATA[{"nbRuns":[{"long":1}],
@@ -5369,7 +5369,7 @@
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importServicesJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
                 <![CDATA[{"oneFilePerJob":[{"boolean":false}],
                 "FlatFileProcessingJob_outputDir":[{"string":"/imports/services/outputs"}],
@@ -5406,7 +5406,7 @@
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importSubscriptionsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
                 <![CDATA[{"oneFilePerJob":[{"boolean":false}],
                 "FlatFileProcessingJob_outputDir":[{"string":"/imports/subscriptions/outputs"}],
@@ -5439,7 +5439,7 @@
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importAccesPointsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
                 <![CDATA[{"oneFilePerJob":[{"boolean":false}],
                 "FlatFileProcessingJob_outputDir":[{"string":"/imports/accessPoints/outputs"}],
@@ -5492,7 +5492,7 @@
             <column name="following_job_id" value="null" />
             <column name="uuid" value="DeleteCustomersScript_JOB" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 
             <column name="cf_values">
                 <![CDATA[{"FlatFileProcessingJob_mappingConf":[{"string":"<beanio xmlns=\"http://www.beanio.org/2012/03\" \r\n      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n      xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n      <stream name=\"RECORD\" format=\"csv\" strict=\"true\">\r\n        <parser>\r\n          <property name=\"delimiter\" value=\";\" />\r\n        </parser>     \r\n        <record name=\"customer\"  minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">  \r\n           <field name=\"customerCode\" minOccurs=\"0\" position=\"0\" />\r\n           <field name=\"noCheck\" minOccurs=\"0\" position=\"1\"/>\r\n        </record> \r\n      </stream>\r\n    </beanio>"}]
@@ -5899,7 +5899,7 @@
             <column name="code" value="CsvImportCDR" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">

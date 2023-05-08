@@ -171,7 +171,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
     public Optional<SecurityDeposit> createOrinstantiate(SecurityDeposit securityDepositInput, 
             SecurityDepositStatusEnum status, boolean validate, boolean isInstantiate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException {
         // Check FinanceSettings.useSecurityDeposit
-        FinanceSettings financeSettings = financeSettingsService.findLastOne();
+        FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
         if (financeSettings == null || !financeSettings.isUseSecurityDeposit()) {
             throw new BadRequestException("instantiation is not allowed in general settings");
         }

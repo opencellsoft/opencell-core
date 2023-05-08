@@ -54,7 +54,7 @@ public class CheckPaymentScheduleCallbackJobBean extends IteratorBasedJobBean<Lo
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::checkPaymentStatus, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::checkPaymentStatus, null, null, null);
     }
 
     /**

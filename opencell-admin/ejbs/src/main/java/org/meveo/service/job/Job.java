@@ -43,6 +43,7 @@ import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobClusterBehaviorEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -98,6 +99,11 @@ public abstract class Job {
      */
     public static final String JOB_PARAM_LAUNCHER = "jobLauncher";
 
+    /**
+     * Parent job result identifier
+     */
+    public static final String JOB_PARAM_HISTORY_PARENT_ID = "parentJobResultId";
+
     @Resource
     protected TimerService timerService;
 
@@ -122,7 +128,7 @@ public abstract class Job {
     @Inject
     @Processed
     private Event<JobExecutionResultImpl> eventJobProcessed;
-    
+
     @Inject
     @Started
     private Event<JobExecutionResultImpl> eventJobStarted;
@@ -161,10 +167,11 @@ public abstract class Job {
         auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
         auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
 
-        JobRunningStatusEnum jobRunningStatus = jobExecutionService.markJobAsRunning(jobInstance, jobInstance.isLimitToSingleNode(), executionResult != null ? executionResult.getId() : null, null);
+        JobRunningStatusEnum jobRunningStatus = jobExecutionService.markJobAsRunning(jobInstance, jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE,
+            executionResult != null ? executionResult.getId() : null, null);
 
         if (jobRunningStatus == JobRunningStatusEnum.NOT_RUNNING || jobRunningStatus == JobRunningStatusEnum.LOCKED_THIS
-                || (!jobInstance.isLimitToSingleNode() && (jobRunningStatus == JobRunningStatusEnum.RUNNING_OTHER || jobRunningStatus == JobRunningStatusEnum.LOCKED_OTHER))) {
+                || (jobInstance.getClusterBehavior() != JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && (jobRunningStatus == JobRunningStatusEnum.RUNNING_OTHER || jobRunningStatus == JobRunningStatusEnum.LOCKED_OTHER))) {
 
             log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser,
                 Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());
@@ -175,7 +182,7 @@ public abstract class Job {
             }
 
             try {
-            	eventJobStarted.fire(executionResult);
+                eventJobStarted.fire(executionResult);
                 executionResult = execute(executionResult, jobInstance);
 
                 boolean jobCanceled = jobExecutionService.isJobCancelled(jobInstance.getId());

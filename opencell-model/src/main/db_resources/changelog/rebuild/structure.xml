@@ -5829,6 +5829,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="job_status" type="varchar(14)"/>
+            <column name ="parent_job_result_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-262">
@@ -6078,13 +6079,13 @@
                 <constraints nullable="false" />
             </column>
             <column name="run_on_nodes" type="VARCHAR(100)" />
-            <column name="single_node" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="cf_values" type="${type.json}" />
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
             <column name="query_scheduler_id" type="bigint" />
+            <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -19587,6 +19588,9 @@
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari"/>
+
+    <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
+    
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

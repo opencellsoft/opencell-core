@@ -74,7 +74,7 @@ public class GenericWorkflowJobBean extends IteratorBasedJobBean<Object[]> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeWorkflow, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeWorkflow, null, null, null);
         genericWf = null;
     }
 

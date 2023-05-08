@@ -340,7 +340,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         walletOperation.setEdr(edr);
 
         RatingResult ratedEDRResult = rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), chargeInstance.getCountry().getId(), chargeInstance.getCurrency(), isVirtual);
-        log.info("rateCharge walletoperation={}, unitamount={}",walletOperation.getCode(),walletOperation.getUnitAmountWithoutTax());
         
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
@@ -1012,7 +1011,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
         }
         if(priceWithoutTax == null && priceWithTax == null) {
-            throw new BusinessException("Couldn’t find a price for charge " + wo.getChargeInstance().getCode() + " and price plan " + pricePlan.getCode() + ": no price version and price plan amount is null");
+            throw new BusinessException("Couldn't find a price for charge " + wo.getChargeInstance().getCode() + " and price plan " + pricePlan.getCode() + ": no price version and price plan amount is null");
         }
         return new Amounts(priceWithoutTax, priceWithTax);
     }

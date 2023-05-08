@@ -83,7 +83,7 @@ public class SubscriptionStatusJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::updateSubscriptionStatus, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::updateSubscriptionStatus, null, null, null);
     }
 
     /**
