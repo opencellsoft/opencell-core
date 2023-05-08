@@ -226,7 +226,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 }
             }
 
-            if(0 != amountToMatch.longValue()){
+            if(0 != amountToMatch.doubleValue()){
                 accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
             accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
             accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
@@ -312,7 +312,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 
             }
 
-            if(0 != amountToMatch.longValue()) {
+            if(0 != amountToMatch.doubleValue()) {
                 accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
                 accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
                 accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
