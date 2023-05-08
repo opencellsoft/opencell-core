@@ -789,6 +789,24 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return addressTag;
     }
 
+    protected Element createBATaxationCategorySection(Document doc, BillingAccount billingAccount) {
+        if (billingAccount != null && billingAccount.getTaxCategory() != null) {
+            Element taxationCategoryTag = doc.createElement("taxationCategory");
+
+            if (billingAccount.getTaxCategory().getUntdidTaxationCategory() != null) {
+                taxationCategoryTag.setAttribute("code", billingAccount.getTaxCategory().getUntdidTaxationCategory().getCode());
+            }
+
+            if (StringUtils.isNotBlank(billingAccount.getExemptionReason())) {
+                taxationCategoryTag.setAttribute("taxationCategoryReason", billingAccount.getExemptionReason());
+            }
+
+            return taxationCategoryTag;
+        }
+
+        return null;
+    }
+
     /**
      * Create invoice/header/[customer,customerAccount,billingAccount, userAccount]/name DOM element
      *
@@ -1169,9 +1187,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param invoice              Invoice to convert
      * @return DOM element
      */
-    protected Element createAmountTaxSection(Document doc, Invoice invoice, Map<String, String> mapTaxesIndexes) {
+    protected Element createAmountTaxSection(Document doc, Invoice invoice, Map<String, String> mapTaxesIndexes, Set<String> vatexReasons) {
 
         Element taxes = doc.createElement("taxes");
+        if (CollectionUtils.isNotEmpty(vatexReasons)) {
+            taxes.setAttribute("vatexReasons", String.join(",", vatexReasons));
+        }
         boolean exoneratedFromTaxes = billingAccountService.isExonerated(invoice.getBillingAccount());
         if (exoneratedFromTaxes) {
             Element exoneratedElement = doc.createElement("exonerated");
@@ -1247,7 +1268,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param invoice              Invoice to convert
      * @return DOM element
      */
-    protected Element createHeaderCategoriesSection(Document doc, Invoice invoice, Map<String, String> mapTaxesIndexes) {
+    protected Element createHeaderCategoriesSection(Document doc, Invoice invoice, Map<String, String> mapTaxesIndexes,
+                                                    Set<String> vatexReasons) {
 
     	String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguageCode();
         LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories = new LinkedHashMap<>();
@@ -1366,7 +1388,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                             amountByTaxXml.setAttribute("taxDescription", amountByTax.getKey().getDescription());
                             amountByTaxXml.setAttribute("taxationCategory", amountByTax.getKey().getUntdidTaxationCategory() != null ? amountByTax.getKey().getUntdidTaxationCategory().getCode() : "");
                             amountByTaxXml.setAttribute("taxationCategoryLabel", amountByTax.getKey().getUntdidTaxationCategory() != null ? amountByTax.getKey().getUntdidTaxationCategory().getName() : "");
-                            amountByTaxXml.setAttribute("vatex", amountByTax.getKey().getUntdidVatex() != null ? amountByTax.getKey().getUntdidVatex().getCode() : "");
+                            if (amountByTax.getKey().getUntdidVatex() != null) {
+                                vatexReasons.add(amountByTax.getKey().getUntdidVatex().getCode());
+                                amountByTaxXml.setAttribute("vatex", amountByTax.getKey().getUntdidVatex().getCode());
+                            } else {
+                                amountByTaxXml.setAttribute("vatex", "");
+                            }
                             amountByTaxXml.setAttribute("taxPercent", toPlainString(amountByTax.getKey().getPercent()));
                             amountsByTaxXml.appendChild(amountByTaxXml);
                         }
@@ -1592,11 +1619,13 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String billingTemplateName = invoiceService.getInvoiceTemplateName(invoice, billingCycle, invoice.getInvoiceType());
         invoiceTag.setAttribute("templateName", billingTemplateName);
         addCustomFields(invoice, doc, invoiceTag);
-        Element header = createHeaderSection(doc, invoice, isInvoiceAdjustment, invoiceConfiguration, invoiceDateFormat, mapTaxesIndexes);
+        Set<String> vatexReasons = new HashSet<>(); // Set of all untdidVatex grouped to ease way of displaying in Jasper
+        Element header = createHeaderSection(doc, invoice, isInvoiceAdjustment, invoiceConfiguration,
+                invoiceDateFormat, mapTaxesIndexes, vatexReasons);
         if (header != null) {
             invoiceTag.appendChild(header);
         }
-        Element amountTag = createAmountSection(doc, invoice, mapTaxesIndexes);
+        Element amountTag = createAmountSection(doc, invoice, mapTaxesIndexes, vatexReasons);
         if (amountTag != null) {
             invoiceTag.appendChild(amountTag);
         }
@@ -1682,6 +1711,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element addressTag = createAddressSection(doc, billingAccount, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (addressTag != null) {
             billingAccountTag.appendChild(addressTag);
+        }
+        Element taxationCategorySection = createBATaxationCategorySection(doc, billingAccount);
+        if (taxationCategorySection != null) {
+            billingAccountTag.appendChild(taxationCategorySection);
         }
         return billingAccountTag;
     }
@@ -1898,7 +1931,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @param invoice              Invoice to convert
      * @return DOM element
      */
-    protected Element createAmountSection(Document doc, Invoice invoice, Map<String, String> mapTaxesIndexes) {
+    protected Element createAmountSection(Document doc, Invoice invoice, Map<String, String> mapTaxesIndexes, Set<String> vatexReasons) {
 
         Element amount = doc.createElement("amount");
 
@@ -1949,7 +1982,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         netToPayElement.appendChild(this.createTextNode(doc, toPlainString(invoice.getNetToPay())));
         amount.appendChild(netToPayElement);
 
-        Element taxes = createAmountTaxSection(doc, invoice, mapTaxesIndexes);
+        Element taxes = createAmountTaxSection(doc, invoice, mapTaxesIndexes, vatexReasons);
         if (taxes != null) {
             amount.appendChild(taxes);
         }
@@ -1996,7 +2029,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return DOM element
      */
     protected Element createHeaderSection(Document doc, Invoice invoice, boolean isInvoiceAdjustment, InvoiceConfiguration invoiceConfiguration, String invoiceDateFormat,
-                                          Map<String, String> mapTaxesIndexes) {
+                                          Map<String, String> mapTaxesIndexes, Set<String> vatexReasons) {
         Element header = doc.createElement("header");
         if (invoiceConfiguration.isDisplayProvider()) {
             Element providerTag = createProviderSection(doc, appProvider);
@@ -2042,7 +2075,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element comment = doc.createElement("comment");
         comment.appendChild(doc.createCDATASection(getDefaultIfNull(invoice.getComment(), " ")));
         header.appendChild(comment);
-        Element categoriesTag = createHeaderCategoriesSection(doc, invoice, mapTaxesIndexes);
+        Element categoriesTag = createHeaderCategoriesSection(doc, invoice, mapTaxesIndexes, vatexReasons);
         if (categoriesTag != null) {
             header.appendChild(categoriesTag);
         }

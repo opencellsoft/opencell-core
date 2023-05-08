@@ -22,6 +22,7 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -231,6 +232,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 					.withAmountWithoutTax(invoiceLine.getAmountWithoutTax())
 					.withAmountWithTax(invoiceLine.getAmountWithTax())
 					.withAmountTax(invoiceLine.getAmountTax());
+			if (CollectionUtils.isEmpty(invoice.getInvoiceLines())){
+				invoice.setInvoiceLines(new ArrayList<>());
+			}
 			invoice.getInvoiceLines().add(invoiceLine);
 			result.addInvoiceLines(invoiceLineResource);
 		}
@@ -538,4 +542,11 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		customFieldEntity = invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), customFieldEntity, false);
         return invoiceService.updateValidatedInvoice(invoice, invoiceResource.getComment(), customFieldEntity.getCfValues());
     }
+	
+	/**
+	 * @param invoice
+	 */
+	public void setInvoiceExchangeRate(Invoice invoice, BigDecimal exchangeRate) {
+		invoiceService.refreshConvertedAmounts(invoice, exchangeRate, new Date());
+	}
 }

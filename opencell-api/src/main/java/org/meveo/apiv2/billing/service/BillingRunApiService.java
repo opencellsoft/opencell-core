@@ -206,7 +206,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
         }
         try {
             ratedTransactionService.deleteSupplementalRTs(billingRun);
-            if(REOPEN == action) {
+            if(action == null || REOPEN == action) {
                 ratedTransactionService.uninvoiceRTs(billingRun);
             } else {
                 ratedTransactionService.cancelRatedTransaction(billingRun);
