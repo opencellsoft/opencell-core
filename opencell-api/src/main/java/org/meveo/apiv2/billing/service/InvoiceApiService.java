@@ -22,6 +22,7 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -231,6 +232,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 					.withAmountWithoutTax(invoiceLine.getAmountWithoutTax())
 					.withAmountWithTax(invoiceLine.getAmountWithTax())
 					.withAmountTax(invoiceLine.getAmountTax());
+			if (CollectionUtils.isEmpty(invoice.getInvoiceLines())){
+				invoice.setInvoiceLines(new ArrayList<>());
+			}
 			invoice.getInvoiceLines().add(invoiceLine);
 			result.addInvoiceLines(invoiceLineResource);
 		}
