@@ -24,6 +24,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -53,6 +54,9 @@ public class ContractApiTest {
 
     @Mock
     private ContractService contractService;
+
+    @Mock
+    private ContractItemService contractItemService;
 
     @Mock
     private MeveoUser currentUser = new MeveoUser() {
@@ -145,7 +149,7 @@ public class ContractApiTest {
         duplicatedPPMV.setStatus(VersionStatusEnum.DRAFT);
         duplicatedPPMV.setPriceVersionType(ppmv.getPriceVersionType());
 
-        when(pricePlanMatrixVersionService.duplicate(any(PricePlanMatrixVersion.class), any(PricePlanMatrix.class), any(), any(VersionStatusEnum.class), any(PriceVersionTypeEnum.class), anyBoolean()))
+        when(pricePlanMatrixVersionService.duplicate(any(PricePlanMatrixVersion.class), any(PricePlanMatrix.class), any(), any(VersionStatusEnum.class), any(PriceVersionTypeEnum.class), anyBoolean(), anyInt()))
                 .thenReturn(duplicatedPPMV);
 
         when(contractService.findByCode(contractCode)).thenReturn(source);
