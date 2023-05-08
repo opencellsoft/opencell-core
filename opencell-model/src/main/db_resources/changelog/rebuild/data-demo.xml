@@ -1437,6 +1437,7 @@
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_category_exempted" />
             <column name="version" valueNumeric="0" />
+			<column name="untdid_taxation_category_id" valueComputed="(SELECT id FROM untdid_5305_taxation_category WHERE code = 'E')"/>
         </insert>
         <insert tableName="billing_tax_category">
             <column name="id" value="-3"/>
@@ -1446,6 +1447,7 @@
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_category_regular" />
             <column name="version" valueNumeric="0" />
+			<column name="untdid_taxation_category_id" valueComputed="(SELECT id FROM untdid_5305_taxation_category WHERE code = 'S')"/>
         </insert>
         <insert tableName="billing_tax_class">
         	<column name="id" value="-3"/>

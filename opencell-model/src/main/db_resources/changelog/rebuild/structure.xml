@@ -2692,6 +2692,7 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="icd_id" type="bigint" />
+            <column name="exemption_reason" type="varchar(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -8672,6 +8673,7 @@
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
+			<column name="untdid_taxation_category_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
         </createTable>
     </changeSet>
@@ -18059,6 +18061,10 @@
             </column>
 
         </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="untdid_taxation_category_id" baseTableName="billing_tax_category" constraintName="fk_untdid_taxation_category"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" 
+			referencedColumnNames="id" referencedTableName="untdid_5305_taxation_category" />
         
         <createSequence sequenceName="untdid_vatex_seq" startValue="1" />
         <createTable tableName="untdid_vatex">
@@ -19730,8 +19736,10 @@
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15841_20230502" author="AdilElJaouhari" />
-	<changeSet id="#INTRD-15664-20230501" author="aelmalki"  />
+	<changeSet id="#INTRD-15664-20230501" author="aelmalki" />
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari"/>
+	<changeSet id="#INTRD-15899_20230505" author="aelmalki" />
+	<changeSet id="#INTRD-15899_20230505-taxation-FK" author="aelmalki" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

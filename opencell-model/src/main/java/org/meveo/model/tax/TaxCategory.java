@@ -25,6 +25,9 @@ import java.util.Map;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
@@ -38,6 +41,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
+import org.meveo.model.billing.UntdidTaxationCategory;
 
 /**
  * Tax category
@@ -65,6 +69,10 @@ import org.meveo.model.ISearchable;
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "untdid_taxation_category_id")
+    private UntdidTaxationCategory untdidTaxationCategory;
+
     /**
      * @param descriptionI18n Translated descriptions in JSON format with language code as a key and translated description as a value
      */
@@ -90,5 +98,13 @@ import org.meveo.model.ISearchable;
             this.descriptionI18n = new HashMap<>();
         }
         return this.descriptionI18n;
+    }
+
+    public UntdidTaxationCategory getUntdidTaxationCategory() {
+        return untdidTaxationCategory;
+    }
+
+    public void setUntdidTaxationCategory(UntdidTaxationCategory untdidTaxationCategory) {
+        this.untdidTaxationCategory = untdidTaxationCategory;
     }
 }
