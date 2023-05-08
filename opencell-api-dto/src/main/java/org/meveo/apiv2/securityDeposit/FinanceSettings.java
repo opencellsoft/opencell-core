@@ -71,4 +71,10 @@ public interface FinanceSettings extends Resource {
     default Boolean getDiscountAdvancedMode() {
         return FALSE;
     }
+    
+    @Value.Default
+    @Schema(description = "Enable Price List")
+    default Boolean getEnablePriceList() {
+        return FALSE;
+    }
 }

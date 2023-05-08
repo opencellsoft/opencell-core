@@ -16342,5 +16342,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari">
         <dropNotNullConstraint tableName="billing_tax" columnName="taxation_category_id"/>
     </changeSet>
+
+    <changeSet id="#INTRD-15881_20230504" author="zelmeliani">
+        <addColumn tableName="finance_settings">
+            <column name="enable_price_list" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
