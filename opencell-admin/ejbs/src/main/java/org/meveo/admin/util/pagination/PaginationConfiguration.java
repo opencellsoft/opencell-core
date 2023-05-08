@@ -85,6 +85,8 @@ public class PaginationConfiguration implements Serializable {
      */
     private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
 
+    private boolean distinctQuery = Boolean.FALSE;
+
     /**
      * 
      * @param sortField Field to sort by
@@ -136,6 +138,11 @@ public class PaginationConfiguration implements Serializable {
     public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Object... sortFieldsAndOrder) {
     	this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, sortFieldsAndOrder);
     	this.joinType=joinType;
+    }
+
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Boolean distinct, Object... sortFieldsAndOrder) {
+        this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, joinType, sortFieldsAndOrder);
+        this.distinctQuery = distinct;
     }
     
     /**
@@ -343,5 +350,14 @@ public class PaginationConfiguration implements Serializable {
      */
     public boolean isCacheable() {
         return cacheable;
-    }	
+    }
+
+
+    public boolean isDistinctQuery() {
+        return distinctQuery;
+    }
+
+    public void setDistinctQuery(boolean distinctQuery) {
+        this.distinctQuery = distinctQuery;
+    }
 }

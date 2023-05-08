@@ -37,6 +37,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -387,7 +389,7 @@ public class QueryBuilder {
     	this.clazz=clazz;
     	List<String> select = new ArrayList<>();
     	boolean useSelectColumns = false;
-        StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
+        StringBuilder query = new StringBuilder("select " + (distinct ? "distinct " : "" ) + alias+ " from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
 				if(!fetchField.contains(".") && !fetchField.contains(" ")) {
@@ -1536,22 +1538,22 @@ public class QueryBuilder {
     	String countSql = "select count(*) " + toStringQuery(false).substring(q.indexOf(FROM));
 
         // Uncomment if plan to use addCollectionMember()
-        // String sql = q.toString().toLowerCase();
-        // if (sql.contains(" distinct")) {
-        //
-        // String regex = "from[ \\t]+[\\w\\.]+[ \\t]+(\\w+)";
-        // Pattern pattern = Pattern.compile(regex);
-        // Matcher matcher = pattern.matcher(sql);
-        // if (!matcher.find()) {
-        // throw new RuntimeException("Can not determine alias name");
-        // }
-        // String aliasName = matcher.group(1);
-        //
-        // countSql = "select count(distinct " + aliasName + ") " + toStringQuery().substring(q.indexOf(from));
-        // }
+         String sql = q.toString().toLowerCase();
+         if (sql.contains(" distinct")) {
 
-        // Logger log = LoggerFactory.getLogger(getClass());
-        // log.trace("Count query is {}", countSql);
+         String regex = "from[ \\t]+[\\w\\.]+[ \\t]+(\\w+)";
+         Pattern pattern = Pattern.compile(regex);
+         Matcher matcher = pattern.matcher(sql);
+         if (!matcher.find()) {
+         throw new RuntimeException("Can not determine alias name");
+         }
+         String aliasName = matcher.group(1);
+
+         countSql = "select count(distinct " + aliasName + ") " + toStringQuery().substring(q.indexOf(FROM));
+         }
+
+         //Logger log = LoggerFactory.getLogger(getClass());
+         //log.trace("Count query is {}", countSql);
 
         Query result = em.createQuery(countSql);
         
