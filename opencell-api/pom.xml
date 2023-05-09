@@ -7,7 +7,7 @@
         <groupId>com.opencellsoft</groupId>
         <artifactId>opencell</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>14.1.4-SNAPSHOT</version>
+        <version>14.1.5-SNAPSHOT</version>
     </parent>
     <artifactId>opencell-api</artifactId>
     <name>Opencell API</name>
@@ -140,6 +140,14 @@
             <version>3.14.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jboss.spec.javax.jms</groupId>
+            <artifactId>jboss-jms-api_2.0_spec</artifactId>
+            <version>2.0.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- End of libraries provided in Jboss -->
 
         <dependency>
             <groupId>org.hibernate</groupId>

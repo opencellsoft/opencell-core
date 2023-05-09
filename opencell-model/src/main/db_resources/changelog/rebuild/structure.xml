@@ -5803,6 +5803,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="job_status" type="varchar(14)"/>
+            <column name ="parent_job_result_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-262">
@@ -6051,13 +6052,13 @@
                 <constraints nullable="false" />
             </column>
             <column name="run_on_nodes" type="VARCHAR(100)" />
-            <column name="single_node" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="cf_values" type="${type.json}" />
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
             <column name="query_scheduler_id" type="bigint" />
+            <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -9624,7 +9625,7 @@
             </column>
 
         </createTable>
-        <addUniqueConstraint columnNames="current_version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
+        <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
 
     <changeSet id="rebuild-str-tbl-448" author="TarikF">
@@ -10763,6 +10764,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="subscription_id" type="bigint"/>
+            <column name="user_account_id" type="bigint"></column>
             <column name="service_instance_id" type="bigint"/>
             <column name="offer_template_id" type="bigint"/>
             <column name="order_lot_id" type="bigint"/>
@@ -12719,7 +12721,7 @@
         <addUniqueConstraint columnNames="charge_id,attribute_id" constraintName="cpq_attribute_charge_pkey" tableName="cpq_attribute_charge" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-546">
-        <addUniqueConstraint columnNames="code,ppm_version_id" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+        <addUniqueConstraint columnNames="ppm_version_id,code" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
     </changeSet>
     <changeSet author="ZBariki" id="rebuild-str-uk-547">
         <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
@@ -18080,6 +18082,11 @@
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 	</changeSet>
 
+	<changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+	</changeSet>
+
     <changeSet id="#INTRD-13883_20230208_fk" author="hichamELHALOUI">
         <addForeignKeyConstraint baseTableName="cat_discount_plan"
 								 baseColumnNames="allowance_code_id"
@@ -19388,8 +19395,8 @@
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15501_20230413" author="ThangNguyen" />
-    
-    
+    <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
+
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -39,6 +39,9 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.jobs.JobClusterBehaviorEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -85,6 +88,10 @@ public class JobExecutionService extends BaseService {
     @Inject
     private ClusterEventPublisher clusterEventPublisher;
 
+    @Inject
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
+
     /**
      * Execute a job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed asynchronously.
      * 
@@ -108,14 +115,10 @@ public class JobExecutionService extends BaseService {
      * @return Job execution result ID
      * @throws BusinessException Any exception
      */
+    @SuppressWarnings("unchecked")
     public Long executeJob(JobInstance jobInstance, Map<String, Object> params, JobLauncherEnum jobLauncher, boolean triggerExecutionOnOtherNodes) throws BusinessException {
 
-        // Preserve runTimeValues field, that gets set when executing from API
-        Map<String, Object> runTimeValues = jobInstance.getRunTimeValues();
-
         jobInstance = jobInstanceService.findById(jobInstance.getId());
-
-        jobInstance.setRunTimeValues(runTimeValues);
 
         log.info("Execute a job {} of type {} with parameters {} from {}", jobInstance, jobInstance.getJobTemplate(), params, jobLauncher);
 
@@ -123,15 +126,23 @@ public class JobExecutionService extends BaseService {
 
         if (jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())) {
 
-            JobRunningStatusEnum isRunning = lockForRunning(jobInstance, jobInstance.isLimitToSingleNode());
+            JobRunningStatusEnum isRunning = lockForRunning(jobInstance, jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE);
 
-            if ((jobInstance.isLimitToSingleNode() && isRunning == JobRunningStatusEnum.NOT_RUNNING)
-                    || (!jobInstance.isLimitToSingleNode() && (isRunning == JobRunningStatusEnum.NOT_RUNNING || isRunning == JobRunningStatusEnum.LOCKED_OTHER || isRunning == JobRunningStatusEnum.RUNNING_OTHER))) {
+            // For worker, expected response is running_other
+
+            if ((jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && isRunning == JobRunningStatusEnum.NOT_RUNNING)
+                    || (jobInstance.getClusterBehavior() != JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE
+                            && (isRunning == JobRunningStatusEnum.NOT_RUNNING || isRunning == JobRunningStatusEnum.LOCKED_OTHER || isRunning == JobRunningStatusEnum.RUNNING_OTHER))) {
 
                 JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl(jobInstance, jobLauncher);
+                // set parent history id
+                if (params != null && params.containsKey(Job.JOB_PARAM_HISTORY_PARENT_ID)) {
+                    jobExecutionResult.setParentJobExecutionResult((Long) params.get(Job.JOB_PARAM_HISTORY_PARENT_ID));
+                }
+
                 jobExecutionResultService.persistResult(jobExecutionResult);
 
-                jobExecutionService.executeJobAsync(jobInstance, params, jobExecutionResult, currentUser.unProxy());
+                jobExecutionService.executeJobAsync(jobInstance, params, jobExecutionResult, jobLauncher, currentUser.unProxy());
 
                 jobExecutionResultId = jobExecutionResult.getId();
 
@@ -145,14 +156,16 @@ public class JobExecutionService extends BaseService {
                 throw new ValidationException("Job is currently running on another cluster node and is limited to run one at a time");
             }
         }
-        // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only
-        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API)
-                && (!jobInstance.isLimitToSingleNode() || (jobInstance.isLimitToSingleNode() && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
-            
+        // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only or was launched from a node that
+        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API) && (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.RUN_IN_PARALLEL
+                || (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
+
             Map<String, Object> jobParameters = new HashMap<String, Object>();
             jobParameters.put(Job.JOB_PARAM_LAUNCHER, jobLauncher);
-            
-            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.execute, jobParameters);
+            if (params != null) {
+                jobParameters.putAll(params);
+            }
+            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.execute, params);
         }
         return jobExecutionResultId;
     }
@@ -163,29 +176,34 @@ public class JobExecutionService extends BaseService {
      * @param jobInstance Job instance to execute.
      * @param params Parameters (currently not used)
      * @param jobExecutionResult Job execution history/results. Optional. If not provided. One will be created automatically.
+     * @param jobLauncher How job was launched
      * @param lastCurrentUser Currently authenticated user
      * @throws BusinessException Any exception
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void executeJobAsync(JobInstance jobInstance, Map<String, Object> params, JobExecutionResultImpl jobExecutionResult, MeveoUser lastCurrentUser) throws BusinessException {
+    public void executeJobAsync(JobInstance jobInstance, Map<String, Object> params, JobExecutionResultImpl jobExecutionResult, JobLauncherEnum jobLauncher, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-        JobExecutionResultStatusEnum jobResultStatus = job.execute(jobInstance, jobExecutionResult, null);
 
-        int i = 0;
-        while (jobResultStatus == JobExecutionResultStatusEnum.COMPLETED_MORE && i < MAX_TIMES_TO_RUN_INCOMPLETE_JOB) {
-            jobResultStatus = job.execute(jobInstance, null, JobLauncherEnum.INCOMPLETE);
-            i++;
-        }
+        jobInstance.setRunTimeValues(params);
+        JobExecutionResultStatusEnum jobResultStatus = job.execute(jobInstance, jobExecutionResult, jobLauncher);
 
-        if (jobResultStatus == JobExecutionResultStatusEnum.COMPLETED && jobInstance.getFollowingJob() != null) {
-            JobInstance nextJob = jobInstanceService.refreshOrRetrieve(jobInstance.getFollowingJob());
-            nextJob = PersistenceUtils.initializeAndUnproxy(nextJob);
-            log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
-            executeJob(nextJob, null, JobLauncherEnum.TRIGGER, false);
+        if (jobLauncher != JobLauncherEnum.WORKER) {
+            int i = 0;
+            while (jobResultStatus == JobExecutionResultStatusEnum.COMPLETED_MORE && i < MAX_TIMES_TO_RUN_INCOMPLETE_JOB) {
+                jobResultStatus = job.execute(jobInstance, null, JobLauncherEnum.INCOMPLETE);
+                i++;
+            }
+
+            if (jobResultStatus == JobExecutionResultStatusEnum.COMPLETED && jobInstance.getFollowingJob() != null) {
+                JobInstance nextJob = jobInstanceService.refreshOrRetrieve(jobInstance.getFollowingJob());
+                nextJob = PersistenceUtils.initializeAndUnproxy(nextJob);
+                log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
+                executeJob(nextJob, null, JobLauncherEnum.TRIGGER, false);
+            }
         }
     }
 
@@ -215,7 +233,6 @@ public class JobExecutionService extends BaseService {
      *
      * @param jobInstance Job instance to stop
      */
-    @SuppressWarnings("rawtypes")
     public void stopJobByForce(JobInstance jobInstance) {
         stopJobByForce(jobInstance, true);
     }
@@ -253,7 +270,9 @@ public class JobExecutionService extends BaseService {
                 i++;
             }
         }
-        // Publish to other cluster nodes to cancel job execution
+
+        // Clear pending workload from queue and
+        // publish to other cluster nodes to cancel job execution
         if (triggerStopOnOtherNodes) {
             clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.stop);
         }

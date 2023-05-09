@@ -44,16 +44,13 @@ import javax.inject.Inject;
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -85,6 +82,10 @@ import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
  * @author Tarik FA.
@@ -458,7 +459,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         	return null;
         }
         if(result.size()>1) {
-        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmId+"' matching date: "+ operationDate);
+        	throw new RatingException("More than one pricePlanVersion for pricePlan '"+ppmId+"' matching date: "+ operationDate);
         }
 		return result.get(0);
 	}

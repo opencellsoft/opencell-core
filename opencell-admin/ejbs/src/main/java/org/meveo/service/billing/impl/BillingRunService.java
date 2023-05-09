@@ -17,7 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
-import static java.math.BigDecimal.*;
+import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.collections4.ListUtils.partition;
@@ -26,7 +26,17 @@ import static org.meveo.commons.utils.ParamBean.getInstance;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -59,7 +69,27 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingProcessTypesEnum;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
+import org.meveo.model.billing.BillingRunList;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.BillingRunTypeEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.PostInvoicingReportsDTO;
+import org.meveo.model.billing.PreInvoicingReportsDTO;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -1359,9 +1389,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         JobInstance jobInstance = jobInstances.get(0);
         Map<String, Object> params = new HashMap<>();
         params.put("BillingRuns", Arrays.asList(new EntityReferenceWrapper(BillingRun.class.getName(), null, billingRun.getId().toString())));
-        jobInstance.setRunTimeValues(params);
 
-        jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.API);
+        jobExecutionService.executeJob(jobInstance, params, JobLauncherEnum.API);
 
     }
 
@@ -1761,4 +1790,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
     
+	public List<Long> getBAsHavingOpenILs(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("InvoiceLine.getBAsHavingOpenILsByBR",Long.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+	}
 }

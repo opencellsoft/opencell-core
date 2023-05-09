@@ -56,7 +56,6 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.cpq.contract.ContractItem;
-import org.meveo.model.payments.DunningLOT;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -76,7 +75,13 @@ import org.meveo.model.scripts.ScriptInstance;
         @Parameter(name = "sequence_name", value = "cat_price_plan_matrix_seq"), })
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCode", query = "SELECT ppm from PricePlanMatrix ppm where ppm.disabled is false and ppm.eventCode=:chargeCode order by ppm.priority ASC, id", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+                @QueryHint(name = "org.hibernate.cacheable", value = "true"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
+        @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCodeForRating", query = "SELECT new org.meveo.model.catalog.PricePlanMatrixForRating(id,  code, offerTemplate.id,  startSubscriptionDate,  endSubscriptionDate,  startRatingDate,  endRatingDate,  minQuantity, "
+                + "maxQuantity, minSubscriptionAgeInMonth, maxSubscriptionAgeInMonth,  criteria1Value,  criteria2Value,  criteria3Value,  criteriaEL,  amountWithoutTax, "
+                + "amountWithTax,  amountWithoutTaxEL,  amountWithTaxEL, tradingCurrency.id, tradingCountry.id,  priority, seller.id, validityCalendar.id, sequence, scriptInstance.id, "
+                + "totalAmountEL,  minimumAmountEL,  invoiceSubCategoryEL,  validityFrom,  validityDate) from PricePlanMatrix ppm where ppm.disabled is false and ppm.eventCode=:chargeCode order by ppm.priority ASC, id", hints = {
+                        @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+
 public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparable<PricePlanMatrix>, ISearchable {
     private static final long serialVersionUID = 1L;
 
@@ -143,7 +148,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
-    @OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PricePlanMatrixVersion> versions = new ArrayList<>();
 
     /**
@@ -372,12 +377,12 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @JoinColumn(name = "charge_template_id")
     private ChargeTemplate chargeTemplate;
 
-    @OneToMany(mappedBy = "pricePlan", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pricePlan", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ContractItem> contractItems;
     /**
 	 * Discount plan items
 	 */
-	@OneToMany(mappedBy = "pricePlanMatrix", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<DiscountPlanItem> discountPlanItems = new ArrayList<>();  
 	
     public String getEventCode() {

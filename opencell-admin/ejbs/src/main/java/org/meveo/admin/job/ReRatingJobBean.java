@@ -54,7 +54,7 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rerate, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rerate, null, null, null);
     }
 
     /**
