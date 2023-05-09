@@ -20,14 +20,14 @@ public class CustomFieldTemplateUtils {
      * @param valueRequire Is value required
      * @param storageType Storage type
      * @param entityClazz Entity class
-     * @param appliedTo Applies to value
+     * @param appliesTo Applies to value
      * @return A custom field template
      */
     public static CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum fieldType, String guiPosition, String defaultValue, boolean valueRequire, CustomFieldStorageTypeEnum storageType,
-            String entityClazz, String appliedTo) {
+            String entityClazz, String appliesTo) {
         CustomFieldTemplate cft = new CustomFieldTemplate();
         cft.setCode(code);
-        cft.setAppliesTo("JobInstance_RatedTransactionsJob");
+        cft.setAppliesTo(appliesTo);
         cft.setActive(true);
         cft.setDescription(description);
         cft.setFieldType(fieldType);
