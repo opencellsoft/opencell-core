@@ -143,7 +143,7 @@ public class InvoiceLinesFactory {
                 && billingRun.getBillingCycle() != null
                 && !billingRun.getBillingCycle().isDisableAggregation()
                 && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
-            BigDecimal unitAmount = (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO);
+            BigDecimal unitAmount = (BigDecimal) data.getOrDefault("sum_without_tax", ZERO);
             BigDecimal quantity = (BigDecimal) data.getOrDefault("quantity", ZERO);
             MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
             BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity, mc);
