@@ -298,14 +298,14 @@ public abstract class PaymentMethod extends EnableCFEntity {
 	
     
     public void anonymize(String code) {
-        setInfo1(code);
-        setInfo2(code);
-        setInfo3(code);
-        setInfo4(code);
-        setInfo5(code);
-        setTokenId(code);
-        setToken3DsId(code);
-        setUserId(code);
+        setInfo1(StringUtils.isNotBlank(info1) ? code : info1);
+        setInfo2(StringUtils.isNotBlank(info2) ? code : info2);
+        setInfo3(StringUtils.isNotBlank(info3) ? code : info3);
+        setInfo4(StringUtils.isNotBlank(info4) ? code : info4);
+        setInfo5(StringUtils.isNotBlank(info5) ? code : info5);
+        setTokenId(StringUtils.isNotBlank(tokenId) ? code : tokenId);
+        setToken3DsId(StringUtils.isNotBlank(token3DsId) ? code : token3DsId);
+        setUserId(StringUtils.isNotBlank(userId) ? code : userId);
     }
 
     @Override

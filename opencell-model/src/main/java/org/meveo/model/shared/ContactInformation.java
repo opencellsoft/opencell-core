@@ -25,6 +25,7 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.Size;
 
 import org.meveo.commons.encryption.PersonnalDataEncryptor;
+import org.meveo.commons.utils.StringUtils;
 
 /**
  * Contact information
@@ -122,10 +123,10 @@ public class ContactInformation implements Serializable, Cloneable {
     }
 
     public void anonymize(String code) {
-        setEmail(code + "@opencellsoft.com");
-        setFax(code);
-        setMobile(code);
-        setPhone(code);
+        setEmail(StringUtils.isNotBlank(email) ? code + "@opencellsoft.com" : email);
+        setFax(StringUtils.isNotBlank(fax) ? code : fax);
+        setMobile(StringUtils.isNotBlank(mobile) ? code : mobile);
+        setPhone(StringUtils.isNotBlank(phone) ? code : phone);
     }
 
 }

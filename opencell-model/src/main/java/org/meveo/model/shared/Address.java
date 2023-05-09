@@ -26,6 +26,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Country;
 
 /**
@@ -208,12 +209,12 @@ public class Address implements Serializable, Cloneable {
     }
 
     public void anonymize(String code) {
-        setAddress1(code);
-        setAddress2(code);
-        setAddress3(code);
-        setCity(code);
-        setState(code);
-        setZipCode("xxx");
+        setAddress1(StringUtils.isNotBlank(address1) ? code :address1);
+        setAddress2(StringUtils.isNotBlank(address2) ? code : address2);
+        setAddress3(StringUtils.isNotBlank(address3) ? code : address3);
+        setCity(StringUtils.isNotBlank(city) ? code : city);
+        setState(StringUtils.isNotBlank(state) ? code : state);
+        setZipCode(StringUtils.isNotBlank(zipCode) ? "xxx" : zipCode);
         setCountry(null);
     }
 

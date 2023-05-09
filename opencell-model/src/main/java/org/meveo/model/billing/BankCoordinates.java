@@ -257,18 +257,18 @@ public class BankCoordinates implements Serializable, Cloneable {
     }
     
     public void anonymize(String code) {
-        setKey(code.substring(0,2));
-        setBankCode(code.substring(0,5));
-        setBranchCode(code.substring(0,5));
-        setAccountNumber(code.substring(0,11));
-        setIban(code);
-        setBic(code);
-        setAccountOwner(code);
-        setBankName(code);
-        setBankId(code);
-        setIssuerNumber(code);
-        setIssuerName(code);
-        setIcs(code.substring(0,35));
+        setKey(StringUtils.isNotBlank(key) ? code.substring(0,2) : key);
+        setBankCode(StringUtils.isNotBlank(bankCode) ? code.substring(0,5) : bankCode);
+        setBranchCode(StringUtils.isNotBlank(branchCode) ? code.substring(0,5) : branchCode);
+        setAccountNumber(StringUtils.isNotBlank(accountNumber) ? code.substring(0,11) : accountNumber);
+        setIban(StringUtils.isNotBlank(iban) ? code : iban);
+        setBic(StringUtils.isNotBlank(bic) ? code : bic);
+        setAccountOwner(StringUtils.isNotBlank(accountOwner) ? code : accountOwner);
+        setBankName(StringUtils.isNotBlank(bankName) ? code : bankName);
+        setBankId(StringUtils.isNotBlank(bankId) ? code : bankId);
+        setIssuerNumber(StringUtils.isNotBlank(issuerNumber) ? code : issuerNumber);
+        setIssuerName(StringUtils.isNotBlank(issuerName) ? code : issuerName);
+        setIcs(StringUtils.isNotBlank(ics) ? code.substring(0,35) : ics);
     }
 
     @Override
