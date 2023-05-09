@@ -1138,7 +1138,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public QueryBuilder getQuery(PaginationConfiguration config) {
-    	return getQuery(config,"a", false);
+    	return getQuery(config,"a", config.isDistinctQuery());
     }
     	
     public QueryBuilder getQuery(PaginationConfiguration config, String alias, boolean distinct) {
