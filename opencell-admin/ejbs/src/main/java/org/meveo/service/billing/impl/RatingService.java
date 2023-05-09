@@ -624,13 +624,16 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
             //Get contract by list of customer ids, billing account and customer account
             List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, bareWalletOperation);
-            
+             
             // Unit price was not overridden
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise()) || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
+
+                Contract contract = lookupSuitableContract(customers, contracts);
+                
                 // Check if unit price was not overridden by a contract
-                    // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
+                // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
                 Contract contractWithRules = lookupSuitableContract(customers, contracts, true);
-                    bareWalletOperation.setRulesContract(contractWithRules);
+                bareWalletOperation.setRulesContract(contractWithRules);
 
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
