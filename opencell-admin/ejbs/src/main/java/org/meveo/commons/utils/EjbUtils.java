@@ -19,7 +19,6 @@ package org.meveo.commons.utils;
 
 import java.util.Properties;
 
-import javax.enterprise.inject.spi.CDI;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -132,17 +131,6 @@ public class EjbUtils {
     @SuppressWarnings("rawtypes")
     public static Object getServiceInterface(Class entityClass) {
         return getServiceInterface(entityClass.getSimpleName() + "Service");
-    }
-
-    /**
-     * Lookup a CDI managed bean
-     * 
-     * @param <T> Bean class
-     * @param beanClass Bean class
-     * @return Bean instance
-     */
-    public static <T> T getCdiBean(Class<T> beanClass) {
-        return CDI.current().select(beanClass).get();
     }
 
     public static String getCurrentClusterNode() {
