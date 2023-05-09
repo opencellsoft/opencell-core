@@ -127,7 +127,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     
     @Inject
     private TradingCurrencyService tradingCurrencyService;
-    
+
 	@Inject
 	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
     
@@ -394,8 +394,12 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return duplicate(pricePlanMatrixVersion, pricePlanMatrix, validity, null, priceVersionType, setNewVersion);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrix pricePlanMatrix, DatePeriod validity, VersionStatusEnum status, PriceVersionTypeEnum priceVersionType, boolean setNewVersion) {
+        return duplicate(pricePlanMatrixVersion, pricePlanMatrix, validity, status, priceVersionType, setNewVersion, null);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrix pricePlanMatrix, DatePeriod validity, VersionStatusEnum status, PriceVersionTypeEnum priceVersionType, boolean setNewVersion, Integer currentVersion) {
         var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
         var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
 
@@ -410,8 +414,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         if(priceVersionType != null){
             duplicate.setPriceVersionType(priceVersionType);
         }
-        if(!setNewVersion) {
-            Integer lastVersion = getLastVersion(pricePlanMatrixVersion.getPricePlanMatrix());
+        if(currentVersion != null) {
+            duplicate.setCurrentVersion(currentVersion);
+        } else if(!setNewVersion) {
+            Integer lastVersion = getLastVersion(pricePlanMatrix);
             duplicate.setCurrentVersion(lastVersion + 1);
         }else {
             duplicate.setCurrentVersion(1);

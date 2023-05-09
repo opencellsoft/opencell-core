@@ -145,4 +145,13 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 		    }
 	}
 
+	@Override
+	public Response duplicateContract(String contractCode) {
+		try {
+			Long id = contractApi.duplicateContract(contractCode);
+			return Response.ok(Collections.singletonMap("id", id)).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e);
+		}
+	}
 }
