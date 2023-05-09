@@ -634,6 +634,11 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		if(order.getOrderParent() != null){
 			duplicatedCommercialOrderDto.setOrderParentCode(order.getOrderParent().getCode());
 		}
+
+		// build custom field
+		duplicatedCommercialOrderDto.setCustomFields(
+				entityToDtoConverter.getCustomFieldsDTO(order, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+
 		return duplicatedCommercialOrderDto;
 	}
 
