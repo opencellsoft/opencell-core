@@ -664,7 +664,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         ofNullable(customerAccountDescription).ifPresent(caDescription -> qb.addSql("UPPER(ao.customerAccount.description) like '%" + caDescription.toUpperCase() +"%'"));
         ofNullable(sellerDescription).ifPresent(sDescription -> qb.addSql("UPPER(ao.seller.description) like ('%" + sDescription.toUpperCase() +"%')"));
         ofNullable(sellerCode).ifPresent(sel -> qb.addSql("UPPER(ao.seller.code) like '%" + sellerCode.toUpperCase() +"%'"));
-        ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
+        ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("UPPER(ao.invoice.invoiceNumber) like '%" + invNumber.toUpperCase() +"%'"));
         ofNullable(tradingCurrency)
                 .ifPresent(fc -> qb.addSql("ao.transactionalCurrency.currency.currencyCode = '" + fc + "'"));
 
