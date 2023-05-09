@@ -176,25 +176,25 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
             MatchingAmount matchingAmount = new MatchingAmount();
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
-                // Transactional Amounts
-                if (amountCredit.compareTo(accountOperation.getTransactionalUnMatchingAmount()) >= 0) {
-                    fullMatch = true;
-                    amountToMatch = accountOperation.getTransactionalUnMatchingAmount();
-                    amountCredit = amountCredit.subtract(amountToMatch);
-                } else {
-                    fullMatch = false;
-                    amountToMatch = amountCredit;
-                    amountCredit = ZERO;
-
-                }
                 // Functional Amounts
                 if (functionalCreditAmount.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
+                    fullMatch = true;
                     functionalAmountToMatch = accountOperation.getUnMatchingAmount();
                     functionalCreditAmount = functionalCreditAmount.subtract(functionalAmountToMatch);
 
                 } else {
+                    fullMatch = false;
                     functionalAmountToMatch = functionalCreditAmount;
                     functionalCreditAmount = ZERO;
+                }
+                
+                // Transactional Amounts
+                if (amountCredit.compareTo(accountOperation.getTransactionalUnMatchingAmount()) >= 0) {
+                    amountToMatch = accountOperation.getTransactionalUnMatchingAmount();
+                    amountCredit = amountCredit.subtract(amountToMatch);
+                } else {
+                    amountToMatch = amountCredit;
+                    amountCredit = ZERO;
                 }
 
                 if (PPL_CREATION.equals(accountOperation.getCode())) {
@@ -207,24 +207,24 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 securityDepositAOPs.add(accountOperation);
 
             } else {
+                // Functional Amounts
+                if (functionalDebitAmount.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
+                	fullMatch = true;
+                	functionalAmountToMatch = accountOperation.getUnMatchingAmount();
+                    functionalDebitAmount = functionalDebitAmount.subtract(functionalAmountToMatch);
+                } else {
+                	fullMatch = false;
+                    functionalAmountToMatch = functionalDebitAmount;
+                    functionalDebitAmount = ZERO;
+                }
+                
                 // Transactional Amounts
                 if (amountDebit.compareTo(accountOperation.getTransactionalUnMatchingAmount()) >= 0) {
-                    fullMatch = true;
                     amountToMatch = accountOperation.getTransactionalUnMatchingAmount();
                     amountDebit = amountDebit.subtract(amountToMatch);
                 } else {
-                    fullMatch = false;
                     amountToMatch = amountDebit;
                     amountDebit = ZERO;
-                }
-
-                // Functional Amounts
-                if (functionalDebitAmount.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
-                    functionalAmountToMatch = accountOperation.getUnMatchingAmount();
-                    functionalDebitAmount = functionalDebitAmount.subtract(functionalAmountToMatch);
-                } else {
-                    functionalAmountToMatch = functionalDebitAmount;
-                    functionalDebitAmount = ZERO;
                 }
             }
 
