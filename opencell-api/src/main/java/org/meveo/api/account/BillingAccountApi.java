@@ -618,6 +618,15 @@ public class BillingAccountApi extends AccountEntityApi {
             }            
         }
 
+        // exemptionReason is mandatory billingAccount.taxCategory==EXEMPTED
+        if ("EXEMPTED".equalsIgnoreCase(postData.getTaxCategoryCode()) && StringUtils.isBlank(postData.getExemptionReason())) {
+            throw new BusinessApiException("Exemption Reason is mandatory for EXEMPTED TaxCategory");
+        }
+
+        if (StringUtils.isNotBlank(postData.getExemptionReason())) {
+            billingAccount.setExemptionReason(postData.getExemptionReason());
+        }
+
         // Update payment method information in a customer account.
         // ONLY used to handle deprecated billingAccountDto.paymentMethod and billingAccountDto.bankCoordinates fields. Use
         createOrUpdatePaymentMethodInCA(postData, billingAccount);

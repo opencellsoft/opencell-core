@@ -1011,4 +1011,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return result;
     }
 
+    public void cancelDiscountedWalletOperation(List<Long> ids) {
+        if(org.apache.commons.collections.CollectionUtils.isNotEmpty(ids)) {
+            getEntityManager().createNamedQuery("WalletOperation.cancelDisountedWallet").setParameter("walletOperationIds", ids).executeUpdate();
+        }else{
+            log.warn("can not cancel discounted wallet operation, cause the list is empty");
+        }
+    }
 }

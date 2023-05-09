@@ -61,6 +61,8 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
+import org.meveo.model.payments.UnMatchingAmount;
+import org.meveo.model.payments.UnMatchingCode;
 import org.meveo.model.payments.WriteOff;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
@@ -113,6 +115,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     @Inject
     private TradingCurrencyService tradingCurrencyService;
 
+    @Inject
+    private UnMatchingCodeService unMatchingCodeService;
+
+    @Inject
+    private UnMatchingAmountService unMatchingAmountService;
+
     private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
 
@@ -140,6 +148,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         boolean isToTriggerCollectionPlanLevelsJob = false;
         List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<>();
         List<AccountOperation> aosToGenerateMatchingCode = new ArrayList<>();
+        BigDecimal appliedRate = ONE;
 
         // Param for security deposit
         Invoice sdInvoice = null;
@@ -187,7 +196,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 }
                 // Functional Amounts
                 if (functionalCreditAmount.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
-                    functionalAmountToMatch = accountOperation.getMatchingAmount();
+                    functionalAmountToMatch = accountOperation.getUnMatchingAmount();
                     functionalCreditAmount = functionalCreditAmount.subtract(functionalAmountToMatch);
 
                 } else {
@@ -260,14 +269,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), InvoicePaymentStatusEnum.PPAID);
                     } 
                     invoice.setPaymentStatusDate(new Date());
+                    appliedRate = invoice.getAppliedRate();
                     entityUpdatedEventProducer.fire(invoice);
 
                 }
             }
 
-            if (0 != amountToMatch.longValue()) {
-                accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(functionalAmountToMatch));
-                accountOperation.setTransactionalMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
+            if (0 != amountToMatch.doubleValue()) {
+                // add baseMatchingAmount to avoid having TransactionalMatchingAmount = MatchingAmount * 2
+                BigDecimal baseMatchingAmount = accountOperation.getMatchingAmount();
+                accountOperation.setMatchingAmount(baseMatchingAmount.add(functionalAmountToMatch));
+                accountOperation.setTransactionalMatchingAmount(baseMatchingAmount.add(amountToMatch));
                 accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(functionalAmountToMatch));
                 accountOperation.setTransactionalUnMatchingAmount(accountOperation.getTransactionalUnMatchingAmount().subtract(amountToMatch));
                 accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
@@ -374,7 +386,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 
             }
 
-            if(0 != amountToMatch.longValue()) {
+            if(0 != amountToMatch.doubleValue()) {
                 accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(functionalAmountToMatch));
                 accountOperation.setTransactionalMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
 
@@ -398,7 +410,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
                 }
                 if (transactionalCurrency != null && !transactionalCurrency.equals(functionalCurrency)) {
-                    createExchangeGainLoss(accountOperation, matchingAmount, transactionalCurrency);
+                    createExchangeGainLoss(accountOperation, matchingAmount, transactionalCurrency, appliedRate);
                 }
             }
         }
@@ -432,29 +444,21 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     }
 
-    private void createExchangeGainLoss(AccountOperation accountOperation, MatchingAmount matchingAmount, TradingCurrency transactionalCurrency) {
-        Date transactionDate =
-                parseDateWithPattern(dateFormat.format(accountOperation.getTransactionDate()), DATE_FORMAT_PATTERN);
-        BigDecimal currentRate = transactionalCurrency.getExchangeRate(transactionDate) != null
-                ? transactionalCurrency.getExchangeRate(transactionDate).getExchangeRate() : null;
-        BigDecimal lastExchangeRate = accountOperation.getAppliedRate();
+    private void createExchangeGainLoss(AccountOperation accountOperation, MatchingAmount matchingAmount, TradingCurrency transactionalCurrency, BigDecimal appliedRate) {
+        Date transactionDate = parseDateWithPattern(dateFormat.format(accountOperation.getTransactionDate()), DATE_FORMAT_PATTERN);
+        BigDecimal currentRate = transactionalCurrency.getExchangeRate(transactionDate) != null? transactionalCurrency.getExchangeRate(transactionDate).getExchangeRate() : null;
 
         AccountOperation exchangeDeltaAccountOperation = new AccountOperation();
         if (currentRate != null) {
-            if (currentRate.compareTo(lastExchangeRate) < 0) {
-
-                BigDecimal exchangeRateGain = lastExchangeRate.subtract(currentRate);
-                BigDecimal exchangeGain = matchingAmount.getMatchingAmount().divide(exchangeRateGain, 2, HALF_UP);
+            BigDecimal amontAppliedRate = matchingAmount.getMatchingAmount().multiply(appliedRate);
+            BigDecimal amontCurrentRate = amontAppliedRate.divide(currentRate);
+            if (currentRate.compareTo(appliedRate) < 0) {
+                BigDecimal exchangeGain = amontAppliedRate.subtract(amontCurrentRate);
                 exchangeDeltaAccountOperation.setCode("XCH_GAIN");
                 exchangeDeltaAccountOperation.setAmount(exchangeGain);
                 exchangeDeltaAccountOperation.setMatchingAmount(exchangeGain);
-
             } else {
-                BigDecimal exchangeRateLoss = currentRate.subtract(lastExchangeRate);
-                if(ZERO.compareTo(exchangeRateLoss) == 0) {
-                    exchangeRateLoss = ONE;
-                }
-                BigDecimal exchangeLoss = matchingAmount.getMatchingAmount().divide(exchangeRateLoss, 2, HALF_UP);
+                BigDecimal exchangeLoss = amontCurrentRate.subtract(amontAppliedRate);
                 exchangeDeltaAccountOperation.setCode("XCH_LOSS");
                 exchangeDeltaAccountOperation.setAmount(exchangeLoss);
                 exchangeDeltaAccountOperation.setMatchingAmount(exchangeLoss);
@@ -543,6 +547,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         }
         List<MatchingAmount> matchingAmounts = matchingCode.getMatchingAmounts();
 
+        // Build unmatching code instance
+        UnMatchingCode unMatchingCode = new UnMatchingCode(matchingCode);
+        unMatchingCodeService.create(unMatchingCode);
+
         if (matchingAmounts != null) {
             log.info("matchingAmounts.size:" + matchingAmounts.size());
             for (MatchingAmount matchingAmount : matchingAmounts) {
@@ -553,8 +561,13 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 if (operation instanceof RecordedInvoice && ((RecordedInvoice) operation).getPaymentScheduleInstanceItem() != null) {
                     paymentScheduleInstanceItem = ((RecordedInvoice) operation).getPaymentScheduleInstanceItem();
                 }
-                operation.setUnMatchingAmount(operation.getUnMatchingAmount().add(matchingAmount.getMatchingAmount()));
-                operation.setMatchingAmount(operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount()));
+                BigDecimal baseUnMatchingAmount = operation.getUnMatchingAmount();
+                BigDecimal calculatedMatchingAmount = operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount());
+                BigDecimal calculatedUnMatchingAmount = baseUnMatchingAmount.add(matchingAmount.getMatchingAmount());
+                operation.setUnMatchingAmount(calculatedUnMatchingAmount);
+                operation.setTransactionalUnMatchingAmount(calculatedUnMatchingAmount);
+                operation.setMatchingAmount(calculatedMatchingAmount);
+                operation.setTransactionalMatchingAmount(calculatedMatchingAmount);
                 if (ZERO.compareTo(operation.getMatchingAmount()) == 0) {
                     operation.setMatchingStatus(MatchingStatusEnum.O);
                     if (operation instanceof RecordedInvoice) {
@@ -582,6 +595,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 operation.getMatchingAmounts().remove(matchingAmount);
                 accountOperationService.update(operation);
                 log.info("cancel one accountOperation!");
+
+                // Build unMatchingAmount instance
+                UnMatchingAmount unMatchingAmount = new UnMatchingAmount(matchingAmount, unMatchingCode);
+                unMatchingAmountService.create(unMatchingAmount);
             }
         }
         log.info("remove matching code ....");

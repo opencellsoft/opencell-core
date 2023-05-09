@@ -471,7 +471,9 @@
         <createSequence sequenceName="meveo_script_parameter_seq"/>
         <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
         <createSequence sequenceName="cpq_converted_price_plan_version_seq" startValue="1" />
-       <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
+        <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
+	    <createSequence sequenceName="ar_unmatching_code_seq" startValue="1"/>
+        <createSequence sequenceName="ar_unmatching_amount_seq" startValue="1"/>
     </changeSet>
 
 
@@ -2690,6 +2692,7 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="icd_id" type="bigint" />
+            <column name="exemption_reason" type="varchar(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -6791,6 +6794,7 @@
                 <constraints nullable="false" />
             </column>
 		    <column name="invoice_subject_code" type="bigint" />
+			<column name="description_i18n" type="${type.json}"></column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
@@ -8669,6 +8673,7 @@
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
+			<column name="untdid_taxation_category_id" type="bigint" />
             <column name="cf_values" type="${type.json}" />
         </createTable>
     </changeSet>
@@ -17821,7 +17826,7 @@
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-10541_20221013_build" author="TarikFA.">
     	<createTable tableName="billing_linked_invoices">
             <column name="id" type="bigint" >
@@ -18056,6 +18061,10 @@
             </column>
 
         </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="untdid_taxation_category_id" baseTableName="billing_tax_category" constraintName="fk_untdid_taxation_category"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" 
+			referencedColumnNames="id" referencedTableName="untdid_5305_taxation_category" />
         
         <createSequence sequenceName="untdid_vatex_seq" startValue="1" />
         <createTable tableName="untdid_vatex">
@@ -18320,6 +18329,52 @@
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+
+	<changeSet author="aelmalki" id="#rebuild-INTRD-15664-20230501">
+        <createTable tableName="ar_unmatching_code">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_unmatching_code_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="unmatching_amount_credit" type="numeric(23, 12)" />
+            <column name="unmatching_amount_debit" type="numeric(23, 12)" />
+			<column name="transactional_unmatching_amount_credit" type="numeric(23, 12)" />
+            <column name="transactional_unmatching_amount_debit" type="numeric(23, 12)" />
+            <column name="unmatching_date" type="date" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+
+		<createTable tableName="ar_unmatching_amount">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_unmatching_amount_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="unmatching_amount" type="numeric(23, 12)" />
+            <column name="transactional_unmatching_amount" type="numeric(23, 12)" />
+
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="account_operation_id" type="bigint" />
+            <column name="unmatching_code_id" type="bigint" />
+        </createTable>
+    </changeSet>
+
+    <changeSet author="aelmalki" id="#rebuild-fk-INTRD-15664-20230501">
+		<addForeignKeyConstraint baseColumnNames="account_operation_id" baseTableName="ar_unmatching_amount" constraintName="fk_eurt0sf36q7w68zx58bn" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+
+		<addForeignKeyConstraint baseColumnNames="unmatching_code_id" baseTableName="ar_unmatching_amount" constraintName="fk_qwvfl1elw6vgzi7vp5dc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_unmatching_code" />
     </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
@@ -19680,8 +19735,13 @@
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
-    
-    
+    <changeSet id="#INTRD-15841_20230502" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-15664-20230501" author="aelmalki" />
+	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari"/>
+	<changeSet id="#INTRD-15899_20230505" author="aelmalki" />
+	<changeSet id="#INTRD-15899_20230505-taxation-FK" author="aelmalki" />
+
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

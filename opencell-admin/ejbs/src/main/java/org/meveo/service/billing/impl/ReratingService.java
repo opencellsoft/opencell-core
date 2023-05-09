@@ -11,10 +11,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -26,6 +23,7 @@ import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.RatingResult;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
@@ -40,6 +38,8 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
+
+import liquibase.pro.packaged.e;
 
 /**
  * Service to handle wallet operation re-rating when service parameters or tariffs change.
@@ -554,9 +554,11 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
     }
 
     private WalletOperation rateNewWO(WalletOperation oldWO, boolean useSamePricePlan) {
-        WalletOperation newWO = oneShotRatingService.rateRatedWalletOperation(oldWO, useSamePricePlan);
-        create(newWO);
-        return newWO;
+    	RatingResult ratingResult = oneShotRatingService.rateRatedWalletOperation(oldWO, useSamePricePlan);
+    	for(WalletOperation wo : ratingResult.getWalletOperations()) {
+    		create(wo);
+    	} 
+        return ratingResult.getWalletOperations().stream().filter(e -> e.getDiscountValue()==null).findFirst().orElse(null);
     }
 
 }

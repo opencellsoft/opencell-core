@@ -27,8 +27,10 @@ import org.meveo.api.dto.response.tax.TaxCategoryListResponseDto;
 import org.meveo.api.dto.tax.TaxCategoryDto;
 import org.meveo.api.exception.*;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.model.billing.UntdidTaxationCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.tax.TaxCategory;
+import org.meveo.service.billing.impl.UntdidTaxationCategoryService;
 import org.meveo.service.tax.TaxCategoryService;
 
 import javax.ejb.Stateless;
@@ -47,6 +49,9 @@ public class TaxCategoryApi extends BaseCrudApi<TaxCategory, TaxCategoryDto> {
 
     @Inject
     private TaxCategoryService entityService;
+
+    @Inject
+    private UntdidTaxationCategoryService untdidTaxationCategoryService;
 
     /**
      * Creates a new TaxCategory entity
@@ -174,6 +179,16 @@ public class TaxCategoryApi extends BaseCrudApi<TaxCategory, TaxCategoryDto> {
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
+        }
+
+        // Find untdidTaxationCategory
+        if (StringUtils.isNotBlank(dto.getUntdidTaxationCategoryCode())) {
+            UntdidTaxationCategory untdidTaxationCategory = untdidTaxationCategoryService.getByCode(dto.getUntdidTaxationCategoryCode());
+            if (untdidTaxationCategory == null) {
+                throw new EntityDoesNotExistsException(UntdidTaxationCategory.class, dto.getUntdidTaxationCategoryCode());
+            } else {
+                entity.setUntdidTaxationCategory(untdidTaxationCategory);
+            }
         }
     }
 }

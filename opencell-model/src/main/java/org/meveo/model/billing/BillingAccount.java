@@ -328,6 +328,10 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
     @Size(max = 2000)
     private String ccedEmails;
 
+    @Column(name = "exemption_reason", length = 2000)
+    @Size(max = 2000)
+    private String exemptionReason;
+
     /**
      * Account tax category
      **/
@@ -863,5 +867,13 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
         return ofNullable(tradingLanguage)
                 .map(TradingLanguage::getLanguageCode)
                 .orElse(null);
+    }
+
+    public String getExemptionReason() {
+        return exemptionReason;
+    }
+
+    public void setExemptionReason(String exemptionReason) {
+        this.exemptionReason = exemptionReason;
     }
 }
