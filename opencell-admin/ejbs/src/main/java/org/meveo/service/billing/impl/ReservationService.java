@@ -167,6 +167,7 @@ public class ReservationService extends PersistenceService<Reservation> {
             walletReservation.setAmountWithoutTax(servicesSum);
         }
 
+        walletReservation.setTradingCurrency(currency);
         walletReservationService.create(walletReservation);
 
         // #4 Return the reservationId.

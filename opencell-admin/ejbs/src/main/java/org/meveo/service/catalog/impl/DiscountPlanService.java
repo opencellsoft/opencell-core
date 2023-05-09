@@ -20,7 +20,6 @@ package org.meveo.service.catalog.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,8 +57,6 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 
@@ -68,16 +65,9 @@ import org.meveo.service.tax.TaxMappingService.TaxInfo;
  **/
 @Stateless
 public class DiscountPlanService extends BusinessService<DiscountPlan> {
-
-
-    @Inject
-    private AccountingArticleService accountingArticleService;
     
     @Inject
     private DiscountPlanItemService discountPlanItemService;
-    
-    @Inject
-    private WalletOperationService walletOperationService;
 
     @Inject
     private TaxMappingService taxMappingService;
@@ -173,7 +163,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 	public List<WalletOperation> calculateDiscountplanItems(List<DiscountPlanItem> discountPlanItems, Seller seller, BillingAccount billingAccount, Date operationDate, BigDecimal quantity, 
     		BigDecimal unitAmountWithoutTax, String discountCode, WalletInstance walletInstance, OfferTemplate offerTemplate, 
     		ServiceInstance serviceInstance, Subscription subscription, String discountDescription, boolean isVirtual, ChargeInstance chargeInstance, WalletOperation walletOperation, DiscountPlanTypeEnum... discountPlanTypeEnum) {
-    	List<WalletOperation> discountWalletOperations = new ArrayList<WalletOperation>();
+    	List<WalletOperation> discountWalletOperations = new ArrayList<>();
     	 int rounding = appProvider.getRounding();
          RoundingModeEnum roundingMode = appProvider.getRoundingMode();
     	discountPlanItems.sort(Comparator.comparing(DiscountPlanItem::getFinalSequence));
@@ -186,7 +176,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     		BigDecimal discountValue=null;
     		BigDecimal discountedAmount=unitAmountWithoutTax;
     		Product product=null;
-    		List<DiscountPlanItem> discountPlanItemsByType =  new ArrayList<DiscountPlanItem>(discountPlanItems);
+    		List<DiscountPlanItem> discountPlanItemsByType =  new ArrayList<>(discountPlanItems);
 
     		if(discountPlanTypeEnum != null) {
     			final List<DiscountPlanTypeEnum> discountPlanTypeEnumList=Arrays.asList(discountPlanTypeEnum);
@@ -260,14 +250,15 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			discountWalletOperation.setDescription(discountDescription);
     			discountWalletOperation.setChargeInstance(chargeInstance);
     			discountWalletOperation.setInputQuantity(quantity);
-    			discountWalletOperation.setCurrency(walletOperation!=null?walletOperation.getCurrency():billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
+    			discountWalletOperation.setCurrency(walletOperation != null ? walletOperation.getCurrency()
+						: billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
     			discountWalletOperation.setDiscountPlanItem(discountPlanItem);
     			discountWalletOperation.setDiscountPlanType(discountPlanItem.getDiscountPlanItemType());
     			discountWalletOperation.setDiscountValue(discountValue);
     			discountWalletOperation.setSequence(discountPlanItem.getFinalSequence());
     			discountWalletOperation.setDiscountedAmount(discountedAmount);
 				discountWalletOperation.setOrderNumber(walletOperation != null ? walletOperation.getOrderNumber() : null);
-    			
+				discountWalletOperation.setTradingCurrency(billingAccount.getTradingCurrency());
     			if(!isVirtual) {
     				discountWalletOperation.setSubscription(subscription);
     				discountWalletOperation.setUserAccount(subscription.getUserAccount());
@@ -280,12 +271,13 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     				walletOperation.setDiscountedAmount(discountedAmount);
     				discountWalletOperation.setUuid(walletOperation.getUuid());
     			}
-    			log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",walletOperation!=null?walletOperation.getCode():null,discountValue);
+				log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",
+						walletOperation != null ? walletOperation.getCode() : null, discountValue);
     			//TODO: must have wallet operation for : link discountWallet to the current wallet, and
     			discountWalletOperations.add(discountWalletOperation);
-    			if(BooleanUtils.isTrue(discountPlanItem.getLastDiscount())){
-    				break;
-    			}
+				if (BooleanUtils.isTrue(discountPlanItem.getLastDiscount())) {
+					break;
+				}
     		}
     	}
 
