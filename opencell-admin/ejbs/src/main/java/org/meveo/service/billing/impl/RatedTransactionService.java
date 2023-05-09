@@ -1693,8 +1693,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             Map<String, String> mapToInvoiceLineTable = buildMapToInvoiceLineTable(aggregationConfiguration);
             String query = buildFetchQuery(new PaginationConfiguration(filter, fieldToFetch, mapToInvoiceLineTable.keySet()),
-                    getEntityCondition(be), lastTransactionDate, incrementalInvoiceLines, mapToInvoiceLineTable,
-                    aggregationConfiguration.isAggregationPerUnitAmount());
+                    getEntityCondition(be), lastTransactionDate, incrementalInvoiceLines, mapToInvoiceLineTable);
 
             if (incrementalInvoiceLines) {
                 query = query.replace("a.ivl.", "ivl.");
@@ -1703,7 +1702,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
         } else {
-            return getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate, filter, null);
+            return getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate, filter, aggregationConfiguration);
         }
     }
 
@@ -1799,8 +1798,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     private String buildFetchQuery(PaginationConfiguration searchConfig, String entityCondition, Date lastTransactionDate,
-                                   boolean incrementalInvoiceLines, Map<String, String> mapToInvoiceLineTable,
-                                   boolean aggregationPerUnitAmount) {
+                                   boolean incrementalInvoiceLines, Map<String, String> mapToInvoiceLineTable) {
         String extraCondition = entityCondition + (lastTransactionDate!=null? " AND a.usageDate < :lastTransactionDate AND ":" AND ") + QUERY_FILTER;
 
         StringBuilder leftJoinClauseBd = new StringBuilder();
@@ -1843,10 +1841,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 if (itr.hasNext())
                     leftJoinClauseBd.append(" AND ");
             }
-
-            if (aggregationPerUnitAmount) {
-                leftJoinClauseBd.append(" AND unit_amount_without_tax/quantity=ivl.unitPrice ");
-            }
         }
 
         QueryBuilder queryBuilder = nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig,
@@ -1882,6 +1876,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             put("infoOrder.productVersion.id", "productVersion.id");
             put("accountingArticle.id", "accountingArticle.id");
             put("discountedRatedTransaction", "discountedInvoiceLine");
+            put("invoiceLine.id", "id");
         }};
 
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption());
@@ -1936,8 +1931,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 false, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType(),
                 billingRun.getIncrementalInvoiceLines());
         String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
-                getEntityCondition(be), lastTransactionDate, billingRun.getIncrementalInvoiceLines(),
-                null, false);
+                getEntityCondition(be), lastTransactionDate, billingRun.getIncrementalInvoiceLines(), null);
 
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
     }
