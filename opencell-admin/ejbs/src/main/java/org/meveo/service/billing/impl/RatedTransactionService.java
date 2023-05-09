@@ -2032,7 +2032,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 List<RatedTransaction> lstRatedTransaction = rtGrpByBAElement.getValue();
                 boolean isApplied = false;
                 for(RatedTransaction rt : lstRatedTransaction) {
-                        List<BillingRule> billingRules = billingRulesService.findAllBillingRulesByBillingAccountAndContract(billingAccount, rt.getRulesContract());                
+                        List<BillingRule> billingRules = rt.getRulesContract() != null ? rt.getRulesContract().getBillingRules() : Collections.emptyList();
+                        
                     isApplied = false;
                         for(BillingRule billingRule : billingRules) { 
                         if (!isApplied) {
@@ -2107,9 +2108,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     if (!isApplied && billingRules.size() != 0) {
                             //same BillingAccount
                             rt.setOriginBillingAccount(rt.getBillingAccount());
-                        if (!rt.isTransient()) {
-                            update(rt);
-                        }
                             if(!isExistInBillingAccountLists(billingAccountsAfter, rt.getBillingAccount())) {
                                 billingAccountsAfter.add(rt.getBillingAccount());
                             }
