@@ -95,6 +95,10 @@ public class AuthorizationCacheContainerProvider implements Serializable { // Ca
      */
     public void addAuthorization(String token, String url, boolean isAuthorized) {
 
+        if (token == null) {
+            token = "null";
+        }
+        
         Map<String, Boolean> authMap = authorizations.get(token);
         if (authMap == null) {
             authMap = new HashMap<String, Boolean>();
@@ -113,6 +117,10 @@ public class AuthorizationCacheContainerProvider implements Serializable { // Ca
      */
     public void addAuthorization(String token, Map<String, Boolean> authorizationInfo) {
 
+        if (token == null) {
+            token = "null";
+        }
+        
         Map<String, Boolean> authMap = authorizations.get(token);
         if (authMap == null) {
             authMap = authorizationInfo;
@@ -132,6 +140,10 @@ public class AuthorizationCacheContainerProvider implements Serializable { // Ca
      * @return True/false if url is (not)authorized or NULL if no information is available yet
      */
     public Boolean isAuthorized(String token, String url) {
+        
+        if (token == null) {
+            token = "null";
+        }
 
         Map<String, Boolean> authMap = authorizations.get(token);
         if (authMap != null) {
