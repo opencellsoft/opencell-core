@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ExemptionReason"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ExemptionReason2"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -574,8 +574,9 @@
 					<textElement markup="styled">
 						<font fontName="Arial" size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{vatexReasons} != null ? ("<style isBold='true'>VAT exoneration reason : </style>" + $F{vatexReasons} + "\n") : "") + 
-($F{baExemptionReason} != null ? ("<style isBold='true'>Exemption reason : </style>" + $F{baExemptionReason}) : "")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{baExemptionReason} != null ? ("<style isBold='true'>Exemption reason : </style> Not subject to VAT - " + $F{baExemptionReason}) : "") + 
+(($F{baExemptionReason} == null || $F{baExemptionReason}.isEmpty()) && $F{vatexReasons} != null ? ("<style isBold='true'>VAT exoneration reason : </style>" + $F{vatexReasons} + "\n") : "") 
+]]></textFieldExpression>
 				</textField>
 				<componentElement>
 					<reportElement key="" positionType="Float" stretchType="ElementGroupHeight" isPrintRepeatedValues="false" x="243" y="4" width="343" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="efb6e3e2-cf48-479d-a73b-0fabcbe6decb"/>

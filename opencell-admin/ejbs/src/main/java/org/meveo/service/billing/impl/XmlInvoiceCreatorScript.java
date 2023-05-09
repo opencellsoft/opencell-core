@@ -123,6 +123,7 @@ import java.util.stream.Collectors;
 public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     private static final String INVOICE_DATE_FORMAT = "invoice.dateFormat";
+    private static final String DEFAULT_VATEX_EU_O_VALUE = "VATEX-EU-O";
 
     @Inject
     @CurrentUser
@@ -799,6 +800,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
             if (StringUtils.isNotBlank(billingAccount.getExemptionReason())) {
                 taxationCategoryTag.setAttribute("taxationCategoryReason", billingAccount.getExemptionReason());
+                // in case of exemption reason, add a hardcoded value for vatex attribute
+                taxationCategoryTag.setAttribute("vatex", DEFAULT_VATEX_EU_O_VALUE);
             }
 
             return taxationCategoryTag;
