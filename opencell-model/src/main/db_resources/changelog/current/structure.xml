@@ -16357,5 +16357,26 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" 
 			referencedColumnNames="id" referencedTableName="untdid_5305_taxation_category" />
    	</changeSet>
+   	
+   	
+    <changeSet id="#INTRD-15849_20230509" author="TarikFA.">
+    		<createTable tableName="billing_seller_media">
+    			<column name="seller_id" type="bigint" />
+    			<column name="media_id" type="bigint" />
+    		</createTable>
+       	 <addUniqueConstraint columnNames="seller_id, media_id" constraintName="seller_id_media_id_unique_key" tableName="billing_seller_media" />
+        <addForeignKeyConstraint baseColumnNames="seller_id" 
+        						 baseTableName="billing_seller_media" 
+        						 constraintName="fk_media_seller_id" 
+        						 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            					 onUpdate="NO ACTION" referencedColumnNames="id" 
+            					 referencedTableName="crm_seller" />
+        <addForeignKeyConstraint baseColumnNames="media_id" 
+        						 baseTableName="billing_seller_media" 
+        						 constraintName="fk_seller_media_id" 
+        						 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            					 onUpdate="NO ACTION" referencedColumnNames="id" 
+            					 referencedTableName="cpq_media" />
+    </changeSet>
     
 </databaseChangeLog>
