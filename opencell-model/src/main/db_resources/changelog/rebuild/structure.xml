@@ -474,6 +474,7 @@
         <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
 	    <createSequence sequenceName="ar_unmatching_code_seq" startValue="1"/>
         <createSequence sequenceName="ar_unmatching_amount_seq" startValue="1"/>
+        <createSequence sequenceName="price_list_seq" startValue="1" />
     </changeSet>
 
 
@@ -18370,7 +18371,6 @@
     </changeSet>
 
     <changeSet id="#INTRD-16031_20230508_rebuild" author="zelmeliani">
-        <createSequence sequenceName="price_list_seq" startValue="1" />
         <createTable tableName="price_list">
 	    	<column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="price_list_pkey" />

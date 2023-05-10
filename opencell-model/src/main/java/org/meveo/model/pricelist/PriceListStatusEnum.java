@@ -1,4 +1,4 @@
-package org.meveo.model.priceList;
+package org.meveo.model.pricelist;
 
 public enum PriceListStatusEnum {
 
