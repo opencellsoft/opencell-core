@@ -312,7 +312,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		customer.setMandateAddress(address);
     		customer.setPersonalInformation(personalInformation);
     		if(isEntreprise) {
-    			customer.setCompanyName(formatIngenicoData(customerAccount.getName().getLastName(), true));
+    			String customerLastName=customerAccount.getName().getLastName();
+    			if (customerLastName.length() > 40) {
+    			    customerLastName = customerLastName.substring(0, 40);
+    			}
+    			customer.setCompanyName(formatIngenicoData(customerLastName, true));
     		}
     		
     		CreateMandateRequest body = new CreateMandateRequest();
