@@ -374,8 +374,8 @@ public class PricePlanSelectionService implements Serializable {
     public PricePlanMatrixLine determinePricePlanLine(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues) throws NoPricePlanException {
         PricePlanMatrixLine ppLine = determinePricePlanLineOptional(pricePlanMatrixVersion, attributeValues);
         if (ppLine == null) {
-            throw new NoPricePlanException("No price match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion()
-                    + ") using attributes : " + attributeValues);
+            throw new NoPricePlanException("No price match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + " id: "
+                    + pricePlanMatrixVersion.getId() + ") using attributes : " + attributeValues);
         }
         return ppLine;
     }
