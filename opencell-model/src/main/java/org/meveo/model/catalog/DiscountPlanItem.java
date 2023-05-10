@@ -35,6 +35,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
@@ -175,7 +176,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
 
-	  /**
+	/**
      * list of accountingArticle attached
      */
     @ManyToMany(fetch = FetchType.LAZY)
@@ -224,6 +225,12 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	@Column(name = "description", length = 255)
 	private String description;
+	
+	/**
+     * list of trading discount plan item attached
+     */
+	@OneToMany(mappedBy = "discountPlanItem", fetch = FetchType.LAZY)
+    private Set<TradingDiscountPlanItem> tradingDiscountPlanItems = new HashSet<>();
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -501,9 +508,13 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 		return finalSequence;
 	
 	}
-	
-	
-	
-	
+
+	public Set<TradingDiscountPlanItem> getTradingDiscountPlanItems() {
+		return tradingDiscountPlanItems;
+	}
+
+	public void setTradingDiscountPlanItems(Set<TradingDiscountPlanItem> tradingDiscountPlanItems) {
+		this.tradingDiscountPlanItems = tradingDiscountPlanItems;
+	}
 
 }

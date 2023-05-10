@@ -475,6 +475,7 @@
 	    <createSequence sequenceName="ar_unmatching_code_seq" startValue="1"/>
         <createSequence sequenceName="ar_unmatching_amount_seq" startValue="1"/>
         <createSequence sequenceName="price_list_seq" startValue="1" />
+        <createSequence sequenceName="cat_trading_discount_plan_item_seq" startValue="1" />
     </changeSet>
 
 
@@ -18404,6 +18405,41 @@
 		<addForeignKeyConstraint baseColumnNames="unmatching_code_id" baseTableName="ar_unmatching_amount" constraintName="fk_qwvfl1elw6vgzi7vp5dc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_unmatching_code" />
     </changeSet>
+    
+    <changeSet id="#INTRD-15823_20230510" author="AdilElJaouhari">
+		<createTable tableName="cat_trading_discount_plan_item">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"	primaryKeyName="cat_trading_discount_plan_item_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="discount_plan_item_id" type="bigint" />
+			<column name="transactional_discount_value" type="numeric(23, 12)" />
+			<column name="trading_currency_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="rate" type="numeric(23, 12)" />
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="discount_plan_item_id"
+			baseTableName="cat_trading_discount_plan_item"
+			constraintName="cat_trading_discount_plan_item_fk" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id"
+			referencedTableName="cat_discount_plan_item" />
+		<addForeignKeyConstraint
+			baseColumnNames="trading_currency_id"
+			baseTableName="cat_trading_discount_plan_item"
+			constraintName="cat_trading_discount_plan_trading_currency_fk"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="billing_trading_currency" />
+	</changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
