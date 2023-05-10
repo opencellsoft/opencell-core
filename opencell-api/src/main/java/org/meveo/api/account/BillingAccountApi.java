@@ -625,6 +625,8 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (StringUtils.isNotBlank(postData.getExemptionReason())) {
             billingAccount.setExemptionReason(postData.getExemptionReason());
+        } else {
+            billingAccount.setExemptionReason(null);
         }
 
         // Update payment method information in a customer account.
