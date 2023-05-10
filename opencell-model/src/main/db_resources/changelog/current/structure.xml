@@ -16391,5 +16391,41 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="status" type="varchar(50)" />
         </createTable>
     </changeSet>
+
+	<changeSet id="#INTRD-15823_20230510" author="AdilElJaouhari">
+		<createSequence sequenceName="cat_trading_discount_plan_item_seq" startValue="1" />
+		<createTable tableName="cat_trading_discount_plan_item">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"	primaryKeyName="cat_trading_discount_plan_item_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="discount_plan_item_id" type="bigint" />
+			<column name="transactional_discount_value" type="numeric(23, 12)" />
+			<column name="trading_currency_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="rate" type="numeric(23, 12)" />
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="discount_plan_item_id"
+			baseTableName="cat_trading_discount_plan_item"
+			constraintName="cat_trading_discount_plan_item_fk" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id"
+			referencedTableName="cat_discount_plan_item" />
+		<addForeignKeyConstraint
+			baseColumnNames="trading_currency_id"
+			baseTableName="cat_trading_discount_plan_item"
+			constraintName="cat_trading_discount_plan_trading_currency_fk"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="billing_trading_currency" />
+	</changeSet>
     
 </databaseChangeLog>
