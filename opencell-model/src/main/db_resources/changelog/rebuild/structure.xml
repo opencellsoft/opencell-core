@@ -16886,6 +16886,7 @@
     	<sql>CREATE INDEX billing_wallet_operation_charge_instance_idx ON billing_wallet_operation(charge_instance_id)</sql>
         <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
         <sql>CREATE INDEX billing_redirection_rule_contract_index ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>
+        <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -19400,6 +19401,7 @@
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>    
     <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15938_20230503" author="AndriusKarpavcius"/>    
+    <changeSet id="#INTRD-16140_20230510" author="AndriusKarpavicius"/>
     
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

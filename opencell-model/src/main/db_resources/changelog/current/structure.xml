@@ -15811,4 +15811,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>update ${db.schema.adapted}cpq_price_plan_matrix_line set accuracy = (select count(*) from ${db.schema.adapted}cpq_price_plan_matrix_value where ppml_id=cpq_price_plan_matrix_line.id)</sql>
     </changeSet>
     
+    <changeSet id="#INTRD-16140_20230510" author="AndriusKarpavicius">
+        <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
+    </changeSet>
+
 </databaseChangeLog>
