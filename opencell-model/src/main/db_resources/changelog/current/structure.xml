@@ -16427,5 +16427,49 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="billing_trading_currency" />
 	</changeSet>
+
+    <changeSet id="#INTRD-16036_20230510" author="zelmeliani" >
+        <createTable tableName="price_list_brand">
+            <column name="price_list_id" type="bigint" />
+            <column name="brand" type="varchar(100)" />
+        </createTable>
+        <createTable tableName="price_list_client_category">
+            <column name="price_list_id" type="bigint" />
+            <column name="client_category" type="varchar(100)" />
+        </createTable>
+        <createTable tableName="price_list_credit_category">
+            <column name="price_list_id" type="bigint" />
+            <column name="credit_category" type="varchar(100)" />
+        </createTable>
+        <createTable tableName="price_list_country">
+            <column name="price_list_id" type="bigint" />
+            <column name="country" type="varchar(100)" />
+        </createTable>
+        <createTable tableName="price_list_currency">
+            <column name="price_list_id" type="bigint" />
+            <column name="currency" type="varchar(100)" />
+        </createTable>
+        <createTable tableName="price_list_legal_entity">
+            <column name="price_list_id" type="bigint" />
+            <column name="legal_entity" type="varchar(100)" />
+        </createTable>
+        <createTable tableName="price_list_payment_method">
+            <column name="price_list_id" type="bigint" />
+            <column name="payment_method" type="varchar(100)" />
+        </createTable>
+        <createTable tableName="price_list_seller">
+            <column name="price_list_id" type="bigint" />
+            <column name="seller" type="varchar(100)" />
+        </createTable>
+
+        <addPrimaryKey columnNames="price_list_id, brand" constraintName="price_list_brand_pkey" tableName="price_list_brand" />
+        <addPrimaryKey columnNames="price_list_id, client_category" constraintName="price_list_client_category_pkey" tableName="price_list_client_category" />
+        <addPrimaryKey columnNames="price_list_id, credit_category" constraintName="price_list_credit_category_pkey" tableName="price_list_credit_category" />
+        <addPrimaryKey columnNames="price_list_id, country" constraintName="price_list_country_pkey" tableName="price_list_country" />
+        <addPrimaryKey columnNames="price_list_id, currency" constraintName="price_list_currency_pkey" tableName="price_list_currency" />
+        <addPrimaryKey columnNames="price_list_id, legal_entity" constraintName="price_list_legal_entity_pkey" tableName="price_list_legal_entity" />
+        <addPrimaryKey columnNames="price_list_id, payment_method" constraintName="price_list_payment_method_pkey" tableName="price_list_payment_method" />
+        <addPrimaryKey columnNames="price_list_id, seller" constraintName="price_list_seller_pkey" tableName="price_list_seller" />
+    </changeSet>
     
 </databaseChangeLog>
