@@ -145,10 +145,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param jobExecutionResult Job execution result
      */
     private void convertWoToRTBatch(List<WalletOperationNative> walletOperations, JobExecutionResultImpl jobExecutionResult) {
-
-        List<Long> rtIds = ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
-
-        ratedTransactionService.applyInvoicingRules(rtIds);
+        ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
     }
 
     private boolean hasMore(JobInstance jobInstance) {
