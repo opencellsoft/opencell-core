@@ -1930,7 +1930,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String aliasInvoiceLineTable = "ivl";
             leftJoinClauseBd.append("LEFT JOIN InvoiceLine ").append(aliasInvoiceLineTable).append(" ON ");
             Iterator<String> itr = searchConfig.getGroupBy().iterator();
-            String groupByInRT = itr.next();
+            String groupByInRT;
             String leftJoinInIL = "";
             String testNullCondition = "";
             while (itr.hasNext()) {
@@ -2000,7 +2000,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             put("infoOrder.productVersion.id", "productVersion.id");
             put("accountingArticle.id", "accountingArticle.id");
             put("discountedRatedTransaction", "discountedInvoiceLine");
-            put("invoiceLine.id", "id");
         }};
 
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption());
