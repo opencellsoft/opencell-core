@@ -55,6 +55,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
@@ -2093,7 +2094,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 List<RatedTransaction> lstRatedTransaction = rtGrpByBAElement.getValue();
                 boolean isApplied = false;
                 for(RatedTransaction rt : lstRatedTransaction) {
-                        List<BillingRule> billingRules = rt.getRulesContract() != null ? rt.getRulesContract().getBillingRules() : Collections.emptyList();
+                	if(rt.getRulesContract() == null || CollectionUtils.isEmpty(rt.getRulesContract().getBillingRules()) ) {
+                		continue;
+                	}
+                    
+                	List<BillingRule> billingRules =  rt.getRulesContract().getBillingRules();
                         
                     isApplied = false;
                         for(BillingRule billingRule : billingRules) { 
@@ -2103,7 +2108,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                     eCriteriaEL = checkCriteriaEL(rt, billingRule.getCriteriaEL());
                                 } catch (BusinessException e) {
                                     rt.setStatus(RatedTransactionStatusEnum.REJECTED);
-                                rt.setRejectReason("Error evaluating criteriaEL [id=" + billingRule.getId() + ", priority= " + billingRule.getPriority() + ", criteriaEL=" + billingRule.getCriteriaEL() + "] for RT [id="
+                                    rt.setRejectReason("Error evaluating criteriaEL [id=" + billingRule.getId() + ", priority= " + billingRule.getPriority() + ", criteriaEL=" + billingRule.getCriteriaEL() + "] for RT [id="
                                         + rt.getId() + "]: Error in criteriaEL evaluation");
                                 if (!rt.isTransient()) {
                                     update(rt);
@@ -2167,8 +2172,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         }
                     }
                     if (!isApplied && billingRules.size() != 0) {
-                            //same BillingAccount
-                            rt.setOriginBillingAccount(rt.getBillingAccount());
                             if(!isExistInBillingAccountLists(billingAccountsAfter, rt.getBillingAccount())) {
                                 billingAccountsAfter.add(rt.getBillingAccount());
                             }
