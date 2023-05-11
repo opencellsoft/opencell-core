@@ -79,8 +79,13 @@ import org.meveo.model.scripts.ScriptInstance;
         @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCodeForRating", query = "SELECT new org.meveo.model.catalog.PricePlanMatrixForRating(id,  code, offerTemplate.id,  startSubscriptionDate,  endSubscriptionDate,  startRatingDate,  endRatingDate,  minQuantity, "
                 + "maxQuantity, minSubscriptionAgeInMonth, maxSubscriptionAgeInMonth,  criteria1Value,  criteria2Value,  criteria3Value,  criteriaEL,  amountWithoutTax, "
                 + "amountWithTax,  amountWithoutTaxEL,  amountWithTaxEL, tradingCurrency.id, tradingCountry.id,  priority, seller.id, validityCalendar.id, sequence, scriptInstance.id, "
-                + "totalAmountEL,  minimumAmountEL,  invoiceSubCategoryEL,  validityFrom,  validityDate) from PricePlanMatrix ppm where ppm.disabled is false and ppm.eventCode=:chargeCode order by ppm.priority ASC, id", hints = {
-                        @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+                + "totalAmountEL,  minimumAmountEL,  invoiceSubCategoryEL,  validityFrom,  validityDate) from PricePlanMatrix ppm where ppm.disabled is false and ppm.eventCode=:chargeCode and "
+                + "(seller.id is null or seller.id=:sellerId) and (offerTemplate.id is null or offerTemplate.id=:offerId) and (tradingCountry.id is null or tradingCountry.id=:tradingCountryId) and (tradingCurrency.id is null or tradingCurrency.id=:tradingCurrencyId) and "
+                + "(criteria1Value is null or criteria1Value=:param1) and (criteria2Value is null or criteria2Value=:param2) and (criteria3Value is null or criteria3Value=:param3) and (startSubscriptionDate is null or startSubscriptionDate<=:subscriptionDate) and "
+                + "(endSubscriptionDate is null or endSubscriptionDate>:subscriptionDate) and (minSubscriptionAgeInMonth is null or minSubscriptionAgeInMonth>=:subscriptionAge) and (maxSubscriptionAgeInMonth is null or maxSubscriptionAgeInMonth<:subscriptionAge) and "
+                + "(startRatingDate is null or startRatingDate<=:operationDate) and (endRatingDate is null or endRatingDate>:operationDate) and (validityFrom is null or validityFrom<:startDate) and (validityDate is null or (validityDate>=:startDate or validityDate>=:endDate)) and "
+                + "(maxQuantity is null or maxQuantity>:quantity) and (minQuantity is null or minQuantity<=:quantity)"
+                + "order by ppm.priority ASC, id", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 
 public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparable<PricePlanMatrix>, ISearchable {
     private static final long serialVersionUID = 1L;

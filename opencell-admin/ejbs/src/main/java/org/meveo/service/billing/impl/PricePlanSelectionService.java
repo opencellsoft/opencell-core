@@ -1,7 +1,6 @@
 package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -11,13 +10,14 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.ELUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -67,31 +67,58 @@ public class PricePlanSelectionService implements Serializable {
     /**
      * Determine a price plan that match a wallet operation and buyer country and currency
      * 
-     * @param bareWalletOperation Wallet operation to determine price for
+     * @param bareWo Wallet operation to determine price for
      * @param buyerCountryId Buyer country id
      * @param buyerCurrency Buyer currency
      * @return Price plan matched
      * @throws NoPricePlanException No price plan line was matched
      * @throws InvalidELException Failed to evaluate EL expression
      */
-    public PricePlanMatrix determineDefaultPricePlan(WalletOperation bareWalletOperation, Long buyerCountryId, TradingCurrency buyerCurrency) throws NoPricePlanException, InvalidELException {
+    public PricePlanMatrix determineDefaultPricePlan(WalletOperation bareWo, Long buyerCountryId, TradingCurrency buyerCurrency) throws NoPricePlanException, InvalidELException {
+
+        long subscriptionAge = 0;
+        Date subscriptionDate = DateUtils.truncateTime(bareWo.getSubscriptionDate());
+        Date operationDate = DateUtils.truncateTime(bareWo.getOperationDate());
+        if (subscriptionDate != null && operationDate != null) {
+            subscriptionAge = DateUtils.monthsBetween(operationDate, DateUtils.addDaysToDate(subscriptionDate, -1));
+        }
+
+        Date startDate = operationDate;
+        Date endDate = operationDate;
+        RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(bareWo.getChargeInstance());
+
+        if ((recurringChargeTemplate != null && recurringChargeTemplate.isProrataOnPriceChange() && bareWo.getEndDate().after(bareWo.getStartDate()))) {
+            startDate = DateUtils.truncateTime(bareWo.getStartDate());
+            endDate = DateUtils.truncateTime(bareWo.getEndDate());
+        }
 
         EntityManager em = getEntityManager();
-        List<PricePlanMatrixForRating> chargePricePlans = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRating", PricePlanMatrixForRating.class)
-            .setParameter("chargeCode", bareWalletOperation.getCode()).getResultList();
+        TypedQuery<PricePlanMatrixForRating> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRating", PricePlanMatrixForRating.class);
 
-        if (chargePricePlans == null || chargePricePlans.isEmpty()) {
-            throw new NoPricePlanException("No active price plan found for charge code " + bareWalletOperation.getCode());
+        Object[] params = new Object[] { "chargeCode", bareWo.getCode(), "sellerId", bareWo.getSeller().getId(), "tradingCountryId", buyerCountryId, "tradingCurrencyId",
+                buyerCurrency != null ? buyerCurrency.getId() : null, "subscriptionDate", subscriptionDate, "subscriptionAge", subscriptionAge, "operationDate", operationDate, "param1", bareWo.getParameter1(), "param2",
+                bareWo.getParameter2(), "param3", bareWo.getParameter3(), "offerId", bareWo.getOfferTemplate() != null ? bareWo.getOfferTemplate().getId() : null, "quantity", bareWo.getQuantity(), "startDate", startDate,
+                "endDate", endDate };
+
+        for (int i = 0; i < 28; i = i + 2) {
+            query.setParameter((String) params[i], params[i + 1]);
         }
-        PricePlanMatrixForRating pricePlan = matchPricePlan(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
+
+        // When matching in DB only, no PricePlanMatrix.criteriaEl and validityCalendar fields will be consulted
+        boolean matchDbOnly = ParamBean.getInstance().getBooleanValue("pricePlanDefault.matchDBOnly", true);
+        if (matchDbOnly) {
+            query.setMaxResults(1);
+        }
+        List<PricePlanMatrixForRating> chargePricePlans = query.getResultList();
+        PricePlanMatrixForRating pricePlan = matchPricePlan(chargePricePlans, bareWo, buyerCountryId, buyerCurrency);
         if (pricePlan == null) {
-            throw new NoPricePlanException("No price plan matched to rate WO for charge code " + bareWalletOperation.getCode());
+            throw new NoPricePlanException("No active price plan matched for parameters " + params);
         }
         return em.getReference(PricePlanMatrix.class, pricePlan.getId());
     }
 
     /**
-     * Find a matching price plan for a given wallet operation
+     * Find a matching price plan for a given wallet operation - used to resolve Price plan criteriaEL and validityCalendar fields that can not be done in DB
      *
      * @param listPricePlan List of price plans to consider
      * @param bareOperation Wallet operation to lookup price plan for
@@ -101,138 +128,24 @@ public class PricePlanSelectionService implements Serializable {
      * @throws InvalidELException Failed to evaluate EL expression
      */
     private PricePlanMatrixForRating matchPricePlan(List<PricePlanMatrixForRating> listPricePlan, WalletOperation bareOperation, Long buyerCountryId, TradingCurrency buyerCurrency) throws InvalidELException {
-        // FIXME: the price plan properties could be null !
-        Date startDate = bareOperation.getStartDate();
-        Date endDate = bareOperation.getEndDate();
-
-        RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(bareOperation.getChargeInstance());
 
         for (PricePlanMatrixForRating pricePlan : listPricePlan) {
 
             log.trace("Try to verify price plan {} for WO {}", pricePlan.getId(), bareOperation.getCode());
 
-            Long sellerId = pricePlan.getSeller();
-            boolean sellerAreEqual = sellerId == null || sellerId.equals(bareOperation.getSeller().getId());
-            if (!sellerAreEqual) {
-                continue;
-            }
-
-            Long tradingCountryId = pricePlan.getTradingCountry();
-            boolean countryAreEqual = tradingCountryId == null || tradingCountryId.equals(buyerCountryId);
-            if (!countryAreEqual) {
-                continue;
-            }
-
-            Long tradingCurrencyId = pricePlan.getTradingCurrency();
-            boolean currencyAreEqual = tradingCurrencyId == null || (buyerCurrency != null && buyerCurrency.getId().equals(tradingCurrencyId));
-            if (!currencyAreEqual) {
-                continue;
-            }
-            Date subscriptionDate = bareOperation.getSubscriptionDate();
-            Date startSubscriptionDate = pricePlan.getStartSubscriptionDate();
-            Date endSubscriptionDate = pricePlan.getEndSubscriptionDate();
-            boolean subscriptionDateInPricePlanPeriod = subscriptionDate == null || ((startSubscriptionDate == null || subscriptionDate.after(startSubscriptionDate) || subscriptionDate.equals(startSubscriptionDate))
-                    && (endSubscriptionDate == null || subscriptionDate.before(endSubscriptionDate)));
-            if (!subscriptionDateInPricePlanPeriod) {
-//                log.trace("The subscription date {} is not in the priceplan subscription range {} - {}", subscriptionDate, startSubscriptionDate, endSubscriptionDate);
-                continue;
-            }
-
-            int subscriptionAge = 0;
-            Date operationDate = bareOperation.getOperationDate();
-            if (subscriptionDate != null && operationDate != null) {
-                subscriptionAge = DateUtils.monthsBetween(operationDate, DateUtils.addDaysToDate(subscriptionDate, -1));
-            }
-
-            boolean subscriptionMinAgeOK = pricePlan.getMinSubscriptionAgeInMonth() == null || subscriptionAge >= pricePlan.getMinSubscriptionAgeInMonth();
-            if (!subscriptionMinAgeOK) {
-//                log.trace("The subscription age={} is less than the priceplan subscription age min={}", subscriptionAge, pricePlan.getMinSubscriptionAgeInMonth());
-                continue;
-            }
-            Long maxSubscriptionAgeInMonth = pricePlan.getMaxSubscriptionAgeInMonth();
-            boolean subscriptionMaxAgeOK = maxSubscriptionAgeInMonth == null || maxSubscriptionAgeInMonth == 0 || subscriptionAge < maxSubscriptionAgeInMonth;
-            if (!subscriptionMaxAgeOK) {
-//                log.trace("The subscription age {} is greater than the priceplan subscription age max {}", subscriptionAge, maxSubscriptionAgeInMonth);
-                continue;
-            }
-
-            Date startRatingDate = pricePlan.getStartRatingDate();
-            Date endRatingDate = pricePlan.getEndRatingDate();
-            boolean applicationDateInPricePlanPeriod = (startRatingDate == null || operationDate.after(startRatingDate) || operationDate.equals(startRatingDate))
-                    && (endRatingDate == null || operationDate.before(endRatingDate));
-            if (!applicationDateInPricePlanPeriod) {
-//                log.trace("The application date {} is not in the priceplan application range {} - {}", operationDate, startRatingDate, endRatingDate);
-                continue;
-            }
-
-            String criteria1Value = pricePlan.getCriteria1Value();
-            boolean criteria1SameInPricePlan = criteria1Value == null || criteria1Value.equals(bareOperation.getParameter1());
-            if (!criteria1SameInPricePlan) {
-//                log.trace("The operation param1 {} is not compatible with price plan criteria 1: {}", bareOperation.getParameter1(), criteria1Value);
-                continue;
-            }
-            String criteria2Value = pricePlan.getCriteria2Value();
-            String parameter2 = bareOperation.getParameter2();
-            boolean criteria2SameInPricePlan = criteria2Value == null || criteria2Value.equals(parameter2);
-            if (!criteria2SameInPricePlan) {
-//                log.trace("The operation param2 {} is not compatible with price plan criteria 2: {}", parameter2, criteria2Value);
-                continue;
-            }
-            String criteria3Value = pricePlan.getCriteria3Value();
-            boolean criteria3SameInPricePlan = criteria3Value == null || criteria3Value.equals(bareOperation.getParameter3());
-            if (!criteria3SameInPricePlan) {
-//                log.trace("The operation param3 {} is not compatible with price plan criteria 3: {}", bareOperation.getParameter3(), criteria3Value);
-                continue;
-            }
             if (!StringUtils.isBlank(pricePlan.getCriteriaEL())) {
                 UserAccount ua = bareOperation.getWallet().getUserAccount();
                 if (!elUtils.evaluateBooleanExpression(pricePlan.getCriteriaEL(), bareOperation, ua, null, pricePlan, null)) {
-//                    log.trace("The operation is not compatible with price plan criteria EL: {}", pricePlan.getCriteriaEL());
+                    // log.trace("The operation is not compatible with price plan criteria EL: {}", pricePlan.getCriteriaEL());
                     continue;
                 }
-            }
-
-            Long ppOfferTemplateId = pricePlan.getOfferTemplate();
-            if (ppOfferTemplateId != null) {
-                boolean offerCodeSameInPricePlan = true;
-
-                if (bareOperation.getOfferTemplate() != null) {
-                    offerCodeSameInPricePlan = bareOperation.getOfferTemplate().getId().equals(ppOfferTemplateId);
-//                } else if (bareOperation.getOfferCode() != null) {
-//                    offerCodeSameInPricePlan = ppOfferTemplateId.getCode().equals(bareOperation.getOfferCode());
-                }
-
-                if (!offerCodeSameInPricePlan) {
-//                    log.trace("The operation offerCode {} is not compatible with price plan offerCode: {}", bareOperation.getOfferTemplate() != null ? bareOperation.getOfferTemplate() : bareOperation.getOfferCode(),
-//                        ppOfferTemplateId);
-                    continue;
-                }
-            }
-
-            BigDecimal maxQuantity = pricePlan.getMaxQuantity();
-            BigDecimal quantity = bareOperation.getQuantity();
-            boolean quantityMaxOk = maxQuantity == null || maxQuantity.compareTo(quantity) > 0;
-            if (!quantityMaxOk) {
-//                log.trace("The quantity " + quantity + " is strictly greater than " + maxQuantity);
-                continue;
-            }
-
-            BigDecimal minQuantity = pricePlan.getMinQuantity();
-            boolean quantityMinOk = minQuantity == null || minQuantity.compareTo(quantity) <= 0;
-            if (!quantityMinOk) {
-//                log.trace("The quantity " + quantity + " is less than " + minQuantity);
-                continue;
-            }
-            if ((recurringChargeTemplate != null && recurringChargeTemplate.isProrataOnPriceChange())
-                    && (!isStartDateBetween(startDate, pricePlan.getValidityFrom(), pricePlan.getValidityDate()) || !isEndDateBetween(endDate, startDate, pricePlan.getValidityDate()))) {
-                continue;
             }
 
             if (pricePlan.getValidityCalendar() != null) {
                 org.meveo.model.catalog.Calendar validityCalendar = getEntityManager().find(org.meveo.model.catalog.Calendar.class, pricePlan.getValidityCalendar());
-                boolean validityCalendarOK = validityCalendar.previousCalendarDate(operationDate) != null;
+                boolean validityCalendarOK = validityCalendar.previousCalendarDate(bareOperation.getOperationDate()) != null;
                 if (!validityCalendarOK) {
-//                    log.trace("The operation date " + operationDate + " does not match pricePlan validity calendar " + validityCalendar.getCode() + "period range ");
+                    // log.trace("The operation date " + operationDate + " does not match pricePlan validity calendar " + validityCalendar.getCode() + "period range ");
                     continue;
                 }
             }
@@ -240,6 +153,7 @@ public class PricePlanSelectionService implements Serializable {
             return pricePlan;
         }
         return null;
+
     }
 
     /**
@@ -438,31 +352,28 @@ public class PricePlanSelectionService implements Serializable {
     }
 
     /**
-     * @param businessAttributes
-     * @param attributeValues
-     * @param walletOperation
+     * Business type attributes are resolved via Wallet operation properties
+     * 
+     * @param businessAttributes Business type attributes
+     * @param attributeValues Attribute values to supplement with new attributes
+     * @param walletOperation Wallet operation to use for EL expression resolution
      */
-    private void addBusinessAttributeValues(List<Attribute> businessAttributes, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
+    private void addBusinessAttributeValues(List<Attribute> businessAttributes, @SuppressWarnings("rawtypes") Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
         businessAttributes.stream().forEach(attribute -> attributeValues.add(getBusinessAttributeValue(attribute, walletOperation)));
     }
 
     /**
-     * @param attribute
-     * @return
+     * Resolve attribute value from EL expression
+     * 
+     * @param attribute Attribute to resolve
+     * @param op Wallet operation to use for EL expression resolution
+     * @return Resolved Attribute value
      */
     @SuppressWarnings("rawtypes")
     private AttributeValue getBusinessAttributeValue(Attribute attribute, WalletOperation op) {
         Object value = ValueExpressionWrapper.evaluateExpression(attribute.getElValue(), Object.class, op);
         AttributeValue<AttributeValue> attributeValue = new AttributeValue<AttributeValue>(attribute, value);
         return attributeValue;
-    }
-
-    private boolean isStartDateBetween(Date date, Date from, Date to) {
-        return (from != null && (date.equals(from) || (date.after(from))));
-    }
-
-    private boolean isEndDateBetween(Date date, Date from, Date to) {
-        return date.after(from) && (to == null || (date.before(to) || date.equals(to)));
     }
 
     private RecurringChargeTemplate getRecurringChargeTemplateFromChargeInstance(ChargeInstance chargeInstance) {
