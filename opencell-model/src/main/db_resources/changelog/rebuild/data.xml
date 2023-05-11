@@ -12006,7 +12006,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
 	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
-	
+	<changeSet id="#INTRD-13682_20230510" author="AbdellatifBARI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

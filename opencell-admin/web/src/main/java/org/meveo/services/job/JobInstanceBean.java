@@ -270,21 +270,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * @return True if it can be executed locally
      */
     public boolean isAllowedToExecute(JobInstance jobInstance) {
-        if (jobInstance == null || jobInstance.getId() == null) {
-            return false;
-        }
-
-        JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
-        if (isRunning == JobRunningStatusEnum.NOT_RUNNING) {
-            return true;
-        } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS || isRunning == JobRunningStatusEnum.LOCKED_THIS || isRunning == JobRunningStatusEnum.REQUEST_TO_STOP) {
-            return false;
-
-        } else {
-
-            String nodeToCheck = EjbUtils.getCurrentClusterNode();
-            return jobInstance.isRunnableOnNode(nodeToCheck);
-        }
+        return jobExecutionService.isAllowedToExecute(jobInstance);
     }
 
     /**

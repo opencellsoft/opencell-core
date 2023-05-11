@@ -20899,4 +20899,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+    <changeSet id="#INTRD-13682_20230510" author="AbdellatifBARI">
+        <update tableName="adm_notification">
+            <column name="event_expression_filter" value="#{event.jobInstance.code.toLowerCase().startsWith('massimport')}" />
+            <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
