@@ -1248,20 +1248,24 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 	}
 	
 	public int getSubscriptionMonthsAge() {
-	    return calculateAge(ChronoUnit.MONTHS);
+	    return calculateAge(ChronoUnit.MONTHS,null);
 	}
 	
 	public int getSubscriptionDaysAge() {
-		return calculateAge(ChronoUnit.DAYS);
+		return calculateAge(ChronoUnit.DAYS,null);
 	}
-
-	public int calculateAge(final ChronoUnit unit) {
+	public int getSubscriptionMonthsAge(Date operationDate) {
+	    return calculateAge(ChronoUnit.MONTHS,operationDate);
+	}
+	public int calculateAge(final ChronoUnit unit,Date operationDate) {
 		if(getSubscriptionDate()==null) {
 			return 0;
 		}
-		Date now = new Date(); 
+		if(operationDate==null) {
+			operationDate=new Date();
+		}
 	    YearMonth m1 = YearMonth.from(getSubscriptionDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-	    YearMonth m2 = YearMonth.from(now.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+	    YearMonth m2 = YearMonth.from(operationDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 	    return Math.toIntExact(m1.until(m2, unit))+1; //+1 is added to include the last month
 	}
 	
