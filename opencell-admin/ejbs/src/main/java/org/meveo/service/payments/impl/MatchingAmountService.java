@@ -17,6 +17,8 @@
  */
 package org.meveo.service.payments.impl;
 
+import static java.util.Optional.ofNullable;
+
 import java.math.BigDecimal;
 
 import javax.ejb.Stateless;
@@ -54,6 +56,10 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 		}
 		operation.setUnMatchingAmount(operation.getUnMatchingAmount().add(matchingAmount.getMatchingAmount()));
 		operation.setMatchingAmount(operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount()));
+		operation.setTransactionalUnMatchingAmount(operation.
+				getTransactionalUnMatchingAmount().add(ofNullable(matchingAmount.getTransactionalMatchingAmount()).orElse(BigDecimal.ZERO)));
+		operation.setTransactionalMatchingAmount(operation.
+				getTransactionalMatchingAmount().subtract(ofNullable(matchingAmount.getTransactionalMatchingAmount()).orElse(BigDecimal.ZERO)));
 		if (BigDecimal.ZERO.compareTo(operation.getMatchingAmount()) == 0) {
 			operation.setMatchingStatus(MatchingStatusEnum.O);
 		} else {
