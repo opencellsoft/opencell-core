@@ -569,6 +569,7 @@ public class WalletApi extends BaseApi {
             throw e;
         }
 
+        walletOperation.setTradingCurrency(userAccount.getBillingAccount().getTradingCurrency());
         walletOperationService.create(walletOperation);
 
         return walletOperation;

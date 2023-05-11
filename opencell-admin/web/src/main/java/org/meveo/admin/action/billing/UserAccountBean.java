@@ -373,6 +373,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         reloadOperation.setDescription("reload");
         reloadOperation.setSeller(entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
         reloadOperation.setType(OperationTypeEnum.CREDIT);
+        reloadOperation.setTradingCurrency(entity.getBillingAccount().getTradingCurrency());
     }
 
     public void reload() throws BusinessException {

@@ -253,7 +253,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     /**
      * Currency of operation rated amounts
+     * @deprecated
      */
+    @Deprecated(since = "15.0.0")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id")
     private Currency currency;
@@ -1233,6 +1235,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setFullRatingPeriod(fullRatingPeriod);
         result.setChargeMode(chargeMode);
         result.setAccountingCode(accountingCode);
+        result.setTradingCurrency(tradingCurrency);
 
         return result;
     }

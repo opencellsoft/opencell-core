@@ -248,6 +248,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     		wo.setInputQuantity(woToRerate.getInputQuantity());
     		wo.setQuantity(woToRerate.getQuantity());
     		wo.setCode(woToRerate.getCode());
+    		wo.setTradingCurrency(woToRerate.getBillingAccount().getTradingCurrency());
     		walletOperationService.update(wo);
     		if (wo.getRatedTransaction() != null) {
     			wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
