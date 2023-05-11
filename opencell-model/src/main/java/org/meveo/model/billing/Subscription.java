@@ -21,7 +21,7 @@ import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1259,10 +1259,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 		if(getSubscriptionDate()==null) {
 			return 0;
 		}
-		Date now = new Date();
-		YearMonth m1 = YearMonth.from(getSubscriptionDate().toInstant().atZone(ZoneOffset.UTC));
-	    YearMonth m2 = YearMonth.from(now.toInstant().atZone(ZoneOffset.UTC));
-		return Math.toIntExact(m1.until(m2, unit));
+		Date now = new Date(); 
+	    YearMonth m1 = YearMonth.from(getSubscriptionDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+	    YearMonth m2 = YearMonth.from(now.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+	    return Math.toIntExact(m1.until(m2, unit))+1; //+1 is added to include the last month
 	}
 	
 }
