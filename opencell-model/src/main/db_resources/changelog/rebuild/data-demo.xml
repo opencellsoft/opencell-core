@@ -4636,6 +4636,7 @@
 			<column name="creator" value="opencell.admin" />
 			<column name="uuid" value="billing_invoice_sub_cat_iscat_security_deposit" />
 		</insert>
+        <!--
 		<insert tableName="billing_accounting_article">
 			<column name="id" value='-11'/>
 			<column name="version" valueNumeric="0" />
@@ -4650,12 +4651,14 @@
 			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
 			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
 		</insert>
+		-->
 	</changeSet>
     <changeSet id="INTRD-5089_20220215" author="TarikRabeh" />
     <changeSet id="#INTRD-5344_2022-02_25" author="hichamELHALOUI" />
     <changeSet id="#INTRD-5888_2022-03_23" author="hichamELHALOUI" />
 
     <changeSet id="INTRD-5701_20220215" author="HatimOUDAD">
+        <!--
         <insert tableName="billing_accounting_article">
         	<column name="id" value="-5"/>
         	<column name="version" valueNumeric="0" />
@@ -4671,6 +4674,64 @@
             <column name="invoice_type_id" value="-5" />
             <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
+        -->
+
+        <insert tableName="billing_accounting_article">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="updated" valueDate="${db.current.time}" />
+            <column name="code" value="PROD-STD" />
+            <column name="description" value="standar product" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="uuid" value="PROD-STD" />
+            <column name="tax_class_id" value="-5" />
+            <column name="invoice_sub_category_id" value="-2" />
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
+        </insert>
+
+        <insert tableName="billing_accounting_article">
+            <column name="id" value='-2'/>
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="DISC-STD"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Remise de pied de facture","ENG":"Invoice discount"}'/>
+            <column name="description" value='Invoice discount'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-DISC-STD" />
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
+        </insert>
+        <insert tableName="billing_accounting_article">
+            <column name="id" value='-3'/>
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="ART-STD"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Article standard","ENG":"Standard article"}'/>
+            <column name="description" value='Standard article'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-ART-STD" />
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
+        </insert>
+        <insert tableName="billing_accounting_article">
+            <column name="id" value='-4'/>
+            <column name="version" valueNumeric="0"/>
+            <column name="code" value="MIN-STD"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Complément du minimum de facturation","ENG":"Invoice minimum complement"}'/>
+            <column name="description" value='Invoice minimum complement'/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="uuid" value="billing_accounting_article-MIN-STD"/>
+            <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
+        </insert>
+
     </changeSet>
 
     <changeSet id="INTRD-5997_20220330" author="HichamELHALOUI">
