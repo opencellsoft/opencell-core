@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -32,6 +33,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
@@ -608,14 +610,21 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		accountOperation.setAccountingDate(accoutingOperationDate);
 	}
 	
-    public int updateAOOperationActionToNone(List<Long> AOIds) throws BusinessException {
-        String strQuery = "UPDATE AccountOperation o SET o.operationAction=org.meveo.model.payments.OperationActionEnum.NONE " + " WHERE o.id in (:AOIds) ";
-        Query query = getEntityManager().createQuery(strQuery);
-        query.setParameter("AOIds", AOIds);
-        int affectedRecords = query.executeUpdate();
-        log.debug("updated record AO to operation action equal to None count={}", affectedRecords);
-        return affectedRecords;
-    }
+	public int updateAOOperationActionToNone(List<Long> AOIds) throws BusinessException {
+	    final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+	    AtomicInteger affectedRecords = new AtomicInteger(0);
+
+	    ListUtils.partition(AOIds, maxValue).forEach(sublist -> {
+	        String strQuery = "UPDATE AccountOperation o SET o.operationAction = org.meveo.model.payments.OperationActionEnum.NONE WHERE o.id IN (:AOIds)";
+	        Query query = getEntityManager().createQuery(strQuery);
+	        query.setParameter("AOIds", sublist);
+	        affectedRecords.addAndGet(query.executeUpdate());
+	    });
+
+	    int totalAffectedRecords = affectedRecords.get();
+	    log.debug("Updated records AO to operation action equal to None count={}", totalAffectedRecords);
+	    return totalAffectedRecords;
+	}
 
 	/**
 	 * @param status 
