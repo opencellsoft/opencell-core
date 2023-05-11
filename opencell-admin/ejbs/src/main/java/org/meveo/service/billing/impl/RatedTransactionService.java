@@ -1889,7 +1889,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (BILLINGACCOUNT != type || !ignoreSubscription) {
             fieldToFetch.add("subscription.id as subscription_id");
             fieldToFetch.add("serviceInstance.id as service_instance_id");
-            fieldToFetch.add("chargeInstance.id as charge_instance_id");
         }
         if(!ignoreOrder) {
             fieldToFetch.add("subscription.order.id as commercial_order_id");
@@ -2011,7 +2010,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (! ignoreSubscription) {
             mapToInvoiceLineTable.put("subscription.id", "subscription.id");
             mapToInvoiceLineTable.put("serviceInstance", "serviceInstance");
-            mapToInvoiceLineTable.put("chargeInstance.id", "chargeInstance.id");
         }
 
         if (! aggregationConfiguration.isIgnoreOrders()) {
