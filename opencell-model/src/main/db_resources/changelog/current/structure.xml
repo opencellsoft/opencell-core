@@ -16674,4 +16674,32 @@ public class AgedBalanceReporting extends ReportExtractScript {
             referencedColumnNames="id" />
     </changeSet>
 
+    <changeSet id="#INTRD-16256_20230515" author="ZBariki">
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_amount_without_tax"
+                      newColumnName="transactional_amount_without_tax"/>
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_amount_with_tax"
+                      newColumnName="transactional_amount_with_tax"/>
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_amount_tax"
+                      newColumnName="transactional_amount_tax"/>
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_unit_amount_without_tax"
+                      newColumnName="transactional_unit_amount_without_tax"/>
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_unit_amount_with_tax"
+                      newColumnName="transactional_unit_amount_with_tax"/>
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_unit_amount_tax"
+                      newColumnName="transactional_unit_amount_tax"/>
+
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_amount_without_tax"
+                      newColumnName="transactional_amount_without_tax"/>
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_amount_with_tax"
+                      newColumnName="transactional_amount_with_tax"/>
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_amount_tax"
+                      newColumnName="transactional_amount_tax"/>
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_unit_amount_without_tax"
+                      newColumnName="transactional_unit_amount_without_tax"/>
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_unit_amount_with_tax"
+                      newColumnName="transactional_unit_amount_with_tax"/>
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_unit_amount_tax"
+                      newColumnName="transactional_unit_amount_tax"/>
+    </changeSet>
+
 </databaseChangeLog>
