@@ -93,28 +93,43 @@ public class PricePlanSelectionService implements Serializable {
         }
 
         EntityManager em = getEntityManager();
-        TypedQuery<PricePlanMatrixForRating> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRating", PricePlanMatrixForRating.class);
 
         Object[] params = new Object[] { "chargeCode", bareWo.getCode(), "sellerId", bareWo.getSeller().getId(), "tradingCountryId", buyerCountryId, "tradingCurrencyId",
                 buyerCurrency != null ? buyerCurrency.getId() : null, "subscriptionDate", subscriptionDate, "subscriptionAge", subscriptionAge, "operationDate", operationDate, "param1", bareWo.getParameter1(), "param2",
                 bareWo.getParameter2(), "param3", bareWo.getParameter3(), "offerId", bareWo.getOfferTemplate() != null ? bareWo.getOfferTemplate().getId() : null, "quantity", bareWo.getQuantity(), "startDate", startDate,
                 "endDate", endDate };
 
-        for (int i = 0; i < 28; i = i + 2) {
-            query.setParameter((String) params[i], params[i + 1]);
-        }
+        // When matching in DB only, no PricePlanMatrix.criteriaEl and validityCalendar fields will be consulted and the highest priority will be chosen
+        boolean matchDbOnly = ParamBean.getInstance().getBooleanValue("pricePlan.default.matchDBOnly", true);
 
-        // When matching in DB only, no PricePlanMatrix.criteriaEl and validityCalendar fields will be consulted
-        boolean matchDbOnly = ParamBean.getInstance().getBooleanValue("pricePlanDefault.matchDBOnly", true);
         if (matchDbOnly) {
+            TypedQuery<PricePlanMatrix> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRatingMatchDB", PricePlanMatrix.class);
+
+            for (int i = 0; i < 28; i = i + 2) {
+                query.setParameter((String) params[i], params[i + 1]);
+            }
             query.setMaxResults(1);
+
+            PricePlanMatrix pricePlan = query.getSingleResult();
+            if (pricePlan == null) {
+                throw new NoPricePlanException("No active price plan matched for parameters " + params);
+            }
+            return pricePlan;
+
+        } else {
+            TypedQuery<PricePlanMatrixForRating> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRating", PricePlanMatrixForRating.class);
+
+            for (int i = 0; i < 28; i = i + 2) {
+                query.setParameter((String) params[i], params[i + 1]);
+            }
+
+            List<PricePlanMatrixForRating> chargePricePlans = query.getResultList();
+            PricePlanMatrixForRating pricePlan = matchPricePlan(chargePricePlans, bareWo, buyerCountryId, buyerCurrency);
+            if (pricePlan == null) {
+                throw new NoPricePlanException("No active price plan matched for parameters " + params);
+            }
+            return em.getReference(PricePlanMatrix.class, pricePlan.getId());
         }
-        List<PricePlanMatrixForRating> chargePricePlans = query.getResultList();
-        PricePlanMatrixForRating pricePlan = matchPricePlan(chargePricePlans, bareWo, buyerCountryId, buyerCurrency);
-        if (pricePlan == null) {
-            throw new NoPricePlanException("No active price plan matched for parameters " + params);
-        }
-        return em.getReference(PricePlanMatrix.class, pricePlan.getId());
     }
 
     /**
