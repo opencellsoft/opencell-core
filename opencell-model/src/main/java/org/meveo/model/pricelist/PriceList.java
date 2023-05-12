@@ -13,10 +13,10 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 
-@Table(name = "price_list")
+@Table(name = "cat_price_list")
 @Entity
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "price_list_seq"), })
+        @Parameter(name = "sequence_name", value = "cat_price_list_seq"), })
 public class PriceList extends BusinessCFEntity {
 
     private static final long serialVersionUID = 3512021797431043307L;
