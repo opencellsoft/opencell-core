@@ -5136,6 +5136,7 @@
             <column name="code" value="OC_MASS_IMPORT_NOTIFICATION" />
             <column name="class_name_filter" value="org.meveo.model.jobs.JobExecutionResultImpl" />
             <column name="event_type_filter" value="STARTED" />
+            <column name="event_expression_filter" value="#{event.jobInstance.code.toLowerCase().startsWith('massimport')}" />
             <column name="version" value="0" />
             <column name="creator" value="opencell.admin" />
             <column name="script_instance_id"
