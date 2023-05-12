@@ -56,4 +56,24 @@ public interface InvoicingResource {
                             description = "The billing run cannot be cancelled")
             })
     Response cancelBillingRun(@PathParam("billingRunId") Long billingRunId);
+
+    @PUT
+    @Path("/{billingRunId}/closeInvoiceLines")
+    @Operation(summary = "Set status of billing run to INVOICE_LINES_CREATED while in appending mode",
+            tags = {"Invoicing"},
+            description = "Set status of billing run to INVOICE_LINES_CREATED, the invoice lines cannot receive new incoming RTs",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+                            description = "The status of billing run is successfully set to INVOICE_LINES_CREATED"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403",
+                            description = "The billing run must be in status OPEN to be updated"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
+                            description = "The billing run does not exists"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409",
+                            description = "The status of billing run cannot be updated to INVOICE_LINES_CREATED")
+            })
+    Response closeInvoiceLines(@Parameter(description = "The id of billing run to be updated")
+                                @PathParam("billingRunId") Long billingRunId,
+                               @Parameter(description = "True to generate invoice immediately, false otherwise") @DefaultValue("false")
+                               @QueryParam("executeInvoicingJob") boolean executeInvoicingJob);
 }
