@@ -508,6 +508,10 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Column(name = "comment_text")
     private String comment;
 
+    @Type(type = "longText")
+    @Column(name = "error_detail")
+    private String errorDetail;
+
     public Date getDueDate() {
         return dueDate;
     }
@@ -1188,5 +1192,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-    
+
+    public String getErrorDetail() {
+        return errorDetail;
+    }
+
+    public void setErrorDetail(String errorDetail) {
+        this.errorDetail = errorDetail;
+    }
 }
