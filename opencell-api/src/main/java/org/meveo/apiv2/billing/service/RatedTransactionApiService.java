@@ -223,7 +223,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 			currentInstance = instances.get(0).getCode();
 		}
 		jobInstanceInfoDto.setCode(currentInstance);
-		JobExecutionResultDto jobExecution = jobApi.executeJob(jobInstanceInfoDto);
+		JobExecutionResultDto jobExecution = jobApi.executeJob(jobInstanceInfoDto, false);
 		result.setJobExecutionResultDto(jobExecution);
 		result.getActionStatus().setMessage(jobExecution.getId() == null ? "NOTHING_TO_DO" : jobExecution.getId().toString());
 		return result;

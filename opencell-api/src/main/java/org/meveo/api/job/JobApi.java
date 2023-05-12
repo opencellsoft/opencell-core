@@ -84,11 +84,12 @@ public class JobApi extends BaseApi {
      * Execute job.
      * 
      * @param jobExecution Job execution info
+     * @param checkJobRunningStatus check the job running status
      * @return Job execution result identifier
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
      */
-    public JobExecutionResultDto executeJob(JobInstanceInfoDto jobExecution) throws MeveoApiException, BusinessException {
+    public JobExecutionResultDto executeJob(JobInstanceInfoDto jobExecution, boolean checkJobRunningStatus) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(jobExecution.getCode()) && StringUtils.isBlank(jobExecution.getTimerName())) {
             missingParameters.add("timerName or code");
         }
@@ -100,7 +101,11 @@ public class JobApi extends BaseApi {
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
-        
+
+        if (checkJobRunningStatus && !jobExecutionService.isAllowedToExecute(jobInstance)) {
+            return findJobExecutionResult(jobInstance.getCode(), null);
+        }
+
         jobInstanceService.createMissingCustomFieldTemplates(jobInstance);
         
         // populate customFields
