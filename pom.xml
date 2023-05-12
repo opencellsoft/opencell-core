@@ -760,7 +760,7 @@
                         <artifactId>byte-buddy</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
+            </dependency>            
 
             <dependency>
                 <groupId>net.bytebuddy</groupId>

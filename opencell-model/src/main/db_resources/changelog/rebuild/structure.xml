@@ -18087,7 +18087,7 @@
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 	</changeSet>
-
+	
 	<changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
@@ -19399,7 +19399,7 @@
     <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI" />
     <changeSet id="#INTRD-15233_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>    
     <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15938_20230503" author="AndriusKarpavcius"/>
     <changeSet id="#INTRD-16140_20230510" author="AndriusKarpavicius"/>
