@@ -127,6 +127,11 @@ public class CreateBillingRunDto extends BaseEntityDto {
      */
     private List<LanguageDescriptionDto> descriptionsTranslated;
 
+    /**
+     * To decide if adding invoice lines incrementally or not.
+     */
+    private Boolean incrementalInvoiceLines;
+
     public Long getId() {
 		return id;
 	}
@@ -371,6 +376,24 @@ public class CreateBillingRunDto extends BaseEntityDto {
 	public void setGenerateAO(Boolean generateAO) {
 		this.generateAO = generateAO;
 	}
+
+    /**
+     * Set the incrementalInvoiceLines
+     *
+     * @param incrementalInvoiceLines
+     */
+    public void setIncrementalInvoiceLines(Boolean incrementalInvoiceLines) {
+        this.incrementalInvoiceLines = incrementalInvoiceLines;
+    }
+
+    /**
+     * Get the incrementalInvoiceLines
+     *
+     * @return incrementalInvoiceLines
+     */
+    public Boolean getIncrementalInvoiceLines() {
+        return incrementalInvoiceLines;
+    }
 
 	@Override
     public String toString() {

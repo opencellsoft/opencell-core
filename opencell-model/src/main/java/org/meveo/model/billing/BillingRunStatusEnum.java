@@ -39,7 +39,11 @@ public enum BillingRunStatusEnum {
     DISCOUNT_ADDED(25,"BillingRunStatusEnum.discountAdded"),//Invoicing threshold have been checked
     TAX_COMPUTED(26,"BillingRunStatusEnum.taxComputed"),//Tax aggregates have been added
     
-    DRAFT_INVOICES(27,"BillingRunStatusEnum.draftInvoices");//Draft invoices have been created. Postinvoicing report is available
+    DRAFT_INVOICES(27,"BillingRunStatusEnum.draftInvoices"),//Draft invoices have been created. Postinvoicing report is available
+
+    OPEN(28, "BillingRunStatusEnum.open"); // when the BR is in this status, it is available to process the update of
+    // existing invoice lines with new Rated Transactions
+
     private Integer id;
     private String label;
 
