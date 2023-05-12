@@ -196,7 +196,7 @@ public class CurrentUserProvider {
      * 
      * @return Current provider code
      */
-    private static String getCurrentTenant() {
+    public static String getCurrentTenant() {
         return currentTenant.get();
     }
 

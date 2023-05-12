@@ -47,6 +47,7 @@ import org.meveo.commons.utils.ThreadUtils;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionInterceptor;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
@@ -200,8 +201,8 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @return Is Job currently running on this cluster node and was not requested to be stopped
      */
     // @Lock(LockType.READ)
-    public boolean isShouldJobContinue(Long jobInstanceId) {
-        String currentProvider = currentUser.getProviderCode();
+    public boolean isShouldJobContinue(Long jobInstanceId) { 
+        String currentProvider = CurrentUserProvider.getCurrentTenant();
         if (jobInstanceId == null) {
             return false;
         }
