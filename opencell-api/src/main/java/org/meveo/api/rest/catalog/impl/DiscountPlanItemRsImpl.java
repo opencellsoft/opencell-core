@@ -22,6 +22,7 @@ import org.meveo.api.catalog.DiscountPlanItemApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
+import org.meveo.api.dto.catalog.TradingDiscountPlanItemDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -160,4 +161,43 @@ public class DiscountPlanItemRsImpl extends BaseRs implements DiscountPlanItemRs
 
         return result;
     }
+
+	@Override
+	public ActionStatus create(TradingDiscountPlanItemDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			result.setEntityId(discountPlanItemApi.createTradingDiscountPlanItem(postData).getId());
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus update(Long tradingDiscountPlanItemId, TradingDiscountPlanItemDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			result.setEntityId(discountPlanItemApi.updateTradingDiscountPlanItem(tradingDiscountPlanItemId, postData).getId());
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus delete(Long tradingDiscountPlanItemId) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			discountPlanItemApi.deleteTradingDiscountPlanItem(tradingDiscountPlanItemId);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
 }
