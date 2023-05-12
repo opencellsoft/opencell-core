@@ -434,6 +434,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 i++;
             }
 
+            // In multiItemProcessing try to read batch size in 1/5th intervals as to spread better load among threads when there are little of data to process
+            int minMultiReadSize = batchSize / 5 + 1;
             mainLoop: while (itemToProcess != null) {
 
                 if (useMultipleItemProcessing) {
@@ -446,13 +448,39 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                         // Job running as job manager publish data to a queue from a DB based iterator in parallel as other threads process data.
                         // Job running as job manager can obtain data from two places - DB based iterator and queue based iterator once no more data is retrieved from a DB based iterator
                         // First try to obtain a value from a current iterator. If no item is retrieved, give a try in Queue based iterator if applicable.
-                        itemToProcess = threadIterator.next();
+                        if (threadIterator instanceof SynchronizedIterator) {
+                            int nextJobStatusCheck = i / checkJobStatusEveryNr + checkJobStatusEveryNr;
+
+                            // Read items in batch as to minimize blocking time on synchronized method SynchronizedIterator.next
+                            int nrItemsToRead = (batchSize - nrOfItemsInBatch) < minMultiReadSize ? (batchSize - nrOfItemsInBatch) : minMultiReadSize;
+                            List<T> itemsToProcessBatchRead = ((SynchronizedIterator<T>) threadIterator).next(nrItemsToRead);
+                            if (itemsToProcessBatchRead != null) {
+
+                                itemsToProcess.addAll(itemsToProcessBatchRead);
+                                nrOfItemsInBatch = nrOfItemsInBatch + itemsToProcessBatchRead.size();
+                                i = i + itemsToProcessBatchRead.size();
+
+                                // Check if job is not stopped yet
+                                if (i >= nextJobStatusCheck && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                                    break mainLoop;
+                                }
+
+                                continue;
+
+                                // Nothing found in batch read
+                            } else {
+                                itemToProcess = null;
+                            }
+                        } else {
+                            itemToProcess = threadIterator.next();
+                        }
                         if (itemToProcess == null && spreadOverCluster && isRunningAsJobManager && !isQueueBasedIterator) {
                             threadIterator = queueBasedIterator;
                             isQueueBasedIterator = true;
                             log.trace("Switching to queue based iterator. Processed {} from db iterator.", i);
                             itemToProcess = threadIterator.next();
                         }
+                        // Still nothing retrieved neither from current nor queue based iterator, so no more data to retrieve - continue with processing
                         if (itemToProcess == null) {
                             break;
                         }

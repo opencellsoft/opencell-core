@@ -35,6 +35,8 @@ import org.meveo.model.cpq.AttributeValue;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_line_sq") })
 @NamedQueries({
+    @NamedQuery(name = "PricePlanMatrixLine.findDefaultByPricePlanMatrixVersion", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId and ratingAccuracy=0", hints = {
+            @QueryHint(name = "org.hibernate.cacheable", value = "TRUE"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
 	@NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select distinct(p) from PricePlanMatrixLine p left join fetch p.pricePlanMatrixValues pv where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId order by p.priority, p.id", hints = {
             @QueryHint(name = "org.hibernate.cacheable", value = "TRUE"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
     @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersionIds", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id in (:ppmvIds)")})
@@ -65,12 +67,18 @@ public class PricePlanMatrixLine extends AuditableEntity {
     private BigDecimal value;
 
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
 
     @Column(name = "priority")
     @NotNull
     private Integer priority = 0;
+    
+    /** 
+     * Rating accuracy - how many values are specified 
+     */
+    @Column(name = "accuracy")
+    @NotNull
+    private int ratingAccuracy = 0;
     
     public PricePlanMatrixLine() {
         super();
@@ -86,6 +94,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.priceWithoutTax = copy.priceWithoutTax;
         this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
         this.priority = copy.priority;
+        this.ratingAccuracy = copy.ratingAccuracy;
         this.valueEL = copy.valueEL;
         this.value = copy.value;
     }
@@ -128,17 +137,8 @@ public class PricePlanMatrixLine extends AuditableEntity {
         return priority;
     }
 
-    public long getEffectifPriority() {
-        return priority != null ? Long.valueOf(priority).longValue() : id;
-    }
-
     public void setPriority(Integer priority) {
         this.priority = priority != null ? priority : 0;
-    }
-
-    public boolean isDefaultLine(){
-        return pricePlanMatrixValues.stream()
-                .allMatch(v -> v.matchWithAllValues());
     }
 
     public String getValueEL() {
@@ -149,11 +149,6 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.valueEL = priceEL;
     }
     
-    public boolean match(Set<AttributeValue> attributeValues) {
-        return pricePlanMatrixValues.stream()
-                .allMatch(v -> v.match(attributeValues));
-    }
-
     public BigDecimal getValue() {
         return value;
     }
@@ -162,6 +157,20 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.value = price;
     }
 
+    /**
+     * @return Rating accuracy - how many values are specified 
+     */
+    public int getRatingAccuracy() {
+        return ratingAccuracy;
+    }
+    
+    /**
+     * @param ratingAccuracy Rating accuracy - how many values are specified 
+     */
+    public void setRatingAccuracy(int ratingAccuracy) {
+        this.ratingAccuracy = ratingAccuracy;
+    }
+        
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
