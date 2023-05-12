@@ -16427,5 +16427,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="billing_trading_currency" />
 	</changeSet>
+	
+	<changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari">
+		<renameColumn tableName="cat_trading_discount_plan_item" oldColumnName="transactional_discount_value" newColumnName="trading_discount_value"/>
+	</changeSet>
     
 </databaseChangeLog>
