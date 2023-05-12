@@ -16434,7 +16434,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	
 	<changeSet id="#INTRD-16219_20230511" author="aelmalki">
         <addColumn tableName="ar_account_operation">
-            <column name="error_detail" type="varchar(2000)" />
+            <column name="error_detail" type="${type.longtext}" />
         </addColumn>
     </changeSet>
     
