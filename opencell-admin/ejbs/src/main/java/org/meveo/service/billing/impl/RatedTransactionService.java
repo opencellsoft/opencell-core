@@ -1818,7 +1818,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             Map<String, String> mapToInvoiceLineTable = buildMapToInvoiceLineTable(aggregationConfiguration);
             String query = buildFetchQuery(new PaginationConfiguration(filter, fieldToFetch, mapToInvoiceLineTable.keySet()),
-                    getEntityCondition(be), lastTransactionDate, incrementalInvoiceLines, mapToInvoiceLineTable);
+                    getEntityCondition(be), lastTransactionDate, incrementalInvoiceLines, mapToInvoiceLineTable,
+                    billingRun.getId());
 
             if (incrementalInvoiceLines) {
                 query = query.replace("a.ivl.", "ivl.");
@@ -1922,7 +1923,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     private String buildFetchQuery(PaginationConfiguration searchConfig, String entityCondition, Date lastTransactionDate,
-                                   boolean incrementalInvoiceLines, Map<String, String> mapToInvoiceLineTable) {
+                                   boolean incrementalInvoiceLines, Map<String, String> mapToInvoiceLineTable,
+                                   Long billingRunId) {
         String extraCondition = entityCondition + (lastTransactionDate!=null? " AND a.usageDate < :lastTransactionDate AND ":" AND ") + QUERY_FILTER;
 
         StringBuilder leftJoinClauseBd = new StringBuilder();
@@ -1965,6 +1967,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 if (itr.hasNext())
                     leftJoinClauseBd.append(" AND ");
             }
+
+            leftJoinClauseBd.append("AND ivl.billingRun.id = ").append(billingRunId).append(" ");
         }
 
         QueryBuilder queryBuilder = nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig,
@@ -2053,7 +2057,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 false, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType(),
                 billingRun.getIncrementalInvoiceLines());
         String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
-                getEntityCondition(be), lastTransactionDate, billingRun.getIncrementalInvoiceLines(), null);
+                getEntityCondition(be), lastTransactionDate, billingRun.getIncrementalInvoiceLines(), null,
+                billingRun.getId());
 
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
     }
