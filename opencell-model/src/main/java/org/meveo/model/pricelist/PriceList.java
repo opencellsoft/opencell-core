@@ -1,11 +1,13 @@
 package org.meveo.model.pricelist;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -35,7 +37,10 @@ public class PriceList extends BusinessCFEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
-    private SecurityTemplateStatusEnum status;
+    private PriceListStatusEnum status;
+
+	@OneToMany(mappedBy = "priceList")
+	private Set<PriceListLine> lines;
 
 	public Date getValidFrom() {
 		return validFrom;
@@ -69,11 +74,19 @@ public class PriceList extends BusinessCFEntity {
 		this.applicationEndDate = applicationEndDate;
 	}
 
-	public SecurityTemplateStatusEnum getStatus() {
+	public PriceListStatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(SecurityTemplateStatusEnum status) {
+	public void setStatus(PriceListStatusEnum status) {
 		this.status = status;
+	}
+
+	public Set<PriceListLine> getLines() {
+		return lines;
+	}
+
+	public void setLines(Set<PriceListLine> lines) {
+		this.lines = lines;
 	}
 }
