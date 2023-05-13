@@ -19779,6 +19779,9 @@
             </column>
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
             <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -19797,7 +19800,7 @@
             <column name="charge_template_id" type="bigint" />
             <column name="price_plan_id" type="bigint" />
             <column name="price_list_type" type="varchar(25)" />
-            <column name="applicationEL" type="varchar(255)" />
+            <column name="application_el" type="varchar(255)" />
             <column name="rate" type="numeric(23, 12)" />
         </createTable>
         <addForeignKeyConstraint
