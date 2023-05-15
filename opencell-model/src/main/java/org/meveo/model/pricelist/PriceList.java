@@ -1,22 +1,18 @@
 package org.meveo.model.pricelist;
 
 import java.util.Date;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 
-@Table(name = "price_list")
+@Table(name = "cat_price_list")
 @Entity
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "price_list_seq"), })
+        @Parameter(name = "sequence_name", value = "cat_price_list_seq"), })
 public class PriceList extends BusinessCFEntity {
 
     private static final long serialVersionUID = 3512021797431043307L;
@@ -35,7 +31,10 @@ public class PriceList extends BusinessCFEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
-    private SecurityTemplateStatusEnum status;
+    private PriceListStatusEnum status;
+
+	@OneToMany(mappedBy = "priceList", fetch = FetchType.LAZY)
+	private Set<PriceListLine> lines;
 
 	public Date getValidFrom() {
 		return validFrom;
@@ -69,11 +68,19 @@ public class PriceList extends BusinessCFEntity {
 		this.applicationEndDate = applicationEndDate;
 	}
 
-	public SecurityTemplateStatusEnum getStatus() {
+	public PriceListStatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(SecurityTemplateStatusEnum status) {
+	public void setStatus(PriceListStatusEnum status) {
 		this.status = status;
+	}
+
+	public Set<PriceListLine> getLines() {
+		return lines;
+	}
+
+	public void setLines(Set<PriceListLine> lines) {
+		this.lines = lines;
 	}
 }
