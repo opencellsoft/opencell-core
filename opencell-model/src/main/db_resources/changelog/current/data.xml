@@ -1490,8 +1490,10 @@
         	<column name="id" value='-1'/>
         	<column name="version" valueNumeric="0" />
         	<column name="code" value="ADV-STD"/>
-        	<column name="tax_class_id" value="-1"/>
+        	<column name="tax_class_id" value="-3"/>
             <column name="invoice_sub_category_id" value="-3"/>
+            <column name="accounting_code_id" value="-6" />
+            <column name="invoice_type_id" value="-5" />
             <column name="description_i18n" value='{"FRA":"Acompte","ENG":"Advance payment"}'/>
             <column name="description" value='Advance payment'/>
             <column name="created" valueDate="${db.current.time}" />
@@ -1533,6 +1535,31 @@
             <column name="created" valueDate="${db.current.time}"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="uuid" value="billing_accounting_article-MIN-STD"/>
+        </insert>
+        <insert tableName="billing_accounting_article">
+            <column name="id" value='-10'/>
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="PROD-STD"/>
+            <column name="tax_class_id" value="-1"/>
+            <column name="invoice_sub_category_id" value="-2"/>
+            <column name="description_i18n" value='{"FRA":"Remise de pied de facture","ENG":"Invoice discount"}'/>
+            <column name="description" value='Invoice discount'/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="63ef9cee-f498-4908-PROD-STD" />
+        </insert>
+        <insert tableName="billing_accounting_article">
+            <column name="id" value='-11'/>
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="ART_SECURITY_DEPOSIT"/>
+            <column name="tax_class_id" value="-3"/>
+            <column name="invoice_sub_category_id" value="-4"/>
+            <column name="invoice_type_id" value="-6"/>
+            <column name="accounting_code_id" value="-36"/>
+            <column name="description" value="Article Security Deposit"/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="uuid" value="billing_accounting_article_art_security_deposit" />
         </insert>
 
     </changeSet>
@@ -2656,21 +2683,6 @@ Best regards,
 Opencell team.
                 ]]>
             </column>
-        </insert>
-    </changeSet>
-
-    <changeSet id="#20210607_540_563" author="TarikFA." failOnError="false">
-        <insert tableName="billing_accounting_article">
-        	<column name="id" value='-10'/>
-        	<column name="version" valueNumeric="0" />
-        	<column name="code" value="PROD-STD"/>
-            <column name="tax_class_id" value="-1"/>
-            <column name="invoice_sub_category_id" value="-2"/>
-            <column name="description_i18n" value='{"FRA":"Remise de pied de facture","ENG":"Invoice discount"}'/>
-            <column name="description" value='Invoice discount'/>
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="uuid" value="63ef9cee-f498-4908-PROD-STD" />
         </insert>
     </changeSet>
 
@@ -6960,18 +6972,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="creator" value="opencell.admin" />
 			<column name="uuid" value="billing_invoice_sub_cat_iscat_security_deposit" />
 		</insert>
-		<insert tableName="billing_accounting_article">
-			<column name="id" value='-11'/>
-			<column name="version" valueNumeric="0" />
-			<column name="code" value="ART_SECURITY_DEPOSIT"/>
-			<column name="tax_class_id" value="-3"/>
-			<column name="invoice_sub_category_id" value="-4"/>
-			<column name="invoice_type_id" value="-6"/>
-			<column name="description" value="Article Security Deposit"/>
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="creator" value="opencell.admin" />
-			<column name="uuid" value="billing_accounting_article_art_security_deposit" />
-		</insert>
 	</changeSet>
 	<changeSet id="#INTRD-4950-20220208" author="MohammedSTITANE">
 		<insert tableName="meveo_script_instance_cat">
@@ -7001,12 +7001,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="sequence_id" valueSequenceCurrent="generic_sequence_seq" />
 		</insert>
 	</changeSet>
-    <changeSet id="INTRD-5089_20220215" author="TarikRabeh">
-        <update tableName="billing_accounting_article">
-			<column name="accounting_code_id" value="-36"/>
-            <where>code='ART_SECURITY_DEPOSIT'</where>
-        </update>
-    </changeSet>
+
     <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI">
     	<sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id = (SELECT id from crm_custom_field_tmpl where code = 'AggregationOptions')</sql>
 	    <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob' and code ='AggregationOptions'</sql>
@@ -8275,15 +8270,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code = 'AutoUpdateCurrentRateJob_Job'</where>
 		</update>
     </changeSet>
-    
-    <changeSet id="#INTRD-11154_20221102" author="TarikFA.">
-    	<update tableName="billing_accounting_article">
-            <column name="accounting_code_id" value="-6" />
-            <column name="invoice_type_id" value="-5" />
-        	<column name="tax_class_id" value="-3"/>
-        	<where> code = 'ADV-STD'</where>
-    	</update>
-    </changeSet>
+
     
     <changeSet id="#INTRD-9161_20221102" author="TarikFA.">
     	<update tableName="billing_invoice_type">
