@@ -13,7 +13,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 
 @Table(name = "cat_price_list")
 @Entity
