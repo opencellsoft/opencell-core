@@ -476,6 +476,7 @@
         <createSequence sequenceName="ar_unmatching_amount_seq" startValue="1"/>
         <createSequence sequenceName="cat_price_list_seq" startValue="1" />
         <createSequence sequenceName="cat_trading_discount_plan_item_seq" startValue="1" />
+        <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
     </changeSet>
 
 
@@ -19771,8 +19772,6 @@
 	</changeSet>
 
     <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe">
-        <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
-
         <createTable tableName="cat_price_list_line">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_price_list_line_pk" />
