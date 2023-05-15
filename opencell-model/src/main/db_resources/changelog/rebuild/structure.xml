@@ -2151,7 +2151,7 @@
             <column name="applied_rate" type="numeric(23, 12)" />
             <column name="applied_rate_date" type="datetime" />
             <column name="transactional_payment_fees" type="numeric(23, 12)" />
-			<column name="error_detail" type="${type.longtext}" />
+			<column name="error_detail" type="varchar(2000)" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">

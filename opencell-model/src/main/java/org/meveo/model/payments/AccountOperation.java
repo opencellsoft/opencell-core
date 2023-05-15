@@ -508,8 +508,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @Column(name = "comment_text")
     private String comment;
 
-    @Type(type = "longText")
-    @Column(name = "error_detail")
+    @Column(name = "error_detail", length = 2000)
     private String errorDetail;
 
     public Date getDueDate() {
