@@ -30,6 +30,7 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
@@ -46,6 +47,7 @@ import org.slf4j.Logger;
  *
  * @author Andrius Karpavicius
  */
+@Stateless
 public class MetricsConfigurationCacheContainerProvider implements Serializable {
 
     @Inject

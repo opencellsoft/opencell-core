@@ -18,27 +18,13 @@
 
 package org.meveo.cache;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.inject.Inject;
-
+import org.apache.commons.lang3.SerializationUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.IEvent;
 import org.meveo.model.AuditableEntity;
@@ -46,6 +32,11 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.catalog.CalendarBanking;
+import org.meveo.model.catalog.CalendarDaily;
+import org.meveo.model.catalog.CalendarInterval;
+import org.meveo.model.catalog.CalendarYearly;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -53,6 +44,24 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.notification.GenericNotificationService;
 import org.slf4j.Logger;
+
+import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 /**
  * Provides cache related services (loading, update) for event notification related operations
@@ -64,6 +73,7 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 7.0
  *
  */
+@Stateless
 public class NotificationCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = 358151068726872948L;

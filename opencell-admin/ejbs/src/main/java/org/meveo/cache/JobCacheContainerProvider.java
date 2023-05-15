@@ -31,6 +31,9 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -56,6 +59,8 @@ import org.slf4j.Logger;
  */
 // @Singleton
 // @Lock(LockType.READ)
+@Stateless
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class JobCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = -4730906690144309131L;
