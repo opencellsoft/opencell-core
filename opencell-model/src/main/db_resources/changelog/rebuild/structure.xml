@@ -2151,6 +2151,7 @@
             <column name="applied_rate" type="numeric(23, 12)" />
             <column name="applied_rate_date" type="datetime" />
             <column name="transactional_payment_fees" type="numeric(23, 12)" />
+			<column name="error_detail" type="varchar(2000)" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -19807,6 +19808,7 @@
 	<changeSet id="#INTRD-15899_20230505-taxation-FK" author="aelmalki" />
     <changeSet id="#INTRD-16031_20230508" author="zelmeliani" />
     <changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-16219_20230511" author="aelmalki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
