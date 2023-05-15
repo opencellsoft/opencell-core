@@ -7082,22 +7082,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="payment_method" value="CHECK" />
 		</insert>
 	</changeSet>
-	
-	<changeSet id="INTRD-5701_20220215" author="HatimOUDAD">
-        <insert tableName="billing_accounting_article">
-        	<column name="id" value="-5"/>
-        	<column name="version" valueNumeric="0" />
-        	<column name="code" value="ADV-STD"/>
-        	<column name="tax_class_id" value="-1"/>
-            <column name="invoice_sub_category_id" value="-3"/>
-            <column name="description_i18n" value='{"FRA":"Acompte","ENG":"Advance payment"}'/>
-            <column name="description" value='Advance payment'/>
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="uuid" value="billing_accounting_article-ADV-STD" />
-        </insert>
-    </changeSet>
-    
+
 	<changeSet id="#INTRD-4702-20220321" author="ZBariki">
 		<update tableName="meveo_script_instance_cat">
 			<column name="code" value="ACCOUNTING_SCHEMES"></column>
