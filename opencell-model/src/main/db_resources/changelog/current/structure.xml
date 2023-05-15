@@ -15828,4 +15828,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="INTRD-16050_20230515" author="ThangNguyen">
+        <addColumn tableName="billing_cycle">
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
