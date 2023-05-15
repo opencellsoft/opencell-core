@@ -16501,6 +16501,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 baseColumnNames="price_list_id"
                 baseTableName="cat_price_list_line" />
     </changeSet>
+    <changeSet id="16039_20230512_fk" author="a.rouaguebe" />
 
 	<changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari">
 		<renameColumn tableName="cat_trading_discount_plan_item" oldColumnName="transactional_discount_value" newColumnName="trading_discount_value"/>
