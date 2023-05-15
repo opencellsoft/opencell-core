@@ -2947,6 +2947,7 @@
             <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -16871,7 +16872,7 @@
         <sql>CREATE INDEX rating_cdr_or_index ON ${db.schema.adapted}rating_cdr(origin_record)</sql>
         <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>     
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
         <sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation (ddrequest_item_id)</sql>
         <sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation (reference)</sql>
         <sql>CREATE INDEX audit_field_changes_history_index on ${db.schema.adapted}audit_field_changes_history (lower(entity_class), entity_id)</sql>
@@ -19405,6 +19406,7 @@
     <changeSet id="#INTRD-16140_20230510" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15501_20230413" author="ThangNguyen" />
+    <changeSet id="#INTRD-16050_20230515" author="ThangNguyen" />
 
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
