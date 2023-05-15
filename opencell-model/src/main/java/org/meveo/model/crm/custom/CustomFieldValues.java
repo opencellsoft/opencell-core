@@ -63,11 +63,16 @@ import org.w3c.dom.Text;
 public class CustomFieldValues implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -1733710622601844949L;
-
+    
     /**
+     * ThreadLocal holding SimpleDateFormat for each thread
      * Date format for custom field value period conversion to DOM XML string
      */
-    private static SimpleDateFormat xmlsdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static final ThreadLocal<SimpleDateFormat> threadLocalXmlsdf = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
+
+    private static SimpleDateFormat getXmlsdf() {
+        return threadLocalXmlsdf.get();
+    }
 
     /**
      * Custom field values (CF value entity) grouped by a custom field code.
@@ -721,13 +726,13 @@ public class CustomFieldValues implements Cloneable, Serializable {
                 customFieldTag.setAttribute("code", cfValueInfo.getKey());
                 customFieldTag.setAttribute("description", cft != null ? cft.getDescription() : "");
                 if (cfValue.getPeriod() != null && cfValue.getPeriod().getFrom() != null) {
-                    customFieldTag.setAttribute("periodStartDate", xmlsdf.format(cfValue.getPeriod().getFrom()));
+                    customFieldTag.setAttribute("periodStartDate", getXmlsdf().format(cfValue.getPeriod().getFrom()));
                 }
                 if (cfValue.getPeriod() != null && cfValue.getPeriod().getTo() != null) {
-                    customFieldTag.setAttribute("periodEndDate", xmlsdf.format(cfValue.getPeriod().getTo()));
+                    customFieldTag.setAttribute("periodEndDate", getXmlsdf().format(cfValue.getPeriod().getTo()));
                 }
 
-                Text customFieldText = doc.createTextNode(cfValue.toXmlText(xmlsdf));
+                Text customFieldText = doc.createTextNode(cfValue.toXmlText(getXmlsdf()));
                 customFieldTag.appendChild(customFieldText);
                 parentElement.appendChild(customFieldTag);
             }

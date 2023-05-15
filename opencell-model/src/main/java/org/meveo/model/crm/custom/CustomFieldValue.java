@@ -905,9 +905,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
         if (stringValue != null) {
             return stringValue;
         } else if (dateValue != null) {
-        	 synchronized (sdf) {
-        		    return sdf.format(dateValue);
-        	 }
+        	return sdf.format(dateValue);      	 
         } else if (longValue != null) {
             return longValue.toString();
         } else if (doubleValue != null) {
