@@ -27,27 +27,27 @@ public class PriceListLine extends EnableBusinessCFEntity {
 
     private BigDecimal rate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_list_id")
     private PriceList priceList;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_category_id")
     private OfferTemplateCategory offerCategory;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_template_id")
     private OfferTemplate offerTemplate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_template_id")
     private ChargeTemplate chargeTemplate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_plan_id")
     private PricePlanMatrix pricePlan;
 
