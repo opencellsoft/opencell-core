@@ -16428,48 +16428,88 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			referencedTableName="billing_trading_currency" />
 	</changeSet>
 
-    <changeSet id="#INTRD-16036_20230510" author="zelmeliani" >
-        <createTable tableName="price_list_brand">
-            <column name="price_list_id" type="bigint" />
-            <column name="brand" type="varchar(100)" />
-        </createTable>
-        <createTable tableName="price_list_client_category">
-            <column name="price_list_id" type="bigint" />
-            <column name="client_category" type="varchar(100)" />
-        </createTable>
-        <createTable tableName="price_list_credit_category">
-            <column name="price_list_id" type="bigint" />
-            <column name="credit_category" type="varchar(100)" />
-        </createTable>
-        <createTable tableName="price_list_country">
-            <column name="price_list_id" type="bigint" />
-            <column name="country" type="varchar(100)" />
-        </createTable>
-        <createTable tableName="price_list_currency">
-            <column name="price_list_id" type="bigint" />
-            <column name="currency" type="varchar(100)" />
-        </createTable>
-        <createTable tableName="price_list_legal_entity">
-            <column name="price_list_id" type="bigint" />
-            <column name="legal_entity" type="varchar(100)" />
-        </createTable>
-        <createTable tableName="price_list_payment_method">
-            <column name="price_list_id" type="bigint" />
-            <column name="payment_method" type="varchar(100)" />
-        </createTable>
-        <createTable tableName="price_list_seller">
-            <column name="price_list_id" type="bigint" />
-            <column name="seller" type="varchar(100)" />
-        </createTable>
+    <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe">
 
-        <addPrimaryKey columnNames="price_list_id, brand" constraintName="price_list_brand_pkey" tableName="price_list_brand" />
-        <addPrimaryKey columnNames="price_list_id, client_category" constraintName="price_list_client_category_pkey" tableName="price_list_client_category" />
-        <addPrimaryKey columnNames="price_list_id, credit_category" constraintName="price_list_credit_category_pkey" tableName="price_list_credit_category" />
-        <addPrimaryKey columnNames="price_list_id, country" constraintName="price_list_country_pkey" tableName="price_list_country" />
-        <addPrimaryKey columnNames="price_list_id, currency" constraintName="price_list_currency_pkey" tableName="price_list_currency" />
-        <addPrimaryKey columnNames="price_list_id, legal_entity" constraintName="price_list_legal_entity_pkey" tableName="price_list_legal_entity" />
-        <addPrimaryKey columnNames="price_list_id, payment_method" constraintName="price_list_payment_method_pkey" tableName="price_list_payment_method" />
-        <addPrimaryKey columnNames="price_list_id, seller" constraintName="price_list_seller_pkey" tableName="price_list_seller" />
+        <renameSequence oldSequenceName="price_list_seq" newSequenceName="cat_price_list_seq" />
+        <renameTable oldTableName="price_list" newTableName="cat_price_list" />
+
+        <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
+        <createTable tableName="cat_price_list_line">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_price_list_line_pk" />
+            </column>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(300)" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="price_list_id" type="bigint" />
+            <column name="offer_category_id" type="bigint" />
+            <column name="offer_template_id" type="bigint" />
+            <column name="product_id" type="bigint" />
+            <column name="charge_template_id" type="bigint" />
+            <column name="price_plan_id" type="bigint" />
+            <column name="price_list_type" type="varchar(25)" />
+            <column name="application_el" type="varchar(255)" />
+            <column name="rate" type="numeric(23, 12)" />
+        </createTable>
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_offer_category"
+                referencedTableName="cat_offer_template_category"
+                referencedColumnNames="id"
+                baseColumnNames="offer_category_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_offer_template"
+                referencedTableName="cat_offer_template"
+                referencedColumnNames="id"
+                baseColumnNames="offer_template_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_cpq_product"
+                referencedTableName="cpq_product"
+                referencedColumnNames="id"
+                baseColumnNames="product_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_charge_template"
+                referencedTableName="cat_charge_template"
+                referencedColumnNames="id"
+                baseColumnNames="charge_template_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_price_plan"
+                referencedTableName="cat_price_plan_matrix"
+                referencedColumnNames="id"
+                baseColumnNames="price_plan_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id"
+                baseColumnNames="price_list_id"
+                baseTableName="cat_price_list_line" />
     </changeSet>
-    
+
+	<changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari">
+		<renameColumn tableName="cat_trading_discount_plan_item" oldColumnName="transactional_discount_value" newColumnName="trading_discount_value"/>
+	</changeSet>
+	
+	<changeSet id="#INTRD-16219_20230511" author="aelmalki">
+        <addColumn tableName="ar_account_operation">
+            <column name="error_detail" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

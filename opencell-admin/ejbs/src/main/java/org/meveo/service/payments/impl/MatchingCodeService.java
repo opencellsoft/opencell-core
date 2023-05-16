@@ -19,7 +19,7 @@ package org.meveo.service.payments.impl;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static java.math.RoundingMode.HALF_UP;
+import static java.util.Optional.ofNullable;
 import static org.meveo.model.shared.DateUtils.parseDateWithPattern;
 
 import java.math.BigDecimal;
@@ -495,7 +495,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			if(securityDepositTemplate.getMaxAmount() != null && securityDepositTemplate.getMaxAmount().compareTo(securityDeposit.getCurrentBalance().add(amountToMatch)) < 0) {
 				throw new BusinessException("The current balance + amount to credit must be less than or equal to the maximum amount of the Template");
 			}
-			securityDeposit.setCurrentBalance(Optional.ofNullable(securityDeposit.getCurrentBalance()).orElse(ZERO).add(amountToMatch));
+			securityDeposit.setCurrentBalance(ofNullable(securityDeposit.getCurrentBalance()).orElse(ZERO).add(amountToMatch));
 			// Update SD.Amount for VALIDATED and HOLD SecurityDeposit
 			if(Arrays.asList(SecurityDepositStatusEnum.HOLD, SecurityDepositStatusEnum.VALIDATED).contains(securityDeposit.getStatus())) {
 				securityDeposit.setAmount(securityDeposit.getAmount().subtract(amountToMatch));
@@ -567,7 +567,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 operation.setUnMatchingAmount(calculatedUnMatchingAmount);
                 operation.setTransactionalUnMatchingAmount(calculatedUnMatchingAmount);
                 operation.setMatchingAmount(calculatedMatchingAmount);
-                operation.setTransactionalMatchingAmount(calculatedMatchingAmount);
+                operation.setTransactionalUnMatchingAmount(operation.
+                        getTransactionalUnMatchingAmount().add(ofNullable(matchingAmount.getTransactionalMatchingAmount()).orElse(ZERO)));
+                operation.setTransactionalMatchingAmount(operation.
+                        getTransactionalMatchingAmount().subtract(ofNullable(matchingAmount.getTransactionalMatchingAmount()).orElse(ZERO)));
                 if (ZERO.compareTo(operation.getMatchingAmount()) == 0) {
                     operation.setMatchingStatus(MatchingStatusEnum.O);
                     if (operation instanceof RecordedInvoice) {

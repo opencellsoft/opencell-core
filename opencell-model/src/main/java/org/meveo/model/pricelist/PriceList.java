@@ -1,28 +1,18 @@
 package org.meveo.model.pricelist;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 
-@Table(name = "price_list")
+@Table(name = "cat_price_list")
 @Entity
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "price_list_seq"), })
+        @Parameter(name = "sequence_name", value = "cat_price_list_seq"), })
 public class PriceList extends BusinessCFEntity {
 
     private static final long serialVersionUID = 3512021797431043307L;
@@ -41,7 +31,10 @@ public class PriceList extends BusinessCFEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
-    private SecurityTemplateStatusEnum status;
+    private PriceListStatusEnum status;
+
+	@OneToMany(mappedBy = "priceList", fetch = FetchType.LAZY)
+	private Set<PriceListLine> lines;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "price_list_brand", joinColumns = @JoinColumn(name = "price_list_id", referencedColumnName = "id"))
@@ -115,75 +108,19 @@ public class PriceList extends BusinessCFEntity {
 		this.applicationEndDate = applicationEndDate;
 	}
 
-	public SecurityTemplateStatusEnum getStatus() {
+	public PriceListStatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(SecurityTemplateStatusEnum status) {
+	public void setStatus(PriceListStatusEnum status) {
 		this.status = status;
 	}
 
-	public Set<String> getBrands() {
-		return brands;
+	public Set<PriceListLine> getLines() {
+		return lines;
 	}
 
-	public void setBrands(Set<String> brands) {
-		this.brands = brands;
-	}
-
-	public Set<String> getClientCategories() {
-		return clientCategories;
-	}
-
-	public void setClientCategories(Set<String> clientCategories) {
-		this.clientCategories = clientCategories;
-	}
-
-	public Set<String> getCreditCategories() {
-		return creditCategories;
-	}
-
-	public void setCreditCategories(Set<String> creditCategories) {
-		this.creditCategories = creditCategories;
-	}
-
-	public Set<String> getCountries() {
-		return countries;
-	}
-
-	public void setCountries(Set<String> countries) {
-		this.countries = countries;
-	}
-
-	public Set<String> getCurrencies() {
-		return currencies;
-	}
-
-	public void setCurrencies(Set<String> currencies) {
-		this.currencies = currencies;
-	}
-
-	public Set<String> getLegalEntities() {
-		return legalEntities;
-	}
-
-	public void setLegalEntities(Set<String> legalEntities) {
-		this.legalEntities = legalEntities;
-	}
-
-	public Set<String> getPaymentMethods() {
-		return paymentMethods;
-	}
-
-	public void setPaymentMethods(Set<String> paymentMethods) {
-		this.paymentMethods = paymentMethods;
-	}
-
-	public Set<String> getSellers() {
-		return sellers;
-	}
-
-	public void setSellers(Set<String> sellers) {
-		this.sellers = sellers;
+	public void setLines(Set<PriceListLine> lines) {
+		this.lines = lines;
 	}
 }
