@@ -248,56 +248,96 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     
     public List<DiscountPlanItem>  getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,Subscription subscription,WalletOperation walletOperation,AccountingArticle accountingArticle,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
             throws BusinessException {
-    	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
-    	
-    	if(discountPlan.getSequence()==null){
-    		discountPlanService.setDiscountPlanSequence(discountPlan);
-    		discountPlanService.update(discountPlan);
-    	} 
-        if(accountingArticle==null && walletOperation!=null) {
-        	accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
+        List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
+
+        if(discountPlan.getSequence()==null){
+            discountPlanService.setDiscountPlanSequence(discountPlan);
+            discountPlanService.update(discountPlan);
         }
-        
+        if(accountingArticle==null && walletOperation!=null) {
+            accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
+        }
+
         ChargeTemplate chargeTemplate = null;
         boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,walletOperation,subscription);
         if (walletOperation != null) {
             chargeTemplate = walletOperation.getChargeInstance().getChargeTemplate();
-            
+
             log.debug("getApplicableDiscountPlanItems accountingArticle={}, discountPlan code={},isDiscountApplicable={}",accountingArticle,discountPlan.getCode(),isDiscountApplicable);
-            
+
             Boolean applyDiscountsOverridenPriceInCharge=  walletOperation.getChargeInstance().getApplyDiscountsOnOverridenPrice();
             boolean applyDiscountsOnOverridenPrice=applyDiscountsOverridenPriceInCharge!=null?applyDiscountsOverridenPriceInCharge:BooleanUtils.isTrue(discountPlan.getApplicableOnOverriddenPrice());
-            
+
             if (walletOperation.isOverrodePrice() && !applyDiscountsOnOverridenPrice) {
                 return Collections.emptyList();
             }
         }
-        
-        if (isDiscountApplicable) {
-        	List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
-        	Long lowPriority=null;
-        	for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-        		if(chargeTemplate != null && DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
-        			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
-        				continue;
-        		}
-                if(discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
-        			if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority()))
-        					&& isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
-        				lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
 
-        				if(discountPlanItem.getSequence()==null) {
-        					setDisountPlanItemSequence(discountPlanItem);
-        					super.update(discountPlanItem);
-        				}
-        				applicableDiscountPlanItems.add(discountPlanItem);
-        			}
-        		}   
-        	}
+        boolean isFixedDpItemIncluded=false;
+        if (isDiscountApplicable) {
+            List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+            Long lowPriority=null;
+            for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                isFixedDpItemIncluded=false;
+                if(chargeTemplate != null && DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
+                    if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
+                        continue;
+                }
+                if(discountPlanItem.isApplyByArticle()) {
+                    //this DP item will be handled as a percentage dp, so a discount WO/IL will be created on the product level and linked to the discounted WO/IL
+                    isFixedDpItemIncluded=discountPlanItemType != null ? DiscountPlanItemTypeEnum.PERCENTAGE == discountPlanItemType : DiscountPlanItemTypeEnum.PERCENTAGE == discountPlanItem.getDiscountPlanItemType();
+                    if(!isFixedDpItemIncluded) {
+                        continue;
+                    }
+                }
+
+                if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
+                    if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority()))
+                            && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
+                        lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
+
+                        if(discountPlanItem.getSequence()==null) {
+                            setDisountPlanItemSequence(discountPlanItem);
+                            super.update(discountPlanItem);
+                        }
+                        applicableDiscountPlanItems.add(discountPlanItem);
+
+                    }
+                }
+            }
         }
         log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
         return applicableDiscountPlanItems;
-     }
+    }
+
+    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan, AccountingArticle accountingArticle,
+                                                                 Date applicationDate) throws BusinessException {
+        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
+        if (discountPlan.getSequence() == null) {
+            discountPlanService.setDiscountPlanSequence(discountPlan);
+            discountPlanService.update(discountPlan);
+        }
+        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan, applicationDate, null, null);
+        if (isDiscountApplicable) {
+            List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+            Long lowPriority = null;
+            for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                if ((lowPriority == null || lowPriority.equals(discountPlanItem.getPriority()))
+                        && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle, null, null)) {
+                    lowPriority = lowPriority != null ? lowPriority : discountPlanItem.getPriority();
+
+                    if (discountPlanItem.getSequence() == null) {
+                        setDisountPlanItemSequence(discountPlanItem);
+                        super.update(discountPlanItem);
+                    }
+                    applicableDiscountPlanItems.add(discountPlanItem);
+                }
+            }
+        }
+        log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}", discountPlan.getCode(), applicableDiscountPlanItems.size());
+        return applicableDiscountPlanItems;
+    }
+
     public boolean isDiscountPlanItemApplicable(BillingAccount billingAccount,DiscountPlanItem discountPlanItem,AccountingArticle accountingArticle,Subscription subscription,WalletOperation walletOperation)
             throws BusinessException {
     	boolean isApplicable=false;
