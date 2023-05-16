@@ -102,10 +102,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         int billableEntitiesSize=0;
                         final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", billingRunService.SHORT_MAX_VALUE);
                         if (billingAccountsIDs.size() > maxValue) {
-                            List<Long> ids = new ArrayList<>();
                             List<List<Long>> invoiceLineIdsSubList = partition(billingAccountsIDs, maxValue);
                             invoiceLineIdsSubList.forEach(subIdsList -> processInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration,
-                            		billingRun, nbRuns, waitingMillis, maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, ids));
+                            		billingRun, nbRuns, waitingMillis, maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, subIdsList));
                         } else {
                         	processInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration, billingRun, nbRuns, waitingMillis,
 									maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, billingAccountsIDs);
