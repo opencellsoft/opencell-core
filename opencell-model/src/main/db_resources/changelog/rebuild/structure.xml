@@ -7476,6 +7476,9 @@
             <column name="cf_values" type="${type.json}" />
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
             <column name="payment_means" type="bigint" />
+			<column name="mandate_change_action" type="varchar(20)" defaultValue="NONE">
+                <constraints nullable="false" />
+			</column>
         </createTable>
     </changeSet>
 
@@ -19882,6 +19885,7 @@
     <changeSet id="#INTRD-16031_20230508" author="zelmeliani" />
     <changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-16219_20230511" author="aelmalki" />
+	<changeSet id="#INTRD-16166_20230512" author="aelmalki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
