@@ -1,16 +1,5 @@
 package org.meveo.service.mediation;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -34,6 +23,16 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Stateless
 public class MediationsettingService extends PersistenceService<MediationSetting> {
@@ -134,7 +133,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                             // check if wallet operation related to EDR is treated
                             List<WalletOperation> wos = (List<WalletOperation>) walletOperationService.getEntityManager()
                                 .createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )").setParameter("edrId", previousEdr.getId()).getResultList();
-                            // Any WO is billed already - exists RT with status Billed
+							// Any WO is billed already - exists RT with status Billed
                             boolean billedTransaction = wos.stream().anyMatch(wo -> wo.getRatedTransaction() != null && wo.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED && wo.getRatedTransaction().getInvoiceLine().getStatus() == InvoiceLineStatusEnum.BILLED );
 
                             if (billedTransaction) {
@@ -161,7 +160,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                                     boolean oldChargeTriggerdNext = isChargeHasTriggeredNexCharge(wo, edr);
                                     for (WalletOperation woToRerate : rating.getWalletOperations()) {
                                         boolean newChargeTriggerdNext = isChargeHasTriggeredNexCharge(woToRerate, edr);
-                                        torerateWalletOperation(wo, woToRerate, edr);
+                                        torerateWalletOperation(wo, woToRerate, edr, previousEdr);
                                         if (oldChargeTriggerdNext && newChargeTriggerdNext) {
                                             break;
                                         }
@@ -189,7 +188,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         }
         return isRated;
     }
-
+	
     private boolean isChargeHasTriggeredNexCharge(WalletOperation wo, EDR edr) {
         ChargeInstance usageChargeInstance = wo.getChargeInstance();
         boolean triggerNextCharge = false;
@@ -203,15 +202,29 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         return triggerNextCharge;
     }
 
-    private void torerateWalletOperation(WalletOperation wo, WalletOperation woToRerate, EDR edr) {
+    private void torerateWalletOperation(WalletOperation wo, WalletOperation woToRerate, EDR edr, EDR Previousedr) {
     	if(woToRerate.getDiscountValue()==null) {
     		List<WalletOperation> discountWos=walletOperationService.findByDiscountedWo(wo.getId());
-    		for(WalletOperation wallet:discountWos) {
-    			if(!wallet.getStatus().equals(WalletOperationStatusEnum.CANCELED) ) {
-    				wallet.setStatus(WalletOperationStatusEnum.CANCELED);
-    				walletOperationService.update(wallet);
-    			}	
-    		}
+			if(CollectionUtils.isNotEmpty(discountWos)) {
+				List<Long> discountWoId = discountWos.stream().map(WalletOperation::getId).collect(Collectors.toList());
+				//discountWoId.add(wo.getId());
+				List<WalletOperation> triggeredWo = (List<WalletOperation>) walletOperationService.getEntityManager().createNamedQuery("WalletOperation.findByTriggerdEdr").setParameter("rerateWalletOperationIds", discountWoId).getResultList();
+				discountWos.addAll(triggeredWo);
+				for (WalletOperation wallet : discountWos) {
+					if (!wallet.getStatus().equals(WalletOperationStatusEnum.CANCELED)) {
+						wallet.setStatus(WalletOperationStatusEnum.CANCELED);
+						walletOperationService.update(wallet);
+						if(wallet.getEdr() != null){
+							wallet.getEdr().setStatus(EDRStatusEnum.CANCELLED);
+							edrService.update(wallet.getEdr());
+						}
+						if (wallet.getRatedTransaction() != null && wallet.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED) {
+							wallet.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+							ratedTransactionService.update(wallet.getRatedTransaction());
+						}
+					}
+				}
+			}
     		wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
     		wo.setEdr(edr);
     		wo.setAccountingArticle(woToRerate.getAccountingArticle());
@@ -255,7 +268,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 
     @SuppressWarnings("unchecked")
     private void manageTriggeredEdr(WalletOperation walletOperation, EDR edr) {
-        if (walletOperation.getEdr() != null) {
+       if (walletOperation.getEdr() != null) {
             List<EDR> tEdrs = (List<EDR>) edrService.getEntityManager().createNamedQuery("EDR.getByWO").setParameter("WO_IDS", List.of(walletOperation.getId())).getResultList();
             tEdrs = tEdrs.stream().filter(e -> e.getStatus() != EDRStatusEnum.CANCELLED).collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(tEdrs)) {
