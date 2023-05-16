@@ -273,25 +273,15 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
             }
         }
         
-        boolean isFixedDpItemIncluded=false;
         if (isDiscountApplicable) {
         	List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
         	Long lowPriority=null;
         	for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-        		isFixedDpItemIncluded=false;
         		if(chargeTemplate != null && DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
         			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
         				continue;
         		}
-        		if(discountPlanItem.isApplyByArticle()) {
-        			//this DP item will be handled as a percentage dp, so a discount WO/IL will be created on the product level and linked to the discounted WO/IL
-        			isFixedDpItemIncluded=discountPlanItemType != null ? DiscountPlanItemTypeEnum.PERCENTAGE == discountPlanItemType : DiscountPlanItemTypeEnum.PERCENTAGE == discountPlanItem.getDiscountPlanItemType();
-        			if(!isFixedDpItemIncluded) {
-        				continue;
-        			}
-        		}
-
-        		if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
+                if(discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
         			if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority()))
         					&& isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
         				lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
@@ -301,7 +291,6 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         					super.update(discountPlanItem);
         				}
         				applicableDiscountPlanItems.add(discountPlanItem);
-
         			}
         		}   
         	}
