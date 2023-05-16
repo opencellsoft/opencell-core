@@ -73,6 +73,8 @@ import org.meveo.util.ApplicationProvider;
 @Stateless
 public class AccountOperationService extends PersistenceService<AccountOperation> {
 
+    private static final String CLOSED_PERIOD_ERROR_DETAIL = "Closed period";
+
     /** The customer account service. */
     @Inject
     private CustomerAccountService customerAccountService;
@@ -635,6 +637,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		accountOperation.setAccountingDate(null);
 		accountOperation.setStatus(AccountOperationStatus.REJECTED);
 		accountOperation.setReason(AccountOperationRejectionReason.CLOSED_PERIOD);
+        accountOperation.setErrorDetail(CLOSED_PERIOD_ERROR_DETAIL);
 	}
 
 	public void forceAccountOperation(AccountOperation accountOperation, AccountingPeriod accountingPeriod) {
@@ -699,9 +702,12 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 	 */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateStatusInNewTransaction(List<AccountOperation> accountOperations, AccountOperationStatus status) {
+	public void updateStatusInNewTransaction(List<AccountOperation> accountOperations, AccountOperationStatus status, String errorDetail) {
     	accountOperations.stream().forEach(ao -> {
 			ao.setStatus(status);
+            if (StringUtils.isNotBlank(errorDetail)) {
+               ao.setErrorDetail(errorDetail);
+            }
 			update(ao);});
 	}
 

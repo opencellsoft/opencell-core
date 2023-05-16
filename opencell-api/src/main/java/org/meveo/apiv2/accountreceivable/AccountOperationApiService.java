@@ -123,7 +123,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		if (AccountOperationStatus.EXPORTED.equals(status)) {
 			Map<Boolean, List<AccountOperation>> statusGroups = accountOperations.stream()
 					.collect(Collectors.partitioningBy(ao -> POSTED.equals(ao.getStatus())));
-			accountOperationService.updateStatusInNewTransaction(statusGroups.get(true), status);
+			accountOperationService.updateStatusInNewTransaction(statusGroups.get(true), status, null);
 			if (!CollectionUtils.isEmpty(statusGroups.get(false))) {
 				throw new ConflictException("The status of following account operations can not be updated: "
 						+ statusGroups.get(false).stream().map(ao -> ao.getId() + ", ").reduce("", String::concat));

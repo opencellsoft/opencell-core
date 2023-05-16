@@ -3,17 +3,11 @@ package org.meveo.model.pricelist;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 
 @Table(name = "cat_price_list")
 @Entity
@@ -39,7 +33,7 @@ public class PriceList extends BusinessCFEntity {
     @Column(name = "status")
     private PriceListStatusEnum status;
 
-	@OneToMany(mappedBy = "priceList")
+	@OneToMany(mappedBy = "priceList", fetch = FetchType.LAZY)
 	private Set<PriceListLine> lines;
 
 	public Date getValidFrom() {
