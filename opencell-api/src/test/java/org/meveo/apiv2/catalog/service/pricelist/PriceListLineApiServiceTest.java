@@ -2,18 +2,21 @@ package org.meveo.apiv2.catalog.service.pricelist;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.catalog.ImmutablePriceListLineDto;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PriceListLineService;
+import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -23,6 +26,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -50,18 +54,21 @@ public class PriceListLineApiServiceTest {
     @Mock
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
+    @Mock
+    private ProductLineService productLineService;
+
     @Test
     public void create_shouldCreate() {
         // given
         var priceListCode = "a-price-list";
         var givenDto = ImmutablePriceListLineDto.builder()
                                                 .priceListCode(priceListCode)
-                                                .code("a-price-list-line")
+                                                .description("a-description")
                                                 .applicationEl("an-application-el")
                                                 .offerCategoryCode("an-offer-category")
                                                 .offerTemplateCode("an-offer-template")
                                                 .productCode("a-product")
-                                                .productCategoryCode(null)
+                                                .productCategoryCode("a-product-category")
                                                 .chargeTemplateCode("a-charge-template")
                                                 .rate(123.456d)
                                                 .amount(BigDecimal.valueOf(123456.789))
@@ -75,7 +82,7 @@ public class PriceListLineApiServiceTest {
         when(offerTemplateCategoryService.findByCode(givenDto.getOfferCategoryCode())).thenReturn(new OfferTemplateCategory());
         when(productService.findByCode(givenDto.getProductCode())).thenReturn(new Product());
         when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(new UsageChargeTemplate());
-
+        when(productLineService.findByCode(givenDto.getProductCategoryCode())).thenReturn(new ProductLine());
 
         // when
         priceListLineApiService.create(givenDto);
@@ -94,7 +101,26 @@ public class PriceListLineApiServiceTest {
         assertThat(entityToCheck.getOfferCategory()).isNotNull();
         assertThat(entityToCheck.getOfferTemplate()).isNotNull();
         assertThat(entityToCheck.getProduct()).isNotNull();
+        assertThat(entityToCheck.getProductCategory()).isNotNull();
         assertThat(entityToCheck.getChargeTemplate()).isNotNull();
         assertThat(entityToCheck.getApplicationEl()).isEqualTo(givenDto.getApplicationEl());
+        assertThat(entityToCheck.getAmount()).isEqualTo(givenDto.getAmount());
+        assertThat(entityToCheck.getRate().doubleValue()).isEqualTo(givenDto.getRate());
+        assertThat(entityToCheck.getDescription()).isEqualTo(givenDto.getDescription());
+    }
+
+    @Test
+    public void create_givenMissingMandatoryFieldsShouldTriggerError() {
+        // given
+        var priceListCode = "a-price-list";
+        var givenDto = ImmutablePriceListLineDto.builder()
+                                                .build();
+
+        // when
+        assertThatThrownBy(() -> priceListLineApiService.create(givenDto))
+                .isInstanceOf(MissingParameterException.class)
+                .hasMessageContaining("priceListCode")
+                .hasMessageContaining("chargeTemplateCode");
+
     }
 }

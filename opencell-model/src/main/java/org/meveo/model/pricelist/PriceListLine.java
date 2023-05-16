@@ -7,6 +7,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductLine;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -25,7 +26,11 @@ import java.math.BigDecimal;
 )
 public class PriceListLine extends EnableBusinessCFEntity {
 
+    @Column(name = "rate")
     private BigDecimal rate;
+
+    @Column(name = "amount")
+    private BigDecimal amount;
 
     @ManyToOne
     @JoinColumn(name = "price_list_id")
@@ -42,6 +47,10 @@ public class PriceListLine extends EnableBusinessCFEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "product_line_id")
+    private ProductLine productCategory;
 
     @ManyToOne
     @JoinColumn(name = "charge_template_id")
@@ -103,6 +112,14 @@ public class PriceListLine extends EnableBusinessCFEntity {
         return this;
     }
 
+    public ProductLine getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(ProductLine productCategory) {
+        this.productCategory = productCategory;
+    }
+
     public ChargeTemplate getChargeTemplate() {
         return chargeTemplate;
     }
@@ -137,5 +154,13 @@ public class PriceListLine extends EnableBusinessCFEntity {
     public PriceListLine setApplicationEl(String applicationEl) {
         this.applicationEl = applicationEl;
         return this;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 }
