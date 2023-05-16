@@ -24,12 +24,12 @@ import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.OfferContextConfigDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
+import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
 import org.meveo.api.dto.cpq.ProductChargeTemplateMappingDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
@@ -1099,8 +1099,8 @@ public class ProductApi extends BaseApi {
 	                offerProduct.getProduct().setCurrentProductVersion(productVersionResponse);
 	            }
 	        }
-			for (AttributeDTO attributeDto : offertemplateDTO.getAttributes()) {
-				List<CommercialRuleHeader> commercialRules = commercialRulesContainerProvider.getForOfferAndAttribute(attributeDto.getCode() + "-"+ offertemplateDTO.getCode());
+			for (OfferTemplateAttributeDTO attributeDto :  offertemplateDTO.getOfferAttributes()) {
+				List<CommercialRuleHeader> commercialRules = commercialRulesContainerProvider.getForOfferAndAttribute(attributeDto.getAttributeCode() + "-"+ offertemplateDTO.getCode());
 	            // List<CommercialRuleHeader> commercialRulesOld = commercialRuleHeaderService.getOfferAttributeRules(attributeDto.getCode(), offertemplateDTO.getCode());
 	            if (commercialRules != null && !commercialRules.isEmpty()) {
 	                List<String> commercialRuleCodes = new ArrayList<String>();
@@ -1112,10 +1112,10 @@ public class ProductApi extends BaseApi {
 	                attributeDto.setSelectable(isSelectable);
 					replacementRulesExecutor.executeReplacements(offerSourceSelectedAttributes, productSourceSelectedAttributes, commercialRules);
 	                if(offerSourceSelectedAttributes.getSelectedAttributesMap() != null){
-						attributeDto.setAssignedValue(offerSourceSelectedAttributes.getSelectedAttributesMap().get(attributeDto.getCode()));
+						attributeDto.setAssignedValue(offerSourceSelectedAttributes.getSelectedAttributesMap().get(attributeDto.getAttributeCode()));
 					}
 	            }
-	            List<Long> sourceRules = commercialRuleLineService.getSourceOfferAttributeRules(attributeDto.getCode(), offerCode);
+	            List<Long> sourceRules = commercialRuleLineService.getSourceOfferAttributeRules(attributeDto.getAttributeCode(), offerCode);
 	            if (sourceRules != null && !sourceRules.isEmpty()) {
 	                attributeDto.setRuled(true);
 	            }
