@@ -1203,19 +1203,21 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.paymentMethod = paymentMethod;
     }
 
-    public void assignTemporaryInvoiceNumber() {
+	public void assignTemporaryInvoiceNumber() {
 
-        StringBuffer num1 = new StringBuffer("000000000");
-        num1.append(id + "");
-        String invoiceNumber = num1.substring(num1.length() - 9);
-        int key = 0;
+		StringBuffer num1 = new StringBuffer("000000000");
+		if (id != null) {
+			num1.append(id + "");
+		}
+		String invoiceNumber = num1.substring(num1.length() - 9);
+		int key = 0;
 
-        for (int i = 0; i < invoiceNumber.length(); i++) {
-            key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
-        }
+		for (int i = 0; i < invoiceNumber.length(); i++) {
+			key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
+		}
 
-        setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
-    }
+		setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
+	}
 
     public BigDecimal getDueBalance() {
         return dueBalance;
