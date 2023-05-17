@@ -423,18 +423,6 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         tEdrs = tEdrs.stream().filter(e -> e.getStatus() != EDRStatusEnum.CANCELLED).collect(Collectors.toList());
         WalletOperation newWO = null;
         
-		// when WO has Discounted WO and these discounted WO has TriggeredEDR
-	    List<WalletOperation> discountWos=walletOperationService.findByDiscountedWo(operationToRerateId);
-		if(CollectionUtils.isNotEmpty(discountWos) && operationToRerate.getEdr() != null){
-			operationToRerate.setStatus(WalletOperationStatusEnum.CANCELED);
-			operationToRerate.getEdr().setStatus(EDRStatusEnum.OPEN);
-			edrService.update(operationToRerate.getEdr());
-			getEntityManager().createNamedQuery("EDR.deleteByWO")
-						.setParameter("WO_IDS", List.of(operationToRerate.getId()))
-					.executeUpdate();
-			return;
-		}
-	    
 
         // To manage case when 1 WO have more than 1 T.EDR
         Map<Long, WalletOperation> oldWOAndNewWO = new HashMap<>();
