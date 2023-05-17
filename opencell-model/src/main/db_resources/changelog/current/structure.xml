@@ -16511,5 +16511,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="error_detail" type="varchar(2000)" />
         </addColumn>
     </changeSet>
-
+    
+    <changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari">
+    	<renameTable newTableName="cpq_trading_price_plan_version" oldTableName="cpq_converted_price_plan_version"/>
+    	<renameColumn tableName="cpq_trading_price_plan_version" oldColumnName="converted_price" newColumnName="trading_price"/>
+    	<renameSequence newSequenceName="cpq_trading_price_plan_version_seq" oldSequenceName="cpq_converted_price_plan_version_seq" />
+    	<renameTable newTableName="cpq_trading_price_plan_matrix_line" oldTableName="cpq_converted_price_plan_matrix_line"/>
+    	<renameColumn tableName="cpq_trading_price_plan_matrix_line" oldColumnName="converted_value" newColumnName="trading_value"/>
+    	<renameSequence newSequenceName="cpq_trading_price_plan_matrix_line_sq" oldSequenceName="cpq_converted_price_plan_matrix_line_sq" />
+	</changeSet>
+	
 </databaseChangeLog>
