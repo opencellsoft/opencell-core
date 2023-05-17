@@ -160,7 +160,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                                     boolean oldChargeTriggerdNext = isChargeHasTriggeredNexCharge(wo, edr);
                                     for (WalletOperation woToRerate : rating.getWalletOperations()) {
                                         boolean newChargeTriggerdNext = isChargeHasTriggeredNexCharge(woToRerate, edr);
-                                        torerateWalletOperation(wo, woToRerate, edr, previousEdr);
+                                        torerateWalletOperation(wo, woToRerate, edr);
                                         if (oldChargeTriggerdNext && newChargeTriggerdNext) {
                                             break;
                                         }
@@ -202,7 +202,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         return triggerNextCharge;
     }
 
-    private void torerateWalletOperation(WalletOperation wo, WalletOperation woToRerate, EDR edr, EDR Previousedr) {
+    private void torerateWalletOperation(WalletOperation wo, WalletOperation woToRerate, EDR edr) {
     	if(woToRerate.getDiscountValue()==null) {
     		List<WalletOperation> discountWos=walletOperationService.findByDiscountedWo(wo.getId());
 			if(CollectionUtils.isNotEmpty(discountWos)) {

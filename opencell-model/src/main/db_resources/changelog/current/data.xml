@@ -19111,4 +19111,13 @@ public class ValidateBRScript extends ValidateBR {
         </update>
     </changeSet>
 
+    <changeSet id="#INTRD-16167_20230515_revert" author="TarikFA.">
+        <delete tableName="crm_custom_field_tmpl">
+            <where>code = 'disableTriggeredEdr'</where>
+        </delete>
+        <update tableName="cat_charge_template">
+            <column name="cf_values" value="" />
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
