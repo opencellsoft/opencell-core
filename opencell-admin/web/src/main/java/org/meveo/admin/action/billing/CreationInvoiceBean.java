@@ -669,11 +669,15 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) {
+    	Date dueDate = entity.getDueDate();
+    	Date invoiceDate = entity.getInvoiceDate();
     	if(entity.getId()!=null) {
     		if( !amountsAndlinesUpdated) {
     			return getListViewName();
     		} else{
     			entity = invoiceService.retrieveIfNotManaged(entity);
+    			entity.setDueDate(dueDate);
+    			entity.setInvoiceDate(invoiceDate);
     		}
     	}
         if(entity.getId() == null) {
@@ -756,7 +760,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         if (preferedPaymentMethod != null) {
             entity.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
-    	if(entity.getStatus() == InvoiceStatusEnum.DRAFT && entity.getInvoiceNumber() == null) {
+    	if(entity.getInvoiceNumber() == null) {
 	        entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
 	        try {
 	            entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
