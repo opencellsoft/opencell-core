@@ -979,8 +979,8 @@ public class NativePersistenceService extends BaseService {
         if (!fieldsToRetrieve.isEmpty()) {
             config.getFetchFields().remove("id");
         }
-
-        QueryBuilder queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, "") + " from " + tableName + " a ", "a");
+        String distinct = config.isDistinctQuery() ? "distinct" : "";
+        QueryBuilder queryBuilder =  new QueryBuilder("select " +  distinct +" " + buildFields(fieldsToRetrieve, "") + " from " + tableName + " a ", "a");
         if (id != null) {
             queryBuilder.addSql(" a.id ='" + id + "'");
         }

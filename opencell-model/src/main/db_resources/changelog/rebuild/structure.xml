@@ -474,6 +474,9 @@
         <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
 	    <createSequence sequenceName="ar_unmatching_code_seq" startValue="1"/>
         <createSequence sequenceName="ar_unmatching_amount_seq" startValue="1"/>
+        <createSequence sequenceName="cat_price_list_seq" startValue="1" />
+        <createSequence sequenceName="cat_trading_discount_plan_item_seq" startValue="1" />
+        <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
     </changeSet>
 
 
@@ -2149,6 +2152,7 @@
             <column name="applied_rate" type="numeric(23, 12)" />
             <column name="applied_rate_date" type="datetime" />
             <column name="transactional_payment_fees" type="numeric(23, 12)" />
+			<column name="error_detail" type="varchar(2000)" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -11922,6 +11926,7 @@
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="enable_price_list" type="${type.boolean}" defaultValueNumeric="0" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -12425,6 +12430,65 @@
             <column name="collection" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#INTRD-16031_20230508_rebuild" author="zelmeliani">
+        <createTable tableName="cat_price_list">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="price_list_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(300)" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
+            <column name="valid_from" type="datetime" />
+            <column name="valid_until" type="datetime" />
+            <column name="application_start_date" type="datetime" />
+            <column name="application_end_date" type="datetime" />
+            <column name="status" type="varchar(50)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe">
+        <createTable tableName="cat_price_list_line">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_price_list_line_pk" />
+            </column>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(300)" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="price_list_id" type="bigint" />
+            <column name="offer_category_id" type="bigint" />
+            <column name="offer_template_id" type="bigint" />
+            <column name="product_id" type="bigint" />
+            <column name="charge_template_id" type="bigint" />
+            <column name="price_plan_id" type="bigint" />
+            <column name="price_list_type" type="varchar(25)" />
+            <column name="application_el" type="varchar(255)" />
+            <column name="rate" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
     
@@ -16913,6 +16977,45 @@
                                  referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+
+    <changeSet id="#INTRD-16039_20230512_fk" author="a.rouaguebe">
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_offer_category"
+                referencedTableName="cat_offer_template_category"
+                referencedColumnNames="id"
+                baseColumnNames="offer_category_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_offer_template"
+                referencedTableName="cat_offer_template"
+                referencedColumnNames="id"
+                baseColumnNames="offer_template_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_cpq_product"
+                referencedTableName="cpq_product"
+                referencedColumnNames="id"
+                baseColumnNames="product_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_charge_template"
+                referencedTableName="cat_charge_template"
+                referencedColumnNames="id"
+                baseColumnNames="charge_template_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_price_plan"
+                referencedTableName="cat_price_plan_matrix"
+                referencedColumnNames="id"
+                baseColumnNames="price_plan_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id"
+                baseColumnNames="price_list_id"
+                baseTableName="cat_price_list_line" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -18396,6 +18499,41 @@
 		<addForeignKeyConstraint baseColumnNames="unmatching_code_id" baseTableName="ar_unmatching_amount" constraintName="fk_qwvfl1elw6vgzi7vp5dc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_unmatching_code" />
     </changeSet>
+    
+    <changeSet id="#INTRD-15823_20230510" author="AdilElJaouhari">
+		<createTable tableName="cat_trading_discount_plan_item">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"	primaryKeyName="cat_trading_discount_plan_item_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="discount_plan_item_id" type="bigint" />
+			<column name="trading_discount_value" type="numeric(23, 12)" />
+			<column name="trading_currency_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="rate" type="numeric(23, 12)" />
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="discount_plan_item_id"
+			baseTableName="cat_trading_discount_plan_item"
+			constraintName="cat_trading_discount_plan_item_fk" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id"
+			referencedTableName="cat_discount_plan_item" />
+		<addForeignKeyConstraint
+			baseColumnNames="trading_currency_id"
+			baseTableName="cat_trading_discount_plan_item"
+			constraintName="cat_trading_discount_plan_trading_currency_fk"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="billing_trading_currency" />
+	</changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -19725,7 +19863,7 @@
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
 	</changeSet>
-    
+
    	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA."/>
    	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA."/>
     <changeSet id="#INTRD-13326_20230227" author="zelmeliani" />
@@ -19758,9 +19896,12 @@
     <changeSet id="#INTRD-15841_20230502" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-15664-20230501" author="aelmalki" />
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari"/>
+    <changeSet id="#INTRD-15881_20230504" author="zelmeliani" />
 	<changeSet id="#INTRD-15899_20230505" author="aelmalki" />
 	<changeSet id="#INTRD-15899_20230505-taxation-FK" author="aelmalki" />
-
+    <changeSet id="#INTRD-16031_20230508" author="zelmeliani" />
+    <changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-16219_20230511" author="aelmalki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -134,7 +134,7 @@ public class ImportJobNotificationScript extends Script {
         customFields.setCustomField(List.of(customFieldDto));
         jobInstanceInfoDto.setCustomFields(customFields);
 
-        jobApi.executeJob(jobInstanceInfoDto);
+        jobApi.executeJob(jobInstanceInfoDto, true);
     }
 
     private JobResultStatusEnum getJobResultStatus(JobExecutionResultImpl jobExecutionResult) {

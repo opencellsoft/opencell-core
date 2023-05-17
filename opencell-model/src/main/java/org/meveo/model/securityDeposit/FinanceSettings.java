@@ -53,6 +53,10 @@ public class FinanceSettings extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "discount_advanced_mode")
     private boolean discountAdvancedMode = false;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "enable_price_list")
+    private boolean enablePriceList = false;
 
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
@@ -139,5 +143,13 @@ public class FinanceSettings extends BusinessEntity {
 
 	public void setDiscountAdvancedMode(boolean discountAdvancedMode) {
 		this.discountAdvancedMode = discountAdvancedMode;
+	}
+
+	public boolean isEnablePriceList() {
+		return enablePriceList;
+	}
+
+	public void setEnablePriceList(boolean enablePriceList) {
+		this.enablePriceList = enablePriceList;
 	}
 }

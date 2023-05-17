@@ -5136,6 +5136,7 @@
             <column name="code" value="OC_MASS_IMPORT_NOTIFICATION" />
             <column name="class_name_filter" value="org.meveo.model.jobs.JobExecutionResultImpl" />
             <column name="event_type_filter" value="STARTED" />
+            <column name="event_expression_filter" value="#{event.jobInstance.code.toLowerCase().startsWith('massimport')}" />
             <column name="version" value="0" />
             <column name="creator" value="opencell.admin" />
             <column name="script_instance_id"
@@ -6446,6 +6447,7 @@
     <changeSet id="#INTRD-12906_20230112" author="hichamELHALOUI"/>
    	<changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI"/>
     <changeSet id="#INTRD-14750_20230331" author="TarikFA." />
+    <changeSet id="#INTRD-13682_20230510" author="AbdellatifBARI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

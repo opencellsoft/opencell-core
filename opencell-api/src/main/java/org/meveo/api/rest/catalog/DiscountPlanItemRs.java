@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
+import org.meveo.api.dto.catalog.TradingDiscountPlanItemDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -254,4 +255,73 @@ public interface DiscountPlanItemRs extends IBaseRs {
 				)}
 	)
     ActionStatus disable(@PathParam("code") String code);
+    
+    /**
+     * Create a new trading discount plan item.
+     *
+     * @param postData A trading discount plan item's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/tradingDiscountPlanItem")
+	@Operation(
+			summary=" Create a new trading discount plan item. ",
+			description=" Create a new trading discount plan item. ",
+			operationId="    POST_TradingDiscountPlanItem_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
+    ActionStatus create(TradingDiscountPlanItemDto postData);
+    
+    /**
+     * Update a trading discount plan item.
+     *
+     * @param postData A trading discount plan item's data
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/tradingDiscountPlanItem/{id}")
+	@Operation(
+			summary=" Update an existing trading discount plan item. ",
+			description=" Update an existing new trading discount plan item. ",
+			operationId="    POST_TradingDiscountPlanItem_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
+    ActionStatus update(@Parameter(description = "ID of trading discount plan item to update", required = true)  @PathParam("id") Long tradingDiscountPlanItemId, TradingDiscountPlanItemDto postData);
+    
+    /**
+     * Delete a trading discount plan item.
+     *
+     * @param postData A trading discount plan item's data
+     * @return Request processing status
+     */
+    @DELETE
+    @Path("/tradingDiscountPlanItem/{id}")
+	@Operation(
+			summary=" Delete an existing trading discount plan item. ",
+			description=" Delete an existing new trading discount plan item. ",
+			operationId="    POST_TradingDiscountPlanItem_delete",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
+    ActionStatus delete(@Parameter(description = "ID of trading discount plan item to delete") @PathParam("id") Long tradingDiscountPlanItemId);
 }
