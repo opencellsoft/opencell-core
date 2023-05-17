@@ -26,6 +26,7 @@ import org.meveo.model.jaxb.customer.bankdetails.Modification;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.DDPaymentMethod;
+import org.meveo.model.payments.MandateChangeAction;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.admin.impl.CustomerBankDetailsImportHistoService;
 import org.meveo.service.job.JobExecutionService;
@@ -199,9 +200,16 @@ public class ImportCustomerBankDetailsJobBean {
 
     private void dupDDPaymentMethode(String ibanArrivee, String bicArrivee, PaymentMethod paymentMethod) throws CloneNotSupportedException {
         DDPaymentMethod dDPaymentMethod = (DDPaymentMethod) paymentMethod;
-        DDPaymentMethod newDDPaymentMethod = dDPaymentMethod.copieDDPaymentMethod();              
+        DDPaymentMethod newDDPaymentMethod = dDPaymentMethod.copieDDPaymentMethod();
         newDDPaymentMethod.getBankCoordinates().setIban(ibanArrivee);
-        newDDPaymentMethod.getBankCoordinates().setBic(bicArrivee);        
+        newDDPaymentMethod.getBankCoordinates().setBic(bicArrivee);
+
+        if (newDDPaymentMethod.getBankCoordinates() != null && ((DDPaymentMethod) paymentMethod).getBankCoordinates() == null) {
+            newDDPaymentMethod.setMandateChangeAction(MandateChangeAction.TO_ADVERTISE);
+        } else if (newDDPaymentMethod.getBankCoordinates() != null && ((DDPaymentMethod) paymentMethod).getBankCoordinates() != null
+                && !newDDPaymentMethod.getBankCoordinates().getIban().equals(((DDPaymentMethod) paymentMethod).getBankCoordinates().getIban())) {
+            newDDPaymentMethod.setMandateChangeAction(MandateChangeAction.TO_ADVERTISE);
+        }
         paymentMethodService.create(newDDPaymentMethod);
         
         paymentMethod.setPreferred(false);            
