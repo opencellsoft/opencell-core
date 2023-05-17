@@ -651,6 +651,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
             invoiceCopy.setId(null);
             invoiceCopy.assignTemporaryInvoiceNumber();
+            invoiceCopy.setStatus(InvoiceStatusEnum.VALIDATED);
             serviceSingleton.assignInvoiceNumberVirtual(invoiceCopy);
             PaymentMethod preferedPaymentMethod = invoiceCopy.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
             if (preferedPaymentMethod != null) {
@@ -696,11 +697,15 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) {
+    	Date dueDate = entity.getDueDate();
+    	Date invoiceDate = entity.getInvoiceDate();
     	if(entity.getId()!=null) {
     		if( !amountsAndlinesUpdated) {
     			return getListViewName();
     		} else{
     			entity = invoiceService.retrieveIfNotManaged(entity);
+    			entity.setDueDate(dueDate);
+    			entity.setInvoiceDate(invoiceDate);
     		}
     	}
 
