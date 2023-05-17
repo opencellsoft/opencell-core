@@ -439,13 +439,15 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     public List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual, boolean evaluatEdrVersioning)
             throws RatingException, InvalidELException, ElementNotFoundException, CommunicateToRemoteInstanceException, ChargingEdrOnRemoteInstanceErrorException {
 
-        if(walletOperation != null && walletOperation.getDiscountedAmount() != null) return Collections.EMPTY_LIST;
 
         List<EDR> triggredEDRs = new ArrayList<>();
 
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
         UserAccount ua = chargeInstance.getUserAccount();
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+	    
+	    boolean sckipTriggredEdr = chargeTemplate.getCfValue("disableTriggeredEdr") != null ? (Boolean)chargeTemplate.getCfValue("disableTriggeredEdr") : false;
+	    if(!sckipTriggredEdr && walletOperation != null && walletOperation.getDiscountedAmount() != null) return Collections.EMPTY_LIST;
 
         List<TriggeredEDRTemplate> triggeredEDRTemplates = chargeTemplate.getEdrTemplates();
 

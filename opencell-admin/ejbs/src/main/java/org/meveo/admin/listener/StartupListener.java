@@ -42,7 +42,7 @@ public class StartupListener {
     private void init() {
         log.info("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase an Opencell subscription from https://opencellsoft.com/");
 
-        jobExecutionResultService.getEntityManager().createNamedQuery("JobExecutionResultImpl.cancelAllRunningJobs").executeUpdate();
+        jobExecutionResultService.getEntityManager().createNamedQuery("JobExecutionResult.cancelAllRunningJobs").executeUpdate();
         
         
 
