@@ -17152,29 +17152,6 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
         </insert>
     </changeSet>
 
-    <changeSet id="#INTRD-16167_20230515_rebuild" author="TarikFA.">
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="disableTriggeredEdr"/>
-            <column name="applies_to" value="ChargeTemplate"/>
-            <column name="description" value="disable generation of triggered EDR"/>
-            <column name="field_type" value="BOOLEAN"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="versionable" value="0"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="gui_position" value=""/>
-            <column name="allow_edit" value="1"/>
-            <column name="hide_on_new" value="0"/>
-            <column name="inh_as_def_value" value="0"/>
-            <column name="cf_protectable" value="0"/>
-            <column name="default_value" value="true"/>
-        </insert>
-    </changeSet>
-
 	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-12463_20230119" author="AbdellatifBARI" />
     <changeSet id="#INTRD-13386_20230223" author="TarikFA." />
@@ -17187,6 +17164,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 	<changeSet id="#INTRD-13967_20230217" author="houdad"/>
     <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
     <changeSet id="#INTRD-16167_20230515" author="TarikFA." />
+    <changeSet id="#INTRD-16167_20230515_revert" author="TarikFA." />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

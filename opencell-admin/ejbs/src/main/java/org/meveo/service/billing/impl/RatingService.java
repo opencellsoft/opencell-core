@@ -446,8 +446,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         UserAccount ua = chargeInstance.getUserAccount();
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 	    
-	    boolean sckipTriggredEdr = chargeTemplate.getCfValue("disableTriggeredEdr") != null ? (Boolean)chargeTemplate.getCfValue("disableTriggeredEdr") : false;
-	    if(!sckipTriggredEdr && walletOperation != null && walletOperation.getDiscountedAmount() != null) return Collections.EMPTY_LIST;
+	    if(walletOperation != null && walletOperation.getDiscountedAmount() != null) return Collections.EMPTY_LIST;
 
         List<TriggeredEDRTemplate> triggeredEDRTemplates = chargeTemplate.getEdrTemplates();
 
