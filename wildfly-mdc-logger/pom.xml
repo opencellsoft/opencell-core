@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.opencellsoft.wildfly</groupId>
     <artifactId>mdc-logger</artifactId>
-    <version>14.1.4</version>
+    <version>14.1.4-600-f3a0625</version>
     <name>MDC filename logger</name>
     <description>MDC filename custom logger for Wildfly server</description>
     <dependencies>
