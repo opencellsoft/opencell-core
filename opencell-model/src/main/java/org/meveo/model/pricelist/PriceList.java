@@ -3,7 +3,15 @@ package org.meveo.model.pricelist;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -13,6 +21,9 @@ import org.meveo.model.BusinessCFEntity;
 @Entity
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_price_list_seq"), })
+@NamedQueries({
+		@NamedQuery(name = "PriceList.getExpiredOpenPriceList", query = "SELECT pl FROM PriceList pl WHERE pl.validUntil <= :untilDate AND pl.status in :openStatus")
+})
 public class PriceList extends BusinessCFEntity {
 
     private static final long serialVersionUID = 3512021797431043307L;
