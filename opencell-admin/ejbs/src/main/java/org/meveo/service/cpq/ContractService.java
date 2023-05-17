@@ -5,6 +5,8 @@ import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,10 +94,10 @@ public class ContractService extends BusinessService<Contract>  {
 		LOGGER.info("contract({}) to be deleted", contractCode);
 		
 		final Contract contratToDelete = findByCode(contractCode);
-		if(contratToDelete == null) {
+		if (contratToDelete == null) {
 			throw new EntityDoesNotExistsException(Contract.class, contractCode);
 		}
-		if(contratToDelete.getStatus().equals(ProductStatusEnum.ACTIVE)) {
+		if (ContractStatusEnum.ACTIVE.getValue().equals(contratToDelete.getStatus())) {
 			LOGGER.warn("contract({}) can not be removed, because its status is active", contratToDelete.getCode());
 			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, contratToDelete.getCode(), contratToDelete.getStatus().toString()));
 		}
@@ -174,10 +176,20 @@ public class ContractService extends BusinessService<Contract>  {
 
 	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
 		try {
+			Date operationDate = bareWalletOperation != null ? bareWalletOperation.getOperationDate() : null;
+			if(operationDate != null) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(operationDate);
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				operationDate = calendar.getTime();
+			}
 			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
 					.setParameter("customerId", customersID).setParameter("billingAccountId", billingAccount.getId())
 					.setParameter("customerAccountId",customerAccount.getId())
-					.setParameter("operationDate", bareWalletOperation.getOperationDate()).getResultList();
+					.setParameter("operationDate", operationDate).getResultList();
 			
 			
 			return contracts.stream()

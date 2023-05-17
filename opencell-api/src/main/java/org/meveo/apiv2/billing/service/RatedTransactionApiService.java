@@ -26,7 +26,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.bi.impl.JobService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
@@ -54,8 +53,6 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
-	@Inject
-	private JobService jobService;
 	@Inject
 	private JobApi jobApi;
 	@Inject
@@ -161,7 +158,8 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 
 		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(filters);
 		if(countRatedTransaction.intValue() > maxLimit) {
-			log.info("filter for duplication has more than : " + maxLimit + ", current rated transaction from filters are : " + countRatedTransaction + ". will job be lunched ? : " + startJob);
+			log.info("filter for duplication has more than : {}, current rated transaction from filters are : {} . will job be lunched ? : {}",
+					maxLimit, countRatedTransaction, startJob);
 			ratedTransactionService.incrementPendingDuplicate(rtToDuplicate.stream().map(RatedTransaction::getId).collect(Collectors.toList()), negateAmount);
 			if(!startJob){
 				result.setActionStatus(new ActionStatus(ActionStatusEnum.WARNING, "The filter reach the max limit to duplicate, to duplicate these rated transaction please run the job 'DuplicationRatedTransactionJob'"));
@@ -225,7 +223,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 			currentInstance = instances.get(0).getCode();
 		}
 		jobInstanceInfoDto.setCode(currentInstance);
-		JobExecutionResultDto jobExecution = jobApi.executeJob(jobInstanceInfoDto);
+		JobExecutionResultDto jobExecution = jobApi.executeJob(jobInstanceInfoDto, false);
 		result.setJobExecutionResultDto(jobExecution);
 		result.getActionStatus().setMessage(jobExecution.getId() == null ? "NOTHING_TO_DO" : jobExecution.getId().toString());
 		return result;

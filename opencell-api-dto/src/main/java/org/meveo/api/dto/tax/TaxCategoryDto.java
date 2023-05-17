@@ -23,8 +23,10 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
@@ -48,6 +50,10 @@ public class TaxCategoryDto extends BusinessEntityDto implements Serializable {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+
+    @XmlElement(required = true)
+    @Schema(description = "The UntdidTaxationCategory")
+    protected String untdidTaxationCategoryCode;
 
     /**
      * Default constructor
@@ -102,5 +108,13 @@ public class TaxCategoryDto extends BusinessEntityDto implements Serializable {
      */
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
+    }
+
+    public String getUntdidTaxationCategoryCode() {
+        return untdidTaxationCategoryCode;
+    }
+
+    public void setUntdidTaxationCategoryCode(String untdidTaxationCategoryCode) {
+        this.untdidTaxationCategoryCode = untdidTaxationCategoryCode;
     }
 }

@@ -84,11 +84,12 @@ public class JobApi extends BaseApi {
      * Execute job.
      * 
      * @param jobExecution Job execution info
+     * @param checkJobRunningStatus check the job running status
      * @return Job execution result identifier
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
      */
-    public JobExecutionResultDto executeJob(JobInstanceInfoDto jobExecution) throws MeveoApiException, BusinessException {
+    public JobExecutionResultDto executeJob(JobInstanceInfoDto jobExecution, boolean checkJobRunningStatus) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(jobExecution.getCode()) && StringUtils.isBlank(jobExecution.getTimerName())) {
             missingParameters.add("timerName or code");
         }
@@ -100,7 +101,11 @@ public class JobApi extends BaseApi {
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
-        
+
+        if (checkJobRunningStatus && !jobExecutionService.isAllowedToExecute(jobInstance)) {
+            return findJobExecutionResult(jobInstance.getCode(), null);
+        }
+
         jobInstanceService.createMissingCustomFieldTemplates(jobInstance);
         
         // populate customFields
@@ -113,14 +118,12 @@ public class JobApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        // #3063 Ability to pass parameters when running job instance                                                                                  
-        this.setJobRunTimeJobValues(jobExecution, jobInstance);
 
         if (jobExecution.isForceExecution()) {
             jobCacheContainerProvider.resetJobRunningStatus(jobInstance);
         }
 
-        Long executionId = jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.API);
+        Long executionId = jobExecutionService.executeJob(jobInstance, getJobRunTimeJobValues(jobExecution, jobInstance), JobLauncherEnum.API);
 
         return findJobExecutionResult(null, executionId);
     }
@@ -131,13 +134,13 @@ public class JobApi extends BaseApi {
      *
      * @param jobExecution the job execution
      * @param jobInstance the job instance
-     * @throws MeveoApiException 
+     * @throws MeveoApiException
      */
-    private void setJobRunTimeJobValues(JobInstanceInfoDto jobExecution, JobInstance jobInstance) throws MeveoApiException {
-        
-        Map<String , Object> jobRunTimeValues = new HashMap<>();
-        
-        final String  runOnNodes = jobExecution.getRunOnNodes();
+    private Map<String, Object> getJobRunTimeJobValues(JobInstanceInfoDto jobExecution, JobInstance jobInstance) throws MeveoApiException {
+
+        Map<String, Object> jobRunTimeValues = new HashMap<>();
+
+        final String runOnNodes = jobExecution.getRunOnNodes();
         if (isNotEmpty(runOnNodes)) {
             jobRunTimeValues.put("runOnNodes", runOnNodes);
         }
@@ -145,17 +148,18 @@ public class JobApi extends BaseApi {
         if (isNotEmpty(parameters)) {
             jobRunTimeValues.put("parameters", parameters);
         }
-        
+
         CustomFieldsDto customFieldsDto = jobExecution.getCustomFields();
         if (customFieldsDto != null && CollectionUtils.isNotEmpty(customFieldsDto.getCustomField())) {
             List<CustomFieldDto> cfDtos = customFieldsDto.getCustomField();
             this.validateAndConvertCustomFields(cfDtos, jobInstance);
-            
+
             for (CustomFieldDto cfDto : cfDtos) {
                 jobRunTimeValues.put(cfDto.getCode(), cfDto.getValueConverted());
             }
         }
-        jobInstance.setRunTimeValues(jobRunTimeValues);
+
+        return jobRunTimeValues;
     }
 
     /**

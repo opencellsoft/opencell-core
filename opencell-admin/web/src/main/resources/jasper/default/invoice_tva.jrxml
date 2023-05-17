@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Transact-Amount-EPE"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ExemptionReason2"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -190,7 +190,7 @@
 			<fieldDescription><![CDATA[transactionalAmountWithoutTax]]></fieldDescription>
 		</field>
 		<field name="amount" class="java.lang.String">
-			<fieldDescription><![CDATA[amount]]></fieldDescription>
+			<fieldDescription><![CDATA[transactionalAmount]]></fieldDescription>
 		</field>
 		<field name="percent" class="java.lang.String">
 			<fieldDescription><![CDATA[percent]]></fieldDescription>
@@ -222,6 +222,14 @@
 	<queryString language="xPath">
 		<![CDATA[/invoice]]>
 	</queryString>
+	<field name="vatexReasons" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/amount/taxes/@vatexReasons"/>
+		<fieldDescription><![CDATA[/invoice/amount/taxes/@vatexReasons]]></fieldDescription>
+	</field>
+	<field name="baExemptionReason" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/billingAccount/taxationCategory/@taxationCategoryReason"/>
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/taxationCategory/@taxationCategoryReason]]></fieldDescription>
+	</field>
 	<field name="country" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@country"/>
 		<fieldDescription><![CDATA[/invoice/@country]]></fieldDescription>
@@ -560,19 +568,29 @@
 					</textElement>
 					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new java.math.BigDecimal(Double.valueOf($F{amountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($F{amountWithoutTax}))))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new java.math.BigDecimal(Double.valueOf($F{amountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($F{amountWithoutTax})))))]]></textFieldExpression>
 				</textField>
+				<textField>
+					<reportElement x="248" y="84" width="346" height="59" forecolor="#878787" uuid="497ea258-6ffb-494f-be3b-4bc544034578"/>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="2"/>
+					<textElement markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{baExemptionReason} != null ? ("<style isBold='true'>Exemption reason : </style> Not subject to VAT - " + $F{baExemptionReason}) : "") + 
+(($F{baExemptionReason} == null || $F{baExemptionReason}.isEmpty()) && $F{vatexReasons} != null ? ("<style isBold='true'>VAT exoneration reason : </style>" + $F{vatexReasons} + "\n") : "") 
+]]></textFieldExpression>
+				</textField>
 				<componentElement>
-					<reportElement key="" positionType="Float" stretchType="ElementGroupHeight" isPrintRepeatedValues="false" x="242" y="11" width="343" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="9bc14f0d-7b5b-43bb-8663-066a35ba3cd2"/>
+					<reportElement key="" positionType="Float" stretchType="ElementGroupHeight" isPrintRepeatedValues="false" x="243" y="4" width="343" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="efb6e3e2-cf48-479d-a73b-0fabcbe6decb"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
-						<datasetRun subDataset="dataset1" uuid="6d96d948-6ab0-45eb-aaa1-98411b9f8aa2">
+						<datasetRun subDataset="dataset1" uuid="de44a2e2-c550-491d-a95f-b1e1dfa85e3f">
 							<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}.dataSource("/invoice/amount/taxes/tax")]]></dataSourceExpression>
 						</datasetRun>
-						<jr:column width="55" uuid="1210f389-271f-44a3-841e-67f8c635e43c">
+						<jr:column width="55" uuid="69bff1a6-a6a8-4898-866c-3d50b16a3017">
 							<jr:tableHeader height="14" rowSpan="1">
 								<box>
 									<bottomPen lineWidth="1.0" lineColor="#999999"/>
 								</box>
 								<staticText>
-									<reportElement x="0" y="0" width="55" height="14" uuid="b9569b9f-3aee-4301-82da-71e1d8c6bd56">
+									<reportElement x="0" y="0" width="55" height="14" uuid="49ffee1d-ac5c-4014-934f-9250ea57693c">
 										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
 									</reportElement>
 									<box leftPadding="2">
@@ -593,7 +611,7 @@
 									<rightPen lineWidth="0.0" lineColor="#999999"/>
 								</box>
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="55" height="15" uuid="fbaa7a32-3773-4a3d-8f35-c3bbea990e8e"/>
+									<reportElement x="0" y="0" width="55" height="15" uuid="27d16478-c309-4d54-8f66-c731ad068ece"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
@@ -601,13 +619,13 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="70" uuid="9afc34e5-cf43-40af-b7c1-9b2d50d82105">
+						<jr:column width="70" uuid="aeb91550-8315-4052-a49d-967822c3f6da">
 							<jr:tableHeader height="14" rowSpan="1">
 								<box>
 									<bottomPen lineWidth="1.0" lineColor="#999999"/>
 								</box>
 								<staticText>
-									<reportElement x="0" y="0" width="70" height="14" uuid="d257de6e-64c3-4ea0-9765-1db4ec5303a1">
+									<reportElement x="0" y="0" width="70" height="14" uuid="d5f3dbd9-da7b-48dd-80b2-1a3a36eae462">
 										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
 									</reportElement>
 									<box leftPadding="2">
@@ -628,7 +646,7 @@
 									<rightPen lineWidth="0.0" lineColor="#999999"/>
 								</box>
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="70" height="15" uuid="e5bc7204-6fbb-41ff-a61b-996ee9e72fae"/>
+									<reportElement x="0" y="0" width="70" height="15" uuid="4ec8f0d4-7127-4805-bcbb-546aa1bf52e2"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
@@ -636,13 +654,13 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="110" uuid="8f78bb85-47d5-41be-b7da-caf1b9b90064">
+						<jr:column width="110" uuid="479b0efc-a186-453c-b019-70b156ecb2fa">
 							<jr:tableHeader height="14" rowSpan="1">
 								<box>
 									<bottomPen lineWidth="1.0" lineColor="#999999"/>
 								</box>
 								<textField>
-									<reportElement x="0" y="0" width="110" height="14" uuid="8a4e1e79-a070-41ae-843c-1ba4c7da2058">
+									<reportElement x="0" y="0" width="110" height="14" uuid="1b1dfa15-c535-4692-8b9e-fdbcf1728556">
 										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
 									</reportElement>
 									<box leftPadding="2">
@@ -664,7 +682,7 @@
 									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="110" height="15" isPrintWhenDetailOverflows="true" uuid="fbc8ffdd-aa29-45f5-b29f-6371deafbe99"/>
+									<reportElement x="0" y="0" width="110" height="15" isPrintWhenDetailOverflows="true" uuid="afb9d91c-1878-4b38-9d12-32e0e1651260"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
@@ -672,13 +690,13 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="100" uuid="47ea677e-4af8-489d-bb42-44c4e21b3c94">
+						<jr:column width="100" uuid="d22ea2f9-dc8f-4425-a88e-fd1e72106999">
 							<jr:tableHeader height="14" rowSpan="1">
 								<box>
 									<bottomPen lineWidth="1.0" lineColor="#999999"/>
 								</box>
 								<textField>
-									<reportElement x="0" y="0" width="100" height="14" forecolor="#000000" uuid="6d770f1c-0fe2-4fd5-8e9b-f952408c6624">
+									<reportElement x="0" y="0" width="100" height="14" forecolor="#000000" uuid="c1455c0e-af4b-49d6-a6cb-032188f417fd">
 										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
 									</reportElement>
 									<box leftPadding="2">
@@ -701,7 +719,7 @@
 									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="100" height="15" uuid="249a5b76-e45c-4611-ba34-9458b99761a6"/>
+									<reportElement x="0" y="0" width="100" height="15" uuid="f4bffe91-968b-40cf-8165-2f7198aeee52"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
 										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 									</textElement>
@@ -711,15 +729,6 @@
 						</jr:column>
 					</jr:table>
 				</componentElement>
-				<staticText>
-					<reportElement x="250" y="41" width="309" height="20" forecolor="#878787" uuid="f20d1945-420e-452f-a5d0-aeaa0cd1c74e">
-						<printWhenExpression><![CDATA[$F{total}!=null && Double.valueOf($F{total}) == 0]]></printWhenExpression>
-					</reportElement>
-					<textElement>
-						<font fontName="Arial" size="11"/>
-					</textElement>
-					<text><![CDATA["VAT exoneration reason : " + $F{vatex}]]></text>
-				</staticText>
 			</band>
 			<band/>
 		</groupHeader>

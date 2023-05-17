@@ -3130,7 +3130,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importServicesJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/services/outputs"}],
@@ -3166,7 +3166,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importSubscriptionsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/subscriptions/outputs"}],
@@ -3199,7 +3199,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importAccesPointsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/accessPoints/outputs"}],
@@ -3286,7 +3286,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="description" value="Process customer payments file job"/>
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="uuid" value="ProcessCustomerPaymentsFileJob" />
@@ -7563,7 +7563,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="following_job_id" value="null" />
             <column name="uuid" value="ImportCustomerBankDetailsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values" value="null" />
             <column name="verbose_report" value="1" />
         </insert>
@@ -8231,39 +8231,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
     </changeSet>
     
-   	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE">
-   		<update tableName="crm_customer_category">
-			<column name="tax_category_id" value="-1" />
-			<where>id in (-1,-2)</where>
-		</update>
-		<update tableName="billing_tax_mapping">
-			<column name="tax_category_id" value="-1" />
-			<where>tax_category_id = -3</where>
-		</update>
-		<update tableName="billing_billing_account">
-			<column name="tax_category_id" value="-1" />
-			<where>tax_category_id = -3</where>
-		</update>
-		<update tableName="billing_tax_category">			
-			<column name="code" value="REGULAR1"/>        
-			<where>id = -3</where>
-		</update>
-		<update tableName="billing_tax_category">			
-			<column name="code" value="REGULAR"/>
-            <column name="description_i18n" value='{"FRA":"Standard","ENG":"Regular"}'/>
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="uuid" value="billing_tax_category_regular" />            
-			<where>id = -1</where>
-		</update>
-		<delete tableName="billing_tax_category">
-			<where>id = -3</where>
-		</delete>
-    </changeSet>
-
 	<changeSet id="#INTRD-10692_20221019_ajd_occ_template" author="a.rouaguebe">
 		<insert tableName="ar_occ_template">
-			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="id" valueNumeric="-71" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
@@ -8302,7 +8272,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
 	<changeSet id="#INTRD-10772_20221025_ajd_occ_template" author="e.bourras">
 		<insert tableName="ar_occ_template">
-			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="id" valueNumeric="-72" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="updated" valueDate="${db.current.time}" />
@@ -9083,7 +9053,7 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="creator" value="opencell.admin" />
 			<column name="updater" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 		</insert>
 	</changeSet>
@@ -9663,7 +9633,7 @@ public class CdrMassImportScript extends GenericMassImportScript {
 			<column name="code" value="CsvImportCDR" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10577,7 +10547,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportCustomerJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10597,7 +10567,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportCustomerAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10617,7 +10587,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportPaymentMethodJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10637,7 +10607,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportBillingAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10657,7 +10627,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportUserAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -11477,7 +11447,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportSubscriptionJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -11497,7 +11467,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportServiceInstanceJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -11517,7 +11487,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportAttributeInstance" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -11537,7 +11507,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportAccessPoint" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -16504,11 +16474,17 @@ public class ValidateBRScript extends ValidateBR {
     	</update>
     </changeSet>
 
-    <changeSet id="#INTRD-13314_20230123" author="zelmeliani">
+    <changeSet id="#INTRD-13314_20230123-f" author="zelmeliani" failOnError="false">
         <update tableName="billing_tax_mapping">
             <column name="tax_category_id" value="-3"/>
             <where>tax_category_id=-1</where>
         </update>
+        <update tableName="billing_tax_mapping">
+            <column name="tax_class_id" value="-5"/>
+            <where>tax_class_id in (-1, -2)</where>
+        </update>        
+    </changeSet>
+    <changeSet id="#INTRD-13314_20230123" author="zelmeliani">        
         <update tableName="crm_customer_category">
             <column name="tax_category_id" value="-3"/>
             <where>tax_category_id=-1</where>
@@ -16521,10 +16497,6 @@ public class ValidateBRScript extends ValidateBR {
             <where>id=-1 and code = 'Tax category'</where>
         </delete>
 
-        <update tableName="billing_tax_mapping">
-            <column name="tax_class_id" value="-5"/>
-            <where>tax_class_id in (-1, -2)</where>
-        </update>
         <update tableName="cat_charge_template">
             <column name="tax_class_id" value="-5"/>
             <where>tax_class_id in (-1, -2)</where>
@@ -20315,7 +20287,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	
 	<changeSet id="#INTRD-14126_20230307" author="aelmalki">
         <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
+            <column name="id" valueNumeric="-75" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
@@ -20343,7 +20315,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
     <changeSet id="#INTRD-14786_20230309" author="bourras">
         <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
+            <column name="id" valueNumeric="-73" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
@@ -20356,7 +20328,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
         <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
+            <column name="id" valueNumeric="-74" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
@@ -20411,6 +20383,67 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         <sql>SELECT setval('untdid_5305_taxation_category_seq', 9, true)</sql> 
         <sql>SELECT setval('untdid_vatex_seq', 57, true)</sql> 
         <sql>SELECT setval('untdid_2475_vat_payment_option_seq', 3, true)</sql> 
+    </changeSet>
+    
+    	<changeSet id="#INTRD-5882__23-03-2022" author="Mohammed_ELAZZOUZI">
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="waitingMillis"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Waiting before next launch (ms)"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="nbRuns"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Number of parallel execution"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="maxInvoiceLinesPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Maximum of maxInvoiceLines generated per transaction"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="maxBAsPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoicingJobV2"/>
+            <column name="description" value="commit interval"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
     </changeSet>
 
     <changeSet id="#INTRD-14750_20230331" author="TarikFA.">
@@ -20735,6 +20768,142 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'tag_category_code_sequence')"/>
         </insert>
+    </changeSet>
+
+    <changeSet id="INTRD-15458_2023_04_17" author="ZBariki">
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="CUSTOMER_CODE_SEQUENCE"/>
+            <column name="description" value="Customer code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.crm.Customer"/>
+            <column name="format_el" value="#{'CUS-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'CUSTOMER_CODE_SEQUENCE')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="INTRD-15467_2023_04_17" author="ZBariki">
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="MEDIA_CODE_SEQUENCE"/>
+            <column name="description" value="Media code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.Media"/>
+            <column name="format_el" value="#{'MED-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'MEDIA_CODE_SEQUENCE')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="INTRD-15467-15458_2023_04_18" author="ZBariki">
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="format_el" value="#{'CU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="updated" valueDate="${db.current.time}"/>
+            <column name="updater" value="applicationInitializer"/>
+            <where>entity_class = 'org.meveo.model.crm.Customer'</where>
+        </update>
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="format_el" value="#{'M-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="updated" valueDate="${db.current.time}"/>
+            <column name="updater" value="applicationInitializer"/>
+            <where>entity_class = 'org.meveo.model.cpq.Media'</where>
+        </update>
+    </changeSet>
+	
+	<changeSet id="INTRD-15222_20230424" author="aelmalki" failOnError="false">
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" valueComputed="(select id from billing_invoice_type where code = 'ADJ')"/>
+            <column name="applies_to_id" valueComputed="(select id from billing_invoice_type where code = 'COMMERCIAL_ORDER')"/>
+        </insert>
+    </changeSet>
+    
+    <changeSet id="INTRD-15841_20230502" author="aeljaouhari">
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Invoice"/>
+			<column name="description_i18n" value='{"FRA":"Facture","ENG":"Invoice"}'/>
+			<where>code = 'COM'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Credit note"/>
+			<column name="description_i18n" value='{"FRA":"Avoir","ENG":"Credit note"}'/>
+			<where>code = 'ADJ'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Quote"/>
+			<column name="description_i18n" value='{"FRA":"Devis","ENG":"Quote"}'/>
+			<where>code = 'QUOTE'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Call for advance payment"/>
+			<column name="description_i18n" value='{"FRA":"Appel de payment d&apos;avance","ENG":"Call for advance payment"}'/>
+			<where>code = 'ADV'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Security deposit"/>
+			<column name="description_i18n" value='{"FRA":"Dépôt de garantie","ENG":"Security deposit"}'/>
+			<where>code = 'SECURITY_DEPOSIT'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Refundable credit note"/>
+			<column name="description_i18n" value='{"FRA":"Avoir remboursable","ENG":"Refundable credit note"}'/>
+			<where>code = 'ADJ_REF'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Credit note on invoice"/>
+			<column name="description_i18n" value='{"FRA":"Avoir sur facture","ENG":"Credit note on invoice"}'/>
+			<where>code = 'ADJ_INV'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Commercial order"/>
+			<column name="description_i18n" value='{"FRA":"Commande","ENG":"Commercial order"}'/>
+			<where>code = 'COMMERCIAL_ORDER'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="INTRD-15899_20230505" author="aelmalki">
+		<update tableName="billing_tax_category">
+			<column name="untdid_taxation_category_id" valueComputed="(SELECT id FROM untdid_5305_taxation_category WHERE code = 'E')"/>
+			<where>code = 'EXEMPTED'</where>
+		</update>
+		<update tableName="billing_tax_category">
+			<column name="untdid_taxation_category_id" valueComputed="(SELECT id FROM untdid_5305_taxation_category WHERE code = 'S')"/>
+			<where>code = 'REGULAR'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki">
+		<update tableName="billing_billing_account">
+			<column name="tax_category_id" valueComputed="(SELECT id FROM billing_tax_category WHERE code = 'REGULAR')"/>
+			<where>tax_category_id is null</where>
+		</update>
+	</changeSet>
+
+    <changeSet id="#INTRD-13682_20230510" author="AbdellatifBARI">
+        <update tableName="adm_notification">
+            <column name="event_expression_filter" value="#{event.jobInstance.code.toLowerCase().startsWith('massimport')}" />
+            <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
+        </update>
     </changeSet>
 
 </databaseChangeLog>

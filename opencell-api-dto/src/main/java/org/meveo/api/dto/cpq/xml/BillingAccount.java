@@ -31,6 +31,10 @@ public class BillingAccount {
     private Address address;
     private CustomFieldsDto customFields;
     private PaymentMethod paymentMethod;
+    @XmlAttribute
+    private String country;
+    @XmlAttribute
+    private String lang;
     
 
     public BillingAccount(org.meveo.model.billing.BillingAccount billingAccount) {
@@ -45,12 +49,16 @@ public class BillingAccount {
         this.vatNo = billingAccount.getVatNo();
         this.name = new Name(billingAccount.getName());
         this.address = new Address(billingAccount.getAddress());
+        this.country = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry().getCode() : "";
+        this.lang = billingAccount.getTradingLanguage() != null ? billingAccount.getTradingLanguage().getLanguageCode() : "";
     }
     
     public BillingAccount(org.meveo.model.billing.BillingAccount billingAccount, PaymentMethod paymentMethod, CustomFieldsDto customFieldsDto) {
     	this(billingAccount);
     	this.customFields = customFieldsDto;
     	this.paymentMethod=paymentMethod;
+        this.country = billingAccount.getTradingCountry() != null ? billingAccount.getTradingCountry().getCode() : "";
+        this.lang = billingAccount.getTradingLanguage() != null ? billingAccount.getTradingLanguage().getLanguageCode() : "";
     }
 
     public String getBillingCycleCode() {

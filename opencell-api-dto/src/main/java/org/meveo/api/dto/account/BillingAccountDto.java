@@ -252,6 +252,10 @@ public class BillingAccountDto extends AccountDto {
     @Schema(description = "The iso ICD Code")
     private String isoICDCode;
 
+    /** The exemption reason. */
+    @Schema(description = "The exemption reason")
+    private String exemptionReason;
+
     public String getIsoICDCode() {
         return isoICDCode;
     }
@@ -273,7 +277,6 @@ public class BillingAccountDto extends AccountDto {
     @XmlElement(name = "tagCodes")
     @Schema(description = "list of the code of tags")
     protected Set<String> tagCodes = new HashSet<>();
-
 
     /**
      * Instantiates a new billing account dto.
@@ -945,4 +948,12 @@ public class BillingAccountDto extends AccountDto {
 	public void setTagCodes(Set<String> tagCodes) {
 		this.tagCodes = tagCodes;
 	}
+
+    public String getExemptionReason() {
+        return exemptionReason;
+    }
+
+    public void setExemptionReason(String exemptionReason) {
+        this.exemptionReason = exemptionReason;
+    }
 }

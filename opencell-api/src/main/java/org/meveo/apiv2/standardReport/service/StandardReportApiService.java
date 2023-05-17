@@ -32,9 +32,6 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 							   Integer numberOfPeriods, String tradingCurrency, String functionalCurrency) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset != null
 				? offset.intValue() : null, limit.intValue() , null, null, fetchFields, orderBy, sort);
-        if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
-			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
-		}
 		if(numberOfPeriods != null && stepInDays == null) {
 			throw new BadRequestException("StepInDays parameter is mandatory when numberOfPeriods is provided");
 		}
@@ -127,10 +124,6 @@ public class StandardReportApiService implements ApiService<RecordedInvoice> {
 	 */
 	public Long getCountAgedReceivables(String customerAccountCode, String customerAccountDescription, String sellerCode, String sellerDescription, String invoiceNumber, String tradingCurrency, 
 			Date startDueDate, Date endDueDate, Date startDate) {
-		if(invoiceNumber != null && invoiceService.findByInvoiceNumber(invoiceNumber) == null) {
-			throw new NotFoundException("Invoice number : " + invoiceNumber + " does not exits");
-		}
-
 		if (startDueDate != null && endDueDate != null && startDueDate.after(endDueDate)) {
 			throw new BadRequestException("End due date must be after start due date");
 		}

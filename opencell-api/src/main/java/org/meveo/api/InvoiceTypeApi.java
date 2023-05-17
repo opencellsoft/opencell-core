@@ -308,6 +308,9 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
         if (dto.getDescription() != null) {
             entity.setDescription(StringUtils.isEmpty(dto.getDescription()) ? null : dto.getDescription());
         }
+        if (dto.getLanguageDescriptions() != null) {
+        	entity.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getLanguageDescriptions(), null));
+		}
         if (dto.getOccTemplateCodeEl() != null) {
             entity.setOccTemplateCodeEl(StringUtils.isEmpty(dto.getOccTemplateCodeEl()) ? null : dto.getOccTemplateCodeEl());
         }

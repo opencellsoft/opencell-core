@@ -555,18 +555,39 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     private String resolveType(String type, Object value, String operator) {
 
-
+        String rangeType = "";
         switch(type.toLowerCase()){
             case "string":
                 return "(LOWER(ppmv.stringValue) " + formattedOperation(operator, value.toString().toLowerCase()) + " OR ppmv.stringValue IS NULL)";
             case "long":
                 return "(ppmv.longValue " + formattedOperation(operator, value) + " OR ppmv.long_value IS NULL)";
             case "double":
+                if("=".equals(operator)){
+                    rangeType = "(ppmc.isRange = true and ppmv.fromDoubleValue <=" + Double.valueOf(value.toString())+ "  and ppmv.toDoubleValue >="+ Double.valueOf(value.toString());
+                    rangeType +=  " OR (ppmv.doubleValue " + formattedOperation(operator, Double.valueOf(value.toString()))+ " OR ppmv.doubleValue IS NULL))";
+                    return rangeType;
+                }else if("!=".equals(operator)){
+                    rangeType = "(ppmc.isRange = true and ppmv.toDoubleValue <" + Double.valueOf(value.toString())+ "  and ppmv.fromDoubleValue >"+ Double.valueOf(value.toString());
+                    rangeType +=  " OR (ppmv.doubleValue " + formattedOperation(operator, Double.valueOf(value.toString()))+ " OR ppmv.doubleValue IS NULL))";
+                    return rangeType;
+                }
+                if(operator.contentEquals("BETWEEN")){
+                    return "(ppmv.doubleValue " + formattedOperation(operator, value.toString())+ " OR ppmv.doubleValue IS NULL)";
+                }
                 return "(ppmv.doubleValue " + formattedOperation(operator, Double.valueOf(value.toString()))+ " OR ppmv.doubleValue IS NULL)";
             case "boolean":
                 return "(ppmv.booleanValue " + formattedOperation(operator, Boolean.valueOf(value.toString()))+ " OR ppmv.booleanValue IS NULL)";
             case "date":
-                return "(ppmv.dateValue " + formattedOperation(operator, new java.sql.Date(parseDate(value).getTime()))+ " OR ppmv.dateValue IS NULL)";
+                if("=".equals(operator)){
+                    rangeType = "(ppmc.isRange = true and ppmv.fromDateValue <='" + new java.sql.Date(parseDate(value).getTime())+ "'  and ppmv.toDateValue >='"+ new java.sql.Date(parseDate(value).getTime())+"'";
+                    rangeType +=  " OR (ppmc.isRange = false and (ppmv.dateValue " + formattedOperation(operator, new java.sql.Date(parseDate(value).getTime()))+ " OR ppmv.dateValue IS NULL)))";
+                    return rangeType;
+                }else if("!=".equals(operator)){
+                    rangeType = "(ppmc.isRange = true and ppmv.toDateValue <'" +  new java.sql.Date(parseDate(value).getTime())+ "'  or ppmv.fromDateValue >'"+ new java.sql.Date(parseDate(value).getTime()) + "'";
+                    rangeType +=  " OR (ppmc.isRange = false and (ppmv.dateValue " + formattedOperation(operator, new java.sql.Date(parseDate(value).getTime()))+ " OR ppmv.dateValue IS NULL)))";
+                    return rangeType;
+                }
+                return rangeType + "(ppmc.isRange = false and (ppmv.dateValue " + formattedOperation(operator, new java.sql.Date(parseDate(value).getTime()))+ " OR ppmv.dateValue IS NULL))";
             default:
                 return "stringValue = ''";
         }
@@ -596,6 +617,17 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             }
             case "in": {
                 operand = "in (" + value + ")";
+                break;
+            }
+            case "BETWEEN" : {
+                if(Objects.isNull(value)){
+                    throw  new BusinessException("The operator BETWEEN can n ot have a null value");
+                }
+                String[] values = value.toString().split(";");
+                if(values.length < 2 ){
+                    throw  new BusinessException("The operator BETWEEN must have 2 values");
+                }
+                operand = "between " + values[0] + " AND " + values[1];
                 break;
             }
             default:

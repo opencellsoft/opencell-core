@@ -26,7 +26,12 @@ import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.ExchangeRate;
+import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
@@ -69,6 +74,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.String.valueOf;
 import static java.time.Instant.now;
@@ -151,10 +157,23 @@ public class ServiceSingleton {
             '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
             'V', '6', 'W', '7', 'X', '8', 'Y', '9', 'Z');
 
-    private static final String GENERATED_CODE_KEY = "generatedCode";
+    private static Map<Long, AtomicInteger> invoicingTempNumber = new HashMap<>();
+    
+	private static final String GENERATED_CODE_KEY = "generatedCode";
 
     private Random random = new SecureRandom();
 
+    public String getTempInvoiceNumber(Long billingRunId){
+    	// #MEL when remove brs from this map?
+    	if(!invoicingTempNumber.containsKey(billingRunId)) {
+    		AtomicInteger counter = new AtomicInteger(0);
+    		invoicingTempNumber.put(billingRunId, counter);
+    	}
+    	AtomicInteger counter = invoicingTempNumber.get(billingRunId);
+    	final String index = ""+counter.incrementAndGet();
+    	return ""+billingRunId+"-"+("000000000"+index).substring(index.length());
+    }
+    
 
     /**
      * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.
@@ -602,7 +621,7 @@ public class ServiceSingleton {
     }
 
     public void triggersJobs() {
-    	FinanceSettings lastOne = financeSettingsService.findLastOne();
+    	FinanceSettings lastOne = financeSettingsService.getFinanceSetting();
         if (lastOne != null && lastOne.isActivateDunning()) {
         	Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob", "TriggerReminderDunningLevel_Job").stream()
         	.map(jobInstanceService::findByCode)

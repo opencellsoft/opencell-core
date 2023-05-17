@@ -41,6 +41,7 @@ import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
@@ -191,7 +192,10 @@ public class ContractApi extends BaseApi{
 			throw new BusinessApiException(String.format(CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN, format.format(dto.getEndDate()), format.format(dto.getBeginDate())));
 		}
 		//get the current contract
-		Contract contract = contractService.findByCode(dto.getCode());
+		Contract contract = contractService.findById(dto.getId());
+		if (contract == null) {
+			contract = contractService.findByCode(dto.getCode());
+		}
 		if(contract == null)
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
 		//check the status of the contract
@@ -510,6 +514,101 @@ public class ContractApi extends BaseApi{
 		missingParameters.addAll(new ArrayList<>(brMessages));
 		
 		handleMissingParameters();
-		
+
+	}
+
+	public Long duplicateContract(String contractCode) {
+		missingParameters.clear();
+
+		if(StringUtils.isBlank(contractCode)) {
+			missingParameters.add("contractCode");
+		}
+		handleMissingParameters();
+
+		Contract contractToDuplicate = contractService.findByCode(contractCode);
+		if(contractToDuplicate == null) {
+			throw new EntityDoesNotExistsException(Contract.class, contractCode);
+		}
+
+		String newContractCode = contractToDuplicate.getCode() + "-COPY";
+		if(contractService.findByCode(newContractCode) != null) {
+			throw new EntityAlreadyExistsException(Contract.class, newContractCode);
+		}
+
+		Contract entityToSave = new Contract();
+		entityToSave.setCode(newContractCode);
+		entityToSave.setBeginDate(contractToDuplicate.getBeginDate());
+		entityToSave.setEndDate(contractToDuplicate.getEndDate());
+		entityToSave.setSeller(contractToDuplicate.getSeller());
+		entityToSave.setCustomer(contractToDuplicate.getCustomer());
+		entityToSave.setCustomerAccount(contractToDuplicate.getCustomerAccount());
+		entityToSave.setBillingAccount(contractToDuplicate.getBillingAccount());
+		entityToSave.setApplicationEl(contractToDuplicate.getApplicationEl());
+		entityToSave.setRenewal(contractToDuplicate.isRenewal());
+		entityToSave.setContractDuration(contractToDuplicate.getContractDuration());
+
+		if(contractToDuplicate.getBillingRules() != null) {
+			List<BillingRule> duplicatedBRs = contractToDuplicate.getBillingRules()
+					.stream()
+					.map(br -> {
+						BillingRule billingRule = new BillingRule();
+						billingRule.setPriority(br.getPriority());
+						billingRule.setCriteriaEL(br.getCriteriaEL());
+						billingRule.setInvoicedBACodeEL(br.getInvoicedBACodeEL());
+						billingRule.setContract(entityToSave);
+						billingRule.updateAudit(currentUser);
+						return billingRule;
+					})
+					.collect(Collectors.toList());
+			entityToSave.setBillingRules(duplicatedBRs);
+		}
+
+		if(contractToDuplicate.getContractItems() != null) {
+			List<ContractItem> duplicatedCIs = contractToDuplicate.getContractItems()
+					.stream()
+					.map(ci -> {
+						ContractItem contractItem = new ContractItem();
+						contractItem.setCode(ci.getCode() + "-COPY");
+						contractItem.setApplicationEl(ci.getApplicationEl());
+						contractItem.setRate(ci.getRate());
+						contractItem.setSeparateDiscount(ci.isSeparateDiscount());
+						contractItem.setOfferTemplate(ci.getOfferTemplate());
+						contractItem.setProduct(ci.getProduct());
+						contractItem.setChargeTemplate(ci.getChargeTemplate());
+						contractItem.setContractRateType(ci.getContractRateType());
+						contractItem.setContract(entityToSave);
+						contractItem.updateAudit(currentUser);
+
+						if(ci.getPricePlan() != null) {
+							contractItem.setPricePlan(duplicatePricePlan(contractItem.getCode(), ci.getPricePlan()));
+						}
+
+						return contractItem;
+					})
+					.collect(Collectors.toList());
+			entityToSave.setContractItems(duplicatedCIs);
+		}
+
+		entityToSave.setCfValues(contractToDuplicate.getCFValuesCopy());
+		contractService.create(entityToSave);
+
+		return entityToSave.getId();
+	}
+
+	private PricePlanMatrix duplicatePricePlan(String newContractItemCode, PricePlanMatrix pricePlanMatrix) {
+		PricePlanMatrix duplicate = new PricePlanMatrix(pricePlanMatrix);
+		duplicate.setCode(pricePlanMatrixService.findDuplicateCode(pricePlanMatrix));
+		duplicate.setEventCode(newContractItemCode);
+		duplicate.setVersion(0);
+		duplicate.setVersions(new ArrayList<>());
+
+		pricePlanMatrixService.create(duplicate);
+
+		pricePlanMatrix.getVersions().forEach(ppv -> {
+			PricePlanMatrixVersion duplicatedPPMV = pricePlanMatrixVersionService.duplicate(ppv, duplicate, ppv.getValidity(), VersionStatusEnum.DRAFT, ppv.getPriceVersionType(), false, ppv.getCurrentVersion());
+			duplicate.getVersions().add(duplicatedPPMV);
+		});
+
+		return duplicate;
 	}
 }

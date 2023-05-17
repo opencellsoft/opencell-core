@@ -82,7 +82,7 @@ public class DocumentResourceImpl implements DocumentResource {
                 documentService.remove(document);
                 documentFileService.deleteFile(document);
             }, () -> new NotFoundException("document with code "+code+" and version "+version+" does not exist."));
-        return Response.noContent().build();
+        return Response.ok().build();
     }
 
     @Override
@@ -105,14 +105,14 @@ public class DocumentResourceImpl implements DocumentResource {
     public Response updateDocumentFile(String code, String encodedDocumentFile) {
         Optional.ofNullable(documentService.findByCodeAndLastVersion(code)).ifPresentOrElse(document ->
                 documentFileService.updateFile(document, Base64.getDecoder().decode(encodedDocumentFile)), () -> new NotFoundException("document with code "+code+" does not exist."));
-        return Response.noContent().build();
+        return Response.ok().build();
     }
 
     @Override
     public Response updateDocumentFile(String code, Integer version, String encodedDocumentFile) {
         Optional.ofNullable(documentService.findByCodeAndVersion(code, version)).ifPresentOrElse(document ->
                 documentFileService.updateFile(document, Base64.getDecoder().decode(encodedDocumentFile)), () -> new NotFoundException("document with code "+code+" and version "+version+" does not exist."));
-        return Response.noContent().build();
+        return Response.ok().build();
     }
 
     @Override
@@ -124,7 +124,7 @@ public class DocumentResourceImpl implements DocumentResource {
                     }
                     documentFileService.deleteFile(document);
                 }, () -> new NotFoundException("document with code "+code+" and version "+version+" does not exist."));
-        return Response.noContent().build();
+        return Response.ok().build();
     }
 
 

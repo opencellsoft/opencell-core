@@ -28,6 +28,7 @@ import org.meveo.apiv2.accountreceivable.AccountOperationApiService;
 import org.meveo.apiv2.accountreceivable.ChangeStatusDto;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.model.MatchingReturnObject;
+import org.meveo.model.accounting.AccountingOperationAction;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
@@ -62,26 +63,6 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
     @Inject
     private AccountOperationApi accountOperationApi;
 
-    /**
-     * Get accounting date of account operation
-     *
-     * @param accountOperation the account operation
-     * @return accounting date
-     */
-    private Date getAccountingDate(AccountOperation accountOperation) {
-        Date accountingDate = accountOperation.getAccountingDate();
-        if(accountingDate == null){
-            accountingDate = accountOperation.getTransactionDate();
-            if (accountOperation instanceof Refund ||
-                    accountOperation instanceof Payment ||
-                    accountOperation instanceof RejectedPayment) {
-                accountingDate = accountOperation.getCollectionDate() != null ? accountOperation.getCollectionDate()
-                        : accountOperation.getDueDate();
-            }
-        }
-        return accountingDate;
-    }
-
     @Override
     public Response post(Map<String, Set<Long>> accountOperations) {
         Set<Long> accountOperationsIds = accountOperations.getOrDefault("accountOperations", Collections.EMPTY_SET);
@@ -93,7 +74,7 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
                 .map(aOId -> accountOperationService.findById(aOId))
                 .filter(accountOperation -> accountOperation != null)
                 .forEach(accountOperation -> {
-                    Date accountingDate = getAccountingDate(accountOperation);
+                    Date accountingDate = accountOperationService.getAccountingDate(accountOperation);
                     if (accountingDate == null) {
                         aONotHaveTransactionDate.add(accountOperation.getId());
                         return;
@@ -155,17 +136,26 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
 			}
 			return ao;
 		}).filter(accountOperation -> accountOperation != null).forEach(accountOperation -> {
-            Date accountingDate = getAccountingDate(accountOperation);
+            Date accountingDate = accountOperationService.getAccountingDate(accountOperation);
             if (accountingDate == null) {
                 aONotHaveTransactionDate.add(accountOperation.getId());
                 return;
             }
             String fiscalYear = String.valueOf(DateUtils.getYearFromDate(accountingDate));
-			AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(fiscalYear);
-			if (accountingPeriod == null || accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.CLOSED) {
-				aOWithClosedAccountingPeriod.add(accountOperation.getId());
-				return;
-			}
+            AccountingPeriod accountingPeriod = accountingPeriodService.findByAccountingPeriodYear(fiscalYear);
+            if (accountingPeriod == null || (accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.CLOSED &&
+                    accountingPeriod.getAccountingOperationAction() != AccountingOperationAction.FORCE)) {
+                aOWithClosedAccountingPeriod.add(accountOperation.getId());
+                return;
+            } else if (accountingPeriod.getAccountingPeriodStatus() == AccountingPeriodStatusEnum.CLOSED) {
+                accountingPeriod = accountingPeriodService.findOpenAccountingPeriod();
+                if (accountingPeriod == null) {
+                    aOWithClosedAccountingPeriod.add(accountOperation.getId());
+                    return;
+                }
+                accountingDate = accountingPeriod.getStartDate();
+            }
+
             accountOperation.setAccountingDate(accountingDate);
 			accountOperationService.forceAccountOperation(accountOperation, accountingPeriod);
 			accountOperationService.update(accountOperation);

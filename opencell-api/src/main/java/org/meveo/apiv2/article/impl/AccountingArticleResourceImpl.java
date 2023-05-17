@@ -56,11 +56,7 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 	@Override
 	public Response updateAccountingArticle(Long id, org.meveo.apiv2.article.AccountingArticle accountingArticle) {
         AccountingArticle accountingArticleEntity = mapper.toEntity(accountingArticle);        
-        UntdidAllowanceCode untdidAllowanceCode = untdidAllowanceCodeService.getByCode(accountingArticle.getAllowanceCode());
-        if (untdidAllowanceCode == null) {
-            throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, accountingArticle.getAllowanceCode());
-        }
-        accountingArticleEntity.setAllowanceCode(untdidAllowanceCode);
+        accountingArticleEntity.setAllowanceCode(untdidAllowanceCodeService.getByCode(accountingArticle.getAllowanceCode()));
         accountingArticleBaseApi.populateCustomFieldsForGenericApi(accountingArticle.getCustomFields(), accountingArticleEntity, false);
         Optional<AccountingArticle> accountingUpdated = accountingArticleApiService.update(id, accountingArticleEntity);
         return Response

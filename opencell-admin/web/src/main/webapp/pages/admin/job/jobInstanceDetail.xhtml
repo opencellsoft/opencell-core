@@ -62,8 +62,8 @@
 							</p:selectOneMenu>
 						</hftl:decorateFormField>
 						<hftl:formField label="#{messages['jobInstance.jobSpeed']}" field="jobSpeed" />
-						
-						<hftl:formField label="#{messages['jobInstance.limitToSingleNode']}" field="limitToSingleNode" newLine="true" />
+
+						<hftl:formField label="#{messages['jobInstance.clusterBehavior']}" field="clusterBehavior" newLine="true" />
 						<hftl:formField label="#{messages['jobInstance.runOnNodes']}" field="runOnNodes" />
 
 						<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!jobInstanceBean.entity.transient}">
@@ -107,8 +107,7 @@
 					stopByForce="#{jobInstanceBean.isJobRunning(jobInstanceBean.entity)}" executeLabel="#{messages['job.executeJobNow']}" stopLabel="#{messages['action.stop']}"
 					stopConfirmationMessage="#{messages['jobInstance.job.stopConfirmation']}" stopByForceLabel="#{messages['action.stopNow']}"
 					stopByForceConfirmationMessage="#{messages['jobInstance.job.stopNowConfirmation']}" backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
-					submitPartialProcess=":formId:tabView" showEnableDisableButton="true"
-					killConversationOnSave="false" killConversationOnBack="false" />
+					submitPartialProcess=":formId:tabView" showEnableDisableButton="true" killConversationOnSave="false" killConversationOnBack="false" />
 
 
 			</hftl:formPanel>
@@ -121,45 +120,45 @@
 				<p:fieldset legend="#{messages['jobInstance.jobHistory']}" styleClass="clearLeft">
 
 					<h:form id="jobExecutionsDatatable_frm" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
-						<p:dataTable id="jobExecutionsDatatable" var="entity" sortBy="#{entity.id}" sortOrder="descending" paginator="true"
-							paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-							value="#{jobInstanceBean.getExecutionHistory()}" rows="10" rowKey="#{entity.id}" resizableColumns="true" lazy="true" styleClass="custom-grid"
-							rowsPerPageTemplate="10,15,20,50" reflow="true" paginatorAlwaysVisible="true" paginatorPosition="both">
 
-							<p:column sortBy="#{entity.startDate}" headerText="#{messages['jobExecution.startDate']}" width="10%">
+						<p:treeTable id="jobExecutionsTree" value="#{jobInstanceBean.getExecutionHistoryRoot()}" var="entity" nodeVar="node" paginator="true" rows="10"
+							paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+							resizableColumns="true" lazy="true" styleClass="custom-grid" rowsPerPageTemplate="10,15,20,50" reflow="true" paginatorAlwaysVisible="true" paginatorPosition="both">
+
+							<p:column sortBy="#{entity.startDate}" headerText="#{messages['jobExecution.startDate']}" width="15%">
 								<h:outputText value="#{entity.startDate}">
 									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 								</h:outputText>
 							</p:column>
 
 							<p:column sortBy="#{entity.endDate}" headerText="#{messages['jobExecution.endDate']}" width="10%">
-								<h:outputText value="#{entity.endDate}">
+								<h:outputText value="#{node.type eq 'child'?entity.endDate:entity.cumulativeEndDate}">
 									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
 								</h:outputText>
 							</p:column>
 
-
 							<p:column sortBy="#{entity.nbItemsToProcess}" headerText="#{messages['jobExecution.nbToProcess']}" width="10%">
-								<h:outputText value="#{entity.nbItemsToProcess}" />
+								<h:outputText value="#{node.type eq 'child'?'':entity.nbItemsToProcess}" />
 							</p:column>
 
-
 							<p:column sortBy="#{entity.nbItemsCorrectlyProcessed}" headerText="#{messages['jobExecution.nbOk']}" width="5%">
-								<h:outputText value="#{entity.nbItemsCorrectlyProcessed}" />
+								<h:outputText value="#{node.type eq 'child'?entity.nbItemsCorrectlyProcessed: entity.cumulativeNbItemsCorrectlyProcessed}" />
 							</p:column>
 
 							<p:column sortBy="#{entity.nbItemsProcessedWithWarning}" headerText="#{messages['jobExecution.nbWarn']}" width="5%">
-								<h:outputText value="#{entity.nbItemsProcessedWithWarning}" />
+								<h:outputText value="#{node.type eq 'child'?entity.nbItemsProcessedWithWarning:entity.cumulativeNbItemsProcessedWithWarning}" />
 							</p:column>
 
 							<p:column sortBy="#{entity.nbItemsProcessedWithError}" headerText="#{messages['jobExecution.nbKo']}" width="5%">
-								<h:outputText value="#{entity.nbItemsProcessedWithError}" />
+								<h:outputText value="#{node.type eq 'child'?entity.nbItemsProcessedWithError:entity.cumulativeNbItemsProcessedWithError}" />
 							</p:column>
 
-							<hftl:column label="#{messages['jobExecution.status']}" field="status.label" isMessage="true" width="10%" />
-							<hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" />
-
-						</p:dataTable>
+							<p:column sortBy="#{entity.status}" headerText="#{messages['jobExecution.status']}" width="10%">
+								<h:outputText value="#{messages[node.type eq 'child'?entity.status.label:entity.cumulativeStatus.label]}" />
+							</p:column>
+							
+							<hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" show="#{node.type eq 'child'}" />
+						</p:treeTable>
 					</h:form>
 				</p:fieldset>
 			</p:panel>

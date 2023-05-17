@@ -292,9 +292,9 @@ public class DefaultNotificationService {
                     // script context overwrite
                     context.putAll(executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context,false,true,false));
                 }
-               if( emailNotifier.sendEmail(emailNotification, entityOrEvent, context, lastCurrentUser)) {
-            	   executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context,false,false,true);
-               }
+                if (emailNotifier.sendEmail(emailNotification, entityOrEvent, context, lastCurrentUser) && notif.getScriptInstance() != null) {
+                    executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context, false, false, true);
+                }
 
             } else if (notif instanceof WebHook) {
                 MeveoUser lastCurrentUser = currentUser.unProxy();

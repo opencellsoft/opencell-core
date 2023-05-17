@@ -189,7 +189,9 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.detachFromInvoices", query = "UPDATE RatedTransaction r SET r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceLine=null, r.invoiceAgregateF=null WHERE r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice.id IN (:ids)) "),
         @NamedQuery(name = "RatedTransaction.reopenRatedTransactions", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null, r.invoiceLine=null where r.id IN (:rtIds)"),
         @NamedQuery(name = "RatedTransaction.updatePendingDuplicate", query = "update RatedTransaction r set r.pendingDuplicates= r.pendingDuplicates + :pendingDuplicates, r.pendingDuplicatesToNegate= r.pendingDuplicatesToNegate + :pendingDuplicatesToNegate where r.id in (:rtI)"),
-        @NamedQuery(name = "RatedTransaction.findPendingOrNegateDuplicated", query = "Select r from RatedTransaction r where r.pendingDuplicates > 0 or r.pendingDuplicatesToNegate > 0")
+        @NamedQuery(name = "RatedTransaction.findPendingOrNegateDuplicated", query = "Select r from RatedTransaction r where r.pendingDuplicates > 0 or r.pendingDuplicatesToNegate > 0"),
+        @NamedQuery(name = "RatedTransaction.cancelRatedTransactionsByBR", query = "update RatedTransaction rt set rt.status = 'CANCELED', rt.updated = CURRENT_TIMESTAMP ,rt.invoiceLine = null, rt.invoice = null where rt.billingRun.id = :billingRunId"),
+        @NamedQuery(name = "RatedTransaction.findForAppyInvoicingRuleByIds", query = "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) AND  rt.status = 'OPEN' and rt.rulesContract is not null")
         })
 
 @NamedNativeQueries({
@@ -226,26 +228,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Origin Billing account associated to rated transaction
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "origin_billing_account")
     private BillingAccount originBillingAccount;
     
-    public BillingAccount getOriginBillingAccount() {
-        return originBillingAccount;
-    }
-
-    public void setOriginBillingAccount(BillingAccount originBillingAccount) {
-        this.originBillingAccount = originBillingAccount;
-    }
-
-    public String getRejectReason() {
-        return rejectReason;
-    }
-
-    public void setRejectReason(String rejectReason) {
-        this.rejectReason = rejectReason;
-    }
-
     /**
      * User account associated to rated transaction
      */
@@ -630,6 +616,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
+
+    /**The amount after discount**/
+    @Column(name = "discounted_amount")
+    private BigDecimal discountedAmount;
     
     @ManyToOne
     @JoinColumn(name = "rules_contract_id")
@@ -673,10 +663,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
   	private Integer sequence;
 
     @Column(name = "pending_duplicates")
-    private Integer pendingDuplicates;
+    private Integer pendingDuplicates = 0;
 
     @Column(name = "pending_duplicates_to_negate")
-    private Integer pendingDuplicatesToNegate;
+    private Integer pendingDuplicatesToNegate = 0;
     
     public RatedTransaction() {
         super();
@@ -833,6 +823,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountPlanItem = walletOperation.getDiscountPlanItem();
         this.discountPlanType = walletOperation.getDiscountPlanType();
         this.discountValue = walletOperation.getDiscountValue();
+        this.discountedAmount = walletOperation.getDiscountedAmount();
         this.sequence = walletOperation.getSequence();
         this.rulesContract = walletOperation.getRulesContract();
     }
@@ -889,6 +880,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountPlanItem = rateTransactionToDuplicate.getDiscountPlanItem();
         this.discountPlanType = rateTransactionToDuplicate.getDiscountPlanType();
         this.discountValue = rateTransactionToDuplicate.getDiscountValue();
+        this.discountedAmount = rateTransactionToDuplicate.getDiscountedAmount();
         this.sequence = rateTransactionToDuplicate.getSequence();
         this.rulesContract = rateTransactionToDuplicate.getRulesContract();
         this.pendingDuplicates = 0;
@@ -1012,6 +1004,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         return billingAccount.getId();
     }
 
+    public BillingAccount getOriginBillingAccount() {
+        return originBillingAccount;
+    }
+
+    public void setOriginBillingAccount(BillingAccount originBillingAccount) {
+        this.originBillingAccount = originBillingAccount;
+    }
+    
     /**
      * @return User account associated to rated transaction
      */
@@ -1058,6 +1058,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.code = code;
     }
 
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
+    
     public String getDescription() {
         return description;
     }
@@ -1659,6 +1667,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
 		this.discountPlanItem = discountPlanItem;
 	}
+
+    public BigDecimal getDiscountedAmount() {
+        return discountedAmount;
+    }
+
+    public void setDiscountedAmount(BigDecimal discountedAmount) {
+        this.discountedAmount = discountedAmount;
+    }
 
 	public OrderInfo getInfoOrder() {
 		return infoOrder;

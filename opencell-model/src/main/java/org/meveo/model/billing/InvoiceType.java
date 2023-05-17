@@ -19,6 +19,7 @@ package org.meveo.model.billing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -148,7 +149,7 @@ public class InvoiceType extends BusinessCFEntity {
     @JoinColumn(name = "invoice_validation_script_id")
     private ScriptInstance invoiceValidationScript;
 
-    @OneToMany(mappedBy = "invoiceType", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "invoiceType", fetch = FetchType.LAZY)
     private List<InvoiceValidationRule> invoiceValidationRules;
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -164,7 +165,11 @@ public class InvoiceType extends BusinessCFEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_subject_code")
-    private UntdidInvoiceSubjectCode invoiceSubjectCode;    
+    private UntdidInvoiceSubjectCode invoiceSubjectCode;
+    
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "jsonb")
+    private Map<String, String> descriptionI18n;  
 
     public UntdidInvoiceSubjectCode getInvoiceSubjectCode() {
         return invoiceSubjectCode;
@@ -418,4 +423,12 @@ public class InvoiceType extends BusinessCFEntity {
 		this.untdidVatPaymentOption = untdidVatPaymentOption;
 	}
 
+	public Map<String, String> getDescriptionI18n() {
+		return descriptionI18n;
+	}
+
+	public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+		this.descriptionI18n = descriptionI18n;
+	}
+	
 }

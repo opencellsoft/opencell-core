@@ -121,11 +121,7 @@ public class PaymentMethodApi extends BaseApi {
         paymentMethod.setTokenId(paymentMethodDto.getTokenId());
         
         if (paymentMethodDto.getUntdidPaymentMeans() != null) {
-            UntdidPaymentMeans untdidPaymentMeans = untdidPaymentMeansService.getByCode(paymentMethodDto.getUntdidPaymentMeans());
-            if (untdidPaymentMeans == null) {
-                throw new EntityDoesNotExistsException(UntdidPaymentMeans.class, paymentMethodDto.getUntdidPaymentMeans());
-            }
-            paymentMethod.setPaymentMeans(untdidPaymentMeans);
+            paymentMethod.setPaymentMeans(untdidPaymentMeansService.getByCode(paymentMethodDto.getUntdidPaymentMeans()));
         }
 
 		// populate customFields
@@ -181,11 +177,7 @@ public class PaymentMethodApi extends BaseApi {
         }
         
         if (paymentMethodDto.getUntdidPaymentMeans() != null) {
-            UntdidPaymentMeans untdidPaymentMeans = untdidPaymentMeansService.getByCode(paymentMethodDto.getUntdidPaymentMeans());
-            if (untdidPaymentMeans == null) {
-                throw new EntityDoesNotExistsException(UntdidPaymentMeans.class, paymentMethodDto.getUntdidPaymentMeans());
-            }
-            paymentMethod.setPaymentMeans(untdidPaymentMeans);
+            paymentMethod.setPaymentMeans(untdidPaymentMeansService.getByCode(paymentMethodDto.getUntdidPaymentMeans()));
         }
         
 		// populate customFields

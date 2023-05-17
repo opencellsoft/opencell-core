@@ -576,10 +576,11 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 					OrderOffer offer = new OrderOffer();
 					offer.setOrder(duplicatedOrder);
 					offer.setOfferTemplate(orderOffer.getOfferTemplate());
+					offer.setSubscription(orderOffer.getSubscription());
 					offer.setDiscountPlan(orderOffer.getDiscountPlan());
 					offer.setDeliveryDate(orderOffer.getDeliveryDate());
 					offer.setUserAccount(orderOffer.getUserAccount());
-					offer.setOrderLineType(OfferLineTypeEnum.CREATE);
+					offer.setOrderLineType(orderOffer.getOrderLineType());
 					orderOfferService.create(offer);
 					offer.setProducts(orderOffer.getProducts().stream()
 							.map(orderProduct -> duplicateProduct(orderProduct, offer))
@@ -633,6 +634,11 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		if(order.getOrderParent() != null){
 			duplicatedCommercialOrderDto.setOrderParentCode(order.getOrderParent().getCode());
 		}
+
+		// build custom field
+		duplicatedCommercialOrderDto.setCustomFields(
+				entityToDtoConverter.getCustomFieldsDTO(order, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+
 		return duplicatedCommercialOrderDto;
 	}
 
@@ -1396,10 +1402,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		if(orderOffer.getProducts() != null) {
 			orderOffer.getProducts()
 					.stream()
-					.filter(orderProduct -> orderProduct.getOrderArticleLine() != null)
+					.filter(orderProduct -> orderProduct.getOrderArticleLines() != null)
 					.forEach(orderProduct -> {
-						orderProduct.getOrderArticleLine().setOrderProduct(null);
-						orderProduct.setOrderArticleLine(null);
+						orderProduct.getOrderArticleLines().forEach(a -> a.setOrderProduct(null));
+						orderProduct.getOrderArticleLines().clear();
 					});
 		}
     	orderOfferService.remove(orderOffer);

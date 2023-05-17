@@ -34,6 +34,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobExecutionStatus;
 import org.meveo.cache.JobRunningStatusEnum;
@@ -48,6 +49,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.service.base.IEntityService;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionErrorService;
@@ -55,6 +57,8 @@ import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
 /**
  * @author Edward P. Legaspi
@@ -85,7 +89,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     @Inject
     private IEntityService iEntityService;
 
-    private ServiceBasedLazyDataModel<JobExecutionResultImpl> executionHistoryDM = null;
+    private TreeNode executionHistoryRoot;
 
     private ServiceBasedLazyDataModel<JobExecutionError> executionErrorDM = null;
 
@@ -266,21 +270,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * @return True if it can be executed locally
      */
     public boolean isAllowedToExecute(JobInstance jobInstance) {
-        if (jobInstance == null || jobInstance.getId() == null) {
-            return false;
-        }
-
-        JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
-        if (isRunning == JobRunningStatusEnum.NOT_RUNNING) {
-            return true;
-        } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS || isRunning == JobRunningStatusEnum.LOCKED_THIS || isRunning == JobRunningStatusEnum.REQUEST_TO_STOP) {
-            return false;
-
-        } else {
-
-            String nodeToCheck = EjbUtils.getCurrentClusterNode();
-            return jobInstance.isRunnableOnNode(nodeToCheck);
-        }
+        return jobExecutionService.isAllowedToExecute(jobInstance);
     }
 
     /**
@@ -324,43 +314,6 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     public void disable() {
         super.disable();
         initEntity();
-    }
-
-    /**
-     * Get execution history lazy data model
-     *
-     * @return Execution history lazy data model
-     */
-    public ServiceBasedLazyDataModel<JobExecutionResultImpl> getExecutionHistory() {
-
-        if (executionHistoryDM == null) {
-
-            executionHistoryDM = new ServiceBasedLazyDataModel<JobExecutionResultImpl>() {
-
-                private static final long serialVersionUID = 87900L;
-
-                @Override
-                protected Map<String, Object> getSearchCriteria() {
-
-                    Map<String, Object> filters = new HashMap<>();
-                    filters.put("jobInstance", entity);
-                    return filters;
-                }
-
-                @Override
-                protected String getDefaultSortImpl() {
-                    return "id";
-                }
-
-                @Override
-                protected IPersistenceService<JobExecutionResultImpl> getPersistenceServiceImpl() {
-                    return jobExecutionResultService;
-                }
-            };
-
-        }
-
-        return executionHistoryDM;
     }
 
     /**
@@ -414,6 +367,33 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         }
 
         return executionErrorDM;
+    }
+
+    public TreeNode getExecutionHistoryRoot() {
+
+        if (executionHistoryRoot == null) {
+
+            executionHistoryRoot = new DefaultTreeNode(new JobExecutionResultImpl());
+
+            Map<String, Object> filters = new HashMap<>();
+            filters.put("jobInstance", entity);
+            filters.put("parentJobExecutionResult", PersistenceService.SEARCH_IS_NULL);
+
+            PaginationConfiguration paginationFilter = new PaginationConfiguration(filters, "id", SortOrder.DESCENDING);
+            List<JobExecutionResultImpl> jobExecutions = jobExecutionResultService.list(paginationFilter);
+
+            for (JobExecutionResultImpl jobExecutionResultParent : jobExecutions) {
+
+                TreeNode executionHistoryNode = new DefaultTreeNode(jobExecutionResultParent, executionHistoryRoot);
+                if (!jobExecutionResultParent.getWorkerJobExecutionResults().isEmpty()) {
+                    for (JobExecutionResultImpl jobExecutionResultChild : jobExecutionResultParent.getCumulativeJobExecutionResults()) {
+                        new DefaultTreeNode("child", jobExecutionResultChild, executionHistoryNode);
+                    }
+                }
+            }
+        }
+
+        return executionHistoryRoot;
     }
 
     /**
