@@ -8,7 +8,6 @@ import org.meveo.apiv2.catalog.service.pricelist.PriceListLineApiService;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import java.util.Map;
 
 @Stateless
 public class PriceListLineResourceImpl implements PriceListLineResource {
