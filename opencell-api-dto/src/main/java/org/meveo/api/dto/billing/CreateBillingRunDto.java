@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
@@ -130,6 +131,7 @@ public class CreateBillingRunDto extends BaseEntityDto {
     /**
      * To decide if adding invoice lines incrementally or not.
      */
+    @Schema(description = "Use incremental mode in invoice lines or not", nullable = true)
     private Boolean incrementalInvoiceLines;
 
     public Long getId() {

@@ -2760,6 +2760,7 @@
             <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
             	<constraints nullable="false" />
             </column>
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -19882,6 +19883,7 @@
     <changeSet id="#INTRD-16031_20230508" author="zelmeliani" />
     <changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-16219_20230511" author="aelmalki" />
+    <changeSet id="#INTRD-15501_20230413" author="ThangNguyen" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

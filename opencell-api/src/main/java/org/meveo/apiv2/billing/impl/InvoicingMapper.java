@@ -34,6 +34,7 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
         billingRun.setProcessType(resource.getBillingRunTypeEnum());
         billingRun.setFilters(resource.getFilters());
         billingRun.setComputeDatesAtValidation(resource.isComputeDatesAtValidation());
+        billingRun.setIncrementalInvoiceLines(resource.isIncrementalInvoiceLines());
         return billingRun;
     }
 
