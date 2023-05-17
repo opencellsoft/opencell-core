@@ -2,6 +2,7 @@ package org.meveo.apiv2.catalog.service.pricelist;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -15,6 +16,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
+import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -61,6 +63,8 @@ public class PriceListLineApiService extends BaseApi {
         PriceList priceList = priceListService.findByCode(postDto.getPriceListCode());
         if(priceList == null) {
             throw new EntityDoesNotExistsException(PriceList.class, postDto.getPriceListCode());
+        } else if (!PriceListStatusEnum.DRAFT.equals(priceList.getStatus())) {
+            throw new BusinessApiException("PriceList Line cannot be created for PriceList status other than DRAFT");
         }
         entityToSave.setPriceList(priceList);
 
@@ -134,6 +138,8 @@ public class PriceListLineApiService extends BaseApi {
         PriceListLine priceListLineToUpdate = priceListLineService.findById(priceListLineId);
         if(priceListLineToUpdate == null) {
             throw new EntityDoesNotExistsException(PriceListLine.class, priceListLineId);
+        } else if (!PriceListStatusEnum.DRAFT.equals(priceListLineToUpdate.getPriceList().getStatus())) {
+            throw new BusinessApiException("PriceList Line cannot be updated for PriceList status other than DRAFT");
         } else if(StringUtils.isNotBlank(postDto.getCode()) && !priceListLineToUpdate.getCode().equals(postDto.getCode()) && priceListLineService.findByCode(postDto.getCode()) != null) {
             throw new EntityAlreadyExistsException(PriceListLine.class, postDto.getCode());
         } else if (StringUtils.isNotBlank(postDto.getCode())) {
@@ -230,6 +236,8 @@ public class PriceListLineApiService extends BaseApi {
         PriceListLine priceListLineToDelete = priceListLineService.findById(priceListLineId);
         if(priceListLineToDelete == null) {
             throw new EntityDoesNotExistsException(PriceListLine.class, priceListLineId);
+        } else if (!PriceListStatusEnum.DRAFT.equals(priceListLineToDelete.getPriceList().getStatus())) {
+            throw new BusinessApiException("PriceList Line cannot be deleted for PriceList status other than DRAFT");
         }
         priceListLineService.remove(priceListLineToDelete);
     }
