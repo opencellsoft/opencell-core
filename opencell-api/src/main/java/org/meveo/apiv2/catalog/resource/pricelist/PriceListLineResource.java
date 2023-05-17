@@ -22,11 +22,11 @@ public interface PriceListLineResource {
     Response create(PriceListLineDto postDto);
 
     @PUT
-    @Path("")
-    Response update(PriceListLineDto postDto);
+    @Path("/{priceListLineId}")
+    Response update(@PathParam("priceListLineId") Long priceListLineId, PriceListLineDto postDto);
 
     @DELETE
-    @Path("/{priceListLineCode}")
-    Response delete(@PathParam("priceListLineCode") String priceListLineCode);
+    @Path("/{priceListLineId}")
+    Response delete(@PathParam("priceListLineId") Long priceListLineId);
 
 }

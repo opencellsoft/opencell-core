@@ -16512,4 +16512,17 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-16040_20230516" author="a.rouaguebe">
+        <addColumn tableName="cat_price_list_line">
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="product_line_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_product_line"
+                referencedTableName="cpq_product_line"
+                referencedColumnNames="id"
+                baseColumnNames="product_line_id"
+                baseTableName="cat_price_list_line" />
+    </changeSet>
+
 </databaseChangeLog>

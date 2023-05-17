@@ -1,5 +1,7 @@
 package org.meveo.apiv2.catalog.resource.pricelist;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.catalog.PriceListLineDto;
 import org.meveo.apiv2.catalog.service.pricelist.PriceListLineApiService;
 
@@ -15,17 +17,25 @@ public class PriceListLineResourceImpl implements PriceListLineResource {
     private PriceListLineApiService priceListLineApiService;
 
     public Response create(PriceListLineDto postDto) {
-        Long entityId = priceListLineApiService.create(postDto);
-        return Response.ok(Map.of("entityId", entityId)).build();
+        ActionStatus actionStatus = new ActionStatus();
+        actionStatus.setStatus(ActionStatusEnum.SUCCESS);
+        actionStatus.setEntityId(priceListLineApiService.create(postDto));
+        return Response.ok(actionStatus).build();
     }
 
     @Override
-    public Response update(PriceListLineDto postDto) {
-        return null;
+    public Response update(Long priceListLineId, PriceListLineDto postDto) {
+        ActionStatus actionStatus = new ActionStatus();
+        actionStatus.setStatus(ActionStatusEnum.SUCCESS);
+        actionStatus.setEntityId(priceListLineApiService.update(priceListLineId, postDto));
+        return Response.ok(actionStatus).build();
     }
 
     @Override
-    public Response delete(String priceListLineCode) {
-        return null;
+    public Response delete(Long priceListLineId) {
+        ActionStatus actionStatus = new ActionStatus();
+        actionStatus.setStatus(ActionStatusEnum.SUCCESS);
+        priceListLineApiService.delete(priceListLineId);
+        return Response.ok(actionStatus).build();
     }
 }

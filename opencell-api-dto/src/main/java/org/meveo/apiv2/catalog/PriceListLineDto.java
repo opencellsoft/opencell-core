@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.model.pricelist.PriceListTypeEnum;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -61,8 +62,9 @@ public interface PriceListLineDto extends Resource {
     String getApplicationEl();
 
     @Nullable
+    @Value.Default
     @Schema(description = "rate of priceList type", example = "possible value are : PERCENTAGE, FIXED")
-    default PriceListRateTypeEnum getPriceListRateType() { return PriceListRateTypeEnum.PERCENTAGE; }
+    default PriceListTypeEnum getPriceListRateType() { return PriceListTypeEnum.PERCENTAGE; }
 
     @Nullable
     @Schema(description = "list of the custom field if any")
