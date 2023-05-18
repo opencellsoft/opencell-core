@@ -467,7 +467,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         	throw new BusinessException("The converted price is inconsistent with the price plan version price and the rate");
         }
 
-        ConvertedPricePlanVersion cppv = ppmv.getConvertedPricePlanMatrixLines()
+        ConvertedPricePlanVersion cppv = ppmv.getConvertedPricePlanVersions()
                 .stream()
                 .filter(e -> e.getId().equals(cppvId))
                 .findFirst()
@@ -575,7 +575,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixVersionId());
         }
 
-        ppmv.getConvertedPricePlanMatrixLines()
+        ppmv.getConvertedPricePlanVersions()
                 .stream()
                 .filter(cppml -> cppml.getTradingCurrency().getCurrencyCode().equals(dtoData.getTradingCurrency().getCode()) || cppml.getTradingCurrency().getId().equals(dtoData.getTradingCurrency().getId()))
                 .forEach(cppml -> {

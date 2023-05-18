@@ -223,15 +223,15 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 		            		priceVersionNew.setPricePlanMatrix(pricePlanMatrixNew);
 		            		pricePlanMatrixVersionService.create(priceVersionNew);
 		            		
-		            		if(priceVersion.getConvertedPricePlanMatrixLines() != null) {
+		            		if(priceVersion.getConvertedPricePlanVersions() != null) {
                                 Set<ConvertedPricePlanVersion> convertedPricePlanVersions = new HashSet<>();
-                                for(ConvertedPricePlanVersion convertedPricePlanVersion:priceVersion.getConvertedPricePlanMatrixLines()){
+                                for(ConvertedPricePlanVersion convertedPricePlanVersion:priceVersion.getConvertedPricePlanVersions()){
                                     ConvertedPricePlanVersion convertedPricePlanVersionNew = new ConvertedPricePlanVersion(convertedPricePlanVersion);
                                     convertedPricePlanVersionNew.setPricePlanMatrixVersion(priceVersionNew);
                                     convertedPricePlanVersionService.create(convertedPricePlanVersionNew);
                                     convertedPricePlanVersions.add(convertedPricePlanVersionNew);
                                 }
-                                priceVersionNew.setConvertedPricePlanMatrixLines(convertedPricePlanVersions);
+                                priceVersionNew.setConvertedPricePlanVersions(convertedPricePlanVersions);
                             }
 		            	}
 	        		}
