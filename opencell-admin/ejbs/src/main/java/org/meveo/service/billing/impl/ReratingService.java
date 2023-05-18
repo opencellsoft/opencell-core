@@ -39,8 +39,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
 
-import liquibase.pro.packaged.e;
-
 /**
  * Service to handle wallet operation re-rating when service parameters or tariffs change.
  * 
