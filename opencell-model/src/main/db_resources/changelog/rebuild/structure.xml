@@ -3424,12 +3424,12 @@
             <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0">
 			    <constraints nullable="false" />
 			</column>
-			<column name="converted_amount_without_tax" type="numeric(23, 12)" />
-			<column name="converted_amount_with_tax" type="numeric(23, 12)" />
-			<column name="converted_amount_tax" type="numeric(23, 12)" />
-			<column name="converted_unit_amount_without_tax" type="numeric(23, 12)" />
-			<column name="converted_unit_amount_with_tax" type="numeric(23, 12)" />
-			<column name="converted_unit_amount_tax" type="numeric(23, 12)" />
+			<column name="transactional_amount_without_tax" type="numeric(23, 12)" />
+			<column name="transactional_amount_with_tax" type="numeric(23, 12)" />
+			<column name="transactional_amount_tax" type="numeric(23, 12)" />
+			<column name="transactional_unit_amount_without_tax" type="numeric(23, 12)" />
+			<column name="transactional_unit_amount_with_tax" type="numeric(23, 12)" />
+			<column name="transactional_unit_amount_tax" type="numeric(23, 12)" />
 			<column name="trading_currency_id" type="bigint" />
             <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
             <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
@@ -4043,12 +4043,12 @@
             <column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0">
 			    <constraints nullable="false" />
 			</column>
-			<column name="converted_amount_without_tax" type="numeric(23, 12)" />
-			<column name="converted_amount_with_tax" type="numeric(23, 12)" />
-			<column name="converted_amount_tax" type="numeric(23, 12)" />
-			<column name="converted_unit_amount_without_tax" type="numeric(23, 12)" />
-			<column name="converted_unit_amount_with_tax" type="numeric(23, 12)" />
-			<column name="converted_unit_amount_tax" type="numeric(23, 12)" />
+			<column name="transactional_amount_without_tax" type="numeric(23, 12)" />
+			<column name="transactional_amount_with_tax" type="numeric(23, 12)" />
+			<column name="transactional_amount_tax" type="numeric(23, 12)" />
+			<column name="transactional_unit_amount_without_tax" type="numeric(23, 12)" />
+			<column name="transactional_unit_amount_with_tax" type="numeric(23, 12)" />
+			<column name="transactional_unit_amount_tax" type="numeric(23, 12)" />
 			<column name="trading_currency_id" type="bigint" />
             <column name="contract_line_id" type="bigint" />
         </createTable>
@@ -20042,6 +20042,7 @@
     <changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-16219_20230511" author="aelmalki" />
 	<changeSet id="#INTRD-16166_20230512" author="aelmalki" />
+    <changeSet id="#INTRD-16256_20230515" author="ZBariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
