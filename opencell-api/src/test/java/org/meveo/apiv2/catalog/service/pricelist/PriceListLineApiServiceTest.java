@@ -155,11 +155,21 @@ public class PriceListLineApiServiceTest {
 
         PriceList priceList = new PriceList();
         priceList.setCode(priceListCode);
-        when(offerTemplateService.findByCode(givenDto.getOfferTemplateCode())).thenReturn(new OfferTemplate());
-        when(offerTemplateCategoryService.findByCode(givenDto.getOfferCategoryCode())).thenReturn(new OfferTemplateCategory());
-        when(productService.findByCode(givenDto.getProductCode())).thenReturn(new Product());
-        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(new UsageChargeTemplate());
-        when(productLineService.findByCode(givenDto.getProductCategoryCode())).thenReturn(new ProductLine());
+        OfferTemplate offer = new OfferTemplate();
+        offer.setCode("an-offer-template");
+        when(offerTemplateService.findByCode(givenDto.getOfferTemplateCode())).thenReturn(offer);
+        OfferTemplateCategory offerCategory = new OfferTemplateCategory();
+        offerCategory.setCode("an-offer-category");
+        when(offerTemplateCategoryService.findByCode(givenDto.getOfferCategoryCode())).thenReturn(offerCategory);
+        Product product = new Product();
+        product.setCode("a-product");
+        when(productService.findByCode(givenDto.getProductCode())).thenReturn(product);
+        UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
+        chargeTemplate.setCode("a-charge-template");
+        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(chargeTemplate);
+        ProductLine productLine = new ProductLine();
+        productLine.setCode("a-product-category");
+        when(productLineService.findByCode(givenDto.getProductCategoryCode())).thenReturn(productLine);
 
         PriceListLine priceListLineToUpdate = new PriceListLine();
         priceListLineToUpdate.setCode("e-price-list-line-code");
@@ -174,10 +184,15 @@ public class PriceListLineApiServiceTest {
 
         assertThat(priceListLineToUpdate.getCode()).isEqualTo(givenDto.getCode());
         assertThat(priceListLineToUpdate.getOfferCategory()).isNotNull();
+        assertThat(priceListLineToUpdate.getOfferCategory().getCode()).isEqualTo("an-offer-category");
         assertThat(priceListLineToUpdate.getOfferTemplate()).isNotNull();
+        assertThat(priceListLineToUpdate.getOfferTemplate().getCode()).isEqualTo("an-offer-template");
         assertThat(priceListLineToUpdate.getProduct()).isNotNull();
+        assertThat(priceListLineToUpdate.getProduct().getCode()).isEqualTo("a-product");
         assertThat(priceListLineToUpdate.getProductCategory()).isNotNull();
+        assertThat(priceListLineToUpdate.getProductCategory().getCode()).isEqualTo("a-product-category");
         assertThat(priceListLineToUpdate.getChargeTemplate()).isNotNull();
+        assertThat(priceListLineToUpdate.getChargeTemplate().getCode()).isEqualTo("a-charge-template");
         assertThat(priceListLineToUpdate.getApplicationEl()).isEqualTo(givenDto.getApplicationEl());
         assertThat(priceListLineToUpdate.getAmount()).isEqualTo(givenDto.getAmount());
         assertThat(priceListLineToUpdate.getRate().doubleValue()).isEqualTo(givenDto.getRate());
