@@ -1612,7 +1612,7 @@ public class QueryBuilder {
         String query = toStringQuery();
 
         for (Map.Entry<String, Object> e : params.entrySet()) {
-            query = query.replaceAll(":" + e.getKey(), paramToString(e.getValue()));
+            query = query.replaceAll(":" + e.getKey() + "\\b", paramToString(e.getValue()));
         }
         return query;
     }
