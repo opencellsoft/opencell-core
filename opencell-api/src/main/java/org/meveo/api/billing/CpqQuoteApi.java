@@ -1653,7 +1653,6 @@ public class CpqQuoteApi extends BaseApi {
         getQuoteVersionDtoResponse.setQuoteItems(new ArrayList<>());
         for (QuoteOffer quoteOffer : updatedQuoteVersion.getQuoteOffers()) {
             QuoteOfferDTO quoteOfferDTO = new QuoteOfferDTO(quoteOffer);
-            getQuoteVersionDtoResponse.getQuoteItems().add(quoteOfferDTO);
             for(QuoteProduct quoteProduct: quoteOffer.getQuoteProduct()) {
                 QuoteProductDTO quoteProductDTO = new QuoteProductDTO();
                 quoteProductDTO.init(quoteProduct);
