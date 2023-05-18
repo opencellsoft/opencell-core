@@ -1364,7 +1364,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void assignTemporaryInvoiceNumber() {
 
         StringBuffer num1 = new StringBuffer("000000000");
-        num1.append(id + "");
+		if (id != null) {
+			num1.append(id + "");
+		}
         String invoiceNumber = num1.substring(num1.length() - 9);
         int key = 0;
 
