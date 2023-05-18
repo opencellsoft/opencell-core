@@ -1,6 +1,7 @@
 package org.meveo.model.pricelist;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -10,12 +11,23 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Country;
+import org.meveo.model.crm.CustomerBrand;
+import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.payments.CreditCategory;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.shared.Title;
 
 @Table(name = "cat_price_list")
 @Entity
@@ -46,6 +58,45 @@ public class PriceList extends BusinessCFEntity {
 
 	@OneToMany(mappedBy = "priceList", fetch = FetchType.LAZY)
 	private Set<PriceListLine> lines;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_price_list_customer_brand", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "customer_brand_id"))
+	private Set<CustomerBrand> brands = new HashSet<>();
+	
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_price_list_customer_category", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "customer_category_id"))
+	@Column(name = "customer_category")
+	private Set<CustomerCategory> customerCategories = new HashSet<>();
+	
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_price_list_credit_category", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "credit_category_id"))
+	@Column(name = "credit_category")
+	private Set<CreditCategory> creditCategories = new HashSet<>();
+	
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_price_list_country", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "country_id"))
+	@Column(name = "country")
+	private Set<Country> countries = new HashSet<>();
+	
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_price_list_currency", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "currency_id"))
+	@Column(name = "currency")
+	private Set<Currency> currencies = new HashSet<>();
+	
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_price_list_legal_entity", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "legal_entity_id"))
+	@Column(name = "legal_entity")
+	private Set<Title> legalEntities = new HashSet<>();
+	
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_price_list_payment_method", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "payment_method_id"))
+	@Column(name = "payment_method")
+	private Set<PaymentMethod> paymentMethods = new HashSet<PaymentMethod>();
+	
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_price_list_seller", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "seller_id"))
+	@Column(name = "seller")
+	private Set<Seller> sellers = new HashSet<Seller>();
 
 	public Date getValidFrom() {
 		return validFrom;
@@ -93,5 +144,69 @@ public class PriceList extends BusinessCFEntity {
 
 	public void setLines(Set<PriceListLine> lines) {
 		this.lines = lines;
+	}
+
+	public Set<CustomerBrand> getBrands() {
+		return brands;
+	}
+
+	public void setBrands(Set<CustomerBrand> brands) {
+		this.brands = brands;
+	}
+
+	public Set<CustomerCategory> getCustomerCategories() {
+		return customerCategories;
+	}
+
+	public void setCustomerCategories(Set<CustomerCategory> customerCategories) {
+		this.customerCategories = customerCategories;
+	}
+
+	public Set<CreditCategory> getCreditCategories() {
+		return creditCategories;
+	}
+
+	public void setCreditCategories(Set<CreditCategory> creditCategories) {
+		this.creditCategories = creditCategories;
+	}
+
+	public Set<Country> getCountries() {
+		return countries;
+	}
+
+	public void setCountries(Set<Country> countries) {
+		this.countries = countries;
+	}
+
+	public Set<Currency> getCurrencies() {
+		return currencies;
+	}
+
+	public void setCurrencies(Set<Currency> currencies) {
+		this.currencies = currencies;
+	}
+
+	public Set<Title> getLegalEntities() {
+		return legalEntities;
+	}
+
+	public void setLegalEntities(Set<Title> legalEntities) {
+		this.legalEntities = legalEntities;
+	}
+
+	public Set<PaymentMethod> getPaymentMethods() {
+		return paymentMethods;
+	}
+
+	public void setPaymentMethods(Set<PaymentMethod> paymentMethods) {
+		this.paymentMethods = paymentMethods;
+	}
+
+	public Set<Seller> getSellers() {
+		return sellers;
+	}
+
+	public void setSellers(Set<Seller> sellers) {
+		this.sellers = sellers;
 	}
 }
