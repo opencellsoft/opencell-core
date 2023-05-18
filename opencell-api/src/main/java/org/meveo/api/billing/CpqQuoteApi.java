@@ -1529,7 +1529,6 @@ public class CpqQuoteApi extends BaseApi {
         getQuoteVersionDtoResponse.setQuoteItems(new ArrayList<>());
         for (QuoteOffer quoteOffer : updatedQuoteVersion.getQuoteOffers()) {
             QuoteOfferDTO quoteOfferDTO = new QuoteOfferDTO(quoteOffer);
-            getQuoteVersionDtoResponse.getQuoteItems().add(quoteOfferDTO);
             for(QuoteProduct quoteProduct: quoteOffer.getQuoteProduct()) {
                 QuoteProductDTO quoteProductDTO = new QuoteProductDTO();
                 quoteProductDTO.init(quoteProduct);
@@ -1555,7 +1554,8 @@ public class CpqQuoteApi extends BaseApi {
                                 .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
 
                         quoteTotalAmountBigDecimal.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
-                        accountingArticlePricesDTO.setAccountingArticlePrices(prices);}
+                        accountingArticlePricesDTO.setAccountingArticlePrices(prices);
+                        }
                         quoteProductDTO.getAccountingArticlePrices().add(accountingArticlePricesDTO);
                 }
                 quoteOfferDTO.getProducts().add(quoteProductDTO);
