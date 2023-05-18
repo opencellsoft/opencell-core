@@ -310,7 +310,16 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         return applicableDiscountPlanItems;
      }
 
-
+    /**
+     * Get applicable discount plan items
+     *
+     * @param billingAccount the billing account
+     * @param discountPlan the discount plan
+     * @param accountingArticle the accounting article
+     * @param applicationDate the application date
+     * @return list of discount plan item
+     * @throws BusinessException the business exception
+     */
     public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan, AccountingArticle accountingArticle,
                                                                  Date applicationDate) throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
