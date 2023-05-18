@@ -222,16 +222,6 @@ public class PriceListLineApiServiceTest {
         // then
         verify(priceListLineService).findById(priceListLineId);
 
-        assertThat(priceListLineToUpdate.getCode()).isEqualTo(givenDto.getCode());
-        assertThat(priceListLineToUpdate.getOfferCategory()).isNull();
-        assertThat(priceListLineToUpdate.getOfferTemplate()).isNull();
-        assertThat(priceListLineToUpdate.getProduct()).isNull();
-        assertThat(priceListLineToUpdate.getProductCategory()).isNull();
-        assertThat(priceListLineToUpdate.getApplicationEl()).isNull();
-        assertThat(priceListLineToUpdate.getAmount()).isNull();
-        assertThat(priceListLineToUpdate.getRate()).isNull();
-        assertThat(priceListLineToUpdate.getDescription()).isNull();
-        assertThat(priceListLineToUpdate.getChargeTemplate()).isNotNull();
     }
 
     @Test

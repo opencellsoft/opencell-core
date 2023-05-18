@@ -141,52 +141,62 @@ public class PriceListLineApiService extends BaseApi {
         }
 
 
-        if(StringUtils.isNotBlank(postDto.getProductCategoryCode())) {
-            ProductLine productLine = productLineService.findByCode(postDto.getProductCategoryCode());
-            if(productLine == null) {
-                throw new EntityDoesNotExistsException(ProductLine.class, postDto.getProductCategoryCode());
+        if(postDto.getProductCategoryCode() != null) {
+            if(StringUtils.isNotBlank(postDto.getProductCategoryCode())) {
+                ProductLine productLine = productLineService.findByCode(postDto.getProductCategoryCode());
+                if(productLine == null) {
+                    throw new EntityDoesNotExistsException(ProductLine.class, postDto.getProductCategoryCode());
+                }
+                priceListLineToUpdate.setProductCategory(productLine);
+            } else {
+                priceListLineToUpdate.setProductCategory(null);
             }
-            priceListLineToUpdate.setProductCategory(productLine);
-        } else {
-            priceListLineToUpdate.setProductCategory(null);
         }
 
-        if(StringUtils.isNotBlank(postDto.getProductCode())) {
-            Product product = productService.findByCode(postDto.getProductCode());
-            if(product == null) {
-                throw new EntityDoesNotExistsException(Product.class, postDto.getProductCode());
+        if(postDto.getProductCode() != null) {
+            if(StringUtils.isNotBlank(postDto.getProductCode())) {
+                Product product = productService.findByCode(postDto.getProductCode());
+                if (product == null) {
+                    throw new EntityDoesNotExistsException(Product.class, postDto.getProductCode());
+                }
+                priceListLineToUpdate.setProduct(product);
+            } else {
+                priceListLineToUpdate.setProduct(null);
             }
-            priceListLineToUpdate.setProduct(product);
-        } else {
-            priceListLineToUpdate.setProduct(null);
         }
 
-        if(StringUtils.isNotBlank(postDto.getOfferCategoryCode())) {
-            OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postDto.getOfferCategoryCode());
-            if(offerTemplateCategory == null) {
-                throw new EntityDoesNotExistsException(OfferTemplateCategory.class, postDto.getOfferCategoryCode());
+        if(postDto.getOfferCategoryCode() != null) {
+            if(StringUtils.isNotBlank(postDto.getOfferCategoryCode())) {
+                OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postDto.getOfferCategoryCode());
+                if (offerTemplateCategory == null) {
+                    throw new EntityDoesNotExistsException(OfferTemplateCategory.class, postDto.getOfferCategoryCode());
+                }
+                priceListLineToUpdate.setOfferCategory(offerTemplateCategory);
+            } else {
+                priceListLineToUpdate.setOfferCategory(null);
             }
-            priceListLineToUpdate.setOfferCategory(offerTemplateCategory);
-        } else {
-            priceListLineToUpdate.setOfferCategory(null);
         }
 
-        if(StringUtils.isNotBlank(postDto.getOfferTemplateCode())) {
-            OfferTemplate offerTemplate = offerTemplateService.findByCode(postDto.getOfferTemplateCode());
-            if(offerTemplate == null) {
-                throw new EntityDoesNotExistsException(OfferTemplate.class, postDto.getOfferTemplateCode());
+        if(postDto.getOfferTemplateCode() != null) {
+            if(StringUtils.isNotBlank(postDto.getOfferTemplateCode())) {
+                OfferTemplate offerTemplate = offerTemplateService.findByCode(postDto.getOfferTemplateCode());
+                if (offerTemplate == null) {
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, postDto.getOfferTemplateCode());
+                }
+                priceListLineToUpdate.setOfferTemplate(offerTemplate);
+            } else {
+                priceListLineToUpdate.setOfferTemplate(null);
             }
-            priceListLineToUpdate.setOfferTemplate(offerTemplate);
-        } else {
-            priceListLineToUpdate.setOfferTemplate(null);
         }
 
-        if(StringUtils.isNotBlank(postDto.getChargeTemplateCode())) {
-            ChargeTemplate chargeTemplate = chargeTemplateService.findByCode(postDto.getChargeTemplateCode());
-            if(chargeTemplate == null) {
-                throw new EntityDoesNotExistsException(ChargeTemplate.class, postDto.getChargeTemplateCode());
+        if(postDto.getChargeTemplateCode() != null) {
+            if(StringUtils.isNotBlank(postDto.getChargeTemplateCode())) {
+                ChargeTemplate chargeTemplate = chargeTemplateService.findByCode(postDto.getChargeTemplateCode());
+                if (chargeTemplate == null) {
+                    throw new EntityDoesNotExistsException(ChargeTemplate.class, postDto.getChargeTemplateCode());
+                }
+                priceListLineToUpdate.setChargeTemplate(chargeTemplate);
             }
-            priceListLineToUpdate.setChargeTemplate(chargeTemplate);
         }
 
         if(postDto.getRate() != null) {
@@ -195,10 +205,27 @@ public class PriceListLineApiService extends BaseApi {
             priceListLineToUpdate.setRate(null);
         }
 
-        priceListLineToUpdate.setPriceListType(postDto.getPriceListRateType());
-        priceListLineToUpdate.setAmount(postDto.getAmount());
-        priceListLineToUpdate.setDescription(postDto.getDescription());
-        priceListLineToUpdate.setApplicationEl(postDto.getApplicationEl());
+        if(postDto.getPriceListRateType() != null) {
+            priceListLineToUpdate.setPriceListType(postDto.getPriceListRateType());
+        }
+        if(postDto.getAmount() != null) {
+            priceListLineToUpdate.setAmount(postDto.getAmount());
+        }
+
+        if(postDto.getDescription() != null) {
+            if(StringUtils.isNotBlank(postDto.getDescription())) {
+                priceListLineToUpdate.setDescription(postDto.getDescription());
+            } else {
+                priceListLineToUpdate.setDescription(null);
+            }
+        }
+        if(postDto.getApplicationEl() != null) {
+            if(StringUtils.isNotBlank(postDto.getApplicationEl())) {
+                priceListLineToUpdate.setApplicationEl(postDto.getApplicationEl());
+            } else {
+                priceListLineToUpdate.setApplicationEl(null);
+            }
+        }
 
         try {
             populateCustomFields(postDto.getCustomFields(), priceListLineToUpdate, false);
