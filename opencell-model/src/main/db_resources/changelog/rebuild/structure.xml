@@ -12487,11 +12487,13 @@
             <column name="offer_category_id" type="bigint" />
             <column name="offer_template_id" type="bigint" />
             <column name="product_id" type="bigint" />
+            <column name="product_line_id" type="bigint" />
             <column name="charge_template_id" type="bigint" />
             <column name="price_plan_id" type="bigint" />
             <column name="price_list_type" type="varchar(25)" />
             <column name="application_el" type="varchar(255)" />
             <column name="rate" type="numeric(23, 12)" />
+            <column name="amount" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
 
@@ -17047,6 +17049,12 @@
                 referencedTableName="cat_price_list"
                 referencedColumnNames="id"
                 baseColumnNames="price_list_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_product_line"
+                referencedTableName="cpq_product_line"
+                referencedColumnNames="id"
+                baseColumnNames="product_line_id"
                 baseTableName="cat_price_list_line" />
     </changeSet>
 
