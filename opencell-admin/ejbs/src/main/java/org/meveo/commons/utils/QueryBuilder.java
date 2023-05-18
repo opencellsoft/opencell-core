@@ -411,8 +411,9 @@ public class QueryBuilder {
 				select.add(current_alias);
 				
             }
-            if(useSelectColumns) {
-            	query.replace(0, 0, "select "+(distinct ? "distinct ":"")+String.join(", ", select)+" ");
+            if (useSelectColumns) {
+                query.replace(0, query.indexOf("from"), "select " + (distinct ? "distinct " : "")
+                        + String.join(", ", select) + " ");
             }
         }
 
