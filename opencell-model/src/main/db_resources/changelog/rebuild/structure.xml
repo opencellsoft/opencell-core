@@ -12494,6 +12494,56 @@
             <column name="rate" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
+
+    <changeSet id="#INTRD-16036_20230516" author="zelmeliani" >
+        <createTable tableName="cat_price_list_customer_brand">
+            <column name="price_list_id" type="bigint" />
+            <column name="customer_brand_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, customer_brand_id" constraintName="cat_price_list_customer_brand_pkey" tableName="cat_price_list_customer_brand" />
+        
+        <createTable tableName="cat_price_list_customer_category">
+            <column name="price_list_id" type="bigint" />
+            <column name="customer_category_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, customer_category_id" constraintName="cat_price_list_customer_category_pkey" tableName="cat_price_list_customer_category" />
+        
+        <createTable tableName="cat_price_list_credit_category">
+            <column name="price_list_id" type="bigint" />
+            <column name="credit_category_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, credit_category_id" constraintName="cat_price_list_credit_category_pkey" tableName="cat_price_list_credit_category" />
+        
+        <createTable tableName="cat_price_list_country">
+            <column name="price_list_id" type="bigint" />
+            <column name="country_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, country_id" constraintName="cat_price_list_country_pkey" tableName="cat_price_list_country" />
+
+        <createTable tableName="cat_price_list_currency">
+            <column name="price_list_id" type="bigint" />
+            <column name="currency_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, currency_id" constraintName="cat_price_list_currency_pkey" tableName="cat_price_list_currency" />
+
+        <createTable tableName="cat_price_list_legal_entity">
+            <column name="price_list_id" type="bigint" />
+            <column name="legal_entity_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, legal_entity_id" constraintName="cat_price_list_legal_entity_pkey" tableName="cat_price_list_legal_entity" />
+
+        <createTable tableName="cat_price_list_payment_method">
+            <column name="price_list_id" type="bigint" />
+            <column name="payment_method_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, payment_method_id" constraintName="cat_price_list_payment_method_pkey" tableName="cat_price_list_payment_method" />
+
+        <createTable tableName="cat_price_list_seller">
+            <column name="price_list_id" type="bigint" />
+            <column name="seller_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, seller_id" constraintName="cat_price_list_seller_pkey" tableName="cat_price_list_seller" />
+    </changeSet>
     
     <!-- end tables -->
 
@@ -16998,6 +17048,112 @@
                 referencedColumnNames="id"
                 baseColumnNames="price_list_id"
                 baseTableName="cat_price_list_line" />
+    </changeSet>
+
+    <changeSet id="#INTRD-16036_20230516_fk" author="zelmeliani">
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_customer_brand"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_customer_brand_pli_fk"
+			referencedTableName="cat_price_list" 
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_customer_brand"
+			baseColumnNames="customer_brand_id"
+			constraintName="cat_price_list_customer_brand_cb_fk"
+			referencedTableName="crm_customer_brand" 
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_customer_category"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_customer_category_pli_fk"
+			referencedTableName="cat_price_list" 
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_customer_category"
+			baseColumnNames="customer_category_id"
+			constraintName="cat_price_list_customer_category_cc_fk"
+			referencedTableName="crm_customer_category" 
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_credit_category"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_credit_category_pli_fk"
+			referencedTableName="cat_price_list" 
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_credit_category"
+			baseColumnNames="credit_category_id"
+			constraintName="cat_price_list_credit_category_cc_fk"
+			referencedTableName="ar_credit_category" 
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_country"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_country_pli_fk"
+			referencedTableName="cat_price_list" 
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_country"
+			baseColumnNames="country_id"
+			constraintName="cat_price_list_country_c_fk"
+			referencedTableName="adm_country" 
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_currency"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_currency_pli_fk"
+			referencedTableName="cat_price_list" 
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_currency"
+			baseColumnNames="currency_id"
+			constraintName="cat_price_list_currency_c_fk"
+			referencedTableName="adm_currency" 
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_legal_entity"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_legal_entity_pli_fk"
+			referencedTableName="cat_price_list" 
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_legal_entity"
+			baseColumnNames="legal_entity_id"
+			constraintName="cat_price_list_legal_entity_le_fk"
+			referencedTableName="adm_title" 
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_payment_method"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_payment_method_pli_fk"
+			referencedTableName="cat_price_list" 
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_payment_method"
+			baseColumnNames="payment_method_id"
+			constraintName="cat_price_list_payment_method_pm_fk"
+			referencedTableName="ar_payment_token" 
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_seller"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_seller_pli_fk"
+			referencedTableName="cat_price_list" 
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_seller"
+			baseColumnNames="seller_id"
+			constraintName="cat_price_list_seller_s_fk"
+			referencedTableName="crm_seller" 
+            referencedColumnNames="id" />
     </changeSet>
     <!-- end fk -->
 
