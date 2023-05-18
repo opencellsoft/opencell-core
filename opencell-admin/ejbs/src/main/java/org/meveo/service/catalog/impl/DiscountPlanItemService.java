@@ -309,6 +309,48 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
         return applicableDiscountPlanItems;
      }
+
+    /**
+     * Get applicable discount plan items
+     *
+     * @param billingAccount the billing account
+     * @param discountPlan the discount plan
+     * @param accountingArticle the accounting article
+     * @param applicationDate the application date
+     * @return list of discount plan item
+     * @throws BusinessException the business exception
+     */
+    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan, AccountingArticle accountingArticle,
+                                                                 Date applicationDate) throws BusinessException {
+        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
+
+        if (discountPlan.getSequence() == null) {
+            discountPlanService.setDiscountPlanSequence(discountPlan);
+            discountPlanService.update(discountPlan);
+        }
+        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan, applicationDate, null, null);
+
+        if (isDiscountApplicable) {
+            List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+            Long lowPriority = null;
+            for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                if ((lowPriority == null || lowPriority.equals(discountPlanItem.getPriority()))
+                        && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle, null, null)) {
+                    lowPriority = lowPriority != null ? lowPriority : discountPlanItem.getPriority();
+
+                    if (discountPlanItem.getSequence() == null) {
+                        setDisountPlanItemSequence(discountPlanItem);
+                        super.update(discountPlanItem);
+                    }
+                    applicableDiscountPlanItems.add(discountPlanItem);
+                }
+            }
+        }
+        log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}", discountPlan.getCode(), applicableDiscountPlanItems.size());
+        return applicableDiscountPlanItems;
+    }
+
+
     public boolean isDiscountPlanItemApplicable(BillingAccount billingAccount,DiscountPlanItem discountPlanItem,AccountingArticle accountingArticle,Subscription subscription,WalletOperation walletOperation)
             throws BusinessException {
     	boolean isApplicable=false;
