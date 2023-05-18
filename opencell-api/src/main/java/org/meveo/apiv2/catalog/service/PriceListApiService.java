@@ -64,6 +64,7 @@ public class PriceListApiService {
         }
 
         priceListToUpdate.setStatus(newStatus);
+        priceListService.update(priceListToUpdate);
 
     }
 
