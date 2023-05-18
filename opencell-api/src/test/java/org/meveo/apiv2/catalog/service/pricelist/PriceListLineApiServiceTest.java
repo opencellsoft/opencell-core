@@ -250,11 +250,21 @@ public class PriceListLineApiServiceTest {
         PriceList priceList = new PriceList();
         priceList.setCode(priceListCode);
         priceList.setStatus(PriceListStatusEnum.DRAFT);
-        when(offerTemplateService.findByCode(givenDto.getOfferTemplateCode())).thenReturn(new OfferTemplate());
-        when(offerTemplateCategoryService.findByCode(givenDto.getOfferCategoryCode())).thenReturn(new OfferTemplateCategory());
-        when(productService.findByCode(givenDto.getProductCode())).thenReturn(new Product());
-        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(new UsageChargeTemplate());
-        when(productLineService.findByCode(givenDto.getProductCategoryCode())).thenReturn(new ProductLine());
+        OfferTemplate offer = new OfferTemplate();
+        offer.setCode("an-offer-template");
+        when(offerTemplateService.findByCode(givenDto.getOfferTemplateCode())).thenReturn(offer);
+        OfferTemplateCategory offerCategory = new OfferTemplateCategory();
+        offerCategory.setCode("an-offer-category");
+        when(offerTemplateCategoryService.findByCode(givenDto.getOfferCategoryCode())).thenReturn(offerCategory);
+        Product product = new Product();
+        product.setCode("a-product");
+        when(productService.findByCode(givenDto.getProductCode())).thenReturn(product);
+        UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
+        chargeTemplate.setCode("a-charge-template");
+        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(chargeTemplate);
+        ProductLine productLine = new ProductLine();
+        productLine.setCode("a-product-category");
+        when(productLineService.findByCode(givenDto.getProductCategoryCode())).thenReturn(productLine);
 
         PriceListLine priceListLineToUpdate = new PriceListLine();
         priceListLineToUpdate.setCode("e-price-list-line-code");
@@ -270,10 +280,88 @@ public class PriceListLineApiServiceTest {
 
         assertThat(priceListLineToUpdate.getCode()).isEqualTo(givenDto.getCode());
         assertThat(priceListLineToUpdate.getOfferCategory()).isNotNull();
+        assertThat(priceListLineToUpdate.getOfferCategory().getCode()).isEqualTo("an-offer-category");
         assertThat(priceListLineToUpdate.getOfferTemplate()).isNotNull();
+        assertThat(priceListLineToUpdate.getOfferTemplate().getCode()).isEqualTo("an-offer-template");
         assertThat(priceListLineToUpdate.getProduct()).isNotNull();
+        assertThat(priceListLineToUpdate.getProduct().getCode()).isEqualTo("a-product");
         assertThat(priceListLineToUpdate.getProductCategory()).isNotNull();
+        assertThat(priceListLineToUpdate.getProductCategory().getCode()).isEqualTo("a-product-category");
         assertThat(priceListLineToUpdate.getChargeTemplate()).isNotNull();
+        assertThat(priceListLineToUpdate.getChargeTemplate().getCode()).isEqualTo("a-charge-template");
+        assertThat(priceListLineToUpdate.getApplicationEl()).isEqualTo(givenDto.getApplicationEl());
+        assertThat(priceListLineToUpdate.getAmount()).isEqualTo(givenDto.getAmount());
+        assertThat(priceListLineToUpdate.getRate().doubleValue()).isEqualTo(givenDto.getRate());
+        assertThat(priceListLineToUpdate.getDescription()).isEqualTo(givenDto.getDescription());
+    }
+
+    @Test
+    public void update_givenSomeFieldsNullShouldUpdate() {
+        // given
+        var priceListCode = "a-price-list";
+        var priceListLineId = 10001L;
+        var givenDto = ImmutablePriceListLineDto.builder()
+                                                .priceListCode(priceListCode)
+                                                .code("a-price-list-line-code")
+                                                .description("a-description")
+                                                .applicationEl("an-application-el")
+                                                .chargeTemplateCode("a-charge-template-code")
+                                                .rate(123.456d)
+                                                .amount(BigDecimal.valueOf(123456.789))
+                                                .build();
+
+        PriceList priceList = new PriceList();
+        priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.DRAFT);
+
+        PriceListLine priceListLineToUpdate = new PriceListLine();
+        priceListLineToUpdate.setCode("e-price-list-line-code");
+
+        OfferTemplateCategory offerCategory = new OfferTemplateCategory();
+        offerCategory.setCode("initial-offer-category");
+        priceListLineToUpdate.setOfferCategory(offerCategory);
+
+        OfferTemplate offerTemplate = new OfferTemplate();
+        offerTemplate.setCode("initial-offer-template");
+        priceListLineToUpdate.setOfferTemplate(offerTemplate);
+
+        Product product = new Product();
+        product.setCode("initial-product");
+        priceListLineToUpdate.setProduct(product);
+
+        UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
+        chargeTemplate.setCode("initial-charge-template");
+        priceListLineToUpdate.setChargeTemplate(chargeTemplate);
+
+        ProductLine productCategory = new ProductLine();
+        productCategory.setCode("initial-product-line");
+        priceListLineToUpdate.setProductCategory(productCategory);
+        priceListLineToUpdate.setPriceList(priceList);
+        when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
+
+
+        UsageChargeTemplate newChargeTemplate = new UsageChargeTemplate();
+        newChargeTemplate.setCode("a-charge-template-code");
+        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(newChargeTemplate);
+
+        // when
+        priceListLineApiService.update(priceListLineId, givenDto);
+
+
+        // then
+        verify(priceListLineService).findById(priceListLineId);
+
+        assertThat(priceListLineToUpdate.getCode()).isEqualTo(givenDto.getCode());
+        assertThat(priceListLineToUpdate.getOfferCategory()).isNotNull();
+        assertThat(priceListLineToUpdate.getOfferCategory().getCode()).isEqualTo("initial-offer-category");
+        assertThat(priceListLineToUpdate.getOfferTemplate()).isNotNull();
+        assertThat(priceListLineToUpdate.getOfferTemplate().getCode()).isEqualTo("initial-offer-template");
+        assertThat(priceListLineToUpdate.getProduct()).isNotNull();
+        assertThat(priceListLineToUpdate.getProduct().getCode()).isEqualTo("initial-product");
+        assertThat(priceListLineToUpdate.getProductCategory()).isNotNull();
+        assertThat(priceListLineToUpdate.getProductCategory().getCode()).isEqualTo("initial-product-line");
+        assertThat(priceListLineToUpdate.getChargeTemplate()).isNotNull();
+        assertThat(priceListLineToUpdate.getChargeTemplate().getCode()).isEqualTo("a-charge-template-code");
         assertThat(priceListLineToUpdate.getApplicationEl()).isEqualTo(givenDto.getApplicationEl());
         assertThat(priceListLineToUpdate.getAmount()).isEqualTo(givenDto.getAmount());
         assertThat(priceListLineToUpdate.getRate().doubleValue()).isEqualTo(givenDto.getRate());
@@ -389,14 +477,23 @@ public class PriceListLineApiServiceTest {
     }
 
     @Test
-    public void update_givenSlimDtoShouldEmptyAllOptionalFields() {
+    public void update_givenBlankFieldsShouldUpdate() {
         // given
         var priceListCode = "a-price-list";
         var priceListLineId = 10001L;
         var givenDto = ImmutablePriceListLineDto.builder()
                                                 .priceListCode(priceListCode)
                                                 .code("a-price-list-line-code")
-                                                .chargeTemplateCode("a-charge-template")
+                                                .description("a-description")
+                                                .applicationEl("")
+                                                .offerCategoryCode("")
+                                                .offerTemplateCode("")
+                                                .productCode("")
+                                                .productCategoryCode("")
+                                                .chargeTemplateCode("a-charge-template-code")
+                                                .rate(123.456d)
+                                                .amount(BigDecimal.valueOf(123456.789))
+                                                .pricePlanCode("")
                                                 .build();
 
         PriceList priceList = new PriceList();
@@ -409,17 +506,36 @@ public class PriceListLineApiServiceTest {
         priceListLineToUpdate.setCode("e-price-list-line-code");
         priceListLineToUpdate.setRate(BigDecimal.valueOf(123));
         priceListLineToUpdate.setAmount(BigDecimal.valueOf(123));
-        priceListLineToUpdate.setPriceList(new PriceList());
-        priceListLineToUpdate.setProduct(new Product());
-        priceListLineToUpdate.setProductCategory(new ProductLine());
-        priceListLineToUpdate.setChargeTemplate(new RecurringChargeTemplate());
-        priceListLineToUpdate.setOfferTemplate(new OfferTemplate());
-        priceListLineToUpdate.setOfferCategory(new OfferTemplateCategory());
+
+        OfferTemplateCategory offerCategory = new OfferTemplateCategory();
+        offerCategory.setCode("initial-offer-category");
+        priceListLineToUpdate.setOfferCategory(offerCategory);
+
+        OfferTemplate offerTemplate = new OfferTemplate();
+        offerTemplate.setCode("initial-offer-template");
+        priceListLineToUpdate.setOfferTemplate(offerTemplate);
+
+        Product product = new Product();
+        product.setCode("initial-product");
+        priceListLineToUpdate.setProduct(product);
+
+        UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
+        chargeTemplate.setCode("initial-charge-template");
+        priceListLineToUpdate.setChargeTemplate(chargeTemplate);
+
+        ProductLine productCategory = new ProductLine();
+        productCategory.setCode("initial-product-line");
+        priceListLineToUpdate.setProductCategory(productCategory);
+
         priceListLineToUpdate.setApplicationEl("e-application-el");
         priceListLineToUpdate.setPriceList(priceList);
 
-
         when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
+
+
+        UsageChargeTemplate newChargeTemplate = new UsageChargeTemplate();
+        newChargeTemplate.setCode("a-charge-template-code");
+        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(newChargeTemplate);
 
         // when
         priceListLineApiService.update(priceListLineId, givenDto);
@@ -433,11 +549,12 @@ public class PriceListLineApiServiceTest {
         assertThat(priceListLineToUpdate.getOfferTemplate()).isNull();
         assertThat(priceListLineToUpdate.getProduct()).isNull();
         assertThat(priceListLineToUpdate.getProductCategory()).isNull();
-        assertThat(priceListLineToUpdate.getApplicationEl()).isNull();
-        assertThat(priceListLineToUpdate.getAmount()).isNull();
-        assertThat(priceListLineToUpdate.getRate()).isNull();
-        assertThat(priceListLineToUpdate.getDescription()).isNull();
         assertThat(priceListLineToUpdate.getChargeTemplate()).isNotNull();
+        assertThat(priceListLineToUpdate.getChargeTemplate().getCode()).isEqualTo("a-charge-template-code");
+        assertThat(priceListLineToUpdate.getApplicationEl()).isNull();
+        assertThat(priceListLineToUpdate.getAmount()).isEqualTo(givenDto.getAmount());
+        assertThat(priceListLineToUpdate.getRate().doubleValue()).isEqualTo(givenDto.getRate());
+        assertThat(priceListLineToUpdate.getDescription()).isEqualTo(givenDto.getDescription());
     }
 
     @Test
