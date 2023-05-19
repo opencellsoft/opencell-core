@@ -40,19 +40,19 @@ public interface PriceListResource {
 	Response create(@Parameter(required = true) PriceList priceList);
 
 	@PUT
-	@Path("/{priceListId}")
+	@Path("/{priceListCode}")
 	@Operation(summary = "Update an existing Price List", tags = { "PriceList" }, description = "Update a Price List", responses = {
 			@ApiResponse(responseCode = "200", description = "Price List successfully updated"),
 			@ApiResponse(responseCode = "404", description = "Price List successfully updated"),
 			@ApiResponse(responseCode = "400", description = "Price List with given code does not exist") })
-	Response update(@Parameter(required = true) PriceList priceList, @PathParam("priceListId") Long priceListId); 
+	Response update(@Parameter(required = true) PriceList priceList, @Parameter(required = true, description = "Price List code to delete") @PathParam("priceListCode") String priceListCode); 
 
 	@DELETE
-	@Path("/{priceListId}")
+	@Path("/{priceListCode}")
 	@Operation(summary = "Delete existing Price List", tags = { "PriceList" }, description = "Delete Existing Price List", responses = {
 			@ApiResponse(responseCode = "200", description = "Price List successfully deleted"),
 			@ApiResponse(responseCode = "404", description = "Price List with id in the path doesn't exist") })
-	Response delete(@Parameter(required = true, description = "Price List id to delete") @PathParam("priceListId") Long priceListId);
+	Response delete(@Parameter(required = true, description = "Price List code to delete") @PathParam("priceListCode") String priceListCode);
 
     @PUT
     @Path("/{priceListCode}/status/{newStatus}")

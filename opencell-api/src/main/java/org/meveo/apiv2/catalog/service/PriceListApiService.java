@@ -87,8 +87,8 @@ public class PriceListApiService extends BaseApi {
      * @param paymentMethods A list of {@link PaymentMethod}
      * @return {@link PriceList}
      */
-    public Optional<PriceList> update(PriceList priceList, Long id, List<Long> paymentMethods) {
-    	PriceList priceListToUpdate = Optional.ofNullable(priceListService.findById(id)).orElseThrow(() -> new EntityDoesNotExistsException(PriceList.class, id));    	
+    public Optional<PriceList> update(PriceList priceList, String priceListCode, List<Long> paymentMethods) {
+    	PriceList priceListToUpdate = Optional.ofNullable(priceListService.findByCode(priceListCode)).orElseThrow(() -> new EntityDoesNotExistsException(PriceList.class, priceListCode));    	
     	setDefaultValues(priceList);
     	validateMandatoryFields(priceList);
     	validateApplicationRules(priceList, paymentMethods);
@@ -103,8 +103,8 @@ public class PriceListApiService extends BaseApi {
      * @param id Price List Id
      * @return {@link PriceList}
      */
-    public Optional<PriceList> delete(Long id) {
-    	PriceList priceList = Optional.ofNullable(priceListService.findById(id)).orElseThrow(() -> new EntityDoesNotExistsException(PriceList.class, id));
+    public Optional<PriceList> delete(String priceListCode) {
+    	PriceList priceList = Optional.ofNullable(priceListService.findByCode(priceListCode)).orElseThrow(() -> new EntityDoesNotExistsException(PriceList.class, priceListCode));
     	priceListService.remove(priceList);
         return Optional.ofNullable(priceList);
     }

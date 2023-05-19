@@ -30,17 +30,17 @@ public class PriceListResourceImpl implements PriceListResource {
 	}
     
     @Override
-	public Response update(org.meveo.apiv2.catalog.PriceList priceList, Long priceListId) {
+	public Response update(org.meveo.apiv2.catalog.PriceList priceList, String priceListCode) {
     	PriceList entity = mapper.toEntity(priceList);
-    	PriceList updated = priceListApiService.update(entity, priceListId, priceList.getPaymentMethods()).get();
+    	PriceList updated = priceListApiService.update(entity, priceListCode, priceList.getPaymentMethods()).get();
 		return ok(LinkGenerator.getUriBuilderFromResource(DunningLevelResource.class, updated.getId()).build())
 				.entity(mapper.toResource(updated))
 				.build();
 	}
     
     @Override
-	public Response delete(Long priceListId) {
-		priceListApiService.delete(priceListId);
+	public Response delete(String priceListCode) {
+		priceListApiService.delete(priceListCode);
 		ResponseBuilder response = ok();
 		return response.build();
 	}
