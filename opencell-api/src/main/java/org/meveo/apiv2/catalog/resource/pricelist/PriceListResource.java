@@ -45,7 +45,7 @@ public interface PriceListResource {
 			@ApiResponse(responseCode = "200", description = "Price List successfully updated"),
 			@ApiResponse(responseCode = "404", description = "Price List successfully updated"),
 			@ApiResponse(responseCode = "400", description = "Price List with given code does not exist") })
-	Response update(@Parameter(required = true) PriceList priceList, @Parameter(required = true, description = "Price List code to delete") @PathParam("priceListCode") String priceListCode); 
+	Response update(@Parameter(required = true) PriceList priceList, @Parameter(required = true, description = "Price List code to update") @PathParam("priceListCode") String priceListCode); 
 
 	@DELETE
 	@Path("/{priceListCode}")
