@@ -34,7 +34,6 @@ import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.payments.impl.CreditCategoryService;
-import org.meveo.service.payments.impl.PaymentMethodService;
 
 @Stateless
 public class PriceListApiService extends BaseApi {
@@ -59,9 +58,6 @@ public class PriceListApiService extends BaseApi {
     
     @Inject
     private TitleService titleService;
-    
-    @Inject
-    private PaymentMethodService paymentMethodService;
     
     @Inject
     private SellerService sellerService;
