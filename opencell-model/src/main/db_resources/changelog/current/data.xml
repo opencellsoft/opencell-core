@@ -15429,6 +15429,19 @@ public class CdrFlatFileImportScript extends Script {
 				
 		]]>
 		</sql>
+		
+		<update tableName="cat_discount_plan">
+			<column name="allowance_code_id" valueComputed="(SELECT id from untdid_5189_allowance_code where code = '95')"></column>
+			<where>allowance_code_id is null</where>
+		</update>
+        <addNotNullConstraint tableName="cat_discount_plan" columnName="allowance_code_id" />
+        <addForeignKeyConstraint baseTableName="cat_discount_plan"
+								 baseColumnNames="allowance_code_id"
+								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 		</changeSet>
 		
 		<changeSet id="#INTRD-12085_20221221" author="HatimOUDAD">
@@ -20029,15 +20042,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
     
-    <changeSet id="#INTRD-13867_20230220" author="aeljaouhari">
-        <sql>
-	        update public.accounting_journal_entry set 
-		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
-		        	where ac.id = btc.currency_id and inv.trading_currency_id = btc.id and inv.id = aco.invoice_id and aco.id =  accounting_operation_id),
-		        converted_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco 
-		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
-        </sql>
-    </changeSet>
     <changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI">
     <insert tableName="cpq_tag_type">
         <column name="id" value="-1"/>
@@ -20300,18 +20304,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
         </insert>
     </changeSet>
-	
-	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308">
-		<update tableName="ar_account_operation">
-			<column name="converted_amount" valueComputed="amount"/>
-			<column name="converted_amount_without_tax" valueComputed="amount_without_tax"/>
-			<column name="converted_tax_amount" valueComputed="tax_amount"/>
-			<column name="converted_matching_amount" valueComputed="matching_amount"/>
-			<column name="converted_un_matching_amount" valueComputed="un_matching_amount"/>
-			<column name="transactional_currency" valueComputed="(SELECT id FROM billing_trading_currency btc where currency_id = (SELECT currency_id from crm_provider where id = 1))"></column>
-			<where>transactional_currency is null</where>
-		</update>
-	</changeSet>
 
     <changeSet id="#INTRD-14786_20230309" author="bourras">
         <insert tableName="ar_occ_template">
@@ -20898,6 +20890,22 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>tax_category_id is null</where>
 		</update>
 	</changeSet>
+
+    <changeSet id="#INTRD-16102_priceliststatusjob" author="a.rouaguebe">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="PriceListStatusJob" />
+            <column name="code" value="PriceListStatusJob" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="timerentity_id"
+                    valueComputed="(SELECT id from meveo_timer where code = 'Daily-midnight')" />
+            <column name="uuid" value="PriceListStatusJob_Job" />
+        </insert>
+    </changeSet>
 
     <changeSet id="#INTRD-13682_20230510" author="AbdellatifBARI">
         <update tableName="adm_notification">

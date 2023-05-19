@@ -7,8 +7,16 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductLine;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 
 /**
@@ -25,36 +33,77 @@ import java.math.BigDecimal;
 )
 public class PriceListLine extends EnableBusinessCFEntity {
 
+    /**
+     * PriceList Line value used for Discount
+     */
+    @Column(name = "rate")
     private BigDecimal rate;
 
+    /**
+     * PriceList Line vamue for Fixed Price
+     */
+    @Column(name = "amount")
+    private BigDecimal amount;
+
+    /**
+     * Price list linked to this price list line
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_list_id")
     private PriceList priceList;
 
+    /**
+     * Offer category attached to this price line list
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_category_id")
     private OfferTemplateCategory offerCategory;
 
+    /**
+     * Offer Template attached to this price line list
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_template_id")
     private OfferTemplate offerTemplate;
 
+    /**
+     * Cpq Product attached to this price line list
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
+    /**
+     * Cpq ProductLine attached to this price line list
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_line_id")
+    private ProductLine productCategory;
+
+    /**
+     * Charge Template attached to this price line list
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_template_id")
     private ChargeTemplate chargeTemplate;
 
+    /**
+     * PricePlan attached to this price line list
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_plan_id")
     private PricePlanMatrix pricePlan;
 
+    /**
+     * Price list Line Type (FIXED or PERCENTAGE)
+     */
     @Column(name = "price_list_type")
     @Enumerated(EnumType.STRING)
     private PriceListTypeEnum priceListType;
 
+    /**
+     * Application Expression Language
+     */
     @Column(name = "application_el")
     private String applicationEl;
 
@@ -103,6 +152,14 @@ public class PriceListLine extends EnableBusinessCFEntity {
         return this;
     }
 
+    public ProductLine getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(ProductLine productCategory) {
+        this.productCategory = productCategory;
+    }
+
     public ChargeTemplate getChargeTemplate() {
         return chargeTemplate;
     }
@@ -137,5 +194,13 @@ public class PriceListLine extends EnableBusinessCFEntity {
     public PriceListLine setApplicationEl(String applicationEl) {
         this.applicationEl = applicationEl;
         return this;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 }
