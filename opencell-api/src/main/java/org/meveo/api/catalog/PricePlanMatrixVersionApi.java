@@ -389,7 +389,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     }
 
 
-    public void removeAllConvertedPricePlanLinesByVersion(Long pricePlanMatrixVersionId, String tradingCurrencyCode) {
+    public void removeAllTradingPricePlanLinesByVersion(Long pricePlanMatrixVersionId, String tradingCurrencyCode) {
         PricePlanMatrixVersion planMatrixVersion = pricePlanMatrixVersionService.findById(pricePlanMatrixVersionId);
         if(planMatrixVersion == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixVersionId);
@@ -398,12 +398,12 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             throw new MissingParameterException("tradingCurrenyCode");
         }
         planMatrixVersion.getLines().forEach(ppml -> {
-            ppml.getConvertedPricePlanMatrixLines().removeIf(cppml -> cppml.getTradingCurrency() != null && cppml.getTradingCurrency().getCurrency() != null && cppml.getTradingCurrency().getCurrency().getCurrencyCode().equals(tradingCurrencyCode));
+            ppml.getTradingPricePlanMatrixLines().removeIf(cppml -> cppml.getTradingCurrency() != null && cppml.getTradingCurrency().getCurrency() != null && cppml.getTradingCurrency().getCurrency().getCurrencyCode().equals(tradingCurrencyCode));
         });
     }
 
     @Transactional
-    public ConvertedPricePlanVersion createConvertedPricePlanVersion(ConvertedPricePlanVersionDto dtoData) throws MeveoApiException, BusinessException {
+    public TradingPricePlanVersion createTradingPricePlanVersion(TradingPricePlanVersionDto dtoData) throws MeveoApiException, BusinessException {
         checkMandatoryFields(dtoData);
 
         TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCodeOrId(dtoData.getTradingCurrency().getCode(), dtoData.getTradingCurrency().getId());
@@ -467,7 +467,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         	throw new BusinessException("The trading price is inconsistent with the price plan version price and the rate");
         }
 
-        TradingPricePlanVersion cppv = ppmv.getTradingPricePlanMatrixLines()
+        TradingPricePlanVersion cppv = ppmv.getTradingPricePlanVersions()
                 .stream()
                 .filter(e -> e.getId().equals(cppvId))
                 .findFirst()
@@ -575,7 +575,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixVersionId());
         }
 
-        ppmv.getTradingPricePlanMatrixLines()
+        ppmv.getTradingPricePlanVersions()
                 .stream()
                 .filter(cppml -> cppml.getTradingCurrency().getCurrencyCode().equals(dtoData.getTradingCurrency().getCode()) || cppml.getTradingCurrency().getId().equals(dtoData.getTradingCurrency().getId()))
                 .forEach(cppml -> {

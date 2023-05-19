@@ -213,8 +213,8 @@ public class PricePlanMatrixVersionApiTest {
 		TradingPricePlanVersion eTPPV = new TradingPricePlanVersion();
 		eTPPV.setId(1L);
 		eTPPV.setTradingCurrency(eTradingCurrency);
-		ePPV.setTradingPricePlanMatrixLines(new HashSet<>());
-		ePPV.getTradingPricePlanMatrixLines().add(eTPPV);
+		ePPV.setTradingPricePlanVersions(new HashSet<>());
+		ePPV.getTradingPricePlanVersions().add(eTPPV);
 		
 		Mockito.when(pricePlanMatrixVersionService.findById(anyLong())).thenReturn(ePPV);
 		
