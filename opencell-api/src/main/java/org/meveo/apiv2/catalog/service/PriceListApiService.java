@@ -88,7 +88,10 @@ public class PriceListApiService extends BaseApi {
      * @return {@link PriceList}
      */
     public Optional<PriceList> update(PriceList priceList, String priceListCode, List<Long> paymentMethods) {
-    	PriceList priceListToUpdate = Optional.ofNullable(priceListService.findByCode(priceListCode)).orElseThrow(() -> new EntityDoesNotExistsException(PriceList.class, priceListCode));    	
+    	PriceList priceListToUpdate = Optional.ofNullable(priceListService.findByCode(priceListCode)).orElseThrow(() -> new EntityDoesNotExistsException(PriceList.class, priceListCode));
+        if(!PriceListStatusEnum.DRAFT.equals(priceListToUpdate.getStatus())) {
+            throw new BusinessApiException("Updating a PriceList other than DRAFT is not allowed");
+        }
     	setDefaultValues(priceList);
     	validateMandatoryFields(priceList);
     	validateApplicationRules(priceList, paymentMethods);
