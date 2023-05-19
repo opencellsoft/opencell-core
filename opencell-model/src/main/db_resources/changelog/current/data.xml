@@ -15429,6 +15429,19 @@ public class CdrFlatFileImportScript extends Script {
 				
 		]]>
 		</sql>
+		
+		<update tableName="cat_discount_plan">
+			<column name="allowance_code_id" valueComputed="(SELECT id from untdid_5189_allowance_code where code = '95')"></column>
+			<where>allowance_code_id is null</where>
+		</update>
+        <addNotNullConstraint tableName="cat_discount_plan" columnName="allowance_code_id" />
+        <addForeignKeyConstraint baseTableName="cat_discount_plan"
+								 baseColumnNames="allowance_code_id"
+								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 		</changeSet>
 		
 		<changeSet id="#INTRD-12085_20221221" author="HatimOUDAD">
@@ -20029,15 +20042,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
     
-    <changeSet id="#INTRD-13867_20230220" author="aeljaouhari">
-        <sql>
-	        update public.accounting_journal_entry set 
-		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
-		        	where ac.id = btc.currency_id and inv.trading_currency_id = btc.id and inv.id = aco.invoice_id and aco.id =  accounting_operation_id),
-		        converted_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco 
-		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
-        </sql>
-    </changeSet>
     <changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI">
     <insert tableName="cpq_tag_type">
         <column name="id" value="-1"/>
