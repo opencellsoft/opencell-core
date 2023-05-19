@@ -4,19 +4,23 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
@@ -26,7 +30,7 @@ import org.meveo.model.billing.Country;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CreditCategory;
-import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Title;
 
 @Table(name = "cat_price_list")
@@ -88,10 +92,12 @@ public class PriceList extends BusinessCFEntity {
 	@Column(name = "legal_entity")
 	private Set<Title> legalEntities = new HashSet<>();
 	
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "cat_price_list_payment_method", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "payment_method_id"))
-	@Column(name = "payment_method")
-	private Set<PaymentMethod> paymentMethods = new HashSet<PaymentMethod>();
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @ElementCollection(targetClass = PaymentMethodEnum.class)
+    @CollectionTable(name = "cat_price_list_payment_method", joinColumns = @JoinColumn(name = "price_list_id"))
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+	private Set<PaymentMethodEnum> paymentMethods = new HashSet<PaymentMethodEnum>();
 	
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_price_list_seller", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "seller_id"))
@@ -194,11 +200,11 @@ public class PriceList extends BusinessCFEntity {
 		this.legalEntities = legalEntities;
 	}
 
-	public Set<PaymentMethod> getPaymentMethods() {
+	public Set<PaymentMethodEnum> getPaymentMethods() {
 		return paymentMethods;
 	}
 
-	public void setPaymentMethods(Set<PaymentMethod> paymentMethods) {
+	public void setPaymentMethods(Set<PaymentMethodEnum> paymentMethods) {
 		this.paymentMethods = paymentMethods;
 	}
 

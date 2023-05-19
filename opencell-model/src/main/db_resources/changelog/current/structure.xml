@@ -16438,7 +16438,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			referencedTableName="billing_trading_currency" />
 	</changeSet>
 
-    <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe">
+    <!--<changeSet id="#INTRD-16039_20230512" author="a.rouaguebe">
 
         <renameSequence oldSequenceName="price_list_seq" newSequenceName="cat_price_list_seq" />
         <renameTable oldTableName="price_list" newTableName="cat_price_list" />
@@ -16510,7 +16510,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 referencedColumnNames="id"
                 baseColumnNames="price_list_id"
                 baseTableName="cat_price_list_line" />
-    </changeSet>
+    </changeSet>-->
 
 	<changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari">
 		<renameColumn tableName="cat_trading_discount_plan_item" oldColumnName="transactional_discount_value" newColumnName="trading_discount_value"/>
@@ -16722,6 +16722,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
                       newColumnName="transactional_unit_amount_with_tax"/>
         <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_unit_amount_tax"
                       newColumnName="transactional_unit_amount_tax"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-16374_20230519" author="zelmeliani">
+        <dropPrimaryKey constraintName="cat_price_list_payment_method_pkey" tableName="cat_price_list_payment_method" />
+        <dropForeignKeyConstraint baseTableName="cat_price_list_payment_method" constraintName="cat_price_list_payment_method_pm_fk" />
+        <renameColumn tableName="cat_price_list_payment_method" oldColumnName="payment_method_id" newColumnName="payment_method"/>
+        <modifyDataType tableName="cat_price_list_payment_method" columnName="payment_method" newDataType="varchar(50)"/>
     </changeSet>
 
 </databaseChangeLog>
