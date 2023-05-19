@@ -80,8 +80,6 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.ConvertedPricePlanMatrixLine;
-import org.meveo.model.catalog.ConvertedPricePlanVersion;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -93,6 +91,8 @@ import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.catalog.TradingPricePlanMatrixLine;
+import org.meveo.model.catalog.TradingPricePlanVersion;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.CpqQuote;
@@ -697,10 +697,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     unitPriceWithTax = unitPrices.getAmountWithTax();
                     bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
                     bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
-                    Amounts convertedUnitPrices = determineTradingUnitPrice(pricePlan, bareWalletOperation)
+                    Amounts transationalUnitPrices = determineTradingUnitPrice(pricePlan, bareWalletOperation)
                             .orElse(determineUnitPrice(pricePlan, bareWalletOperation));
-                    bareWalletOperation.setTransactionalUnitAmountWithoutTax(convertedUnitPrices.getAmountWithoutTax());
-                    bareWalletOperation.setTransactionalUnitAmountWithTax(convertedUnitPrices.getAmountWithTax());
+                    bareWalletOperation.setTransactionalUnitAmountWithoutTax(transationalUnitPrices.getAmountWithoutTax());
+                    bareWalletOperation.setTransactionalUnitAmountWithTax(transationalUnitPrices.getAmountWithTax());
                     if (pricePlan.getScriptInstance() != null) {
                         log.debug("start to execute script instance for ratePrice {}", pricePlan);
                         executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
@@ -1795,29 +1795,27 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         final TradingCurrency tradingCurrency = walletOperation.getBillingAccount().getTradingCurrency();
         if (pricePlanMatrixVersion != null) {
             if(!pricePlanMatrixVersion.isMatrix()) {
-                ConvertedPricePlanVersion convertedPPVersion =
-                        getConvertedPPVersionFrom(pricePlanMatrixVersion, tradingCurrency);
-                if(convertedPPVersion != null) {
+                TradingPricePlanVersion tradingPPVersion =
+                        getTradingPPVersionFrom(pricePlanMatrixVersion, tradingCurrency);
+                if(tradingPPVersion != null) {
                     if (appProvider.isEntreprise()) {
-                        priceWithoutTax = convertedPPVersion.getConvertedPrice();
+                        priceWithoutTax = tradingPPVersion.getTradingPrice();
                     } else {
-                        priceWithTax = convertedPPVersion.getConvertedPrice();
+                        priceWithTax = tradingPPVersion.getTradingPrice();
                     }
                     if(walletOperation.getTransactionalUnitAmountWithoutTax() == null) {
                         walletOperation.setTransactionalUnitAmountWithoutTax(priceWithoutTax);
                     }
                 }
             } else {
-                PricePlanMatrixLine pricePlanMatrixLine =
-                        pricePlanMatrixVersionService.loadPrices(pricePlanMatrixVersion, walletOperation);
-                ConvertedPricePlanMatrixLine convertedPricePlanMatrixLine =
-                        getConvertedPricePlanMatrixLineFrom(tradingCurrency, pricePlanMatrixLine);
+                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(pricePlanMatrixVersion, walletOperation);
+                TradingPricePlanMatrixLine tradingPricePlanMatrixLine = getTradingPricePlanMatrixLineFrom(tradingCurrency, pricePlanMatrixLine);
                 if(pricePlanMatrixLine != null) {
                     walletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
                     if(appProvider.isEntreprise()) {
-                        priceWithoutTax = convertedPricePlanMatrixLine.getConvertedValue();
+                        priceWithoutTax = tradingPricePlanMatrixLine.getTradingValue();
                     } else {
-                        priceWithTax = convertedPricePlanMatrixLine.getConvertedValue();
+                        priceWithTax = tradingPricePlanMatrixLine.getTradingValue();
                     }
                     if(walletOperation.getTransactionalUnitAmountWithoutTax() == null) {
                         walletOperation.setTransactionalUnitAmountWithoutTax(priceWithoutTax);
@@ -1837,22 +1835,18 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
     }
 
-    private ConvertedPricePlanVersion getConvertedPPVersionFrom(PricePlanMatrixVersion pricePlanMatrixVersion,
-                                                                TradingCurrency woTradingCurrency) {
-        return pricePlanMatrixVersion.getConvertedPricePlanVersions()
+    private TradingPricePlanVersion getTradingPPVersionFrom(PricePlanMatrixVersion pricePlanMatrixVersion, TradingCurrency woTradingCurrency) {
+        return pricePlanMatrixVersion.getTradingPricePlanVersions()
                 .stream()
-                .filter(convertedPricePlanVersion
-                        -> convertedPricePlanVersion.getTradingCurrency().getId().equals(woTradingCurrency.getId()))
+                .filter(tradingPricePlanVersion -> tradingPricePlanVersion.getTradingCurrency().getId().equals(woTradingCurrency.getId()))
                 .findFirst()
                 .orElse(null);
     }
 
-    private ConvertedPricePlanMatrixLine getConvertedPricePlanMatrixLineFrom(TradingCurrency woTradingCurrency,
-                                                                             PricePlanMatrixLine pricePlanMatrixLine) {
-        return pricePlanMatrixLine.getConvertedPricePlanMatrixLines()
+    private TradingPricePlanMatrixLine getTradingPricePlanMatrixLineFrom(TradingCurrency woTradingCurrency, PricePlanMatrixLine pricePlanMatrixLine) {
+        return pricePlanMatrixLine.getTradingPricePlanMatrixLines()
                 .stream()
-                .filter(convertedPPlanMatrixLine
-                        -> convertedPPlanMatrixLine.getTradingCurrency().getId().equals(woTradingCurrency.getId()))
+                .filter(tradingPPlanMatrixLine -> tradingPPlanMatrixLine.getTradingCurrency().getId().equals(woTradingCurrency.getId()))
                 .findFirst()
                 .orElse(null);
     }

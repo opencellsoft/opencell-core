@@ -19,18 +19,18 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.TradingCurrency;
 
 @Entity
-@Table(name = "cpq_converted_price_plan_version")
+@Table(name = "cpq_trading_price_plan_version")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_converted_price_plan_version_seq") })
+        @Parameter(name = "sequence_name", value = "cpq_trading_price_plan_version_seq") })
 @NamedQueries({
-		@NamedQuery(name = "ConvertedPricePlanVersion.getByPricePlanVersionAndCurrency", query = "SELECT cppv from ConvertedPricePlanVersion cppv where cppv.pricePlanMatrixVersion =:ppmv and cppv.tradingCurrency = :tradingCurrency") 
+		@NamedQuery(name = "TradingPricePlanVersion.getByPricePlanVersionAndCurrency", query = "SELECT tppv from TradingPricePlanVersion tppv where tppv.pricePlanMatrixVersion =:ppmv and tppv.tradingCurrency = :tradingCurrency") 
 })
-public class ConvertedPricePlanVersion extends AuditableEntity {
+public class TradingPricePlanVersion extends AuditableEntity {
 	
 	private static final long serialVersionUID = 6114895863558742249L;
 
-	@Column(name = "converted_price")
-	private BigDecimal convertedPrice;
+	@Column(name = "trading_price")
+	private BigDecimal tradingPrice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "trading_currency_id", nullable = false)
@@ -47,12 +47,12 @@ public class ConvertedPricePlanVersion extends AuditableEntity {
     @JoinColumn(name = "price_plan_matrix_version_id")
 	private PricePlanMatrixVersion pricePlanMatrixVersion;
 	
-	public ConvertedPricePlanVersion() {
+	public TradingPricePlanVersion() {
     
 	}
 
-    public ConvertedPricePlanVersion(ConvertedPricePlanVersion copy) {
-        this.convertedPrice = copy.convertedPrice;
+    public TradingPricePlanVersion(TradingPricePlanVersion copy) {
+        this.tradingPrice = copy.tradingPrice;
         this.tradingCurrency = copy.tradingCurrency;
         this.rate = copy.rate;
         this.useForBillingAccounts = copy.useForBillingAccounts;
@@ -60,17 +60,17 @@ public class ConvertedPricePlanVersion extends AuditableEntity {
     }
 
 	/**
-	 * @return the convertedPrice
+	 * @return the tradingPrice
 	 */
-	public BigDecimal getConvertedPrice() {
-		return convertedPrice;
+	public BigDecimal getTradingPrice() {
+		return tradingPrice;
 	}
 
 	/**
-	 * @param convertedPrice the convertedPrice to set
+	 * @param tradingPrice the tradingPrice to set
 	 */
-	public void setConvertedPrice(BigDecimal convertedPrice) {
-		this.convertedPrice = convertedPrice;
+	public void setTradingPrice(BigDecimal tradingPrice) {
+		this.tradingPrice = tradingPrice;
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class ConvertedPricePlanVersion extends AuditableEntity {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ Objects.hash(convertedPrice, pricePlanMatrixVersion, rate, tradingCurrency, useForBillingAccounts);
+				+ Objects.hash(tradingPrice, pricePlanMatrixVersion, rate, tradingCurrency, useForBillingAccounts);
 		return result;
 	}
 
@@ -146,8 +146,8 @@ public class ConvertedPricePlanVersion extends AuditableEntity {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ConvertedPricePlanVersion other = (ConvertedPricePlanVersion) obj;
-		return Objects.equals(convertedPrice, other.convertedPrice)
+		TradingPricePlanVersion other = (TradingPricePlanVersion) obj;
+		return Objects.equals(tradingPrice, other.tradingPrice)
 				&& Objects.equals(pricePlanMatrixVersion, other.pricePlanMatrixVersion)
 				&& Objects.equals(rate, other.rate) && Objects.equals(tradingCurrency, other.tradingCurrency)
 				&& useForBillingAccounts == other.useForBillingAccounts;

@@ -69,7 +69,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
     
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<ConvertedPricePlanMatrixLine> convertedPricePlanMatrixLines = new HashSet<>();
+    private Set<TradingPricePlanMatrixLine> tradingPricePlanMatrixLines = new HashSet<>();
 
     @Column(name = "priority")
     @NotNull
@@ -182,11 +182,11 @@ public class PricePlanMatrixLine extends AuditableEntity {
         return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getValue(), getPriority());
     }
 
-    public Set<ConvertedPricePlanMatrixLine> getConvertedPricePlanMatrixLines() {
-        return convertedPricePlanMatrixLines;
+    public Set<TradingPricePlanMatrixLine> getTradingPricePlanMatrixLines() {
+        return tradingPricePlanMatrixLines;
     }
 
-    public void setConvertedPricePlanMatrixLines(Set<ConvertedPricePlanMatrixLine> convertedPricePlanMatrixLines) {
-        this.convertedPricePlanMatrixLines = convertedPricePlanMatrixLines;
+    public void setTradingPricePlanMatrixLines(Set<TradingPricePlanMatrixLine> tradingPricePlanMatrixLines) {
+        this.tradingPricePlanMatrixLines = tradingPricePlanMatrixLines;
     }
 }

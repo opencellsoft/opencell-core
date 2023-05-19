@@ -66,7 +66,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ColumnTypeEnum;
-import org.meveo.model.catalog.ConvertedPricePlanVersion;
+import org.meveo.model.catalog.TradingPricePlanVersion;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -123,7 +123,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     private PricePlanMatrixService pricePlanMatrixService;
     
     @Inject
-    private ConvertedPricePlanVersionService convertedPricePlanVersionService;
+    private TradingPricePlanVersionService tradingPricePlanVersionService;
     
     @Inject
     private TradingCurrencyService tradingCurrencyService;
@@ -208,9 +208,9 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
             for (PricePlanMatrixVersion pv : pvs) {
                 DatePeriod validity = pv.getValidity();
-                List<ConvertedPricePlanVersion> listConvertedPricePlanVersion = convertedPricePlanVersionService.getListConvertedPricePlanVersionByPpmvId(pv.getId());
-                for (ConvertedPricePlanVersion cppv : listConvertedPricePlanVersion) {
-                    convertedPricePlanVersionService.remove(cppv);
+                List<TradingPricePlanVersion> listTradingPricePlanVersion = tradingPricePlanVersionService.getListTradingPricePlanVersionByPpmvId(pv.getId());
+                for (TradingPricePlanVersion cppv : listTradingPricePlanVersion) {
+                    tradingPricePlanVersionService.remove(cppv);
                 }                
                 if(validity == null) {
                     remove(pv);
@@ -265,8 +265,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 create(newPv);
                 for(int i=2; i < split.length; i++) {
                     String[] unitPriceLineSplit = split[i].split(COLUMN_SEPARATOR);
-                    ConvertedPricePlanVersion cppv = new ConvertedPricePlanVersion();
-                    cppv.setConvertedPrice(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
+                    TradingPricePlanVersion cppv = new TradingPricePlanVersion();
+                    cppv.setTradingPrice(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
                     String tradingCurrencyCode = unitPriceLineSplit[1].toUpperCase();
                     TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(tradingCurrencyCode); 
                     if(tradingCurrency == null) {
@@ -276,7 +276,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     cppv.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
                     cppv.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
                     cppv.setPricePlanMatrixVersion(newPv);
-                    convertedPricePlanVersionService.create(cppv);
+                    tradingPricePlanVersionService.create(cppv);
                 }
             } else if (StringUtils.isNotBlank(header)) {
                 // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start
@@ -742,7 +742,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         public String export(Set<PricePlanMatrixVersion> pricePlanMatrixVersions, String fileType){
             List<Long> ppmvIds = pricePlanMatrixVersions.stream().map(PricePlanMatrixVersion::getId).collect(toList());            
-            List<Map<String, Object>> ppmvMaps = convertedPricePlanVersionService.getPPVWithCPPVByPpmvId(ppmvIds);            
+            List<Map<String, Object>> ppmvMaps = tradingPricePlanVersionService.getPPVWithCPPVByPpmvId(ppmvIds);            
             if (pricePlanMatrixVersions != null && !pricePlanMatrixVersions.isEmpty()) {
                 Set<Path> filePaths = pricePlanMatrixVersions.stream().map(ppv -> saveAsRecord(buildFileName(ppv), ppv, fileType, ppmvMaps)).collect(Collectors.toSet());
                 if (filePaths.size() > 1) {
@@ -770,7 +770,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
                 });
                 
-                line.getConvertedPricePlanMatrixLines().iterator().forEachRemaining(cppmv -> {
+                line.getTradingPricePlanMatrixLines().iterator().forEachRemaining(cppmv -> {
                     String codeCurrency = "";
                     if(cppmv.getTradingCurrency().getCurrency() != null) {
                         codeCurrency = cppmv.getTradingCurrency().getCurrency().getCurrencyCode();

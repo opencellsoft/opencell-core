@@ -38,12 +38,13 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
-import org.meveo.model.catalog.ConvertedPricePlanVersion;
+import org.meveo.model.catalog.TradingPricePlanVersion;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.catalog.TradingPricePlanVersion;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -76,7 +77,7 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
     private PricePlanMatrixLineService pricePlanMatrixLineService;
 
     @Inject
-    private ConvertedPricePlanVersionService convertedPricePlanVersionService;
+    private TradingPricePlanVersionService tradingPricePlanVersionService;
 
     @Inject
     @MeveoJpa
@@ -222,17 +223,17 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 
 		            		priceVersionNew.setPricePlanMatrix(pricePlanMatrixNew);
 		            		pricePlanMatrixVersionService.create(priceVersionNew);
-		            		
-		            		if(priceVersion.getConvertedPricePlanVersions() != null) {
-                                Set<ConvertedPricePlanVersion> convertedPricePlanVersions = new HashSet<>();
-                                for(ConvertedPricePlanVersion convertedPricePlanVersion:priceVersion.getConvertedPricePlanVersions()){
-                                    ConvertedPricePlanVersion convertedPricePlanVersionNew = new ConvertedPricePlanVersion(convertedPricePlanVersion);
-                                    convertedPricePlanVersionNew.setPricePlanMatrixVersion(priceVersionNew);
-                                    convertedPricePlanVersionService.create(convertedPricePlanVersionNew);
-                                    convertedPricePlanVersions.add(convertedPricePlanVersionNew);
-                                }
-                                priceVersionNew.setConvertedPricePlanVersions(convertedPricePlanVersions);
-                            }
+
+							if(priceVersion.getTradingPricePlanMatrixLines() != null) {
+								Set<TradingPricePlanVersion> tradingPricePlanVersions = new HashSet<>();
+								for (TradingPricePlanVersion tradingPricePlanVersion : priceVersion.getTradingPricePlanMatrixLines()) {
+									TradingPricePlanVersion tradingPricePlanVersionNew = new TradingPricePlanVersion(tradingPricePlanVersion);
+									tradingPricePlanVersionNew.setPricePlanMatrixVersion(priceVersionNew);
+									tradingPricePlanVersionService.create(tradingPricePlanVersionNew);
+									tradingPricePlanVersions.add(tradingPricePlanVersionNew);
+								}
+								priceVersionNew.setTradingPricePlanMatrixLines(tradingPricePlanVersions);
+							}
 		            	}
 	        		}
 	        	}
