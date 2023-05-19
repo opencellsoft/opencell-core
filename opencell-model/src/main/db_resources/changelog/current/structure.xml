@@ -15794,7 +15794,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />    
     </changeSet>
     
-   	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308">
+   	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308" failOnError="false">
 		<update tableName="ar_account_operation">
 			<column name="converted_amount" valueComputed="amount"/>
 			<column name="converted_amount_without_tax" valueComputed="amount_without_tax"/>
@@ -15825,7 +15825,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <renameColumn tableName="accounting_journal_entry" oldColumnName="trading_amount" newColumnName="converted_amount"/>
     </changeSet>
     
-     <changeSet id="#INTRD-13867_20230220" author="aeljaouhari">
+     <changeSet id="#INTRD-13867_20230220" author="aeljaouhari" failOnError="false">
         <sql>
 	        update public.accounting_journal_entry set 
 		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
