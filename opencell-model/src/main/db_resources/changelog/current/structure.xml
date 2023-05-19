@@ -16531,6 +16531,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 referencedColumnNames="id"
                 baseColumnNames="product_line_id"
                 baseTableName="cat_price_list_line" />
+    </changeSet>
     <changeSet id="#INTRD-16036_20230516" author="zelmeliani" >
         <createTable tableName="cat_price_list_customer_brand">
             <column name="price_list_id" type="bigint" />
