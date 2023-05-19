@@ -446,7 +446,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         UserAccount ua = chargeInstance.getUserAccount();
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 	    
-	    if(walletOperation != null && walletOperation.getDiscountedAmount() != null) return Collections.EMPTY_LIST;
+	    //if(walletOperation != null && walletOperation.getDiscountedAmount() != null) return Collections.EMPTY_LIST;
 
         List<TriggeredEDRTemplate> triggeredEDRTemplates = chargeTemplate.getEdrTemplates();
 
@@ -945,7 +945,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
         }
         if(priceWithoutTax == null && priceWithTax == null) {
-            throw new BusinessException("Couldnâ€™t find a price for charge " + wo.getChargeInstance().getCode() + " and price plan " + pricePlan.getCode() + ": no price version and price plan amount is null");
+            throw new BusinessException("Couldn’t find a price for charge " + wo.getChargeInstance().getCode() + " and price plan " + pricePlan.getCode() + ": no price version and price plan amount is null");
         }
         return new Amounts(priceWithoutTax, priceWithTax);
     }
