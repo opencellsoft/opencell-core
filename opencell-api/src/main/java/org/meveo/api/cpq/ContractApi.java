@@ -333,8 +333,11 @@ public class ContractApi extends BaseApi{
     		throw new EntityAlreadyExistsException(ContractItem.class, contractItemDto.getCode());
     	item = new ContractItem();
     	final Contract contract = contractService.findByCode(contractItemDto.getContractCode());
-    	if(contract == null)
+    	if(contract == null) {
     		throw new EntityDoesNotExistsException(Contract.class, contractItemDto.getContractCode());
+		} else if (!ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
+			throw new BusinessApiException("Create contract lines for Active contracts is not allowed.");
+		}
     	if(!Strings.isEmpty(contractItemDto.getServiceTemplateCode())) {
         	item.setServiceTemplate(serviceTemplateService.findByCode(contractItemDto.getServiceTemplateCode()));
     	}
