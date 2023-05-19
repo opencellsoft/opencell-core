@@ -23,7 +23,7 @@ import org.meveo.model.billing.TradingCurrency;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_trading_price_plan_version_seq") })
 @NamedQueries({
-		@NamedQuery(name = "TradingPricePlanVersion.getByPricePlanVersionAndCurrency", query = "SELECT tppv from TradingPricePlanVersion cppv where tppv.pricePlanMatrixVersion =:ppmv and tppv.tradingCurrency = :tradingCurrency") 
+		@NamedQuery(name = "TradingPricePlanVersion.getByPricePlanVersionAndCurrency", query = "SELECT tppv from TradingPricePlanVersion tppv where tppv.pricePlanMatrixVersion =:ppmv and tppv.tradingCurrency = :tradingCurrency") 
 })
 public class TradingPricePlanVersion extends AuditableEntity {
 	

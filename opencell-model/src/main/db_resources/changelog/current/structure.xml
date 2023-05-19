@@ -16512,7 +16512,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
     
-    <changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari">
+    <changeSet id="#INTRD-15044_20230517" author="AdilElJaouhari">
     	<renameTable newTableName="cpq_trading_price_plan_version" oldTableName="cpq_converted_price_plan_version"/>
     	<renameColumn tableName="cpq_trading_price_plan_version" oldColumnName="converted_price" newColumnName="trading_price"/>
     	<renameSequence newSequenceName="cpq_trading_price_plan_version_seq" oldSequenceName="cpq_converted_price_plan_version_seq" />

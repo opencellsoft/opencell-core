@@ -18,7 +18,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.criterion.MatchMode;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoPricePlanException;
-import org.meveo.api.dto.catalog.ConvertedPricePlanMatrixLineDto;
+import org.meveo.api.dto.catalog.TradingPricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
@@ -212,25 +212,25 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 }).collect(Collectors.toSet());
     }
 
-    public Set<TradingPricePlanMatrixLine> getCppmlFromDto(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
-        Set<TradingPricePlanMatrixLine> listCppml = new HashSet<TradingPricePlanMatrixLine>();
-        List<ConvertedPricePlanMatrixLineDto> listCppmlDto = dtoData.getConvertedPricePlanMatrixLines();
-        for (ConvertedPricePlanMatrixLineDto cppmlDto : listCppmlDto) {
+    public Set<TradingPricePlanMatrixLine> getTppmlFromDto(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
+        Set<TradingPricePlanMatrixLine> listTppml = new HashSet<TradingPricePlanMatrixLine>();
+        List<TradingPricePlanMatrixLineDto> listTppmlDto = dtoData.getTradingPricePlanMatrixLines();
+        for (TradingPricePlanMatrixLineDto tppmlDto : listTppmlDto) {
             TradingPricePlanMatrixLine cppml = new TradingPricePlanMatrixLine();
-            cppml.setTradingValue(cppmlDto.getConvertedValue());
-            cppml.setRate(cppmlDto.getRate());            
-            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(cppmlDto.getTradingCurrency().getCode()); 
+            cppml.setTradingValue(tppmlDto.getTradingValue());
+            cppml.setRate(tppmlDto.getRate());            
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(tppmlDto.getTradingCurrency().getCode()); 
             if(tradingCurrency == null) {
-                throw new MeveoApiException("Trading currency doesn't exist for  ( code : " +  cppmlDto.getTradingCurrency().getCode());
+                throw new MeveoApiException("Trading currency doesn't exist for  ( code : " +  tppmlDto.getTradingCurrency().getCode());
             }            
             cppml.setTradingCurrency(tradingCurrency);
-            cppml.setTradingValue(cppmlDto.getConvertedValue());
-            cppml.setUseForBillingAccounts(cppmlDto.getUseForBillingAccounts());
+            cppml.setTradingValue(tppmlDto.getTradingValue());
+            cppml.setUseForBillingAccounts(tppmlDto.getUseForBillingAccounts());
             cppml.setPricePlanMatrixLine(pricePlanMatrixLine);
             tradingPricePlanMatrixLineService.create(cppml);
-            listCppml.add(cppml);
+            listTppml.add(cppml);
         }        
-        return listCppml;
+        return listTppml;
     }
 
     public PricePlanMatrixLineDto load(Long ppmLineId) {
@@ -359,7 +359,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
             pricePlanMatrixLine.setValue(value);
             create(pricePlanMatrixLine); 
-            Set<TradingPricePlanMatrixLine> convertedPricePlanMatrixLines = getCppmlFromDto(pricePlanMatrixLineDto, pricePlanMatrixLine);
+            Set<TradingPricePlanMatrixLine> convertedPricePlanMatrixLines = getTppmlFromDto(pricePlanMatrixLineDto, pricePlanMatrixLine);
             pricePlanMatrixLine.getTradingPricePlanMatrixLines().clear();
             pricePlanMatrixLine.getTradingPricePlanMatrixLines().addAll(convertedPricePlanMatrixLines);            
             update(pricePlanMatrixLine);            
@@ -390,8 +390,8 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
                 pricePlanMatrixLine.getPricePlanMatrixValues().clear();
                 pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
-                Set<TradingPricePlanMatrixLine> convertedPricePlanMatrixLines = getTradingPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider);
-                pricePlanMatrixLine.getTradingPricePlanMatrixLines().addAll(convertedPricePlanMatrixLines);
+                Set<TradingPricePlanMatrixLine> tradingPricePlanMatrixLines = getTradingPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider);
+                pricePlanMatrixLine.getTradingPricePlanMatrixLines().addAll(tradingPricePlanMatrixLines);
                 update(pricePlanMatrixLine);
             }
             else {                
@@ -412,7 +412,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     private Set<TradingPricePlanMatrixLine> getTradingPricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto, PricePlanMatrixLine pricePlanMatrixLine,  Provider provider){
         Set<TradingPricePlanMatrixLine> tradingPricePlanMatrixLines = new HashSet<>();
         List<String> checkDuplicateTradingCurrency = new ArrayList<>();
-        for (ConvertedPricePlanMatrixLineDto convertedPPML : pricePlanMatrixLineDto.getConvertedPricePlanMatrixLines()) {
+        for (TradingPricePlanMatrixLineDto convertedPPML : pricePlanMatrixLineDto.getTradingPricePlanMatrixLines()) {
             if(convertedPPML.getTradingCurrency() == null) {
                 throw new MissingParameterException("tradingCurrency");
             }
@@ -430,7 +430,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             }else {
                 checkDuplicateTradingCurrency.add(tradingCurrencyToAdd.getCurrencyCode());
             }
-            TradingPricePlanMatrixLine convPPML =  new TradingPricePlanMatrixLine(convertedPPML.getConvertedValue(), tradingCurrencyToAdd, convertedPPML.getRate(), convertedPPML.getUseForBillingAccounts(), pricePlanMatrixLine);
+            TradingPricePlanMatrixLine convPPML =  new TradingPricePlanMatrixLine(convertedPPML.getTradingValue(), tradingCurrencyToAdd, convertedPPML.getRate(), convertedPPML.getUseForBillingAccounts(), pricePlanMatrixLine);
             tradingPricePlanMatrixLineService.create(convPPML);
             tradingPricePlanMatrixLines.add(convPPML);
         }

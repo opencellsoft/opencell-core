@@ -470,8 +470,8 @@
         <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
         <createSequence sequenceName="meveo_script_parameter_seq"/>
         <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
-        <createSequence sequenceName="cpq_converted_price_plan_version_seq" startValue="1" />
-        <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
+        <createSequence sequenceName="cpq_trading_price_plan_version_seq" startValue="1" />
+        <createSequence sequenceName="cpq_trading_price_plan_matrix_line_sq" startValue="1" />
 	    <createSequence sequenceName="ar_unmatching_code_seq" startValue="1"/>
         <createSequence sequenceName="ar_unmatching_amount_seq" startValue="1"/>
         <createSequence sequenceName="cat_price_list_seq" startValue="1" />
@@ -12541,7 +12541,7 @@
     </changeSet>
     
     <changeSet id="#INTRD-12614_20221227_BUILD_TABLE" author="TarikFA.">
-       <createTable tableName="cpq_converted_price_plan_matrix_line">
+       <createTable tableName="cpq_trading_price_plan_matrix_line">
        		<column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_converted_plan_matrix_line" />
             </column>
@@ -12553,7 +12553,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             
-            <column name="converted_value" type="numeric(23, 12)" />
+            <column name="trading_value" type="numeric(23, 12)" />
             <column name="trading_currency_id" type="bigint" />
             <column name="rate" type="numeric(23, 12)" />
             <column name="use_for_billing_accounts" type="${type.boolean}" />
@@ -18283,7 +18283,7 @@
     
 
 	<changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
-        <createTable tableName="cpq_converted_price_plan_version">
+        <createTable tableName="cpq_trading_price_plan_version">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_converted_price_plan_version_pkey" />
             </column>
@@ -18295,7 +18295,7 @@
             <column name="updated" type="datetime" />
             <column name="updater" type="varchar(100)" />
             <column name="price_plan_matrix_version_id" type="bigint" />
-            <column name="converted_price" type="numeric(23, 12)" />
+            <column name="trading_price" type="numeric(23, 12)" />
             <column name="trading_currency_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -19882,6 +19882,8 @@
     <changeSet id="#INTRD-16031_20230508" author="zelmeliani" />
     <changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-16219_20230511" author="aelmalki" />
+	<changeSet id="#INTRD-15044_20230517" author="AdilElJaouhari" />
+	
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
