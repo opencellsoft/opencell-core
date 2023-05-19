@@ -2697,6 +2697,7 @@
             <column name="legal_entity_type_id" type="bigint" />
             <column name="icd_id" type="bigint" />
             <column name="exemption_reason" type="varchar(2000)" />
+            <column name="price_list_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -17163,6 +17164,15 @@
 			referencedTableName="crm_seller" 
             referencedColumnNames="id" />
     </changeSet>
+
+    <changeSet id="#INTRD-16203_20230519_ba_pricelist_fk" author="a.rouaguebe">
+        <addForeignKeyConstraint
+                baseTableName="billing_billing_account"
+                baseColumnNames="price_list_id"
+                constraintName="fk_ba_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -20053,6 +20063,7 @@
     <changeSet id="#INTRD-16256_20230515" author="ZBariki" />
     <changeSet id="#INTRD-13867_20230220" author="aeljaouhari" />
     <changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
+    <changeSet id="#INTRD-16203_20230519_ba_pricelist" author="a.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

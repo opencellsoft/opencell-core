@@ -16440,8 +16440,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
     <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe">
 
-        <renameSequence oldSequenceName="price_list_seq" newSequenceName="cat_price_list_seq" />
-        <renameTable oldTableName="price_list" newTableName="cat_price_list" />
+<!--        <renameSequence oldSequenceName="price_list_seq" newSequenceName="cat_price_list_seq" />-->
+<!--        <renameTable oldTableName="price_list" newTableName="cat_price_list" />-->
 
         <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
         <createTable tableName="cat_price_list_line">
@@ -16722,6 +16722,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
                       newColumnName="transactional_unit_amount_with_tax"/>
         <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_unit_amount_tax"
                       newColumnName="transactional_unit_amount_tax"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-16203_20230519_ba_pricelist" author="a.rouaguebe">
+        <addColumn tableName="billing_billing_account">
+            <column name="price_list_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="billing_billing_account"
+                baseColumnNames="price_list_id"
+                constraintName="fk_ba_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
     </changeSet>
 
 </databaseChangeLog>
