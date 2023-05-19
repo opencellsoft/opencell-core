@@ -470,8 +470,8 @@
         <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
         <createSequence sequenceName="meveo_script_parameter_seq"/>
         <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
-        <createSequence sequenceName="cpq_converted_price_plan_version_seq" startValue="1" />
-        <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
+        <createSequence sequenceName="cpq_trading_price_plan_version_seq" startValue="1" />
+        <createSequence sequenceName="cpq_trading_price_plan_matrix_line_sq" startValue="1" />
 	    <createSequence sequenceName="ar_unmatching_code_seq" startValue="1"/>
         <createSequence sequenceName="ar_unmatching_amount_seq" startValue="1"/>
         <createSequence sequenceName="cat_price_list_seq" startValue="1" />
@@ -12598,7 +12598,7 @@
     <changeSet id="#INTRD-12614_20221227_BUILD_TABLE" author="TarikFA.">
        <createTable tableName="cpq_trading_price_plan_matrix_line">
        		<column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_converted_plan_matrix_line" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_trading_plan_matrix_line" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -16965,16 +16965,16 @@
     
     
      <changeSet id="#INTRD-12614_20221227_fk" author="hichamELHALOUI">
-        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+        <addForeignKeyConstraint baseTableName="cpq_trading_price_plan_matrix_line"
                                  baseColumnNames="trading_currency_id"
-                                 constraintName="fk_cpq_converted_price_plan_matrix_line_id"
+                                 constraintName="fk_cpq_trading_price_plan_matrix_line_id"
                                  referencedTableName="billing_trading_currency"
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
                                  
                                  
-        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+        <addForeignKeyConstraint baseTableName="cpq_trading_price_plan_matrix_line"
                                  baseColumnNames="price_plan_matrix_line_id"
                                  constraintName="fk_price_plan_matrix_line_id"
                                  referencedTableName="cpq_price_plan_matrix_line"
@@ -18452,7 +18452,7 @@
 	<changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
         <createTable tableName="cpq_trading_price_plan_version">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_converted_price_plan_version_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_trading_price_plan_version_pkey" />
             </column>
             <column name="version" type="int4" />
             <column name="creator" type="varchar(100)" />
