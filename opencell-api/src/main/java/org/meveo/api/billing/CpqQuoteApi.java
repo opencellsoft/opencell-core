@@ -1652,8 +1652,7 @@ public class CpqQuoteApi extends BaseApi {
         GetQuoteVersionDtoResponse getQuoteVersionDtoResponse = new GetQuoteVersionDtoResponse(updatedQuoteVersion);
         getQuoteVersionDtoResponse.setQuoteItems(new ArrayList<>());
         for (QuoteOffer quoteOffer : updatedQuoteVersion.getQuoteOffers()) {
-            QuoteOfferDTO quoteOfferDTO = new QuoteOfferDTO(quoteOffer);
-            getQuoteVersionDtoResponse.getQuoteItems().add(quoteOfferDTO);
+        	 QuoteOfferDTO quoteOfferDTO = new QuoteOfferDTO(quoteOffer);
             for(QuoteProduct quoteProduct: quoteOffer.getQuoteProduct()) {
                 QuoteProductDTO quoteProductDTO = new QuoteProductDTO();
                 quoteProductDTO.init(quoteProduct);
@@ -1713,7 +1712,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setCurrencyCode(accountingArticlePrice.getCurrencyCode());
             if(!PriceLevelEnum.OFFER.equals(level)) {
                 quotePriceService.create(quotePrice);
-                quotePriceService.getEntityManager().flush();;
+                quotePriceService.getEntityManager().flush();
             }
             log.debug("reducePrices1 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
             return Optional.of(quotePrice);

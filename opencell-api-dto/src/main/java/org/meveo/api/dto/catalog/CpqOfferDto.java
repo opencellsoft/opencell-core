@@ -33,6 +33,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
+import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -74,10 +75,10 @@ public class CpqOfferDto extends EnableBusinessDto {
     @XmlElement(name = "tags")
     private List<TagDto> tags;
     
-    /** The tags. */
+    /** The offerAttributes. */
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
-    private List<AttributeDTO> attributes;
+    private List<OfferTemplateAttributeDTO> attributes;
     
     
     /** The valid from. */
@@ -118,6 +119,12 @@ public class CpqOfferDto extends EnableBusinessDto {
 		this.validTo=entity.getValidity().getTo();
 		this.name=entity.getName();
 		this.bomCode=entity.getBusinessOfferModel()!=null?entity.getBusinessOfferModel().getCode():null;
+		if(entity.getOfferAttributes() != null && !entity.getOfferAttributes().isEmpty()) {
+       	 this.attributes = entity.getOfferAttributes()
+                    .stream()
+                    .map(OfferTemplateAttributeDTO::new)
+                    .collect(Collectors.toList());
+        }
     }
     
     
@@ -137,7 +144,7 @@ public class CpqOfferDto extends EnableBusinessDto {
 		this.attachments = offerTemplatedto.getAttachments();
 		this.lifeCycleStatus = offerTemplatedto.getLifeCycleStatus();
 		this.customFields = offerTemplatedto.getCustomFields();
-		this.attributes=offerTemplatedto.getAttributes();
+		this.attributes=offerTemplatedto.getOfferAttributes();
 	}
 
 
@@ -303,19 +310,15 @@ public class CpqOfferDto extends EnableBusinessDto {
 		this.customFields = customFields;
 	}
 
-	/**
-	 * @return the attributes
-	 */
-	public List<AttributeDTO> getAttributes() {
+	public List<OfferTemplateAttributeDTO> getAttributes() {
 		return attributes;
 	}
 
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(List<AttributeDTO> attributes) {
+	public void setAttributes(List<OfferTemplateAttributeDTO> attributes) {
 		this.attributes = attributes;
 	}
+
+	
 
   
 	
