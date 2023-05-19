@@ -20052,6 +20052,7 @@
 	<changeSet id="#INTRD-16166_20230512" author="aelmalki" />
     <changeSet id="#INTRD-16256_20230515" author="ZBariki" />
     <changeSet id="#INTRD-13867_20230220" author="aeljaouhari" />
+    <changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

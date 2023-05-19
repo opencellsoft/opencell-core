@@ -15794,6 +15794,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />    
     </changeSet>
     
+   	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308">
+		<update tableName="ar_account_operation">
+			<column name="converted_amount" valueComputed="amount"/>
+			<column name="converted_amount_without_tax" valueComputed="amount_without_tax"/>
+			<column name="converted_tax_amount" valueComputed="tax_amount"/>
+			<column name="converted_matching_amount" valueComputed="matching_amount"/>
+			<column name="converted_un_matching_amount" valueComputed="un_matching_amount"/>
+			<column name="transactional_currency" valueComputed="(SELECT id FROM billing_trading_currency btc where currency_id = (SELECT currency_id from crm_provider where id = 1))"></column>
+			<where>transactional_currency is null</where>
+		</update>
+	</changeSet>
+    
     <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari">
     	<dropNotNullConstraint columnName="created" tableName="billing_invoice_validation_rule"/>
     	<dropNotNullConstraint columnName="fail_status" tableName="billing_invoice_validation_rule"/>
