@@ -16440,8 +16440,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
     <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe">
 
-<!--        <renameSequence oldSequenceName="price_list_seq" newSequenceName="cat_price_list_seq" />-->
-<!--        <renameTable oldTableName="price_list" newTableName="cat_price_list" />-->
+        <renameSequence oldSequenceName="price_list_seq" newSequenceName="cat_price_list_seq" />
+        <renameTable oldTableName="price_list" newTableName="cat_price_list" />
 
         <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
         <createTable tableName="cat_price_list_line">
