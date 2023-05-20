@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.apiv2.models.Resource;
 
 @Path("/seller")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -30,7 +31,7 @@ public interface SellerResource {
 				@ApiResponse(description=" action status ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= Response.class
 											)
 								)
 				)}
@@ -53,12 +54,12 @@ public interface SellerResource {
 				@ApiResponse(description=" action status. ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= Response.class
 											)
 								)
 				)}
 	)
-    ActionStatus update(Seller postData);
+    Response update(Seller postData);
     
 
 
@@ -78,10 +79,10 @@ public interface SellerResource {
 				@ApiResponse(description=" created or updated seller. ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= Response.class
 											)
 								)
 				)}
 	)
-    ActionStatus createOrUpdate(Seller postData);
+    Response createOrUpdate(Seller postData);
 }

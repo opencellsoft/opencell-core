@@ -158,7 +158,7 @@ public class Seller extends AccountEntity implements IWFEntity {
     
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_seller_media", joinColumns = @JoinColumn(name = "seller_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
-    private List<Media> medias;
+    private List<Media> medias = new ArrayList<>();
     
     /**
      * IsoIcd

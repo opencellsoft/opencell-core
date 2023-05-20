@@ -4,10 +4,12 @@ import java.io.Serializable;
 
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 
 @Value.Immutable
 @Value.Style(jdkOnly=true)
+@JsonDeserialize(as = ImmutableAddress.class)
 public interface Address extends Serializable {
 
 	@Nullable

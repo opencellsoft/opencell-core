@@ -5,12 +5,13 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 
 @Value.Immutable
 @Value.Style(jdkOnly=true)
-//@JsonDeserialize(as = ImmutableGenericPagingAndFiltering.class)
+@JsonDeserialize(as = ImmutableSeller.class)
 public interface Seller extends Resource{
 
 	@Nullable
@@ -39,4 +40,7 @@ public interface Seller extends Resource{
 	default List<String> getMediaCodes(){
 		return Collections.emptyList();
 	}
+	
+	@Nullable
+	String getVatNumber();
 }
