@@ -2,17 +2,21 @@ package org.meveo.apiv2.admin;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.model.admin.Seller;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.validation.ValidationByNumberCountryService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Stateless
 public class SellerApiService {
@@ -34,12 +38,54 @@ public class SellerApiService {
 			}
 			seller.setSeller(parentSeller);
 		}
-		/*try{
-			validationByNumberCountryService.getValByValNbCountryCode("", seller.getTradingCountry().getCountryCode());
+		checkVatNum(seller.getVatNo(), seller.getTradingCountry().getCountryCode());
+		sellerService.create(seller);
+	}
+	
+	public void update(Seller postSeller) {
+		handleMissingParameters(postSeller);
+		if(postSeller.getId() == null) {
+			throw new MissingParameterException(List.of("id"));
+		}
+		var seller = Optional.ofNullable(sellerService.findById(postSeller.getId())).orElseThrow(NotFoundException::new);
+		
+		seller.setDescription(postSeller.getDescription());
+		seller.setVatNo(postSeller.getVatNo());
+		seller.setTradingLanguage(postSeller.getTradingLanguage());
+		seller.setTradingCountry(postSeller.getTradingCountry());
+		seller.setTradingCurrency(postSeller.getTradingCurrency());
+		seller.setContactInformation(postSeller.getContactInformation());
+		seller.setAddress(postSeller.getAddress());
+		if(CollectionUtils.isNotEmpty(postSeller.getMedias())){
+			seller.getMedias().clear();
+			seller.getMedias().addAll(postSeller.getMedias());
+		}
+		if(postSeller.getSeller() != null) {
+			seller.setSeller(postSeller.getSeller());
+		}
+		checkVatNum(seller.getVatNo(), seller.getTradingCountry().getCountryCode());
+		sellerService.update(seller);
+	}
+	
+	
+	public void createOrUpdate(Seller postData) {
+		if(postData.getId() == null){
+			create(postData);
+		}else{
+			update(postData);
+		}
+	}
+	
+	private void checkVatNum(String vatNo, String countryCode) {
+		
+		try{
+			boolean valExist = validationByNumberCountryService.getValByValNbCountryCode(vatNo, countryCode);
+			if(!valExist){
+				throw new BusinessException("The Val Number : " + vatNo + " is incorrect !");
+			}
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage());
-		}*/
-		sellerService.create(seller);
+		}
 	}
 	
 	private void checkField(String fieldData, String fieldError, List<String> missingParameters) {
@@ -75,4 +121,5 @@ public class SellerApiService {
 			throw new MissingParameterException(paramMissing);
 		}
 	}
+	
 }

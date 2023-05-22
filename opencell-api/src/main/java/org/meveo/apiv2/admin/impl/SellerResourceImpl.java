@@ -30,22 +30,29 @@ public class SellerResourceImpl implements SellerResource {
 	public Response create(Seller postData) {
 		var seller = sellerMapper.toEntity(postData);
 		sellerApiService.create(seller);
-		Link link = new org.meveo.apiv2.generic.common.LinkGenerator.SelfLinkGenerator(SellerResource.class).withPutAction().withPostAction().withId(seller.getId()).build();
 		var response = ImmutableSeller.copyOf(sellerMapper.toResource(seller));
-		return Response.created(LinkGenerator.getUriBuilderFromResource(DunningSettingResource.class, seller.getId()).build())
+		return Response.created(LinkGenerator.getUriBuilderFromResource(SellerResource.class, seller.getId()).build())
 				.entity(response)
 				.build();
 	}
 
 	@Override
 	public Response update(Seller postData) {
-		// TODO Auto-generated method stub
-		return null;
+		var sellerSeller = sellerMapper.toEntity(postData);
+		sellerApiService.update(sellerSeller);
+		var response = ImmutableSeller.copyOf(sellerMapper.toResource(sellerSeller));
+		return Response.ok(LinkGenerator.getUriBuilderFromResource(SellerResource.class, sellerSeller.getId()).build())
+				.entity(response)
+				.build();
 	}
 
 	@Override
 	public Response createOrUpdate(Seller postData) {
-		// TODO Auto-generated method stub
-		return null;
+		var sellerSeller = sellerMapper.toEntity(postData);
+		sellerApiService.createOrUpdate(sellerSeller);
+		var response = ImmutableSeller.copyOf(sellerMapper.toResource(sellerSeller));
+		return Response.ok(LinkGenerator.getUriBuilderFromResource(SellerResource.class, sellerSeller.getId()).build())
+				.entity(response)
+				.build();
 	}
 }

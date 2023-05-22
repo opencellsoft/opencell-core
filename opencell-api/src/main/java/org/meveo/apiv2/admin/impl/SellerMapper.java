@@ -17,6 +17,7 @@ import org.meveo.model.cpq.Media;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.CountryService;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -34,6 +35,8 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 	private final TradingLanguageService tradingLanguageService = (TradingLanguageService) getServiceInterface(TradingLanguageService.class.getSimpleName());
 	private final MediaService mediaService = (MediaService) getServiceInterface(MediaService.class.getSimpleName());
 	private final CountryService countryService = (CountryService) getServiceInterface(CountryService.class.getSimpleName());
+	
+	private final SellerService sellerService = (SellerService) getServiceInterface(SellerService.class.getSimpleName());
 	protected org.meveo.apiv2.admin.Seller toResource(Seller entity) {
 		return ImmutableSeller.builder()
 				.id(entity.getId())
@@ -81,6 +84,7 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 	protected Seller toEntity(org.meveo.apiv2.admin.Seller resource) {
 		Seller seller = new Seller();
 		seller.setCode(resource.getCode());
+		seller.setId(resource.getId());
 		seller.setDescription(resource.getDescription());
 		seller.setVatNo(resource.getVatNumber());
 		if(StringUtils.isNotBlank(resource.getCurrencyCode())){
@@ -146,7 +150,10 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 			seller.setContactInformation(contactInfo);
 		}
 		if(StringUtils.isNotBlank(resource.getParentSeller())){
-			var parentSeller = new Seller();
+			var parentSeller = sellerService.findByCode(resource.getParentSeller());
+			if(parentSeller == null) {
+				throw new EntityDoesNotExistsException(Seller.class, resource.getParentSeller());
+			}
 			parentSeller.setCode(resource.getParentSeller());
 			seller.setSeller(parentSeller);
 		}
