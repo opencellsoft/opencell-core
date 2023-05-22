@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "a49c719a-04cb-4464-9470-757671c99dde",
-		"name": "INTRD-8406 - Converted price plan version",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "b51d925e-bef1-4b33-8d48-beadc0275758",
+		"name": "INTRD-8406 - trading price plan version",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23793433"
 	},
 	"item": [
 		{
@@ -94,13 +95,13 @@
 			]
 		},
 		{
-			"name": "Create CPPV",
+			"name": "Create TPPV",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"pricePlanMatrixVersionId\": 1,\n    \"tradingCurrency\": {\n        \"id\":\"-2\"\n    },\n    \"convertedPrice\": 334,\n    \"rate\": 1.5,\n    \"useForBillingAccounts\": true\n}",
+					"raw": "{\n    \"pricePlanMatrixVersionId\": 1,\n    \"tradingCurrency\": {\n        \"id\":\"5\"\n    },\n    \"tradingPrice\": 303,\n    \"rate\": 3,\n    \"useForBillingAccounts\": true\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -108,27 +109,27 @@
 					}
 				},
 				"url": {
-					"raw": "{{opencell.url}}/catalog/pricePlan/convertedPricePlanVersion",
+					"raw": "{{opencell.url}}/catalog/pricePlan/tradingPricePlanVersion",
 					"host": [
 						"{{opencell.url}}"
 					],
 					"path": [
 						"catalog",
 						"pricePlan",
-						"convertedPricePlanVersion"
+						"tradingPricePlanVersion"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Update CPPV",
+			"name": "Update TPPV",
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"pricePlanMatrixVersionId\": 1,\n    \"tradingCurrency\": {\n        \"id\":\"-1\"\n    },\n    \"convertedPrice\": 222,\n    \"rate\": 1.1,\n    \"useForBillingAccounts\": true\n}",
+					"raw": "{\n    \"pricePlanMatrixVersionId\": 1,\n    \"tradingCurrency\": {\n        \"id\":\"-1\"\n    },\n    \"tradingPrice\": 404,\n    \"rate\": 4,\n    \"useForBillingAccounts\": true\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -136,14 +137,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{opencell.url}}/catalog/pricePlan/convertedPricePlanVersion/1",
+					"raw": "{{opencell.url}}/catalog/pricePlan/tradingPricePlanVersion/1",
 					"host": [
 						"{{opencell.url}}"
 					],
 					"path": [
 						"catalog",
 						"pricePlan",
-						"convertedPricePlanVersion",
+						"tradingPricePlanVersion",
 						"1"
 					]
 				}
@@ -151,7 +152,7 @@
 			"response": []
 		},
 		{
-			"name": "Get CPPV",
+			"name": "Get TPPV",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -165,7 +166,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{opencell.url}}/v2/generic/all/convertedpriceplanversion",
+					"raw": "{{opencell.url}}/v2/generic/all/tradingPricePlanVersion",
 					"host": [
 						"{{opencell.url}}"
 					],
@@ -173,20 +174,20 @@
 						"v2",
 						"generic",
 						"all",
-						"convertedpriceplanversion"
+						"tradingPricePlanVersion"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Delete CPPV",
+			"name": "Delete TPPV",
 			"request": {
 				"method": "DELETE",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"pricePlanMatrixVersionId\": 1,\n    \"tradingCurrency\": {\n        \"id\":\"-1\"\n    },\n    \"convertedPrice\": 222,\n    \"rate\": 1.1,\n    \"useForBillingAccounts\": true\n}",
+					"raw": "{}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -194,14 +195,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{opencell.url}}/catalog/pricePlan/convertedPricePlanVersion/1",
+					"raw": "{{opencell.url}}/catalog/pricePlan/tradingPricePlanVersion/1",
 					"host": [
 						"{{opencell.url}}"
 					],
 					"path": [
 						"catalog",
 						"pricePlan",
-						"convertedPricePlanVersion",
+						"tradingPricePlanVersion",
 						"1"
 					]
 				}

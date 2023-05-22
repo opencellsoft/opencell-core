@@ -482,12 +482,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 ratedTransaction.setRulesContract(em.getReference(Contract.class, walletOperation.getRulesContractId()));
             }
             ratedTransaction.setUseSpecificPriceConversion(walletOperation.isUseSpecificPriceConversion());
-            ratedTransaction.setConvertedAmountWithoutTax(walletOperation.getConvertedAmountWithoutTax());
-            ratedTransaction.setConvertedAmountWithTax(walletOperation.getConvertedAmountWithTax());
-            ratedTransaction.setConvertedAmountTax(walletOperation.getConvertedAmountTax());
-            ratedTransaction.setConvertedUnitAmountWithoutTax(walletOperation.getConvertedUnitAmountWithoutTax());
-            ratedTransaction.setConvertedUnitAmountWithTax(walletOperation.getConvertedUnitAmountWithTax());
-            ratedTransaction.setConvertedUnitAmountTax(walletOperation.getConvertedUnitAmountTax());
+            ratedTransaction.setTransactionalAmountWithoutTax(walletOperation.getTransactionalAmountWithoutTax());
+            ratedTransaction.setTransactionalAmountWithTax(walletOperation.getTransactionalAmountWithTax());
+            ratedTransaction.setTransactionalAmountTax(walletOperation.getTransactionalAmountTax());
+            ratedTransaction.setTransactionalUnitAmountWithoutTax(walletOperation.getTransactionalUnitAmountWithoutTax());
+            ratedTransaction.setTransactionalUnitAmountWithTax(walletOperation.getTransactionalUnitAmountWithTax());
+            ratedTransaction.setTransactionalUnitAmountTax(walletOperation.getTransactionalUnitAmountTax());
             if (walletOperation.getTradingCurrencyId() != null) {
                 ratedTransaction.setTradingCurrency(em.getReference(TradingCurrency.class, walletOperation.getTradingCurrencyId()));
             }

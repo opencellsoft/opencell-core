@@ -90,6 +90,9 @@ public class ServiceToUpdateDto implements Serializable, IEntityDto {
     private List<DiscountPlanDto> discountPlansForInstantiation;
     
     private List<String> discountPlanForTermination;
+	
+	private Date priceVersionDate;
+	
     /**
      * Gets the id.
      *
@@ -308,4 +311,12 @@ public class ServiceToUpdateDto implements Serializable, IEntityDto {
     public void setDiscountPlanForTermination(List<String> discountPlanForTermination) {
         this.discountPlanForTermination = discountPlanForTermination;
     }
+	
+	public Date getPriceVersionDate() {
+		return priceVersionDate;
+	}
+	
+	public void setPriceVersionDate(Date priceVersionDate) {
+		this.priceVersionDate = priceVersionDate;
+	}
 }

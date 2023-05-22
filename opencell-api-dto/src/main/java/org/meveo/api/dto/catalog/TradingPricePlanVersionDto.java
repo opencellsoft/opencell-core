@@ -9,13 +9,13 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CurrencyDto;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConvertedPricePlanVersionDto extends BaseEntityDto {
+public class TradingPricePlanVersionDto extends BaseEntityDto {
 
 	private static final long serialVersionUID = 4515155675514862123L;
 
 	private Long pricePlanMatrixVersionId;
 
-	private BigDecimal convertedPrice;
+	private BigDecimal tradingPrice;
 
 	private BigDecimal rate;
 
@@ -38,17 +38,17 @@ public class ConvertedPricePlanVersionDto extends BaseEntityDto {
 	}
 
 	/**
-	 * @return the convertedPrice
+	 * @return the tradingPrice
 	 */
-	public BigDecimal getConvertedPrice() {
-		return convertedPrice;
+	public BigDecimal getTradingPrice() {
+		return tradingPrice;
 	}
 
 	/**
-	 * @param convertedPrice the convertedPrice to set
+	 * @param tradingPrice the tradingPrice to set
 	 */
-	public void setConvertedPrice(BigDecimal convertedPrice) {
-		this.convertedPrice = convertedPrice;
+	public void setTradingPrice(BigDecimal tradingPrice) {
+		this.tradingPrice = tradingPrice;
 	}
 
 	/**

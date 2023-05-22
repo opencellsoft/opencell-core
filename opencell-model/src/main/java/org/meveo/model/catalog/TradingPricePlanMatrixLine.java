@@ -18,18 +18,18 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.TradingCurrency;
 
 @Entity
-@Table(name = "cpq_converted_price_plan_matrix_line")
+@Table(name = "cpq_trading_price_plan_matrix_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_converted_price_plan_matrix_line_sq") })
+        @Parameter(name = "sequence_name", value = "cpq_trading_price_plan_matrix_line_sq") })
 @NamedQueries({
-	@NamedQuery(name = "ConvertedPricePlanMatrixLine.enableOrDisable", query = "UPDATE ConvertedPricePlanMatrixLine set useForBillingAccounts =:enable where id in (:ids)") 
+	@NamedQuery(name = "TradingPricePlanMatrixLine.enableOrDisable", query = "UPDATE TradingPricePlanMatrixLine set useForBillingAccounts =:enable where id in (:ids)") 
 })
-public class ConvertedPricePlanMatrixLine  extends AuditableEntity {
+public class TradingPricePlanMatrixLine  extends AuditableEntity {
 
     private static final long serialVersionUID = -8640286801032633017L;
 
-	@Column(name = "converted_value", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal convertedValue;
+	@Column(name = "trading_value", precision = NB_PRECISION, scale = NB_DECIMALS)
+	private BigDecimal tradingValue;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
@@ -46,15 +46,13 @@ public class ConvertedPricePlanMatrixLine  extends AuditableEntity {
     @JoinColumn(name = "price_plan_matrix_line_id")
 	private PricePlanMatrixLine pricePlanMatrixLine;
     
-    
-
-	public ConvertedPricePlanMatrixLine() {
+	public TradingPricePlanMatrixLine() {
         super();
     }
 
-    public ConvertedPricePlanMatrixLine(BigDecimal convertedValue, TradingCurrency tradingCurrency, BigDecimal rate, boolean useForBillingAccounts, PricePlanMatrixLine pricePlanMatrixLine) {
+    public TradingPricePlanMatrixLine(BigDecimal tradingValue, TradingCurrency tradingCurrency, BigDecimal rate, boolean useForBillingAccounts, PricePlanMatrixLine pricePlanMatrixLine) {
         super();
-        this.convertedValue = convertedValue;
+        this.tradingValue = tradingValue;
         this.tradingCurrency = tradingCurrency;
         this.rate = rate;
         this.useForBillingAccounts = useForBillingAccounts;
@@ -62,17 +60,17 @@ public class ConvertedPricePlanMatrixLine  extends AuditableEntity {
     }
 
     /**
-	 * @return the convertedValue
+	 * @return the tradingValue
 	 */
-	public BigDecimal getConvertedValue() {
-		return convertedValue;
+	public BigDecimal getTradingValue() {
+		return tradingValue;
 	}
 
 	/**
-	 * @param convertedValue the convertedValue to set
+	 * @param tradingValue the tradingValue to set
 	 */
-	public void setConvertedValue(BigDecimal convertedValue) {
-		this.convertedValue = convertedValue;
+	public void setTradingValue(BigDecimal tradingValue) {
+		this.tradingValue = tradingValue;
 	}
 
 	/**
@@ -130,6 +128,5 @@ public class ConvertedPricePlanMatrixLine  extends AuditableEntity {
 	public void setPricePlanMatrixLine(PricePlanMatrixLine pricePlanMatrixLine) {
 		this.pricePlanMatrixLine = pricePlanMatrixLine;
 	}
-	
 	
 }
