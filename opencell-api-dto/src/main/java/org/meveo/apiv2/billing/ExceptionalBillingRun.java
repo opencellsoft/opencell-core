@@ -66,4 +66,11 @@ public interface ExceptionalBillingRun extends Resource {
     default Boolean isComputeDatesAtValidation() {
         return FALSE;
     }
+
+    @Default
+    @Schema(description = "Decide if adding invoice lines incrementally or not")
+    @JsonProperty("incrementalInvoiceLines")
+    default Boolean isIncrementalInvoiceLines() {
+        return FALSE;
+    }
 }

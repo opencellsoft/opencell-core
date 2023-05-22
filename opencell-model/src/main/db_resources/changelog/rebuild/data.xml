@@ -8606,7 +8606,7 @@
            <column name="created" valueDate="2021-02-03 00:00:00.000" />
            <column name="code" value="ADV" />
 		   <column name="description" value="Call for advance payment"/>
-		   <column name="description_i18n" value='{"FRA":"Appel de payment d&apos;avance","ENG":"Call for advance payment"}'/>
+		   <column name="description_i18n" value='{"FRA":"Appel de paiement d&apos;avance","ENG":"Call for advance payment"}'/>
            <column name="creator" value="OPENCELL.ADMIN" />
            <column name="invoice_sequence_id" valueComputed="(SELECT id from billing_seq_invoice where code = 'ADV')" />
            <column name="occ_templ_negative_id" value="-40" />
@@ -12022,6 +12022,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
 	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
+	<changeSet id="#INTRD-16296_20230517" author="aeljaouhari" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

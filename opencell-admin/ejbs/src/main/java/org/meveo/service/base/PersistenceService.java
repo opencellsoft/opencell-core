@@ -789,6 +789,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return new ArrayList<E>();
         }
 
+        config.setDoFetch(false);
         Query query = listQueryBuilder(config).getQuery(getEntityManager());
         if (config.isCacheable()) {
             query.setHint("org.hibernate.cacheable", true);
