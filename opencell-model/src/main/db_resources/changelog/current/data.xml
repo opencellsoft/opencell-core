@@ -20914,4 +20914,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
 
+	<changeSet id="#INTRD-16296_20230517" author="aeljaouhari">
+		<update tableName="billing_invoice_type">
+			<column name="description_i18n" value='{"FRA":"Appel de paiement d&apos;avance","ENG":"Call for advance payment"}' />
+			<where>code = 'ADV'</where>
+		</update>
+	</changeSet>
+    
 </databaseChangeLog>
