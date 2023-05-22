@@ -44,7 +44,6 @@ import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
-import org.meveo.model.catalog.TradingPricePlanVersion;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -224,15 +223,15 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 		            		priceVersionNew.setPricePlanMatrix(pricePlanMatrixNew);
 		            		pricePlanMatrixVersionService.create(priceVersionNew);
 
-							if(priceVersion.getTradingPricePlanMatrixLines() != null) {
+							if(priceVersion.getTradingPricePlanVersions() != null) {
 								Set<TradingPricePlanVersion> tradingPricePlanVersions = new HashSet<>();
-								for (TradingPricePlanVersion tradingPricePlanVersion : priceVersion.getTradingPricePlanMatrixLines()) {
+								for (TradingPricePlanVersion tradingPricePlanVersion : priceVersion.getTradingPricePlanVersions()) {
 									TradingPricePlanVersion tradingPricePlanVersionNew = new TradingPricePlanVersion(tradingPricePlanVersion);
 									tradingPricePlanVersionNew.setPricePlanMatrixVersion(priceVersionNew);
 									tradingPricePlanVersionService.create(tradingPricePlanVersionNew);
 									tradingPricePlanVersions.add(tradingPricePlanVersionNew);
 								}
-								priceVersionNew.setTradingPricePlanMatrixLines(tradingPricePlanVersions);
+								priceVersionNew.setTradingPricePlanVersions(tradingPricePlanVersions);
 							}
 		            	}
 	        		}
