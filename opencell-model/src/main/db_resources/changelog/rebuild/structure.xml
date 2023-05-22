@@ -12463,7 +12463,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe">
+    <changeSet id="#INTRD-16039_20230512-rebuild" author="a.rouaguebe">
         <createTable tableName="cat_price_list_line">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_price_list_line_pk" />
@@ -20049,6 +20049,7 @@
     <changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
 	<changeSet id="#INTRD-15044_20230517" author="AdilElJaouhari" />
     <changeSet id="#INTRD-15501_20230413" author="ThangNguyen" />
+    <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
