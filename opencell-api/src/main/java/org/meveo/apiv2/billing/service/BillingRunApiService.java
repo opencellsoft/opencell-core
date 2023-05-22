@@ -131,28 +131,26 @@ public class BillingRunApiService implements ApiService<BillingRun> {
 
         if (billingRun.getStatus() == NEW || billingRun.getStatus() == INVOICE_LINES_CREATED
                 || billingRun.getStatus() == DRAFT_INVOICES || billingRun.getStatus() == REJECTED) {
-            
-            if (billingRun.getStatus() == NEW && executeInvoicingJob) {
 
-                Map<String, Object> invoiceLineJobParams = new HashMap<>();
-                invoiceLineJobParams.put(INVOICE_LIENS_JOB_PARAMETERS,
-                        asList(new EntityReferenceWrapper(BillingRun.class.getName(),
-                                null, billingRun.getReferenceCode())));
+            if (billingRun.getStatus() == NEW && executeInvoicingJob) {
                 JobInstance invoiceLineJob = jobInstanceService.findByCode(INVOICE_LINES_JOB_CODE);
-                JobInstance invoicingJob = jobInstanceService.findByCode(INVOICING_JOB_CODE);
-                invoiceLineJob.setFollowingJob(jobInstanceService.findByCode(INVOICING_JOB_CODE));
-                if(invoicingJob.getCfValues() != null) {
-                    if(invoicingJob.getCfValues().getValue("InvoicingJobV2_billingRun") != null
-                            && !((List) invoicingJob.getCfValues().getValue("InvoicingJobV2_billingRun")).isEmpty()) {
-                        ((List) invoicingJob.getCfValues().getValue("InvoicingJobV2_billingRun")).clear();
+                if (invoiceLineJob != null) {
+                    Map<String, Object> invoiceLineJobParams = new HashMap<>();
+                    invoiceLineJobParams.put(INVOICE_LIENS_JOB_PARAMETERS, asList(new EntityReferenceWrapper(BillingRun.class.getName(),
+                            null, billingRun.getReferenceCode())));
+                    JobInstance invoicingJob = jobInstanceService.refreshOrRetrieve(invoiceLineJob.getFollowingJob());
+                    if (invoicingJob != null && invoicingJob.getCfValues() != null) {
+                        if (invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS) != null
+                                && !((List) invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS)).isEmpty()) {
+                            ((List) invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS)).clear();
+                        }
+                        invoicingJob.getCfValues().setValue(INVOICING_JOB_PARAMETERS,
+                                asList(new EntityReferenceWrapper(BillingRun.class.getName(),
+                                        null, billingRun.getReferenceCode())));
+                        jobInstanceService.update(invoicingJob);
                     }
-                    invoicingJob.getCfValues().setValue("InvoicingJobV2_billingRun",
-                            asList(new EntityReferenceWrapper(BillingRun.class.getName(),
-                                    null, billingRun.getReferenceCode())));
+                    executeJob(invoiceLineJob, invoiceLineJobParams);
                 }
-                jobInstanceService.update(invoiceLineJob);
-                jobInstanceService.update(invoicingJob);
-                executeJob(invoiceLineJob, invoiceLineJobParams);
             } else {
 
                 BillingRunStatusEnum initialStatus = billingRun.getStatus();
