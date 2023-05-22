@@ -49,6 +49,7 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
         		.isSkipValidationScript(entity.isSkipValidationScript())
         		.filters(entity.getFilters())
         		.isComputeDatesAtValidation(entity.getComputeDatesAtValidation())
+                .isIncrementalInvoiceLines(entity.getIncrementalInvoiceLines())
         		.billingRunTypeEnum(entity.getProcessType())
         		.build();
     }
