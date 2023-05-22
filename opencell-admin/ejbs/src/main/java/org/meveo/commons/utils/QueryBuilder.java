@@ -411,8 +411,9 @@ public class QueryBuilder {
 				select.add(current_alias);
 				
             }
-            if(useSelectColumns) {
-            	query.replace(0, 0, "select "+(distinct ? "distinct ":"")+String.join(", ", select)+" ");
+            if (useSelectColumns) {
+                query.replace(0, query.indexOf("from"), "select " + (distinct ? "distinct " : "")
+                        + String.join(", ", select) + " ");
             }
         }
 
@@ -1612,7 +1613,7 @@ public class QueryBuilder {
         String query = toStringQuery();
 
         for (Map.Entry<String, Object> e : params.entrySet()) {
-            query = query.replaceAll(":" + e.getKey(), paramToString(e.getValue()));
+            query = query.replaceAll(":" + e.getKey() + "\\b", paramToString(e.getValue()));
         }
         return query;
     }

@@ -169,7 +169,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.listWOsInfoToRerateRecurringChargeIncludingInvoicedByOfferAndServiceTemplate", query = "select wo.chargeInstance.id, min(wo.startDate), max(wo.endDate) from WalletOperation wo where wo.endDate>:fromDate and wo.status in ('OPEN', 'TREATED', 'TO_RERATE') and wo.chargeInstance.chargeType = 'R' and wo.offerTemplate.id=:offer and wo.serviceInstance.serviceTemplate.id=:serviceTemplate group by wo.chargeInstance.id"),
         @NamedQuery(name = "WalletOperation.listOpenWOsToRateByBA", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' AND o.billingAccount=:billingAccount"),
 		@NamedQuery(name = "WalletOperation.discountWalletOperation", query = "SELECT o FROM WalletOperation o WHERE discountedWalletOperation is not null and o.id IN (:woIds)"),
-		@NamedQuery(name = "WalletOperation.findByTriggerdEdr", query = "SELECT o FROM WalletOperation o left join o.edr edr where o.edr in (select e.id FROM EDR e where e.walletOperation.id =:rerateWalletOperationIds)"),
+		@NamedQuery(name = "WalletOperation.findByTriggerdEdr", query = "SELECT o FROM WalletOperation o left join o.edr edr where o.edr in (select e.id FROM EDR e where e.walletOperation.id in :rerateWalletOperationIds)"),
         @NamedQuery(name = "WalletOperation.cancelTriggerEdr", query = "UPDATE WalletOperation o SET o.status='TO_RERATE' where o.id in (ids)"),
         @NamedQuery(name = "WalletOperation.cancelDisountedWallet", query = "UPDATE WalletOperation o SET o.status='CANCELED' where o.discountedWalletOperation in (:walletOperationIds)")
 })
@@ -332,21 +332,21 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_1", length = 255)
+    @Column(name = "parameter_1")
     @Size(max = 255)
     private String parameter1;
 
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_2", length = 255)
+    @Column(name = "parameter_2")
     @Size(max = 255)
     private String parameter2;
 
     /**
      * Additional rating parameter
      */
-    @Column(name = "parameter_3", length = 255)
+    @Column(name = "parameter_3")
     @Size(max = 255)
     private String parameter3;
 
@@ -381,7 +381,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Offer code
      */
-    @Column(name = "offer_code", length = 255)
+    @Column(name = "offer_code")
     @Size(max = 255, min = 1)
     protected String offerCode;
 
@@ -469,7 +469,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private BigDecimal rawAmountWithoutTax;
 
     /**
-     * Raw rating amount with tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
+     * Raw rating amount with tax from Price plan. Might differ from amountWithoutTax when minimumAmount is set on a price plan.
      */
     @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
@@ -653,23 +653,23 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @Type(type = "numeric_boolean")
     private boolean useSpecificPriceConversion;
     
-    @Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountWithoutTax;
+    @Column(name = "transactional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountWithoutTax;
     
-    @Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountWithTax;
+    @Column(name = "transactional_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountWithTax;
     
-    @Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountTax;
+    @Column(name = "transactional_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountTax;
     
-    @Column(name = "converted_unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedUnitAmountWithoutTax;
+    @Column(name = "transactional_unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalUnitAmountWithoutTax;
     
-    @Column(name = "converted_unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedUnitAmountWithTax;
+    @Column(name = "transactional_unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalUnitAmountWithTax;
     
-    @Column(name = "converted_unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedUnitAmountTax;
+    @Column(name = "transactional_unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalUnitAmountTax;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
@@ -1769,87 +1769,87 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	}
 
     /**
-	 * @return the convertedAmountWithoutTax
+	 * @return transactionalAmountWithoutTax
 	 */
-	public BigDecimal getConvertedAmountWithoutTax() {
-		return convertedAmountWithoutTax != null ? convertedAmountWithoutTax : amountWithoutTax;
+	public BigDecimal getTransactionalAmountWithoutTax() {
+		return transactionalAmountWithoutTax != null ? transactionalAmountWithoutTax : amountWithoutTax;
 	}
 
     /**
-	 * @param convertedAmountWithoutTax the convertedAmountWithoutTax to set
+	 * @param transactionalAmountWithoutTax transactionalAmountWithoutTax to set
 	 */
-	public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
-		this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+	public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+		this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
 	}
 
     /**
-	 * @return the convertedAmountWithTax
+	 * @return transactionalAmountWithTax
 	 */
-	public BigDecimal getConvertedAmountWithTax() {
-		return convertedAmountWithTax != null ? convertedAmountWithTax : amountWithTax;
+	public BigDecimal getTransactionalAmountWithTax() {
+		return transactionalAmountWithTax != null ? transactionalAmountWithTax : amountWithTax;
 	}
 
     /**
-	 * @param convertedAmountWithTax the convertedAmountWithTax to set
+	 * @param transactionalAmountWithTax transactionalAmountWithTax to set
 	 */
-	public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
-		this.convertedAmountWithTax = convertedAmountWithTax;
+	public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+		this.transactionalAmountWithTax = transactionalAmountWithTax;
 	}
 
     /**
-	 * @return the convertedAmountTax
+	 * @return transactionalAmountTax
 	 */
-	public BigDecimal getConvertedAmountTax() {
-		return convertedAmountTax != null ? convertedAmountTax : amountTax;
+	public BigDecimal getTransactionalAmountTax() {
+		return transactionalAmountTax != null ? transactionalAmountTax : amountTax;
 	}
 
     /**
-	 * @param convertedAmountTax the convertedAmountTax to set
+	 * @param transactionalAmountTax transactionalAmountTax to set
 	 */
-	public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
-		this.convertedAmountTax = convertedAmountTax;
+	public void setTransactionalAmountTax(BigDecimal transactionalAmountTax) {
+		this.transactionalAmountTax = transactionalAmountTax;
 	}
 
     /**
-	 * @return the convertedUnitAmountWithoutTax
+	 * @return transactionalUnitAmountWithoutTax
 	 */
-	public BigDecimal getConvertedUnitAmountWithoutTax() {
-		return convertedUnitAmountWithoutTax != null ? convertedUnitAmountWithoutTax : unitAmountWithoutTax;
+	public BigDecimal getTransactionalUnitAmountWithoutTax() {
+		return transactionalUnitAmountWithoutTax != null ? transactionalUnitAmountWithoutTax : unitAmountWithoutTax;
 	}
 
     /**
-	 * @param convertedUnitAmountWithoutTax the convertedUnitAmountWithoutTax to set
+	 * @param transactionalUnitAmountWithoutTax transactionalUnitAmountWithoutTax to set
 	 */
-	public void setConvertedUnitAmountWithoutTax(BigDecimal convertedUnitAmountWithoutTax) {
-		this.convertedUnitAmountWithoutTax = convertedUnitAmountWithoutTax;
+	public void setTransactionalUnitAmountWithoutTax(BigDecimal transactionalUnitAmountWithoutTax) {
+		this.transactionalUnitAmountWithoutTax = transactionalUnitAmountWithoutTax;
 	}
 
     /**
-	 * @return the convertedUnitAmountWithTax
+	 * @return transactionalUnitAmountWithTax
 	 */
-	public BigDecimal getConvertedUnitAmountWithTax() {
-		return convertedUnitAmountWithTax != null ? convertedUnitAmountWithTax : unitAmountWithTax;
+	public BigDecimal getTransactionalUnitAmountWithTax() {
+		return transactionalUnitAmountWithTax != null ? transactionalUnitAmountWithTax : unitAmountWithTax;
 	}
 
     /**
-	 * @param convertedUnitAmountWithTax the convertedUnitAmountWithTax to set
+	 * @param transactionalUnitAmountWithTax transactionalUnitAmountWithTax to set
 	 */
-	public void setConvertedUnitAmountWithTax(BigDecimal convertedUnitAmountWithTax) {
-		this.convertedUnitAmountWithTax = convertedUnitAmountWithTax;
+	public void setTransactionalUnitAmountWithTax(BigDecimal transactionalUnitAmountWithTax) {
+		this.transactionalUnitAmountWithTax = transactionalUnitAmountWithTax;
 	}
 
     /**
-	 * @return the convertedUnitAmountTax
+	 * @return transactionalUnitAmountTax
 	 */
-	public BigDecimal getConvertedUnitAmountTax() {
-		return convertedUnitAmountTax != null ? convertedUnitAmountTax : unitAmountTax;
+	public BigDecimal getTransactionalUnitAmountTax() {
+		return transactionalUnitAmountTax != null ? transactionalUnitAmountTax : unitAmountTax;
 	}
 
     /**
-	 * @param convertedUnitAmountTax the convertedUnitAmountTax to set
+	 * @param transactionalUnitAmountTax transactionalUnitAmountTax to set
 	 */
-	public void setConvertedUnitAmountTax(BigDecimal convertedUnitAmountTax) {
-		this.convertedUnitAmountTax = convertedUnitAmountTax;
+	public void setTransactionalUnitAmountTax(BigDecimal transactionalUnitAmountTax) {
+		this.transactionalUnitAmountTax = transactionalUnitAmountTax;
 	}
 
     /**

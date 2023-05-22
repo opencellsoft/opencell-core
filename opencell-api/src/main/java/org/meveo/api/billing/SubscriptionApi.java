@@ -2133,8 +2133,8 @@ public class SubscriptionApi extends BaseApi {
                 serviceToUpdate.setMinimumLabelEl(postData.getMinimumLabelEl());
             }
             
-            if(postData.getPriceVersionDate() != null) {
-            	serviceToUpdate.setPriceVersionDate(postData.getPriceVersionDate());
+            if(serviceToUpdateDto.getPriceVersionDate() != null) {
+            	serviceToUpdate.setPriceVersionDate(serviceToUpdateDto.getPriceVersionDate());
             	serviceToUpdate.setPriceVersionDateSetting(PriceVersionDateSettingEnum.MANUAL);
             }
            

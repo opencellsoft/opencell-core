@@ -5,15 +5,15 @@ import java.util.Set;
 import javax.ejb.Stateless;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.meveo.model.catalog.ConvertedPricePlanMatrixLine;
+import org.meveo.model.catalog.TradingPricePlanMatrixLine;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class ConvertedPricePlanMatrixLineService extends PersistenceService<ConvertedPricePlanMatrixLine> {
+public class TradingPricePlanMatrixLineService extends PersistenceService<TradingPricePlanMatrixLine> {
 
-	public void disableOrEnableAllConvertedPricePlanMatrixLine(Set<Long> ids, boolean enable) {
+	public void disableOrEnableAllTradingPricePlanMatrixLine(Set<Long> ids, boolean enable) {
 		if(CollectionUtils.isNotEmpty(ids)) {
-			this.getEntityManager().createNamedQuery("ConvertedPricePlanMatrixLine.enableOrDisable")
+			this.getEntityManager().createNamedQuery("TradingPricePlanMatrixLine.enableOrDisable")
 									.setParameter("enable", enable)
 									.setParameter("ids", ids).executeUpdate();
 		}

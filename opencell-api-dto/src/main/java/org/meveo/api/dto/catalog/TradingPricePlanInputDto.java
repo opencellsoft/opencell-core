@@ -8,11 +8,8 @@ import org.meveo.api.dto.BaseEntityDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConvertedPricePlanInputDto extends BaseEntityDto {
+public class TradingPricePlanInputDto extends BaseEntityDto {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3498847257781821440L;
 
     @Schema(description = "price plan matrix version id")
@@ -48,7 +45,5 @@ public class ConvertedPricePlanInputDto extends BaseEntityDto {
 	public void setTradingCurrency(TradingCurrencyDto tradingCurrency) {
 		this.tradingCurrency = tradingCurrency;
 	}
-
-
 	
 }

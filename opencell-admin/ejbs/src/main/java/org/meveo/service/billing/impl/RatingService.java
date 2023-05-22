@@ -18,6 +18,9 @@
 
 package org.meveo.service.billing.impl;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -46,7 +49,6 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
@@ -89,6 +91,8 @@ import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.catalog.TradingPricePlanMatrixLine;
+import org.meveo.model.catalog.TradingPricePlanVersion;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.CpqQuote;
@@ -170,12 +174,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     @Inject
     protected CounterInstanceService counterInstanceService;
 
-    @Inject
-    private ServiceInstanceService serviceInstanceService;
-    
-    @Inject
-    private WalletOperationService walletOperationService;
-
     final private static BigDecimal HUNDRED = new BigDecimal("100");
     
     @Inject
@@ -184,14 +182,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private DiscountPlanItemService discountPlanItemService;
     @Inject
     private AccountingArticleService accountingArticleService;
-
-    @Inject
-    private MethodCallingUtils methodCallingUtils;
-    
     @Inject
     private RecurringRatingService recurringRatingService;
 
-    
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
     
@@ -439,8 +432,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      */
     public List<EDR> instantiateTriggeredEDRs(WalletOperation walletOperation, EDR edr, boolean isVirtual, boolean evaluatEdrVersioning)
             throws RatingException, InvalidELException, ElementNotFoundException, CommunicateToRemoteInstanceException, ChargingEdrOnRemoteInstanceErrorException {
-
-        if(walletOperation != null && walletOperation.getDiscountedAmount() != null) return Collections.EMPTY_LIST;
 
         List<EDR> triggredEDRs = new ArrayList<>();
 
@@ -704,6 +695,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     unitPriceWithTax = unitPrices.getAmountWithTax();
                     bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
                     bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+                    Amounts transationalUnitPrices = determineTradingUnitPrice(pricePlan, bareWalletOperation)
+                            .orElse(determineUnitPrice(pricePlan, bareWalletOperation));
+                    bareWalletOperation.setTransactionalUnitAmountWithoutTax(transationalUnitPrices.getAmountWithoutTax());
+                    bareWalletOperation.setTransactionalUnitAmountWithTax(transationalUnitPrices.getAmountWithTax());
                     if (pricePlan.getScriptInstance() != null) {
                         log.debug("start to execute script instance for ratePrice {}", pricePlan);
                         executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
@@ -1780,5 +1775,77 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         log.info("rateDiscountWalletOperation walletOperation code={},discountValue={},UnitAmountWithoutTax={},UnitAmountWithTax={},UnitAmountTax={}",discountWalletOperation.getCode(),discountedAmount,amounts[0],amounts[1],amounts[2]);
         return discountWalletOperation;
+    }
+
+    /**
+     * Determine trading unit price from pricePlanMatrix and walletOperation
+     *
+     * @param pricePlan Price plan matrix
+     * @param walletOperation wallet operation
+     * @return Optional<Amounts> return computed Amounts or empty if no price plan found
+     */
+    public Optional<Amounts> determineTradingUnitPrice(PricePlanMatrix pricePlan, WalletOperation walletOperation) {
+        PricePlanMatrixVersion pricePlanMatrixVersion =
+                pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getId(),
+                        walletOperation.getServiceInstance(), walletOperation.getOperationDate());
+        BigDecimal priceWithoutTax = null;
+        BigDecimal priceWithTax = null;
+        final TradingCurrency tradingCurrency = walletOperation.getBillingAccount().getTradingCurrency();
+        if (pricePlanMatrixVersion != null) {
+            if(!pricePlanMatrixVersion.isMatrix()) {
+                TradingPricePlanVersion tradingPPVersion =
+                        getTradingPPVersionFrom(pricePlanMatrixVersion, tradingCurrency);
+                if(tradingPPVersion != null) {
+                    if (appProvider.isEntreprise()) {
+                        priceWithoutTax = tradingPPVersion.getTradingPrice();
+                    } else {
+                        priceWithTax = tradingPPVersion.getTradingPrice();
+                    }
+                    if(walletOperation.getTransactionalUnitAmountWithoutTax() == null) {
+                        walletOperation.setTransactionalUnitAmountWithoutTax(priceWithoutTax);
+                    }
+                }
+            } else {
+                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(pricePlanMatrixVersion, walletOperation);
+                TradingPricePlanMatrixLine tradingPricePlanMatrixLine = getTradingPricePlanMatrixLineFrom(tradingCurrency, pricePlanMatrixLine);
+                if(pricePlanMatrixLine != null) {
+                    walletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
+                    if(appProvider.isEntreprise()) {
+                        priceWithoutTax = tradingPricePlanMatrixLine.getTradingValue();
+                    } else {
+                        priceWithTax = tradingPricePlanMatrixLine.getTradingValue();
+                    }
+                    if(walletOperation.getTransactionalUnitAmountWithoutTax() == null) {
+                        walletOperation.setTransactionalUnitAmountWithoutTax(priceWithoutTax);
+                    }
+                }
+                if (priceWithoutTax == null && priceWithTax == null) {
+                    throw new BusinessException("No price for price plan version "
+                            + pricePlanMatrixVersion.getId()
+                            + "and charge instance : " + walletOperation.getChargeInstance());
+                }
+            }
+            walletOperation.setUseSpecificPriceConversion(true);
+            return of(new Amounts(priceWithoutTax, priceWithTax));
+        } else {
+            walletOperation.setUseSpecificPriceConversion(false);
+            return empty();
+        }
+    }
+
+    private TradingPricePlanVersion getTradingPPVersionFrom(PricePlanMatrixVersion pricePlanMatrixVersion, TradingCurrency woTradingCurrency) {
+        return pricePlanMatrixVersion.getTradingPricePlanVersions()
+                .stream()
+                .filter(tradingPricePlanVersion -> tradingPricePlanVersion.getTradingCurrency().getId().equals(woTradingCurrency.getId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private TradingPricePlanMatrixLine getTradingPricePlanMatrixLineFrom(TradingCurrency woTradingCurrency, PricePlanMatrixLine pricePlanMatrixLine) {
+        return pricePlanMatrixLine.getTradingPricePlanMatrixLines()
+                .stream()
+                .filter(tradingPPlanMatrixLine -> tradingPPlanMatrixLine.getTradingCurrency().getId().equals(woTradingCurrency.getId()))
+                .findFirst()
+                .orElse(null);
     }
 }

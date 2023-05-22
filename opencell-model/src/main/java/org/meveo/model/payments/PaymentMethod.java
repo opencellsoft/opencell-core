@@ -171,6 +171,10 @@ public abstract class PaymentMethod extends EnableCFEntity {
     @JoinColumn(name = "payment_means")
     private UntdidPaymentMeans paymentMeans;
 
+    @Column(name = "mandate_change_action", length = 20)
+    @Enumerated(EnumType.STRING)
+    protected MandateChangeAction mandateChangeAction = MandateChangeAction.NONE;
+
     public UntdidPaymentMeans getPaymentMeans() {
         return paymentMeans;
     }
@@ -312,8 +316,15 @@ public abstract class PaymentMethod extends EnableCFEntity {
 	public void setToken3DsId(String token3DsId) {
 		this.token3DsId = token3DsId;
 	}
-	
-    
+
+    public MandateChangeAction getMandateChangeAction() {
+        return mandateChangeAction;
+    }
+
+    public void setMandateChangeAction(MandateChangeAction mandateChangeAction) {
+        this.mandateChangeAction = mandateChangeAction;
+    }
+
     public void anonymize(String code) {
         setInfo1(code);
         setInfo2(code);

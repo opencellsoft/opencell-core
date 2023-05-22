@@ -457,23 +457,23 @@ public class WalletOperationNative extends BaseEntity {
     @Type(type = "numeric_boolean")
     private boolean useSpecificPriceConversion;
 
-    @Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountWithoutTax;
+    @Column(name = "transactional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountWithoutTax;
 
-    @Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountWithTax;
+    @Column(name = "transactional_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountWithTax;
 
-    @Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmountTax;
+    @Column(name = "transactional_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmountTax;
 
-    @Column(name = "converted_unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedUnitAmountWithoutTax;
+    @Column(name = "transactional_unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalUnitAmountWithoutTax;
 
-    @Column(name = "converted_unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedUnitAmountWithTax;
+    @Column(name = "transactional_unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalUnitAmountWithTax;
 
-    @Column(name = "converted_unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedUnitAmountTax;
+    @Column(name = "transactional_unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalUnitAmountTax;
 
     @Column(name = "trading_currency_id")
     private Long tradingCurrencyId;
@@ -1123,52 +1123,52 @@ public class WalletOperationNative extends BaseEntity {
         this.useSpecificPriceConversion = useSpecificPriceConversion;
     }
 
-    public BigDecimal getConvertedAmountWithoutTax() {
-        return convertedAmountWithoutTax;
+    public BigDecimal getTransactionalAmountWithoutTax() {
+        return transactionalAmountWithoutTax;
     }
 
-    public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
-        this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+    public void setTransactionalAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
+        this.transactionalAmountWithoutTax = convertedAmountWithoutTax;
     }
 
-    public BigDecimal getConvertedAmountWithTax() {
-        return convertedAmountWithTax;
+    public BigDecimal getTransactionalAmountWithTax() {
+        return transactionalAmountWithTax;
     }
 
-    public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
-        this.convertedAmountWithTax = convertedAmountWithTax;
+    public void setTransactionalAmountWithTax(BigDecimal convertedAmountWithTax) {
+        this.transactionalAmountWithTax = convertedAmountWithTax;
     }
 
-    public BigDecimal getConvertedAmountTax() {
-        return convertedAmountTax;
+    public BigDecimal getTransactionalAmountTax() {
+        return transactionalAmountTax;
     }
 
-    public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
-        this.convertedAmountTax = convertedAmountTax;
+    public void setTransactionalAmountTax(BigDecimal convertedAmountTax) {
+        this.transactionalAmountTax = convertedAmountTax;
     }
 
-    public BigDecimal getConvertedUnitAmountWithoutTax() {
-        return convertedUnitAmountWithoutTax;
+    public BigDecimal getTransactionalUnitAmountWithoutTax() {
+        return transactionalUnitAmountWithoutTax;
     }
 
-    public void setConvertedUnitAmountWithoutTax(BigDecimal convertedUnitAmountWithoutTax) {
-        this.convertedUnitAmountWithoutTax = convertedUnitAmountWithoutTax;
+    public void setTransactionalUnitAmountWithoutTax(BigDecimal convertedUnitAmountWithoutTax) {
+        this.transactionalUnitAmountWithoutTax = convertedUnitAmountWithoutTax;
     }
 
-    public BigDecimal getConvertedUnitAmountWithTax() {
-        return convertedUnitAmountWithTax;
+    public BigDecimal getTransactionalUnitAmountWithTax() {
+        return transactionalUnitAmountWithTax;
     }
 
-    public void setConvertedUnitAmountWithTax(BigDecimal convertedUnitAmountWithTax) {
-        this.convertedUnitAmountWithTax = convertedUnitAmountWithTax;
+    public void setTransactionalUnitAmountWithTax(BigDecimal convertedUnitAmountWithTax) {
+        this.transactionalUnitAmountWithTax = convertedUnitAmountWithTax;
     }
 
-    public BigDecimal getConvertedUnitAmountTax() {
-        return convertedUnitAmountTax;
+    public BigDecimal getTransactionalUnitAmountTax() {
+        return transactionalUnitAmountTax;
     }
 
-    public void setConvertedUnitAmountTax(BigDecimal convertedUnitAmountTax) {
-        this.convertedUnitAmountTax = convertedUnitAmountTax;
+    public void setTransactionalUnitAmountTax(BigDecimal convertedUnitAmountTax) {
+        this.transactionalUnitAmountTax = convertedUnitAmountTax;
     }
 
     public Long getTradingCurrencyId() {

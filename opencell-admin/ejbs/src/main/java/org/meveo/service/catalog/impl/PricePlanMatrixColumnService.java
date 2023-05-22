@@ -24,7 +24,7 @@ import javax.ws.rs.NotFoundException;
 import org.hibernate.SessionFactory;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.api.dto.catalog.ConvertedPricePlanMatrixLineDto;
+import org.meveo.api.dto.catalog.TradingPricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.api.dto.catalog.TradingCurrencyDto;
@@ -230,7 +230,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 	        PricePlanMatrixVersion pricePlanMatrixVersion, Scanner scanner, List<Map.Entry<String, Optional<Attribute>>> columns) {
 		String line;
 		List<PricePlanMatrixLineDto> pricePlanMatrixLines = new ArrayList<>();
-		List<ConvertedPricePlanMatrixLineDto> lstCppml = new ArrayList<ConvertedPricePlanMatrixLineDto>();
+		List<TradingPricePlanMatrixLineDto> tppmlList = new ArrayList<TradingPricePlanMatrixLineDto>();
 		
 		while (scanner.hasNextLine()) {
 			
@@ -303,15 +303,15 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 					}
 					if (columns.get(columnIndex).getKey().substring(0, 9).equalsIgnoreCase("unitPrice")) {
 	                    String[] unitPriceLineSplit = nextLine[columnIndex].split(COLUMN_SEPARATOR);
-	                    ConvertedPricePlanMatrixLineDto cppv = new ConvertedPricePlanMatrixLineDto();
-	                    cppv.setConvertedValue(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
+	                    TradingPricePlanMatrixLineDto tppv = new TradingPricePlanMatrixLineDto();
+	                    tppv.setTradingValue(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
 	                    String tradingCurrencyCode = unitPriceLineSplit[1].toUpperCase();
 	                    TradingCurrencyDto tradingCurrencyDto = new TradingCurrencyDto();
 	                    tradingCurrencyDto.setCode(tradingCurrencyCode);
-	                    cppv.setTradingCurrency(tradingCurrencyDto);
-	                    cppv.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
-	                    cppv.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
-	                    lstCppml.add(cppv);
+	                    tppv.setTradingCurrency(tradingCurrencyDto);
+	                    tppv.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
+	                    tppv.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
+	                    tppmlList.add(tppv);
                     }
 					if (columns.get(columnIndex).getKey().equalsIgnoreCase("PriceWithoutTax")) {
 						String val = convertToDecimalFormat(nextLine[columnIndex]);
@@ -323,7 +323,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 					}
 				}
 			}
-			pricePlanMatrixLineDto.setConvertedPricePlanMatrixLines(lstCppml);
+			pricePlanMatrixLineDto.setTradingPricePlanMatrixLines(tppmlList);
 			pricePlanMatrixLineDto.setPricePlanMatrixCode(pricePlanMatrixCode);
 			pricePlanMatrixLineDto.setPricePlanMatrixVersion(pricePlanMatrixVersion.getCurrentVersion());
 			pricePlanMatrixLineDto.setPricePlanMatrixValues(pricePlanMatrixValueDtoList);
