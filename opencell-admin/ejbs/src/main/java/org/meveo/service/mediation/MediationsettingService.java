@@ -208,13 +208,27 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 
     private void torerateWalletOperation(WalletOperation wo, WalletOperation woToRerate, EDR edr) {
     	if(woToRerate.getDiscountValue()==null) {
-    		List<WalletOperation> discountWos=walletOperationService.findByDiscountedWo(wo.getId());
-    		for(WalletOperation wallet:discountWos) {
-    			if(!wallet.getStatus().equals(WalletOperationStatusEnum.CANCELED) ) {
-    				wallet.setStatus(WalletOperationStatusEnum.CANCELED);
-    				walletOperationService.update(wallet);
-    			}	
-    		}
+            List<WalletOperation> discountWos=walletOperationService.findByDiscountedWo(wo.getId());
+            if(CollectionUtils.isNotEmpty(discountWos)) {
+                List<Long> discountWoId = discountWos.stream().map(WalletOperation::getId).collect(Collectors.toList());
+                //discountWoId.add(wo.getId());
+                List<WalletOperation> triggeredWo = (List<WalletOperation>) walletOperationService.getEntityManager().createNamedQuery("WalletOperation.findByTriggerdEdr").setParameter("rerateWalletOperationIds", discountWoId).getResultList();
+                discountWos.addAll(triggeredWo);
+                for (WalletOperation wallet : discountWos) {
+                    if (!wallet.getStatus().equals(WalletOperationStatusEnum.CANCELED)) {
+                        wallet.setStatus(WalletOperationStatusEnum.CANCELED);
+                        walletOperationService.update(wallet);
+                        if(wallet.getEdr() != null){
+                            wallet.getEdr().setStatus(EDRStatusEnum.CANCELLED);
+                            edrService.update(wallet.getEdr());
+                        }
+                        if (wallet.getRatedTransaction() != null && wallet.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED) {
+                            wallet.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+                            ratedTransactionService.update(wallet.getRatedTransaction());
+                        }
+                    }
+                }
+            }
     		wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
     		wo.setEdr(edr);
     		wo.setAccountingArticle(woToRerate.getAccountingArticle());
