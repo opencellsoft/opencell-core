@@ -15818,7 +15818,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
     <changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius">
         <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
-        <sql>CREATE INDEX cpq_ppl_ppVersion_index ON cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql>
+        <sql>CREATE INDEX cpq_ppl_ppVersion_index ON ${db.schema.adapted}cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql>
     </changeSet>
 
 
@@ -15832,6 +15832,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addColumn tableName="billing_cycle">
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-16274_20230515" author="AndriusKarpavicius">
+        <sql>CREATE INDEX rating_edr_subscription_id_idx ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
     </changeSet>
 
 </databaseChangeLog>

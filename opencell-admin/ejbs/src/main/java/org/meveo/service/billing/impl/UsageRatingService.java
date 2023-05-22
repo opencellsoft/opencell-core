@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,6 +68,7 @@ import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.medina.impl.CDRService;
@@ -377,24 +379,27 @@ public class UsageRatingService extends RatingService implements Serializable {
             }
 
             List<UsageChargeInstance> usageChargeInstances = null;
+
             maxDeep = maxDeep != null ? maxDeep : 0;
             currentRatingDepth = currentRatingDepth != null ? currentRatingDepth : 0;
-            // Charges should be already ordered by priority and id (why id??)
+            
             Long subscriptionId = edr.getSubscription().getId();
             if (subscriptionId != null) {
                 
+                usageChargeInstances = getActiveUsageChargeInstancesForEdr(edr);
+
+                List<Long> serviceInstanceIds = new ArrayList<Long>();
+                for (UsageChargeInstance ci : usageChargeInstances) {
+                    serviceInstanceIds.add(ci.getServiceInstance().getId());
+                }
+                List<ServiceInstance> subscriptionServices = getEntityManager().createNamedQuery("ServiceInstance.findByIdsLoadAttributes", ServiceInstance.class).setParameter("ids", serviceInstanceIds)
+                    .setHint("org.hibernate.readOnly", true).getResultList();
+
                 boolean isSubscriptionInitialized = Hibernate.isInitialized(edr.getSubscription());
                 
-                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(edr.getSubscription(), edr.getEventDate());
-                if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
-                    throw new NoChargeException("No active usage charges are associated with subscription " + subscriptionId);
-                }
-
                 // Just to load all subscription service instances with their attributes to avoid querying service instances and their attributes one by one. 
                 // Done once per subscription (in same tx) - a fix when EDR batch to rate is based on same subscription, or when EDR triggers other EDRs 
-                if (!isSubscriptionInitialized) {
-                    List<ServiceInstance> subscriptionServices = getEntityManager().createNamedQuery("ServiceInstance.findBySubscriptionIdLoadAttributes", ServiceInstance.class).setParameter("subscriptionId", subscriptionId)
-                        .getResultList();
+                if (!isSubscriptionInitialized) {                   
                     UserAccount userAccount = userAccountService.findById(edr.getSubscription().getUserAccount().getId(), Arrays.asList("wallet"));
                 }
                     
@@ -408,7 +413,7 @@ public class UsageRatingService extends RatingService implements Serializable {
 
             boolean fullyRated = false;
             
-            // Find the first matching charge and rate it
+            // Find the first matching charge and rate it. Charges are already ordered by priority 
             for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
           
                 log.trace("Try to rate EDR {} with charge {}", edr.getId(), usageChargeInstance.getCode());
@@ -513,6 +518,26 @@ public class UsageRatingService extends RatingService implements Serializable {
             }
         }
         return ratingResult;
+    }
+
+    /**
+     * Get a list of active usage charge instances for a given subscription, date and EDR parameter 1
+     *
+     * @param edr EDR to match
+     * 
+     * @return An ordered list by priority (ascended) of usage charge instances
+     * @throws NoChargeException No matching active charge was found
+     */
+    private List<UsageChargeInstance> getActiveUsageChargeInstancesForEdr(EDR edr) throws NoChargeException{
+
+        List<UsageChargeInstance> usageChargeInstances = getEntityManager().createNamedQuery("UsageChargeInstance.getUsageChargesValideForDateBySubscriptionAndParam1", UsageChargeInstance.class).setParameter("subscriptionId", edr.getSubscription().getId())
+            .setParameter("terminationDate", DateUtils.truncateTime(edr.getEventDate())).setParameter("param1", edr.getParameter1()).getResultList();
+
+        if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
+            throw new NoChargeException("No active usage charges are associated with subscription " + edr.getSubscription().getId() + ", EDR parameter 1 " + edr.getParameter1() + "and event date " + edr.getEventDate());
+        }
+        
+        return usageChargeInstances;
     }
 
     /**
