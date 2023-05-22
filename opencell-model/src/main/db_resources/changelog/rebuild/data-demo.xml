@@ -1,8 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-    
-    
+
+    <changeSet author="AndriusKarpavicius" id="rebuild-data-script-categories">
+        <insert tableName="meveo_script_instance_cat">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="REPORT_EXTRACT" />
+            <column name="description" value="Report Extract" />
+            <column name="description_i18n" value='{"FR":"Extraction de rapport","EN":"Report Extract"}'/>
+        </insert>
+        <insert tableName="meveo_script_instance_cat">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="DUNNING_ACTION" />
+            <column name="description" value="dunning action" />
+            <column name="description_i18n" value='{"FR":"Action de recouvrement","EN":"Dunning action"}'/>
+        </insert>
+        <insert tableName="meveo_script_instance_cat">
+            <column name="id" valueNumeric="-3"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="code" value="INVOICE_VALIDATION"/>
+            <column name="description" value="Invoice validation rule"/>
+            <column name="description_i18n" value='{"FR":"Règle de validation de facture","EN":"Invoice validation rule"}'/>
+        </insert>
+        <insert tableName="meveo_script_instance_cat">
+            <column name="id" valueNumeric="-4"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="code" value="BILLING_RUN_VALIDATION"/>
+            <column name="description" value="Billing run validation"/>
+            <column name="description_i18n" value='{"FR":"Validation de run de facturation","EN":"Billing run validation"}'/>
+        </insert>
+        <insert tableName="meveo_script_instance_cat">
+            <column name="id" valueNumeric="-5"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="code" value="INVOICE_SPLIT"/>
+            <column name="description" value="Invoice split"/>
+            <column name="description_i18n" value='{"FR":"Découpage facture","EN":"Invoice split"}'/>
+        </insert>
+        <insert tableName="meveo_script_instance_cat">
+            <column name="id" valueNumeric="-6" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="GLOBAL_INVOICE_VALIDATION" />
+            <column name="description" value="Global invoice validation" />
+            <column name="description_i18n" value='{"FR":"Validation de facture globale","EN":"Global invoice validation"}' />
+        </insert>
+        <insert tableName="meveo_script_instance_cat">
+            <column name="id" valueSequenceNext="meveo_script_instance_cat_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="code" value="ACCOUNTING_SCHEMES"/>
+            <column name="description" value="Accounting schemes"/>
+            <column name="description_i18n" value='{"FR":"Schéma comptable","EN":"Accounting schemes"}'/>
+        </insert>
+    </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-titlesDEMO">
         <insert tableName="adm_title">
@@ -2224,70 +2281,6 @@
             <column name="gui_position" value="tab:Configuration:0;fieldGroup:File configuration:1;field:7"/>
         </insert>
     </changeSet>    
-    
-
-    <changeSet author="AndriusKarpavicius" id="rebuild-data-script-categories">
-        <insert tableName="meveo_script_instance_cat">
-            <column name="id" valueNumeric="-1" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="REPORT_EXTRACT" />
-            <column name="description" value="Report Extract" />
-            <column name="description_i18n" value='{"FR":"Extraction de rapport","EN":"Report Extract"}'/>
-        </insert>
-        <insert tableName="meveo_script_instance_cat">
-            <column name="id" valueNumeric="-2" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="DUNNING_ACTION" />
-            <column name="description" value="dunning action" />
-            <column name="description_i18n" value='{"FR":"Action de recouvrement","EN":"Dunning action"}'/>
-        </insert>
-        <insert tableName="meveo_script_instance_cat">
-            <column name="id" valueNumeric="-3"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="created" valueDate="${db.current.time}"/>
-            <column name="code" value="INVOICE_VALIDATION"/>
-            <column name="description" value="Invoice validation rule"/>
-            <column name="description_i18n" value='{"FR":"Règle de validation de facture","EN":"Invoice validation rule"}'/>
-        </insert>
-        <insert tableName="meveo_script_instance_cat">
-            <column name="id" valueNumeric="-4"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="created" valueDate="${db.current.time}"/>
-            <column name="code" value="BILLING_RUN_VALIDATION"/>
-            <column name="description" value="Billing run validation"/>
-            <column name="description_i18n" value='{"FR":"Validation de run de facturation","EN":"Billing run validation"}'/>
-        </insert>        
-        <insert tableName="meveo_script_instance_cat">
-            <column name="id" valueNumeric="-5"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="created" valueDate="${db.current.time}"/>
-            <column name="code" value="INVOICE_SPLIT"/>
-            <column name="description" value="Invoice split"/>
-            <column name="description_i18n" value='{"FR":"Découpage facture","EN":"Invoice split"}'/>
-        </insert>
-        <insert tableName="meveo_script_instance_cat">
-            <column name="id" valueNumeric="-6" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="GLOBAL_INVOICE_VALIDATION" />
-            <column name="description" value="Global invoice validation" />
-            <column name="description_i18n" value='{"FR":"Validation de facture globale","EN":"Global invoice validation"}' />
-        </insert>
-        <insert tableName="meveo_script_instance_cat">
-            <column name="id" valueSequenceNext="meveo_script_instance_cat_seq"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="created" valueDate="${db.current.time}"/>
-            <column name="code" value="ACCOUNTING_SCHEMES"/>
-            <column name="description" value="Accounting schemes"/>
-            <column name="description_i18n" value='{"FR":"Schéma comptable","EN":"Accounting schemes"}'/>
-        </insert>
-    </changeSet>
-    
-    
-    
-    
 
     <changeSet id="#540_563_20210607" author="TarikFA.">
         <insert tableName="billing_accounting_article">
