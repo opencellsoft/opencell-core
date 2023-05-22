@@ -446,8 +446,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         UserAccount ua = chargeInstance.getUserAccount();
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 	    
-	    if(walletOperation != null && walletOperation.getDiscountedAmount() != null) return Collections.EMPTY_LIST;
-
         List<TriggeredEDRTemplate> triggeredEDRTemplates = chargeTemplate.getEdrTemplates();
 
         for (TriggeredEDRTemplate triggeredEDRTemplate : triggeredEDRTemplates) {
