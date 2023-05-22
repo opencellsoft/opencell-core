@@ -104,6 +104,7 @@ import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
@@ -130,6 +131,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
@@ -262,6 +264,9 @@ public class CpqQuoteApi extends BaseApi {
 
     @Inject
     private TaxService taxService;
+
+    @Inject
+    private PriceListService priceListService;
     
     private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     
@@ -379,6 +384,15 @@ public class CpqQuoteApi extends BaseApi {
     				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
     			}
 			    quoteVersion.setInvoicingPlan(invoicingPlan);
+            }
+
+            if(StringUtils.isNotBlank(quoteVersionDto.getPriceListCode())) {
+                String priceListCode = quoteVersionDto.getPriceListCode();
+                PriceList priceList = priceListService.findByCode(priceListCode);
+                if(priceList == null) {
+                    throw new EntityDoesNotExistsException(PriceList.class, priceListCode);
+                }
+                quoteVersion.setPriceList(priceList);
             }
 
     		if (quoteVersionDto.getStartDate() == null) {
@@ -902,6 +916,19 @@ public class CpqQuoteApi extends BaseApi {
                 if(StringUtils.isNotBlank(quoteVersionDto.getComment())) {
        			 qv.setComment(quoteVersionDto.getComment());
        	         }
+
+                if(quoteVersionDto.getPriceListCode() != null) {
+                    if(quoteVersionDto.getPriceListCode().isBlank()) {
+                       qv.setPriceList(null);
+                    } else {
+                        PriceList priceList = priceListService.findByCode(quoteVersionDto.getPriceListCode());
+                        if(priceList == null) {
+                            throw new EntityDoesNotExistsException(PriceList.class, quoteVersionDto.getPriceListCode());
+                        }
+                        qv.setPriceList(priceList);
+                    }
+                }
+
                 populateCustomFields(quoteVersionDto.getCustomFields(), qv, false);
                 quoteVersionService.update(qv);
                 quoteVersionDto = new QuoteVersionDto(qv);
