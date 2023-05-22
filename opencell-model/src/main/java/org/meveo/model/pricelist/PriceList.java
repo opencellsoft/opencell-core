@@ -97,7 +97,7 @@ public class PriceList extends BusinessCFEntity {
     @CollectionTable(name = "cat_price_list_payment_method", joinColumns = @JoinColumn(name = "price_list_id"))
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
-	private Set<PaymentMethodEnum> paymentMethods = new HashSet<PaymentMethodEnum>();
+	private Set<PaymentMethodEnum> paymentMethods = new HashSet<>();
 	
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_price_list_seller", joinColumns = @JoinColumn(name = "price_list_id"), inverseJoinColumns = @JoinColumn(name = "seller_id"))
