@@ -10507,7 +10507,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="following_job_id" value="null" />
             <column name="uuid" value="ImportCustomerBankDetailsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values" value="null" />
             <column name="verbose_report" value="1" />
         </insert>
@@ -11477,7 +11477,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="creator" value="opencell.admin" />
 			<column name="updater" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 		</insert>
 	</changeSet>
@@ -12057,7 +12057,7 @@ public class CdrMassImportScript extends GenericMassImportScript {
 			<column name="code" value="CsvImportCDR" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13697,7 +13697,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="code" value="massImportCustomerJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13717,7 +13717,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="code" value="massImportCustomerAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13737,7 +13737,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="code" value="massImportPaymentMethodJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13757,7 +13757,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="code" value="massImportBillingAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13777,7 +13777,7 @@ public class SubscriptionJobNotification extends Script {
 			<column name="code" value="massImportUserAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -13871,7 +13871,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportSubscriptionJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -13891,7 +13891,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportServiceInstanceJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -13911,7 +13911,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportAttributeInstance" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -13931,7 +13931,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportAccessPoint" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -17126,6 +17126,67 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
 						public class OneShotOtherTypeMigration extends OneShotOtherTypeMigrationScript {}
 				]]>
             </column>
+        </insert>
+    </changeSet>
+    
+    <changeSet id="#INTRD-5882__23-03-2022" author="Mohammed_ELAZZOUZI">
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="waitingMillis"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Waiting before next launch (ms)"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="nbRuns"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Number of parallel execution"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="maxInvoiceLinesPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Maximum of maxInvoiceLines generated per transaction"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="maxBAsPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoicingJobV2"/>
+            <column name="description" value="commit interval"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
         </insert>
     </changeSet>
 

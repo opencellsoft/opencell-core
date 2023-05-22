@@ -31,9 +31,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -45,8 +42,7 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ThreadUtils;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionInterceptor;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
@@ -59,8 +55,6 @@ import org.slf4j.Logger;
  */
 // @Singleton
 // @Lock(LockType.READ)
-@Stateless
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class JobCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = -4730906690144309131L;
@@ -85,10 +79,6 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     @SuppressWarnings("rawtypes")
     private static Map<Long, List<Future>> runningJobFutures = new HashMap<Long, List<Future>>();
-
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
 
     /**
      * Get a summary of cached information.
@@ -144,9 +134,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             return JobRunningStatusEnum.NOT_RUNNING;
         }
 
-        String currentProvider = currentUser.getProviderCode();
-
-        JobExecutionStatus jobExecutionStatus = runningJobsCache.get(new CacheKeyLong(currentProvider, jobInstanceId));
+        JobExecutionStatus jobExecutionStatus = runningJobsCache.get(new CacheKeyLong(CurrentUserProvider.getCurrentTenant(), jobInstanceId));
 
         return getJobRunningStatus(jobExecutionStatus);
     }
@@ -201,11 +189,10 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     // @Lock(LockType.READ)
     public boolean isShouldJobContinue(Long jobInstanceId) {
-        String currentProvider = currentUser.getProviderCode();
         if (jobInstanceId == null) {
             return false;
         }
-        JobExecutionStatus jobExecutionStatus = runningJobsCache.get(new CacheKeyLong(currentProvider, jobInstanceId));
+        JobExecutionStatus jobExecutionStatus = runningJobsCache.get(new CacheKeyLong(CurrentUserProvider.getCurrentTenant(), jobInstanceId));
         if (jobExecutionStatus == null || jobExecutionStatus.isRequestedToStop()) {
             return false;
 
@@ -229,7 +216,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     public JobRunningStatusEnum lockForRunning(JobInstance jobInstance, boolean limitToSingleNode) {
 
         String currentNode = EjbUtils.getCurrentClusterNode();
-        String currentProvider = currentUser.getProviderCode();
+        String currentProvider = CurrentUserProvider.getCurrentTenant();
 
         final Long jobInstanceId = jobInstance.getId();
         final String jobInstanceCode = jobInstance.getCode();
@@ -327,7 +314,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     public JobRunningStatusEnum markJobAsRunning(JobInstance jobInstance, boolean limitToSingleNode, Long jobExecutionResultId, List<Future> threads) {
 
         String currentNode = EjbUtils.getCurrentClusterNode();
-        String currentProvider = currentUser.getProviderCode();
+        String currentProvider = CurrentUserProvider.getCurrentTenant();
 
         final Long jobInstanceId = jobInstance.getId();
         final String jobInstanceCode = jobInstance.getCode();
@@ -484,7 +471,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         String currentNode = EjbUtils.getCurrentClusterNode();
         boolean isClusterMode = EjbUtils.isRunningInClusterMode();
-        String currentProvider = currentUser.getProviderCode();
+        String currentProvider = CurrentUserProvider.getCurrentTenant();
 
         final Long jobInstanceId = jobInstance.getId();
         final String jobInstanceCode = jobInstance.getCode();
@@ -536,7 +523,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         long delay = ParamBean.getInstance().getPropertyAsInteger(CACHE_RETRY_DELAY, 5);
         long times = ParamBean.getInstance().getPropertyAsInteger(CACHE_RETRY_TIMES, 3);
 
-        String currentProvider = currentUser.getProviderCode();
+        String currentProvider = CurrentUserProvider.getCurrentTenant();
 
         JobExecutionStatus jobStatus = this.computeCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId), remappingFunction, delay, times);
 
@@ -554,8 +541,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @return Job execution status
      */
     public JobExecutionStatus getJobStatus(Long jobInstanceId) {
-        String currentProvider = currentUser.getProviderCode();
-        return runningJobsCache.get(new CacheKeyLong(currentProvider, jobInstanceId));
+        return runningJobsCache.get(new CacheKeyLong(CurrentUserProvider.getCurrentTenant(), jobInstanceId));
     }
 
     /**
@@ -580,7 +566,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         long delay = ParamBean.getInstance().getPropertyAsInteger(CACHE_RETRY_DELAY, 5);
         long times = ParamBean.getInstance().getPropertyAsInteger(CACHE_RETRY_TIMES, 3);
 
-        this.computeCacheWithRetry(new CacheKeyLong(currentUser.getProviderCode(), jobInstanceId), remappingFunction, delay, times);
+        this.computeCacheWithRetry(new CacheKeyLong(CurrentUserProvider.getCurrentTenant(), jobInstanceId), remappingFunction, delay, times);
     }
 
     /**
@@ -589,13 +575,12 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param jobInstanceId Job instance identifier
      */
     public void removeJobInstance(Long jobInstanceId) {
-        String currentProvider = currentUser.getProviderCode();
 
         // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
         long delay = ParamBean.getInstance().getPropertyAsInteger(CACHE_RETRY_DELAY, 5);
         long times = ParamBean.getInstance().getPropertyAsInteger(CACHE_RETRY_TIMES, 3);
 
-        this.removeFromCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId), delay, times);
+        this.removeFromCacheWithRetry(new CacheKeyLong(CurrentUserProvider.getCurrentTenant(), jobInstanceId), delay, times);
     }
 
     /**
@@ -628,21 +613,21 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * Initialize cache for all job instances
      */
     private void populateJobCache() {
-        log.debug("Start to pre-populate Job cache of provider {}.", currentUser.getProviderCode());
+        log.debug("Start to pre-populate Job cache of provider {}.", CurrentUserProvider.getCurrentTenant());
 
         List<JobInstance> jobInsances = jobInstanceService.list();
         for (JobInstance jobInstance : jobInsances) {
             addUpdateJobInstance(jobInstance);
         }
 
-        log.debug("End populating Job cache of Provider {} with {} jobs.", currentUser.getProviderCode(), jobInsances.size());
+        log.debug("End populating Job cache of Provider {} with {} jobs.", CurrentUserProvider.getCurrentTenant(), jobInsances.size());
     }
 
     /**
      * Clear the current provider data from cache
      */
     private void clear() {
-        String currentProvider = currentUser.getProviderCode();
+        String currentProvider = CurrentUserProvider.getCurrentTenant();
         Iterator<Entry<CacheKeyLong, JobExecutionStatus>> iter = runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
         ArrayList<CacheKeyLong> itemsToBeRemoved = new ArrayList<>();
         while (iter.hasNext()) {
@@ -671,7 +656,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     @SuppressWarnings("rawtypes")
     public List<Future> getJobExecutionThreads(Long jobInstanceId) {
-        JobExecutionStatus jobExecutionStatus = runningJobsCache.get(new CacheKeyLong(currentUser.getProviderCode(), jobInstanceId));
+        JobExecutionStatus jobExecutionStatus = runningJobsCache.get(new CacheKeyLong(CurrentUserProvider.getCurrentTenant(), jobInstanceId));
         if (jobExecutionStatus != null) {
             if (jobExecutionStatus.getNumberThreads(EjbUtils.getCurrentClusterNode()) > 0 && runningJobFutures.containsKey(jobInstanceId)) {
                 return runningJobFutures.get(jobInstanceId);
@@ -689,7 +674,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     public void markJobToStop(JobInstance jobInstance) {
 
-        String currentProvider = currentUser.getProviderCode();
+        String currentProvider = CurrentUserProvider.getCurrentTenant();
 
         final Long jobInstanceId = jobInstance.getId();
         final String jobInstanceCode = jobInstance.getCode();

@@ -52,12 +52,10 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.IEntity;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptParameter;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
-import org.meveo.service.base.BaseEntityService;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -79,9 +77,6 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
     @Inject
     private ScriptCompilerService scriptCompilerService;
     
-    @Inject
-    private BaseEntityService baseEntityService;
-
     /**
      * Stores compiled scripts. Key format: &lt;cluster node code&gt;_&lt;scriptInstance code&gt;. Value is a compiled script class and class instance
      */
@@ -824,7 +819,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
     public <T> T parseObjectFromString(String value, String clazzName) {
         try {
             Class<T> clazz = (Class<T>) Class.forName(clazzName);
-            return (clazzName.startsWith("org.meveo.model"))? (T) baseEntityService.tryToFindByEntityClassAndId((Class<? extends IEntity>) clazz, Long.parseLong(value)) 
+            return (clazzName.startsWith("org.meveo.model"))? (T) getEntityManager().find(clazz, Long.parseLong(value)) 
             		: clazz.getConstructor(new Class[] {String.class }).newInstance(value);
         } catch (Exception e) {
             throw new BusinessException(String.format("Failed to parse %s as %s", value, clazzName));

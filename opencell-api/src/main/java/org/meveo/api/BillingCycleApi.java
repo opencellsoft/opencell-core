@@ -273,6 +273,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getIgnoreOrders() != null) {
             entity.setIgnoreOrders(dto.getIgnoreOrders());
         }
+        if (dto.getIncrementalInvoiceLines() != null) {
+            entity.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
+        }
 
        	// populate customFields
         try {

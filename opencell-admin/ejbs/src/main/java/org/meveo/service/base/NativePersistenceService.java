@@ -81,6 +81,7 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.model.shared.DateUtils;
@@ -89,6 +90,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.expressions.NativeExpressionFactory;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.util.MeveoParamBean;
 
 import static java.util.stream.Collectors.joining;
@@ -147,6 +149,9 @@ public class NativePersistenceService extends BaseService {
 
     @Inject
     protected Event<CustomTableEvent> entityChangeEventProducer;
+
+    @Inject
+    private GenericNotificationService genericNotificationService;
 
     /**
      * Find record by its identifier
@@ -324,7 +329,7 @@ public class NativePersistenceService extends BaseService {
      * @param tableName the table name
      * @return
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private Map<String, Object> getFields(String tableName) {
         tableName = addCurrentSchema(tableName);
         Map<String, Object> fields = new HashedMap();
@@ -362,9 +367,9 @@ public class NativePersistenceService extends BaseService {
     /**
      * Insert a new record into a table. If returnId=True values parameter will be updated with 'id' field value.
      *
-     * @param tableName Table name to update
-     * @param values Values
-     * @param returnId Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
+     * @param tableName         Table name to update
+     * @param values            Values
+     * @param returnId          Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
      * @param fireNotifications Should notifications be fired upon record creation
      * @throws BusinessException General exception
      */
@@ -479,8 +484,8 @@ public class NativePersistenceService extends BaseService {
     /**
      * Update a record in a table. Record is identified by an "id" field value.
      *
-     * @param tableName Table name to update
-     * @param value Values. Values must contain an "id" (FIELD_ID) field.
+     * @param tableName         Table name to update
+     * @param value             Values. Values must contain an "id" (FIELD_ID) field.
      * @param fireNotifications Should notifications be fired upon record update
      * @throws BusinessException General exception
      */
@@ -534,9 +539,9 @@ public class NativePersistenceService extends BaseService {
      * Update field value in a table
      *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @param fieldName Field to update
-     * @param value New value
+     * @param value     New value
      * @throws BusinessException General exception
      */
     public void updateValue(String tableName, Long id, String fieldName, Object value) throws BusinessException {
@@ -559,7 +564,7 @@ public class NativePersistenceService extends BaseService {
      * Disable a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Long id) throws BusinessException {
@@ -572,7 +577,7 @@ public class NativePersistenceService extends BaseService {
      * Disable multiple records. Note: There is no check done that records exists.
      *
      * @param tableName Table name to update
-     * @param ids A list of record identifiers
+     * @param ids       A list of record identifiers
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Set<Long> ids) throws BusinessException {
@@ -584,7 +589,7 @@ public class NativePersistenceService extends BaseService {
      * Enable a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Long id) throws BusinessException {
@@ -597,7 +602,7 @@ public class NativePersistenceService extends BaseService {
      * Enable multiple records. Note: There is no check done that records exists.
      *
      * @param tableName Table name to update
-     * @param ids A list of record identifiers
+     * @param ids       A list of record identifiers
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Set<Long> ids) throws BusinessException {
@@ -610,7 +615,7 @@ public class NativePersistenceService extends BaseService {
      * Delete a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @return Number of records deleted
      * @throws BusinessException General exception
      */
@@ -634,7 +639,7 @@ public class NativePersistenceService extends BaseService {
      * excpetion
      *
      * @param tableName Table name to delete from
-     * @param ids A set of record identifiers
+     * @param ids       A set of record identifiers
      * @return Number of records deleted
      * @throws BusinessException General exception
      */
@@ -650,13 +655,13 @@ public class NativePersistenceService extends BaseService {
 //        ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
 //        return getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
     }
-
+    
     /**
      * Delete multiple records. Note: There is no check done that records exists.
      * Will not check Code or description field, it will find the table by id and then delete
      *
      * @param tableName Table name to delete from
-     * @param ids A set of record identifiers
+     * @param ids       A set of record identifiers
      * @return Number of records deleted
      * @throws BusinessException General exception
      */
@@ -800,8 +805,8 @@ public class NativePersistenceService extends BaseService {
      * </ul>
      *
      * @param tableName A name of a table to query
-     * @param config Data filtering, sorting and pagination criteria
-     * @param id Id field value to explicitly extract data by ID
+     * @param config    Data filtering, sorting and pagination criteria
+     * @param id Id field value to explicitly extract data by ID 
      * @return Query builder to filter entities according to pagination configuration data.
      */
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config, Long id) {
@@ -972,17 +977,33 @@ public class NativePersistenceService extends BaseService {
     }
 
     public QueryBuilder getAggregateQuery(String tableName, PaginationConfiguration config, Long id) {
+        return getAggregateQuery(tableName, config, id, null, null);
+    }
+
+    public QueryBuilder getAggregateQuery(String tableName, PaginationConfiguration config, Long id, String extraCondition,
+                                          String leftJoinClause) {
         tableName = addCurrentSchema(tableName);
-        Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
 
         String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), null) : "";
         if (!fieldsToRetrieve.isEmpty()) {
             config.getFetchFields().remove("id");
         }
 
-        QueryBuilder queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, "") + " from " + tableName + " a ", "a");
+        QueryBuilder queryBuilder;
+        if (leftJoinClause != null) {
+            queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, "") + " from "
+                    + tableName + " a " + leftJoinClause, "a");
+        }
+        else {
+            queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, "") + " from " + tableName + " a ", "a");
+        }
+
         if (id != null) {
             queryBuilder.addSql(" a.id ='" + id + "'");
+        }
+
+        if (extraCondition != null) {
+            queryBuilder.addSql(extraCondition);
         }
 
         if (config == null) {
@@ -1001,13 +1022,12 @@ public class NativePersistenceService extends BaseService {
         if (config.getOrderings() != null && config.getOrderings().length == 2) {
             if (config.getOrderings()[0].equals("id")
                     && config.getOrderings()[1].equals(PagingAndFiltering.SortOrder.ASCENDING)) {
-                config.setOrderings(new Object[] {});
+                config.setOrderings(new Object[]{});
             }
         }
 
         queryBuilder.addPaginationConfiguration(config, "a");
-
-        String fieldsToGroupBy = config.getGroupBy() != null ? retrieveFields(new ArrayList<>(config.getGroupBy()), predicate.negate()) : "";
+        String fieldsToGroupBy = config.getGroupBy() != null ? retrieveFields(new ArrayList<>(config.getGroupBy()), null) : "";
 
         if (!fieldsToGroupBy.isEmpty()) {
             queryBuilder.addGroupCriterion(fieldsToGroupBy);
@@ -1146,7 +1166,7 @@ public class NativePersistenceService extends BaseService {
      * @param config Data filtering, sorting and pagination criteria
      * @return A list of Object[] values for each record. A full list of fields or only the ones specified in a list of fields in search and paging configuration
      */
-    @SuppressWarnings({ "deprecation", "rawtypes" })
+    @SuppressWarnings({"deprecation", "rawtypes"})
     public List listAsObjects(String tableName, PaginationConfiguration config) {
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config, null);
@@ -1204,7 +1224,7 @@ public class NativePersistenceService extends BaseService {
      * Count number of records in a database table
      *
      * @param tableName A name of a table to query
-     * @param config Data filtering, sorting and pagination criteria
+     * @param config    Data filtering, sorting and pagination criteria
      * @return Number of entities.
      */
     public long count(String tableName, PaginationConfiguration config) {
@@ -1227,7 +1247,7 @@ public class NativePersistenceService extends BaseService {
      * Create new or update existing custom table record value
      *
      * @param tableName A name of a table to query
-     * @param values Values to save
+     * @param values    Values to save
      * @throws BusinessException General exception
      */
     public void createOrUpdate(String tableName, List<Map<String, Object>> values) throws BusinessException {
@@ -1260,8 +1280,8 @@ public class NativePersistenceService extends BaseService {
     /**
      * Convert value of unknown data type to a target data type. A value of type list is considered as already converted value, as would come only from WS.
      *
-     * @param value Value to convert
-     * @param targetClass Target data type class to convert to
+     * @param value        Value to convert
+     * @param targetClass  Target data type class to convert to
      * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
      *                     converted accordingly. If a single value is passed, it will be added to a list.
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
@@ -1271,7 +1291,7 @@ public class NativePersistenceService extends BaseService {
      * @return A converted data type
      * @throws ValidationException Value can not be cast to a target class
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns, CustomFieldTemplate cft) throws ValidationException {
 
         // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
@@ -1684,5 +1704,17 @@ public class NativePersistenceService extends BaseService {
         }
 
         fieldDataTypeMappings = fieldMappings;
+    }
+
+    /**
+     * Check if event of a given type is enabled for a given table
+     * 
+     * @param tableName Table name to check
+     * @param eventType Event type
+     * @return True if events of such event type exist for a given table
+     */
+    protected boolean areEventsEnabled(String tableName, NotificationEventTypeEnum eventType) {
+        List<Notification> notifications = genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.CREATED, new CustomTableEvent(tableName, null, null, eventType));
+        return notifications != null && !notifications.isEmpty();
     }
 }

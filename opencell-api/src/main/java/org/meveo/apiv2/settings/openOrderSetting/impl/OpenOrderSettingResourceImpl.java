@@ -27,13 +27,11 @@ public class OpenOrderSettingResourceImpl implements OpenOrderSettingResource {
     public Response create(OpenOrderSettingInput input) {
 
        OpenOrderSetting openOrderSetting = openOrderSettingMapper.toEntity(input);
-       FinanceSettings financeSettings = financeSettingsService.findLastOne();
-        if(financeSettings == null)
-        {
-            financeSettingsService.create(new FinanceSettings());
-
-        }
-        financeSettings = financeSettingsService.findLastOne();
+       FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
+       if (financeSettings == null) {
+           financeSettingsService.create(new FinanceSettings());
+       }
+       financeSettings = financeSettingsService.getFinanceSetting();
 
         openOrderSettingService.create(openOrderSetting);
         financeSettings.setOpenOrderSetting(openOrderSetting);

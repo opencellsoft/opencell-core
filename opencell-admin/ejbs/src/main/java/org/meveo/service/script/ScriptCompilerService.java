@@ -195,7 +195,7 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
             addToClassPath(Logger.class.getName());
             addToClassPath(EntityManager.class.getName());
         }
-        log.info("compileAll classpath={}", classpath);
+        log.info("Use classpath for script compilation: {}", classpath);
 
     }
 
@@ -213,7 +213,7 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
                 compileScript(script, false);
             }
         } catch (Exception e) {
-            log.error("", e);
+            log.error("Failed to construct a classpath for Script compilation", e);
         }
     }
 

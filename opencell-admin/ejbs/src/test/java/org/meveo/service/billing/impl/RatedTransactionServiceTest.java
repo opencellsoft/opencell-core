@@ -112,7 +112,6 @@ public class RatedTransactionServiceTest {
     @InjectMocks
     private RatedTransactionService ratedTransactionService;
     
-    @Test
     public List<RatedTransaction> initData() {
         Seller seller = new Seller();
 

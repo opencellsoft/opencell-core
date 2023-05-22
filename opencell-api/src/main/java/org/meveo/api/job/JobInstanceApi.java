@@ -41,6 +41,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobClusterBehaviorEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -108,8 +109,15 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         jobInstance.setCode(postData.getCode());
         jobInstance.setDescription(postData.getDescription());
         jobInstance.setRunOnNodes(postData.getRunOnNodes());
-        if (postData.getLimitToSingleNode() != null) {
-            jobInstance.setLimitToSingleNode(postData.getLimitToSingleNode());
+        
+        if (postData.getClusterBehavior()!=null) {
+            jobInstance.setClusterBehavior(postData.getClusterBehavior());
+            
+        } else if (postData.getLimitToSingleNode() != null) {
+            jobInstance.setClusterBehavior(postData.getLimitToSingleNode() ? JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE : JobClusterBehaviorEnum.RUN_IN_PARALLEL);
+        
+        } else {
+            jobInstance.setClusterBehavior(JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE);
         }
 
         if (!StringUtils.isBlank(postData.getTimerCode())) {
@@ -200,9 +208,13 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         if (postData.getRunOnNodes() != null) {
             jobInstance.setRunOnNodes(postData.getRunOnNodes());
         }
-        if (postData.getLimitToSingleNode() != null) {
-            jobInstance.setLimitToSingleNode(postData.getLimitToSingleNode());
-        }
+        if (postData.getClusterBehavior()!=null) {
+            jobInstance.setClusterBehavior(postData.getClusterBehavior());
+            
+        } else if (postData.getLimitToSingleNode() != null) {
+            jobInstance.setClusterBehavior(postData.getLimitToSingleNode() ? JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE : JobClusterBehaviorEnum.RUN_IN_PARALLEL);
+        } 
+        
         if (postData.getVerboseReport() != null) {
             jobInstance.setVerboseReport(postData.getVerboseReport());
         }

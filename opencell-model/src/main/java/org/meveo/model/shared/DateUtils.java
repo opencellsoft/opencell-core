@@ -1059,6 +1059,7 @@ public class DateUtils {
      */
     public static Date getFirstDayFromYearAndWeek(int year, int week) {
         Calendar cld = Calendar.getInstance();
+        cld.clear();
         cld.set(Calendar.YEAR, year);
         cld.set(Calendar.WEEK_OF_YEAR, week);
         return cld.getTime();
@@ -1263,6 +1264,10 @@ public class DateUtils {
         public String toString() {
             return calendar.getCode() + " #" + priority + " value:" + value;
         }
+    }
+    
+    public static Date parseDefaultDate(String dateValue) {
+    	return parseDateWithPattern(dateValue, DATE_PATTERN);
     }
 
     public static Date fromLocalDate(LocalDate localDate) {

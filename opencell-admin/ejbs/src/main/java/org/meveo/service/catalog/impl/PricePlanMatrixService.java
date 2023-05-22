@@ -31,7 +31,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.collections.IteratorUtils;
@@ -565,9 +564,10 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
      * @return A list of applicable price plans matching a charge code and ordered by priority
      */
     public List<PricePlanMatrix> getActivePricePlansByChargeCode(String chargeCode) {
-        return getEntityManager().createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCode", PricePlanMatrix.class).setParameter("chargeCode", chargeCode).setFlushMode(FlushModeType.COMMIT).getResultList();
-        }
-
+                
+        return getEntityManager().createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCode", PricePlanMatrix.class).setParameter("chargeCode", chargeCode).getResultList();
+    }
+    
     public Long getLastPricePlanSequenceByChargeCode(String chargeCode) {
         QueryBuilder qb = new QueryBuilder("select max(sequence) from PricePlanMatrix m");
         qb.addCriterion("m.eventCode", "=", chargeCode, true);

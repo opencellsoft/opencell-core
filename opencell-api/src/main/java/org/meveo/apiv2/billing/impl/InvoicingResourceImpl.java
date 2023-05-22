@@ -78,4 +78,15 @@ public class InvoicingResourceImpl implements InvoicingResource {
                 .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Billing run status successfully canceled\"},\"id\":" + billingRun.getId() + "}")
                 .build();
     }
+
+    @Override
+    public Response closeInvoiceLines(Long billingRunId, boolean executeInvoicingJob) {
+        BillingRun billingRun = invoicingApiService.closeInvoiceLines(billingRunId, executeInvoicingJob)
+                .orElseThrow(() -> new NotFoundException("Billing run with id " + billingRunId + " does not exists"));
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Update billing run status successfully\"},\"id\":"
+                        + billingRun.getId() + ",\"billingRunStatus\": " + billingRun.getStatus()
+                        + ", \"executeInvoicingJob\": " + executeInvoicingJob + "}")
+                .build();
+    }
 }

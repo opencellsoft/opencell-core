@@ -2738,6 +2738,7 @@
             <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
             	<constraints nullable="false" />
             </column>
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -2946,6 +2947,7 @@
             <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -5802,6 +5804,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="job_status" type="varchar(14)"/>
+            <column name ="parent_job_result_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-262">
@@ -6050,13 +6053,13 @@
                 <constraints nullable="false" />
             </column>
             <column name="run_on_nodes" type="VARCHAR(100)" />
-            <column name="single_node" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="cf_values" type="${type.json}" />
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
             <column name="query_scheduler_id" type="bigint" />
+            <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -9623,7 +9626,7 @@
             </column>
 
         </createTable>
-        <addUniqueConstraint columnNames="current_version,ppm_id" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
+        <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
 
     <changeSet id="rebuild-str-tbl-448" author="TarikF">
@@ -10762,6 +10765,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="subscription_id" type="bigint"/>
+            <column name="user_account_id" type="bigint"></column>
             <column name="service_instance_id" type="bigint"/>
             <column name="offer_template_id" type="bigint"/>
             <column name="order_lot_id" type="bigint"/>
@@ -10909,6 +10913,9 @@
 			<column name="value_el" type="varchar(255)" />
             <column name="description" type="varchar(255)"/>
             <column name="value" type="numeric(23, 12)" />
+            <column name="accuracy" type="int" defaultValueNumeric="0">
+                 <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-492" author="NabilOUACHI">
@@ -12718,7 +12725,7 @@
         <addUniqueConstraint columnNames="charge_id,attribute_id" constraintName="cpq_attribute_charge_pkey" tableName="cpq_attribute_charge" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-546">
-        <addUniqueConstraint columnNames="code,ppm_version_id" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+        <addUniqueConstraint columnNames="ppm_version_id,code" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
     </changeSet>
     <changeSet author="ZBariki" id="rebuild-str-uk-547">
         <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
@@ -16844,7 +16851,7 @@
         <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema.adapted}cat_offer_serv_templates(offer_template_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
-        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code)</sql>
+        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
         <sql>CREATE INDEX medina_access_user_id_index ON ${db.schema.adapted}medina_access(acces_user_id)</sql>
         <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id)</sql>
         <sql>CREATE INDEX counter_period_ci_id ON ${db.schema.adapted}billing_counter_period(counter_instance_id)</sql>
@@ -16865,7 +16872,7 @@
         <sql>CREATE INDEX rating_cdr_or_index ON ${db.schema.adapted}rating_cdr(origin_record)</sql>
         <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>     
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
         <sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation (ddrequest_item_id)</sql>
         <sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation (reference)</sql>
         <sql>CREATE INDEX audit_field_changes_history_index on ${db.schema.adapted}audit_field_changes_history (lower(entity_class), entity_id)</sql>
@@ -16879,6 +16886,9 @@
     	<sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
     	<sql>CREATE INDEX cpq_attribute_instance_service_instance_idx ON cpq_attribute_instance(service_instance_id)</sql>
     	<sql>CREATE INDEX billing_wallet_operation_charge_instance_idx ON billing_wallet_operation(charge_instance_id)</sql>
+        <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
+        <sql>CREATE INDEX billing_redirection_rule_contract_index ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>
+        <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -17050,7 +17060,7 @@
         <sql>CREATE INDEX rt_billing_account_id_contract_index ON ${db.schema.adapted}cpq_contract (billing_account_id) where status='ACTIVE'</sql>
         <sql>CREATE INDEX rt_customer_account_contract_index ON ${db.schema.adapted}cpq_contract (customer_account_id) where status='ACTIVE'</sql>
         <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
-        <sql>CREATE INDEX CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql></changeSet>
+        <sql>CREATE INDEX CREATE INDEX cpq_ppl_ppVersion_index ON cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql></changeSet>
         
         
     <changeSet id="#INTRD-12047-20230112-rebuild" author="AbdelmounaimAkadid">
@@ -18077,6 +18087,11 @@
 								 referencedColumnNames="id"
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
+	</changeSet>
+	
+	<changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
 	</changeSet>
 
     <changeSet id="#INTRD-13883_20230208_fk" author="hichamELHALOUI">
@@ -19385,9 +19400,14 @@
     <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI" />
     <changeSet id="#INTRD-15233_20230425" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>
-    
-    
+    <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius"/>    
+    <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-15938_20230503" author="AndriusKarpavcius"/>
+    <changeSet id="#INTRD-16140_20230510" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-15501_20230413" author="ThangNguyen" />
+    <changeSet id="#INTRD-16050_20230515" author="ThangNguyen" />
+
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
