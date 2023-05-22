@@ -12498,7 +12498,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="#INTRD-16036_20230516" author="zelmeliani" >
+    <changeSet id="#INTRD-16036_20230516-rebuild" author="zelmeliani" >
         <createTable tableName="cat_price_list_customer_brand">
             <column name="price_list_id" type="bigint" />
             <column name="customer_brand_id" type="bigint" />
