@@ -15805,7 +15805,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<where>transactional_currency is null</where>
 		</update>
 	</changeSet>
-    
+
     <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari">
     	<dropNotNullConstraint columnName="created" tableName="billing_invoice_validation_rule"/>
     	<dropNotNullConstraint columnName="fail_status" tableName="billing_invoice_validation_rule"/>
@@ -15827,14 +15827,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
     
      <changeSet id="#INTRD-13867_20230220" author="aeljaouhari" failOnError="false">
         <sql>
-	        update public.accounting_journal_entry set 
-		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
+	        update public.accounting_journal_entry set
+		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco
 		        	where ac.id = btc.currency_id and inv.trading_currency_id = btc.id and inv.id = aco.invoice_id and aco.id =  accounting_operation_id),
-		        converted_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco 
+		        converted_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco
 		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
         </sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14264_20230222" author="TarikFA.">
     	<addColumn tableName="billing_rated_transaction">
     		<column name="origin_ratedtransaction_id" type="bigint" />
@@ -16521,7 +16521,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="error_detail" type="varchar(2000)" />
         </addColumn>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-16166_20230512" author="aelmalki">
         <addColumn tableName="ar_payment_token">
             <column name="mandate_change_action" type="varchar(20)" defaultValue="NONE">
@@ -16548,19 +16548,19 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="customer_brand_id" type="bigint" />
         </createTable>
         <addPrimaryKey columnNames="price_list_id, customer_brand_id" constraintName="cat_price_list_customer_brand_pkey" tableName="cat_price_list_customer_brand" />
-        
+
         <createTable tableName="cat_price_list_customer_category">
             <column name="price_list_id" type="bigint" />
             <column name="customer_category_id" type="bigint" />
         </createTable>
         <addPrimaryKey columnNames="price_list_id, customer_category_id" constraintName="cat_price_list_customer_category_pkey" tableName="cat_price_list_customer_category" />
-        
+
         <createTable tableName="cat_price_list_credit_category">
             <column name="price_list_id" type="bigint" />
             <column name="credit_category_id" type="bigint" />
         </createTable>
         <addPrimaryKey columnNames="price_list_id, credit_category_id" constraintName="cat_price_list_credit_category_pkey" tableName="cat_price_list_credit_category" />
-        
+
         <createTable tableName="cat_price_list_country">
             <column name="price_list_id" type="bigint" />
             <column name="country_id" type="bigint" />
@@ -16595,104 +16595,104 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			baseTableName="cat_price_list_customer_brand"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_customer_brand_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_customer_brand"
 			baseColumnNames="customer_brand_id"
 			constraintName="cat_price_list_customer_brand_cb_fk"
-			referencedTableName="crm_customer_brand" 
+			referencedTableName="crm_customer_brand"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_customer_category"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_customer_category_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_customer_category"
 			baseColumnNames="customer_category_id"
 			constraintName="cat_price_list_customer_category_cc_fk"
-			referencedTableName="crm_customer_category" 
+			referencedTableName="crm_customer_category"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_credit_category"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_credit_category_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_credit_category"
 			baseColumnNames="credit_category_id"
 			constraintName="cat_price_list_credit_category_cc_fk"
-			referencedTableName="ar_credit_category" 
+			referencedTableName="ar_credit_category"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_country"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_country_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_country"
 			baseColumnNames="country_id"
 			constraintName="cat_price_list_country_c_fk"
-			referencedTableName="adm_country" 
+			referencedTableName="adm_country"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_currency"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_currency_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_currency"
 			baseColumnNames="currency_id"
 			constraintName="cat_price_list_currency_c_fk"
-			referencedTableName="adm_currency" 
+			referencedTableName="adm_currency"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_legal_entity"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_legal_entity_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_legal_entity"
 			baseColumnNames="legal_entity_id"
 			constraintName="cat_price_list_legal_entity_le_fk"
-			referencedTableName="adm_title" 
+			referencedTableName="adm_title"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_payment_method"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_payment_method_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_payment_method"
 			baseColumnNames="payment_method_id"
 			constraintName="cat_price_list_payment_method_pm_fk"
-			referencedTableName="ar_payment_token" 
+			referencedTableName="ar_payment_token"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_seller"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_seller_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_seller"
 			baseColumnNames="seller_id"
 			constraintName="cat_price_list_seller_s_fk"
-			referencedTableName="crm_seller" 
+			referencedTableName="crm_seller"
             referencedColumnNames="id" />
     </changeSet>
 
@@ -16730,5 +16730,20 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <renameColumn tableName="cat_price_list_payment_method" oldColumnName="payment_method_id" newColumnName="payment_method"/>
         <modifyDataType tableName="cat_price_list_payment_method" columnName="payment_method" newDataType="varchar(50)"/>
     </changeSet>
+
+    <changeSet id="#INTRD-15044_20230517" author="AdilElJaouhari">
+    	<renameTable newTableName="cpq_trading_price_plan_version" oldTableName="cpq_converted_price_plan_version"/>
+    	<renameColumn tableName="cpq_trading_price_plan_version" oldColumnName="converted_price" newColumnName="trading_price"/>
+    	<renameSequence newSequenceName="cpq_trading_price_plan_version_seq" oldSequenceName="cpq_converted_price_plan_version_seq" />
+    	<renameTable newTableName="cpq_trading_price_plan_matrix_line" oldTableName="cpq_converted_price_plan_matrix_line"/>
+    	<renameColumn tableName="cpq_trading_price_plan_matrix_line" oldColumnName="converted_value" newColumnName="trading_value"/>
+    	<renameSequence newSequenceName="cpq_trading_price_plan_matrix_line_sq" oldSequenceName="cpq_converted_price_plan_matrix_line_sq" />
+	</changeSet>
+
+    <changeSet id="INTRD-15501_20230413" author="ThangNguyen">
+    <addColumn tableName="billing_billing_run">
+        <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+    </addColumn>
+</changeSet>
 
 </databaseChangeLog>

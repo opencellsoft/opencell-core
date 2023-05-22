@@ -150,6 +150,10 @@ public class InvoicingApi extends BaseApi {
         	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
         }
         billingRun.setGenerateAO(Optional.ofNullable(dto.getGenerateAO()).orElse(false));
+
+        if (dto.getIncrementalInvoiceLines() != null) {
+            billingRun.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
+        }
         
         billingRunService.create(billingRun);
 
@@ -231,6 +235,10 @@ public class InvoicingApi extends BaseApi {
         
         if (dto.isComputeDatesAtValidation() != null) {
             billingRun.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
+        }
+
+        if (dto.getIncrementalInvoiceLines() != null) {
+            billingRun.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
         }
 
         // populate customFields

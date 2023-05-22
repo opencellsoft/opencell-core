@@ -30,8 +30,8 @@ import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.DatePeriodDto;
-import org.meveo.api.dto.catalog.ConvertedPricePlanInputDto;
-import org.meveo.api.dto.catalog.ConvertedPricePlanVersionDto;
+import org.meveo.api.dto.catalog.TradingPricePlanInputDto;
+import org.meveo.api.dto.catalog.TradingPricePlanVersionDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
@@ -427,20 +427,20 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	}
 
     @Override
-    public Response deleteConvertedPricePlanMatrixLines(Long pricePlanMatrixVersion, String tradingCurrencyCode) {
+    public Response deleteTradingPricePlanMatrixLines(Long pricePlanMatrixVersion, String tradingCurrencyCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            pricePlanMatrixVersionApi.removeAllConvertedPricePlanLinesByVersion(pricePlanMatrixVersion, tradingCurrencyCode);
+            pricePlanMatrixVersionApi.removeAllTradingPricePlanLinesByVersion(pricePlanMatrixVersion, tradingCurrencyCode);
         } catch (MeveoApiException e) {
             return errorResponse(e, result);
         }
         return Response.ok(result).build();
     }
     
-	public Response createConvertedPricePlanVersion(ConvertedPricePlanVersionDto postData) {
+	public Response createTradingPricePlanVersion(TradingPricePlanVersionDto postData) {
 		ActionStatus result = new ActionStatus();
 		try {
-            result.setEntityId(pricePlanMatrixVersionApi.createConvertedPricePlanVersion(postData).getId());
+            result.setEntityId(pricePlanMatrixVersionApi.createTradingPricePlanVersion(postData).getId());
 			return Response.ok(result).build();
 		} catch (Exception e) {
 			processException(e, result);
@@ -450,10 +450,10 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	}
 
 	@Override
-    public Response updateConvertedPricePlanVersion(Long cppvId, ConvertedPricePlanVersionDto postData) {
+    public Response updateTradingPricePlanVersion(Long cppvId, TradingPricePlanVersionDto postData) {
         ActionStatus result = new ActionStatus();
         try {
-            pricePlanMatrixVersionApi.updateConvertedPricePlanVersion(cppvId, postData);
+            pricePlanMatrixVersionApi.updateTradingPricePlanVersion(cppvId, postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -461,10 +461,10 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     }
 
 	@Override
-	public Response deleteConvertedPricePlanVersion(Long cppvId) {
+	public Response deleteTradingPricePlanVersion(Long cppvId) {
 		ActionStatus result = new ActionStatus();
 		try {
-            pricePlanMatrixVersionApi.deleteConvertedPricePlanVersion(cppvId);
+            pricePlanMatrixVersionApi.deleteTradingPricePlanVersion(cppvId);
 			return Response.ok(result).build();
 		} catch (Exception e) {
 			processException(e, result);
@@ -473,10 +473,10 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	}
 
 	@Override
-	public Response disableAllConvertedPricePlan(ConvertedPricePlanInputDto convertedPricePlanInputDto) {
+	public Response disableAllTradingPricePlan(TradingPricePlanInputDto tradingPricePlanInputDto) {
 		ActionStatus result = new ActionStatus();
 		try {
-            pricePlanMatrixVersionApi.disableAllConvertedPricePlan(convertedPricePlanInputDto);
+            pricePlanMatrixVersionApi.disableAllTradingPricePlan(tradingPricePlanInputDto);
 			return Response.ok(result).build();
 		} catch (Exception e) {
 			processException(e, result);
@@ -485,10 +485,10 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	}
 
 	@Override
-	public Response enableAllConvertedPricePlan(ConvertedPricePlanInputDto convertedPricePlanInputDto) {
+	public Response enableAllTradingPricePlan(TradingPricePlanInputDto tradingPricePlanInputDto) {
 		ActionStatus result = new ActionStatus();
 		try {
-            pricePlanMatrixVersionApi.enableAllConvertedPricePlan(convertedPricePlanInputDto);
+            pricePlanMatrixVersionApi.enableAllTradingPricePlan(tradingPricePlanInputDto);
 			return Response.ok(result).build();
 		} catch (Exception e) {
 			processException(e, result);
@@ -497,10 +497,10 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	}
 
 	@Override
-	public Response enableConvertedVersionPricePlan(Long convertedPricePlanVersionId) {
+	public Response enableTradingVersionPricePlan(Long tradingPricePlanVersionId) {
 		ActionStatus result = new ActionStatus();
 		try {
-            pricePlanMatrixVersionApi.enableConvertedVersionPricePlan(convertedPricePlanVersionId);
+            pricePlanMatrixVersionApi.enableTradingVersionPricePlan(tradingPricePlanVersionId);
 			return Response.ok(result).build();
 		} catch (Exception e) {
 			processException(e, result);
@@ -509,10 +509,10 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	}
 
 	@Override
-	public Response disableConvertedVersionPricePlan(Long convertedPricePlanVersionId) {
+	public Response disableTradingVersionPricePlan(Long tradingPricePlanVersionId) {
 		ActionStatus result = new ActionStatus();
 		try {
-            pricePlanMatrixVersionApi.disableConvertedVersionPricePlan(convertedPricePlanVersionId);
+            pricePlanMatrixVersionApi.disableTradingVersionPricePlan(tradingPricePlanVersionId);
 			return Response.ok(result).build();
 		} catch (Exception e) {
 			processException(e, result);
@@ -521,10 +521,10 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	}
 
     @Override
-    public Response calculateConvertedPricePlanMatrixLine(ConvertedPricePlanVersionDto postData) {
+    public Response calculateTradingPricePlanMatrixLine(TradingPricePlanVersionDto postData) {
         ActionStatus result = new ActionStatus();
         try {
-            pricePlanMatrixVersionApi.calculateConvertedPricePlanMatrixLine(postData);
+            pricePlanMatrixVersionApi.calculateTradingPricePlanMatrixLine(postData);
             return Response.ok(result).build();
         } catch (Exception e) {
             processException(e, result);

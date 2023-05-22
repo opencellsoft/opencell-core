@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
@@ -126,6 +127,12 @@ public class CreateBillingRunDto extends BaseEntityDto {
      * The description I18N.
      */
     private List<LanguageDescriptionDto> descriptionsTranslated;
+
+    /**
+     * To decide if adding invoice lines incrementally or not.
+     */
+    @Schema(description = "Use incremental mode in invoice lines or not", nullable = true)
+    private Boolean incrementalInvoiceLines;
 
     public Long getId() {
 		return id;
@@ -371,6 +378,24 @@ public class CreateBillingRunDto extends BaseEntityDto {
 	public void setGenerateAO(Boolean generateAO) {
 		this.generateAO = generateAO;
 	}
+
+    /**
+     * Set the incrementalInvoiceLines
+     *
+     * @param incrementalInvoiceLines
+     */
+    public void setIncrementalInvoiceLines(Boolean incrementalInvoiceLines) {
+        this.incrementalInvoiceLines = incrementalInvoiceLines;
+    }
+
+    /**
+     * Get the incrementalInvoiceLines
+     *
+     * @return incrementalInvoiceLines
+     */
+    public Boolean getIncrementalInvoiceLines() {
+        return incrementalInvoiceLines;
+    }
 
 	@Override
     public String toString() {

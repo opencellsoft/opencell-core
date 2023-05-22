@@ -122,7 +122,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     private Set<PricePlanMatrixColumn> columns = new HashSet<>();
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.LAZY)
-    private Set<ConvertedPricePlanVersion> convertedPricePlanVersions = new HashSet<>();
+    private Set<TradingPricePlanVersion> tradingPricePlanVersions = new HashSet<>();
 
     /**
      * The lower number, the higher the priority is
@@ -317,18 +317,12 @@ public class PricePlanMatrixVersion extends AuditableEntity {
         this.priceVersionType = priceVersionType;
     }
 
-	/**
-	 * @return the convertedPricePlanMatrixLines
-	 */
-	public Set<ConvertedPricePlanVersion> getConvertedPricePlanVersions() {
-		return convertedPricePlanVersions;
+	public Set<TradingPricePlanVersion> getTradingPricePlanVersions() {
+		return tradingPricePlanVersions;
 	}
 
-	/**
-	 * @param convertedPricePlanMatrixLines the convertedPricePlanMatrixLines to set
-	 */
-	public void setConvertedPricePlanVersions(Set<ConvertedPricePlanVersion> convertedPricePlanMatrixLines) {
-		this.convertedPricePlanVersions = convertedPricePlanMatrixLines;
+	public void setTradingPricePlanVersions(Set<TradingPricePlanVersion> tradingPricePlanVersions) {
+		this.tradingPricePlanVersions = tradingPricePlanVersions;
 	}
 
 	@Override
