@@ -6,12 +6,14 @@ import java.util.stream.Collectors;
 
 import org.meveo.apiv2.catalog.ImmutablePriceList;
 import org.meveo.apiv2.generic.ResourceMapper;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Country;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CreditCategory;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.shared.Title;
 
@@ -35,6 +37,7 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
 				.currencies(getCurrenciesCodes(entity))
 				.legalEntities(getLegalEntitiesCodes(entity))
 				.sellers(getSellersCodes(entity))
+				.paymentMethods(entity.getPaymentMethods().stream().map(paymentMethod -> paymentMethod.name()).collect(Collectors.toList()))
 				.build();	
     }
 	
@@ -140,6 +143,7 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
         entity.setCurrencies(getCurrenciesFromCodes(resource.getCurrencies()));
         entity.setLegalEntities(getLegalEntitiesFromCodes(resource.getLegalEntities()));
         entity.setSellers(getSellersFromCodes(resource.getSellers()));
+        entity.setPaymentMethods(getPaymentMethodsFromCodes(resource.getPaymentMethods()));
         return entity;
 	}
 	
@@ -261,5 +265,18 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
 			seller.setCode(code);
 			return seller;
 		}).collect(Collectors.toSet());
+	}
+	
+	/**
+	 * Get a set of {@link PaymentMethodEnum}
+	 * @param paymentMethods Payment method codes
+	 * @return Set of {@link PaymentMethodEnum}
+	 */
+	private Set<PaymentMethodEnum> getPaymentMethodsFromCodes(Set<String> paymentMethods) {
+		if (paymentMethods != null) {
+    		return paymentMethods.stream().filter(StringUtils::isNotBlank).map(PaymentMethodEnum::valueOf).collect(Collectors.toSet());
+        }
+		
+		return null;
 	}
 }

@@ -12537,9 +12537,8 @@
 
         <createTable tableName="cat_price_list_payment_method">
             <column name="price_list_id" type="bigint" />
-            <column name="payment_method_id" type="bigint" />
+            <column name="payment_method" type="varchar(50)" />
         </createTable>
-        <addPrimaryKey columnNames="price_list_id, payment_method_id" constraintName="cat_price_list_payment_method_pkey" tableName="cat_price_list_payment_method" />
 
         <createTable tableName="cat_price_list_seller">
             <column name="price_list_id" type="bigint" />
@@ -17143,12 +17142,6 @@
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_payment_method_pli_fk"
 			referencedTableName="cat_price_list"
-            referencedColumnNames="id" />
-		<addForeignKeyConstraint
-			baseTableName="cat_price_list_payment_method"
-			baseColumnNames="payment_method_id"
-			constraintName="cat_price_list_payment_method_pm_fk"
-			referencedTableName="ar_payment_token"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
