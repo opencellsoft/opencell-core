@@ -1,6 +1,7 @@
 package org.meveo.model.pricelist;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -26,6 +27,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "cat_price_list_line")
+@CustomFieldEntity(cftCodePrefix = "PriceListLine")
 @GenericGenerator(
         name = "ID_GENERATOR",
         strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
