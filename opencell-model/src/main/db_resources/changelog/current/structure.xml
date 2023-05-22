@@ -16740,6 +16740,38 @@ public class AgedBalanceReporting extends ReportExtractScript {
     	<renameSequence newSequenceName="cpq_trading_price_plan_matrix_line_sq" oldSequenceName="cpq_converted_price_plan_matrix_line_sq" />
 	</changeSet>
 
+
+
+    <changeSet id="#INTRD-16396_20230522_pli_quote" author="a.rouaguebe">
+        <addColumn tableName="cpq_quote_version">
+            <column name="price_list_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="cpq_quote_version"
+                baseColumnNames="price_list_id"
+                constraintName="fk_cpq_quote_version_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+        <addColumn tableName="cpq_commercial_order">
+            <column name="price_list_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="cpq_commercial_order"
+                baseColumnNames="price_list_id"
+                constraintName="fk_cpq_commercial_order_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+        <addColumn tableName="billing_subscription">
+            <column name="price_list_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="billing_subscription"
+                baseColumnNames="price_list_id"
+                constraintName="fk_billing_subscription_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+    </changeSet>
+
     <changeSet id="INTRD-15501_20230413" author="ThangNguyen">
     <addColumn tableName="billing_billing_run">
         <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />

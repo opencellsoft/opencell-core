@@ -3706,6 +3706,7 @@
             </column>
             <column name="sales_person_name" type="varchar(52)" />
     		<column name="contract_id" type="bigint" />
+            <column name="price_list_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-194">
@@ -9553,6 +9554,7 @@
             <column name="discount_plan_id" type="bigint"></column>
             <column name="contract_id" type="bigint" />
             <column name="comment" type="varchar(2000)" />
+            <column name="price_list_id" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -10359,6 +10361,7 @@
             <column name="sales_person_name" type="varchar(52)" />
             <column name="billing_cycle_id" type="bigint" />
             <column name="billing_run_id" type="bigint" />
+            <column name="price_list_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-475" author="NabilOUACHI">
@@ -17156,6 +17159,24 @@
 			constraintName="cat_price_list_seller_s_fk"
 			referencedTableName="crm_seller"
             referencedColumnNames="id" />
+        <addForeignKeyConstraint
+                baseTableName="cpq_quote_version"
+                baseColumnNames="price_list_id"
+                constraintName="fk_cpq_quote_version_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+        <addForeignKeyConstraint
+                baseTableName="cpq_commercial_order"
+                baseColumnNames="price_list_id"
+                constraintName="fk_cpq_commercial_order_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+        <addForeignKeyConstraint
+                baseTableName="billing_subscription"
+                baseColumnNames="price_list_id"
+                constraintName="fk_billing_subscription_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
     </changeSet>
     <!-- end fk -->
 

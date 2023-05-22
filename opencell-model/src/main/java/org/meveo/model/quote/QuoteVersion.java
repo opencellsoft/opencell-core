@@ -44,6 +44,7 @@ import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.pricelist.PriceList;
 
 @SuppressWarnings("serial")
 @Entity
@@ -179,6 +180,13 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 	@OneToMany(mappedBy = "quoteVersion", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("id")
 	private List<QuotePrice> quotePrices = new ArrayList<QuotePrice>();
+
+	/**
+	 * Default PriceList (Optional)
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "price_list_id")
+	private PriceList priceList;
     
 	/**
 	 * @return the quoteVersion
@@ -418,13 +426,20 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	/**
+	 * PriceList Getter
+	 * @return the priceList
+	 */
+	public PriceList getPriceList() {
+		return priceList;
+	}
+
+	/**
+	 * PriceList Setter
+	 * @param priceList value to set
+	 */
+	public void setPriceList(PriceList priceList) {
+		this.priceList = priceList;
+	}
 }
