@@ -16734,4 +16734,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
     	<renameSequence newSequenceName="cpq_trading_price_plan_matrix_line_sq" oldSequenceName="cpq_converted_price_plan_matrix_line_sq" />
 	</changeSet>
 
+    <changeSet id="INTRD-15501_20230413" author="ThangNguyen">
+    <addColumn tableName="billing_billing_run">
+        <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+    </addColumn>
+</changeSet>
+
 </databaseChangeLog>
