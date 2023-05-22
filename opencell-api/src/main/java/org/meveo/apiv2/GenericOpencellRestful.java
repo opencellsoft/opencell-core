@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -111,7 +110,7 @@ public class GenericOpencellRestful extends Application {
     private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
     private static boolean GENERIC_API_REQUEST_EXTRACT_LIST;
     public static List<Map<String, String>> VERSION_INFO = new ArrayList<>();
-    public static Map<String, List<String>> ENTITIES_MAP = new HashMap<>();
+    public static List<Class> ENTITIES_LIST = new ArrayList<>();
     public static long API_LIST_DEFAULT_LIMIT;
 
     @Inject
@@ -194,11 +193,9 @@ public class GenericOpencellRestful extends Application {
     }
 
     private void loadEntitiesList() {
-        List<String> listEntities = new ArrayList<>();
-        for (Map.Entry<String, Class> entry : GenericHelper.entitiesByName.entrySet()) {
-            listEntities.add(entry.getValue().getSimpleName());
+    	for (Map.Entry<String, Class> entry : GenericHelper.entitiesByName.entrySet()) {
+    		ENTITIES_LIST.add(entry.getValue());
         }
-        ENTITIES_MAP.put("entities", listEntities);
     }
 
     public boolean shouldExtractList() {
