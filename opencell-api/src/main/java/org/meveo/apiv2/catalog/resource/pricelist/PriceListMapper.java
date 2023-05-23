@@ -37,7 +37,7 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
 				.currencies(getCurrenciesCodes(entity))
 				.legalEntities(getLegalEntitiesCodes(entity))
 				.sellers(getSellersCodes(entity))
-				.paymentMethods(entity.getPaymentMethods().stream().map(paymentMethod -> paymentMethod.name()).collect(Collectors.toList()))
+				.paymentMethods(getPaymentMethodCode(entity))
 				.build();	
     }
 	
@@ -124,12 +124,24 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
 		}
 		return entity.getSellers().stream().map(seller -> seller.getCode()).collect(Collectors.toList());
 	}
+	
+	/**
+	 * Get codes from a set of Payment Methods
+	 * @param entity Price List
+	 * @return a list of Payment Methods
+	 */
+	private List<String> getPaymentMethodCode(PriceList entity) {
+		if (entity == null || entity.getPaymentMethods() == null) {
+			return null;
+		}
+		return entity.getPaymentMethods().stream().map(paymentMethod -> paymentMethod.name()).collect(Collectors.toList());
+	}
 
 	@Override
 	protected PriceList toEntity(org.meveo.apiv2.catalog.PriceList resource) {
 		var entity = new PriceList();		
 		entity.setId(resource.getId());
-		entity.setCode(resource.getName());
+		entity.setCode(resource.getName() != null ? resource.getName() : resource.getCode());
         entity.setDescription(resource.getDescription());
         entity.setValidFrom(resource.getValidFrom());
         entity.setValidUntil(resource.getValidUntil());
