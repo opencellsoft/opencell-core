@@ -16724,6 +16724,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
                       newColumnName="transactional_unit_amount_tax"/>
     </changeSet>
 
+    <changeSet id="#INTRD-16203_20230519_ba_pricelist" author="a.rouaguebe">
+        <addColumn tableName="billing_billing_account">
+            <column name="price_list_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="billing_billing_account"
+                baseColumnNames="price_list_id"
+                constraintName="fk_ba_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+    </changeSet>
+
     <changeSet id="#INTRD-16374_20230519" author="zelmeliani">
         <dropPrimaryKey constraintName="cat_price_list_payment_method_pkey" tableName="cat_price_list_payment_method" />
         <dropForeignKeyConstraint baseTableName="cat_price_list_payment_method" constraintName="cat_price_list_payment_method_pm_fk" />

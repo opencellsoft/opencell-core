@@ -44,6 +44,7 @@ import org.meveo.admin.sepa.jaxb.pain001.PaymentTypeInformation19;
 import org.meveo.admin.sepa.jaxb.pain001.RemittanceInformation5;
 import org.meveo.admin.sepa.jaxb.pain008.AccountIdentification4Choice;
 import org.meveo.admin.sepa.jaxb.pain008.ActiveOrHistoricCurrencyAndAmount;
+import org.meveo.admin.sepa.jaxb.pain008.AmendmentInformationDetails6;
 import org.meveo.admin.sepa.jaxb.pain008.BranchAndFinancialInstitutionIdentification4;
 import org.meveo.admin.sepa.jaxb.pain008.CashAccount16;
 import org.meveo.admin.sepa.jaxb.pain008.CustomerDirectDebitInitiationV02;
@@ -51,6 +52,7 @@ import org.meveo.admin.sepa.jaxb.pain008.DirectDebitTransaction6;
 import org.meveo.admin.sepa.jaxb.pain008.DirectDebitTransactionInformation9;
 import org.meveo.admin.sepa.jaxb.pain008.Document;
 import org.meveo.admin.sepa.jaxb.pain008.FinancialInstitutionIdentification7;
+import org.meveo.admin.sepa.jaxb.pain008.GenericAccountIdentification1;
 import org.meveo.admin.sepa.jaxb.pain008.GenericPersonIdentification1;
 import org.meveo.admin.sepa.jaxb.pain008.GroupHeader39;
 import org.meveo.admin.sepa.jaxb.pain008.LocalInstrument2Choice;
@@ -76,6 +78,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.MandateChangeAction;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -505,6 +508,9 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		catch (Exception e) {
 			throw new BusinessException(e);
 		}
+
+		addEventForChangingIban(paymentInformations, mandateRelatedInformation);
+
 		BranchAndFinancialInstitutionIdentification4 debtorAgent = new BranchAndFinancialInstitutionIdentification4();
 		directDebitTransactionInformation.setDbtrAgt(debtorAgent);
 		FinancialInstitutionIdentification7 financialInstitutionIdentification = new FinancialInstitutionIdentification7();
@@ -520,6 +526,35 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		AccountIdentification4Choice identification = new AccountIdentification4Choice();
 		identification.setIBAN((String) paymentInformations[5]);
 		debtorAccount.setId(identification);
+	}
+
+	/**
+	 * Add event SMNDA to prevent change of IBAN
+	 *
+	 * @param paymentInformations       DD payment infomation details
+	 * @param mandateRelatedInformation tag where the event change will be added
+	 */
+	private void addEventForChangingIban(Object[] paymentInformations, MandateRelatedInformation6 mandateRelatedInformation) {
+		Long idPaymentMethod = (Long) paymentInformations[10];
+
+		if (MandateChangeAction.TO_ADVERTISE == paymentInformations[9]) {
+			AmendmentInformationDetails6 amendmentInformationDetails6 = new AmendmentInformationDetails6();
+			CashAccount16 cashAccount16 = new CashAccount16();
+			AccountIdentification4Choice accountIdentification4Choice = new AccountIdentification4Choice();
+			GenericAccountIdentification1 genericAccountIdentification1 = new GenericAccountIdentification1();
+
+			amendmentInformationDetails6.setOrgnlDbtrAgtAcct(cashAccount16);
+			cashAccount16.setId(accountIdentification4Choice);
+			accountIdentification4Choice.setOthr(genericAccountIdentification1);
+
+			genericAccountIdentification1.setId("SMNDA");
+
+			mandateRelatedInformation.setAmdmntInfDtls(amendmentInformationDetails6);
+
+			// Update PaymentToken to ADVERTISED
+			paymentMethodService.updateMandateChangeAction(idPaymentMethod, MandateChangeAction.ADVERTISED);
+
+		}
 	}
 
 	private Object[] getPreferredPaymentMethod(Long ddRequestItemID) {

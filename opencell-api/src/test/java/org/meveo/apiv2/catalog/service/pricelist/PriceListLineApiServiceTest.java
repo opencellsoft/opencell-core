@@ -3,6 +3,7 @@ package org.meveo.apiv2.catalog.service.pricelist;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
@@ -16,6 +17,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
+import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -86,6 +88,7 @@ public class PriceListLineApiServiceTest {
 
         PriceList priceList = new PriceList();
         priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.DRAFT);
         when(priceListService.findByCode(givenDto.getPriceListCode())).thenReturn(priceList);
         when(offerTemplateService.findByCode(givenDto.getOfferTemplateCode())).thenReturn(new OfferTemplate());
         when(offerTemplateCategoryService.findByCode(givenDto.getOfferCategoryCode())).thenReturn(new OfferTemplateCategory());
@@ -117,6 +120,97 @@ public class PriceListLineApiServiceTest {
         assertThat(entityToCheck.getRate().doubleValue()).isEqualTo(givenDto.getRate());
         assertThat(entityToCheck.getDescription()).isEqualTo(givenDto.getDescription());
     }
+
+    @Test
+    public void create_givenActivePriceListShouldTriggerError() {
+        // given
+        var priceListCode = "a-price-list";
+        var givenDto = ImmutablePriceListLineDto.builder()
+                                                .priceListCode(priceListCode)
+                                                .description("a-description")
+                                                .applicationEl("an-application-el")
+                                                .offerCategoryCode("an-offer-category")
+                                                .offerTemplateCode("an-offer-template")
+                                                .productCode("a-product")
+                                                .productCategoryCode("a-product-category")
+                                                .chargeTemplateCode("a-charge-template")
+                                                .rate(123.456d)
+                                                .amount(BigDecimal.valueOf(123456.789))
+                                                .pricePlanCode("a-price-plan-code")
+                                                .customFields(new CustomFieldsDto())
+                                                .build();
+
+        PriceList priceList = new PriceList();
+        priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.ACTIVE);
+        when(priceListService.findByCode(givenDto.getPriceListCode())).thenReturn(priceList);
+
+        // when + then
+        assertThatThrownBy(() -> priceListLineApiService.create(givenDto))
+                .isInstanceOf(BusinessApiException.class)
+                .hasMessageContaining("PriceList Line cannot be created for PriceList status other than DRAFT");
+    }
+
+    @Test
+    public void create_givenClosedPriceListShouldTriggerError() {
+        // given
+        var priceListCode = "a-price-list";
+        var givenDto = ImmutablePriceListLineDto.builder()
+                                                .priceListCode(priceListCode)
+                                                .description("a-description")
+                                                .applicationEl("an-application-el")
+                                                .offerCategoryCode("an-offer-category")
+                                                .offerTemplateCode("an-offer-template")
+                                                .productCode("a-product")
+                                                .productCategoryCode("a-product-category")
+                                                .chargeTemplateCode("a-charge-template")
+                                                .rate(123.456d)
+                                                .amount(BigDecimal.valueOf(123456.789))
+                                                .pricePlanCode("a-price-plan-code")
+                                                .customFields(new CustomFieldsDto())
+                                                .build();
+
+        PriceList priceList = new PriceList();
+        priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.CLOSED);
+        when(priceListService.findByCode(givenDto.getPriceListCode())).thenReturn(priceList);
+
+        // when + then
+        assertThatThrownBy(() -> priceListLineApiService.create(givenDto))
+                .isInstanceOf(BusinessApiException.class)
+                .hasMessageContaining("PriceList Line cannot be created for PriceList status other than DRAFT");
+    }
+
+    @Test
+    public void create_givenArchivedPriceListShouldTriggerError() {
+        // given
+        var priceListCode = "a-price-list";
+        var givenDto = ImmutablePriceListLineDto.builder()
+                                                .priceListCode(priceListCode)
+                                                .description("a-description")
+                                                .applicationEl("an-application-el")
+                                                .offerCategoryCode("an-offer-category")
+                                                .offerTemplateCode("an-offer-template")
+                                                .productCode("a-product")
+                                                .productCategoryCode("a-product-category")
+                                                .chargeTemplateCode("a-charge-template")
+                                                .rate(123.456d)
+                                                .amount(BigDecimal.valueOf(123456.789))
+                                                .pricePlanCode("a-price-plan-code")
+                                                .customFields(new CustomFieldsDto())
+                                                .build();
+
+        PriceList priceList = new PriceList();
+        priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.ARCHIVED);
+        when(priceListService.findByCode(givenDto.getPriceListCode())).thenReturn(priceList);
+
+        // when + then
+        assertThatThrownBy(() -> priceListLineApiService.create(givenDto))
+                .isInstanceOf(BusinessApiException.class)
+                .hasMessageContaining("PriceList Line cannot be created for PriceList status other than DRAFT");
+    }
+
 
     @Test
     public void create_givenMissingMandatoryFieldsShouldTriggerError() {
@@ -155,6 +249,7 @@ public class PriceListLineApiServiceTest {
 
         PriceList priceList = new PriceList();
         priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.DRAFT);
         OfferTemplate offer = new OfferTemplate();
         offer.setCode("an-offer-template");
         when(offerTemplateService.findByCode(givenDto.getOfferTemplateCode())).thenReturn(offer);
@@ -173,6 +268,7 @@ public class PriceListLineApiServiceTest {
 
         PriceListLine priceListLineToUpdate = new PriceListLine();
         priceListLineToUpdate.setCode("e-price-list-line-code");
+        priceListLineToUpdate.setPriceList(priceList);
         when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
 
         // when
@@ -216,6 +312,7 @@ public class PriceListLineApiServiceTest {
 
         PriceList priceList = new PriceList();
         priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.DRAFT);
 
         PriceListLine priceListLineToUpdate = new PriceListLine();
         priceListLineToUpdate.setCode("e-price-list-line-code");
@@ -239,7 +336,7 @@ public class PriceListLineApiServiceTest {
         ProductLine productCategory = new ProductLine();
         productCategory.setCode("initial-product-line");
         priceListLineToUpdate.setProductCategory(productCategory);
-
+        priceListLineToUpdate.setPriceList(priceList);
         when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
 
 
@@ -272,6 +369,114 @@ public class PriceListLineApiServiceTest {
     }
 
     @Test
+    public void update_givenActivePriceListShouldTriggerError() {
+        // given
+        var priceListCode = "a-price-list";
+        var priceListLineId = 10001L;
+        var givenDto = ImmutablePriceListLineDto.builder()
+                                                .priceListCode(priceListCode)
+                                                .code("a-price-list-line-code")
+                                                .description("a-description")
+                                                .applicationEl("an-application-el")
+                                                .offerCategoryCode("an-offer-category")
+                                                .offerTemplateCode("an-offer-template")
+                                                .productCode("a-product")
+                                                .productCategoryCode("a-product-category")
+                                                .chargeTemplateCode("a-charge-template")
+                                                .rate(123.456d)
+                                                .amount(BigDecimal.valueOf(123456.789))
+                                                .pricePlanCode("a-price-plan-code")
+                                                .build();
+
+        PriceList priceList = new PriceList();
+        priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.ACTIVE);
+
+        PriceListLine priceListLineToUpdate = new PriceListLine();
+        priceListLineToUpdate.setCode("e-price-list-line-code");
+        priceListLineToUpdate.setPriceList(priceList);
+        when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
+
+        // when + then
+        assertThatThrownBy(() -> priceListLineApiService.update(priceListLineId, givenDto))
+                .isInstanceOf(BusinessApiException.class)
+                .hasMessageContaining("PriceList Line cannot be updated for PriceList status other than DRAFT");
+
+    }
+
+    @Test
+    public void update_givenClosedPriceListShouldTriggerError() {
+        // given
+        var priceListCode = "a-price-list";
+        var priceListLineId = 10001L;
+        var givenDto = ImmutablePriceListLineDto.builder()
+                                                .priceListCode(priceListCode)
+                                                .code("a-price-list-line-code")
+                                                .description("a-description")
+                                                .applicationEl("an-application-el")
+                                                .offerCategoryCode("an-offer-category")
+                                                .offerTemplateCode("an-offer-template")
+                                                .productCode("a-product")
+                                                .productCategoryCode("a-product-category")
+                                                .chargeTemplateCode("a-charge-template")
+                                                .rate(123.456d)
+                                                .amount(BigDecimal.valueOf(123456.789))
+                                                .pricePlanCode("a-price-plan-code")
+                                                .build();
+
+        PriceList priceList = new PriceList();
+        priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.CLOSED);
+
+        PriceListLine priceListLineToUpdate = new PriceListLine();
+        priceListLineToUpdate.setCode("e-price-list-line-code");
+        priceListLineToUpdate.setPriceList(priceList);
+        when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
+
+        // when + then
+        assertThatThrownBy(() -> priceListLineApiService.update(priceListLineId, givenDto))
+                .isInstanceOf(BusinessApiException.class)
+                .hasMessageContaining("PriceList Line cannot be updated for PriceList status other than DRAFT");
+
+    }
+
+    @Test
+    public void update_givenArchivedPriceListShouldTriggerError() {
+        // given
+        var priceListCode = "a-price-list";
+        var priceListLineId = 10001L;
+        var givenDto = ImmutablePriceListLineDto.builder()
+                                                .priceListCode(priceListCode)
+                                                .code("a-price-list-line-code")
+                                                .description("a-description")
+                                                .applicationEl("an-application-el")
+                                                .offerCategoryCode("an-offer-category")
+                                                .offerTemplateCode("an-offer-template")
+                                                .productCode("a-product")
+                                                .productCategoryCode("a-product-category")
+                                                .chargeTemplateCode("a-charge-template")
+                                                .rate(123.456d)
+                                                .amount(BigDecimal.valueOf(123456.789))
+                                                .pricePlanCode("a-price-plan-code")
+                                                .build();
+
+        PriceList priceList = new PriceList();
+        priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.ARCHIVED);
+
+        PriceListLine priceListLineToUpdate = new PriceListLine();
+        priceListLineToUpdate.setCode("e-price-list-line-code");
+        priceListLineToUpdate.setPriceList(priceList);
+        when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
+
+        // when + then
+        assertThatThrownBy(() -> priceListLineApiService.update(priceListLineId, givenDto))
+                .isInstanceOf(BusinessApiException.class)
+                .hasMessageContaining("PriceList Line cannot be updated for PriceList status other than DRAFT");
+
+    }
+
+    @Test
     public void update_givenBlankFieldsShouldUpdate() {
         // given
         var priceListCode = "a-price-list";
@@ -293,9 +498,14 @@ public class PriceListLineApiServiceTest {
 
         PriceList priceList = new PriceList();
         priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.DRAFT);
+        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(new UsageChargeTemplate());
 
         PriceListLine priceListLineToUpdate = new PriceListLine();
+        priceListLineToUpdate.setDescription("e-description");
         priceListLineToUpdate.setCode("e-price-list-line-code");
+        priceListLineToUpdate.setRate(BigDecimal.valueOf(123));
+        priceListLineToUpdate.setAmount(BigDecimal.valueOf(123));
 
         OfferTemplateCategory offerCategory = new OfferTemplateCategory();
         offerCategory.setCode("initial-offer-category");
@@ -316,6 +526,9 @@ public class PriceListLineApiServiceTest {
         ProductLine productCategory = new ProductLine();
         productCategory.setCode("initial-product-line");
         priceListLineToUpdate.setProductCategory(productCategory);
+
+        priceListLineToUpdate.setApplicationEl("e-application-el");
+        priceListLineToUpdate.setPriceList(priceList);
 
         when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
 
@@ -384,6 +597,7 @@ public class PriceListLineApiServiceTest {
 
         PriceList priceList = new PriceList();
         priceList.setCode(priceListCode);
+        priceList.setStatus(PriceListStatusEnum.DRAFT);
 
         PriceListLine priceListLineToUpdate = new PriceListLine();
         priceListLineToUpdate.setDescription("e-description");
@@ -397,6 +611,7 @@ public class PriceListLineApiServiceTest {
         priceListLineToUpdate.setOfferTemplate(new OfferTemplate());
         priceListLineToUpdate.setOfferCategory(new OfferTemplateCategory());
         priceListLineToUpdate.setApplicationEl("e-application-el");
+        priceListLineToUpdate.setPriceList(priceList);
 
 
         when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
@@ -412,8 +627,11 @@ public class PriceListLineApiServiceTest {
     @Test
     public void delete_shouldDeletePriceListLine() {
         // given
+        PriceList priceList = new PriceList();
+        priceList.setStatus(PriceListStatusEnum.DRAFT);
         Long priceListLineId = 10001L;
         PriceListLine priceListLineToDelete = new PriceListLine();
+        priceListLineToDelete.setPriceList(priceList);
         when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToDelete);
 
         // when
@@ -422,6 +640,54 @@ public class PriceListLineApiServiceTest {
         // then
         verify(priceListLineService).findById(priceListLineId);
         verify(priceListLineService).remove(priceListLineToDelete);
+    }
+
+    @Test
+    public void delete_givenActivePriceListShouldTriggerError() {
+        // given
+        PriceList priceList = new PriceList();
+        priceList.setStatus(PriceListStatusEnum.ACTIVE);
+        Long priceListLineId = 10001L;
+        PriceListLine priceListLineToDelete = new PriceListLine();
+        priceListLineToDelete.setPriceList(priceList);
+        when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToDelete);
+
+        // when + then
+        assertThatThrownBy(() -> priceListLineApiService.delete(priceListLineId))
+                .isInstanceOf(BusinessApiException.class)
+                .hasMessageContaining("PriceList Line cannot be deleted for PriceList status other than DRAFT");
+    }
+
+    @Test
+    public void delete_givenClosedPriceListShouldTriggerError() {
+        // given
+        PriceList priceList = new PriceList();
+        priceList.setStatus(PriceListStatusEnum.CLOSED);
+        Long priceListLineId = 10001L;
+        PriceListLine priceListLineToDelete = new PriceListLine();
+        priceListLineToDelete.setPriceList(priceList);
+        when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToDelete);
+
+        // when + then
+        assertThatThrownBy(() -> priceListLineApiService.delete(priceListLineId))
+                .isInstanceOf(BusinessApiException.class)
+                .hasMessageContaining("PriceList Line cannot be deleted for PriceList status other than DRAFT");
+    }
+
+    @Test
+    public void delete_givenArchivedPriceListShouldTriggerError() {
+        // given
+        PriceList priceList = new PriceList();
+        priceList.setStatus(PriceListStatusEnum.ARCHIVED);
+        Long priceListLineId = 10001L;
+        PriceListLine priceListLineToDelete = new PriceListLine();
+        priceListLineToDelete.setPriceList(priceList);
+        when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToDelete);
+
+        // when + then
+        assertThatThrownBy(() -> priceListLineApiService.delete(priceListLineId))
+                .isInstanceOf(BusinessApiException.class)
+                .hasMessageContaining("PriceList Line cannot be deleted for PriceList status other than DRAFT");
     }
 
     @Test

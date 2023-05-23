@@ -256,6 +256,9 @@ public class BillingAccountDto extends AccountDto {
     @Schema(description = "The exemption reason")
     private String exemptionReason;
 
+    @Schema(description = "The default Price List")
+    private String priceListCode;
+
     public String getIsoICDCode() {
         return isoICDCode;
     }
@@ -955,5 +958,21 @@ public class BillingAccountDto extends AccountDto {
 
     public void setExemptionReason(String exemptionReason) {
         this.exemptionReason = exemptionReason;
+    }
+
+    /**
+     * PriceListCode Getter
+     * @return the priceListCode
+     */
+    public String getPriceListCode() {
+        return priceListCode;
+    }
+
+    /**
+     * PriceListCode Setter
+     * @param priceListCode the priceListCode to set
+     */
+    public void setPriceListCode(String priceListCode) {
+        this.priceListCode = priceListCode;
     }
 }
