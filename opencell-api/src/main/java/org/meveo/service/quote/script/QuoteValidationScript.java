@@ -157,6 +157,8 @@ public class QuoteValidationScript extends ModuleScript {
 		if(StringUtils.isNotEmpty(cpqQuote.getSalesPersonName())) {
 			order.setSalesPersonName(cpqQuote.getSalesPersonName());
 		}
+
+		order.setPriceList(quoteVersion.getPriceList());
 		
 		var customFieldsFromQuoteVersion = quoteVersion.getCfValues();
 		var customFieldOrder = customFieldTemplateService.findByAppliesTo(order);
