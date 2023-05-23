@@ -134,6 +134,17 @@ public class PriceListApiService extends BaseApi {
                                                                                                           .anyMatch(ppv -> ppv.getStatus().equals(VersionStatusEnum.PUBLISHED))))
                                  .findAny()
                                  .orElseThrow(() -> new BusinessApiException("Cannot activate PriceList without lines having a price or active PricePlan"));
+                if (ListUtils.isEmtyCollection(priceListToUpdate.getBrands())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getCustomerCategories())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getCreditCategories())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getCountries())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getCurrencies())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getLegalEntities())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getPaymentMethods())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getSellers())
+                ) {
+                    throw new BusinessApiException("Cannot activate PriceList without application rules");
+                }
                 break;
             case CLOSED:
                 if(priceListToUpdate.getStatus() != PriceListStatusEnum.ACTIVE) {
