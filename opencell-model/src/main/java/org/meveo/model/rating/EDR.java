@@ -89,7 +89,8 @@ import org.meveo.model.billing.WalletOperation;
         @NamedQuery(name = "EDR.updateEdrsToReprocess", query = "update EDR e  set e.status='OPEN',e.rejectReason = NULL, e.timesTried=(case when e.timesTried is null then 1 else (e.timesTried+1) end) where e.id in :ids"),
         @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN',rejectReason = NULL where e.status='REJECTED' and e.id in :ids"),
         @NamedQuery(name = "EDR.findEDREventVersioning", query = "SELECT e from EDR e where e.status in ('OPEN', 'REJECTED', 'RATED', 'CANCELLED') and e.eventKey=:eventKey and e.eventVersion != null order by e.eventVersion DESC"),
-        @NamedQuery(name = "EDR.getByWO", query = "SELECT edr FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)")
+        @NamedQuery(name = "EDR.getByWO", query = "SELECT edr FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)"),
+        @NamedQuery(name = "EDR.deleteByWO", query = "DELETE FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)")
     })
 public class EDR extends BaseEntity {
 
