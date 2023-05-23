@@ -135,7 +135,8 @@ public interface GenericResource {
                     @ApiResponse(responseCode = "404", description = "the full list of entities not found",
                             content = @Content(schema = @Schema(implementation = ApiException.class)))
             })
-    Response getFullListEntities();
+    Response getFullListEntities(	@Parameter(description = "onlyBusinessEntities to be able to get only entities extending BusinessEntity.") @QueryParam("onlyBusinessEntities") boolean onlyBusinessEntities,
+    								@Parameter(description = "withFullName to be able to get the canonical names") @QueryParam("withFullName") boolean withFullName);
 
     @GET
     @Path("/entities/{entityName}")
