@@ -1922,12 +1922,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id",
                     "useSpecificPriceConversion as use_specific_price_conversion",
-                    "SUM(a.convertedUnitAmountWithoutTax) as converted_unit_amount_without_tax",
-                    "SUM(a.convertedUnitAmountTax) as converted_unit_amount_tax",
-                    "SUM(a.convertedUnitAmountWithTax) as converted_unit_amount_with_tax",
-                    "SUM(a.convertedAmountWithoutTax) as sum_converted_amount_without_tax", 
-                    "SUM(a.convertedAmountTax) as sum_converted_amount_tax",
-                    "SUM(a.convertedAmountWithTax) as sum_converted_amount_with_tax"));
+                    "SUM(a.transactionalUnitAmountWithoutTax) as converted_unit_amount_without_tax",
+                    "SUM(a.transactionalUnitAmountTax) as converted_unit_amount_tax",
+                    "SUM(a.transactionalUnitAmountWithTax) as converted_unit_amount_with_tax",
+                    "SUM(a.transactionalAmountWithoutTax) as sum_converted_amount_without_tax",
+                    "SUM(a.transactionalAmountTax) as sum_converted_amount_tax",
+                    "SUM(a.transactionalAmountWithTax) as sum_converted_amount_with_tax"));
         } else {
             fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
                     "billingAccount.id as billing_account__id", "accountingCode.id as accounting_code_id",
@@ -1938,12 +1938,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id",
                     "useSpecificPriceConversion as use_specific_price_conversion",
-                    "convertedUnitAmountWithoutTax as converted_unit_amount_without_tax",
-                    "convertedUnitAmountTax as converted_unit_amount_tax",
-                    "convertedUnitAmountWithTax as converted_unit_amount_with_tax",
-                    "convertedAmountWithoutTax as sum_converted_amount_without_tax", 
-                    "convertedAmountTax as sum_converted_amount_tax",
-                    "convertedAmountWithTax as sum_converted_amount_with_tax"));
+                    "transactionalUnitAmountWithoutTax as converted_unit_amount_without_tax",
+                    "transactionalUnitAmountTax as converted_unit_amount_tax",
+                    "transactionalUnitAmountWithTax as converted_unit_amount_with_tax",
+                    "transactionalAmountWithoutTax as sum_converted_amount_without_tax",
+                    "transactionalAmountTax as sum_converted_amount_tax",
+                    "transactionalAmountWithTax as sum_converted_amount_with_tax"));
         }
         if(BILLINGACCOUNT != type || (BILLINGACCOUNT == type && !ignoreSubscription)) {
             fieldToFetch.add("subscription.id as subscription_id");
