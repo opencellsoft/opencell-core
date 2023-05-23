@@ -4,8 +4,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.junit.Assert;
@@ -20,12 +23,14 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.TradingPricePlanVersion;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.catalog.impl.TradingPricePlanVersionService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.service.catalog.impl.TradingPricePlanMatrixLineService;
 import org.meveo.util.ApplicationProvider;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,6 +51,9 @@ public class PricePlanMatrixVersionApiTest {
 
 	@Mock
     private TradingPricePlanVersionService tradingPricePlanVersionService;
+	
+	@Mock
+	private TradingPricePlanMatrixLineService tradingPricePlanMatrixLineService;
 
 	@Mock
     @ApplicationProvider
@@ -356,5 +364,99 @@ public class PricePlanMatrixVersionApiTest {
 
 		pricePlanMatrixVersionApi.deleteTradingPricePlanVersion(1L);
 		Assert.fail();
+	}
+	
+	@Test(expected = InvalidParameterException.class)
+	public void failCalculateTPPMSameCurrency() {
+		CurrencyDto currencyDto = new CurrencyDto();
+		currencyDto.setCode("USD");
+
+		TradingPricePlanVersionDto data = new TradingPricePlanVersionDto();
+		data.setPricePlanMatrixVersionId(1L);
+		data.setTradingCurrency(currencyDto);
+		data.setRate(BigDecimal.valueOf(10));
+		data.setTradingPrice(BigDecimal.valueOf(100));
+		data.setUseForBillingAccounts(false);
+		
+		PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
+		ppmv.setStatus(VersionStatusEnum.DRAFT);
+		
+		Mockito.when(pricePlanMatrixVersionService.findById(anyLong())).thenReturn(ppmv);
+		
+		TradingCurrency eTradingCurrency = new TradingCurrency();
+		Currency eCurrency = new Currency();
+		eCurrency.setCurrencyCode("USD");
+		eTradingCurrency.setCurrency(eCurrency);
+		
+		Mockito.when(tradingCurrencyService.findByTradingCurrencyCodeOrId(anyString(), nullable(Long.class))).thenReturn(eTradingCurrency);
+		
+		Currency eFunctionalCurrency = new Currency();
+		eFunctionalCurrency.setCurrencyCode("USD");
+		Mockito.when(appProvider.getCurrency()).thenReturn(eFunctionalCurrency);
+		
+		pricePlanMatrixVersionApi.calculateTradingPricePlanMatrixLine(data);
+		Assert.fail();
+	}
+	
+	@Test(expected = BusinessException.class)
+	public void failCalculateTPPMInvalidStatus() {
+		CurrencyDto currencyDto = new CurrencyDto();
+		currencyDto.setCode("USD");
+
+		TradingPricePlanVersionDto data = new TradingPricePlanVersionDto();
+		data.setPricePlanMatrixVersionId(1L);
+		data.setTradingCurrency(currencyDto);
+		data.setRate(BigDecimal.valueOf(10));
+		data.setTradingPrice(BigDecimal.valueOf(100));
+		data.setUseForBillingAccounts(false);
+		
+		PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
+		ppmv.setStatus(VersionStatusEnum.PUBLISHED);
+		
+		Mockito.when(pricePlanMatrixVersionService.findById(anyLong())).thenReturn(ppmv);
+	
+		pricePlanMatrixVersionApi.calculateTradingPricePlanMatrixLine(data);
+		Assert.fail();
+	}
+	
+	@Test
+	public void shouldCalculateTPPM() {
+		CurrencyDto currencyDto = new CurrencyDto();
+		currencyDto.setCode("USD");
+
+		TradingPricePlanVersionDto data = new TradingPricePlanVersionDto();
+		data.setPricePlanMatrixVersionId(1L);
+		data.setTradingCurrency(currencyDto);
+		data.setRate(BigDecimal.valueOf(10));
+		data.setTradingPrice(BigDecimal.valueOf(100));
+		data.setUseForBillingAccounts(false);
+		
+		PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
+		ppmv.setStatus(VersionStatusEnum.DRAFT);
+		PricePlanMatrixLine ppml1 = new PricePlanMatrixLine();
+		ppml1.setValue(BigDecimal.TEN);
+		PricePlanMatrixLine ppml2 = new PricePlanMatrixLine();
+		ppml2.setValue(BigDecimal.ONE);
+		ppmv.getLines().add(ppml1);
+		ppmv.getLines().add(ppml2);
+		
+		Mockito.when(pricePlanMatrixVersionService.findById(anyLong())).thenReturn(ppmv);
+		
+		TradingCurrency eTradingCurrency = new TradingCurrency();
+		Currency eCurrency = new Currency();
+		eCurrency.setCurrencyCode("USD");
+		eTradingCurrency.setCurrency(eCurrency);
+		
+		Mockito.when(tradingCurrencyService.findByTradingCurrencyCodeOrId(anyString(), nullable(Long.class))).thenReturn(eTradingCurrency);
+		
+		Currency eFunctionalCurrency = new Currency();
+		eFunctionalCurrency.setCurrencyCode("EUR");
+		Mockito.when(appProvider.getCurrency()).thenReturn(eFunctionalCurrency);
+		
+		Mockito.when(tradingPricePlanMatrixLineService.getByPricePlanMatrixVersionAndCurrency(ppmv, eTradingCurrency)).thenReturn(Collections.emptyList());
+		
+		pricePlanMatrixVersionApi.calculateTradingPricePlanMatrixLine(data);
+        verify(tradingPricePlanMatrixLineService, times(2)).create(any());
+		Assert.assertTrue("All good", true );
 	}
 }
