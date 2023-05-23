@@ -500,6 +500,58 @@ public final class FileUtils {
     }
 
     /**
+     * unzip files into folder in file system
+     *
+     * @param folder folder name
+     * @param in input stream
+     * @throws Exception exception
+     */
+    public static void unzipFileInFileSystem(String folder, InputStream in) throws Exception {
+        folder = folder.replace("/", File.separator);
+        ZipInputStream zis = null;
+        BufferedInputStream bis = null;
+        CheckedInputStream cis = null;
+        try {
+            cis = new CheckedInputStream(in, new CRC32());
+            zis = new ZipInputStream(cis);
+            bis = new BufferedInputStream(zis);
+            ZipEntry entry = null;
+            File fileout = null;
+            while ((entry = zis.getNextEntry()) != null) {
+                fileout = new File(folder + File.separator + entry.getName());
+                if (!fileout.toString().startsWith(folder)) {
+                    throw new IOException("Entry is outside of the target directory");
+                }
+                if (entry.isDirectory()) {
+                    if (!fileout.exists()) {
+                        fileout.mkdirs();
+                    }
+                    continue;
+                }
+                if (!fileout.exists()) {
+                    new File(fileout.getParent()).mkdirs();
+                }
+                try (OutputStream fos = new FileOutputStream(fileout)) {
+                    try (BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                        int b = -1;
+                        while ((b = bis.read()) != -1) {
+                            bos.write(b);
+                        }
+                        bos.flush();
+                        fos.flush();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(bis);
+            IOUtils.closeQuietly(zis);
+            IOUtils.closeQuietly(cis);
+        }
+    }
+
+    /**
      * Compress a folder with sub folders and its files into byte array.
      * 
      * @param sourceFolder source folder
