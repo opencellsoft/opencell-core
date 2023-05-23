@@ -100,7 +100,7 @@ public class PricePlanSelectionService implements Serializable {
                 "endDate", endDate };
 
         // When matching in DB only, no PricePlanMatrix.criteriaEl and validityCalendar fields will be consulted and the highest priority will be chosen
-        boolean matchDbOnly = ParamBean.getInstance().getBooleanValue("pricePlan.default.matchDBOnly", true);
+        boolean matchDbOnly = ParamBean.getInstance().getPropertyAsBoolean("pricePlan.default.matchDBOnly", false);
 
         if (matchDbOnly) {
             TypedQuery<PricePlanMatrix> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRatingMatchDB", PricePlanMatrix.class);
@@ -110,11 +110,12 @@ public class PricePlanSelectionService implements Serializable {
             }
             query.setMaxResults(1);
 
-            PricePlanMatrix pricePlan = query.getSingleResult();
-            if (pricePlan == null) {
-                throw new NoPricePlanException("No active price plan matched for parameters " + params);
+            try {
+                PricePlanMatrix pricePlan = query.getSingleResult();
+                return pricePlan;
+            } catch (NoResultException e) {
+                throw new NoPricePlanException("No active price plan matched for parameters: " + StringUtils.concatenate(params));
             }
-            return pricePlan;
 
         } else {
             TypedQuery<PricePlanMatrixForRating> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRating", PricePlanMatrixForRating.class);
@@ -126,7 +127,7 @@ public class PricePlanSelectionService implements Serializable {
             List<PricePlanMatrixForRating> chargePricePlans = query.getResultList();
             PricePlanMatrixForRating pricePlan = matchPricePlan(chargePricePlans, bareWo, buyerCountryId, buyerCurrency);
             if (pricePlan == null) {
-                throw new NoPricePlanException("No active price plan matched for parameters " + params);
+                throw new NoPricePlanException("No active price plan matched for parameters: " + StringUtils.concatenate(params));
             }
             return em.getReference(PricePlanMatrix.class, pricePlan.getId());
         }

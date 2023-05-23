@@ -248,7 +248,7 @@ public class UsageRatingService extends RatingService implements Serializable {
     public void ratePostpaidUsage(Long edrId) throws BusinessException, RatingException {
 
         try {
-            methodCallingUtils.callMethodInNewTx(()->rateUsageInNewTransaction(edrId, false, 0, 0));
+            methodCallingUtils.callMethodInNewTx(()->rateUsage(edrId, false, 0, 0));
 
         } catch (RatingException e) {
             log.trace("Failed to rate EDR {}: {}", edrId, e.getRejectionReason());
@@ -338,9 +338,7 @@ public class UsageRatingService extends RatingService implements Serializable {
      * @throws BusinessException General exception.
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public RatingResult rateUsageInNewTransaction(Long edrId, boolean rateTriggeredEdr, int maxDeep, int currentRatingDepth) throws BusinessException, RatingException {
+    public RatingResult rateUsage(Long edrId, boolean rateTriggeredEdr, int maxDeep, int currentRatingDepth) throws BusinessException, RatingException {
 
         EDR edr = findEdrByIdandSubscription(edrId);
         return rateUsage(edr, false, rateTriggeredEdr, maxDeep, currentRatingDepth, null, false);
@@ -647,8 +645,6 @@ public class UsageRatingService extends RatingService implements Serializable {
         return result;
     }
 
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void rejectEDR(Long edrId, Exception e) {
         EDR edr = edrService.findById(edrId);
         rejectEDR(edr, e, true, true);

@@ -97,7 +97,7 @@ public class BillingRunJobBean extends BaseJobBean {
                 billingCycleType = BillingProcessTypesEnum.getValue(Integer.valueOf(billingCycleTypeId));
             }
             ParamBean param = paramBeanFactory.getInstance();
-            boolean isAllowed = param.getBooleanValue("billingRun.allowManyInvoicing", true);
+            boolean isAllowed = param.getPropertyAsBoolean("billingRun.allowManyInvoicing", true);
             log.info("launchInvoicing allowManyInvoicing={}", isAllowed);
 
             result.setNbItemsToProcess(billingCyclesCode.size());
