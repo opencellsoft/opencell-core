@@ -41,6 +41,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
+import org.meveo.model.payments.MandateChangeAction;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -594,5 +595,11 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             log.warn("error while getting list PaymentMethod by Iban and BicFi", e);
             return new ArrayList<>();
         }
+    }
+
+    public void updateMandateChangeAction(Long idPaymentMethod, MandateChangeAction newAction) {
+        PaymentMethod paymentMethod = findById(idPaymentMethod);
+        paymentMethod.setMandateChangeAction(newAction);
+        super.update(paymentMethod);
     }
 }
