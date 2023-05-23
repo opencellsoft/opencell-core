@@ -470,8 +470,8 @@
         <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
         <createSequence sequenceName="meveo_script_parameter_seq"/>
         <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
-        <createSequence sequenceName="cpq_converted_price_plan_version_seq" startValue="1" />
-        <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
+        <createSequence sequenceName="cpq_trading_price_plan_version_seq" startValue="1" />
+        <createSequence sequenceName="cpq_trading_price_plan_matrix_line_sq" startValue="1" />
 	    <createSequence sequenceName="ar_unmatching_code_seq" startValue="1"/>
         <createSequence sequenceName="ar_unmatching_amount_seq" startValue="1"/>
         <createSequence sequenceName="cat_price_list_seq" startValue="1" />
@@ -2760,6 +2760,7 @@
             <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
             	<constraints nullable="false" />
             </column>
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -12462,7 +12463,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe">
+    <changeSet id="#INTRD-16039_20230512-rebuild" author="a.rouaguebe">
         <createTable tableName="cat_price_list_line">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_price_list_line_pk" />
@@ -12497,25 +12498,25 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="#INTRD-16036_20230516" author="zelmeliani" >
+    <changeSet id="#INTRD-16036_20230516-rebuild" author="zelmeliani" >
         <createTable tableName="cat_price_list_customer_brand">
             <column name="price_list_id" type="bigint" />
             <column name="customer_brand_id" type="bigint" />
         </createTable>
         <addPrimaryKey columnNames="price_list_id, customer_brand_id" constraintName="cat_price_list_customer_brand_pkey" tableName="cat_price_list_customer_brand" />
-        
+
         <createTable tableName="cat_price_list_customer_category">
             <column name="price_list_id" type="bigint" />
             <column name="customer_category_id" type="bigint" />
         </createTable>
         <addPrimaryKey columnNames="price_list_id, customer_category_id" constraintName="cat_price_list_customer_category_pkey" tableName="cat_price_list_customer_category" />
-        
+
         <createTable tableName="cat_price_list_credit_category">
             <column name="price_list_id" type="bigint" />
             <column name="credit_category_id" type="bigint" />
         </createTable>
         <addPrimaryKey columnNames="price_list_id, credit_category_id" constraintName="cat_price_list_credit_category_pkey" tableName="cat_price_list_credit_category" />
-        
+
         <createTable tableName="cat_price_list_country">
             <column name="price_list_id" type="bigint" />
             <column name="country_id" type="bigint" />
@@ -12536,9 +12537,8 @@
 
         <createTable tableName="cat_price_list_payment_method">
             <column name="price_list_id" type="bigint" />
-            <column name="payment_method_id" type="bigint" />
+            <column name="payment_method" type="varchar(50)" />
         </createTable>
-        <addPrimaryKey columnNames="price_list_id, payment_method_id" constraintName="cat_price_list_payment_method_pkey" tableName="cat_price_list_payment_method" />
 
         <createTable tableName="cat_price_list_seller">
             <column name="price_list_id" type="bigint" />
@@ -12596,9 +12596,9 @@
     </changeSet>
     
     <changeSet id="#INTRD-12614_20221227_BUILD_TABLE" author="TarikFA.">
-       <createTable tableName="cpq_converted_price_plan_matrix_line">
+       <createTable tableName="cpq_trading_price_plan_matrix_line">
        		<column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_converted_plan_matrix_line" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_trading_plan_matrix_line" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -12608,7 +12608,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             
-            <column name="converted_value" type="numeric(23, 12)" />
+            <column name="trading_value" type="numeric(23, 12)" />
             <column name="trading_currency_id" type="bigint" />
             <column name="rate" type="numeric(23, 12)" />
             <column name="use_for_billing_accounts" type="${type.boolean}" />
@@ -16965,16 +16965,16 @@
     
     
      <changeSet id="#INTRD-12614_20221227_fk" author="hichamELHALOUI">
-        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+        <addForeignKeyConstraint baseTableName="cpq_trading_price_plan_matrix_line"
                                  baseColumnNames="trading_currency_id"
-                                 constraintName="fk_cpq_converted_price_plan_matrix_line_id"
+                                 constraintName="fk_cpq_trading_price_plan_matrix_line_id"
                                  referencedTableName="billing_trading_currency"
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
                                  
                                  
-        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+        <addForeignKeyConstraint baseTableName="cpq_trading_price_plan_matrix_line"
                                  baseColumnNames="price_plan_matrix_line_id"
                                  constraintName="fk_price_plan_matrix_line_id"
                                  referencedTableName="cpq_price_plan_matrix_line"
@@ -17063,104 +17063,98 @@
 			baseTableName="cat_price_list_customer_brand"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_customer_brand_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_customer_brand"
 			baseColumnNames="customer_brand_id"
 			constraintName="cat_price_list_customer_brand_cb_fk"
-			referencedTableName="crm_customer_brand" 
+			referencedTableName="crm_customer_brand"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_customer_category"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_customer_category_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_customer_category"
 			baseColumnNames="customer_category_id"
 			constraintName="cat_price_list_customer_category_cc_fk"
-			referencedTableName="crm_customer_category" 
+			referencedTableName="crm_customer_category"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_credit_category"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_credit_category_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_credit_category"
 			baseColumnNames="credit_category_id"
 			constraintName="cat_price_list_credit_category_cc_fk"
-			referencedTableName="ar_credit_category" 
+			referencedTableName="ar_credit_category"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_country"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_country_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_country"
 			baseColumnNames="country_id"
 			constraintName="cat_price_list_country_c_fk"
-			referencedTableName="adm_country" 
+			referencedTableName="adm_country"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_currency"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_currency_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_currency"
 			baseColumnNames="currency_id"
 			constraintName="cat_price_list_currency_c_fk"
-			referencedTableName="adm_currency" 
+			referencedTableName="adm_currency"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_legal_entity"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_legal_entity_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_legal_entity"
 			baseColumnNames="legal_entity_id"
 			constraintName="cat_price_list_legal_entity_le_fk"
-			referencedTableName="adm_title" 
+			referencedTableName="adm_title"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_payment_method"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_payment_method_pli_fk"
-			referencedTableName="cat_price_list" 
-            referencedColumnNames="id" />
-		<addForeignKeyConstraint
-			baseTableName="cat_price_list_payment_method"
-			baseColumnNames="payment_method_id"
-			constraintName="cat_price_list_payment_method_pm_fk"
-			referencedTableName="ar_payment_token" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 
         <addForeignKeyConstraint
 			baseTableName="cat_price_list_seller"
 			baseColumnNames="price_list_id"
 			constraintName="cat_price_list_seller_pli_fk"
-			referencedTableName="cat_price_list" 
+			referencedTableName="cat_price_list"
             referencedColumnNames="id" />
 		<addForeignKeyConstraint
 			baseTableName="cat_price_list_seller"
 			baseColumnNames="seller_id"
 			constraintName="cat_price_list_seller_s_fk"
-			referencedTableName="crm_seller" 
+			referencedTableName="crm_seller"
             referencedColumnNames="id" />
     </changeSet>
     <!-- end fk -->
@@ -18450,9 +18444,9 @@
     
 
 	<changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
-        <createTable tableName="cpq_converted_price_plan_version">
+        <createTable tableName="cpq_trading_price_plan_version">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_converted_price_plan_version_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_trading_price_plan_version_pkey" />
             </column>
             <column name="version" type="int4" />
             <column name="creator" type="varchar(100)" />
@@ -18462,7 +18456,7 @@
             <column name="updated" type="datetime" />
             <column name="updater" type="varchar(100)" />
             <column name="price_plan_matrix_version_id" type="bigint" />
-            <column name="converted_price" type="numeric(23, 12)" />
+            <column name="trading_price" type="numeric(23, 12)" />
             <column name="trading_currency_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -20053,7 +20047,13 @@
     <changeSet id="#INTRD-16256_20230515" author="ZBariki" />
     <changeSet id="#INTRD-13867_20230220" author="aeljaouhari" />
     <changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
+	<changeSet id="#INTRD-15044_20230517" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-15501_20230413" author="ThangNguyen" />
+    <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe" />
     <changeSet id="#INTRD-16040_20230516" author="a.rouaguebe" />
+    <changeSet id="#INTRD-16036_20230516" author="zelmeliani" />
+    <changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
+
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
