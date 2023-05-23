@@ -466,21 +466,26 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         Date transactionDate = parseDateWithPattern(dateFormat.format(accountOperation.getTransactionDate()), DATE_FORMAT_PATTERN);
         BigDecimal currentRate = transactionalCurrency.getExchangeRate(transactionDate) != null? transactionalCurrency.getExchangeRate(transactionDate).getExchangeRate() : null;
 
-        AccountOperation exchangeDeltaAccountOperation = new AccountOperation();
         if (currentRate != null) {
-            BigDecimal amontAppliedRate = matchingAmount.getMatchingAmount().multiply(appliedRate);
-            BigDecimal amontCurrentRate = amontAppliedRate.divide(currentRate);
-            if (currentRate.compareTo(appliedRate) < 0) {
-                BigDecimal exchangeGain = amontAppliedRate.subtract(amontCurrentRate);
+            AccountOperation exchangeDeltaAccountOperation = new AccountOperation();
+            BigDecimal amount = matchingAmount.getMatchingAmount().divide(appliedRate);
+            BigDecimal exchangeAmountDelta = amount.subtract(accountOperation.getMatchingAmount());
+            BigDecimal exchangeAmount = exchangeAmountDelta.abs();
+            if (exchangeAmountDelta.compareTo(ZERO) < 0) {
                 exchangeDeltaAccountOperation.setCode("XCH_GAIN");
-                exchangeDeltaAccountOperation.setAmount(exchangeGain);
-                exchangeDeltaAccountOperation.setMatchingAmount(exchangeGain);
+                exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.DEBIT);
             } else {
-                BigDecimal exchangeLoss = amontCurrentRate.subtract(amontAppliedRate);
                 exchangeDeltaAccountOperation.setCode("XCH_LOSS");
-                exchangeDeltaAccountOperation.setAmount(exchangeLoss);
-                exchangeDeltaAccountOperation.setMatchingAmount(exchangeLoss);
+                exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
             }
+            exchangeDeltaAccountOperation.setCustomerAccount(accountOperation.getCustomerAccount());
+            exchangeDeltaAccountOperation.setAccountingCode(accountOperation.getAccountingCode());
+            exchangeDeltaAccountOperation.setMatchingStatus(accountOperation.getMatchingStatus());
+            exchangeDeltaAccountOperation.setJournal(accountOperation.getJournal());
+            exchangeDeltaAccountOperation.setAccountCodeClientSide(accountOperation.getAccountCodeClientSide());
+            exchangeDeltaAccountOperation.setTransactionDate(new Date());
+            exchangeDeltaAccountOperation.setAmount(exchangeAmount);
+            exchangeDeltaAccountOperation.setMatchingAmount(exchangeAmount);
             exchangeDeltaAccountOperation.setTransactionalMatchingAmount(ZERO);
             exchangeDeltaAccountOperation.setTransactionalAmount(ZERO);
             exchangeDeltaAccountOperation.setTransactionalUnMatchingAmount(ZERO);
