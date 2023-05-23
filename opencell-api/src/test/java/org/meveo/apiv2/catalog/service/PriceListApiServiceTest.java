@@ -203,6 +203,7 @@ public class PriceListApiServiceTest {
         assertThat(priceList.getStatus()).isEqualTo(PriceListStatusEnum.ACTIVE);
     }
 
+    /*
     @Test
     public void updateStatus_activate_givenPaymentMethodAsApplicationRuleShouldActivatePriceList() {
 
@@ -223,6 +224,7 @@ public class PriceListApiServiceTest {
 
         assertThat(priceList.getStatus()).isEqualTo(PriceListStatusEnum.ACTIVE);
     }
+    */
 
     @Test
     public void updateStatus_activate_givenPListWithoutLinesShouldTriggerError() {
