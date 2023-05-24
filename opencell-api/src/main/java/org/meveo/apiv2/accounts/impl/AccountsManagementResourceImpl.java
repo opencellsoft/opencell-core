@@ -1,5 +1,7 @@
 package org.meveo.apiv2.accounts.impl;
 
+import static javax.ws.rs.core.Response.ok;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -66,6 +68,14 @@ public class AccountsManagementResourceImpl implements AccountsManagementResourc
 
 		return accountsManagementApiService.applyOneShotChargeList(applyOneShotChargeListInput);
 		
+	}
+
+	@Override
+	public Response getAllParentCustomers(String customerCode) {
+		List<Long> parentCustomerIds = accountsManagementApiService.getAllParentCustomers(customerCode);
+		return ok()
+                .entity("{\"parentCustomers\":" + parentCustomerIds + "}")
+                .build();
 	}
 
 }
