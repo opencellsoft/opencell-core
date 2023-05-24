@@ -117,7 +117,7 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
 
                     if (value != null) {
                         if (NumberUtils.isCreatable(value.toString().trim()) && !shouldEvaluateNumericValueAsString(attributeInstance)) {
-                            value = Double.valueOf(value.toString().trim());
+                            value = Double.valueOf(String.valueOf(NumberUtils.createNumber(value.toString().trim())));
                         }
 
                         AttributeValue attributeValue = new AttributeValue(attributeInstance.getAttribute(), value);
