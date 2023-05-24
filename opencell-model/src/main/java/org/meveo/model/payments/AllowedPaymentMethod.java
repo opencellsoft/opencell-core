@@ -46,7 +46,7 @@ public class AllowedPaymentMethod extends EnableBusinessCFEntity {
 	@JoinTable(name = "allowed_payment_method_channel", joinColumns = @JoinColumn(name = "allowed_payment_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "channel_id", referencedColumnName = "id"))
 	private Set<Channel> channels = new HashSet<>();
 	@ManyToOne
-	@Column(name = "payment_means_id", nullable = false)
+	@JoinColumn(name = "payment_means_id", nullable = false)
 	private UntdidPaymentMeans paymentMeans;
 	
 	@Enumerated(EnumType.STRING)
@@ -60,7 +60,7 @@ public class AllowedPaymentMethod extends EnableBusinessCFEntity {
 	private BigDecimal limitAmount;
 	
 	@ManyToOne
-	@Column(name = "provider_id")
+	@JoinColumn(name = "provider_id")
 	private Provider provider;
 	
 	public PaymentMethodEnum getSupportedPaymentMethod() {

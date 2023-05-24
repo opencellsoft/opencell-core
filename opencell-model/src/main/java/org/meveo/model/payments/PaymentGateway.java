@@ -173,7 +173,7 @@ public class PaymentGateway extends EnableBusinessCFEntity implements ISearchabl
     transient private String secretKeyKS;
 	
 	@ManyToOne
-	@Column(name = "allowed_payment_method_id")
+	@JoinColumn(name = "allowed_payment_method_id")
 	private AllowedPaymentMethod allowedPaymentMethod;
 
     /**
