@@ -70,6 +70,7 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.tax.TaxCategory;
 
 /**
@@ -388,6 +389,13 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "icd_id")
     private IsoIcd icdId;
+
+    /**
+     * Default PriceList (Optional)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "price_list_id")
+    private PriceList priceList;
     
     public IsoIcd getIcdId() {
         return icdId;
@@ -875,5 +883,22 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
 
     public void setExemptionReason(String exemptionReason) {
         this.exemptionReason = exemptionReason;
+    }
+
+
+    /**
+     * PriceList Getter
+     * @return the value
+     */
+    public PriceList getPriceList() {
+        return priceList;
+    }
+
+    /**
+     * PriceList Setter
+     * @param priceList : value to Set
+     */
+    public void setPriceList(PriceList priceList) {
+        this.priceList = priceList;
     }
 }

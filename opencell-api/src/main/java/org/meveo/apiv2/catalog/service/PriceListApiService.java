@@ -1,6 +1,5 @@
 package org.meveo.apiv2.catalog.service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -68,14 +67,14 @@ public class PriceListApiService extends BaseApi {
      * @param paymentMethods A list of {@link PaymentMethod}
      * @return {@link PriceList}
      */
-    public PriceList create(PriceList priceList, List<Long> paymentMethods) {
+    public PriceList create(PriceList priceList) {
         if (priceListService.findByCode(priceList.getCode()) != null) {
             throw new EntityAlreadyExistsException(PriceList.class, priceList.getCode());
         }
         
         setDefaultValues(priceList);
         validateMandatoryFields(priceList);
-        validateApplicationRules(priceList, paymentMethods);
+        validateApplicationRules(priceList);
         priceListService.create(priceList);
         return priceList;
     }
@@ -87,11 +86,14 @@ public class PriceListApiService extends BaseApi {
      * @param paymentMethods A list of {@link PaymentMethod}
      * @return {@link PriceList}
      */
-    public Optional<PriceList> update(PriceList priceList, String priceListCode, List<Long> paymentMethods) {
+    public Optional<PriceList> update(PriceList priceList, String priceListCode) {
     	PriceList priceListToUpdate = Optional.ofNullable(priceListService.findByCode(priceListCode)).orElseThrow(() -> new EntityDoesNotExistsException(PriceList.class, priceListCode));    	
+    	if(!PriceListStatusEnum.DRAFT.equals(priceListToUpdate.getStatus())) {
+             throw new BusinessApiException("Updating a PriceList other than DRAFT is not allowed");
+        }
     	setDefaultValues(priceList);
     	validateMandatoryFields(priceList);
-    	validateApplicationRules(priceList, paymentMethods);
+    	validateApplicationRules(priceList);
     	updatePriceListFields(priceList, priceListToUpdate);
     	updatePriceListFieldLists(priceList, priceListToUpdate);
         priceListService.update(priceListToUpdate);
@@ -135,6 +137,17 @@ public class PriceListApiService extends BaseApi {
                                                                                                           .anyMatch(ppv -> ppv.getStatus().equals(VersionStatusEnum.PUBLISHED))))
                                  .findAny()
                                  .orElseThrow(() -> new BusinessApiException("Cannot activate PriceList without lines having a price or active PricePlan"));
+                if (ListUtils.isEmtyCollection(priceListToUpdate.getBrands())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getCustomerCategories())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getCreditCategories())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getCountries())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getCurrencies())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getLegalEntities())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getPaymentMethods())
+                    && ListUtils.isEmtyCollection(priceListToUpdate.getSellers())
+                ) {
+                    throw new BusinessApiException("Cannot activate PriceList without application rules");
+                }
                 break;
             case CLOSED:
                 if(priceListToUpdate.getStatus() != PriceListStatusEnum.ACTIVE) {
@@ -206,7 +219,7 @@ public class PriceListApiService extends BaseApi {
      * @param priceList {@link PriceList}
      * @param paymentMethods A list of {@link PaymentMethod}
      */
-    private void validateApplicationRules(PriceList priceList, List<Long> paymentMethods) {
+    private void validateApplicationRules(PriceList priceList) {
     	if (priceList.getBrands() != null && !(priceList.getBrands() instanceof PersistentCollection)) {
             Optional<CustomerBrand> unfoundCustomerBrand = priceList.getBrands().stream().filter(customerBrand -> customerBrandService.findByCode(customerBrand.getCode()) == null).findFirst();
             
@@ -353,6 +366,10 @@ public class PriceListApiService extends BaseApi {
     	
     	if (priceList.getSellers() != null) {
     		priceListToUpdate.setSellers(priceList.getSellers());
+        }
+    	
+    	if (priceList.getPaymentMethods() != null) {
+    		priceListToUpdate.setPaymentMethods(priceList.getPaymentMethods());
         }
     }
 }

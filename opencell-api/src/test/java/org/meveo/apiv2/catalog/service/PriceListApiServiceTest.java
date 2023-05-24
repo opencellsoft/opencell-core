@@ -1,19 +1,31 @@
 package org.meveo.apiv2.catalog.service;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Country;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.crm.CustomerBrand;
+import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.payments.CheckPaymentMethod;
+import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
+import org.meveo.model.shared.Title;
 import org.meveo.service.catalog.impl.PriceListService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoRule;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -45,26 +57,14 @@ public class PriceListApiServiceTest {
     }
 
     @Test
-    public void updateStatus_activate_shouldActivatePriceList() {
+    public void updateStatus_activate_givenSellerAsApplicatioNRuleShouldActivatePriceList() {
 
         // Given valid priceListCode and status
         var priceListCode = "myPriceListCode";
         var status = PriceListStatusEnum.ACTIVE;
 
-        var priceList = new PriceList();
-        priceList.setCode(priceListCode);
-        priceList.setStatus(PriceListStatusEnum.DRAFT);
-        PriceListLine priceListLineWithRate = new PriceListLine();
-        priceListLineWithRate.setCode(priceListCode + "-01");
-        priceListLineWithRate.setRate(BigDecimal.valueOf(100L));
-        PriceListLine priceListLineWithPP = new PriceListLine();
-        priceListLineWithPP.setCode(priceListCode + "-02");
-        PricePlanMatrix pricePlan = new PricePlanMatrix();
-        PricePlanMatrixVersion ppv = new PricePlanMatrixVersion();
-        ppv.setStatus(VersionStatusEnum.PUBLISHED);
-        pricePlan.setVersions(List.of(ppv));
-        priceListLineWithPP.setPricePlan(pricePlan);
-        priceList.setLines(Set.of(priceListLineWithRate, priceListLineWithPP));
+        PriceList priceList = newPriceList(priceListCode, PriceListStatusEnum.DRAFT, VersionStatusEnum.PUBLISHED);
+        priceList.setSellers(Set.of(new Seller()));
 
         when(priceListService.findByCode(anyString())).thenReturn(priceList);
 
@@ -75,8 +75,156 @@ public class PriceListApiServiceTest {
         verify(priceListService).findByCode(priceListCode);
 
         assertThat(priceList.getStatus()).isEqualTo(PriceListStatusEnum.ACTIVE);
-
     }
+
+    @Test
+    public void updateStatus_activate_givenCustomerCategoryAsApplicationRuleShouldActivatePriceList() {
+
+        // Given valid priceListCode and status
+        var priceListCode = "myPriceListCode";
+        var status = PriceListStatusEnum.ACTIVE;
+
+        PriceList priceList = newPriceList(priceListCode, PriceListStatusEnum.DRAFT, VersionStatusEnum.PUBLISHED);
+        priceList.setCustomerCategories(Set.of(new CustomerCategory()));
+
+        when(priceListService.findByCode(anyString())).thenReturn(priceList);
+
+        // When updateStatus
+        priceListApiService.updateStatus(priceListCode, status);
+
+        // Then check
+        verify(priceListService).findByCode(priceListCode);
+
+        assertThat(priceList.getStatus()).isEqualTo(PriceListStatusEnum.ACTIVE);
+    }
+
+    @Test
+    public void updateStatus_activate_givenBrandAsApplicationRuleShouldActivatePriceList() {
+
+        // Given valid priceListCode and status
+        var priceListCode = "myPriceListCode";
+        var status = PriceListStatusEnum.ACTIVE;
+
+        PriceList priceList = newPriceList(priceListCode, PriceListStatusEnum.DRAFT, VersionStatusEnum.PUBLISHED);
+        priceList.setBrands(Set.of(new CustomerBrand()));
+
+        when(priceListService.findByCode(anyString())).thenReturn(priceList);
+
+        // When updateStatus
+        priceListApiService.updateStatus(priceListCode, status);
+
+        // Then check
+        verify(priceListService).findByCode(priceListCode);
+
+        assertThat(priceList.getStatus()).isEqualTo(PriceListStatusEnum.ACTIVE);
+    }
+
+    @Test
+    public void updateStatus_activate_givenCreditCategoryAsApplicationRuleShouldActivatePriceList() {
+
+        // Given valid priceListCode and status
+        var priceListCode = "myPriceListCode";
+        var status = PriceListStatusEnum.ACTIVE;
+
+        PriceList priceList = newPriceList(priceListCode, PriceListStatusEnum.DRAFT, VersionStatusEnum.PUBLISHED);
+        priceList.setCreditCategories(Set.of(new CreditCategory()));
+
+        when(priceListService.findByCode(anyString())).thenReturn(priceList);
+
+        // When updateStatus
+        priceListApiService.updateStatus(priceListCode, status);
+
+        // Then check
+        verify(priceListService).findByCode(priceListCode);
+
+        assertThat(priceList.getStatus()).isEqualTo(PriceListStatusEnum.ACTIVE);
+    }
+
+    @Test
+    public void updateStatus_activate_givenCountriesAsApplicationRuleShouldActivatePriceList() {
+
+        // Given valid priceListCode and status
+        var priceListCode = "myPriceListCode";
+        var status = PriceListStatusEnum.ACTIVE;
+
+        PriceList priceList = newPriceList(priceListCode, PriceListStatusEnum.DRAFT, VersionStatusEnum.PUBLISHED);
+        priceList.setCountries(Set.of(new Country()));
+
+        when(priceListService.findByCode(anyString())).thenReturn(priceList);
+
+        // When updateStatus
+        priceListApiService.updateStatus(priceListCode, status);
+
+        // Then check
+        verify(priceListService).findByCode(priceListCode);
+
+        assertThat(priceList.getStatus()).isEqualTo(PriceListStatusEnum.ACTIVE);
+    }
+
+    @Test
+    public void updateStatus_activate_givenCurrencyAsApplicationRuleShouldActivatePriceList() {
+
+        // Given valid priceListCode and status
+        var priceListCode = "myPriceListCode";
+        var status = PriceListStatusEnum.ACTIVE;
+
+        PriceList priceList = newPriceList(priceListCode, PriceListStatusEnum.DRAFT, VersionStatusEnum.PUBLISHED);
+        priceList.setCurrencies(Set.of(new Currency()));
+
+        when(priceListService.findByCode(anyString())).thenReturn(priceList);
+
+        // When updateStatus
+        priceListApiService.updateStatus(priceListCode, status);
+
+        // Then check
+        verify(priceListService).findByCode(priceListCode);
+
+        assertThat(priceList.getStatus()).isEqualTo(PriceListStatusEnum.ACTIVE);
+    }
+
+    @Test
+    public void updateStatus_activate_givenLegalEntityAsApplicationRuleShouldActivatePriceList() {
+
+        // Given valid priceListCode and status
+        var priceListCode = "myPriceListCode";
+        var status = PriceListStatusEnum.ACTIVE;
+
+        PriceList priceList = newPriceList(priceListCode, PriceListStatusEnum.DRAFT, VersionStatusEnum.PUBLISHED);
+        priceList.setLegalEntities(Set.of(new Title()));
+
+        when(priceListService.findByCode(anyString())).thenReturn(priceList);
+
+        // When updateStatus
+        priceListApiService.updateStatus(priceListCode, status);
+
+        // Then check
+        verify(priceListService).findByCode(priceListCode);
+
+        assertThat(priceList.getStatus()).isEqualTo(PriceListStatusEnum.ACTIVE);
+    }
+
+    /*
+    @Test
+    public void updateStatus_activate_givenPaymentMethodAsApplicationRuleShouldActivatePriceList() {
+
+        // Given valid priceListCode and status
+        var priceListCode = "myPriceListCode";
+        var status = PriceListStatusEnum.ACTIVE;
+
+        PriceList priceList = newPriceList(priceListCode, PriceListStatusEnum.DRAFT, VersionStatusEnum.PUBLISHED);
+        priceList.setPaymentMethods(Set.of(new CheckPaymentMethod()));
+
+        when(priceListService.findByCode(anyString())).thenReturn(priceList);
+
+        // When updateStatus
+        priceListApiService.updateStatus(priceListCode, status);
+
+        // Then check
+        verify(priceListService).findByCode(priceListCode);
+
+        assertThat(priceList.getStatus()).isEqualTo(PriceListStatusEnum.ACTIVE);
+    }
+    */
 
     @Test
     public void updateStatus_activate_givenPListWithoutLinesShouldTriggerError() {
@@ -154,20 +302,7 @@ public class PriceListApiServiceTest {
         var priceListCode = "myPriceListCode";
         var status = PriceListStatusEnum.ACTIVE;
 
-        var priceList = new PriceList();
-        priceList.setCode(priceListCode);
-        priceList.setStatus(PriceListStatusEnum.ACTIVE);
-        PriceListLine priceListLineWithRate = new PriceListLine();
-        priceListLineWithRate.setCode(priceListCode + "-01");
-        priceListLineWithRate.setRate(BigDecimal.valueOf(100L));
-        PriceListLine priceListLineWithPP = new PriceListLine();
-        priceListLineWithPP.setCode(priceListCode + "-02");
-        PricePlanMatrix pricePlan = new PricePlanMatrix();
-        PricePlanMatrixVersion ppv = new PricePlanMatrixVersion();
-        ppv.setStatus(VersionStatusEnum.DRAFT);
-        pricePlan.setVersions(List.of(ppv));
-        priceListLineWithPP.setPricePlan(pricePlan);
-        priceList.setLines(Set.of(priceListLineWithRate, priceListLineWithPP));
+        PriceList priceList = newPriceList(priceListCode, PriceListStatusEnum.ACTIVE, VersionStatusEnum.DRAFT);
 
         when(priceListService.findByCode(anyString())).thenReturn(priceList);
 
@@ -179,26 +314,14 @@ public class PriceListApiServiceTest {
 
     }
 
+    @Test
     public void updateStatus_activate_givenPriceListWithoutApplicationRulesShouldTriggerError() {
 
         // Given valid priceListCode and status
         var priceListCode = "myPriceListCode";
         var status = PriceListStatusEnum.ACTIVE;
 
-        var priceList = new PriceList();
-        priceList.setCode(priceListCode);
-        priceList.setStatus(PriceListStatusEnum.DRAFT);
-        PriceListLine priceListLineWithRate = new PriceListLine();
-        priceListLineWithRate.setCode(priceListCode + "-01");
-        priceListLineWithRate.setRate(BigDecimal.valueOf(100L));
-        PriceListLine priceListLineWithPP = new PriceListLine();
-        priceListLineWithPP.setCode(priceListCode + "-02");
-        PricePlanMatrix pricePlan = new PricePlanMatrix();
-        PricePlanMatrixVersion ppv = new PricePlanMatrixVersion();
-        ppv.setStatus(VersionStatusEnum.PUBLISHED);
-        pricePlan.setVersions(List.of(ppv));
-        priceListLineWithPP.setPricePlan(pricePlan);
-        priceList.setLines(Set.of(priceListLineWithRate, priceListLineWithPP));
+        PriceList priceList = newPriceList(priceListCode, PriceListStatusEnum.DRAFT, VersionStatusEnum.PUBLISHED);
 
         when(priceListService.findByCode(anyString())).thenReturn(priceList);
 
@@ -208,6 +331,24 @@ public class PriceListApiServiceTest {
                 .isInstanceOf(BusinessApiException.class)
                 .hasMessageContaining("Cannot activate PriceList without application rules");
 
+    }
+
+    private static PriceList newPriceList(String priceListCode, PriceListStatusEnum draft, VersionStatusEnum published) {
+        var priceList = new PriceList();
+        priceList.setCode(priceListCode);
+        priceList.setStatus(draft);
+        PriceListLine priceListLineWithRate = new PriceListLine();
+        priceListLineWithRate.setCode(priceListCode + "-01");
+        priceListLineWithRate.setRate(BigDecimal.valueOf(100L));
+        PriceListLine priceListLineWithPP = new PriceListLine();
+        priceListLineWithPP.setCode(priceListCode + "-02");
+        PricePlanMatrix pricePlan = new PricePlanMatrix();
+        PricePlanMatrixVersion ppv = new PricePlanMatrixVersion();
+        ppv.setStatus(published);
+        pricePlan.setVersions(List.of(ppv));
+        priceListLineWithPP.setPricePlan(pricePlan);
+        priceList.setLines(Set.of(priceListLineWithRate, priceListLineWithPP));
+        return priceList;
     }
 
     @Test

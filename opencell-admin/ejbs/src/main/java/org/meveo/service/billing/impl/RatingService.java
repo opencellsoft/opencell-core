@@ -1806,9 +1806,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     }
                 }
             } else {
-                PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(pricePlanMatrixVersion, walletOperation);
-                TradingPricePlanMatrixLine tradingPricePlanMatrixLine = getTradingPricePlanMatrixLineFrom(tradingCurrency, pricePlanMatrixLine);
-                if(pricePlanMatrixLine != null) {
+                PricePlanMatrixLine pricePlanMatrixLine =
+                        pricePlanMatrixVersionService.loadPrices(pricePlanMatrixVersion, walletOperation);
+                TradingPricePlanMatrixLine tradingPricePlanMatrixLine =
+                        getTradingPricePlanMatrixLineFrom(tradingCurrency, pricePlanMatrixLine);
+                if(pricePlanMatrixLine != null && tradingPricePlanMatrixLine != null) {
                     walletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
                     if(appProvider.isEntreprise()) {
                         priceWithoutTax = tradingPricePlanMatrixLine.getTradingValue();

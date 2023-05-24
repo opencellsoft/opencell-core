@@ -2,6 +2,7 @@ package org.meveo.apiv2.catalog;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -86,7 +87,7 @@ public interface PriceList extends Resource {
 	@Nullable
 	@Schema(description = "The Price List payment methods")
 	@JsonProperty("paymentMethods")
-	List<Long> getPaymentMethods();
+	Set<String> getPaymentMethods();
 	
 	@Nullable
 	@Schema(description = "The Price List payment sellers")

@@ -28,6 +28,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -52,6 +53,7 @@ import org.meveo.model.billing.IsoIcd;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
@@ -153,6 +155,10 @@ public class Seller extends AccountEntity implements IWFEntity {
 
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY)
     private List<Contract> contracts = new ArrayList<>();
+    
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_seller_media", joinColumns = @JoinColumn(name = "seller_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
+    private List<Media> medias = new ArrayList<>();
     
     /**
      * IsoIcd
@@ -362,4 +368,18 @@ public class Seller extends AccountEntity implements IWFEntity {
     public void setGeneralLedger(GeneralLedger generalLedger) {
         this.generalLedger = generalLedger;
     }
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
+	}
 }

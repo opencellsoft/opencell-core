@@ -19,6 +19,7 @@ package org.meveo.service.admin.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -105,33 +106,13 @@ public class UserService extends PersistenceService<User> {
         if (kcUser == null) {
             return null;
         }
-
-        User user = null;
-        try {
-            user = getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", username.toLowerCase()).getSingleResult();
-
-        } catch (NoResultException ex) {
-            user = new User();
-            // Set fields, even they are transient, so they can be used in a notification if any is fired uppon user creation
-            user.setEmail(kcUser.getEmail());
-            user.setName(kcUser.getName());
-            user.setRoles(kcUser.getRoles());
-            user.setUserLevel(kcUser.getUserLevel());
-            user.setUserName(username);
-            super.create(user);
-        }
-
-        user.setEmail(kcUser.getEmail());
-        user.setName(kcUser.getName());
-        user.setRoles(kcUser.getRoles());
-        user.setUserLevel(kcUser.getUserLevel());
-        return user;
-
+        return findKeycloakUser(kcUser);
     }
 
     @Override
     public List<User> list(PaginationConfiguration config) {
-        return keycloakAdminClientService.listUsers(config);
+        List<User> users = keycloakAdminClientService.listUsers(config);
+        return users.stream().map(kcUser -> findKeycloakUser(kcUser)).collect(Collectors.toList());
     }
 
     @Override
@@ -152,5 +133,33 @@ public class UserService extends PersistenceService<User> {
 
     public UserRepresentation getUserRepresentationByUsername(String username) throws ElementNotFoundException {
         return keycloakAdminClientService.getUserRepresentationByUsername(username);
+    }
+
+    /**
+     * Lookup a keycloak user in database
+     *
+     * @param kcUser keycloak user to lookup by
+     * @return User found
+     */
+    private User findKeycloakUser(User kcUser) {
+        User user = null;
+        try {
+            user = getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", kcUser.getUserName().toLowerCase()).getSingleResult();
+        } catch (NoResultException ex) {
+            user = new User();
+            // Set fields, even they are transient, so they can be used in a notification if any is fired uppon user creation
+            user.setEmail(kcUser.getEmail());
+            user.setName(kcUser.getName());
+            user.setRoles(kcUser.getRoles());
+            user.setUserLevel(kcUser.getUserLevel());
+            user.setUserName(kcUser.getUserName());
+            super.create(user);
+        }
+
+        user.setEmail(kcUser.getEmail());
+        user.setName(kcUser.getName());
+        user.setRoles(kcUser.getRoles());
+        user.setUserLevel(kcUser.getUserLevel());
+        return user;
     }
 }
