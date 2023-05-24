@@ -4,8 +4,8 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.meveo.apiv2.billing.CancelBillingRunInput;
 import org.meveo.apiv2.billing.ExceptionalBillingRun;
-import org.meveo.model.billing.RatedTransactionAction;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -56,6 +56,5 @@ public interface InvoicingResource {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409",
                             description = "The billing run cannot be cancelled")
             })
-    Response cancelBillingRun(@PathParam("billingRunId") Long billingRunId,
-                              @QueryParam("ratedTransactionAction") RatedTransactionAction action);
+    Response cancelBillingRun(@PathParam("billingRunId") Long billingRunId, CancelBillingRunInput input);
 }
