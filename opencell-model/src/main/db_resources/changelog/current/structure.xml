@@ -16739,5 +16739,77 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
     </addColumn>
 </changeSet>
+    
+    <changeSet id="#INTRD-16309_20230524" author="TarikFA.">
+        <createSequence sequenceName="ar_allowed_payment_method_seq" />
+        <createTable tableName="ar_allowed_payment_method">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_allowed_payment_methode" />
+            </column>
+            <column name="code" type="varchar(20)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="allowed_payment_method_unique_code"/>
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <!-- specific column for allowed payment method-->
+            <column name="supported_payment_method" type="varchar(30)" />
+            <column name="description_i18n" type="${type.json}" />
+            <column name="payment_means_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="capacity" type="varchar(30)">
+                <constraints nullable="false" />
+            </column>
+            <column name="payment_type" type="varchar(30)">
+                <constraints nullable="false" />
+            </column>
+            <column name="limit_amount" type="numeric(23, 12)" />
+            <column name="provider_id" type="bigint" />
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="ar_allowed_payment_method" baseColumnNames="payment_means_id" constraintName="fk_allowed_payment_means_id" referencedTableName="untdid_4461_payment_means"
+                                 referencedColumnNames="id" />
+
+        <addForeignKeyConstraint baseTableName="ar_allowed_payment_method" baseColumnNames="provider_id" constraintName="fk_allowed_payment_provider_id" referencedTableName="crm_provider"
+                                 referencedColumnNames="id" />
+
+        <createTable tableName="allowed_payment_method_channel">
+            <column name="allowed_payment_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="channel_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="allowed_payment_id, channel_id" constraintName="allowed_payment_channel_pkey" tableName="allowed_payment_method_channel" />
+
+        <addForeignKeyConstraint baseTableName="allowed_payment_method_channel" baseColumnNames="allowed_payment_id" constraintName="fk_allowed_payment_id" referencedTableName="ar_allowed_payment_method"
+                                 referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="allowed_payment_method_channel" baseColumnNames="channel_id" constraintName="fk_allowed_payment_channel_id" referencedTableName="cat_channel"
+                                 referencedColumnNames="id" />
+        <addColumn tableName="ar_payment_gateway">
+            <column name="allowed_payment_method_id" type="bigint" />
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="ar_payment_gateway" baseColumnNames="allowed_payment_method_id" constraintName="fk_payment_gateway_allowed_payment_method_id" referencedTableName="ar_allowed_payment_method"
+                                 referencedColumnNames="id" />
+        
+        <addColumn tableName="crm_provider">
+            <column name="allow_cash_payment_method"  type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="allow_check_payment_method"  type="${type.boolean}" defaultValueNumeric="1" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

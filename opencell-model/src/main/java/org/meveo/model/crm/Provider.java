@@ -18,7 +18,9 @@
 package org.meveo.model.crm;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.AttributeOverride;
@@ -35,6 +37,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -67,6 +70,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.order.OrderLineTypeEnum;
+import org.meveo.model.payments.AllowedPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentPlanPolicy;
@@ -244,6 +248,16 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "icd_id")
     private IsoIcd icdId;
+	
+	@OneToMany(mappedBy = "provider")
+	private Set<AllowedPaymentMethod> allowedPaymentMethods = new HashSet<>();
+	
+	@Type(type = "numeric_boolean")
+	@Column(name = "allow_cash_payment_method")
+	private boolean allowCashPaymentMethod = Boolean.TRUE;
+	@Type(type = "numeric_boolean")
+	@Column(name = "allow_check_payment_method")
+	private boolean allowCheckPaymentMethod = Boolean.TRUE;
     
     public IsoIcd getIcdId() {
         return icdId;
@@ -946,5 +960,29 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
 
 	public void setOrderLineTypes(List<OrderLineTypeEnum> orderLineTypes) {
 		this.orderLineTypes = orderLineTypes;
+	}
+	
+	public Set<AllowedPaymentMethod> getAllowedPaymentMethods() {
+		return allowedPaymentMethods;
+	}
+	
+	public void setAllowedPaymentMethods(Set<AllowedPaymentMethod> allowedPaymentMethods) {
+		this.allowedPaymentMethods = allowedPaymentMethods;
+	}
+	
+	public boolean isAllowCashPaymentMethod() {
+		return allowCashPaymentMethod;
+	}
+	
+	public void setAllowCashPaymentMethod(boolean allowCashPaymentMethod) {
+		this.allowCashPaymentMethod = allowCashPaymentMethod;
+	}
+	
+	public boolean isAllowCheckPaymentMethod() {
+		return allowCheckPaymentMethod;
+	}
+	
+	public void setAllowCheckPaymentMethod(boolean allowCheckPaymentMethod) {
+		this.allowCheckPaymentMethod = allowCheckPaymentMethod;
 	}
 }

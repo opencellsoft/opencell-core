@@ -171,6 +171,10 @@ public class PaymentGateway extends EnableBusinessCFEntity implements ISearchabl
      * transient secretKey in Keystore
      */
     transient private String secretKeyKS;
+	
+	@ManyToOne
+	@Column(name = "allowed_payment_method_id")
+	private AllowedPaymentMethod allowedPaymentMethod;
 
     /**
      * The api key
@@ -604,4 +608,13 @@ public class PaymentGateway extends EnableBusinessCFEntity implements ISearchabl
         this.seller = seller;
     }
 	
+	public AllowedPaymentMethod getAllowedPaymentMethod() {
+		return allowedPaymentMethod;
+	}
+	
+	public void setAllowedPaymentMethod(AllowedPaymentMethod allowedPaymentMethod) {
+		this.allowedPaymentMethod = allowedPaymentMethod;
+		if(allowedPaymentMethod != null)
+			paymentMethodType = allowedPaymentMethod.getSupportedPaymentMethod();
+	}
 }

@@ -477,6 +477,7 @@
         <createSequence sequenceName="cat_price_list_seq" startValue="1" />
         <createSequence sequenceName="cat_trading_discount_plan_item_seq" startValue="1" />
         <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
+        <createSequence sequenceName="ar_allowed_payment_method_seq" />
     </changeSet>
 
 
@@ -5502,6 +5503,8 @@
             </column>
 			<column name="current_matching_code" type="varchar(255)" />
 			<column name="icd_id" type="bigint" />
+            <column name="allow_cash_payment_method"  type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="allow_check_payment_method"  type="${type.boolean}" defaultValueNumeric="1" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-250">
@@ -7541,6 +7544,7 @@
             <column name="issuer_number" type="varchar(50)" />
             <column name="hash_key" type="varchar(2)" />
             <column name="seller_id" type="bigint" />
+            <column name="allowed_payment_method_id" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -12547,7 +12551,55 @@
         </createTable>
         <addPrimaryKey columnNames="price_list_id, seller_id" constraintName="cat_price_list_seller_pkey" tableName="cat_price_list_seller" />
     </changeSet>
-    
+
+    <changeSet id="#INTRD-16309_20230524_rebuild_table" author="TarikFA.">
+        <createTable tableName="ar_allowed_payment_method">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_allowed_payment_methode" />
+            </column>
+            <column name="code" type="varchar(20)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="allowed_payment_method_unique_code"/>
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <!-- specific column for allowed payment method-->
+            <column name="supported_payment_method" type="varchar(30)" />
+            <column name="description_i18n" type="${type.json}" />
+            <column name="payment_means_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="capacity" type="varchar(30)">
+                <constraints nullable="false" />
+            </column>
+            <column name="payment_type" type="varchar(30)">
+                <constraints nullable="false" />
+            </column>
+            <column name="limit_amount" type="numeric(23, 12)" />
+            <column name="provider_id" type="bigint" />
+        </createTable>
+
+        <createTable tableName="allowed_payment_method_channel">
+            <column name="allowed_payment_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="channel_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="allowed_payment_id, channel_id" constraintName="allowed_payment_channel_pkey" tableName="allowed_payment_method_channel" />
+
+    </changeSet>
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -18683,6 +18735,21 @@
 			referencedTableName="billing_trading_currency" />
 	</changeSet>
 
+    <changeSet id="#INTRD-16309_20230524_FK" author="TarikFA.">
+        <addForeignKeyConstraint baseTableName="ar_allowed_payment_method" baseColumnNames="payment_means_id" constraintName="fk_allowed_payment_means_id" referencedTableName="untdid_4461_payment_means"
+                                 referencedColumnNames="id" />
+
+        <addForeignKeyConstraint baseTableName="ar_allowed_payment_method" baseColumnNames="provider_id" constraintName="fk_allowed_payment_provider_id" referencedTableName="crm_provider"
+                                 referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="allowed_payment_method_channel" baseColumnNames="allowed_payment_id" constraintName="fk_allowed_payment_id" referencedTableName="ar_allowed_payment_method"
+                                 referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="allowed_payment_method_channel" baseColumnNames="channel_id" constraintName="fk_allowed_payment_channel_id" referencedTableName="cat_channel"
+                                 referencedColumnNames="id" />
+
+
+        <addForeignKeyConstraint baseTableName="ar_payment_gateway" baseColumnNames="allowed_payment_method_id" constraintName="fk_payment_gateway_allowed_payment_method_id" referencedTableName="ar_allowed_payment_method"
+                                 referencedColumnNames="id" />
+    </changeSet>
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
     <changeSet id="#4140_08042019" author="hznibar">
@@ -20056,6 +20123,7 @@
     <changeSet author="HichamHANINE" id="#INTRD-14562_20230308" />
 	<changeSet id="#INTRD-15044_20230517" author="AdilElJaouhari" />
     <changeSet id="#INTRD-15501_20230413" author="ThangNguyen" />
+    <changeSet id="#INTRD-16309_20230524" author="TarikFA." />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
