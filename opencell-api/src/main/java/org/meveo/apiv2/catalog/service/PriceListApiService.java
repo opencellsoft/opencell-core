@@ -186,7 +186,13 @@ public class PriceListApiService extends BaseApi {
      */
     private void validateMandatoryFields(PriceList priceList) {
     	if (priceList.getCode() == null) {
-			throw new BusinessApiException("The Name field is mandatory");
+			throw new BusinessApiException("The code field is mandatory");
+    	} else if(priceList.getCode().length() > 50) {
+    		throw new BusinessApiException("The code must be 50 characters or less");
+    	}
+    	
+    	if(priceList.getDescription() != null && !priceList.getDescription().isEmpty() && priceList.getDescription().length() > 300) {
+    		throw new BusinessApiException("The description must be 300 characters or less");
     	}
     	
     	if (priceList.getValidFrom() == null) {
@@ -211,6 +217,14 @@ public class PriceListApiService extends BaseApi {
     	
     	if (priceList.getApplicationEndDate().after(priceList.getValidUntil())) {
 			throw new BusinessApiException("The applicationEndDate should be lower or equal the validUntil Date");
+    	}
+    	
+    	if (priceList.getValidFrom().after(priceList.getValidUntil())) {
+			throw new BusinessApiException("The validFrom date should be lower than the validUntil Date");
+    	}
+    	
+    	if (priceList.getApplicationStartDate().after(priceList.getApplicationEndDate())) {
+			throw new BusinessApiException("The applicationStartDate should be lower than the applicationEndDate Date");
     	}
     }
     
