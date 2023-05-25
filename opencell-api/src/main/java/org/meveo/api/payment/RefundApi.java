@@ -20,11 +20,13 @@ package org.meveo.api.payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -37,7 +39,12 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.billing.ImmutableBasicInvoice;
+import org.meveo.apiv2.billing.ImmutableInvoiceLine;
+import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -47,12 +54,15 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.payments.impl.RefundService;
+
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
 /**
  *  @author Edward P. Legaspi
@@ -80,6 +90,9 @@ public class RefundApi extends BaseApi {
 
     @Inject
     private OCCTemplateService oCCTemplateService;
+
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 
     /**
      * @param refundDto refund object which encapsulates the input data sent by client
@@ -156,6 +169,55 @@ public class RefundApi extends BaseApi {
         if (refundDto.isToMatching()) {
             matchRefunds(refundDto, customerAccount, refund);
         } else {
+            // TODO doit on créer un refund sur plusieurs paiment ?
+            if (CollectionUtils.isEmpty(refundDto.getListAoIdsForMatching())) {
+                throw new BusinessApiException("No AccountOperation specified for refund");
+            }
+
+            if (refundDto.getListAoIdsForMatching().size() > 1) {
+                throw new BusinessApiException("Only one AccountOperation shall be specified for refund");
+            }
+
+            // Create new Invoice Credit Note
+            org.meveo.apiv2.billing.BasicInvoice adjInvoice = ImmutableBasicInvoice.builder()
+                    .invoiceTypeCode(invoiceTypeService.getDefaultAdjustement().getCode())
+                    .billingAccountCode("") // FIXME
+                    .invoiceDate(new Date())
+                    .amountWithTax(refund.getAmountWithoutTax())
+                    .build();
+            Invoice adjustmentInvoice = invoiceService.createBasicInvoice(adjInvoice);
+
+            // Create Invoice Line
+            org.meveo.apiv2.billing.InvoiceLine invoiceLineResource = ImmutableInvoiceLine.builder()
+                    .accountingArticleCode("ART_SECURITY_DEPOSIT")
+                    .amountTax(BigDecimal.ZERO)
+                    .amountWithoutTax(refund.getAmountWithoutTax())
+                    .amountWithTax((null) // TODO where ?
+                    .unitPrice(null) // TODO where ?
+                    .invoiceId(adjustmentInvoice.getId())
+                    .label("Security Deposit Adjustment")
+                    .quantity(BigDecimal.ONE)
+                    .build();
+
+            org.meveo.apiv2.billing.InvoiceLinesInput input = ImmutableInvoiceLinesInput.builder()
+                    .addInvoiceLines(invoiceLineResource)
+                    .build();
+
+            invoiceApiService.createLines(adjustmentInvoice, input);
+
+            // Validate ADJ Invoice
+            adjustmentInvoice.setStatus(VALIDATED);
+            serviceSingleton.assignInvoiceNumber(adjustmentInvoice, true);
+
+
+            Payment payment = paymentService.findById(refundDto.getListAoIdsForMatching().get(0));
+
+            customerAccountService.find
+
+            // Process refund Credit note invoice
+            Invoice invoice = invoiceService.createInvoice(null, refund.getSeller(), refundDto.get, invoiceType);
+
+
             log.info("no matching created ");
         }
         log.debug("refund created for amount:" + refund.getAmount());

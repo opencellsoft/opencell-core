@@ -19,11 +19,26 @@ package org.meveo.model.payments;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 @DiscriminatorValue(value = "RF")
 public class Refund extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "refunded_payment_id")
+    private Payment refundedPayment;
+
+    public Payment getRefundedPayment() {
+        return refundedPayment;
+    }
+
+    public void setRefundedPayment(Payment refundedPayment) {
+        this.refundedPayment = refundedPayment;
+    }
 
 }
