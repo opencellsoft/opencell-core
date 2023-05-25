@@ -12,20 +12,24 @@ import static org.mockito.Mockito.when;
 import javax.validation.ValidationException;
 import javax.ws.rs.NotFoundException;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.Customer;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -43,6 +47,9 @@ public class AccountsManagementApiServiceTest {
 
     @Mock
     private UserAccountService userAccountService;
+    
+    @Mock
+    private CustomerService customerService;
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -127,5 +134,27 @@ public class AccountsManagementApiServiceTest {
         ConsumerInput input = builder().consumerId(1L).build();
         when(userAccountService.findById(any())).thenReturn(ua);
         accountsManagementApiService.transferSubscription("TR_SU", input, OpenTransactionsActionEnum.NONE);
+    }
+    
+    @Test(expected = EntityDoesNotExistsException.class)
+    public void test_getAllParentCustomers_with_a_non_existent_customer() {
+    	when(customerService.findByCode("code")).thenReturn(null);
+        accountsManagementApiService.getAllParentCustomers("code");
+    }
+    
+    @Test
+    public void test_getAllParentCustomers_ok() {
+    	Customer parent = new Customer();
+    	parent.setId(1L);
+    	parent.setCode("codeParent");
+    	
+    	Customer customer = new Customer();
+    	customer.setId(2L);
+    	customer.setCode("codeCustomer");
+    	customer.setParentCustomer(parent);
+    	
+    	when(customerService.findByCode("codeCustomer")).thenReturn(customer);
+        accountsManagementApiService.getAllParentCustomers("codeCustomer");
+        Assert.assertTrue("All good", true );
     }
 }

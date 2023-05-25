@@ -2,6 +2,7 @@ package org.meveo.apiv2.accounts.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -84,4 +85,11 @@ public interface AccountsManagementResource {
             @ApiResponse(responseCode = "200", description = "A list of rated wallet operations, preserving the order of incomming CDRs"),
             @ApiResponse(responseCode = "400", description = "bad request on register CDR list") })
     ProcessApplyChargeListResult applyOneShotChargeList(@Parameter(description = "the ApplyOneShotChargeListInput object", required = true) ApplyOneShotChargeListInput applyOneShotChargeListInput);
+    
+    @GET
+    @Path("/customer/{customerCode}/getAllParentCustomers")
+    @Operation(summary = "This API return a list of IDs of all customer parents", tags = {"Customer"}, responses = {
+            @ApiResponse(responseCode = "200", description = "A list of IDs of all customer parents"),
+            @ApiResponse(responseCode = "404", description = "Customer not found") })
+    Response getAllParentCustomers(@Parameter(description = "Customer code", required = true) @PathParam("customerCode") String customerCode);
 }
