@@ -39,6 +39,7 @@ import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
+import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.quote.QuoteVersion;
 
 
@@ -253,6 +254,13 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_id")
     private BillingRun billingRun;
+
+	/**
+	 * Default PriceList (Optional)
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "price_list_id")
+	private PriceList priceList;
 
 	/**
      * Rated transactions to reach minimum amount per invoice
@@ -815,7 +823,19 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 		this.discountPlan = discountPlan;
 	}
 
+	/**
+	 * PriceList Getter
+	 * @return the priceList
+	 */
+	public PriceList getPriceList() {
+		return priceList;
+	}
 
-	
-	
+	/**
+	 * PriceList Setter
+	 * @param priceList value to set
+	 */
+	public void setPriceList(PriceList priceList) {
+		this.priceList = priceList;
+	}
 }

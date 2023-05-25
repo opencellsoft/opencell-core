@@ -94,6 +94,7 @@ import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 
@@ -480,6 +481,13 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
     @OrderBy("priority")
     @Where(clause = "charge_type='U'")
     private List<UsageChargeInstance> usageChargeInstances;
+
+    /**
+     * Default PriceList (Optional)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "price_list_id")
+    private PriceList priceList;
     
     /**
      * This method is called implicitly by hibernate, used to enable
@@ -1308,5 +1316,21 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
 	 */
 	public void setUsageChargeInstances(List<UsageChargeInstance> usageChargeInstances) {
         this.usageChargeInstances = usageChargeInstances;
+    }
+
+    /**
+     * PriceList Getter
+     * @return the priceList
+     */
+    public PriceList getPriceList() {
+        return priceList;
+    }
+
+    /**
+     * PriceList Setter
+     * @param priceList value to set
+     */
+    public void setPriceList(PriceList priceList) {
+        this.priceList = priceList;
     }
 }
