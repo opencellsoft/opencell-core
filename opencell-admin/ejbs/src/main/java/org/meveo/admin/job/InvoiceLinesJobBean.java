@@ -99,10 +99,13 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                     result.registerError("No valid billing run with status = NEW found");
                 } else {
                     AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(appProvider.isEntreprise(), aggregationPerUnitPrice, dateAggregationOptions);
+                    long totalNbItemsToProcess = 0L;
                     for(BillingRun billingRun : billingRuns) {
                         // set status of billing run as CREATING_INVOICE_LINES, i.e. it indicates that the invoice line job is running
                         billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, CREATING_INVOICE_LINES, null);
                         List<Long> billingAccountsIDs = billingRunService.getBillingAccountsIdsForOpenRTs(billingRun);
+                        totalNbItemsToProcess += billingAccountsIDs.size();
+                        result.setNbItemsToProcess(totalNbItemsToProcess);
 
                         Long nbRunConfig = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
 						final Long nbRuns = nbRunConfig == -1 ? (long) Runtime.getRuntime().availableProcessors() : nbRunConfig;
