@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.catalog.ImmutablePriceList;
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.commons.utils.StringUtils;
@@ -15,6 +16,7 @@ import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.pricelist.PriceList;
+import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.shared.Title;
 
 public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.PriceList, PriceList> {
@@ -29,7 +31,7 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
 				.validUntil(entity.getValidUntil())
 				.applicationStartDate(entity.getApplicationStartDate())
 				.applicationEndDate(entity.getApplicationEndDate())
-				.status(entity.getStatus())
+				.status(getStatus(entity))
 				.brands(getBrandsCodes(entity))
 				.customerCategories(getCustomerCategoriesCodes(entity))
 				.creditCategories(getCreditCategoriesCodes(entity))
@@ -136,6 +138,18 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
 		}
 		return entity.getPaymentMethods().stream().map(paymentMethod -> paymentMethod.name()).collect(Collectors.toList());
 	}
+	
+	/**
+	 * Get status from a set enumeration
+	 * @param entity Price List
+	 * @return a status name
+	 */
+	private String getStatus(PriceList entity) {
+		if (entity == null || entity.getStatus() == null) {
+			return null;
+		}
+		return entity.getStatus().name();
+	}
 
 	@Override
 	protected PriceList toEntity(org.meveo.apiv2.catalog.PriceList resource) {
@@ -147,7 +161,7 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
         entity.setValidUntil(resource.getValidUntil());
         entity.setApplicationStartDate(resource.getApplicationStartDate());
         entity.setApplicationEndDate(resource.getApplicationEndDate());
-        entity.setStatus(resource.getStatus());
+        entity.setStatus(getStatus(resource.getStatus()));
         entity.setBrands(getBrandsFromCodes(resource.getBrands()));
         entity.setCustomerCategories(getCustomerCategoriesFromCodes(resource.getCustomerCategories()));
         entity.setCountries(getCountriesFromCodes(resource.getCountries()));
@@ -158,7 +172,7 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
         entity.setPaymentMethods(getPaymentMethodsFromCodes(resource.getPaymentMethods()));
         return entity;
 	}
-	
+
 	/**
 	 * Get a set of {@link CustomerBrand} from codes
 	 * @param customerBrandCodes customer brand codes
@@ -289,6 +303,21 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
     		return paymentMethods.stream().filter(StringUtils::isNotBlank).map(PaymentMethodEnum::valueOf).collect(Collectors.toSet());
         }
 		
+		return null;
+	}
+	
+	/**
+	 * Get Status 
+	 * @param status
+	 * @return {@link PriceListStatusEnum}
+	 */
+	private PriceListStatusEnum getStatus(String status) {
+		if(status.equals(PriceListStatusEnum.DRAFT.name()) || status.equals(PriceListStatusEnum.ACTIVE.name()) ||
+				status.equals(PriceListStatusEnum.CLOSED.name()) || status.equals(PriceListStatusEnum.ARCHIVED.name())) {
+			PriceListStatusEnum.valueOf(status);			
+		} else {
+			throw new BusinessApiException("The price list status can be either Draft, Active, Closed, or Archived");
+		}
 		return null;
 	}
 }

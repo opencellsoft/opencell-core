@@ -565,23 +565,43 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 	}
 
     public void calculateTradingPricePlanMatrixLine(TradingPricePlanVersionDto dtoData) throws MeveoApiException, BusinessException {
-        if(dtoData.getRate() == null || BigDecimal.ZERO.equals(dtoData.getRate())) {
+        if (dtoData.getRate() == null || BigDecimal.ZERO.equals(dtoData.getRate())) {
             missingParameters.add("rate");
         }
         checkMandatoryFields(dtoData);
 
         PricePlanMatrixVersion ppmv = pricePlanMatrixVersionService.findById(dtoData.getPricePlanMatrixVersionId());
-        if(ppmv == null) {
+        if (ppmv == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixVersionId());
         }
+        
+        if (VersionStatusEnum.PUBLISHED.equals(ppmv.getStatus())) {
+            throw new BusinessException("Trading price plan line cannot be calculated for published price plan matrix version");
+        }
+        
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCodeOrId(dtoData.getTradingCurrency().getCode(), dtoData.getTradingCurrency().getId());
+        if (tradingCurrency == null) {
+            throw new EntityDoesNotExistsException(TradingCurrency.class, dtoData.getTradingCurrency().getCode(), "code", dtoData.getTradingCurrency().getId()+"", "id");
+        }
 
-        ppmv.getTradingPricePlanVersions()
-                .stream()
-                .filter(cppml -> cppml.getTradingCurrency().getCurrencyCode().equals(dtoData.getTradingCurrency().getCode()) || cppml.getTradingCurrency().getId().equals(dtoData.getTradingCurrency().getId()))
-                .forEach(cppml -> {
-                    cppml.setRate(dtoData.getRate());
-                    cppml.setUseForBillingAccounts(dtoData.isUseForBillingAccounts());
-                    cppml.setTradingPrice(dtoData.getRate().multiply(ppmv.getPrice()));
-                });
+        if (appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode().equals(dtoData.getTradingCurrency().getCode())) {
+            throw new InvalidParameterException("Trading currency couldn't be the same as functional currency");
+        }
+        
+        List<TradingPricePlanMatrixLine> tradingLines = tradingPricePlanMatrixLineService.getByPricePlanMatrixVersionAndCurrency(ppmv, tradingCurrency);
+        
+        if (tradingLines.isEmpty()) {
+        	ppmv.getLines().forEach( line -> {
+        		TradingPricePlanMatrixLine tradingLine =  new TradingPricePlanMatrixLine(dtoData.getRate().multiply(line.getValue()), tradingCurrency, dtoData.getRate(), dtoData.isUseForBillingAccounts(), line);
+                tradingPricePlanMatrixLineService.create(tradingLine);	
+        	});
+        } else {
+        	tradingLines.forEach( tradingLine -> {
+        		tradingLine.setRate(dtoData.getRate());
+        		tradingLine.setUseForBillingAccounts(dtoData.isUseForBillingAccounts());
+        		tradingLine.setTradingValue(dtoData.getRate().multiply(tradingLine.getPricePlanMatrixLine().getValue()));
+        	}); 
+        }
+
     }
 }

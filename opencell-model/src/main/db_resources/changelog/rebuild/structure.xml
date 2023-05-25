@@ -12551,6 +12551,14 @@
         <addPrimaryKey columnNames="price_list_id, seller_id" constraintName="cat_price_list_seller_pkey" tableName="cat_price_list_seller" />
     </changeSet>
     
+    <changeSet id="#INTRD-15849_20230509-rebuild" author="TarikFA.">
+    		<createTable tableName="billing_seller_media">
+    			<column name="seller_id" type="bigint" />
+    			<column name="media_id" type="bigint" />
+    		</createTable>
+       	 <addUniqueConstraint columnNames="seller_id, media_id" constraintName="seller_id_media_id_unique_key" tableName="billing_seller_media" />
+    </changeSet>
+
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -17160,6 +17168,8 @@
 			constraintName="cat_price_list_seller_s_fk"
 			referencedTableName="crm_seller"
             referencedColumnNames="id" />
+    </changeSet>
+    <changeSet id="#INTRD-16396_20230522_pli_quote-rebuild" author="a.rouaguebe">
         <addForeignKeyConstraint
                 baseTableName="cpq_quote_version"
                 baseColumnNames="price_list_id"
@@ -17179,7 +17189,6 @@
                 referencedTableName="cat_price_list"
                 referencedColumnNames="id" />
     </changeSet>
-
     <changeSet id="#INTRD-16203_20230519_ba_pricelist_fk" author="a.rouaguebe">
         <addForeignKeyConstraint
                 baseTableName="billing_billing_account"
@@ -17187,6 +17196,21 @@
                 constraintName="fk_ba_price_list"
                 referencedTableName="cat_price_list"
                 referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-15849_20230509_FK" author="TarikFA.">
+        <addForeignKeyConstraint baseColumnNames="seller_id"
+                                 baseTableName="billing_seller_media"
+                                 constraintName="fk_media_seller_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="crm_seller" />
+        <addForeignKeyConstraint baseColumnNames="media_id"
+                                 baseTableName="billing_seller_media"
+                                 constraintName="fk_seller_media_id"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cpq_media" />
     </changeSet>
     <!-- end fk -->
 
@@ -20086,7 +20110,7 @@
     <changeSet id="#INTRD-16036_20230516" author="zelmeliani" />
     <changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
     <changeSet id="#INTRD-16396_20230522_pli_quote" author="a.rouaguebe" />
-
+    <changeSet id="#INTRD-15849_20230509" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
