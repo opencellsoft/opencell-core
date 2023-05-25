@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
-import org.meveo.model.pricelist.PriceListStatusEnum;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -52,7 +51,7 @@ public interface PriceList extends Resource {
 	
 	@Nullable
 	@Schema(description = "The Price List status")
-	PriceListStatusEnum getStatus();
+	String getStatus();
 
 	@Nullable
 	@Schema(description = "The Price List brands")
