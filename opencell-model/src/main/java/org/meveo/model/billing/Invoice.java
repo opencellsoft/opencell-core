@@ -1826,15 +1826,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     }
 
     public void setTransactionalAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
-        this.transactionalAmountWithoutTax = convertedAmountWithoutTax;
+        this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
     }
 
     public BigDecimal getTransactionalAmountWithTax() {
         return transactionalAmountWithTax;
     }
 
-    public void setTransactionalAmountWithTax(BigDecimal convertedAmountWithTax) {
-        this.transactionalAmountWithTax = convertedAmountWithTax;
+    public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+        this.transactionalAmountWithTax = transactionalAmountWithTax;
     }
 
     public BigDecimal getTransactionalAmountTax() {
@@ -1873,8 +1873,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return transactionalAmountWithoutTaxBeforeDiscount;
     }
 
-    public void setTransactionalAmountWithoutTaxBeforeDiscount(BigDecimal convertedAmountWithoutTaxBeforeDiscount) {
-        this.transactionalAmountWithoutTaxBeforeDiscount = convertedAmountWithoutTaxBeforeDiscount;
+    public void setTransactionalAmountWithoutTaxBeforeDiscount(BigDecimal transactionalAmountWithoutTaxBeforeDiscount) {
+        this.transactionalAmountWithoutTaxBeforeDiscount = transactionalAmountWithoutTaxBeforeDiscount;
     }
 
     public PaymentPlan getPaymentPlan() {
