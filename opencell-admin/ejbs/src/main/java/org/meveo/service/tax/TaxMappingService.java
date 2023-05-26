@@ -308,7 +308,13 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             throw new NoTaxException(e);
         }
 
-        return determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, walletOperation, true, false, null);
+        TaxInfo taxInfo = determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, walletOperation, true, false, null);
+        if(taxInfo != null){
+            walletOperation.setTaxClass(taxInfo.taxClass);
+            walletOperation.setTax(taxInfo.tax);
+            walletOperation.setTaxPercent(taxInfo.tax.getPercent());
+        }
+        return taxInfo;
     }
 
     /**

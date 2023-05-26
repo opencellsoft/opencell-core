@@ -725,7 +725,15 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                 }
                             }
                         }
-
+                        if(seperateDiscount) {
+	                        if (bareWalletOperation.getTax() == null) {
+		                        TaxInfo taxInfo = taxMappingService.determineTax(bareWalletOperation);
+		                        if(taxInfo==null) {
+			                        throw new BusinessException("No tax found for the chargeInstance "+ bareWalletOperation.getChargeInstance().getCode());
+		                        }
+	                        }
+                        	discountedWalletOperation=rateDiscountedWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,discountRate,billingAccount,pricePlanMatrixLine);
+                        }
                     }
 
                 }
