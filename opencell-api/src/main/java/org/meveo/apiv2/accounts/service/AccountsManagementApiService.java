@@ -251,6 +251,28 @@ public class AccountsManagementApiService {
             count += walletOperationService.moveAndRerateNotBilledWOToUA(newWallet, subscription);
             count += ratedTransactionService.moveAndRerateNotBilledRTToUA(newWallet, subscription);
         }
+        
+        if (action == OpenTransactionsActionEnum.FAIL_DRAFT) {
+            Long countRTDraft = ratedTransactionService.countRTBySubscriptionForDraftInvoice(subscription);
+            if (countRTDraft > 0) {
+                throw new ConflictException("Cannot move subscription {id=[id], code=[code]} with rated items on DRAFT invoices".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode));
+            }
+        }
+        
+        if (action == OpenTransactionsActionEnum.FAIL_OPEN_AND_DRAFT) {
+            Long countRT = ratedTransactionService.countNotBilledRTBySubscription(subscription);
+            if (countRT > 0) {
+                throw new ConflictException("Cannot move subscription {id=[id], code=[code]} with OPEN rated items".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode));
+            }
+            
+            Long countRTDraft = ratedTransactionService.countRTBySubscriptionForDraftInvoice(subscription);
+            if (countRTDraft > 0) {
+                throw new ConflictException("Cannot move subscription {id=[id], code=[code]} with rated items on DRAFT invoices".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode));
+            }
+        }
 
         // Attache to new user account
         subscription.setUserAccount(newOwner);
