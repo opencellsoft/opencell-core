@@ -3707,6 +3707,7 @@
             </column>
             <column name="sales_person_name" type="varchar(52)" />
     		<column name="contract_id" type="bigint" />
+            <column name="price_list_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-194">
@@ -9554,6 +9555,7 @@
             <column name="discount_plan_id" type="bigint"></column>
             <column name="contract_id" type="bigint" />
             <column name="comment" type="varchar(2000)" />
+            <column name="price_list_id" type="bigint" />
         </createTable>
     </changeSet>
 
@@ -10360,6 +10362,7 @@
             <column name="sales_person_name" type="varchar(52)" />
             <column name="billing_cycle_id" type="bigint" />
             <column name="billing_run_id" type="bigint" />
+            <column name="price_list_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-475" author="NabilOUACHI">
@@ -12555,7 +12558,7 @@
     		</createTable>
        	 <addUniqueConstraint columnNames="seller_id, media_id" constraintName="seller_id_media_id_unique_key" tableName="billing_seller_media" />
     </changeSet>
-    
+
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -17166,6 +17169,26 @@
 			referencedTableName="crm_seller"
             referencedColumnNames="id" />
     </changeSet>
+    <changeSet id="#INTRD-16396_20230522_pli_quote-rebuild" author="a.rouaguebe">
+        <addForeignKeyConstraint
+                baseTableName="cpq_quote_version"
+                baseColumnNames="price_list_id"
+                constraintName="fk_cpq_quote_version_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+        <addForeignKeyConstraint
+                baseTableName="cpq_commercial_order"
+                baseColumnNames="price_list_id"
+                constraintName="fk_cpq_commercial_order_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+        <addForeignKeyConstraint
+                baseTableName="billing_subscription"
+                baseColumnNames="price_list_id"
+                constraintName="fk_billing_subscription_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+    </changeSet>
     <changeSet id="#INTRD-16203_20230519_ba_pricelist_fk" author="a.rouaguebe">
         <addForeignKeyConstraint
                 baseTableName="billing_billing_account"
@@ -17174,7 +17197,7 @@
                 referencedTableName="cat_price_list"
                 referencedColumnNames="id" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-15849_20230509_FK" author="TarikFA.">
         <addForeignKeyConstraint baseColumnNames="seller_id"
                                  baseTableName="billing_seller_media"
@@ -20086,6 +20109,7 @@
     <changeSet id="#INTRD-16040_20230516" author="a.rouaguebe" />
     <changeSet id="#INTRD-16036_20230516" author="zelmeliani" />
     <changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
+    <changeSet id="#INTRD-16396_20230522_pli_quote" author="a.rouaguebe" />
     <changeSet id="#INTRD-15849_20230509" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

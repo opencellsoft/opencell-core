@@ -78,6 +78,9 @@ public class QuoteVersionDto extends BaseEntityDto {
 	@Schema(description = "The custom fields")
     protected CustomFieldsDto customFields;
 
+	@Schema(description = "The associated PriceList code")
+	private String priceListCode;
+
 	/**
 	 * Instantiates a new product version dto.
 	 */
@@ -100,6 +103,7 @@ public class QuoteVersionDto extends BaseEntityDto {
 		this.statusDate = q.getStatusDate();
 		this.discountPlanCode=q.getDiscountPlan()!=null?q.getDiscountPlan().getCode():null;
 		this.comment=q.getComment();
+		this.priceListCode = q.getPriceList() != null ? q.getPriceList().getCode() : null;
 	}
 
 	/**
@@ -253,14 +257,20 @@ public class QuoteVersionDto extends BaseEntityDto {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
-	
-	
-	
-	
 
+	/**
+	 * PriceListCode Getter
+	 * @return the priceListCode
+	 */
+	public String getPriceListCode() {
+		return priceListCode;
+	}
 
-	
-	
-
+	/**
+	 * PriceListCode Setter
+	 * @param priceListCode the value to set
+	 */
+	public void setPriceListCode(String priceListCode) {
+		this.priceListCode = priceListCode;
+	}
 }
