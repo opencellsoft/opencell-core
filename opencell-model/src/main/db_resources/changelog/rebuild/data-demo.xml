@@ -452,6 +452,28 @@
 			<column name="chart_of_account_type" value="ASSETS" />
 			<column name="chart_of_account_view_type" value="REGULAR" />
 		</insert>
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-46" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="666000000" />
+			<column name="description" value="Exchange loss" />
+			<column name="chart_of_account_type" value="LIABILITIES" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+			<column name="migrated" value="0" />
+			<column name="disabled" value="0" />
+		</insert>		
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-47" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="766000000" />
+			<column name="description" value="Exchange gain" />
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+			<column name="migrated" value="0" />
+			<column name="disabled" value="0" />
+		</insert>		
     </changeSet>
     
      <changeSet id="#INTRD-292_20210816" author="HatimOUDAD">
