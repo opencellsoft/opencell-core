@@ -83,4 +83,8 @@ public interface PriceListResource {
                     )
             })
     Response updateStatus(@PathParam("priceListCode") String priceListCode, @PathParam("newStatus") PriceListStatusEnum newStatus);
+
+	@POST
+	@Path("/{priceListCode}/duplicate")
+	Response duplicate(@PathParam("priceListCode") String priceListCode);
 }
