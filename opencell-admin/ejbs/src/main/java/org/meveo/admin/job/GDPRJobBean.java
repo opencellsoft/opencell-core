@@ -450,7 +450,8 @@ public class GDPRJobBean extends BaseJobBean {
 	    	    	if(StringUtils.isBlank(queryInvoice)) {
 	    	    		queryInvoice = "select id from " + schemaPrefix + "billing_invoice i where i.invoice_date<=now() - interval '"
 	                            + gdprConfiguration.getInvoiceLife() + " year'";
-	    	    	}					
+	    	    	}		
+	    	    	log.info("queryInvoices : {}",queryInvoice);
 	                statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_invoices");
 	                statement.execute("create materialized view " + schemaPrefix + "mview_gdpr_invoices (id) as ("+queryInvoice+")");
 	                statement.execute("create index mview_gdpr_invoices_pk on " + schemaPrefix + "mview_gdpr_invoices (id)");
@@ -492,7 +493,7 @@ public class GDPRJobBean extends BaseJobBean {
 	                    statement.execute("delete from " + schemaPrefix + "ar_account_operation where transaction_type='I' and invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
 	                    statement.execute("delete from " + schemaPrefix + "billing_invoice_agregate where type='F' and invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
 	                    statement.execute("delete from " + schemaPrefix + "billing_invoice_agregate where invoice_id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
-	                    statement.execute("delete from " + schemaPrefix + "billing_linked_invoices as bli using " + schemaPrefix + "mview_gdpr_orders as m where bli.id = m.id or bli.linked_invoice_id = m.id");
+	                    statement.execute("delete from " + schemaPrefix + "billing_linked_invoices as bli using " + schemaPrefix + "mview_gdpr_invoices as m where bli.id = m.id or bli.linked_invoice_id = m.id");
 						statement.execute("delete from " + schemaPrefix + "billing_invoice where id in (select id from " + schemaPrefix + "mview_gdpr_invoices)");
 	
 	                }
