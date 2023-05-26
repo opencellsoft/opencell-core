@@ -1,32 +1,9 @@
 package org.meveo.admin.job;
 
-import org.hibernate.Session;
-import org.meveo.admin.async.GDPRJobAsync;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.jpa.EntityManagerProvider;
-import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.dwh.GdprConfiguration;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.order.Order;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.job.Job;
-import org.meveo.service.order.OrderService;
-import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.util.ApplicationProvider;
-import org.slf4j.Logger;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -35,15 +12,22 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import org.hibernate.Session;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.EntityManagerProvider;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.dwh.GdprConfiguration;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -67,21 +51,6 @@ public class GDPRJobBean extends BaseJobBean {
 
 	@Inject
 	private SubscriptionService subscriptionService;
-
-	@Inject
-	private OrderService orderService;
-
-	@Inject
-	private InvoiceService invoiceService;
-
-	@Inject
-	private AccountOperationService accountOperationService;
-
-	@Inject
-	private CustomerService customerService;
-
-	@Inject
-	private GDPRJobAsync gdprJobAsync;
 
     @EJB
     private GDPRJobBean thisNewTx;
@@ -473,14 +442,17 @@ public class GDPRJobBean extends BaseJobBean {
 	
 	        @Override
 	        public void execute(Connection connection) throws SQLException {
-	
+	        	String queryInvoice = (String) getParamOrCFValue(jobExecutionResult.getJobInstance(), "GDPRcustomQueryListInvoice", null);
 	            try (Statement statement = connection.createStatement()) {
 					if (gdprConfiguration.isDeactivateDBTriggers()) {
 						statement.execute("SET session_replication_role = replica");
 					}
+	    	    	if(StringUtils.isBlank(queryInvoice)) {
+	    	    		queryInvoice = "select id from " + schemaPrefix + "billing_invoice i where i.invoice_date<=now() - interval '"
+	                            + gdprConfiguration.getInvoiceLife() + " year'";
+	    	    	}					
 	                statement.execute("drop materialized view if exists " + schemaPrefix + "mview_gdpr_invoices");
-	                statement.execute("create materialized view " + schemaPrefix + "mview_gdpr_invoices (id) as (select id from " + schemaPrefix + "billing_invoice i where i.invoice_date<=now() - interval '"
-	                        + gdprConfiguration.getInvoiceLife() + " year')");
+	                statement.execute("create materialized view " + schemaPrefix + "mview_gdpr_invoices (id) as ("+queryInvoice+")");
 	                statement.execute("create index mview_gdpr_invoices_pk on " + schemaPrefix + "mview_gdpr_invoices (id)");
 	
 	                ResultSet resultset = statement.executeQuery("select count(*) from " + schemaPrefix + "mview_gdpr_invoices");
