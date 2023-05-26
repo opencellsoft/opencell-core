@@ -2133,10 +2133,14 @@ public class SubscriptionApi extends BaseApi {
                 serviceToUpdate.setMinimumLabelEl(postData.getMinimumLabelEl());
             }
             
-            if(serviceToUpdateDto.getPriceVersionDate() != null) {
-            	serviceToUpdate.setPriceVersionDate(serviceToUpdateDto.getPriceVersionDate());
-            	serviceToUpdate.setPriceVersionDateSetting(PriceVersionDateSettingEnum.MANUAL);
-            }
+			if (serviceToUpdateDto.getPriceVersionDate() != null) {
+				serviceToUpdate.setPriceVersionDate(serviceToUpdateDto.getPriceVersionDate());
+				serviceToUpdate.setPriceVersionDateSetting(PriceVersionDateSettingEnum.MANUAL);
+			} else if (PriceVersionDateSettingEnum.MANUAL.equals(serviceToUpdate.getPriceVersionDateSetting())) {
+				throw new InvalidParameterException("the priceVersionDate must not be empty for MANUAL Setting");
+			} else {
+				serviceToUpdate.setPriceVersionDate(null);
+			}
            
             // populate customFields
             try {
