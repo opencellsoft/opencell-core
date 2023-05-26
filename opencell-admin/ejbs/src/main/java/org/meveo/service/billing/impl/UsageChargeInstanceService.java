@@ -163,7 +163,9 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
     public List<UsageChargeInstance> getUsageChargeInstancesValidForDateBySubscriptionId(Subscription subscription, Date date) {
 
         return subscription.getUsageChargeInstances().stream()
-            .filter(ci -> ci.getStatus() == InstanceStatusEnum.ACTIVE || ((ci.getStatus() == InstanceStatusEnum.TERMINATED || ci.getStatus() == InstanceStatusEnum.SUSPENDED) && ci.getTerminationDate().after(date)))
-            .collect(Collectors.toList());
+                .filter(ci -> ci.getStatus() == InstanceStatusEnum.ACTIVE ||
+                        ((ci.getStatus() == InstanceStatusEnum.TERMINATED || ci.getStatus() == InstanceStatusEnum.SUSPENDED) &&
+                                (ci.getTerminationDate() == null || ci.getTerminationDate().after(date))))
+                .collect(Collectors.toList());
     }
 }
