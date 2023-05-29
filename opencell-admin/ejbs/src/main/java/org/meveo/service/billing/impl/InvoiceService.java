@@ -7247,6 +7247,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 .setParameter("billingAccountId", invoice.getBillingAccount().getId())
                 .setParameter("commercialOrder", invoice.getCommercialOrder())
                 .setParameter("tradingCurrencyId",invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getId() : null)
+		        .setParameter("subscriptionId", invoice.getSubscription() != null ? invoice.getSubscription().getId() : null)
                 .getResultList();
         return invoicesAdv;
     }
@@ -7276,11 +7277,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
         BigDecimal invoiceBalance = invoice.getTransactionalInvoiceBalance();
-        if (invoiceBalance != null) {
+        if (invoiceBalance != null && CollectionUtils.isNotEmpty(invoice.getLinkedInvoices())) {
             CommercialOrder orderInvoice = invoice.getCommercialOrder();
+			Subscription subscriptionInvoice = invoice.getSubscription();
             BigDecimal sum = invoice.getLinkedInvoices().stream()
                     .filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType()))
-                    .filter(li -> (orderInvoice != null && orderInvoice.equals(li.getLinkedInvoiceValue().getCommercialOrder())) || (orderInvoice == null && li.getLinkedInvoiceValue().getCommercialOrder() == null))
+                    .filter(li -> (subscriptionInvoice != null && subscriptionInvoice.equals(li.getLinkedInvoiceValue().getSubscription())) || (subscriptionInvoice == null && li.getLinkedInvoiceValue().getSubscription() == null) || (orderInvoice != null && orderInvoice.equals(li.getLinkedInvoiceValue().getCommercialOrder())) || (orderInvoice == null && li.getLinkedInvoiceValue().getCommercialOrder() == null))
                     .map(LinkedInvoice::getTransactionalAmount)
                     .reduce(BigDecimal::add).orElse(ZERO);
             //if balance is well calculated and balance=0, we don't need to recalculate
@@ -7307,6 +7309,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (compCommercialOrder != 0) {
                     return compCommercialOrder;
                 }
+				if(inv1.getSubscription() != null && inv2.getSubscription() == null){
+					compCommercialOrder = -1;
+				}else if(inv1.getSubscription() == null && inv2.getSubscription() != null) {
+					compCommercialOrder = 1;
+				}else if(inv1.getSubscription() == null && inv2.getSubscription() == null) {
+					compCommercialOrder = 0;
+				}else {
+					compCommercialOrder = inv1.getSubscription().getId().compareTo(inv2.getSubscription().getId());
+				}
+				if(compCommercialOrder != 0) {
+					return compCommercialOrder;
+				}
                 int compCreationDate = inv1.getAuditable().getCreated().compareTo(inv2.getAuditable().getCreated());
                 if (compCreationDate != 0) {
                     return compCreationDate;
