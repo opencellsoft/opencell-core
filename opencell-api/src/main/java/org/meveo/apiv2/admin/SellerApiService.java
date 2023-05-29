@@ -3,11 +3,13 @@ package org.meveo.apiv2.admin;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.service.admin.impl.InvoiceTypeSequenceService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.validation.ValidationByNumberCountryService;
 
@@ -15,8 +17,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Stateless
 public class SellerApiService {
@@ -25,6 +29,8 @@ public class SellerApiService {
 	private SellerService sellerService;
 	@Inject
 	private ValidationByNumberCountryService validationByNumberCountryService;
+	@Inject
+	private InvoiceTypeSequenceService invoiceTypeSequenceService;
 	
 	public void create(Seller seller) {
 		handleMissingParameters(seller);
@@ -40,6 +46,22 @@ public class SellerApiService {
 		}
 		checkVatNum(seller.getVatNo(), seller.getTradingCountry().getCountryCode());
 		sellerService.create(seller);
+		
+		if(CollectionUtils.isNotEmpty(seller.getInvoiceTypeSequence())){
+			var invoiceTypeIds = seller.getInvoiceTypeSequence().stream()
+											.filter(invoiceTypeSellerSequence -> invoiceTypeSellerSequence.getInvoiceType() != null)
+											.map(invoiceTypeSellerSequence -> invoiceTypeSellerSequence.getInvoiceType().getId()).collect(Collectors.toList());
+			for(InvoiceTypeSellerSequence inv: seller.getInvoiceTypeSequence()){
+				if(inv.getInvoiceType() != null) {
+					var frequency = Collections.frequency(invoiceTypeIds, inv.getInvoiceType().getId());
+					if(frequency > 1) {
+						throw new BusinessApiException("Invoice numbering for a given invoice type is already specified");
+					}
+				}
+				inv.setSeller(seller);
+				invoiceTypeSequenceService.create(inv);
+			}
+		}
 	}
 	
 	public void update(Seller postSeller) {

@@ -43,4 +43,7 @@ public interface Seller extends Resource{
 	
 	@Nullable
 	String getVatNumber();
+	
+	@Nullable
+	List<InvoiceTypeSellerSequence> getInvoiceTypeSellerSequence();
 }
