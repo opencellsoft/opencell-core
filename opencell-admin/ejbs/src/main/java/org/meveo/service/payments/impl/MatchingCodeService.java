@@ -24,7 +24,6 @@ import static org.meveo.model.shared.DateUtils.parseDateWithPattern;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -412,7 +411,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 accountOperation.setUnMatchingAmount(accountOperation.getAmount().subtract(computedMatchingAmount));
                 accountOperation.setMatchingAmount(computedMatchingAmount);
                 matchingAmount.setMatchingAmount(amountToMatch);
-                accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
+                boolean isMatched = fullMatch && accountOperation.getTransactionalUnMatchingAmount().compareTo(ZERO) == 0;
+                accountOperation.setMatchingStatus(isMatched ? MatchingStatusEnum.L : MatchingStatusEnum.P);
 
                 matchingAmount.updateAudit(currentUser);
                 matchingAmount.setAccountOperation(accountOperation);
@@ -462,22 +462,26 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     }
 
-    private void createExchangeGainLoss(AccountOperation accountOperation, MatchingAmount matchingAmount, TradingCurrency transactionalCurrency, BigDecimal appliedRate) {
+    private void createExchangeGainLoss(AccountOperation accountOperation, MatchingAmount matchingAmount,
+                                        TradingCurrency transactionalCurrency, BigDecimal invoiceRate) {
         Date transactionDate = parseDateWithPattern(dateFormat.format(accountOperation.getTransactionDate()), DATE_FORMAT_PATTERN);
         BigDecimal currentRate = transactionalCurrency.getExchangeRate(transactionDate) != null? transactionalCurrency.getExchangeRate(transactionDate).getExchangeRate() : null;
+        MathContext mathContext = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 
         if (currentRate != null) {
             AccountOperation exchangeDeltaAccountOperation = new AccountOperation();
-            BigDecimal amount = matchingAmount.getMatchingAmount().divide(appliedRate);
-            BigDecimal exchangeAmountDelta = amount.subtract(accountOperation.getMatchingAmount());
+            BigDecimal invoiceAmount = matchingAmount.getMatchingAmount().divide(invoiceRate, mathContext);
+            BigDecimal paymentAmount =
+                    matchingAmount.getMatchingAmount().divide(accountOperation.getAppliedRate(), mathContext);
+            BigDecimal exchangeAmountDelta = invoiceAmount.subtract(paymentAmount);
             BigDecimal exchangeAmount = exchangeAmountDelta.abs();
             if(exchangeAmount.compareTo(ZERO) > 0) {
                 if (exchangeAmountDelta.compareTo(ZERO) < 0) {
-                    exchangeDeltaAccountOperation.setCode("XCH_GAIN");
-                    exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.DEBIT);
-                } else {
                     exchangeDeltaAccountOperation.setCode("XCH_LOSS");
                     exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
+                } else {
+                    exchangeDeltaAccountOperation.setCode("XCH_GAIN");
+                    exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.DEBIT);
                 }
                 exchangeDeltaAccountOperation.setCustomerAccount(accountOperation.getCustomerAccount());
                 exchangeDeltaAccountOperation.setAccountingCode(accountOperation.getAccountingCode());
