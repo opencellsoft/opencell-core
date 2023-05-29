@@ -1,5 +1,7 @@
 package org.meveo.apiv2.catalog.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -12,27 +14,34 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.catalog.resource.pricelist.PriceListMapper;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListStatusEnum;
+import org.meveo.model.report.query.SortOrderEnum;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.payments.impl.CreditCategoryService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 @Stateless
 public class PriceListApiService extends BaseApi {
@@ -60,6 +69,14 @@ public class PriceListApiService extends BaseApi {
     
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+	private FinanceSettingsService financeSettingsService;
+    
+    @Inject
+    private BillingAccountService billingAccountService;
+    
+    private PriceListMapper mapper = new PriceListMapper();
 
     /**
      * Create a price list
@@ -385,5 +402,206 @@ public class PriceListApiService extends BaseApi {
     	if (priceList.getPaymentMethods() != null) {
     		priceListToUpdate.setPaymentMethods(priceList.getPaymentMethods());
         }
+    }
+    
+    /**
+     * Get Price List with criteria
+     * @param pOffset Offset
+     * @param pLimit Limit
+     * @param pSortOrder SortOrder
+     * @param pSortBy SortBy
+     * @param pBillingAccountCode Billing Account Code
+     * @return A list of {@link PriceList}
+     */
+    public List<org.meveo.apiv2.catalog.PriceList> getPriceList(Long pOffset, Long pLimit, String pSortOrder, String pSortBy, String pBillingAccountCode) {
+    	//Check if the PriceList is enabled or not
+    	getAndCheckPriceListActivation();
+    	
+    	if(pSortBy.isBlank()) {
+    		pSortBy = null;
+    	}
+    	
+    	checkSortByField(pSortBy);
+    	
+    	//Get and check the existence of BA
+    	BillingAccount lBillingAccount = getBillingAccount(pBillingAccountCode);
+    	
+    	//Get SortOrder
+    	pSortOrder = pSortOrder == null ? SortOrderEnum.DESCENDING.getLabel() : SortOrderEnum.valueOf(pSortOrder).getLabel();
+    	
+    	//Get PriceList
+    	List<PriceList> priceList = new ArrayList<>();
+    	priceList.addAll(priceListService.getPriceList(pOffset, pLimit, pSortOrder, pSortBy, getCustomerBrandId(lBillingAccount), getCustomerCategoryId(lBillingAccount), 
+    			getCreditCategoryId(lBillingAccount), getTradingCountryId(lBillingAccount), getTradingCurrencyId(lBillingAccount), getLegalEntityTypeId(lBillingAccount),
+    			getPaymentMethodId(lBillingAccount), getSellerId(lBillingAccount), lBillingAccount.getPriceList() != null ? lBillingAccount.getPriceList().getId() : null));
+    	
+    	//Convert PriceList
+    	return priceList.stream().map(s -> mapper.toResource(s, false)).collect(Collectors.toList());
+    }
+    
+    private void checkSortByField(String pSortBy) {
+        List<String> lFieldNames = new ArrayList<>();
+        lFieldNames.add("code");
+        lFieldNames.add("validFrom");
+        lFieldNames.add("validUntil");
+        lFieldNames.add("applicationStartDate");
+		lFieldNames.add("applicationEndDate");
+		lFieldNames.add("status");
+        
+        if(pSortBy != null && !pSortBy.isEmpty() && !lFieldNames.contains(pSortBy)) {
+        	throw new BusinessApiException("The field (" + pSortBy + ") is not allowed in sortBy, only the following fields are authorized: " + lFieldNames.toString());
+        }		
+	}
+
+	/**
+     * Count Price List by Criteria
+     * @param pSortOrder SortOrder
+     * @param pOrderBy OrderBy
+     * @param pBillingAccountCode BillingAccountCode
+     * @return Count of Price List
+     */
+    public Long count(String pSortOrder, String pOrderBy, String pBillingAccountCode) {
+    	//Get SortOrder
+    	pSortOrder = pSortOrder == null ? SortOrderEnum.DESCENDING.getLabel() : SortOrderEnum.valueOf(pSortOrder).getLabel();
+
+    	//Get and check the existence of BA
+    	BillingAccount lBillingAccount = getBillingAccount(pBillingAccountCode);
+    	
+    	//Count PriceList
+    	return priceListService.count(pSortOrder, pOrderBy, getCustomerBrandId(lBillingAccount), getCustomerCategoryId(lBillingAccount), getCreditCategoryId(lBillingAccount), 
+    			getTradingCountryId(lBillingAccount), getTradingCurrencyId(lBillingAccount), getLegalEntityTypeId(lBillingAccount), getPaymentMethodId(lBillingAccount),
+    			getSellerId(lBillingAccount), lBillingAccount.getPriceList() != null ? lBillingAccount.getPriceList().getId() : null);
+    }
+	
+    /**
+     * Check if PriceList mode is activated
+     */
+	private void getAndCheckPriceListActivation() {
+    	//Get FinanceSettings t
+    	FinanceSettings lFinanceSettings = financeSettingsService.getFinanceSetting();
+    	
+    	//Check if the PLi is activated or not
+    	if(!lFinanceSettings.isEnablePriceList()) {
+    		throw new BusinessApiException("The PriceList is not enabled");
+    	}
+    }
+	
+	/**
+	 * Get Billing account
+	 * @param pBillingAccountCode Billing Account Code
+	 * @return {@link BillingAccount}
+	 */
+    private BillingAccount getBillingAccount(String pBillingAccountCode) {
+		BillingAccount billingAccount = billingAccountService.findByCode(pBillingAccountCode);
+		
+		if(billingAccount == null) {
+			throw new EntityDoesNotExistsException(BillingAccount.class, pBillingAccountCode);
+		} else {
+			return billingAccount;
+		}
+	}
+    
+    /**
+     * Get Customer Brand Id
+     * @param pBillingAccountCode Billing Account Code
+     * @return Customer Brand Id
+     */
+    private Long getCustomerBrandId(BillingAccount pBillingAccountCode) {
+    	if(pBillingAccountCode.getCustomerAccount() != null && pBillingAccountCode.getCustomerAccount().getCustomer() != null && pBillingAccountCode.getCustomerAccount().getCustomer().getCustomerBrand() != null) {
+    		return pBillingAccountCode.getCustomerAccount().getCustomer().getCustomerBrand().getId();		
+    	} else {
+    		return null;
+    	}
+    }
+    
+    /**
+     * Get Customer Category Id
+     * @param pBillingAccountCode Billing Account Code
+     * @return Customer Category Id
+     */
+    private Long getCustomerCategoryId(BillingAccount pBillingAccountCode) {
+    	if(pBillingAccountCode.getCustomerAccount() != null && pBillingAccountCode.getCustomerAccount().getCustomer() != null && pBillingAccountCode.getCustomerAccount().getCustomer().getCustomerCategory() != null) {
+    		return pBillingAccountCode.getCustomerAccount().getCustomer().getCustomerCategory().getId();
+    	} else {
+    		return null;
+    	}
+    }
+    
+    /**
+     * Get Credit Category Id
+     * @param pBillingAccountCode Billing Account Code
+     * @return Customer Category Id
+     */
+    private Long getCreditCategoryId(BillingAccount pBillingAccountCode) {
+    	if(pBillingAccountCode.getCustomerAccount() != null && pBillingAccountCode.getCustomerAccount().getCreditCategory() != null) {
+    		return pBillingAccountCode.getCustomerAccount().getCreditCategory().getId();
+    	} else {
+    		return null;
+    	}
+    }
+    
+    /**
+     * Get Trading Country Id
+     * @param pBillingAccountCode Billing Account Code
+     * @return Trading Country Id
+     */
+    private Long getTradingCountryId(BillingAccount pBillingAccountCode) {
+    	if(pBillingAccountCode.getTradingCountry() != null && pBillingAccountCode.getTradingCountry().getCountry() != null) {
+    		return pBillingAccountCode.getTradingCountry().getCountry().getId();
+    	} else {
+    		return null;
+    	}
+    }
+    
+    /**
+     * Get Trading Currency Id
+     * @param pBillingAccountCode Billing Account Code
+     * @return Trading Currency Id
+     */
+    private Long getTradingCurrencyId(BillingAccount pBillingAccountCode) {
+    	if(pBillingAccountCode.getTradingCurrency() != null && pBillingAccountCode.getTradingCurrency().getCurrency() != null) {
+    		return pBillingAccountCode.getTradingCurrency().getCurrency().getId();
+    	} else {
+    		return null;
+    	}
+    }
+    
+    /**
+     * Get Legal Entity Type Id
+     * @param pBillingAccountCode Billing Account Code 
+     * @return Legal Entity Type Id
+     */
+    private Long getLegalEntityTypeId(BillingAccount pBillingAccountCode) {
+    	if(pBillingAccountCode.getLegalEntityType() != null) {
+    		return pBillingAccountCode.getLegalEntityType().getId();
+    	} else {
+    		return null;
+    	}
+    }
+    
+    /**
+     * Get Payment Method 
+     * @param pBillingAccountCode Billing Account Code
+     * @return Payment Method
+     */
+    private PaymentMethodEnum getPaymentMethodId(BillingAccount pBillingAccountCode) {
+    	if(pBillingAccountCode.getPaymentMethod() != null) {
+    		return pBillingAccountCode.getPaymentMethod().getPaymentType();
+    	} else {
+    		return null;
+    	}
+    }
+    
+    /**
+     * Get Seller Id
+     * @param pBillingAccountCode Billing Account Code
+     * @return Seller Id
+     */
+    private Long getSellerId(BillingAccount pBillingAccountCode) {
+    	if(pBillingAccountCode.getCustomerAccount() != null && pBillingAccountCode.getCustomerAccount().getCustomer() != null && pBillingAccountCode.getCustomerAccount().getCustomer().getSeller() != null) {
+    		return pBillingAccountCode.getCustomerAccount().getCustomer().getSeller().getId();
+    	} else {
+    		return null;
+    	}
     }
 }
