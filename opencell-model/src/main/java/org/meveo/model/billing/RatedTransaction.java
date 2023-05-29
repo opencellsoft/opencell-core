@@ -147,6 +147,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount.customerAccount=:customerAccount"),
 
         @NamedQuery(name = "RatedTransaction.countNotBilledRTBySubscription", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status='OPEN' AND r.subscription=:subscription"),
+        @NamedQuery(name = "RatedTransaction.countRTBySubscriptionForDraftInvoice", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status='BILLED' AND r.subscription=:subscription AND r.invoiceLine.invoice.status = org.meveo.model.billing.InvoiceStatusEnum.DRAFT"),
         @NamedQuery(name = "RatedTransaction.moveNotBilledRTToUA", query = "UPDATE RatedTransaction r SET r.wallet=:newWallet, r.userAccount=:newUserAccount, r.billingAccount=:newBillingAccount WHERE r.status='OPEN' AND r.subscription=:subscription"),
         @NamedQuery(name = "RatedTransaction.moveAndRerateNotBilledRTToUA", query = "UPDATE RatedTransaction r SET r.status='RERATED', r.wallet=:newWallet, r.userAccount=:newUserAccount, r.billingAccount=:newBillingAccount WHERE r.id IN (SELECT o.ratedTransaction.id FROM WalletOperation o WHERE o.status='TO_RERATE' AND o.subscription=:subscription) OR (r.status='OPEN' AND r.subscription=:subscription)"),
 

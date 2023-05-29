@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 
 public enum ColumnTypeEnum {
@@ -15,7 +16,7 @@ public enum ColumnTypeEnum {
         	String multiValuesAttributeSeparator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
             if (attributeValue.getStringValue() == null && pricePlanMatrixValue.getStringValue() == null) {
                 return true;
-            } else if (attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) {
+            } else if ((attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) && attributeValue.getAttribute().getAttributeType() != AttributeTypeEnum.EXPRESSION_LANGUAGE) {
                 return false;
             }
             switch (attributeValue.getAttribute().getAttributeType()) {
