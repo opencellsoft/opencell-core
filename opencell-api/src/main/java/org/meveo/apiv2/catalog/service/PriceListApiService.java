@@ -417,7 +417,7 @@ public class PriceListApiService extends BaseApi {
     	//Check if the PriceList is enabled or not
     	getAndCheckPriceListActivation();
     	
-    	if(pSortBy.isBlank()) {
+    	if(pSortBy != null && pSortBy.isBlank()) {
     		pSortBy = null;
     	}
     	
