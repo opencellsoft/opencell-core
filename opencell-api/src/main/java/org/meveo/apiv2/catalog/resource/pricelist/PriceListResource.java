@@ -83,4 +83,12 @@ public interface PriceListResource {
                     )
             })
     Response updateStatus(@PathParam("priceListCode") String priceListCode, @PathParam("newStatus") PriceListStatusEnum newStatus);
+
+	@POST
+	@Path("/{priceListCode}/duplicate")
+	@Operation(summary = "Duplicate a PriceList", tags = { "PriceList" }, description = "Duplicate a Price List", responses = {
+			@ApiResponse(responseCode = "200", description = "The price List successfully duplicated"),
+			@ApiResponse(responseCode = "404", description = "The price list with 'priceListCode' has not been found"),
+			@ApiResponse(responseCode = "400", description = "Duplicate price list failed") })
+	Response duplicate(@PathParam("priceListCode") String priceListCode);
 }

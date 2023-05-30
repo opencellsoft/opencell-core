@@ -51,4 +51,12 @@ public class PriceListResourceImpl implements PriceListResource {
         Map<String, String> lReturn = Map.of("status", "SUCCESS");
         return Response.ok(lReturn).build();
     }
+
+	@Override
+	public Response duplicate(String priceListCode) {
+		PriceList savedPriceList = priceListApiService.duplicate(priceListCode);
+		return ok(LinkGenerator.getUriBuilderFromResource(PriceListResource.class, savedPriceList.getId()).build())
+				.entity(mapper.toResource(savedPriceList))
+				.build();
+	}
 }
