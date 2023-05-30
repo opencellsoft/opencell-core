@@ -13,10 +13,10 @@ public enum ColumnTypeEnum {
     String {
         @Override
         public boolean valueMatch(PricePlanMatrixValueForRating pricePlanMatrixValue, AttributeValue attributeValue) {
-        	String multiValuesAttributeSeparator = ";"; //ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
-            if (attributeValue.getStringValue() == null && pricePlanMatrixValue.getStringValue() == null) {
+            String multiValuesAttributeSeparator = ";"; //ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
+            if (matchWithAllValues(pricePlanMatrixValue)) {
                 return true;
-            } else if ((attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) && attributeValue.getAttribute().getAttributeType() != AttributeTypeEnum.EXPRESSION_LANGUAGE) {
+            } else if ((attributeValue.getStringValue() == null) && attributeValue.getAttribute().getAttributeType() != AttributeTypeEnum.EXPRESSION_LANGUAGE) {
                 return false;
             }
             switch (attributeValue.getAttribute().getAttributeType()) {
@@ -55,7 +55,7 @@ public enum ColumnTypeEnum {
         @Override
         public boolean valueMatch(PricePlanMatrixValueForRating pricePlanMatrixValue, AttributeValue attributeValue) {
         	String multiValuesAttributeSeparator = ";"; //ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
-            if (attributeValue.getDoubleValue() == null || pricePlanMatrixValue.getLongValue() == null) {
+            if (matchWithAllValues(pricePlanMatrixValue) || attributeValue.getDoubleValue() == null) {
                 return true;
             }
             switch (attributeValue.getAttribute().getAttributeType()) {
@@ -79,15 +79,16 @@ public enum ColumnTypeEnum {
 
         @Override
         public boolean matchWithAllValues(PricePlanMatrixValueForRating pricePlanMatrixValue) {
-            return pricePlanMatrixValue.getDoubleValue() == null;
+            return pricePlanMatrixValue.getLongValue() == null;
         }
     },
     Double {
         @Override
         public boolean valueMatch(PricePlanMatrixValueForRating pricePlanMatrixValue, AttributeValue attributeValue) {
         	String multiValuesAttributeSeparator = ";"; //ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
-            if(pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && StringUtils.isEmpty(pricePlanMatrixValue.getStringValue()))
+            if (matchWithAllValues(pricePlanMatrixValue) || attributeValue.getDoubleValue() == null) {
                 return true;
+            }
             Object passedAttributeValue =  attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case INTEGER:
@@ -123,13 +124,13 @@ public enum ColumnTypeEnum {
 
         @Override
         public boolean matchWithAllValues(PricePlanMatrixValueForRating pricePlanMatrixValue) {
-            return pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && StringUtils.isEmpty(pricePlanMatrixValue.getStringValue());
+            return pricePlanMatrixValue.getDoubleValue() == null;
         }
     },
     Range_Date {
         @Override
         public boolean valueMatch(PricePlanMatrixValueForRating pricePlanMatrixValue, AttributeValue attributeValue) {
-            if (attributeValue.getDateValue() == null || (pricePlanMatrixValue.getFromDateValue() == null && pricePlanMatrixValue.getToDateValue() == null)) {
+            if (matchWithAllValues(pricePlanMatrixValue) || attributeValue.getDateValue() == null) {
                 return true;
             } else if (pricePlanMatrixValue.getFromDateValue() != null && pricePlanMatrixValue.getToDateValue() == null) {
                 return attributeValue.getDateValue().equals(pricePlanMatrixValue.getFromDateValue()) || attributeValue.getDateValue().after(pricePlanMatrixValue.getFromDateValue());
@@ -197,7 +198,7 @@ public enum ColumnTypeEnum {
     Boolean {
         @Override
         public boolean valueMatch(PricePlanMatrixValueForRating pricePlanMatrixValue, AttributeValue attributeValue) {
-            if (attributeValue.getStringValue() == null || StringUtils.isEmpty(pricePlanMatrixValue.getStringValue())) {
+            if (matchWithAllValues(pricePlanMatrixValue) || attributeValue.getBooleanValue() == null) {
                 return true;
             }
             return attributeValue.getStringValue().equalsIgnoreCase(pricePlanMatrixValue.getStringValue());
@@ -205,7 +206,7 @@ public enum ColumnTypeEnum {
 
         @Override
         public boolean matchWithAllValues(PricePlanMatrixValueForRating pricePlanMatrixValue) {
-            return StringUtils.isEmpty(pricePlanMatrixValue.getStringValue());
+            return pricePlanMatrixValue.getBooleanValue() == null;
         }
     };
 

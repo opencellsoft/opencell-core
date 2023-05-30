@@ -346,8 +346,6 @@ public class PricePlanSelectionService implements Serializable {
                     if (lastPLId > 0 && allMatch) {
                         matchedPlId = lastPLId;
                         break;
-                    } else {
-                        allMatch = true;
                     }
                     lastPLId = ppValue.getPricePlanMatrixLineId();
 
@@ -358,7 +356,9 @@ public class PricePlanSelectionService implements Serializable {
                 allMatch = ppValue.isMatch(attributeValues);
 
             }
-
+            if (matchedPlId == null && (lastPLId > 0 && allMatch)) {
+                matchedPlId = lastPLId;
+            }
             if (matchedPlId != null) {
                 return em.find(PricePlanMatrixLine.class, matchedPlId);
             }
