@@ -8,10 +8,14 @@ import org.meveo.apiv2.catalog.service.pricelist.PriceListService;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Country;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
-import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.CustomerBrand;
@@ -565,6 +569,18 @@ public class PriceListApiServiceTest {
         assertThat(ppmToCheck.getVersions()).isNotEmpty();
         assertThat(ppmToCheck.getVersions().size()).isEqualTo(pricePlan.getVersions().size());
         assertThat(ppmToCheck.getVersions().get(0).getStatus()).isEqualTo(VersionStatusEnum.DRAFT);
+
+
+    }
+
+    @Test
+    public void duplicate_givenMissingPLiShouldDuplicate() {
+
+        // given a fake non existing PLi Code
+        String priceListCode = "fake-code";
+
+        // when + then
+        assertThatThrownBy(() -> priceListApiService.duplicate(priceListCode)).isInstanceOf(EntityDoesNotExistsException.class);
 
 
     }
