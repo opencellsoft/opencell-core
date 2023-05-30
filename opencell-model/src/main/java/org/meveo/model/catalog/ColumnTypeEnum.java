@@ -110,7 +110,7 @@ public enum ColumnTypeEnum {
                     }
                 }
                 case LIST_MULTIPLE_NUMERIC: {
-                    return !StringUtils.isEmpty(attributeValue.getStringValue()) &&
+                    return !StringUtils.isEmpty(pricePlanMatrixValue.getStringValue()) &&
                             Stream.of(pricePlanMatrixValue.getStringValue().split(multiValuesAttributeSeparator))
                                     .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
                                     .anyMatch(number -> {
