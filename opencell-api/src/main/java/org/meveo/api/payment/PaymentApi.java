@@ -268,7 +268,7 @@ public class PaymentApi extends BaseApi {
 
 	private void matchPayment(PaymentDto paymentDto, CustomerAccount customerAccount, Payment payment)
 			throws BusinessApiException, BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		List<Long> listReferenceToMatch = new ArrayList<Long>();
+		List<Long> listReferenceToMatch = new ArrayList<>();
 		if (paymentDto.getListAoIdsForMatching()!=null && !paymentDto.getListAoIdsForMatching().isEmpty() ) {
 			listReferenceToMatch.addAll(paymentDto.getListAoIdsForMatching());
 		} else if (paymentDto.getListOCCReferenceforMatching() != null) {
@@ -282,7 +282,7 @@ public class PaymentApi extends BaseApi {
 		        listReferenceToMatch.add(accountOperationToMatch.get(0).getId());
 		    }
 		}
-		List<AccountOperation> aosToPaid = new ArrayList<AccountOperation>();
+		List<AccountOperation> aosToPaid = new ArrayList<>();
 		for(Long id : listReferenceToMatch ) {
 			AccountOperation ao = accountOperationService.findById(id);
 			if(ao == null) {
@@ -291,16 +291,23 @@ public class PaymentApi extends BaseApi {
 			aosToPaid.add(ao);
 		}
 		 Collections.sort(aosToPaid, Comparator.comparing(AccountOperation::getDueDate));
-
-		for(AccountOperation ao :aosToPaid ) {			
+		if(checkAccountOperationCurrency(aosToPaid, paymentDto.getTransactionalcurrency())) {
+			throw new BusinessApiException("Transaction currency is different from account operation currency");
+		}
+		for(AccountOperation ao :aosToPaid ) {
 			if(BigDecimal.ZERO.compareTo(payment.getUnMatchingAmount()) == 0) {
 				break;
 			}
-			List<Long> aosIdsToMatch = new ArrayList<Long>();
+			List<Long> aosIdsToMatch = new ArrayList<>();
 			aosIdsToMatch.add(ao.getId());
 			aosIdsToMatch.add(payment.getId());
 			matchingCodeService.matchOperations(null, customerAccount.getCode(), aosIdsToMatch, null, MatchingTypeEnum.A);			
 		}
+	}
+
+	private boolean checkAccountOperationCurrency(List<AccountOperation> aosToPaid, String transactionalCurrency) {
+		return aosToPaid.stream()
+				.anyMatch(accountOperation -> !accountOperation.getTransactionalCurrency().getCurrencyCode().equalsIgnoreCase(transactionalCurrency));
 	}
 
 

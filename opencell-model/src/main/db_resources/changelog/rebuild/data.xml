@@ -11847,6 +11847,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<where>entity_class = 'org.meveo.model.cpq.Media'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="#INTRD-16482_20230526" author="aeljaouhari" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
