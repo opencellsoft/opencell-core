@@ -22,6 +22,7 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PriceListLineService;
+import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
