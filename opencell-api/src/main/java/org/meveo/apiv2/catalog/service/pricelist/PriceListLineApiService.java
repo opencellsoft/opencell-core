@@ -12,6 +12,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.pricelist.PriceList;
@@ -21,6 +22,7 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PriceListLineService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 
@@ -53,6 +55,9 @@ public class PriceListLineApiService extends BaseApi {
 
     @Inject
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
+
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
     public Long create(PriceListLineDto postDto) {
 
@@ -119,6 +124,14 @@ public class PriceListLineApiService extends BaseApi {
         entityToSave.setAmount(postDto.getAmount());
         entityToSave.setApplicationEl(postDto.getApplicationEl());
         entityToSave.setDescription(postDto.getDescription());
+
+        if(StringUtils.isNotBlank(postDto.getPricePlanCode())) {
+            PricePlanMatrix ppm = pricePlanMatrixService.findByCode(postDto.getPricePlanCode());
+            if(ppm == null) {
+                throw new EntityDoesNotExistsException(PricePlanMatrix.class, postDto.getCode());
+            }
+            entityToSave.setPricePlan(ppm);
+        }
 
 
         try {
@@ -230,6 +243,18 @@ public class PriceListLineApiService extends BaseApi {
                 priceListLineToUpdate.setApplicationEl(postDto.getApplicationEl());
             } else {
                 priceListLineToUpdate.setApplicationEl(null);
+            }
+        }
+
+        if(postDto.getPricePlanCode() != null) {
+            if(StringUtils.isNotBlank(postDto.getPricePlanCode())) {
+                PricePlanMatrix ppm = pricePlanMatrixService.findByCode(postDto.getPricePlanCode());
+                if(ppm == null) {
+                    throw new EntityDoesNotExistsException(PricePlanMatrix.class, postDto.getCode());
+                }
+                priceListLineToUpdate.setPricePlan(ppm);
+            } else {
+                priceListLineToUpdate.setPricePlan(null);
             }
         }
 
