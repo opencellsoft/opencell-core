@@ -783,6 +783,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             if(ppmVersion == null && contractItem != null && contractItem.getPricePlan() != null) {
                 ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(contractItem.getPricePlan().getId(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
             }
+	        if (bareWalletOperation.getTax() == null) {
+		        TaxInfo taxInfo = taxMappingService.determineTax(bareWalletOperation);
+		        if(taxInfo==null) {
+			        throw new BusinessException("No tax found for the chargeInstance "+ bareWalletOperation.getChargeInstance().getCode());
+		        }
+	        }
             discountedWalletOperation=rateDiscountedWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,discountRate,ppmVersion,pricePlanMatrixLine);
         }
 
