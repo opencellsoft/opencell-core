@@ -565,9 +565,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 	}
 
     public void calculateTradingPricePlanMatrixLine(TradingPricePlanVersionDto dtoData) throws MeveoApiException, BusinessException {
-        if (dtoData.getRate() == null || BigDecimal.ZERO.equals(dtoData.getRate())) {
-            missingParameters.add("rate");
-        }
         checkMandatoryFields(dtoData);
 
         PricePlanMatrixVersion ppmv = pricePlanMatrixVersionService.findById(dtoData.getPricePlanMatrixVersionId());
@@ -592,14 +589,14 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         
         if (tradingLines.isEmpty()) {
         	ppmv.getLines().forEach( line -> {
-        		TradingPricePlanMatrixLine tradingLine =  new TradingPricePlanMatrixLine(dtoData.getRate().multiply(line.getValue()), tradingCurrency, dtoData.getRate(), dtoData.isUseForBillingAccounts(), line);
+        		TradingPricePlanMatrixLine tradingLine =  new TradingPricePlanMatrixLine((dtoData.getRate() == null) ? null : dtoData.getRate().multiply(line.getValue()), tradingCurrency, dtoData.getRate(), dtoData.isUseForBillingAccounts(), line);
                 tradingPricePlanMatrixLineService.create(tradingLine);	
         	});
         } else {
         	tradingLines.forEach( tradingLine -> {
         		tradingLine.setRate(dtoData.getRate());
         		tradingLine.setUseForBillingAccounts(dtoData.isUseForBillingAccounts());
-        		tradingLine.setTradingValue(dtoData.getRate().multiply(tradingLine.getPricePlanMatrixLine().getValue()));
+        		tradingLine.setTradingValue((dtoData.getRate() == null) ? null : dtoData.getRate().multiply(tradingLine.getPricePlanMatrixLine().getValue()));
         	}); 
         }
 
