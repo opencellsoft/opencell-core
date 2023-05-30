@@ -9,7 +9,6 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.service.base.BusinessService;
 
@@ -48,34 +47,23 @@ public class PriceListService extends BusinessService<PriceList> {
     }
     
 	/**
-	 * Count Price List using criteria
-	 * @param pSortOrder SortOrder
-	 * @param pSortBy Sort By
-	 * @param pBrandId Customer Brand Id
-	 * @param pCustomerCategoryId Customer Category Id
-	 * @param pCreditCategoryId Credit Category Id
-	 * @param pCountryId Country Id
-	 * @param pCurrencyId Currency Id
-	 * @param pTitleId Legal Entity Type Id
-	 * @param pPaymentMethodEnum Payment Method 
-	 * @param pSellerId Seller id
-	 * @param pAttachedPriceListId Attached Price List to Billing Account 
+	 * Get Price List using criteria
+	 * @param pPriceListCriteria
 	 * @return Count of {@link PriceList}
 	 */
-	public Long count(String pSortOrder, String pSortBy, Long pBrandId, Long pCustomerCategoryId, Long pCreditCategoryId, 
-			Long pCountryId, Long pCurrencyId, Long pTitleId, PaymentMethodEnum pPaymentMethodEnum, Long pSellerId, Long pAttachedPriceListId) {
-    	TypedQuery<Long> query = getEntityManager().createQuery(getPriceListQuery(pSortOrder, pSortBy, true), Long.class);
+	public Long count(PriceListCriteria pPriceListCriteria) {
+    	TypedQuery<Long> query = getEntityManager().createQuery(getPriceListQuery(pPriceListCriteria.getSortOrder(), pPriceListCriteria.getSortBy(), true), Long.class);
     	return query.setParameter("activeStatus", List.of(ACTIVE))
         	.setParameter("currentDate", new Date())
-            .setParameter("brandId", pBrandId)
-            .setParameter("customerCategoryId", pCustomerCategoryId)
-            .setParameter("creditCategoryId", pCreditCategoryId)
-            .setParameter("countryId", pCountryId)
-            .setParameter("currencyId", pCurrencyId)
-            .setParameter("titleId", pTitleId)
-            .setParameter("paymentMethod", pPaymentMethodEnum)
-            .setParameter("sellerId", pSellerId)
-            .setParameter("attachedPriceListId", pAttachedPriceListId)
+            .setParameter("brandId", pPriceListCriteria.getBrandId())
+            .setParameter("customerCategoryId", pPriceListCriteria.getCustomerCategoryId())
+            .setParameter("creditCategoryId", pPriceListCriteria.getCreditCategoryId())
+            .setParameter("countryId", pPriceListCriteria.getCountryId())
+            .setParameter("currencyId", pPriceListCriteria.getCurrencyId())
+            .setParameter("titleId", pPriceListCriteria.getTitleId())
+            .setParameter("paymentMethod", pPriceListCriteria.getPaymentMethodEnum())
+            .setParameter("sellerId", pPriceListCriteria.getSellerId())
+            .setParameter("attachedPriceListId", pPriceListCriteria.getAttachedPriceListId())
             .getSingleResult();
     	
 	}

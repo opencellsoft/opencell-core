@@ -526,9 +526,9 @@ public class PriceListApiService extends BaseApi {
     	BillingAccount lBillingAccount = getBillingAccount(pBillingAccountCode);
     	
     	//Count PriceList
-    	return priceListService.count(pSortOrder, pOrderBy, getCustomerBrandId(lBillingAccount), getCustomerCategoryId(lBillingAccount), getCreditCategoryId(lBillingAccount), 
-    			getTradingCountryId(lBillingAccount), getTradingCurrencyId(lBillingAccount), getLegalEntityTypeId(lBillingAccount), getPaymentMethodId(lBillingAccount),
-    			getSellerId(lBillingAccount), lBillingAccount.getPriceList() != null ? lBillingAccount.getPriceList().getId() : null);
+    	return priceListService.count(buildPriceListCriteria(null, null, pSortOrder, pOrderBy, getCustomerBrandId(lBillingAccount), getCustomerCategoryId(lBillingAccount), 
+    			getCreditCategoryId(lBillingAccount), getTradingCountryId(lBillingAccount), getTradingCurrencyId(lBillingAccount), getLegalEntityTypeId(lBillingAccount),
+    			getPaymentMethodId(lBillingAccount), getSellerId(lBillingAccount), lBillingAccount.getPriceList() != null ? lBillingAccount.getPriceList().getId() : null));
     }
 	
     /**
