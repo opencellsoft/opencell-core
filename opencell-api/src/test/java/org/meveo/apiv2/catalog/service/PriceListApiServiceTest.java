@@ -1,35 +1,42 @@
 package org.meveo.apiv2.catalog.service;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Country;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductLine;
+import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
-import org.meveo.model.payments.CheckPaymentMethod;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
+import org.meveo.model.pricelist.PriceListTypeEnum;
 import org.meveo.model.shared.Title;
+import org.meveo.service.catalog.impl.PriceListLineService;
 import org.meveo.service.catalog.impl.PriceListService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.MockitoRule;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.Calendar;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -43,6 +50,15 @@ public class PriceListApiServiceTest {
 
     @Mock
     private PriceListService priceListService;
+
+    @Mock
+    private PriceListLineService priceListLineService;
+
+    @Mock
+    private PricePlanMatrixService pricePlanMatrixService;
+
+    @Mock
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
     @Test
     public void updateStatus_givenMissingCodeShouldTriggerCode() {
@@ -432,5 +448,140 @@ public class PriceListApiServiceTest {
         assertThatThrownBy(() -> priceListApiService.updateStatus(priceListCode, status))
                 .isInstanceOf(BusinessApiException.class)
                 .hasMessageContaining("Unsupported status");
+    }
+
+    @Test
+    public void duplicate_shouldDuplicate() {
+
+        // given an existing priceList
+        PriceList existingPLi = new PriceList();
+        existingPLi.setCode("a-code");
+        existingPLi.setDescription("a-description");
+        existingPLi.setStatus(PriceListStatusEnum.ACTIVE);
+        existingPLi.setValidFrom(new GregorianCalendar(2023, Calendar.MAY, 1).getTime());
+        existingPLi.setValidUntil(new GregorianCalendar(2023, Calendar.MAY, 31).getTime());
+        existingPLi.setApplicationStartDate(new GregorianCalendar(2023, Calendar.MAY, 1).getTime());
+        existingPLi.setApplicationEndDate(new GregorianCalendar(2023, Calendar.MAY, 31).getTime());
+
+        // Customer Fields
+        existingPLi.setCfValue("customField1", "Value 1");
+        existingPLi.setCfValue("customField2", "Value 2");
+        existingPLi.setCfValue("customField3", "Value 3");
+
+        Seller seller = new Seller();
+        seller.setCode("TEST-SELLER");
+
+        existingPLi.setSellers(Set.of(seller));
+
+        OfferTemplateCategory offerTemplateCategory = new OfferTemplateCategory();
+        offerTemplateCategory.setCode("OFFER-CATEGORY");
+        OfferTemplate offerTemplate = new OfferTemplate();
+        offerTemplate.setCode("TEST-OT");
+        ProductLine productLine = new ProductLine();
+        productLine.setCode("PRODUCT-LINE");
+        Product product = new Product();
+        product.setCode("TEST-PRODUCT");
+        product.setProductLine(productLine);
+        UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
+        chargeTemplate.setCode("TEST-CHARGE-TEMPLATE");
+
+        PriceListLine line = new PriceListLine();
+        line.setCode(existingPLi.getCode()+"-0");
+        line.setPriceList(existingPLi);
+        line.setOfferCategory(offerTemplateCategory);
+        line.setOfferTemplate(offerTemplate);
+        line.setChargeTemplate(chargeTemplate);
+        line.setProduct(product);
+        line.setProductCategory(productLine);
+        line.setPriceListType(PriceListTypeEnum.PERCENTAGE);
+        line.setRate(BigDecimal.valueOf(123L));
+
+        existingPLi.setLines(Set.of(line));
+
+        // Price Plan
+        PricePlanMatrix pricePlan = new PricePlanMatrix();
+        pricePlan.setCode("PPM-CODE");
+        pricePlan.setEventCode(line.getCode());
+        PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
+        ppmv.setLabel("PV_01");
+        ppmv.setVersion(1);
+        ppmv.setPriceVersionType(PriceVersionTypeEnum.FIXED);
+
+        PricePlanMatrixLine ppml = new PricePlanMatrixLine();
+        ppml.setDescription("PPML Description");
+        ppmv.setLines(Set.of(ppml));
+
+        pricePlan.setVersions(List.of(ppmv));
+        line.setPricePlan(pricePlan);
+
+        when(pricePlanMatrixService.findDuplicateCode(pricePlan)).thenReturn(pricePlan.getCode()+"-COPY");
+
+        PricePlanMatrixVersion duplicatedPPMV = new PricePlanMatrixVersion(ppmv);
+        duplicatedPPMV.setStatus(VersionStatusEnum.DRAFT);
+        duplicatedPPMV.setPriceVersionType(ppmv.getPriceVersionType());
+
+        when(pricePlanMatrixVersionService.duplicate(any(PricePlanMatrixVersion.class), any(PricePlanMatrix.class), any(), any(VersionStatusEnum.class), any(PriceVersionTypeEnum.class), anyBoolean(), anyInt()))
+                .thenReturn(duplicatedPPMV);
+
+        when(priceListService.findByCode(existingPLi.getCode())).thenReturn(existingPLi);
+
+        // when
+
+        priceListApiService.duplicate(existingPLi.getCode());
+
+        ArgumentCaptor<PriceList> saveCaptor = ArgumentCaptor.forClass(PriceList.class);
+        verify(priceListService).create(saveCaptor.capture());
+
+        // Then, check result
+        assertThat(saveCaptor.getValue()).isNotNull();
+        PriceList duplicatedPLi = saveCaptor.getValue();
+        assertThat(duplicatedPLi.getCode()).isEqualTo(existingPLi.getCode()+"-COPY");
+        assertThat(duplicatedPLi.getDescription()).isEqualTo(existingPLi.getDescription());
+        assertThat(duplicatedPLi.getSellers()).hasSize(1).map(Seller::getCode).contains(seller.getCode());
+        assertThat(duplicatedPLi.getLines()).hasSize(1);
+
+        // Check Line
+        PriceListLine duplicatedLine = duplicatedPLi.getLines()
+                .iterator()
+                .next();
+
+        assertThat(duplicatedLine.getCode()).isEqualTo(line.getCode()+"-COPY");
+        assertThat(duplicatedLine.getOfferCategory()).isNotNull().hasFieldOrPropertyWithValue("code", line.getOfferCategory().getCode());
+        assertThat(duplicatedLine.getOfferTemplate()).isNotNull().hasFieldOrPropertyWithValue("code", line.getOfferTemplate().getCode());
+        assertThat(duplicatedLine.getProductCategory()).isNotNull().hasFieldOrPropertyWithValue("code", line.getProductCategory().getCode());
+        assertThat(duplicatedLine.getProduct()).isNotNull().hasFieldOrPropertyWithValue("code", line.getProduct().getCode());
+        assertThat(duplicatedLine.getChargeTemplate()).isNotNull().hasFieldOrPropertyWithValue("code", line.getChargeTemplate().getCode());
+        assertThat(duplicatedLine.getAmount()).isEqualTo(line.getAmount());
+        assertThat(duplicatedLine.getPriceListType()).isEqualTo(PriceListTypeEnum.PERCENTAGE);
+
+        // Check duplicated Custom Fields
+        assertThat(duplicatedPLi.getCfValues()).isNotNull();
+        assertThat(duplicatedPLi.getCfValue("customField1")).isEqualTo("Value 1");
+        assertThat(duplicatedPLi.getCfValue("customField2")).isEqualTo("Value 2");
+        assertThat(duplicatedPLi.getCfValue("customField3")).isEqualTo("Value 3");
+
+
+        // check priceplan
+        assertThat(duplicatedLine.getPricePlan()).isNotNull();
+        PricePlanMatrix ppmToCheck = duplicatedLine.getPricePlan();
+        assertThat(ppmToCheck.getCode()).isEqualTo(pricePlan.getCode()+"-COPY");
+        assertThat(ppmToCheck.getEventCode()).isEqualTo(duplicatedLine.getCode());
+        assertThat(ppmToCheck.getVersions()).isNotEmpty();
+        assertThat(ppmToCheck.getVersions().size()).isEqualTo(pricePlan.getVersions().size());
+        assertThat(ppmToCheck.getVersions().get(0).getStatus()).isEqualTo(VersionStatusEnum.DRAFT);
+
+
+    }
+
+    @Test
+    public void duplicate_givenMissingPLiShouldDuplicate() {
+
+        // given a fake non existing PLi Code
+        String priceListCode = "fake-code";
+
+        // when + then
+        assertThatThrownBy(() -> priceListApiService.duplicate(priceListCode)).isInstanceOf(EntityDoesNotExistsException.class);
+
+
     }
 }

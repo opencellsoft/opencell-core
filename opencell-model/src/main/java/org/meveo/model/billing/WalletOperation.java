@@ -74,6 +74,7 @@ import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
@@ -674,6 +675,13 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
+    
+    /**
+     * The PriceListLine
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "price_list_line_id")
+    private PriceListLine priceListLine;
     
     /**
      * Constructor
@@ -1872,4 +1880,19 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     public void setContractLine(ContractItem contractLine) {
         this.contractLine = contractLine;
     }
+
+    /**
+     * @return the PriceListLine
+     */
+	public PriceListLine getPriceListLine() {
+		return priceListLine;
+	}
+
+	/**
+	 * @param priceListLine the priceListLine to set
+	 */
+	public void setPriceListLine(PriceListLine priceListLine) {
+		this.priceListLine = priceListLine;
+	}  
+    
 }

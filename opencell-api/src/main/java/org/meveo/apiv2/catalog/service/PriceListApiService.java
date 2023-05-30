@@ -2,6 +2,7 @@ package org.meveo.apiv2.catalog.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -15,12 +16,15 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.catalog.resource.pricelist.PriceListMapper;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -28,6 +32,7 @@ import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.pricelist.PriceList;
+import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.model.securityDeposit.FinanceSettings;
@@ -36,7 +41,10 @@ import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.catalog.impl.PriceListLineService;
 import org.meveo.service.catalog.impl.PriceListService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
@@ -47,8 +55,11 @@ import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 public class PriceListApiService extends BaseApi {
 
     @Inject
-    private PriceListService priceListService; 
-      
+    private PriceListService priceListService;
+
+    @Inject
+    private PriceListLineService priceListLineService;
+
     @Inject
     private CustomerBrandService customerBrandService;
     
@@ -77,6 +88,12 @@ public class PriceListApiService extends BaseApi {
     private BillingAccountService billingAccountService;
     
     private PriceListMapper mapper = new PriceListMapper();
+
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
+
+    @Inject
+    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
     /**
      * Create a price list
@@ -603,5 +620,84 @@ public class PriceListApiService extends BaseApi {
     	} else {
     		return null;
     	}
+    }
+
+    @TransactionAttribute
+    public PriceList duplicate(String priceListCode) {
+
+        if(StringUtils.isBlank(priceListCode)) {
+            throw new MissingParameterException("priceListCode");
+        }
+
+        PriceList priceList = priceListService.findByCode(priceListCode);
+        if(priceList == null) {
+            throw new EntityDoesNotExistsException(PriceList.class, priceListCode);
+        }
+
+        PriceList duplicatedPriceList = new PriceList();
+
+        duplicatedPriceList.setCode(priceList.getCode() + "-COPY");
+        duplicatedPriceList.setDescription(priceList.getDescription());
+        duplicatedPriceList.setApplicationStartDate(priceList.getApplicationStartDate());
+        duplicatedPriceList.setApplicationEndDate(priceList.getApplicationEndDate());
+        duplicatedPriceList.setValidFrom(priceList.getValidFrom());
+        duplicatedPriceList.setValidUntil(priceList.getValidUntil());
+
+        duplicatedPriceList.setCurrencies(new HashSet<>(priceList.getCurrencies()));
+        duplicatedPriceList.setCountries(new HashSet<>(priceList.getCountries()));
+        duplicatedPriceList.setBrands(new HashSet<>(priceList.getBrands()));
+        duplicatedPriceList.setLegalEntities(new HashSet<>(priceList.getLegalEntities()));
+        duplicatedPriceList.setSellers(new HashSet<>(priceList.getSellers()));
+        duplicatedPriceList.setCreditCategories(new HashSet<>(priceList.getCreditCategories()));
+        duplicatedPriceList.setCustomerCategories(new HashSet<>(priceList.getCustomerCategories()));
+        duplicatedPriceList.setPaymentMethods(new HashSet<>(priceList.getPaymentMethods()));
+
+        duplicatedPriceList.setStatus(PriceListStatusEnum.DRAFT);
+        duplicatedPriceList.setLines(new HashSet<>());
+
+        if (priceList.getLines() != null) {
+            for (PriceListLine line : priceList.getLines()) {
+                PriceListLine duplicatedLine = new PriceListLine();
+                duplicatedLine.setCode(line.getCode() + "-COPY");
+                duplicatedLine.setPriceList(duplicatedPriceList);
+                duplicatedLine.setOfferCategory(line.getOfferCategory());
+                duplicatedLine.setOfferTemplate(line.getOfferTemplate());
+                duplicatedLine.setProductCategory(line.getProductCategory());
+                duplicatedLine.setProduct(line.getProduct());
+                duplicatedLine.setChargeTemplate(line.getChargeTemplate());
+                duplicatedLine.setPriceListType(line.getPriceListType());
+                duplicatedLine.setRate(line.getRate());
+                duplicatedLine.setAmount(line.getAmount());
+                duplicatedLine.setApplicationEl(line.getApplicationEl());
+
+                if(line.getPricePlan() != null) {
+                    duplicatedLine.setPricePlan(duplicatePricePlan(duplicatedLine.getCode(), line.getPricePlan()));
+                }
+                priceListLineService.create(duplicatedLine);
+                duplicatedPriceList.getLines().add(duplicatedLine);
+            }
+        }
+
+        duplicatedPriceList.setCfValues(priceList.getCFValuesCopy());
+
+        priceListService.create(duplicatedPriceList);
+        return duplicatedPriceList;
+    }
+
+    private PricePlanMatrix duplicatePricePlan(String newContractItemCode, PricePlanMatrix pricePlanMatrix) {
+        PricePlanMatrix duplicate = new PricePlanMatrix(pricePlanMatrix);
+        duplicate.setCode(pricePlanMatrixService.findDuplicateCode(pricePlanMatrix));
+        duplicate.setEventCode(newContractItemCode);
+        duplicate.setVersion(0);
+        duplicate.setVersions(new ArrayList<>());
+
+        pricePlanMatrixService.create(duplicate);
+
+        pricePlanMatrix.getVersions().forEach(ppv -> {
+            PricePlanMatrixVersion duplicatedPPMV = pricePlanMatrixVersionService.duplicate(ppv, duplicate, ppv.getValidity(), VersionStatusEnum.DRAFT, ppv.getPriceVersionType(), false, ppv.getCurrentVersion());
+            duplicate.getVersions().add(duplicatedPPMV);
+        });
+
+        return duplicate;
     }
 }
