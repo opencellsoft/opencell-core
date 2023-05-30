@@ -144,7 +144,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         BigDecimal functionalCreditAmount = amount;
         BigDecimal functionalDebitAmount = amount;
         MathContext mathContext =
-                new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                new MathContext(8, appProvider.getRoundingMode().getRoundingMode());
         boolean fullMatch = false;
         boolean withWriteOff = false;
         boolean withRefund = false;
@@ -287,12 +287,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 accountOperation.setTransactionalMatchingAmount(accountOperation.getTransactionalAmount()
                         .subtract(accountOperation.getTransactionalUnMatchingAmount()));
                 BigDecimal computedMatchingAmount =
-                        accountOperation.getAmount().multiply((accountOperation.getTransactionalMatchingAmount()
-                                .divide(accountOperation.getTransactionalAmount(), mathContext)));
+                        (accountOperation.getAmount().multiply(accountOperation.getTransactionalMatchingAmount()))
+                                .divide(accountOperation.getTransactionalAmount(), mathContext);
                 accountOperation.setMatchingAmount(computedMatchingAmount);
                 accountOperation.setUnMatchingAmount(accountOperation.getAmount().subtract(computedMatchingAmount));
                 accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
-                matchingAmount.setMatchingAmount(amountToMatch);
+                if(accountOperation.getAmount().compareTo(accountOperation.getTransactionalAmount()) == 0) {
+                    matchingAmount.setMatchingAmount(amountToMatch);
+                } else {
+                    matchingAmount.setMatchingAmount(amountToMatch.divide(appliedRate, mathContext));
+                }
+                matchingAmount.setTransactionalMatchingAmount(amountToMatch);
                 matchingAmount.updateAudit(currentUser);
                 matchingAmount.setAccountOperation(accountOperation);
                 matchingAmount.setMatchingCode(matchingCode);
@@ -406,11 +411,16 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 accountOperation.setTransactionalMatchingAmount(
                         accountOperation.getTransactionalAmount().subtract(accountOperation.getTransactionalUnMatchingAmount()));
                 BigDecimal computedMatchingAmount =
-                        accountOperation.getAmount().multiply((accountOperation.getTransactionalMatchingAmount()
-                                .divide(accountOperation.getTransactionalAmount(), mathContext)));
+                        (accountOperation.getAmount().multiply(accountOperation.getTransactionalMatchingAmount()))
+                                .divide(accountOperation.getTransactionalAmount(), mathContext);
                 accountOperation.setUnMatchingAmount(accountOperation.getAmount().subtract(computedMatchingAmount));
                 accountOperation.setMatchingAmount(computedMatchingAmount);
-                matchingAmount.setMatchingAmount(amountToMatch);
+                if(accountOperation.getAmount().compareTo(accountOperation.getTransactionalAmount()) == 0) {
+                    matchingAmount.setMatchingAmount(amountToMatch);
+                } else {
+                    matchingAmount.setMatchingAmount(amountToMatch.divide(appliedRate, mathContext));
+                }
+                matchingAmount.setTransactionalMatchingAmount(amountToMatch);
                 boolean isMatched = fullMatch && accountOperation.getTransactionalUnMatchingAmount().compareTo(ZERO) == 0;
                 accountOperation.setMatchingStatus(isMatched ? MatchingStatusEnum.L : MatchingStatusEnum.P);
 
@@ -594,12 +604,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 BigDecimal calculatedMatchingAmount = operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount());
                 BigDecimal calculatedUnMatchingAmount = baseUnMatchingAmount.add(matchingAmount.getMatchingAmount());
                 operation.setUnMatchingAmount(calculatedUnMatchingAmount);
-                operation.setTransactionalUnMatchingAmount(calculatedUnMatchingAmount);
                 operation.setMatchingAmount(calculatedMatchingAmount);
-                operation.setTransactionalUnMatchingAmount(operation.
-                        getTransactionalUnMatchingAmount().add(ofNullable(matchingAmount.getTransactionalMatchingAmount()).orElse(ZERO)));
-                operation.setTransactionalMatchingAmount(operation.
-                        getTransactionalMatchingAmount().subtract(ofNullable(matchingAmount.getTransactionalMatchingAmount()).orElse(ZERO)));
+
+                BigDecimal transactionMatchingAmount =
+                        ofNullable(matchingAmount.getTransactionalMatchingAmount()).orElse(ZERO);
+                operation.setTransactionalUnMatchingAmount(
+                        operation.getTransactionalUnMatchingAmount().add(transactionMatchingAmount));
+                operation.setTransactionalMatchingAmount(
+                        operation.getTransactionalMatchingAmount().subtract(transactionMatchingAmount));
                 if (ZERO.compareTo(operation.getMatchingAmount()) == 0) {
                     operation.setMatchingStatus(MatchingStatusEnum.O);
                     if (operation instanceof RecordedInvoice) {
