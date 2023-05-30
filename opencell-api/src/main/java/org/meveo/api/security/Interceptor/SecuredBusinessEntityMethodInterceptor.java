@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
+import javax.persistence.NoResultException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -207,7 +208,15 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      */
     private Map<Class<?>, Set<SecuredEntity>> getAllSecuredEntities(MeveoUser currentUser) {
         List<SecuredEntity> allSecuredEntities = new ArrayList<>();
-        User user = userService.findByUsername(currentUser.getUserName());
+        User user;
+        try {
+            user = userService.getEntityManager()
+                    .createNamedQuery("User.getByUsername", User.class)
+                    .setParameter("username", currentUser.getUserName().toLowerCase())
+                    .getSingleResult();
+        } catch (NoResultException ex) {
+            throw new AccessDeniedException("No User with username " + currentUser.getUserName() + " exists in DB.");
+        }
         allSecuredEntities.addAll(user.getSecuredEntities().stream().filter(securedEntity -> !securedEntity.getDisabledAsBoolean()).collect(Collectors.toList()));
 
         List<Role> rolesWithSecuredEntities = roleService.getEntityManager().createNamedQuery("Role.getRolesWithSecuredEntities", Role.class).setParameter("currentUserRoles", currentUser.getRoles()).getResultList();
