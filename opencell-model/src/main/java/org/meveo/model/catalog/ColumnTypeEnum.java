@@ -31,7 +31,11 @@ public enum ColumnTypeEnum {
                 }
                 case EXPRESSION_LANGUAGE: {
                     if (attributeValue.getDoubleValue() != null) {
-                        return java.lang.Double.valueOf(pricePlanMatrixValue.getStringValue()).equals(attributeValue.getDoubleValue());
+                        try {
+                            return attributeValue.getDoubleValue().equals(java.lang.Double.valueOf(pricePlanMatrixValue.getStringValue()));
+                        } catch (NumberFormatException nfe) {
+                            return false;
+                        }
                     } else if (attributeValue.getBooleanValue() != null) {
                         return attributeValue.getBooleanValue().equals(java.lang.Boolean.valueOf(pricePlanMatrixValue.getStringValue()));
                     } else {
