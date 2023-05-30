@@ -1,11 +1,11 @@
 package org.meveo.model.catalog;
 
-import java.math.BigDecimal;
-import java.util.stream.Stream;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.cpq.AttributeValue;
+
+import java.math.BigDecimal;
+import java.util.stream.Stream;
 
 
 public enum ColumnTypeEnum {
@@ -52,7 +52,7 @@ public enum ColumnTypeEnum {
     Long {
         @Override
         public boolean valueMatch(PricePlanMatrixValueForRating pricePlanMatrixValue, AttributeValue attributeValue) {
-        	String multiValuesAttributeSeparator = ";"; //ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
+            String multiValuesAttributeSeparator = ";"; //ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
             if (pricePlanMatrixValue.getDoubleValue() == null) {
                 return true;
             }
@@ -62,14 +62,14 @@ public enum ColumnTypeEnum {
                 case TOTAL:
                 case NUMERIC: {
                     return attributeValue.getDoubleValue() != null &&
-                            (BigDecimal.valueOf(attributeValue.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue())));
+                            (BigDecimal.valueOf(attributeValue.getDoubleValue()).equals(BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue())));
                 }
                 case LIST_NUMERIC:
                 case LIST_MULTIPLE_NUMERIC: {
                     return !StringUtils.isEmpty(attributeValue.getStringValue()) &&
                             Stream.of(attributeValue.getStringValue().split(multiValuesAttributeSeparator))
-                            .map(value -> BigDecimal.valueOf(java.lang.Double.parseDouble(value)))
-                            .anyMatch(number -> number.equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue())));
+                                    .map(value -> BigDecimal.valueOf(java.lang.Double.parseDouble(value)))
+                                    .anyMatch(number -> number.equals(BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue())));
                 }
                 default:
                     return false;
@@ -85,11 +85,11 @@ public enum ColumnTypeEnum {
     Double {
         @Override
         public boolean valueMatch(PricePlanMatrixValueForRating pricePlanMatrixValue, AttributeValue attributeValue) {
-        	String multiValuesAttributeSeparator = ";"; //ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
+            String multiValuesAttributeSeparator = ";"; //ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
             if (pricePlanMatrixValue.getDoubleValue() == null) {
                 return true;
             }
-            Object passedAttributeValue =  attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
+            Object passedAttributeValue = attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case INTEGER:
                 case COUNT:
@@ -107,14 +107,15 @@ public enum ColumnTypeEnum {
                 }
                 case LIST_MULTIPLE_NUMERIC: {
                     if (Boolean.isNullOrContainsEmptyString(passedAttributeValue)) {
-                            return false;
-                        }
-                    return Stream.of(pricePlanMatrixValue.getStringValue().split(multiValuesAttributeSeparator))
-                            .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
-                            .anyMatch(number -> {
-                                double value = parseValue(passedAttributeValue);
-                                return number.doubleValue() == value;
-                            });
+                        return false;
+                    }
+                    return !StringUtils.isEmpty(pricePlanMatrixValue.getStringValue()) &&
+                            Stream.of(pricePlanMatrixValue.getStringValue().split(multiValuesAttributeSeparator))
+                                    .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
+                                    .anyMatch(number -> {
+                                        double value = parseValue(passedAttributeValue);
+                                        return number.doubleValue() == value;
+                                    });
                 }
                 default:
                     return false;
@@ -158,35 +159,35 @@ public enum ColumnTypeEnum {
             }
             if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null
                     && pricePlanMatrixValue.getToDoubleValue() == null
-                    &&  attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()) {
+                    && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()) {
                 return true;
             }
             if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() == null
                     && pricePlanMatrixValue.getToDoubleValue() != null) {
-                if(excludeMaxValue) {
-                    if(attributeValue.getDoubleValue() < pricePlanMatrixValue.getToDoubleValue()) {
+                if (excludeMaxValue) {
+                    if (attributeValue.getDoubleValue() < pricePlanMatrixValue.getToDoubleValue()) {
                         return true;
                     }
                 } else {
-                    if(attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
+                    if (attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
                         return true;
                     }
                 }
             }
-            if(attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null
+            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null
                     && pricePlanMatrixValue.getToDoubleValue() != null
-                    && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()){
-                if(excludeMaxValue) {
-                    if(attributeValue.getDoubleValue() < pricePlanMatrixValue.getToDoubleValue()) {
+                    && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()) {
+                if (excludeMaxValue) {
+                    if (attributeValue.getDoubleValue() < pricePlanMatrixValue.getToDoubleValue()) {
                         return true;
                     }
                 } else {
-                    if(attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
+                    if (attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
                         return true;
                     }
                 }
             }
-           return false;
+            return false;
 
         }
 
@@ -212,7 +213,7 @@ public enum ColumnTypeEnum {
 
     private static double parseValue(Object quote) {
         double value;
-        if(quote instanceof String) {
+        if (quote instanceof String) {
             value = java.lang.Double.parseDouble((String) quote);
         } else {
             value = (Double) quote;
@@ -224,9 +225,8 @@ public enum ColumnTypeEnum {
 
     public abstract boolean matchWithAllValues(PricePlanMatrixValueForRating pricePlanMatrixValue);
 
-    private boolean isNullOrContainsEmptyString(Object value)
-    {
-      return value == null || (value instanceof String && ((String)value).isEmpty() );
+    private boolean isNullOrContainsEmptyString(Object value) {
+        return value == null || (value instanceof String && ((String) value).isEmpty());
 
     }
 }
