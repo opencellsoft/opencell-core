@@ -443,7 +443,7 @@ public class PriceListApiService extends BaseApi {
                 PriceListLine duplicatedLine = new PriceListLine();
                 duplicatedLine.setCode(line.getCode() + "-COPY");
                 duplicatedLine.setPriceList(duplicatedPriceList);
-                duplicatedLine.setOfferCategory(duplicatedLine.getOfferCategory());
+                duplicatedLine.setOfferCategory(line.getOfferCategory());
                 duplicatedLine.setOfferTemplate(line.getOfferTemplate());
                 duplicatedLine.setProductCategory(line.getProductCategory());
                 duplicatedLine.setProduct(line.getProduct());
