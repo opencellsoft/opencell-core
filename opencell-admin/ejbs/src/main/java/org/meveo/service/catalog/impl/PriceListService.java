@@ -23,40 +23,27 @@ public class PriceListService extends BusinessService<PriceList> {
 		TypedQuery<PriceList> query = getEntityManager().createNamedQuery("PriceList.getExpiredOpenPriceList", PriceList.class);
         return query.setParameter("untilDate", new Date()).setParameter("openStatus", List.of(DRAFT, ACTIVE)).getResultList();
     }
-    
+
 	/**
 	 * Get Price List using criteria
-	 * @param pOffset Offset
-	 * @param pLimit Limit
-	 * @param pSortOrder SortOrder
-	 * @param pSortBy Sort By
-	 * @param pBrandId Customer Brand Id
-	 * @param pCustomerCategoryId Customer Category Id
-	 * @param pCreditCategoryId Credit Category Id
-	 * @param pCountryId Country Id
-	 * @param pCurrencyId Currency Id
-	 * @param pTitleId Legal Entity Type Id
-	 * @param pPaymentMethodEnum Payment Method 
-	 * @param pSellerId Seller id
-	 * @param pAttachedPriceListId Attached Price List to Billing Account 
+	 * @param pPriceListCriteria
 	 * @return List of {@link PriceList}
 	 */
-	public List<PriceList> getPriceList(Long pOffset, Long pLimit, String pSortOrder, String pSortBy, Long pBrandId, Long pCustomerCategoryId, Long pCreditCategoryId, 
-			Long pCountryId, Long pCurrencyId, Long pTitleId, PaymentMethodEnum pPaymentMethodEnum, Long pSellerId, Long pAttachedPriceListId) {
-    	TypedQuery<PriceList> query = getEntityManager().createQuery(getPriceListQuery(pSortOrder, pSortBy, false), PriceList.class);
+	public List<PriceList> getPriceList(PriceListCriteria pPriceListCriteria) {
+    	TypedQuery<PriceList> query = getEntityManager().createQuery(getPriceListQuery(pPriceListCriteria.getSortOrder(), pPriceListCriteria.getSortBy(), false), PriceList.class);
     	return query.setParameter("activeStatus", List.of(ACTIVE))
 					.setParameter("currentDate", new Date())
-					.setParameter("brandId", pBrandId)
-					.setParameter("customerCategoryId", pCustomerCategoryId)
-					.setParameter("creditCategoryId", pCreditCategoryId)
-					.setParameter("countryId", pCountryId)
-					.setParameter("currencyId", pCurrencyId)
-					.setParameter("titleId", pTitleId)
-					.setParameter("paymentMethod", pPaymentMethodEnum)
-					.setParameter("sellerId", pSellerId)
-					.setParameter("attachedPriceListId", pAttachedPriceListId)
-					.setFirstResult(pOffset.intValue())
-					.setMaxResults(pLimit.intValue())
+					.setParameter("brandId", pPriceListCriteria.getBrandId())
+					.setParameter("customerCategoryId", pPriceListCriteria.getCustomerCategoryId())
+					.setParameter("creditCategoryId", pPriceListCriteria.getCreditCategoryId())
+					.setParameter("countryId", pPriceListCriteria.getCountryId())
+					.setParameter("currencyId", pPriceListCriteria.getCurrencyId())
+					.setParameter("titleId", pPriceListCriteria.getTitleId())
+					.setParameter("paymentMethod", pPriceListCriteria.getPaymentMethodEnum())
+					.setParameter("sellerId", pPriceListCriteria.getSellerId())
+					.setParameter("attachedPriceListId", pPriceListCriteria.getAttachedPriceListId())
+					.setFirstResult(pPriceListCriteria.getOffset().intValue())
+					.setMaxResults(pPriceListCriteria.getLimit().intValue())
 					.getResultList();
     }
     

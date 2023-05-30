@@ -41,6 +41,7 @@ import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.catalog.impl.PriceListCriteria;
 import org.meveo.service.catalog.impl.PriceListLineService;
 import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -448,15 +449,55 @@ public class PriceListApiService extends BaseApi {
     	
     	//Get PriceList
     	List<PriceList> priceList = new ArrayList<>();
-    	priceList.addAll(priceListService.getPriceList(pOffset, pLimit, pSortOrder, pSortBy, getCustomerBrandId(lBillingAccount), getCustomerCategoryId(lBillingAccount), 
+    	priceList.addAll(priceListService.getPriceList(buildPriceListCriteria(pOffset, pLimit, pSortOrder, pSortBy, getCustomerBrandId(lBillingAccount), getCustomerCategoryId(lBillingAccount), 
     			getCreditCategoryId(lBillingAccount), getTradingCountryId(lBillingAccount), getTradingCurrencyId(lBillingAccount), getLegalEntityTypeId(lBillingAccount),
-    			getPaymentMethodId(lBillingAccount), getSellerId(lBillingAccount), lBillingAccount.getPriceList() != null ? lBillingAccount.getPriceList().getId() : null));
+    			getPaymentMethodId(lBillingAccount), getSellerId(lBillingAccount), lBillingAccount.getPriceList() != null ? lBillingAccount.getPriceList().getId() : null)));
     	
     	//Convert PriceList
     	return priceList.stream().map(s -> mapper.toResource(s, false)).collect(Collectors.toList());
     }
     
-    private void checkSortByField(String pSortBy) {
+    /**
+	 * Build Price List using criteria
+	 * @param pOffset Offset
+	 * @param pLimit Limit
+	 * @param pSortOrder SortOrder
+	 * @param pSortBy Sort By
+	 * @param pBrandId Customer Brand Id
+	 * @param pCustomerCategoryId Customer Category Id
+	 * @param pCreditCategoryId Credit Category Id
+	 * @param pCountryId Country Id
+	 * @param pCurrencyId Currency Id
+	 * @param pTitleId Legal Entity Type Id
+	 * @param pPaymentMethodEnum Payment Method 
+	 * @param pSellerId Seller id
+	 * @param pAttachedPriceListId Attached Price List to Billing Account 
+	 * @return List of {@link PriceList}
+	 */
+    private PriceListCriteria buildPriceListCriteria(Long pOffset, Long pLimit, String pSortOrder, String pSortBy, Long pBrandId, Long pCustomerCategoryId, Long pCreditCategoryId, 
+			Long pCountryId, Long pCurrencyId, Long pTitleId, PaymentMethodEnum pPaymentMethodEnum, Long pSellerId, Long pAttachedPriceListId) {
+    	PriceListCriteria lPriceListCriteria = new PriceListCriteria();
+    	lPriceListCriteria.setOffset(pOffset);
+    	lPriceListCriteria.setLimit(pLimit);
+    	lPriceListCriteria.setSortOrder(pSortOrder);
+    	lPriceListCriteria.setSortBy(pSortBy);
+    	lPriceListCriteria.setBrandId(pBrandId);
+    	lPriceListCriteria.setCustomerCategoryId(pCustomerCategoryId);
+    	lPriceListCriteria.setCreditCategoryId(pCreditCategoryId);
+    	lPriceListCriteria.setCountryId(pCountryId);
+    	lPriceListCriteria.setCurrencyId(pCurrencyId);
+    	lPriceListCriteria.setTitleId(pTitleId);
+    	lPriceListCriteria.setPaymentMethodEnum(pPaymentMethodEnum);
+    	lPriceListCriteria.setSellerId(pSellerId);
+    	lPriceListCriteria.setAttachedPriceListId(pAttachedPriceListId);
+    	return lPriceListCriteria;
+	}
+
+    /**
+     * Check sort by field
+     * @param pSortBy
+     */
+	private void checkSortByField(String pSortBy) {
         List<String> lFieldNames = new ArrayList<>();
         lFieldNames.add("code");
         lFieldNames.add("validFrom");
