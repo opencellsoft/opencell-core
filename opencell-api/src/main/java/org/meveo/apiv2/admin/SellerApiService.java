@@ -45,23 +45,35 @@ public class SellerApiService {
 			seller.setSeller(parentSeller);
 		}
 		checkVatNum(seller.getVatNo(), seller.getTradingCountry().getCountryCode());
-		sellerService.create(seller);
 		
 		if(CollectionUtils.isNotEmpty(seller.getInvoiceTypeSequence())){
 			var invoiceTypeIds = seller.getInvoiceTypeSequence().stream()
 											.filter(invoiceTypeSellerSequence -> invoiceTypeSellerSequence.getInvoiceType() != null)
 											.map(invoiceTypeSellerSequence -> invoiceTypeSellerSequence.getInvoiceType().getId()).collect(Collectors.toList());
+			var missingParam = new ArrayList<String>();
+			int index = 0;
 			for(InvoiceTypeSellerSequence inv: seller.getInvoiceTypeSequence()){
-				if(inv.getInvoiceType() != null) {
-					var frequency = Collections.frequency(invoiceTypeIds, inv.getInvoiceType().getId());
-					if(frequency > 1) {
-						throw new BusinessApiException("Invoice numbering for a given invoice type is already specified");
-					}
+				if(inv.getInvoiceType() == null) {
+					missingParam.add("invoiceTypeSellerSequence["+index+"].invoiceType");
+				}
+				if(inv.getInvoiceSequence() == null) {
+					missingParam.add("invoiceTypeSellerSequence["+index+"].invoiceSequence");
+				}
+				if(StringUtils.isEmpty(inv.getPrefixEL())){
+					missingParam.add("invoiceTypeSellerSequence["+index+"].prefixEL");
+				}
+				if(CollectionUtils.isNotEmpty(missingParam)){
+					throw new MissingParameterException(missingParam);
+				}
+				++index;
+				var frequency = Collections.frequency(invoiceTypeIds, inv.getInvoiceType().getId());
+				if(frequency > 1) {
+					throw new BusinessApiException("Invoice numbering for a given invoice type is already specified");
 				}
 				inv.setSeller(seller);
-				invoiceTypeSequenceService.create(inv);
 			}
 		}
+		sellerService.create(seller);
 	}
 	
 	public void update(Seller postSeller) {

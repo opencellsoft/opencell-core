@@ -93,7 +93,7 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 	}
 	
 	private List<org.meveo.apiv2.admin.InvoiceTypeSellerSequence> getInvoiceTypeSellerSequences(List<InvoiceTypeSellerSequence> invoiceTypeSellerSequences) {
-		if(CollectionUtils.isNotEmpty(invoiceTypeSellerSequences)) return Collections.emptyList();
+		if(CollectionUtils.isEmpty(invoiceTypeSellerSequences)) return Collections.emptyList();
 		var invoiceTypeSellerSeqs = new ArrayList<org.meveo.apiv2.admin.InvoiceTypeSellerSequence>();
 		invoiceTypeSellerSequences.forEach(invTypeSellerSeq -> {
 			invoiceTypeSellerSeqs.add(
@@ -190,7 +190,7 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 				InvoiceTypeSellerSequence invoiceTypeSellerSequence = new InvoiceTypeSellerSequence();
 				invoiceTypeSellerSequence.setPrefixEL(invTypSelSeq.getPrefixEL());
 				if(invTypSelSeq.getInvoiceTypeId() != null){
-					var invoiceType = invoiceTypeService.findById(invTypSelSeq.getInvoiceSequenceId());
+					var invoiceType = invoiceTypeService.findById(invTypSelSeq.getInvoiceTypeId());
 					if(invoiceType == null){
 						throw new EntityDoesNotExistsException(InvoiceType.class, invTypSelSeq.getInvoiceTypeId());
 					}
