@@ -53,6 +53,8 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 				.code(entity.getCode())
 				.description(entity.getDescription())
 				.vatNumber(entity.getVatNo())
+				.registrationNo(entity.getRegistrationNo())
+				.legalType(entity.getLegalType())
 				.countryCode(entity.getTradingCountry() != null ? entity.getTradingCountry().getCode() : null)
 				.currencyCode(entity.getTradingCurrency() != null ? entity.getTradingCurrency().getCurrencyCode() : null)
 				.languageCode(entity.getTradingLanguage() != null ? entity.getTradingLanguage().getLanguageCode() : null)
@@ -115,6 +117,8 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 		seller.setId(resource.getId());
 		seller.setDescription(resource.getDescription());
 		seller.setVatNo(resource.getVatNumber());
+		seller.setRegistrationNo(resource.getRegistrationNo());
+		seller.setLegalType(resource.getLegalType());
 		if(StringUtils.isNotBlank(resource.getCurrencyCode())){
 			var currency = tradingCurrencyService.findByTradingCurrencyCode(resource.getCurrencyCode());
 			if(currency == null){
@@ -188,6 +192,7 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 		if(CollectionUtils.isNotEmpty(resource.getInvoiceTypeSellerSequence())){
 			resource.getInvoiceTypeSellerSequence().forEach(invTypSelSeq -> {
 				InvoiceTypeSellerSequence invoiceTypeSellerSequence = new InvoiceTypeSellerSequence();
+				invoiceTypeSellerSequence.setId(invTypSelSeq.getId());
 				invoiceTypeSellerSequence.setPrefixEL(invTypSelSeq.getPrefixEL());
 				if(invTypSelSeq.getInvoiceTypeId() != null){
 					var invoiceType = invoiceTypeService.findById(invTypSelSeq.getInvoiceTypeId());
