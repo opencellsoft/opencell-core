@@ -2379,20 +2379,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         String pdfFileName = getFullPdfFilePath(invoice, false);
         File pdfFile = new File(pdfFileName);
-        if (!pdfFile.exists()) {
+        if (!StorageFactory.exists(pdfFile)) {
             throw new BusinessException("Invoice PDF was not produced yet for invoice " + invoice.getInvoiceNumberOrTemporaryNumber());
         }
 
-        FileInputStream fileInputStream = null;
+        InputStream fileInputStream = null;
         try {
-            long fileSize = pdfFile.length();
+            long fileSize = StorageFactory.length(pdfFile);
             if (fileSize > Integer.MAX_VALUE) {
                 throw new IllegalArgumentException("File is too big to put it to buffer in memory.");
             }
-            byte[] fileBytes = new byte[(int) fileSize];
-            fileInputStream = new FileInputStream(pdfFile);
-            fileInputStream.read(fileBytes);
-            return fileBytes;
+            fileInputStream = StorageFactory.getInputStream(pdfFile);
+            assert fileInputStream != null;
+
+            return fileInputStream.readAllBytes();
 
         } catch (Exception e) {
             log.error("Error reading invoice PDF file {} contents", pdfFileName, e);
