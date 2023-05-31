@@ -301,7 +301,7 @@ public class PaymentApi extends BaseApi {
 			List<Long> aosIdsToMatch = new ArrayList<>();
 			aosIdsToMatch.add(ao.getId());
 			aosIdsToMatch.add(payment.getId());
-			matchingCodeService.matchOperations(null, customerAccount.getCode(), aosIdsToMatch, null, MatchingTypeEnum.A);			
+			matchingCodeService.matchOperations(null, customerAccount.getCode(), aosIdsToMatch, payment.getId(), MatchingTypeEnum.A);
 		}
 	}
 
