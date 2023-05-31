@@ -87,6 +87,9 @@ public class CommercialOrderDto extends BaseEntityDto {
 	private String salesPersonName;
 	@Schema(description = "Order billing cycle")
  	private String billingCycleCode;
+
+	@Schema(description = "The code of the PriceList to link to this order")
+	private String priceListCode;
 	
 	public CommercialOrderDto() {
 	}
@@ -126,6 +129,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 		if(order.getOrderLots() != null)
 			orderLotCodes = order.getOrderLots().stream().map(OrderLot::getCode).collect(Collectors.toSet());
 		this.billingCycleCode=order.getBillingCycle()!=null?order.getBillingCycle().getCode():null;
+		this.priceListCode = order.getPriceList() != null ? order.getPriceList().getCode() : null;
 	}
 	
 	/**
@@ -449,5 +453,21 @@ public class CommercialOrderDto extends BaseEntityDto {
 
 	public void setBillingCycleCode(String billingCycleCode) {
 		this.billingCycleCode = billingCycleCode;
+	}
+
+	/**
+	 * PriceListCode Getter
+	 * @return the code of linked PriceList
+	 */
+	public String getPriceListCode() {
+		return priceListCode;
+	}
+
+	/**
+	 * PriceListCode Setter
+	 * @param priceListCode the PriceList code to link to this Order
+	 */
+	public void setPriceListCode(String priceListCode) {
+		this.priceListCode = priceListCode;
 	}
 }
