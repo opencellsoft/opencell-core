@@ -1,5 +1,6 @@
 package org.meveo.apiv2.catalog.service.pricelist;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.BusinessApiException;
@@ -12,8 +13,10 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
+import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
@@ -29,6 +32,7 @@ import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Stateless
 public class PriceListLineApiService extends BaseApi {
@@ -71,23 +75,6 @@ public class PriceListLineApiService extends BaseApi {
         int linesIndex = priceList.getLines() != null ? priceList.getLines().size()+1 : 1;
         entityToSave.setCode(priceList.getCode() + "-" + linesIndex);
 
-
-        if(StringUtils.isNotBlank(postDto.getProductCategoryCode())) {
-            ProductLine productLine = productLineService.findByCode(postDto.getProductCategoryCode());
-            if(productLine == null) {
-                throw new EntityDoesNotExistsException(ProductLine.class, postDto.getProductCategoryCode());
-            }
-            entityToSave.setProductCategory(productLine);
-        }
-
-        if(StringUtils.isNotBlank(postDto.getProductCode())) {
-            Product product = productService.findByCode(postDto.getProductCode());
-            if(product == null) {
-                throw new EntityDoesNotExistsException(Product.class, postDto.getProductCode());
-            }
-            entityToSave.setProduct(product);
-        }
-
         if(StringUtils.isNotBlank(postDto.getOfferCategoryCode())) {
             OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postDto.getOfferCategoryCode());
             if(offerTemplateCategory == null) {
@@ -101,7 +88,32 @@ public class PriceListLineApiService extends BaseApi {
             if(offerTemplate == null) {
                 throw new EntityDoesNotExistsException(OfferTemplate.class, postDto.getOfferTemplateCode());
             }
+
+            checkOfferTemplateCompatibility(entityToSave, offerTemplate);
+
             entityToSave.setOfferTemplate(offerTemplate);
+        }
+
+        if(StringUtils.isNotBlank(postDto.getProductCategoryCode())) {
+            ProductLine productLine = productLineService.findByCode(postDto.getProductCategoryCode());
+            if(productLine == null) {
+                throw new EntityDoesNotExistsException(ProductLine.class, postDto.getProductCategoryCode());
+            }
+
+            checkProductLineCompatibility(entityToSave, productLine);
+
+            entityToSave.setProductCategory(productLine);
+        }
+
+        if(StringUtils.isNotBlank(postDto.getProductCode())) {
+            Product product = productService.findByCode(postDto.getProductCode());
+            if(product == null) {
+                throw new EntityDoesNotExistsException(Product.class, postDto.getProductCode());
+            }
+
+            checkProductCompatibility(entityToSave, product);
+
+            entityToSave.setProduct(product);
         }
 
         if(StringUtils.isNotBlank(postDto.getChargeTemplateCode())) {
@@ -109,6 +121,9 @@ public class PriceListLineApiService extends BaseApi {
             if(chargeTemplate == null) {
                 throw new EntityDoesNotExistsException(ChargeTemplate.class, postDto.getChargeTemplateCode());
             }
+
+            checkChargeTemplateCompatibility(entityToSave, chargeTemplate);
+
             entityToSave.setChargeTemplate(chargeTemplate);
         }
 
@@ -131,6 +146,132 @@ public class PriceListLineApiService extends BaseApi {
         return entityToSave.getId();
     }
 
+    private static void checkOfferTemplateCompatibility(PriceListLine entityToSave, OfferTemplate offerTemplate) {
+        if(entityToSave.getOfferCategory() != null &&
+            !CollectionUtils.emptyIfNull(offerTemplate.getOfferTemplateCategories()).contains(entityToSave.getOfferCategory())) {
+                throw new BusinessApiException("The selected Offer isn't compatible with the Offer category");
+        }
+    }
+
+    private static void checkProductLineCompatibility(PriceListLine entityToSave, ProductLine productLine) {
+        // Check Offer Compatibility
+        if(entityToSave.getOfferTemplate() != null) {
+            boolean check = CollectionUtils.emptyIfNull(entityToSave.getOfferTemplate().getOfferComponents())
+                    .stream()
+                    .map(OfferComponent::getProduct)
+                    .filter(Objects::nonNull)
+                    .map(Product::getProductLine)
+                    .filter(Objects::nonNull)
+                    .anyMatch(pl -> pl.getCode().equals(productLine.getCode()));
+            if(!check){
+                throw new BusinessApiException("The selected Product Category isn't compatible with the Offer Template");
+            }
+        }
+
+        // Check Offer category Compatibility
+        if(entityToSave.getOfferCategory() != null) {
+            boolean check = CollectionUtils.emptyIfNull(entityToSave.getOfferCategory().getProductOffering())
+                    .stream()
+                    .filter(po -> po instanceof OfferTemplate && ((OfferTemplate) po).getOfferComponents() != null)
+                    .flatMap(po -> ((OfferTemplate) po).getOfferComponents().stream())
+                    .map(OfferComponent::getProduct)
+                    .filter(Objects::nonNull)
+                    .map(Product::getProductLine)
+                    .filter(Objects::nonNull)
+                    .anyMatch(pc -> pc.getCode().equals(productLine.getCode()));
+            if(!check){
+                throw new BusinessApiException("The selected Product Category isn't compatible with the Offer Template");
+            }
+        }
+    }
+
+    private static void checkChargeTemplateCompatibility(PriceListLine entityToSave, ChargeTemplate chargeTemplate) {
+        // Check product compatibility
+        if(entityToSave.getProduct() != null) {
+            boolean check = chargeTemplate.getProductCharges()
+                    .stream()
+                    .map(ProductChargeTemplateMapping::getProduct)
+                    .filter(Objects::nonNull)
+                    .anyMatch(p -> p.getCode().equals(entityToSave.getProduct().getCode()));
+            if(!check) {
+                throw new BusinessApiException("The selected ChargeTemplate isn't compatible with the Product");
+            }
+        }
+
+        // Check ProductLine compatibility
+        if(entityToSave.getProductCategory() != null) {
+            boolean check =  CollectionUtils.emptyIfNull(chargeTemplate.getProductCharges())
+                    .stream()
+                    .map(ProductChargeTemplateMapping::getProduct)
+                    .filter(Objects::nonNull)
+                    .map(Product::getProductLine)
+                    .filter(Objects::nonNull)
+                    .anyMatch(pc -> pc.getCode().equals(entityToSave.getProductCategory().getCode()));
+            if(!check) {
+                throw new BusinessApiException("The selected ChargeTemplate isn't compatible with the Product category");
+            }
+        }
+
+        // Check OfferTemplate compatibility
+        if(entityToSave.getOfferTemplate() != null) {
+
+            boolean check = CollectionUtils.emptyIfNull(entityToSave.getOfferTemplate().getOfferComponents())
+                    .stream()
+                    .flatMap(oc -> CollectionUtils.emptyIfNull(oc.getProduct().getProductCharges()).stream())
+                    .map(pc -> pc.getChargeTemplate().getCode())
+                    .anyMatch(c -> c.equals(chargeTemplate.getCode()));
+            if(!check) {
+                throw new BusinessApiException("The selected ChargeTemplate isn't compatible with the Offer template");
+            }
+        }
+
+        // Check OfferTemplate compatibility
+        if(entityToSave.getOfferCategory() != null) {
+
+            boolean check = CollectionUtils.emptyIfNull(entityToSave.getOfferCategory().getProductOffering())
+                    .stream()
+                    .filter(po -> po instanceof OfferTemplate && ((OfferTemplate) po).getOfferComponents() != null)
+                    .flatMap(po -> ((OfferTemplate) po).getOfferComponents().stream())
+                    .flatMap(oc -> CollectionUtils.emptyIfNull(oc.getProduct().getProductCharges()).stream())
+                    .map(pc -> pc.getChargeTemplate().getCode())
+                    .anyMatch(c -> c.equals(chargeTemplate.getCode()));
+            if(!check) {
+                throw new BusinessApiException("The selected ChargeTemplate isn't compatible with the Offer Category");
+            }
+        }
+    }
+
+    private static void checkProductCompatibility(PriceListLine entityToSave, Product product) {
+        if(entityToSave.getProductCategory() != null
+                && (product.getProductLine() == null || !entityToSave.getProductCategory().getCode().equals(product.getProductLine().getCode()))
+        ) {
+            throw new BusinessApiException("The selected Product isn't compatible with the Product line");
+        }
+
+        if(entityToSave.getOfferTemplate() != null) {
+            boolean check = CollectionUtils.emptyIfNull(entityToSave.getOfferTemplate().getOfferComponents())
+                    .stream()
+                    .map(oc -> oc.getProduct().getCode())
+                    .filter(Objects::nonNull)
+                    .anyMatch(c -> c.equals(product.getCode()));
+            if(!check) {
+                throw new BusinessApiException("The selected Product isn't compatible with the Offer template");
+            }
+        }
+
+        if(entityToSave.getOfferCategory() != null) {
+            boolean check = CollectionUtils.emptyIfNull(entityToSave.getOfferCategory().getProductOffering())
+                    .stream()
+                    .filter(po -> po instanceof OfferTemplate && ((OfferTemplate) po).getOfferComponents() != null)
+                    .flatMap(po -> ((OfferTemplate) po).getOfferComponents().stream())
+                    .map(oc -> oc.getProduct().getCode())
+                    .anyMatch(c -> c.equals(product.getCode()));
+            if(!check) {
+                throw new BusinessApiException("The selected Product isn't compatible with the Offer category");
+            }
+        }
+    }
+
     public Long update(Long priceListLineId, PriceListLineDto postDto) {
 
         checkMandatoryFields(postDto);
@@ -144,31 +285,6 @@ public class PriceListLineApiService extends BaseApi {
             throw new EntityAlreadyExistsException(PriceListLine.class, postDto.getCode());
         } else if (StringUtils.isNotBlank(postDto.getCode())) {
             priceListLineToUpdate.setCode(postDto.getCode());
-        }
-
-
-        if(postDto.getProductCategoryCode() != null) {
-            if(StringUtils.isNotBlank(postDto.getProductCategoryCode())) {
-                ProductLine productLine = productLineService.findByCode(postDto.getProductCategoryCode());
-                if(productLine == null) {
-                    throw new EntityDoesNotExistsException(ProductLine.class, postDto.getProductCategoryCode());
-                }
-                priceListLineToUpdate.setProductCategory(productLine);
-            } else {
-                priceListLineToUpdate.setProductCategory(null);
-            }
-        }
-
-        if(postDto.getProductCode() != null) {
-            if(StringUtils.isNotBlank(postDto.getProductCode())) {
-                Product product = productService.findByCode(postDto.getProductCode());
-                if (product == null) {
-                    throw new EntityDoesNotExistsException(Product.class, postDto.getProductCode());
-                }
-                priceListLineToUpdate.setProduct(product);
-            } else {
-                priceListLineToUpdate.setProduct(null);
-            }
         }
 
         if(postDto.getOfferCategoryCode() != null) {
@@ -195,6 +311,30 @@ public class PriceListLineApiService extends BaseApi {
             }
         }
 
+        if(postDto.getProductCategoryCode() != null) {
+            if(StringUtils.isNotBlank(postDto.getProductCategoryCode())) {
+                ProductLine productLine = productLineService.findByCode(postDto.getProductCategoryCode());
+                if(productLine == null) {
+                    throw new EntityDoesNotExistsException(ProductLine.class, postDto.getProductCategoryCode());
+                }
+                priceListLineToUpdate.setProductCategory(productLine);
+            } else {
+                priceListLineToUpdate.setProductCategory(null);
+            }
+        }
+
+        if(postDto.getProductCode() != null) {
+            if(StringUtils.isNotBlank(postDto.getProductCode())) {
+                Product product = productService.findByCode(postDto.getProductCode());
+                if (product == null) {
+                    throw new EntityDoesNotExistsException(Product.class, postDto.getProductCode());
+                }
+                priceListLineToUpdate.setProduct(product);
+            } else {
+                priceListLineToUpdate.setProduct(null);
+            }
+        }
+
         if(postDto.getChargeTemplateCode() != null) {
             if(StringUtils.isNotBlank(postDto.getChargeTemplateCode())) {
                 ChargeTemplate chargeTemplate = chargeTemplateService.findByCode(postDto.getChargeTemplateCode());
@@ -204,6 +344,24 @@ public class PriceListLineApiService extends BaseApi {
                 priceListLineToUpdate.setChargeTemplate(chargeTemplate);
             }
         }
+
+        // sanity checks
+        if(priceListLineToUpdate.getOfferTemplate() != null) {
+            checkOfferTemplateCompatibility(priceListLineToUpdate, priceListLineToUpdate.getOfferTemplate());
+        }
+
+        if(priceListLineToUpdate.getProductCategory() != null) {
+            checkProductLineCompatibility(priceListLineToUpdate, priceListLineToUpdate.getProductCategory());
+        }
+
+        if(priceListLineToUpdate.getProduct() != null) {
+            checkProductCompatibility(priceListLineToUpdate, priceListLineToUpdate.getProduct());
+        }
+
+        if(priceListLineToUpdate.getChargeTemplate()!= null) {
+            checkChargeTemplateCompatibility(priceListLineToUpdate, priceListLineToUpdate.getChargeTemplate());
+        }
+
 
         if(postDto.getRate() != null) {
             priceListLineToUpdate.setRate(BigDecimal.valueOf(postDto.getRate()));

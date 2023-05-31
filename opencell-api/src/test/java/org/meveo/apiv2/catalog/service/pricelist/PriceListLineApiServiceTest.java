@@ -11,10 +11,12 @@ import org.meveo.apiv2.catalog.ImmutablePriceListLineDto;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
+import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
@@ -31,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -89,12 +92,40 @@ public class PriceListLineApiServiceTest {
         PriceList priceList = new PriceList();
         priceList.setCode(priceListCode);
         priceList.setStatus(PriceListStatusEnum.DRAFT);
+
+
+        OfferTemplate offerTemplate = new OfferTemplate();
+        offerTemplate.setCode("an-offer-template");
+        OfferTemplateCategory offerCategory = new OfferTemplateCategory();
+        offerCategory.setCode("an-offer-category");
+        Product product = new Product();
+        product.setCode("a-product");
+        ProductLine productLine = new ProductLine();
+        productLine.setCode("a-product-category");
+        UsageChargeTemplate charge = new UsageChargeTemplate();
+        charge.setCode("a-charge-template");
+
+        offerTemplate.setOfferTemplateCategories(List.of(offerCategory));
+        offerCategory.setProductOffering(List.of(offerTemplate));
+
+        OfferComponent offerComponent = new OfferComponent();
+        offerComponent.setProduct(product);
+        offerTemplate.setOfferComponents(List.of(offerComponent));
+
+        product.setProductLine(productLine);
+
+        ProductChargeTemplateMapping<UsageChargeTemplate> productCharge = new ProductChargeTemplateMapping<>();
+        productCharge.setProduct(product);
+        productCharge.setChargeTemplate(charge);
+        charge.setProductCharges(List.of(productCharge));
+        product.setProductCharges(List.of(productCharge));
+
         when(priceListService.findByCode(givenDto.getPriceListCode())).thenReturn(priceList);
-        when(offerTemplateService.findByCode(givenDto.getOfferTemplateCode())).thenReturn(new OfferTemplate());
-        when(offerTemplateCategoryService.findByCode(givenDto.getOfferCategoryCode())).thenReturn(new OfferTemplateCategory());
-        when(productService.findByCode(givenDto.getProductCode())).thenReturn(new Product());
-        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(new UsageChargeTemplate());
-        when(productLineService.findByCode(givenDto.getProductCategoryCode())).thenReturn(new ProductLine());
+        when(offerTemplateService.findByCode(givenDto.getOfferTemplateCode())).thenReturn(offerTemplate);
+        when(offerTemplateCategoryService.findByCode(givenDto.getOfferCategoryCode())).thenReturn(offerCategory);
+        when(productService.findByCode(givenDto.getProductCode())).thenReturn(product);
+        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(charge);
+        when(productLineService.findByCode(givenDto.getProductCategoryCode())).thenReturn(productLine);
 
         // when
         priceListLineApiService.create(givenDto);
@@ -215,7 +246,6 @@ public class PriceListLineApiServiceTest {
     @Test
     public void create_givenMissingMandatoryFieldsShouldTriggerError() {
         // given
-        var priceListCode = "a-price-list";
         var givenDto = ImmutablePriceListLineDto.builder()
                                                 .build();
 
@@ -250,20 +280,36 @@ public class PriceListLineApiServiceTest {
         PriceList priceList = new PriceList();
         priceList.setCode(priceListCode);
         priceList.setStatus(PriceListStatusEnum.DRAFT);
-        OfferTemplate offer = new OfferTemplate();
-        offer.setCode("an-offer-template");
-        when(offerTemplateService.findByCode(givenDto.getOfferTemplateCode())).thenReturn(offer);
+        OfferTemplate offerTemplate = new OfferTemplate();
+        offerTemplate.setCode("an-offer-template");
         OfferTemplateCategory offerCategory = new OfferTemplateCategory();
         offerCategory.setCode("an-offer-category");
-        when(offerTemplateCategoryService.findByCode(givenDto.getOfferCategoryCode())).thenReturn(offerCategory);
         Product product = new Product();
         product.setCode("a-product");
-        when(productService.findByCode(givenDto.getProductCode())).thenReturn(product);
-        UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
-        chargeTemplate.setCode("a-charge-template");
-        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(chargeTemplate);
         ProductLine productLine = new ProductLine();
         productLine.setCode("a-product-category");
+        UsageChargeTemplate charge = new UsageChargeTemplate();
+        charge.setCode("a-charge-template");
+
+        offerTemplate.setOfferTemplateCategories(List.of(offerCategory));
+        offerCategory.setProductOffering(List.of(offerTemplate));
+
+        OfferComponent offerComponent = new OfferComponent();
+        offerComponent.setProduct(product);
+        offerTemplate.setOfferComponents(List.of(offerComponent));
+
+        product.setProductLine(productLine);
+
+        ProductChargeTemplateMapping<UsageChargeTemplate> productCharge = new ProductChargeTemplateMapping<>();
+        productCharge.setProduct(product);
+        productCharge.setChargeTemplate(charge);
+        charge.setProductCharges(List.of(productCharge));
+        product.setProductCharges(List.of(productCharge));
+
+        when(offerTemplateService.findByCode(givenDto.getOfferTemplateCode())).thenReturn(offerTemplate);
+        when(offerTemplateCategoryService.findByCode(givenDto.getOfferCategoryCode())).thenReturn(offerCategory);
+        when(productService.findByCode(givenDto.getProductCode())).thenReturn(product);
+        when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(charge);
         when(productLineService.findByCode(givenDto.getProductCategoryCode())).thenReturn(productLine);
 
         PriceListLine priceListLineToUpdate = new PriceListLine();
@@ -333,15 +379,41 @@ public class PriceListLineApiServiceTest {
         chargeTemplate.setCode("initial-charge-template");
         priceListLineToUpdate.setChargeTemplate(chargeTemplate);
 
+        UsageChargeTemplate newChargeTemplate = new UsageChargeTemplate();
+        newChargeTemplate.setCode("a-charge-template-code");
+
+
         ProductLine productCategory = new ProductLine();
         productCategory.setCode("initial-product-line");
         priceListLineToUpdate.setProductCategory(productCategory);
+
+
+        offerTemplate.setOfferTemplateCategories(List.of(offerCategory));
+        offerCategory.setProductOffering(List.of(offerTemplate));
+
+        OfferComponent offerComponent = new OfferComponent();
+        offerComponent.setProduct(product);
+        offerTemplate.setOfferComponents(List.of(offerComponent));
+
+        product.setProductLine(productCategory);
+
+        ProductChargeTemplateMapping<UsageChargeTemplate> productCharge = new ProductChargeTemplateMapping<>();
+        productCharge.setProduct(product);
+        productCharge.setChargeTemplate(chargeTemplate);
+        ProductChargeTemplateMapping<UsageChargeTemplate> newProductCharge = new ProductChargeTemplateMapping<>();
+        newProductCharge.setProduct(product);
+        newProductCharge.setChargeTemplate(newChargeTemplate);
+
+        chargeTemplate.setProductCharges(List.of(productCharge));
+        newChargeTemplate.setProductCharges(List.of(newProductCharge));
+        product.setProductCharges(List.of(productCharge, newProductCharge));
+
+
         priceListLineToUpdate.setPriceList(priceList);
         when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
 
 
-        UsageChargeTemplate newChargeTemplate = new UsageChargeTemplate();
-        newChargeTemplate.setCode("a-charge-template-code");
+
         when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(newChargeTemplate);
 
         // when
@@ -694,7 +766,6 @@ public class PriceListLineApiServiceTest {
     public void delete_givenMissingPriceListLineShouldTriggerError() {
         // given
         Long priceListLineId = 10001L;
-        PriceListLine priceListLineToDelete = new PriceListLine();
 
         // when + then
         assertThatThrownBy(() -> priceListLineApiService.delete(priceListLineId))
