@@ -356,6 +356,7 @@ public class PricePlanSelectionService implements Serializable {
                 allMatch = ppValue.isMatch(attributeValues);
 
             }
+            // Case when was matched the last item in the ppValue list (e.g. default value)
             if (matchedPlId == null && (lastPLId > 0 && allMatch)) {
                 matchedPlId = lastPLId;
             }

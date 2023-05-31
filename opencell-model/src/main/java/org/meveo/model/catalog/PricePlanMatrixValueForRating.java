@@ -65,7 +65,7 @@ public class PricePlanMatrixValueForRating implements Serializable {
     public PricePlanMatrixValueForRating(Long attributeId, ColumnTypeEnum pricePlanMatrixColumnType, Long pricePlanMatrixLineId, boolean defaultLine, Long longValue, Double doubleValue, String stringValue,
             Date dateValue, Date fromDateValue, Date toDateValue, Double fromDoubleValue, Double toDoubleValue, Boolean booleanValue) {
 
-        this.attributeId = attributeId;
+        this.attributeId = attributeId != null ? attributeId : 0;
         this.pricePlanMatrixColumnType = pricePlanMatrixColumnType;
         this.pricePlanMatrixLineId = pricePlanMatrixLineId;
         this.defaultLine = defaultLine;
