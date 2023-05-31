@@ -1068,8 +1068,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         boolean useOpenOrder = ofNullable(openOrderSetting).map(OpenOrderSetting::getUseOpenOrders).orElse(false);
         InvoiceLine invoiceLine;
         List<Long> associatedRtIds;
+
+        Long billingRunId = null;
+        boolean incrementalInvoiceLines = false;
+        if (billingRun != null) {
+            billingRunId = billingRun.getId();
+            incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines();
+        }
         for (Map<String, Object> groupedRT : groupedRTs) {
-            boolean incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines();
             if (incrementalInvoiceLines && groupedRT.get("invoice_line_id") != null) {
                 Long invoiceLineId = (Long) groupedRT.get("invoice_line_id");
                 BigDecimal amountWithoutTax = ofNullable(((BigDecimal) groupedRT.get("amount_without_tax"))).orElse(ZERO)
@@ -1092,7 +1098,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 commit();
                 associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
                 basicStatistics.setCount(associatedRtIds.size());
-                ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLineId, billingRun.getId());
+                ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLineId, billingRunId);
             }
             else {
                 invoiceLine = linesFactory.create(groupedRT, iLIdsRtIdsCorrespondence,
@@ -1104,7 +1110,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 commit();
                 associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
                 basicStatistics.setCount(associatedRtIds.size());
-                ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId(), billingRun.getId());
+                ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId(), billingRunId);
                 if(groupedRT.get("rated_transaction_ids") != null) {
                     var ratedTransIds = ((String) groupedRT.get("rated_transaction_ids")).split(",");
                     for(String id: ratedTransIds) {

@@ -558,8 +558,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         RatingResult ratedEDRResult = new RatingResult();
         WalletOperation discountedWalletOperation=null;
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
-    	AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
-    	bareWalletOperation.setAccountingArticle(accountingArticle);
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
 
@@ -578,19 +576,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
             
             RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
-
-            // Determine and set tax if it was not set before.
-            // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
-            if (bareWalletOperation.getTax() == null) {
-
-                TaxInfo taxInfo = taxMappingService.determineTax(bareWalletOperation);
-                if(taxInfo==null) {
-                	throw new BusinessException("No tax found for the chargeInstance "+chargeInstance.getCode());
-                }
-                bareWalletOperation.setTaxClass(taxInfo.taxClass);
-                bareWalletOperation.setTax(taxInfo.tax);
-                bareWalletOperation.setTaxPercent(taxInfo.tax.getPercent());
-            }
 
             PricePlanMatrix pricePlan = null;
             BillingAccount billingAccount = bareWalletOperation.getBillingAccount();
@@ -711,6 +696,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             }
                         }
                         if(seperateDiscount) {
+	                        if (bareWalletOperation.getTax() == null) {
+		                        TaxInfo taxInfo = taxMappingService.determineTax(bareWalletOperation);
+		                        if(taxInfo==null) {
+			                        throw new BusinessException("No tax found for the chargeInstance "+ bareWalletOperation.getChargeInstance().getCode());
+		                        }
+	                        }
                         	discountedWalletOperation=rateDiscountedWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,discountRate,billingAccount,pricePlanMatrixLine);
                         }
                     }
@@ -985,6 +976,22 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         if (amount == null) {
             amount = walletOperation.getQuantity().multiply(unitPrice);
+        }
+
+        walletOperation.setAmountWithoutTax(amount);
+        walletOperation.setAmountWithTax(amount);
+        AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
+        walletOperation.setAccountingArticle(accountingArticle);
+        // Determine and set tax if it was not set before.
+        // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
+        if (walletOperation.getTax() == null) {
+            TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
+            if(taxInfo==null) {
+                throw new BusinessException("No tax found for the chargeInstance "+ walletOperation.getChargeInstance().getCode());
+            }
+            walletOperation.setTaxClass(taxInfo.taxClass);
+            walletOperation.setTax(taxInfo.tax);
+            walletOperation.setTaxPercent(taxInfo.tax.getPercent());
         }
 
         // Unit prices and unit taxes are with higher precision
