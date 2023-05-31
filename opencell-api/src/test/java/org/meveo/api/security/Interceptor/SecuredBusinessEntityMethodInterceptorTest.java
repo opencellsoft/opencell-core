@@ -82,6 +82,7 @@ public class SecuredBusinessEntityMethodInterceptorTest {
     @Before
     public void setUp() {
 
+        when(userService.getEntityManager()).thenReturn(entityManager);
         when(roleService.getEntityManager()).thenReturn(entityManager);
 
         TypedQuery<Object> query = getQuerySimulation();
