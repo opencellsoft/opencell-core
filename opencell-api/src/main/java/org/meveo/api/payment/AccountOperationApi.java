@@ -598,9 +598,8 @@ public class AccountOperationApi extends BaseApi {
      *
      * @param postData the post data
      * @throws BusinessException the business exception
-     * @throws Exception the exception
      */
-    public void unMatchingOperations(UnMatchingOperationRequestDto postData) throws BusinessException, Exception {
+    public void unMatchingOperations(UnMatchingOperationRequestDto postData) throws BusinessException {
         if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
             missingParameters.add("customerAccountCode");
         }
