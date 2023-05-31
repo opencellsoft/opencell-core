@@ -43,6 +43,10 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
 				.build();	
     }
 	
+	public org.meveo.apiv2.catalog.PriceList toResource(PriceList entity, boolean b) {
+		return this.toResource(entity);
+	}
+	
 	/**
 	 * Get codes from a set of Brands
 	 * @param entity Price List

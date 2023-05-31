@@ -12,6 +12,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.Product;
@@ -24,6 +25,8 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PriceListLineService;
+import org.meveo.service.catalog.impl.PriceListService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -69,6 +72,9 @@ public class PriceListLineApiServiceTest {
 
     @Mock
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Mock
+    private PricePlanMatrixService pricePlanMatrixService;
 
     @Test
     public void create_shouldCreate() {
@@ -126,6 +132,8 @@ public class PriceListLineApiServiceTest {
         when(productService.findByCode(givenDto.getProductCode())).thenReturn(product);
         when(chargeTemplateService.findByCode(givenDto.getChargeTemplateCode())).thenReturn(charge);
         when(productLineService.findByCode(givenDto.getProductCategoryCode())).thenReturn(productLine);
+
+        when(pricePlanMatrixService.findByCode(givenDto.getPricePlanCode())).thenReturn(new PricePlanMatrix());
 
         // when
         priceListLineApiService.create(givenDto);
@@ -316,6 +324,8 @@ public class PriceListLineApiServiceTest {
         priceListLineToUpdate.setCode("e-price-list-line-code");
         priceListLineToUpdate.setPriceList(priceList);
         when(priceListLineService.findById(priceListLineId)).thenReturn(priceListLineToUpdate);
+
+        when(pricePlanMatrixService.findByCode(givenDto.getPricePlanCode())).thenReturn(new PricePlanMatrix());
 
         // when
         priceListLineApiService.update(priceListLineId, givenDto);
