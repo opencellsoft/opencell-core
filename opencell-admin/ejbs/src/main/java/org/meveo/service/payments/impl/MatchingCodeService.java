@@ -691,7 +691,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             }
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
                 cptOccDebit++;
-                amoutDebit = amoutDebit.add(accountOperation.getUnMatchingAmount());
+                amoutDebit = amoutDebit.add(accountOperation.getTransactionalUnMatchingAmount());
             }
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
                 cptOccCredit++;
