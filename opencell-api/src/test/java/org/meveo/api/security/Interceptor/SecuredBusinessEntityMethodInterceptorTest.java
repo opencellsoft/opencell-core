@@ -105,7 +105,12 @@ public class SecuredBusinessEntityMethodInterceptorTest {
         User user = new User();
         user.setSecuredEntities(securedEntities);
 
-        Mockito.when(userService.findByUsername(any())).thenReturn(user);
+        Mockito.when(currentUser.getUserName()).thenReturn("username");
+
+        TypedQuery<User> queryUserMock = Mockito.mock(TypedQuery.class);
+        Mockito.when(userService.getEntityManager().createNamedQuery("User.getByUsername", User.class)).thenReturn(queryUserMock);
+        Mockito.when(queryUserMock.setParameter("username", currentUser.getUserName().toLowerCase())).thenReturn(queryUserMock);
+        Mockito.when(queryUserMock.getSingleResult()).thenReturn(user);
 
     }
 
