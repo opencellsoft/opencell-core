@@ -154,6 +154,8 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.pricelist.PriceList;
+import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.audit.AuditableFieldService;
@@ -177,6 +179,7 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.EmailTemplateService;
@@ -314,6 +317,9 @@ public class SubscriptionApi extends BaseApi {
     
 	@Inject
 	private ContractHierarchyHelper contractHierarchyHelper;
+
+    @Inject
+    private PriceListService priceListService;
 
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
@@ -579,6 +585,18 @@ public class SubscriptionApi extends BaseApi {
 		if (!StringUtils.isBlank(postData.getContractCode())) {
 			subscription.setContract(contractHierarchyHelper.checkContractHierarchy(subscription.getUserAccount().getBillingAccount(), postData.getContractCode()));
 		}
+
+        if (StringUtils.isNotBlank(postData.getPriceListCode())) {
+            PriceList priceList = priceListService.findByCode(postData.getPriceListCode());
+            if (priceList == null) {
+                throw new EntityDoesNotExistsException(PriceList.class, postData.getPriceListCode());
+            } else if(!PriceListStatusEnum.ACTIVE.equals(priceList.getStatus())) {
+                throw new BusinessException("Only Active PriceList can be attached to a subscription");
+            }
+            subscription.setPriceList(priceList);
+        } else if(postData.getPriceListCode() != null) {
+            subscription.setPriceList(null);
+        }
 		
         // populate customFields
         try {
@@ -1791,6 +1809,10 @@ public class SubscriptionApi extends BaseApi {
                 existedSubscriptionDto.setAutoEndOfEngagement(subscriptionDto.getAutoEndOfEngagement());
             }
 
+            if(subscriptionDto.getPriceListCode() != null) {
+                existedSubscriptionDto.setPriceListCode(subscriptionDto.getPriceListCode());
+            }
+
             update(existedSubscriptionDto);
         }
 
@@ -2906,6 +2928,16 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setContract(contractHierarchyHelper.checkContractHierarchy(userAccount.getBillingAccount(), postData.getContractCode()));
 		}
 
+        if (StringUtils.isNotBlank(postData.getPriceListCode())) {
+            PriceList priceList = priceListService.findByCode(postData.getPriceListCode());
+            if (priceList == null) {
+                throw new EntityDoesNotExistsException(PriceList.class, postData.getPriceListCode());
+            } else if(!PriceListStatusEnum.ACTIVE.equals(priceList.getStatus())) {
+                throw new BusinessException("Only Active PriceList can be attached to a subscription");
+            }
+            subscription.setPriceList(priceList);
+        }
+
         // subscription.setTerminationDate(postData.getTerminationDate());
 
         SubscriptionRenewal subscriptionRenewal = null;
@@ -3133,6 +3165,10 @@ public class SubscriptionApi extends BaseApi {
 
         if (isNotBlank(subscriptionPatchDto.getNewSubscriptionCode())) {
             existingSubscriptionDto.setCode(subscriptionPatchDto.getNewSubscriptionCode());
+        }
+
+        if (StringUtils.isNotBlank(subscriptionPatchDto.getPriceListCode())) {
+            existingSubscriptionDto.setPriceListCode(subscriptionPatchDto.getPriceListCode());
         }
 
         Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto, subscriptionPatchDto.getSubscriptionCustomFieldsToCopy(), false);
