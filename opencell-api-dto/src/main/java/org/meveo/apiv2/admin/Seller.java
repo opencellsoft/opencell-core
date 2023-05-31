@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.response.TitleDto;
 import org.meveo.apiv2.models.Resource;
 
 @Value.Immutable
@@ -50,10 +51,14 @@ public interface Seller extends Resource{
 	List<InvoiceTypeSellerSequence> getInvoiceTypeSellerSequence();
 	
 	@Nullable
-	String getLegalType();
+	TitleDto getLegalType();
 	
 	@Nullable
 	String getRegistrationNo();
 	@Nullable
 	CustomFieldsDto getCustomFields();
+	
+	@Nullable
+	List<CustomerSequence> getCustomerSequence();
+	
 }
