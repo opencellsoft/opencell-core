@@ -29,6 +29,7 @@ public class SellerResourceImpl implements SellerResource {
 	@Override
 	public Response create(Seller postData) {
 		var seller = sellerMapper.toEntity(postData);
+		sellerApiService.populateCustomFieldsForGenericApi(postData.getCustomFields(), seller, true);
 		sellerApiService.create(seller);
 		var response = ImmutableSeller.copyOf(sellerMapper.toResource(seller));
 		return Response.created(LinkGenerator.getUriBuilderFromResource(SellerResource.class, seller.getId()).build())
@@ -39,6 +40,7 @@ public class SellerResourceImpl implements SellerResource {
 	@Override
 	public Response update(Seller postData) {
 		var sellerSeller = sellerMapper.toEntity(postData);
+		sellerApiService.populateCustomFieldsForGenericApi(postData.getCustomFields(), sellerSeller, false);
 		sellerApiService.update(sellerSeller);
 		var response = ImmutableSeller.copyOf(sellerMapper.toResource(sellerSeller));
 		return Response.ok(LinkGenerator.getUriBuilderFromResource(SellerResource.class, sellerSeller.getId()).build())
@@ -49,6 +51,8 @@ public class SellerResourceImpl implements SellerResource {
 	@Override
 	public Response createOrUpdate(Seller postData) {
 		var sellerSeller = sellerMapper.toEntity(postData);
+		var isNewEntity = postData.getId() == null;
+		sellerApiService.populateCustomFieldsForGenericApi(postData.getCustomFields(), sellerSeller, isNewEntity);
 		sellerApiService.createOrUpdate(sellerSeller);
 		var response = ImmutableSeller.copyOf(sellerMapper.toResource(sellerSeller));
 		return Response.ok(LinkGenerator.getUriBuilderFromResource(SellerResource.class, sellerSeller.getId()).build())
