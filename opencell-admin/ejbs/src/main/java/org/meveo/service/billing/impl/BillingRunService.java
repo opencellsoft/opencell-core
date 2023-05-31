@@ -744,20 +744,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
     
-	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
-		Map<String, Object> filters = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
-		if(filters==null && billingRun.getBillingCycle() != null) {
-			filters=new TreeMap<>();
-			filters.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
-		} 
-		if(filters==null){
-			throw new BusinessException("No filter found for billingRun "+billingRun.getId());
-		}
-		filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
-		QueryBuilder queryBuilder = ratedTransactionService.getQueryFromFilters(filters, Arrays.asList("billingAccount.id"), true);
-		return queryBuilder.getQuery(getEntityManager()).getResultList();
-	}
-
     /**
      * Gets entities that are associated with a billing run
      *
@@ -1695,10 +1681,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         
     }
 
-    public void updateBillingRunJobExecution(BillingRun billingRun, JobExecutionResultImpl result) {
-        billingRun = billingRunService.refreshOrRetrieve(billingRun);
+    public void updateBillingRunJobExecution(Long billingRunId, JobExecutionResultImpl result) {
+        BillingRun billingRun = billingRunService.findById(billingRunId);
         billingRun.addJobExecutions(result);
-
+        update(billingRun);
     }
 
     public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {
