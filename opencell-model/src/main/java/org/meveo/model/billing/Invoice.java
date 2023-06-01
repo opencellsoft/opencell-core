@@ -1825,7 +1825,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return transactionalAmountWithoutTax;
     }
 
-    public void setTransactionalAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
+    public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
         this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
     }
 
@@ -1841,32 +1841,32 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         return transactionalAmountTax;
     }
 
-    public void setTransactionalAmountTax(BigDecimal convertedAmountTax) {
-        this.transactionalAmountTax = convertedAmountTax;
+    public void setTransactionalAmountTax(BigDecimal transactionalAmountTax) {
+        this.transactionalAmountTax = transactionalAmountTax;
     }
 
     public BigDecimal getTransactionalNetToPay() {
         return transactionalNetToPay;
     }
 
-    public void setTransactionalNetToPay(BigDecimal convertedNetToPay) {
-        this.transactionalNetToPay = convertedNetToPay;
+    public void setTransactionalNetToPay(BigDecimal transactionalNetToPay) {
+        this.transactionalNetToPay = transactionalNetToPay;
     }
 
     public BigDecimal getTransactionalRawAmount() {
         return transactionalRawAmount;
     }
 
-    public void setTransactionalRawAmount(BigDecimal convertedRawAmount) {
-        this.transactionalRawAmount = convertedRawAmount;
+    public void setTransactionalRawAmount(BigDecimal transactionalRawAmount) {
+        this.transactionalRawAmount = transactionalRawAmount;
     }
 
     public BigDecimal getTransactionalDiscountAmount() {
         return transactionalDiscountAmount;
     }
 
-    public void setTransactionalDiscountAmount(BigDecimal convertedDiscountAmount) {
-        this.transactionalDiscountAmount = convertedDiscountAmount;
+    public void setTransactionalDiscountAmount(BigDecimal transactionalDiscountAmount) {
+        this.transactionalDiscountAmount = transactionalDiscountAmount;
     }
 
     public BigDecimal getTransactionalAmountWithoutTaxBeforeDiscount() {
@@ -1941,8 +1941,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public BigDecimal getTransactionalInvoiceBalance() {
         return transactionalInvoiceBalance;
     }
-    public void setTransactionalInvoiceBalance(BigDecimal convertedInvoiceBalance) {
-        this.transactionalInvoiceBalance = convertedInvoiceBalance;
+    public void setTransactionalInvoiceBalance(BigDecimal transactionalInvoiceBalance) {
+        this.transactionalInvoiceBalance = transactionalInvoiceBalance;
     }
     
 	public boolean isConversionFromBillingCurrency() {
