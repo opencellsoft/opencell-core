@@ -122,7 +122,7 @@ public class ClusterEventMonitor implements MessageListener {
 
             if (eventDto.getAction() == CrudActionEnum.execute) {
                 JobLauncherEnum jobLauncher = eventDto.getAdditionalInfo() != null && eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER) != null
-                        ? JobLauncherEnum.valueOf((String) eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER))
+                        ? (JobLauncherEnum) eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER)
                         : null;
                 jobExecutionService.executeJob(jobInstanceService.findById(eventDto.getId()), null, jobLauncher, false);
 
