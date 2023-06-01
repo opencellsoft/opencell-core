@@ -78,7 +78,7 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 	}
 	
 	private TitleDto getTitle(Title title) {
-		var titleDto = new TitleDto();
+		TitleDto titleDto = new TitleDto();
 		titleDto.setDescription(title.getDescription());
 		titleDto.setIsCompany(title.getIsCompany());
 		titleDto.setCode(title.getCode());

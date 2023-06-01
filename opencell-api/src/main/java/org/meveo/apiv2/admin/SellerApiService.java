@@ -4,6 +4,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -220,6 +222,10 @@ public class SellerApiService extends BaseApi {
 		if(CollectionUtils.isNotEmpty(paramMissing)) {
 			throw new MissingParameterException(paramMissing);
 		}
+	}
+	
+	public CustomFieldsDto getDto(Seller seller){
+		return entityToDtoConverter.getCustomFieldsDTO(seller);
 	}
 	
 }
