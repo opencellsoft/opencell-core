@@ -1,6 +1,5 @@
 package org.meveo.service.catalog.impl;
 
-import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.service.base.BusinessService;
 
