@@ -377,6 +377,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                             occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                             amoutTax,
                             taxAgr.getTax(), recordedInvoice.getOperationNumber());
+                    taxEntry.setTransactionalAmount(transactionAmoutTax);
                     accountingCodeJournal.put(groupKey, taxEntry);
                 } else {
                     JournalEntry entry = accountingCodeJournal.get(groupKey);
@@ -454,6 +455,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
         revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
         revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
+        revenuEntry.setTransactionalAmount(invoiceLine.getAmountWithoutTax());
         return revenuEntry;
     }
 
