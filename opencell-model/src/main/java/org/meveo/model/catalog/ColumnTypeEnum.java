@@ -160,12 +160,12 @@ public enum ColumnTypeEnum {
             } else if (attributeValue.getDoubleValue() == null) {
                 return false;
             }
-            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null
+            if (pricePlanMatrixValue.getFromDoubleValue() != null
                     && pricePlanMatrixValue.getToDoubleValue() == null
                     && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()) {
                 return true;
             }
-            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() == null
+            if (pricePlanMatrixValue.getFromDoubleValue() == null
                     && pricePlanMatrixValue.getToDoubleValue() != null) {
                 if (excludeMaxValue) {
                     if (attributeValue.getDoubleValue() < pricePlanMatrixValue.getToDoubleValue()) {
@@ -177,7 +177,7 @@ public enum ColumnTypeEnum {
                     }
                 }
             }
-            if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null
+            if (pricePlanMatrixValue.getFromDoubleValue() != null
                     && pricePlanMatrixValue.getToDoubleValue() != null
                     && attributeValue.getDoubleValue() >= pricePlanMatrixValue.getFromDoubleValue()) {
                 if (excludeMaxValue) {
