@@ -53,7 +53,7 @@
 				"enforcement-mode": "DISABLED"
 			},
 			{
-				"path": "/inbound/*",
+				"path": "/inbound/ingenico/*",
 				"enforcement-mode": "DISABLED"
 			}		
 		],
