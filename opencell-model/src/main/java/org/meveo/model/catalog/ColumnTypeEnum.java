@@ -200,15 +200,15 @@ public enum ColumnTypeEnum {
     Boolean {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
-            if (StringUtils.isEmpty(pricePlanMatrixValue.getStringValue())) {
+            if (pricePlanMatrixValue.getBooleanValue() == null) {
                 return true;
             }
-            return pricePlanMatrixValue.getStringValue().equalsIgnoreCase(attributeValue.getStringValue());
+            return pricePlanMatrixValue.getBooleanValue() == attributeValue.getBooleanValue();
         }
 
         @Override
         public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
-            return StringUtils.isEmpty(pricePlanMatrixValue.getStringValue());
+            return pricePlanMatrixValue.getBooleanValue() == null;
         }
     };
 
