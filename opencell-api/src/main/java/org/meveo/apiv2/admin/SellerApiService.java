@@ -4,14 +4,20 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.crm.CustomerSequence;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.InvoiceTypeSequenceService;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.catalog.impl.CustomerSequenceService;
 import org.meveo.service.validation.ValidationByNumberCountryService;
 
 import javax.ejb.Stateless;
@@ -32,6 +38,10 @@ public class SellerApiService extends BaseApi {
 	private ValidationByNumberCountryService validationByNumberCountryService;
 	@Inject
 	private InvoiceTypeSequenceService invoiceTypeSequenceService;
+	@Inject
+	private CustomerSequenceService customerSequenceService;
+	@Inject
+	private MeveoUser meveoUser;
 	
 	public void create(Seller seller) {
 		handleMissingParameters(seller);
@@ -52,6 +62,11 @@ public class SellerApiService extends BaseApi {
 											.filter(invoiceTypeSellerSequence -> invoiceTypeSellerSequence.getInvoiceType() != null)
 											.map(invoiceTypeSellerSequence -> invoiceTypeSellerSequence.getInvoiceType().getId()).collect(Collectors.toList());
 				addNewInvoiceTypeSequence(seller, invoiceTypeIds);
+		}
+		if(CollectionUtils.isNotEmpty(seller.getCustomerSequences())){
+			for (CustomerSequence customerSequence : seller.getCustomerSequences()) {
+				customerSequence.setAuditable(new Auditable(meveoUser));
+			}
 		}
 		sellerService.create(seller);
 	}
@@ -136,6 +151,14 @@ public class SellerApiService extends BaseApi {
 			seller.getInvoiceTypeSequence().addAll(postSeller.getInvoiceTypeSequence());
 			addNewInvoiceTypeSequence(seller,invoiceTypeIds);
 		}
+		seller.getCustomerSequences().clear();
+		if(CollectionUtils.isNotEmpty(postSeller.getCustomerSequences())){
+			for (CustomerSequence customerSequence : postSeller.getCustomerSequences()) {
+				customerSequence.setAuditable(new Auditable(meveoUser));
+				customerSequence.setSeller(seller);
+				seller.getCustomerSequences().add(customerSequence);
+			}
+		}
 		checkVatNum(seller.getVatNo(), seller.getTradingCountry().getCountryCode());
 		sellerService.update(seller);
 	}
@@ -179,8 +202,12 @@ public class SellerApiService extends BaseApi {
 		checkField(seller.getTradingLanguage(), "languageCode", paramMissing);
 		checkField(seller.getTradingCountry(), "countryCode", paramMissing);
 		checkField(seller.getTradingCurrency(), "currencyCode", paramMissing);
-		checkField(seller.getLegalType(), "legalType", paramMissing);
 		checkField(seller.getRegistrationNo(), "registrationNo", paramMissing);
+		if(seller.getLegalEntityType() == null) {
+			paramMissing.add("legalType");
+		}else if(StringUtils.isEmpty(seller.getLegalEntityType().getCode())){
+			paramMissing.add("legalType.code");
+		}
 		if(seller.getContactInformation() == null) {
 			paramMissing.add("contactInformation");
 		}else if(StringUtils.isEmpty(seller.getContactInformation().getEmail())){
@@ -195,6 +222,10 @@ public class SellerApiService extends BaseApi {
 		if(CollectionUtils.isNotEmpty(paramMissing)) {
 			throw new MissingParameterException(paramMissing);
 		}
+	}
+	
+	public CustomFieldsDto getDto(Seller seller){
+		return entityToDtoConverter.getCustomFieldsDTO(seller);
 	}
 	
 }
