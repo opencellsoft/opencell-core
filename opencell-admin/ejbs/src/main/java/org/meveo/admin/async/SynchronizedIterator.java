@@ -25,6 +25,11 @@ public class SynchronizedIterator<T> implements Iterator<T> {
     private int size;
 
     /**
+     * A number of columns that resultset returns. Used to construct an array of values as next() result.
+     */
+    private int numberOfColumns;
+
+    /**
      * Keeps track of a current position in iterator or scrollable results data source implementation
      */
     private int position;
@@ -56,8 +61,20 @@ public class SynchronizedIterator<T> implements Iterator<T> {
      * @param size A total number of records
      */
     public SynchronizedIterator(ScrollableResults scrollableResults, int size) {
+        this(scrollableResults, size, 1);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param scrollableResults Scrollable results
+     * @param size A total number of records
+     * @param numberOfColumns Number of columns that resultset returns
+     */
+    public SynchronizedIterator(ScrollableResults scrollableResults, int size, int numberOfColumns) {
         this.scrollableResults = scrollableResults;
         this.size = size;
+        this.numberOfColumns = numberOfColumns;
     }
 
     /**
@@ -78,7 +95,13 @@ public class SynchronizedIterator<T> implements Iterator<T> {
                 try {
                     if (scrollableResults.next()) {
                         position++;
-                        return (T) scrollableResults.get(0);
+                        if (numberOfColumns == 1) {
+                            return (T) scrollableResults.get(0);
+
+                        } else {
+                            return (T) scrollableResults.get();
+                        }
+
                     } else {
                         return null;
                     }
@@ -91,7 +114,6 @@ public class SynchronizedIterator<T> implements Iterator<T> {
             } else {
                 return null;
             }
-
         }
     }
 
@@ -118,7 +140,11 @@ public class SynchronizedIterator<T> implements Iterator<T> {
                     try {
                         if (scrollableResults.next()) {
                             position++;
-                            item = (T) scrollableResults.get(0);
+                            if (numberOfColumns == 1) {
+                                item = (T) scrollableResults.get(0);
+                            } else {
+                                item = (T) scrollableResults.get();
+                            }
                         } else {
                             break;
                         }
@@ -158,7 +184,9 @@ public class SynchronizedIterator<T> implements Iterator<T> {
         } else if (scrollableResults != null) {
             if (scrollableResults.next()) {
 
-                NextItem<T> nextItem = new NextItem<T>(position, (T) scrollableResults.get(0));
+                T item = numberOfColumns == 1 ? (T) scrollableResults.get(0) : (T) scrollableResults.get();
+
+                NextItem<T> nextItem = new NextItem<T>(position, item);
                 position++;
 
                 return nextItem;

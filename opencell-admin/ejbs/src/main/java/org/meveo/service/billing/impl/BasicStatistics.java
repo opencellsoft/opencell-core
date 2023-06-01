@@ -19,7 +19,6 @@ public class BasicStatistics {
         this.count = valueOf(0);
     }
 
-
     public BigDecimal getSumAmountWithoutTax() {
         return sumAmountWithoutTax;
     }
@@ -27,7 +26,7 @@ public class BasicStatistics {
     public BigDecimal getSumAmountWithTax() {
         return sumAmountWithTax;
     }
-    
+
     public BigDecimal getSumAmountTax() {
         return sumAmountTax;
     }
@@ -41,7 +40,7 @@ public class BasicStatistics {
         this.sumAmountWithTax = this.sumAmountWithTax.add(amount);
         return sumAmountWithTax;
     }
-    
+
     public BigDecimal addToAmountTax(BigDecimal amount) {
         this.sumAmountTax = this.sumAmountTax.add(amount);
         return sumAmountTax;
@@ -55,13 +54,15 @@ public class BasicStatistics {
         this.count = count;
     }
 
-	/**
-	 * @param statistics
-	 */
-	public void append(BasicStatistics statistics) {
-		this.count+=statistics.getCount();
-		 this.sumAmountWithoutTax=this.sumAmountWithoutTax.add(statistics.getSumAmountWithoutTax());
-	     this.sumAmountWithTax=this.sumAmountWithTax.add(statistics.getSumAmountWithTax());
-	     this.sumAmountTax=this.sumAmountTax.add(statistics.getSumAmountTax());
-	}
+    /**
+     * Aggregate statistics
+     * 
+     * @param statistics Statistics to add
+     */
+    public synchronized void append(BasicStatistics statistics) {
+        this.count += statistics.getCount();
+        this.sumAmountWithoutTax = this.sumAmountWithoutTax.add(statistics.getSumAmountWithoutTax());
+        this.sumAmountWithTax = this.sumAmountWithTax.add(statistics.getSumAmountWithTax());
+        this.sumAmountTax = this.sumAmountTax.add(statistics.getSumAmountTax());
+    }
 }

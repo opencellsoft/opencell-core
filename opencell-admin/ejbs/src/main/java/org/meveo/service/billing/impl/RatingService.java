@@ -981,6 +981,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         walletOperation.setAmountWithoutTax(amount);
         walletOperation.setAmountWithTax(amount);
         AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
+       if (accountingArticle == null) {
+            throw new RatingException("Unable to match an accounting article for a charge " + chargeInstance.getId() + "/" + chargeInstance.getCode());
+        }
         walletOperation.setAccountingArticle(accountingArticle);
         // Determine and set tax if it was not set before.
         // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.

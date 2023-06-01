@@ -315,7 +315,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Type(type = "numeric_boolean")
     @Column(name = "skip_validation_script")
-    private Boolean skipValidationScript = Boolean.FALSE;
+    private boolean skipValidationScript = false;
 
     /**
      * EL to compute invoice.initialCollectionDate delay.
@@ -840,15 +840,11 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 		this.suspectAutoAction = autoSuspectAction;
 	}
 
-	public Boolean getSkipValidationScript() {
+	public boolean isSkipValidationScript() {
 		return skipValidationScript;
 	}
 	
-	public boolean isSkipValidationScript() {
-		return skipValidationScript.booleanValue();
-	}
-
-	public void setSkipValidationScript(Boolean skipValidationScript) {
+	public void setSkipValidationScript(boolean skipValidationScript) {
 		this.skipValidationScript = skipValidationScript;
 	}
 	
