@@ -161,11 +161,11 @@ public class JobExecutionService extends BaseService {
                 || (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
 
             Map<String, Object> jobParameters = new HashMap<String, Object>();
-            jobParameters.put(Job.JOB_PARAM_LAUNCHER, jobLauncher);
             if (params != null) {
                 jobParameters.putAll(params);
             }
-            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.execute, params);
+            jobParameters.put(Job.JOB_PARAM_LAUNCHER, jobLauncher);
+            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.execute, jobParameters);
         }
         return jobExecutionResultId;
     }
