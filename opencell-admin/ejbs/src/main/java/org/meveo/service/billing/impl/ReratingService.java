@@ -412,8 +412,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
         assert ratedTransaction != null;
         RatedTransactionStatusEnum oldRTStatus = ratedTransaction.getStatus();
-        if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED
-                || ratedTransaction.getStatus() == RatedTransactionStatusEnum.BILLED) {
+        if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED) {
             ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
         }
 
