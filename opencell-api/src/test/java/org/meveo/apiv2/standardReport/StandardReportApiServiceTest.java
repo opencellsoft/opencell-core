@@ -4,6 +4,7 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +22,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.standardReport.service.StandardReportApiService;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
@@ -45,6 +47,9 @@ public class StandardReportApiServiceTest {
     @Mock
     private RecordedInvoiceService recordedInvoiceService;
 
+    @Mock
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -61,9 +66,6 @@ public class StandardReportApiServiceTest {
         customerAccount.setCode("CA_CODE");
         invoice = new Invoice();
         invoice.setInvoiceNumber("INV_10000");
-
-        when(invoiceService.findByInvoiceNumber("INV_10000")).thenReturn(invoice);
-
     }
 
     @Test
@@ -106,15 +108,6 @@ public class StandardReportApiServiceTest {
         assertEquals(DunningLevelEnum.R1, anElement[8]);
     }
     
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowExceptionIfInvoiceNumberNotFound() {
-        when(invoiceService.findByInvoiceNumber("INV_10000")).thenReturn(null);
-
-        standardReportApiService.list(0l, 5l, null, null, "CA_CODE", startDate, null,null,
-                null, null,null,"INV_10000", 10, 2, null, null);
-        expectedException.expectMessage("Invoice number : INV_10000 does not exits");
-    }
-
     @Test(expected = BadRequestException.class)
     public void shouldThrowExceptionIfStepInDaysIsMissing() {
         standardReportApiService.list(0l, 5l, null, null, "CA_CODE", startDate, null,null,

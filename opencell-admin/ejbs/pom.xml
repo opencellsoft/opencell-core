@@ -5,7 +5,7 @@
     <parent>
         <artifactId>opencell-admin</artifactId>
         <groupId>com.opencellsoft</groupId>
-        <version>14.1.5-SNAPSHOT</version>
+        <version>14.3.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>opencell-admin-ejbs</artifactId>
@@ -687,11 +687,7 @@
             <artifactId>onlinepayments-sdk-java</artifactId>
             <version>${version.worldline.onlinepayments-sdk}</version>
         </dependency>
-       	<dependency>
-		  <groupId>com.stripe</groupId>
-		  <artifactId>stripe-java</artifactId>
-		  <version>${version.stripe-sdk}</version>
-		</dependency>
+       
          <dependency>
 	       <groupId>net.avalara.avatax</groupId>
 		   <artifactId>avatax-rest-v2-api-java_2.11</artifactId>

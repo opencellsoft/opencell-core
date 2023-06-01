@@ -61,7 +61,7 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     protected CustomFieldTypeEnum fieldType;
 
     /** The account level. */
-    @XmlElement(required = false)
+    @XmlElement
     @Deprecated
     protected String accountLevel;
 
@@ -70,7 +70,7 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
      * ChargeTemplate - charge template, ServiceInstance - service instance, ServiceTemplate - service template, OfferTemplateCategory - Offer template category, OfferTemplate - Offer template,
      * JOB_XX - Job instance, CE_ - Custom entity instance.
      */
-    @XmlElement(required = false)
+    @XmlElement
     protected String appliesTo;
 
     /** Default value. */
@@ -241,6 +241,11 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     private String versionFilterEL;
 
     /**
+     * value indicate if anonymize gdpr is enabled
+     */
+    private boolean anonymize;
+
+    /**
      * Instantiates a new custom field template dto.
      */
     public CustomFieldTemplateDto() {
@@ -299,6 +304,7 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
         this.customTableCodeEL = cf.getCustomTableCodeEL();
         this.dataFilterEL = cf.getDataFilterEL();
         this.fieldsEL = cf.getFieldsEL();
+        this.anonymize = cf.isAnonymizeGdpr();
 
     }
 
@@ -517,7 +523,7 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
      */
     public Map<String, String> getListValues() {
         if (listValues == null) {
-            listValues = new HashMap<String, String>();
+            listValues = new HashMap<>();
         }
         return listValues;
     }
@@ -718,7 +724,7 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
      */
     public List<CustomFieldMatrixColumnDto> getMatrixColumns() {
         if (matrixColumns == null) {
-            matrixColumns = new ArrayList<CustomFieldMatrixColumnDto>();
+            matrixColumns = new ArrayList<>();
         }
         return matrixColumns;
     }
@@ -928,5 +934,13 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
      */
     public void setVersionFilterEL(String versionFilterEL) {
         this.versionFilterEL = versionFilterEL;
+    }
+
+    public boolean isAnonymize() {
+        return anonymize;
+    }
+
+    public void setAnonymize(boolean anonymize) {
+        this.anonymize = anonymize;
     }
 }

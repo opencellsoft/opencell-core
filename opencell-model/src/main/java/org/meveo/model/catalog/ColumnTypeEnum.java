@@ -12,7 +12,7 @@ public enum ColumnTypeEnum {
     String {
         @Override
         public boolean valueMatch(PricePlanMatrixValueForRating pricePlanMatrixValue, AttributeValue attributeValue) {
-        	String multiValuesAttributeSeparator = ";"; //ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
+        	String multiValuesAttributeSeparator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
             if (attributeValue.getStringValue() == null && pricePlanMatrixValue.getStringValue() == null) {
                 return true;
             } else if (attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) {
@@ -21,6 +21,9 @@ public enum ColumnTypeEnum {
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case LIST_MULTIPLE_TEXT:
                 case LIST_TEXT: {
+                    if (isNullOrContainsEmptyString(attributeValue.getStringValue())) {
+                        return false;
+                    }
                     return Stream.of(attributeValue.getStringValue().split(multiValuesAttributeSeparator))
                             .anyMatch(value -> value.equals(pricePlanMatrixValue.getStringValue()));
                 }
@@ -84,7 +87,7 @@ public enum ColumnTypeEnum {
     Double {
         @Override
         public boolean valueMatch(PricePlanMatrixValueForRating pricePlanMatrixValue, AttributeValue attributeValue) {
-        	String multiValuesAttributeSeparator = ";"; //ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
+        	String multiValuesAttributeSeparator = ParamBean.getInstance().getProperty("attribute.multivalues.separator", ";");
             if(pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && StringUtils.isEmpty(pricePlanMatrixValue.getStringValue()))
                 return true;
             Object passedAttributeValue =  attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
@@ -95,8 +98,7 @@ public enum ColumnTypeEnum {
                 case LIST_NUMERIC:
                 case NUMERIC: {
                     {
-
-                        if (Boolean.isNullOrContainsEmptyString(passedAttributeValue)) {
+                        if (isNullOrContainsEmptyString(passedAttributeValue)) {
                             return false;
                         }
                         BigDecimal value = pricePlanMatrixValue.getDoubleValue() != null ? BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()) : BigDecimal.valueOf(pricePlanMatrixValue.getLongValue());
@@ -104,9 +106,9 @@ public enum ColumnTypeEnum {
                     }
                 }
                 case LIST_MULTIPLE_NUMERIC: {
-                    if (Boolean.isNullOrContainsEmptyString(passedAttributeValue)) {
-                            return false;
-                        }
+                    if (isNullOrContainsEmptyString(attributeValue.getStringValue())) {
+                        return false;
+                    }
                     return Stream.of(pricePlanMatrixValue.getStringValue().split(multiValuesAttributeSeparator))
                             .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
                             .anyMatch(number -> {
@@ -197,7 +199,7 @@ public enum ColumnTypeEnum {
         @Override
         public boolean valueMatch(PricePlanMatrixValueForRating pricePlanMatrixValue, AttributeValue attributeValue) {
             if (attributeValue.getStringValue() == null || StringUtils.isEmpty(pricePlanMatrixValue.getStringValue())) {
-                return true;
+                return false;
             }
             return attributeValue.getStringValue().equalsIgnoreCase(pricePlanMatrixValue.getStringValue());
         }

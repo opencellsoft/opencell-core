@@ -28,6 +28,8 @@ import org.meveo.model.AuditableEntity;
 	@NamedQuery(name = "SubAccountingPeriod.findNextOpenSubAP", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.endDate = (select min(endDate) from SubAccountingPeriod where regularUsersSubPeriodStatus = 'OPEN' AND startDate >= :accountingDate)"),
     @NamedQuery(name = "SubAccountingPeriod.findByAP", query = "SELECT count(SAP) FROM SubAccountingPeriod SAP where SAP.accountingPeriod.id = :apId"),
     @NamedQuery(name = "SubAccountingPeriod.findByAPAndAfterEndDate", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.accountingPeriod.id = :apId and SAP.endDate <= :endDate"),
+    @NamedQuery(name = "SubAccountingPeriod.getRegularUsersSubPeriodWithStatusOpen", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.accountingPeriod.id = :apId and SAP.regularUsersSubPeriodStatus = 'OPEN'"),
+    @NamedQuery(name = "SubAccountingPeriod.getAllUsersSubPeriodWithStatusOpen", query = "SELECT SAP FROM SubAccountingPeriod SAP where SAP.accountingPeriod.id = :apId and SAP.allUsersSubPeriodStatus = 'OPEN'"),
     @NamedQuery(name = "SubAccountingPeriod.closeSubAccountingPeriods", query = "UPDATE SubAccountingPeriod SAP SET SAP.regularUsersSubPeriodStatus = 'CLOSED', SAP.regularUsersReopeningReason = null, SAP.regularUsersClosedDate = NOW() WHERE SAP.id in (:ids)"),
     @NamedQuery(name = "SubAccountingPeriod.isTheLastPeriodToClose", query = "SELECT COUNT(*) FROM SubAccountingPeriod SAP WHERE SAP.accountingPeriod = :accountingPeriod AND SAP.regularUsersSubPeriodStatus = 'OPEN' AND SAP.id not in (:ids)") })
 public class SubAccountingPeriod extends AuditableEntity {

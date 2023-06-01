@@ -785,10 +785,7 @@
           "composites": {
             "client": {
               "opencell-web": [
-                "general_roleManagement",
-                "genApiFull.create",
-                "genApiFull.delete",
-                "genApiFull.update"
+                "general_roleManagement"
               ]
             }
           },
@@ -1058,7 +1055,6 @@
                 "apiUseJob",
                 "apiIntegration",
                 "apiWorkflowManager",
-                "genApiFull.list",
                 "apiBillingManagement",
                 "apiFinanceManagement",
                 "apiUserManagement",
@@ -1073,6 +1069,7 @@
                 "inboundAccess",
                 "apiAdministrationManagement",
                 "apiUseScript",
+                "genApiFull.list",
                 "general_roleManagement"
               ]
             }
@@ -1191,6 +1188,15 @@
           "composite": false,
           "clientRole": true,
           "containerId": "d4a3eb0d-a156-4f61-8d93-2298dc65af96",
+          "attributes": {}
+        },
+        {
+          "id": "e629ad98-8dd7-11ed-a1eb-0242ac120002",
+          "name": "show_obsolete_legacy",
+          "description": "Show obsolete items in Legacy Admin GUI. These items are no more supported. Use at your own risks.",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "eeeb2d58-8dd7-11ed-a1eb-0242ac120002",
           "attributes": {}
         },
         {
@@ -2099,6 +2105,14 @@
           "attributes": {}
         },
         {
+          "id": "589d953a-ea7a-4d8b-9cba-9d055f416668",
+          "name": "apiCFO",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "d4a3eb0d-a156-4f61-8d93-2298dc65af96",
+          "attributes": {}
+        },
+        {
           "id": "5d463c61-0b58-47ff-bd2a-36210735e417",
           "name": "genApiPkg_admin.list",
           "composite": false,
@@ -2197,7 +2211,10 @@
             "client": {
               "opencell-web": [
                 "apiAdministrateur",
-                "apiSuperAdminManagement"
+                "apiSuperAdminManagement",
+                "genApiFull.create",
+                "genApiFull.delete",
+                "genApiFull.update"
               ]
             }
           },
@@ -4922,7 +4939,11 @@
               "/api/rest/v2/generic/eDR",
               "/api/rest/v2/generic/cDR",
               "/api/rest/v2/generic/cDR/",
-              "/api/rest/v2/generic/eDR/"
+              "/api/rest/v2/generic/eDR/",
+              "/api/rest/v2/generic/EDR",
+              "/api/rest/v2/generic/CDR",
+              "/api/rest/v2/generic/CDR/",
+              "/api/rest/v2/generic/EDR/"
             ],
             "scopes": [
               {
@@ -4939,7 +4960,11 @@
               "/api/rest/v2/generic/eDR/*",
               "/api/rest/v2/generic/export/cDR/*",
               "/api/rest/v2/generic/cDR/*",
-              "/api/rest/v2/generic/export/eDR/*"
+              "/api/rest/v2/generic/export/eDR/*",
+              "/api/rest/v2/generic/EDR/*",
+              "/api/rest/v2/generic/export/CDR/*",
+              "/api/rest/v2/generic/CDR/*",
+              "/api/rest/v2/generic/export/EDR/*"
             ],
             "scopes": [
               {
@@ -12370,6 +12395,7 @@
               "roles": "[{\"id\":\"opencell-web/useJob\",\"required\":false}]"
             }
           },
+          
           {
             "id": "978e5d5f-f867-40c5-9d11-19e080f8b09e",
             "name": "Role languageManagement",

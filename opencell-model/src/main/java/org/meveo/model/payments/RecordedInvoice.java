@@ -54,6 +54,9 @@ public class RecordedInvoice extends AccountOperation {
 
     @Column(name = "net_to_pay", precision = 23, scale = 12)
     private BigDecimal netToPay;
+    
+    @Column(name = "transactional_net_to_pay", precision = 23, scale = 12)
+    private BigDecimal transactionalNetToPay;
 
     @OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<RecordedInvoiceCatAgregate> recordedInvoiceCatAgregates = new ArrayList<RecordedInvoiceCatAgregate>();
@@ -177,5 +180,30 @@ public class RecordedInvoice extends AccountOperation {
 		this.agedReceivableReportKey = agedReceivableReportKey;
 	}
 
+    public BigDecimal getTransactionalNetToPay() {
+        return transactionalNetToPay;
+    }
+
+    public void setTransactionalNetToPay(BigDecimal transactionalNetToPay) {
+        this.transactionalNetToPay = transactionalNetToPay;
+    }
+	
+	@Override
+	public BigDecimal getAppliedRate() {
+	    if(super.getAppliedRate() == null && invoice != null && invoice.getAppliedRate() != null) {
+	        return invoice.getAppliedRate(); 
+	    }else {
+	        return super.getAppliedRate();  
+	    }
+    }
+
+	@Override
+    public Date getAppliedRateDate() {
+        if(super.getAppliedRateDate() == null && invoice != null && invoice.getLastAppliedRateDate() != null) {
+            return invoice.getLastAppliedRateDate(); 
+        }else {
+            return super.getAppliedRateDate();  
+        }
+    }
 
 }

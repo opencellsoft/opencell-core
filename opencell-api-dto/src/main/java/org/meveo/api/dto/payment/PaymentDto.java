@@ -79,6 +79,8 @@ public class PaymentDto extends BaseEntityDto {
     
     /** The transaction date. */
     private Date transactionDate;
+
+    private String transactionalCurrency;
     
     /** The list OCC reference for matching. */
     @Deprecated
@@ -554,5 +556,13 @@ public class PaymentDto extends BaseEntityDto {
 
     public void setCollectionDate(Date collectionDate) {
         this.collectionDate = collectionDate;
+    }
+
+    public String getTransactionalcurrency() {
+        return transactionalCurrency;
+    }
+
+    public void setTransactionalcurrency(String transactionalCurrency) {
+        this.transactionalCurrency = transactionalCurrency;
     }
 }

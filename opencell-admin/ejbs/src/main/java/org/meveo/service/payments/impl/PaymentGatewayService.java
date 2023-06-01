@@ -143,8 +143,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
                 .setParameter("countryValueIN", customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry())               
                 .setParameter("currencyValueIN", providerService.getProvider().getCurrency())
                 .setParameter("cardTypeValueIN", cardTypeToCheck)
-                .setParameter("sellerIN", seller);                    
-                                   
+                .setParameter("sellerIN", seller);                     
                  
             List<PaymentGateway> paymentGateways = (List<PaymentGateway>) query.getResultList();
             

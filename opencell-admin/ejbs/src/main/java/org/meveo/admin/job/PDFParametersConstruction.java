@@ -73,7 +73,7 @@ public class PDFParametersConstruction {
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
-
+    
     private String PDF_DIR_NAME = "pdf";
     private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
 

@@ -129,6 +129,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      */
     public QuoteBean() {
         super(Quote.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.math.BigInteger;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.persistence.CacheRetrieveMode;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -64,9 +66,8 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.CacheMode;
 import org.hibernate.LockMode;
@@ -129,6 +130,10 @@ import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.notification.GenericNotificationService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import static java.math.BigInteger.ONE;
+import static org.meveo.jpa.EntityManagerProvider.isDBOracle;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -438,7 +443,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             
         } else {
             Map<String, Object> hints = new HashMap<>();
-            hints.put(QueryHints.HINT_CACHE_MODE, CacheMode.IGNORE);
+            hints.put("javax.persistence.cache.retrieveMode", CacheRetrieveMode.BYPASS);
             return getEntityManager().find(entityClass, id, hints);
         }
     }
@@ -767,7 +772,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public BusinessEntity findBusinessEntityByCode(String code) {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "entity", null);
         queryBuilder.addCriterion("entity.code", "=", code, true);
-        return (BusinessEntity) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+        try {
+            return (BusinessEntity) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+        } catch (Exception exception) {
+            return null;
+        }
     }
     /**
      * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
@@ -1146,7 +1155,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             } else {
 
                 Map<String, Object> cfFilters = extractCustomFieldsFilters(filters);
-                filters.putAll(cfFilters);
+                if(MapUtils.isNotEmpty(cfFilters)) {
+                    filters.putAll(cfFilters);
+                }
 
                 ExpressionFactory expressionFactory = new ExpressionFactory(queryBuilder, alias);
                 filters.keySet().stream().sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
@@ -1818,4 +1829,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		}
 		return queryBuilder;
 	}
+
+    public Long findNextSequenceId(String sequenceName) {
+        BigInteger nextSequenceValue = (BigInteger) getEntityManager().createNativeQuery(isDBOracle()
+                        ? "SELECT " + sequenceName +".nextval FROM dual"
+                        : "select nextval('"+ sequenceName + "')" )
+                .getSingleResult();
+        return (nextSequenceValue.add(ONE)).longValue();
+    }
 }

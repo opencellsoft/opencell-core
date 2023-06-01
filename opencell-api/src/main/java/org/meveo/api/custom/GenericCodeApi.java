@@ -15,7 +15,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.sequence.Sequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
-import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SequenceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 
@@ -28,9 +27,6 @@ import java.util.Optional;
 public class GenericCodeApi extends BaseApi {
 
     @Inject
-    private CustomGenericEntityCodeService customGenericEntityCodeService;
-
-    @Inject
     private ServiceSingleton serviceSingleton;
 
     @Inject
@@ -41,7 +37,7 @@ public class GenericCodeApi extends BaseApi {
      *
      * @param genericCodeDto generic code data.
      */
-    public void create(GenericCodeDto genericCodeDto) {
+    public GenericCodeDto create(GenericCodeDto genericCodeDto) {
         if (genericCodeDto.getSequence() == null) {
             missingParameters.add("sequence");
         }
@@ -60,6 +56,7 @@ public class GenericCodeApi extends BaseApi {
         }
         CustomGenericEntityCode customGenericEntityCode = from(genericCodeDto, sequence);
         customGenericEntityCodeService.create(customGenericEntityCode);
+        return toDto(customGenericEntityCode);
     }
 
     private void validateEntityClass(String entityClass) {
@@ -84,13 +81,22 @@ public class GenericCodeApi extends BaseApi {
      *
      * @param genericCodeDto generic code data.
      */
-    public void update(GenericCodeDto genericCodeDto) {
+    public GenericCodeDto update(GenericCodeDto genericCodeDto) {
         CustomGenericEntityCode customGenericEntityCode = ofNullable(customGenericEntityCodeService.findByClass(genericCodeDto.getEntityClass()))
                 .orElseThrow(() -> new MeveoApiException("Generic code does not exist"));
         if(genericCodeDto.getSequence() != null && sequenceService.findByCode(genericCodeDto.getSequence().getCode()) == null) {
             throw new MeveoApiException("Sequence does not exist");
         }
-        customGenericEntityCodeService.update(toEntity(genericCodeDto, customGenericEntityCode));
+        return toDto(customGenericEntityCodeService.update(toEntity(genericCodeDto, customGenericEntityCode)));
+    }
+
+    private GenericCodeDto toDto(CustomGenericEntityCode customGenericEntityCode) {
+        GenericCodeDto genericCodeDto = new GenericCodeDto();
+        genericCodeDto.setId(customGenericEntityCode.getId());
+        genericCodeDto.setEntityClass(customGenericEntityCode.getEntityClass());
+        genericCodeDto.setFormatEL(customGenericEntityCode.getFormatEL());
+        genericCodeDto.setSequence(SequenceDto.from(customGenericEntityCode.getSequence()));
+        return genericCodeDto;
     }
 
     private CustomGenericEntityCode toEntity(GenericCodeDto genericCodeDto, CustomGenericEntityCode customGenericEntityCode) {
@@ -191,12 +197,25 @@ public class GenericCodeApi extends BaseApi {
     }
 
     private GetGenericCodeResponseDto from(CustomGenericEntityCode customGenericEntityCode) {
-        GenericCodeDto genericCodeDto = new GenericCodeDto();
-        genericCodeDto.setEntityClass(customGenericEntityCode.getEntityClass());
-        genericCodeDto.setFormatEL(customGenericEntityCode.getFormatEL());
-        genericCodeDto.setSequence(SequenceDto.from(customGenericEntityCode.getSequence()));
+        GenericCodeDto genericCodeDto = toDto(customGenericEntityCode);
         GetGenericCodeResponseDto responseDto = new GetGenericCodeResponseDto();
         responseDto.setGenericCodeDto(genericCodeDto);
         return responseDto;
+    }
+
+    /**
+     * Create or update generic code
+     *
+     * @param input generic code data.
+     * @return GenericCodeDto : created or updated generic code
+     */
+    public GenericCodeDto createOrUpdate(GenericCodeDto input) {
+        CustomGenericEntityCode customGenericEntityCode =
+                customGenericEntityCodeService.findByClass(input.getEntityClass());
+        if(customGenericEntityCode == null) {
+            return create(input);
+        } else {
+            return update(input);
+        }
     }
 }

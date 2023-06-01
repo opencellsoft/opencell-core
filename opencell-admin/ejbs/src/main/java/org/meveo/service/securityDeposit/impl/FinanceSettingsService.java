@@ -61,7 +61,7 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
 
     /**
      * Get an active Finance Setting - there should be only one in the system. Use FINANCE_SETTING_ID to remember the finance setting and look it up by ID next time.
-     *
+     * 
      * @return Mediation setting
      */
     public FinanceSettings getFinanceSetting() {
@@ -72,8 +72,8 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
             List<FinanceSettings> financeSettings = getEntityManager().createQuery("from FinanceSettings f order by f.id desc", FinanceSettings.class).setMaxResults(1).getResultList();
             if (financeSettings.isEmpty()) {
                 FINANCE_SETTING_ID = -1L;
-            return null;
-        }
+                return null;
+            }
             financeSetting = financeSettings.get(0);
             FINANCE_SETTING_ID = financeSetting.getId();
 
@@ -84,11 +84,11 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
             // Finance setting was looked up and exists - find by ID
         } else {
             financeSetting = findById(FINANCE_SETTING_ID);
-    }
+        }
         return financeSetting;
     }
 
-    /**
+/**
      * Generate auxiliary accounting info
      *
      * @param customerAccount customer account
@@ -140,5 +140,10 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
         } else {
             return "#{ca.name.firstName} #{ca.name.lastName}";
         }
+    }
+
+    public boolean isBillingRedirectionRulesEnabled() {
+        FinanceSettings financeSetting = getFinanceSetting();
+        return financeSetting != null && financeSetting.isEnableBillingRedirectionRules();
     }
 }

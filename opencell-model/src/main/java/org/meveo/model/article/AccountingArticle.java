@@ -1,12 +1,12 @@
 package org.meveo.model.article;
 
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -51,7 +51,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
+	@OneToOne(fetch = EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "tax_class_id")
     private TaxClass taxClass;
 
@@ -253,8 +253,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(getAccountingCode(), getAnalyticCode1(), getAnalyticCode2(), getAnalyticCode3(),
-				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(), getInvoiceType(), getInvoiceTypeEl(), getColumnCriteriaEL());
+		result = prime * result;
 		return result;
 	}
 

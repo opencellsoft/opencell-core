@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.annotation.Nonnull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -146,5 +147,23 @@ public class AccountOperationServiceMatchingTest {
 
         ao.setCustomerAccount(customerAccount);
         return ao;
+    }
+
+    @Test
+    public void should_Fill_Converted_Amounts_When_Null() {
+
+        AccountOperation accountOperation = buildAo("ABC", 1L);
+
+        accountOperation.setAmount(new BigDecimal(10));
+        accountOperation.setMatchingAmount(new BigDecimal(5));
+        accountOperation.setUnMatchingAmount(new BigDecimal(6));
+        accountOperation.setTransactionalMatchingAmount(null);
+        accountOperation.setTransactionalUnMatchingAmount(null);
+        accountOperation.setTransactionalAmount(null);
+
+        Assert.assertEquals(accountOperation.getTransactionalMatchingAmount(),accountOperation.getMatchingAmount());
+        Assert.assertEquals(accountOperation.getTransactionalAmount(),accountOperation.getTransactionalAmount());
+        Assert.assertEquals(accountOperation.getTransactionalUnMatchingAmount(),accountOperation.getUnMatchingAmount());
+
     }
 }

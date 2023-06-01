@@ -34,6 +34,7 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Table(name = "dwh_chart_line")
+@Deprecated
 public class LineChart extends Chart {
 
     private static final long serialVersionUID = 1563273820297215070L;

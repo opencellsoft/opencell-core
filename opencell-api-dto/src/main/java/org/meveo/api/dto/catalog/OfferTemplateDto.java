@@ -161,7 +161,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     
     @Schema(description = "Offer template code")
     protected String offerModelCode;
-
+    
     @Schema(description = "allow to generate each edr per product")
     protected Boolean generateQuoteEdrPerProduct = Boolean.FALSE;
 
@@ -169,7 +169,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
     private Integer sequence = 0;
 
     private String documentCode;
-
     public Integer getSequence() {
         return sequence;
     }

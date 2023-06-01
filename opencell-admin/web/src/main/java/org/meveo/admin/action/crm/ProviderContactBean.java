@@ -56,6 +56,7 @@ public class ProviderContactBean extends BaseBean<ProviderContact> {
      */
     public ProviderContactBean() {
         super(ProviderContact.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

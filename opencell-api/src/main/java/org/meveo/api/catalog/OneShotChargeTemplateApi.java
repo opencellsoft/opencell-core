@@ -85,12 +85,14 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
     }
 
     private void checkOneChargeTemplateDto(OneShotChargeTemplateDto postData) {
+
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(OneShotChargeTemplate.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
             missingParameters.add("oneShotChargeTemplateType");
         }
+
         handleMissingParametersAndValidate(postData);
     }
 
@@ -225,4 +227,5 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
     protected BiFunction<OneShotChargeTemplate, CustomFieldsDto, OneShotChargeTemplateDto> getEntityToDtoFunction() {
         return OneShotChargeTemplateDto::new;
     }
+
 }

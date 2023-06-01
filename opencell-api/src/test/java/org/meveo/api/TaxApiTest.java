@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.BadRequestException;
 
 import org.junit.Assert;
@@ -25,7 +26,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class TaxApiTest {
 
@@ -37,10 +37,10 @@ public class TaxApiTest {
 
     @Mock
     private AccountingCodeService accountingCodeService;
-
+    
     @Mock
     private UntdidTaxationCategoryService untdidTaxationCategoryService;
-    
+
     @Mock
     private CustomFieldTemplateService customFieldTemplateService;
 
@@ -77,7 +77,7 @@ public class TaxApiTest {
         subTaxes.add(new TaxDto(2L));
         taxDto.setSubTaxes(subTaxes);
         taxDto.setTaxationCategory("TAXATION_CAT");
-        
+
         Tax tax = taxApi.create(taxDto);
 
         Assert.assertEquals(tax.getPercent(), new BigDecimal(11));
@@ -98,7 +98,7 @@ public class TaxApiTest {
         taxDto.setComposite(Boolean.FALSE);
         taxDto.setPercent(BigDecimal.TEN);
         taxDto.setTaxationCategory("TAXATION_CAT");
-        
+
         Tax tax = taxApi.create(taxDto);
 
         Assert.assertEquals(tax.getPercent(), BigDecimal.TEN);

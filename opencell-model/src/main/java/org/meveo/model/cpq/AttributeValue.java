@@ -213,9 +213,6 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 		}
 		return null;
 	}
-
-    @Override
-    public String toString() {
-        return attribute.getCode()+"="+getValue();
-    }	
+	
+	
 }

@@ -73,6 +73,7 @@ import org.meveo.model.order.Order;
 @Table(name = "ord_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_quote_seq"), })
+@Deprecated
 public class Quote extends BusinessCFEntity implements IWFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;

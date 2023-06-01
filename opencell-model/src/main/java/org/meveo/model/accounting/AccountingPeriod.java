@@ -23,6 +23,8 @@ import org.meveo.model.AuditableEntity;
         @Parameter(name = "sequence_name", value = "accounting_period_seq") })
 @NamedQueries({ @NamedQuery(name = "AccountingPeriod.findByFiscalYear", query = "SELECT AP FROM AccountingPeriod AP where AP.accountingPeriodYear=:fiscalYear"),
         @NamedQuery(name = "AccountingPeriod.findLastAP", query = "SELECT AP FROM AccountingPeriod AP where AP.endDate = (select max(endDate) from AccountingPeriod)"),
+        @NamedQuery(name = "AccountingPeriod.findOpenAP", query = "SELECT AP FROM AccountingPeriod AP where AP.accountingPeriodStatus = 'OPEN' order by AP.startDate asc"),
+        @NamedQuery(name = "AccountingPeriod.findAPByDate", query = "SELECT AP FROM AccountingPeriod AP where (:date between AP.startDate and AP.endDate)"),
         @NamedQuery(name = "AccountingPeriod.findOpenAPByDate", query = "SELECT AP FROM AccountingPeriod AP where AP.accountingPeriodStatus = 'OPEN' and (:date between AP.startDate and AP.endDate)")})
 public class AccountingPeriod extends AuditableEntity {
 

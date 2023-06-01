@@ -19,11 +19,10 @@ public class MediaApi extends BaseApi {
 	private static final String MEDIA_DOESNT_EXIT = "No Media found for the key (%s, %s)"; 
  
 	@Inject 
-	private MediaService mediaService;  
+	private MediaService mediaService;
 	
 	public MediaDto createMedia(MediaDto mediaDto) {
-		if(StringUtils.isBlank(mediaDto.getCode()))
-			missingParameters.add("code");
+
 		if(StringUtils.isBlank(mediaDto.getMediaName()))
 			missingParameters.add("mediaName");
 		if(StringUtils.isBlank(mediaDto.getLabel()))
@@ -32,11 +31,14 @@ public class MediaApi extends BaseApi {
 			missingParameters.add("mediaType");
 		if(mediaDto.isMain() == null)
 			missingParameters.add("main");
+		final Media media = new Media();
+		if(StringUtils.isBlank(mediaDto.getCode())) {
+			mediaDto.setCode(customGenericEntityCodeService.getGenericEntityCode(media));
+		}
 		handleMissingParameters();
 		if (mediaService.findByCode(mediaDto.getCode()) != null) {
 			throw new EntityAlreadyExistsException(Media.class, mediaDto.getCode());
 		}
-		final Media media = new Media(); 
 		media.setCode(mediaDto.getCode());
 		media.setDescription(mediaDto.getDescription());
 		media.setMediaName(mediaDto.getMediaName());

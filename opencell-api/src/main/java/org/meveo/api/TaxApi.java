@@ -108,6 +108,11 @@ public class TaxApi extends BaseApi {
             }
             tax.setUntdidTaxationCategory(untdidTaxationCategory);
         }
+        else {
+        	//taxationCategory, defaut=(S,”Standard rate”)
+        	UntdidTaxationCategory untdidTaxationCategory = untdidTaxationCategoryService.getByCode("S");
+        	tax.setUntdidTaxationCategory(untdidTaxationCategory);
+        }
         if (!StringUtils.isBlank(postData.getVatex())) {
             UntdidVatex untdidVatex = untdidVatexService.getByCode(postData.getVatex());
             if (untdidVatex == null) {
@@ -292,11 +297,11 @@ public class TaxApi extends BaseApi {
         return result;
     }
 
-    public Long createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
+    public TaxDto createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
         if(!StringUtils.isBlank(postData.getCode()) && taxService.findByCode(postData.getCode()) != null) {
-            return update(postData).getId();
+            return new TaxDto(update(postData));
         } else {
-            return create(postData).getId();
+            return new TaxDto(create(postData));
         }
     }
 

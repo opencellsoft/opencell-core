@@ -54,6 +54,7 @@ public class AccountingEntryBean extends BaseBean<AccountingEntry> {
      */
     public AccountingEntryBean() {
         super(AccountingEntry.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     /**

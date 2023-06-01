@@ -85,6 +85,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
      */
     public BillingRunBean() {
         super(BillingRun.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     /**

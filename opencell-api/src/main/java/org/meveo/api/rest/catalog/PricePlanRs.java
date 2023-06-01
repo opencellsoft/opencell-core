@@ -33,6 +33,8 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.DatePeriodDto;
+import org.meveo.api.dto.catalog.ConvertedPricePlanInputDto;
+import org.meveo.api.dto.catalog.ConvertedPricePlanVersionDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
@@ -489,4 +491,97 @@ public interface PricePlanRs extends IBaseRs {
     							@Parameter(description = "The price plan matrix new code", required = true) @QueryParam("pricePlanMatrixNewCode") String pricePlanMatrixNewCode,
     							@Parameter(description = "The price plan matrix version to be duplicated", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, @QueryParam("priceVersionType") String priceVersionType);
     
+    
+    @DELETE
+    @Path("/pricePlanMatrixVersion/{pricePlanVersionId}/convertedPricePlanMatrixLines/tradingCurrency/{tradingCurrencyCode}")
+    @Operation(summary = "duplicate a price plan matrix version",
+    tags = { "Price Plan" },
+    description ="duplicate a product version",
+    responses = {
+            @ApiResponse(responseCode="200", description = "delete all converted price matrix line"),
+            @ApiResponse(responseCode = "404", description = "the trading courrency for plan matrix version doesn't exit")
+    })
+    Response deleteConvertedPricePlanMatrixLines(@Parameter(description = "the id of price plan matrix version ", required = true)  @PathParam("pricePlanVersionId") Long pricePlanVersionId,  
+                                                    @Parameter(description = "The price plan matrix code", required = true) @PathParam("tradingCurrencyCode") String tradingCurrencyCode);
+    
+
+    /**
+    *
+    * @param pricePlanMatrixCode
+    * @param pricePlanMatrixVersion
+    * @return
+    */
+    @POST
+    @Path("/convertedPricePlanVersion")
+    @Operation(summary = "Create a converted price plan version",
+            tags = { "Price Plan" },
+            description ="Create a converted price plan version",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the converted price plan version successfully created"),
+                    @ApiResponse(responseCode = "404", description = "the price plan version with price plan id  in param does not exist "),
+                    @ApiResponse(responseCode = "404", description = "the trading currency with price plan code or id in param does not exist "),
+                    @ApiResponse(responseCode = "412", description = "the trading currency is mandatory to create price plan version "),
+                    @ApiResponse(responseCode = "412", description = "the price plan version is mandatory to create price plan version ")
+            })
+    Response createConvertedPricePlanVersion(ConvertedPricePlanVersionDto postData);
+
+    /**
+     * Update Converted Price Plan Version
+     *
+     * @param cppvId
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/convertedPricePlanVersion/{id}")
+    @Operation(summary = "update a converted price plan version",
+            tags = { "Price Plan" },
+            description ="Update a converted price plan version",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the converted price plan version successfully Updated"),
+                    @ApiResponse(responseCode = "404", description = "the price plan version with price plan id  in param does not exist "),
+                    @ApiResponse(responseCode = "404", description = "the trading currency with price plan code or id in param does not exist "),
+                    @ApiResponse(responseCode = "412", description = "the trading currency is mandatory to create price plan version "),
+                    @ApiResponse(responseCode = "412", description = "the price plan version is mandatory to create price plan version ")
+            })
+    Response updateConvertedPricePlanVersion(@Parameter(description = "The converted price plan version id", required = true)  @PathParam("id") Long cppvId, ConvertedPricePlanVersionDto postData);
+
+    /**
+	 * Delete converted price plan version
+	 * 
+	 * @param cppvId
+	 * @return
+	 */
+    @DELETE
+    @Path("/convertedPricePlanVersion/{id}")
+    @Operation(summary = "Delete a converted price plan version",
+            tags = { "Price Plan" },
+            description ="Delete a converted price plan version",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the converted price plan version successfully deleted"),
+                    @ApiResponse(responseCode = "404", description = "the price plan version with price plan id  in param does not exist "),
+                    @ApiResponse(responseCode = "404", description = "the trading currency with price plan code or id in param does not exist "),
+                    @ApiResponse(responseCode = "412", description = "the trading currency is mandatory to create price plan version "),
+                    @ApiResponse(responseCode = "412", description = "the price plan version is mandatory to create price plan version ")
+            })
+    Response deleteConvertedPricePlanVersion(@Parameter(description = "ID of converted price plan to delete") @PathParam("id") Long ccpvId);
+    
+    
+    @POST
+    @Path("/convertedPricePlanMatrixLines/disable")
+    Response disableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be disabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
+    
+
+    @POST
+    @Path("/convertedPricePlanMatrixLines/enable")
+    Response enableAllConvertedPricePlan(@Parameter(description = "contain information about all converted price that will be enabled") ConvertedPricePlanInputDto convertedPricePlanInputDto);
+    
+    @POST
+    @Path("convertedPricePlanVersion/{id}/enable")
+    Response enableConvertedVersionPricePlan(@PathParam("id") Long id );
+
+    @POST
+    @Path("convertedPricePlanVersion/{id}/disable")
+    Response disableConvertedVersionPricePlan(@PathParam("id") Long id );
+
 }

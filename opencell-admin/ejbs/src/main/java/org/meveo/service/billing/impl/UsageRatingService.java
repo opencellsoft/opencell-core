@@ -389,7 +389,7 @@ public class UsageRatingService extends RatingService implements Serializable {
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     throw new NoChargeException("No active usage charges are associated with subscription " + subscriptionId);
                 }
-
+                
                 // Just to load all subscription service instances with their attributes to avoid querying service instances and their attributes one by one. 
                 // Done once per subscription (in same tx) - a fix when EDR batch to rate is based on same subscription, or when EDR triggers other EDRs 
                 if (!isSubscriptionInitialized) {
@@ -397,7 +397,7 @@ public class UsageRatingService extends RatingService implements Serializable {
                         .getResultList();
                     UserAccount userAccount = userAccountService.findById(edr.getSubscription().getUserAccount().getId(), Arrays.asList("wallet"));
                 }
-                    
+                
                 // This covers a virtual rating case when estimating usage from a quote. Subscription in that case was not persisted.
             } else if (edr.getSubscription().getServiceInstances() != null) {
                 usageChargeInstances = edr.getSubscription().getServiceInstances().stream().flatMap(si -> si.getUsageChargeInstances().stream()).collect(toList());
@@ -525,8 +525,20 @@ public class UsageRatingService extends RatingService implements Serializable {
      */
     private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr) throws InvalidELException {
 
-        UsageChargeTemplate chargeTemplate = chargeInstance.getUsageChargeTemplate();
-        
+        UsageChargeTemplate chargeTemplate;
+        if (chargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
+            chargeTemplate = (UsageChargeTemplate) chargeInstance.getChargeTemplate();
+        } else {
+            chargeTemplate = getEntityManager().find(UsageChargeTemplate.class, chargeInstance.getChargeTemplate().getId());
+        }
+        if (chargeInstance.getServiceInstance() != null) {
+            boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+                .filter(attributeInstance -> chargeInstance.getChargeTemplate().getAttributes().contains(attributeInstance.getAttribute()))
+                .anyMatch(attributeInstance -> attributeInstance.getStringValue() == null || "false".equals(attributeInstance.getStringValue()));
+            if (anyFalseAttribute) {
+                return false;
+            }
+        }
         String filter1 = chargeTemplate.getFilterParam1();
 
         if (filter1 == null || filter1.equals(edr.getParameter1())) {

@@ -18,6 +18,7 @@
 
 package org.meveo.api;
 
+import org.apache.poi.ss.formula.functions.Count;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.TradingCountriesDto;
@@ -81,7 +82,7 @@ public class CountryApi extends BaseApi {
         return result;
     }
 
-    public void create(CountryDto postData) throws MeveoApiException, BusinessException {
+    public CountryDto create(CountryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCountryCode())) {
             String generatedCode = getGenericCode(Country.class.getName());
@@ -166,6 +167,7 @@ public class CountryApi extends BaseApi {
             }
             tradingCurrencyService.create(tradingCurrency);
         }
+        return new CountryDto(country);
     }
 
     public CountryDto find(String countryCode) throws MeveoApiException {
@@ -193,13 +195,17 @@ public class CountryApi extends BaseApi {
         handleMissingParameters();
 
         TradingCountry tradingCountry = tradingCountryService.findByCode(countryCode);
+   
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
         }
+        
+        Long lCountryId = tradingCountry.getCountry().getId();
         tradingCountryService.remove(tradingCountry);
+        countryService.remove(lCountryId);
     }
 
-    public void update(CountryDto postData) throws MeveoApiException, BusinessException {
+    public CountryDto update(CountryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCountryCode())) {
             missingParameters.add("countryCode");
@@ -253,14 +259,15 @@ public class CountryApi extends BaseApi {
 
             tradingCurrencyService.create(tradingCurrency);
         }
+        return new CountryDto(country);
     }
 
-    public void createOrUpdate(CountryDto postData) throws MeveoApiException, BusinessException {
+    public CountryDto createOrUpdate(CountryDto postData) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(postData.getCountryCode())
                 && tradingCountryService.findByCode(postData.getCountryCode()) != null) {
-            update(postData);
+            return update(postData);
         } else {
-            create(postData);
+            return create(postData);
         }
     }
 

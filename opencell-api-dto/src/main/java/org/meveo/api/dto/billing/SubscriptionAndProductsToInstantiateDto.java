@@ -39,6 +39,7 @@ public class SubscriptionAndProductsToInstantiateDto extends SubscriptionDto {
     /** The productToInstantiateDto. */
     @XmlElement(required = true)
     private List<ProductToInstantiateDto> productToInstantiateDto;
+    
 
 	public List<ProductToInstantiateDto> getProductToInstantiateDto() {
 		return productToInstantiateDto;
@@ -47,4 +48,5 @@ public class SubscriptionAndProductsToInstantiateDto extends SubscriptionDto {
 	public void setProductToInstantiateDto(List<ProductToInstantiateDto> productToInstantiateDto) {
 		this.productToInstantiateDto = productToInstantiateDto;
 	}
+
 }

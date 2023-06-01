@@ -99,6 +99,8 @@ public class OrderValidationScript extends Script {
             subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
             subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
             subscription.setOrder(order);
+            subscription.setContract((offer.getContract() != null)? offer.getContract() : order.getContract());
+
             commercialOrderService.processSubscriptionAttributes(subscription, offer.getOfferTemplate(), offer.getOrderAttributes());
             subscriptionService.create(subscription);
 

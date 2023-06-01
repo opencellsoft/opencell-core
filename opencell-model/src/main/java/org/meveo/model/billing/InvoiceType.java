@@ -402,6 +402,21 @@ public class InvoiceType extends BusinessCFEntity {
 	public void setInvoiceValidationRules(List<InvoiceValidationRule> invoiceValidationRules) {
 		this.invoiceValidationRules = invoiceValidationRules;
 	}
+	public UntdidInvoiceCodeType getUntdidInvoiceCodeType() {
+		return untdidInvoiceCodeType;
+	}
+
+	public void setUntdidInvoiceCodeType(UntdidInvoiceCodeType untdidInvoiceCodeType) {
+		this.untdidInvoiceCodeType = untdidInvoiceCodeType;
+	}
+
+	public UntdidVatPaymentOption getUntdidVatPaymentOption() {
+		return untdidVatPaymentOption;
+	}
+
+	public void setUntdidVatPaymentOption(UntdidVatPaymentOption untdidVatPaymentOption) {
+		this.untdidVatPaymentOption = untdidVatPaymentOption;
+	}
 
 	public UntdidInvoiceCodeType getUntdidInvoiceCodeType() {
 		return untdidInvoiceCodeType;

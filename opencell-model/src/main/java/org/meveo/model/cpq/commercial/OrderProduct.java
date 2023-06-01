@@ -81,7 +81,7 @@ public class OrderProduct extends AuditableCFEntity {
 	private BigDecimal quantity;
 
 	@OneToMany(mappedBy = "orderProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderAttribute> orderAttributes=new ArrayList<OrderAttribute>();
+	private List<OrderAttribute> orderAttributes=new ArrayList<>();
 
 	/**
 	 * discountPlan attached to this orderProduct
@@ -127,7 +127,10 @@ public class OrderProduct extends AuditableCFEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "service_instance_id")
 	private ServiceInstance serviceInstance;
-	
+
+	@OneToMany(mappedBy = "orderProduct", fetch = FetchType.LAZY)
+	private List<OrderArticleLine> orderArticleLines;
+
 	public void update(OrderProduct other) {
     	this.orderOffer = other.orderOffer;
     	this.order = other.order;
@@ -144,10 +147,7 @@ public class OrderProduct extends AuditableCFEntity {
         this.terminationReason=other.terminationReason;
 		this.serviceInstance = other.serviceInstance;
     }
-	
-	
-	
-	
+
 	@Override
 	public ICustomFieldEntity[] getParentCFEntities() {
 		if (quoteProduct != null) {
@@ -241,9 +241,9 @@ public class OrderProduct extends AuditableCFEntity {
 	public void setOrderAttributes(List<OrderAttribute> orderAttributes) {
 		this.orderAttributes = orderAttributes;
 	}
-	
-	
-	
+
+
+
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
 	}
@@ -251,8 +251,8 @@ public class OrderProduct extends AuditableCFEntity {
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
 	}
-	
-	
+
+
 
 	public QuoteProduct getQuoteProduct() {
 		return quoteProduct;
@@ -316,7 +316,7 @@ public class OrderProduct extends AuditableCFEntity {
 	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
 	}
-	
+
 	public InstanceStatusEnum getStatus() {
 		return status;
 	}
@@ -337,5 +337,13 @@ public class OrderProduct extends AuditableCFEntity {
 	 */
 	public void setServiceInstance(ServiceInstance serviceInstance) {
 		this.serviceInstance = serviceInstance;
+	}
+
+	public List<OrderArticleLine> getOrderArticleLines() {
+		return orderArticleLines;
+	}
+
+	public void setOrderArticleLines(List<OrderArticleLine> orderArticleLines) {
+		this.orderArticleLines = orderArticleLines;
 	}
 }

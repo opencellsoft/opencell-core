@@ -15,6 +15,7 @@ import org.meveo.apiv2.accounting.service.SubAccountingPeriodApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodActionLevelEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 
 public class AccountingPeriodResourceImpl implements AccountingPeriodResource {

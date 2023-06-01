@@ -315,10 +315,13 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
             this.setPaymentMethodType(PaymentMethodEnum.WIRETRANSFER);
         }
         if (paymentMethod instanceof PaypalPaymentMethod) {
-            this.setPaymentMethodType(PaymentMethodEnum.PAYPAL);
+            this.setPaymentMethodType(PaymentMethodEnum.PAYPALPAYMENTLINK);
         }
         if (paymentMethod instanceof StripePaymentMethod) {
-            this.setPaymentMethodType(PaymentMethodEnum.STRIPE);
+            this.setPaymentMethodType(PaymentMethodEnum.STRIPEDIRECTLINK);
+        }
+        if (paymentMethod.getPaymentMeans() != null) {
+            this.untdidPaymentMeans = paymentMethod.getPaymentMeans().getCodeName();
         }
         if (paymentMethod.getPaymentMeans() != null) {
             this.untdidPaymentMeans = paymentMethod.getPaymentMeans().getCodeName();
@@ -385,10 +388,10 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         case WIRETRANSFER:
             pmEntity = new WirePaymentMethod(disabledBool, alias, preferred, customerAccount);
             break;
-        case PAYPAL:
+        case PAYPALPAYMENTLINK:
             pmEntity = new PaypalPaymentMethod(disabledBool, alias, preferred, customerAccount,userId);
             break;
-        case STRIPE:
+        case STRIPEDIRECTLINK:
             pmEntity = new StripePaymentMethod(disabledBool, alias, preferred, customerAccount,userId);
             break;   
         case CASH:

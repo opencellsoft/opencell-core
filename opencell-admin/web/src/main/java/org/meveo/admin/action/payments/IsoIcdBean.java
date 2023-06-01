@@ -33,7 +33,7 @@ public class IsoIcdBean extends BaseBean<IsoIcd> {
          */
         public IsoIcdBean() {
             super(IsoIcd.class);
-            showDeprecatedWarning();
+            showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
         }
     
         /**

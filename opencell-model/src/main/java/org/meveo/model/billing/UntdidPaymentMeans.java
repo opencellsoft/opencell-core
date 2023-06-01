@@ -15,8 +15,14 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @Cacheable
 @Table(name = "untdid_4461_payment_means")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_5189_allowance_code_seq"), })
-public class UntdidPaymentMeans extends AuditableEntity{
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "untdid_4461_payment_means_seq"), })
+public class UntdidPaymentMeans extends AuditableEntity {
+
+	private static final long serialVersionUID = -1024979001287985755L;
+
+	@Column(name = "code", length = 500)
+	@Size(max = 20)
+	private String code;
 	
 	@Column(name = "code_name", length = 500)
 	@Size(max = 20)
@@ -25,6 +31,14 @@ public class UntdidPaymentMeans extends AuditableEntity{
 	@Column(name = "usage_in_en16931", length = 500)
 	@Size(max = 20)
 	private String usageEN16931;
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
 
 	public String getCodeName() {
 		return codeName;

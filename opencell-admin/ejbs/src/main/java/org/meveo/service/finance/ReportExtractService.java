@@ -179,6 +179,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             } else if (be == null && entity.isGenerateEmptyReport()) {
                 filename = generateEmptyReport(filename, reportDir, entity.getReportExtractResultType());
                 reportExtractExecutionResult.setLineCount(0);
+            } else {
+            	filename = null;
             }
 
         } else {
@@ -202,8 +204,10 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
         }
 
-        File file = new File(reportDir.append(File.separator).append(filename).toString());
-        reportExtractExecutionResult.setFilePath(file.getPath().replace("\\", "/"));
+        if(filename != null) {
+        	File file = new File(reportDir.append(File.separator).append(filename).toString());
+        	reportExtractExecutionResult.setFilePath(file.getPath().replace("\\", "/"));
+        }
         reportExtractExecutionResult.setEndDate(new Date());
         reportExtractExecutionResultService.createInNewTransaction(reportExtractExecutionResult);
 

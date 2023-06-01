@@ -243,7 +243,7 @@ public class BillingCycle extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
     private boolean incrementalInvoiceLines = Boolean.FALSE;
-    
+
     public boolean isThresholdPerEntity() {
         return thresholdPerEntity;
     }

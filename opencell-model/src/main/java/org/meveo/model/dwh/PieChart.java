@@ -34,6 +34,7 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Table(name = "dwh_chart_pie")
+@Deprecated
 public class PieChart extends Chart {
 
     private static final long serialVersionUID = -3549868233998052477L;

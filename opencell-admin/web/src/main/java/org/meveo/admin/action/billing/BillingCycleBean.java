@@ -61,6 +61,7 @@ public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
      */
     public BillingCycleBean() {
         super(BillingCycle.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     /**

@@ -6,6 +6,7 @@ package org.meveo.apiv2.catalog.service;
 import static org.meveo.apiv2.generic.ValidationUtils.checkDto;
 import static org.meveo.apiv2.generic.ValidationUtils.checkId;
 
+import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
@@ -19,18 +20,29 @@ import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.apiv2.billing.DiscountPlanInstanciateDto;
 import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.GenericApiPersistenceDelegate;
+import org.meveo.apiv2.models.Resource;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IEntity;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class DiscountPlanApiService {
@@ -49,6 +61,14 @@ public class DiscountPlanApiService {
 	@Inject
 	@MeveoJpa
 	private EntityManagerWrapper entityManagerWrapper;
+    @Inject
+    private DiscountPlanService discountPlanService;
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
+    @Inject
+    private SubscriptionService subscriptionService;
+    @Inject
+    private BillingAccountService billingAccountService;
 
 	@PostConstruct
 	public void configure() {
@@ -154,4 +174,71 @@ public class DiscountPlanApiService {
 		IEntity updatedEntity = persistenceDelegate.update(DiscountPlan.class, entity);
 		return Optional.ofNullable((Long) updatedEntity.getId());
 	}
+	private DiscountPlan getDiscountPlan(Resource entity) {
+		DiscountPlan discountPlan = null;
+        if(entity.getId() != null) {
+            discountPlan = discountPlanService.findById(entity.getId());
+        }
+        if(discountPlan == null && StringUtils.isNotEmpty(entity.getCode())) {
+            discountPlan = discountPlanService.findByCode(entity.getCode());
+        }
+        if(discountPlan == null) {
+            throw new NotFoundException("entity DiscountPlan with (id :" + entity.getId() + ", code : "+ entity.getCode() +" )  not found.");
+        }
+        return discountPlan;
+	}
+	
+	private void instianciateSubscription(Resource subscriptionResource, DiscountPlan discountPlan) {
+         Subscription subscription = null;
+         if(subscriptionResource.getId() != null) {
+             subscription = subscriptionService.findById(subscriptionResource.getId());
+             if(subscription == null)
+                 throw new NotFoundException("entity subscription with id " + subscriptionResource.getId() + " not found.");
+         }
+         if(subscription == null && StringUtils.isNotEmpty(subscriptionResource.getCode())) {
+             subscription = subscriptionService.findByCode(subscriptionResource.getCode());
+             if(subscription == null)
+                 throw new NotFoundException("entity subscription with code " + subscriptionResource.getCode() + " not found.");
+         }
+         subscriptionService.instantiateDiscountPlan(subscription, discountPlan);
+	}
+	
+	private void instanciateBillingAccount(Resource billingAccountResource, DiscountPlan discountPlan) {
+          BillingAccount billingAccount = null;
+          if(billingAccountResource.getId() != null) {
+              billingAccount = billingAccountService.findById(billingAccountResource.getId());
+              if(billingAccount == null)
+                  throw new NotFoundException("entity billingAccount with id " + billingAccountResource.getId() + " not found.");
+          }
+          if(billingAccount == null && StringUtils.isNotEmpty(billingAccountResource.getCode())) {
+              billingAccount = billingAccountService.findByCode(billingAccountResource.getCode());
+              if(billingAccount == null)
+                  throw new NotFoundException("entity billingAccount with code " + billingAccountResource.getCode() + " not found.");
+          }
+          billingAccountService.instantiateDiscountPlan(billingAccount, discountPlan);
+	}
+	
+    public void instanciateDP(DiscountPlanInstanciateDto discountPlanInstanciateDto) {
+        if(discountPlanInstanciateDto.getDiscountPlan() == null) {
+            throw new InvalidParameterException("The discountPlan is required");
+        }
+        Resource discountPlanResource = discountPlanInstanciateDto.getDiscountPlan();
+        if(discountPlanResource.getId() == null && StringUtils.isEmpty(discountPlanResource.getCode())) {
+            throw new InvalidParameterException("One of discountPlanResource.id or discountPlanResource.code must be present");
+        }
+        DiscountPlan discountPlan = getDiscountPlan(discountPlanResource);
+        
+        if(discountPlanInstanciateDto.getServiceInstance() != null && discountPlanInstanciateDto.getServiceInstance().getId() != null) {
+            ServiceInstance serviceInstance = serviceInstanceService.findById(discountPlanInstanciateDto.getServiceInstance().getId());
+            if(serviceInstance == null)
+                throw new NotFoundException("entity serviceInstance with id " + discountPlanInstanciateDto.getServiceInstance().getId() + " not found.");
+            serviceInstanceService.instantiateDiscountPlan(serviceInstance, discountPlan, false);
+        }else if(discountPlanInstanciateDto.getSubscription() != null && (discountPlanInstanciateDto.getSubscription().getId() != null || StringUtils.isNotEmpty(discountPlanInstanciateDto.getSubscription().getCode())))  {
+        	instianciateSubscription(discountPlanInstanciateDto.getSubscription(), discountPlan);
+        }else if(discountPlanInstanciateDto.getBillingAccount() != null && (discountPlanInstanciateDto.getBillingAccount().getId() != null || StringUtils.isNotEmpty(discountPlanInstanciateDto.getBillingAccount().getCode()))) {
+        	instanciateBillingAccount(discountPlanInstanciateDto.getBillingAccount(), discountPlan);
+        }else {
+            throw new InvalidParameterException("One of these property must be present : serviceInstance, subscription, billingAccount");
+        }
+    }
 }

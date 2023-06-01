@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.accounting.AccountingPeriod;
+import org.meveo.model.accounting.AccountingPeriodActionLevelEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -77,5 +78,6 @@ public interface AccountingPeriodResource {
 			@ApiResponse(responseCode = "404", description = "target entity does not exist")})
 	Response updateStatus(@Parameter(description = "fiscalYear of the Invoice", required = true) @PathParam("fiscalYear") String fiscalYear,
 						 	@Parameter(description = "status", required = true) @PathParam("status") String status);
+	
 
 }

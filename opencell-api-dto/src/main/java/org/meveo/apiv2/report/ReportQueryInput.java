@@ -68,6 +68,10 @@ public interface ReportQueryInput {
     @Schema(description = "Report query emails")
     List<String> getEmails();
 
+    @Nullable
+    @Schema(description = "Report query aliases")
+    Map<String, String> getAliases();
+
     @Schema(description = "Report query - Advanced Query")
     @Nullable
     Map<String, Object> getAdvancedQuery();

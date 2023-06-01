@@ -40,6 +40,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
@@ -154,6 +155,18 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
+        checkAndApplyDiscount(offerTemplate, subscription);
+    }
+    
+    private void checkAndApplyDiscount(OfferTemplate offerTemplate, Subscription subscription) {
+        if(offerTemplate != null ) {
+            if(CollectionUtils.isNotEmpty(offerTemplate.getAllowedDiscountPlans())) {
+                offerTemplate.getAllowedDiscountPlans().stream()
+                                            .filter(DiscountPlan::isAutomaticApplication)
+                                            .forEach(dp -> instantiateDiscountPlan(subscription, dp));
+                                            
+            }
+        }
     }
 
     @MeveoAudit
@@ -182,6 +195,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
+        checkAndApplyDiscount(offerTemplate, subscription);
     }
 
     @MeveoAudit
@@ -703,13 +717,17 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     public Subscription instantiateDiscountPlan(Subscription entity, DiscountPlan dp) throws BusinessException {
        
+    	if(CollectionUtils.isNotEmpty(entity.getDiscountPlanInstances())) {
+    		boolean discountPlanInstancExist = entity.getDiscountPlanInstances().stream().anyMatch(discountPlanInstance -> discountPlanInstance.getDiscountPlan().getCode().equalsIgnoreCase(dp.getCode()));
+    		if(discountPlanInstancExist) return entity;
+    	}
         BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
         for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
             if (dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
                 throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
             }
         }
-        return (Subscription) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+        return (Subscription) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null, false);
     }
 
     public void terminateDiscountPlan(Subscription entity, DiscountPlanInstance dpi) throws BusinessException {

@@ -15,6 +15,7 @@ import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.report.*;
 import org.meveo.apiv2.report.query.service.ReportQueryApiService;
 import org.meveo.model.Auditable;
@@ -29,6 +30,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +50,12 @@ public class ReportQueryResourceImplTest {
 
     @Mock
     private Request request;
+    
+    @Mock
+    private UriInfo mockUriInfo;
+
+    @Mock
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     @Before
     public void setUp() {
@@ -69,6 +77,7 @@ public class ReportQueryResourceImplTest {
         when(reportQueryApiService.update(anyLong(), any())).thenReturn(Optional.of(reportQuery));
         when(reportQueryApiService.delete(1L)).thenReturn(empty());
         when(reportQueryApiService.delete(2L)).thenReturn(of(reportQuery));
+        when(genericPagingAndFilteringUtils.getLimit(anyInt())).thenReturn(10L);
     }
 
     @Test
@@ -175,8 +184,8 @@ public class ReportQueryResourceImplTest {
                 .emails(asList())
                 .build();
 
-        when(reportQueryApiService.execute(1L, false, false, new ArrayList<String>())).thenReturn(of(executionResult));
-        Response response = reportQueryResource.execute(1L, false, false, input);
+        when(reportQueryApiService.execute(1L, false, false, new ArrayList<String>(), mockUriInfo)).thenReturn(of(executionResult));
+        Response response = reportQueryResource.execute(1L, false, false, input, mockUriInfo);
 
         Object responseEntity = response.getEntity();
         assertEquals(3, ((ExecutionResult)responseEntity).getTotal());
@@ -201,8 +210,8 @@ public class ReportQueryResourceImplTest {
                 .emails(asList())
                 .build();
 
-        when(reportQueryApiService.execute(1L, true, false, new ArrayList<String>())).thenReturn(of("Accepted"));
-        Response response = reportQueryResource.execute(1L, true, false, input);
+        when(reportQueryApiService.execute(1L, true, false, new ArrayList<String>(), mockUriInfo)).thenReturn(of("Accepted"));
+        Response response = reportQueryResource.execute(1L, true, false, input, mockUriInfo);
 
         ImmutableSuccessResponse successResponse = (ImmutableSuccessResponse) response.getEntity();
         assertEquals(200, response.getStatus());

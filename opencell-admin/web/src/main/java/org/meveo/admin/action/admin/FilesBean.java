@@ -244,7 +244,7 @@ public class FilesBean implements Serializable {
         } else {
             log.debug("setSelectedFolder " + selectedFolder);
             if (this.selectedFolder == null) {
-                this.selectedFolder = File.separator + selectedFolder;
+                this.selectedFolder = selectedFolder;
             } else {
                 this.selectedFolder += File.separator + selectedFolder;
             }
@@ -449,7 +449,7 @@ public class FilesBean implements Serializable {
 
     private void copyUnZippedFile(String filePath, InputStream in) {
         try {
-            FileUtils.unzipFile(filePath, in);
+            FileUtils.unzipFileInFileSystem(filePath, in);
             buildFileList();
         } catch (Exception e) {
             log.debug("error when upload zip file for new UI", e);

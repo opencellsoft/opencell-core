@@ -12,12 +12,9 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 
-import liquibase.pro.packaged.D;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
-import org.assertj.core.util.DateUtil;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -165,16 +162,17 @@ public class ProductApi extends BaseApi {
 	 * @throws ProductException
 	 */
 	public ProductDto create(ProductDto productDto){
-		if(Strings.isEmpty(productDto.getCode())) {
-			missingParameters.add("code");
-		}
 		if(Strings.isEmpty(productDto.getLabel())){
 			missingParameters.add("label");
+		}
+		Product product = new Product();
+		if(Strings.isEmpty(productDto.getCode())) {
+			productDto.setCode(customGenericEntityCodeService.getGenericEntityCode(product));
 		}
 		handleMissingParameters();
 		try {
 			productDto.setCode(productDto.getCode().trim());
-			Product product = populateProduct(productDto, true);
+			product = populateProduct(productDto, true);
 			productService.create(product);
 			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
 			ProductDto response = new ProductDto(product);
@@ -311,6 +309,7 @@ public class ProductApi extends BaseApi {
 
 			var publishedVersion = versions.stream()
 											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
+											.filter(pv -> pv.getValidity().getTo() == null || pv.getValidity().getTo().compareTo(DateUtils.setTimeToZero(new Date()))  >= 0)
 												.sorted( (pv1, pv2) -> pv2.getValidity().compareFieldTo(pv1.getValidity())).collect(Collectors.toList());
 			if(publishedVersion.size() >= 1 ) {
 				product.setCurrentVersion(publishedVersion.get(0));

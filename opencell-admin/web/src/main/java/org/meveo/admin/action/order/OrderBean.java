@@ -154,6 +154,7 @@ public class OrderBean extends CustomFieldBean<Order> {
      */
     public OrderBean() {
         super(Order.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

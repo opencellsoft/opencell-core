@@ -16,6 +16,9 @@ public class GenericCodeDto {
     @XmlElement(name = "sequence")
     private SequenceDto sequenceDto;
 
+    @XmlElement(name = "id")
+    private Long id;
+
     public String getFormatEL() {
         return formatEL;
     }
@@ -46,5 +49,21 @@ public class GenericCodeDto {
 
     public void setEntityClass(String entityClass) {
         this.entityClass = entityClass;
+    }
+
+    public SequenceDto getSequenceDto() {
+        return sequenceDto;
+    }
+
+    public void setSequenceDto(SequenceDto sequenceDto) {
+        this.sequenceDto = sequenceDto;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -281,6 +281,14 @@ public class SellerApi extends AccountEntityApi {
             seller.setRegistrationNo(postData.getRegistrationNo());
         }
         
+        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getRegistrationNo()) 
+            && seller.getIcdId() == null
+            && org.apache.commons.lang3.StringUtils.isEmpty(postData.getIsoICDCode())
+        		) {
+        	IsoIcd isoIcd = isoIcdService.findByCode("0009");    
+            seller.setIcdId(isoIcd);
+        }
+        
         if (postData.getLegalText() != null) {
             seller.setLegalText(postData.getLegalText());
         }

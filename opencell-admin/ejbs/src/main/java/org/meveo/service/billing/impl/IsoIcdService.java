@@ -5,26 +5,69 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.IsoIcd;
-import org.meveo.model.billing.UntdidInvoiceSubjectCode;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class IsoIcdService extends PersistenceService<IsoIcd> {
+	
+	public IsoIcd findByCode(String pCode) {
+		if (pCode == null) {
+			return null;
+		}
+		
+		QueryBuilder qb = new QueryBuilder(IsoIcd.class, "i");
+		qb.addCriterion("code", "=", pCode, false);
 
-    public IsoIcd findByCode(String isoICDCode) {
-        if (isoICDCode == null) {
-            return null;
+		try {
+			return (IsoIcd) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	
+	public void create(IsoIcd pIsoIcd) throws BusinessException {
+    	validate(pIsoIcd);
+        super.create(pIsoIcd);
+    }
+    
+    public IsoIcd update(IsoIcd pOldIsoIcd, IsoIcd pNewIsoIcd) throws BusinessException {        
+        if(pNewIsoIcd != null && !pNewIsoIcd.getCode().isBlank() && !pNewIsoIcd.getCode().equals(pOldIsoIcd.getCode())){
+        	pOldIsoIcd.setCode(pNewIsoIcd.getCode());
         }
-        QueryBuilder qb = new QueryBuilder(IsoIcd.class, "i");
-        qb.addCriterion("code", "=", isoICDCode, false);
+        
+        if(pNewIsoIcd != null && !pNewIsoIcd.getSchemeName().isBlank() && !pNewIsoIcd.getSchemeName().equals(pOldIsoIcd.getSchemeName())){
+        	pOldIsoIcd.setSchemeName(pNewIsoIcd.getSchemeName());
+        }
+        
+        return super.update(pOldIsoIcd);
+    }
+    
+    private void validate(IsoIcd pIsoIcd) {
+        if(isCodeNullOrAlreadyUsed(pIsoIcd)){
+            throw new BusinessApiException("Code should be not null or already used by another IsoIcd.");
+        }
+        
+        if(pIsoIcd.getSchemeName() == null || (pIsoIcd.getSchemeName() != null && pIsoIcd.getSchemeName().isBlank())){
+            throw new BusinessApiException("SchemeName should be not null.");
+        }
+    }
 
-        try {
-            return (IsoIcd) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
+    private boolean isCodeNullOrAlreadyUsed(IsoIcd pIsoIcd) {
+        if (pIsoIcd.getCode() == null || (pIsoIcd.getCode() != null && pIsoIcd.getCode().isBlank())) {
+            return true;
+        } else {
+        	IsoIcd lIsoIcd = findByCode(pIsoIcd.getCode());
+            
+        	if(lIsoIcd != null && !lIsoIcd.getId().equals(pIsoIcd.getId())){
+                return true;
+            }
         }
+        
+        return false;
     }
 
     @SuppressWarnings("unchecked")

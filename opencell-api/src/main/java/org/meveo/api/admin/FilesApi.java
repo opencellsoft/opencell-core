@@ -68,6 +68,10 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 public class FilesApi extends BaseApi {
 
     public static final String FILE_DOES_NOT_EXISTS = "File does not exists: ";
+
+    public static final String SOURCE_FILE_OR_FOLDER_DOES_NOT_EXISTS = "Source file or folder does not exist: ";
+
+    public static final String DESTINATION_FILE_OR_FOLDER_ALREADY_EXISTS = "Destination file or folder already exists: ";
     @Inject
     private FlatFileValidator flatFileValidator;
 
@@ -407,6 +411,55 @@ public class FilesApi extends BaseApi {
             } else {
                 throw new BusinessApiException(FILE_DOES_NOT_EXISTS + javaXMlFormatFile.getPath());
             }
+        }
+    }
+
+    public void moveFileOrDirectory(String srcPath, String destPath) throws BusinessApiException {
+        String srcName = getProviderRootDir() + File.separator + normalizePath(srcPath);
+        File source = new File(srcName);
+
+        String[] arrFileName = srcName.split("/");
+        String nameFileOrDir = arrFileName[arrFileName.length - 1];
+        String destName = getProviderRootDir() + File.separator + normalizePath(destPath) + File.separator + nameFileOrDir;
+        File dest = new File(destName);
+
+        if (StorageFactory.exists(source) || StorageFactory.existsDirectory(source)) {
+            if (!StorageFactory.isDirectory(source)) {
+                if (!StorageFactory.exists(dest)) {
+                    if (!StorageFactory.existsDirectory(dest.getParentFile())) {
+                        StorageFactory.mkdirs(dest.getParentFile());
+                    }
+
+                    try {
+                        StorageFactory.moveFileOrObject(srcName, destName);
+                    } catch (Exception e) {
+                        throw new BusinessApiException("Error while moving file with source path: " + srcName
+                                + " and destination path: " + destName + e.getMessage());
+                    }
+                }
+                else {
+                    throw new BusinessApiException(DESTINATION_FILE_OR_FOLDER_ALREADY_EXISTS + destName);
+                }
+            } else {
+                if (!StorageFactory.existsDirectory(dest)) {
+                    if (!StorageFactory.existsDirectory(dest.getParentFile())) {
+                        StorageFactory.mkdirs(dest.getParentFile());
+                    }
+
+                    try {
+                        StorageFactory.moveFileOrObject(srcName, destName);
+                    } catch (Exception e) {
+                        throw new BusinessApiException("Error while moving directory with source path: " + srcName
+                                + " and destination path: " + destName + e.getMessage());
+                    }
+                }
+                else {
+                    throw new BusinessApiException(DESTINATION_FILE_OR_FOLDER_ALREADY_EXISTS + destName);
+                }
+            }
+        }
+        else {
+            throw new BusinessApiException(SOURCE_FILE_OR_FOLDER_DOES_NOT_EXISTS + srcName);
         }
     }
 }

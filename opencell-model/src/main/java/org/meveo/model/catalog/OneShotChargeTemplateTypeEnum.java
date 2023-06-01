@@ -36,6 +36,7 @@ public enum OneShotChargeTemplateTypeEnum {
      * Other type charge
      */
     OTHER("oneShotChargeTemplateTypeEnum.other"),
+
     INVOICING_PLAN("oneShotChargeTemplateTypeEnum.invoicing_plan");
 
     private String label;

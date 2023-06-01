@@ -16,6 +16,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.mediation.MediationSetting;
@@ -28,11 +29,12 @@ public class EdrVersioningRuleApiService implements ApiService<EdrVersioningRule
 	private EdrVersioningRuleService edrVersioningRuleService;
 	@Inject
 	private MediationsettingService mediationsettingService;
-	
+
+
 	@Override
 	public List<EdrVersioningRule> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, null, null, null);
-        return edrVersioningRuleService.list(paginationConfiguration);
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, null, null, null);
+		return edrVersioningRuleService.list(paginationConfiguration);
 	}
 
 	@Override

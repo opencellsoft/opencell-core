@@ -59,4 +59,16 @@ public interface FinanceSettings extends Resource {
     default Boolean getActivateDunning() {
         return FALSE;
     }
+
+    @Value.Default
+    @Schema(description = "Enable Billing Redirection Rules")
+    default Boolean getEnableBillingRedirectionRules() {
+        return FALSE;
+    }
+    
+    @Value.Default
+    @Schema(description = "Enable Billing Redirection Rules")
+    default Boolean getDiscountAdvancedMode() {
+        return FALSE;
+    }
 }

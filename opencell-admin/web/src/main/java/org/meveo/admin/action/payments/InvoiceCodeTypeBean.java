@@ -31,7 +31,7 @@ public class InvoiceCodeTypeBean extends BaseBean<UntdidInvoiceCodeType> {
          */
         public InvoiceCodeTypeBean() {
             super(UntdidInvoiceCodeType.class);
-            showDeprecatedWarning();
+            showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
         }
     
         /**

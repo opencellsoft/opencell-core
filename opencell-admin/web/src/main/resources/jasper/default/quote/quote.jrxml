@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Orange_invoice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Orange_invoice" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="152"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="oc-jaspers\quotes\oc.xml"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CopyOfWAFA-AMOUT-0-59"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -180,22 +180,29 @@
 		<field name="priceType" class="java.lang.String">
 			<fieldDescription><![CDATA[@priceType]]></fieldDescription>
 		</field>
-		<field name="amountWithtax" class="java.lang.String">
+		<field name="amountWithTax" class="java.lang.Double">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="amountWithTax"/>
 			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
 		</field>
-		<field name="taxAmount" class="java.lang.String">
+		<field name="taxAmount" class="java.lang.Double">
 			<fieldDescription><![CDATA[taxAmount]]></fieldDescription>
+		</field>
+		<field name="currencySymbol" class="java.lang.String">
+			<fieldDescription><![CDATA[currencySymbol]]></fieldDescription>
 		</field>
 		<field name="billingAccountCode" class="java.lang.String">
 			<fieldDescription><![CDATA[ancestor::billableAccounts/@billingAccountCode]]></fieldDescription>
 		</field>
-		<field name="unitPriceWithoutTax" class="java.lang.String">
+		<field name="unitPriceWithoutTax" class="java.lang.Double">
 			<fieldDescription><![CDATA[unitPriceWithoutTax]]></fieldDescription>
 		</field>
-		<field name="taxRate" class="java.lang.String">
+		<field name="taxRate" class="java.lang.Double">
 			<fieldDescription><![CDATA[taxRate]]></fieldDescription>
 		</field>
-		<field name="amountWithoutTax" class="java.lang.String">
+		<field name="taxIndex" class="java.lang.String">
+			<fieldDescription><![CDATA[taxIndex]]></fieldDescription>
+		</field>
+		<field name="amountWithoutTax" class="java.lang.Double">
 			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
 		</field>
 		<field name="label" class="java.lang.String">
@@ -204,8 +211,9 @@
 		<field name="priceType_1" class="java.lang.String">
 			<fieldDescription><![CDATA[quote/billableAccounts/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price/@priceType]]></fieldDescription>
 		</field>
-		<field name="amountWithtax_1" class="java.lang.String">
-			<fieldDescription><![CDATA[quote/billableAccounts/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price/amountWithtax]]></fieldDescription>
+		<field name="amountWithTax_1" class="java.lang.String">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="quote/billableAccounts/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price/amountWithTax"/>
+			<fieldDescription><![CDATA[quote/billableAccounts/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price/amountWithTax]]></fieldDescription>
 		</field>
 		<field name="unitPriceWithoutTax_1" class="java.lang.String">
 			<fieldDescription><![CDATA[quote/billableAccounts/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price/unitPriceWithoutTax]]></fieldDescription>
@@ -226,6 +234,67 @@
 			<fieldDescription><![CDATA[quote/billableAccounts/quoteLots/quoteLot/@name]]></fieldDescription>
 		</field>
 	</subDataset>
+	<subDataset name="taxList" uuid="65d763de-aa7b-4efc-a212-3638bd8300dc">
+		<queryString language="xPath">
+			<![CDATA[/quote/header/taxDetail/taxes/tax]]>
+		</queryString>
+		<field name="code" class="java.lang.String">
+			<fieldDescription><![CDATA[@code]]></fieldDescription>
+		</field>
+		<field name="percent" class="java.lang.Double">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="percent"/>
+			<fieldDescription><![CDATA[percent]]></fieldDescription>
+		</field>
+		<field name="compositeRate" class="java.lang.String">
+			<fieldDescription><![CDATA[@compositeRate]]></fieldDescription>
+		</field>
+		<field name="index" class="java.lang.String">
+			<fieldDescription><![CDATA[index]]></fieldDescription>
+		</field>
+		<field name="amountWithoutTax" class="java.lang.String">
+			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+		</field>
+		<field name="amountWithTax" class="java.lang.String">
+			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
+		</field>
+		<field name="amountTax" class="java.lang.String">
+			<fieldDescription><![CDATA[amountTax]]></fieldDescription>
+		</field>
+		<field name="country" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+		<sortField name="index"/>
+	</subDataset>
+	<subDataset name="quoteTva" uuid="ae6f28c9-d044-41f4-93d3-220849f67ab4">
+		<queryString language="xPath">
+			<![CDATA[/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price/]]>
+		</queryString>
+		<field name="taxCode" class="java.lang.String">
+			<fieldDescription><![CDATA[taxCode]]></fieldDescription>
+		</field>
+		<field name="taxIndex" class="java.lang.String">
+			<fieldDescription><![CDATA[taxIndex]]></fieldDescription>
+		</field>
+		<field name="amountWithoutTax" class="java.lang.String">
+			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+		</field>
+		<field name="amountWithTax" class="java.lang.Double">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="amountWithTax"/>
+			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
+		</field>
+		<field name="taxAmount" class="java.lang.Double">
+			<fieldDescription><![CDATA[taxAmount]]></fieldDescription>
+		</field>
+		<field name="taxRate" class="java.lang.String">
+			<fieldDescription><![CDATA[taxRate]]></fieldDescription>
+		</field>
+		<field name="currencySymbol" class="java.lang.String">
+			<fieldDescription><![CDATA[currencySymbol]]></fieldDescription>
+		</field>
+		<field name="country" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+	</subDataset>
 	<subDataset name="ba_prices" uuid="5584035b-3f01-4c5b-b63f-2bc9582f7d4a">
 		<queryString language="xPath">
 			<![CDATA[/quote/details]]>
@@ -239,20 +308,27 @@
 		<field name="priceType" class="java.lang.String">
 			<fieldDescription><![CDATA[@priceType]]></fieldDescription>
 		</field>
-		<field name="amountWithtax" class="java.lang.String">
+		<field name="amountWithTax" class="java.lang.Double">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="amountWithTax"/>
 			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
 		</field>
-		<field name="unitPriceWithoutTax" class="java.lang.String">
+		<field name="currencySymbol" class="java.lang.String">
+			<fieldDescription><![CDATA[currencySymbol]]></fieldDescription>
+		</field>
+		<field name="unitPriceWithoutTax" class="java.lang.Double">
 			<fieldDescription><![CDATA[unitPriceWithoutTax]]></fieldDescription>
 		</field>
-		<field name="amountWithoutTax" class="java.lang.String">
+		<field name="amountWithoutTax" class="java.lang.Double">
 			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
 		</field>
-		<field name="taxAmount" class="java.lang.String">
+		<field name="taxAmount" class="java.lang.Double">
 			<fieldDescription><![CDATA[taxAmount]]></fieldDescription>
 		</field>
-		<field name="taxRate" class="java.lang.String">
+		<field name="taxRate" class="java.lang.Double">
 			<fieldDescription><![CDATA[taxRate]]></fieldDescription>
+		</field>
+		<field name="taxIndex" class="java.lang.String">
+			<fieldDescription><![CDATA[taxIndex]]></fieldDescription>
 		</field>
 		<field name="recurrenceDuration" class="java.lang.String">
 			<fieldDescription><![CDATA[recurrenceDuration]]></fieldDescription>
@@ -283,20 +359,27 @@
 		<field name="priceType" class="java.lang.String">
 			<fieldDescription><![CDATA[@priceType]]></fieldDescription>
 		</field>
-		<field name="amountWithtax" class="java.lang.String">
-			<fieldDescription><![CDATA[amountWithtax]]></fieldDescription>
+		<field name="amountWithTax" class="java.lang.Double">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="amountWithTax"/>
+			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
 		</field>
-		<field name="unitPriceWithoutTax" class="java.lang.String">
+		<field name="unitPriceWithoutTax" class="java.lang.Double">
 			<fieldDescription><![CDATA[unitPriceWithoutTax]]></fieldDescription>
 		</field>
-		<field name="amountWithoutTax" class="java.lang.String">
+		<field name="amountWithoutTax" class="java.lang.Double">
 			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
 		</field>
-		<field name="taxAmount" class="java.lang.String">
+		<field name="taxAmount" class="java.lang.Double">
 			<fieldDescription><![CDATA[taxAmount]]></fieldDescription>
 		</field>
-		<field name="taxRate" class="java.lang.String">
+		<field name="currencySymbol" class="java.lang.String">
+			<fieldDescription><![CDATA[currencySymbol]]></fieldDescription>
+		</field>
+		<field name="taxRate" class="java.lang.Double">
 			<fieldDescription><![CDATA[taxRate]]></fieldDescription>
+		</field>
+		<field name="taxIndex" class="java.lang.String">
+			<fieldDescription><![CDATA[taxIndex]]></fieldDescription>
 		</field>
 		<field name="recurrenceDuration" class="java.lang.String">
 			<fieldDescription><![CDATA[recurrenceDuration]]></fieldDescription>
@@ -305,13 +388,82 @@
 			<fieldDescription><![CDATA[ancestor::quoteLot/@name]]></fieldDescription>
 		</field>
 		<field name="recurrencePeriodicity" class="java.lang.String">
-			<fieldDescription><![CDATA[recurrenceDuration]]></fieldDescription>
+			<fieldDescription><![CDATA[recurrencePeriodicity]]></fieldDescription>
+		</field>
+		<field name="accountingArticleCode" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quoteLine/@accountingArticleCode]]></fieldDescription>
 		</field>
 		<field name="accountingArticleLabel" class="java.lang.String">
 			<fieldDescription><![CDATA[ancestor::quoteLine/@accountingArticleLabel]]></fieldDescription>
 		</field>
-		<field name="quantity" class="java.lang.Integer">
-			<fieldDescription><![CDATA[quantity]]></fieldDescription>
+		<field name="quantity" class="java.lang.Double">
+			<fieldDescription><![CDATA[ancestor::quoteLine/@quantity]]></fieldDescription>
+		</field>
+		<field name="country" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
+		</field>
+	</subDataset>
+	<subDataset name="discountsFooter" uuid="f4a51d10-a40b-44a8-ab1f-124785a429d2">
+		<queryString language="xPath">
+			<![CDATA[/quote/details]]>
+		</queryString>
+		<field name="name" class="java.lang.String">
+			<fieldDescription><![CDATA[quoteLots/quoteLot/@name]]></fieldDescription>
+		</field>
+		<field name="accountArticle_label" class="java.lang.String">
+			<fieldDescription><![CDATA[quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticlesDiscounts/accountingArticleDiscount/@label]]></fieldDescription>
+		</field>
+		<field name="accountingArticle_label" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::accountingArticle/@label]]></fieldDescription>
+		</field>
+		<field name="billingAccountCode" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::billableAccount/@billingAccountCode]]></fieldDescription>
+		</field>
+		<field name="priceType" class="java.lang.String">
+			<fieldDescription><![CDATA[@priceType]]></fieldDescription>
+		</field>
+		<field name="amountWithTax" class="java.lang.Double">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="amountWithTax"/>
+			<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
+		</field>
+		<field name="unitPriceWithoutTax" class="java.lang.Double">
+			<fieldDescription><![CDATA[unitPriceWithoutTax]]></fieldDescription>
+		</field>
+		<field name="amountWithoutTax" class="java.lang.Double">
+			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+		</field>
+		<field name="taxAmount" class="java.lang.Double">
+			<fieldDescription><![CDATA[taxAmount]]></fieldDescription>
+		</field>
+		<field name="currencySymbol" class="java.lang.String">
+			<fieldDescription><![CDATA[currencySymbol]]></fieldDescription>
+		</field>
+		<field name="taxRate" class="java.lang.Double">
+			<fieldDescription><![CDATA[taxRate]]></fieldDescription>
+		</field>
+		<field name="taxIndex" class="java.lang.String">
+			<fieldDescription><![CDATA[taxIndex]]></fieldDescription>
+		</field>
+		<field name="recurrenceDuration" class="java.lang.String">
+			<fieldDescription><![CDATA[recurrenceDuration]]></fieldDescription>
+		</field>
+		<field name="name_quotelot" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quoteLot/@name]]></fieldDescription>
+		</field>
+		<field name="recurrencePeriodicity" class="java.lang.String">
+			<fieldDescription><![CDATA[recurrencePeriodicity]]></fieldDescription>
+		</field>
+		<field name="accountingArticleCode" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quoteLine/@accountingArticleCode]]></fieldDescription>
+		</field>
+		<field name="accountingArticleLabel" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quoteLine/@accountingArticleLabel]]></fieldDescription>
+		</field>
+		<field name="quantity" class="java.lang.Double">
+			<fieldDescription><![CDATA[ancestor::quoteLine/@quantity]]></fieldDescription>
+		</field>
+		<field name="country" class="java.lang.String">
+			<fieldDescription><![CDATA[ancestor::quote/header/billingAccount/@country]]></fieldDescription>
 		</field>
 	</subDataset>
 	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
@@ -320,12 +472,12 @@
 	<parameter name="messagePath" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="xmlDateFormat" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["dd/MM/yyyy"]]></defaultValueExpression>
-	</parameter>
 	<queryString language="xPath">
-		<![CDATA[/quote/header/billingAccount/name/name]]>
+		<![CDATA[/quote]]>
 	</queryString>
+	<field name="currencyRate" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/currency/rate]]></fieldDescription>
+	</field>
 	<field name="name" class="java.lang.String">
 		<fieldDescription><![CDATA[/quote/header/billingAccount/name]]></fieldDescription>
 	</field>
@@ -333,7 +485,7 @@
 		<fieldDescription><![CDATA[/quote/header/billingAccount/address]]></fieldDescription>
 	</field>
 	<field name="quoteDate" class="java.lang.String">
-		<fieldDescription><![CDATA[/quote/details/quote/@quoteDate]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/details/quote/quoteDate]]></fieldDescription>
 	</field>
 	<field name="quoteNumber" class="java.lang.String">
 		<fieldDescription><![CDATA[/quote/details/quote/@quoteNumber]]></fieldDescription>
@@ -350,14 +502,20 @@
 	<field name="taxRate_recurring" class="java.lang.Double">
 		<fieldDescription><![CDATA[/quote/details/quotePrices/price[@priceType='RECURRING']//taxRate]]></fieldDescription>
 	</field>
-	<field name="amountWithtax_recurring" class="java.lang.Double">
-		<fieldDescription><![CDATA[/quote/details/quotePrices/price[@priceType='RECURRING']//amountWithtax]]></fieldDescription>
+	<field name="amountWithTax_recurring" class="java.lang.Double">
+		<property name="net.sf.jasperreports.xpath.field.expression">
+			<![CDATA[/quote/details/quotePrices/price[@priceType='RECURRING']/amountWithTax]]>
+		</property>
+		<fieldDescription><![CDATA[/quote/details/quotePrices/price[@priceType='RECURRING']/amountWithTax]]></fieldDescription>
 	</field>
 	<field name="amountWithoutTax_onshot" class="java.lang.Double">
 		<fieldDescription><![CDATA[/quote/details/quotePrices/price[@priceType='ONESHOT']/amountWithoutTax]]></fieldDescription>
 	</field>
-	<field name="amountWithtax_oneshot" class="java.lang.Double">
-		<fieldDescription><![CDATA[/quote/details/quotePrices/price[@priceType='ONESHOT']/amountWithtax]]></fieldDescription>
+	<field name="amountWithTax_oneshot" class="java.lang.Double">
+		<property name="net.sf.jasperreports.xpath.field.expression">
+			<![CDATA[/quote/details/quotePrices/price[@priceType='ONESHOT']/amountWithTax]]>
+		</property>
+		<fieldDescription><![CDATA[/quote/details/quotePrices/price[@priceType='ONESHOT']/amountWithTax]]></fieldDescription>
 	</field>
 	<field name="taxRate_oneshot" class="java.lang.Double">
 		<fieldDescription><![CDATA[/quote/details/quotePrices/price[@priceType='ONESHOT']/taxRate]]></fieldDescription>
@@ -386,11 +544,13 @@
 	<field name="accountingArticleLabel" class="java.lang.String">
 		<fieldDescription><![CDATA[quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/@accountingArticleLabel]]></fieldDescription>
 	</field>
-	<field name="amountWithtax" class="java.lang.String">
-		<fieldDescription><![CDATA[prices/price/amountWithtax]]></fieldDescription>
+	<field name="amountWithTax" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="prices/price/amountWithTax"/>
+		<fieldDescription><![CDATA[prices/price/amountWithTax]]></fieldDescription>
 	</field>
 	<field name="amountWithtax2" class="java.lang.String">
-		<fieldDescription><![CDATA[amountWithtax]]></fieldDescription>
+		<property name="net.sf.jasperreports.xpath.field.expression" value="amountWithTax"/>
+		<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
 	</field>
 	<field name="quantity2" class="java.lang.String">
 		<fieldDescription><![CDATA[/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/quantity]]></fieldDescription>
@@ -398,6 +558,10 @@
 	<field name="quoteVersion" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/quoteVersion"/>
 		<fieldDescription><![CDATA[/quote/header/quoteVersion]]></fieldDescription>
+	</field>
+	<field name="quoteVersionEndDate" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/quoteVersionEndDate"/>
+		<fieldDescription><![CDATA[/quote/header/quoteVersionEndDate]]></fieldDescription>
 	</field>
 	<field name="quoteCode" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/quoteCode"/>
@@ -415,6 +579,10 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/name/name"/>
 		<fieldDescription><![CDATA[/quote/header/billingAccount/name/name]]></fieldDescription>
 	</field>
+	<field name="quality" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/name/quality"/>
+		<fieldDescription><![CDATA[/quote/header/billingAccount/name/quality]]></fieldDescription>
+	</field>
 	<field name="address1" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/address/address1"/>
 		<fieldDescription><![CDATA[/quote/header/billingAccount/address/address1]]></fieldDescription>
@@ -425,7 +593,7 @@
 	</field>
 	<field name="country" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/address/country"/>
-		<fieldDescription><![CDATA[/quote/header/billingAccount/address/country]]></fieldDescription>
+		<fieldDescription><![CDATA[/quote/header/billingAccount/@country]]></fieldDescription>
 	</field>
 	<field name="countryName" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/address/countryName"/>
@@ -455,24 +623,155 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/billingAccount/@id"/>
 		<fieldDescription><![CDATA[/quote/header/billingAccount/@id]]></fieldDescription>
 	</field>
+	<field name="sumAmountWithTax" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="sum(/quote/details/quotePrices/price/amountWithTax)"/>
+		<fieldDescription><![CDATA[sum(/quote/details/quotePrices/price/amountWithTax)]]></fieldDescription>
+	</field>
+	<field name="sumAmountWithoutTax" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="sum(/quote/details/quotePrices/price/amountWithoutTax)"/>
+		<fieldDescription><![CDATA[sum(/quote/details/quotePrices/price/amountWithoutTax)]]></fieldDescription>
+	</field>
+	<field name="sumAmountTax" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="sum(/quote/details/quotePrices/price/taxAmount)"/>
+		<fieldDescription><![CDATA[sum(/quote/details/quotePrices/price/taxAmount)]]></fieldDescription>
+	</field>
+	<field name="currencySymbol" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/details/quotePrices/price/currencySymbol"/>
+		<fieldDescription><![CDATA[/quote/details/quotePrices/price/currencySymbol]]></fieldDescription>
+	</field>
+	<field name="baQuality" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/name/quality]]></fieldDescription>
+	</field>
+	<field name="baName" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="baFirstName" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/name/firstName]]></fieldDescription>
+	</field>
+	<field name="baAddrLine1" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="baAddrLine2" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/address2]]></fieldDescription>
+	</field>
+	<field name="baAddrLine3" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/address3]]></fieldDescription>
+	</field>
+	<field name="baCity" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/city]]></fieldDescription>
+	</field>
+	<field name="baAddrZip" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/zipCode]]></fieldDescription>
+	</field>
+	<field name="baCountry" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/billingAccount/address/countryName]]></fieldDescription>
+	</field>
+	<field name="caQuality" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/customer/name/quality]]></fieldDescription>
+	</field>
+	<field name="caName" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/customer/name/name]]></fieldDescription>
+	</field>
+	<field name="caFirstName" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/customer/name/firstName]]></fieldDescription>
+	</field>
+	<field name="caAddrLine1" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/customer/address/address1]]></fieldDescription>
+	</field>
+	<field name="caAddrLine2" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/customer/address/address2]]></fieldDescription>
+	</field>
+	<field name="caAddrLine3" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/customer/address/address3]]></fieldDescription>
+	</field>
+	<field name="caCity" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/customer/address/city]]></fieldDescription>
+	</field>
+	<field name="caAddrZip" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/customer/address/zipCode]]></fieldDescription>
+	</field>
+	<field name="caCountry" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/customer/address/countryName]]></fieldDescription>
+	</field>
+	<field name="caCountryCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/customer/address/country]]></fieldDescription>
+	</field>
+	<field name="sellerDescription" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/seller/@description]]></fieldDescription>
+	</field>
+	<field name="sellerLegalType" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/seller/@legalType]]></fieldDescription>
+	</field>
+	<field name="sellerVatNo" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/seller/@vatNo]]></fieldDescription>
+	</field>
+	<field name="sellerRegNo" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/seller/@registrationNo]]></fieldDescription>
+	</field>
+	<field name="sellerAddress1" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/seller/address/address1]]></fieldDescription>
+	</field>
+	<field name="sellerAddress2" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/seller/address/address2]]></fieldDescription>
+	</field>
+	<field name="sellerAddress3" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/seller/address/address3]]></fieldDescription>
+	</field>
+	<field name="sellerPostalCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/seller/address/zipCode]]></fieldDescription>
+	</field>
+	<field name="sellerCity" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/seller/address/city]]></fieldDescription>
+	</field>
+	<field name="sellerCountryName" class="java.lang.String">
+		<fieldDescription><![CDATA[/quote/header/seller/address/countryName]]></fieldDescription>
+	</field>
 	<field name="comment" class="java.lang.String">
-		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/comment"/>
 		<fieldDescription><![CDATA[/quote/header/comment]]></fieldDescription>
+	</field>
+	<field name="vatex" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/taxDetail/vatex"/>
+		<fieldDescription><![CDATA[/quote/header/taxDetail/vatex]]></fieldDescription>
+	</field>
+	<field name="totalTaxAmount" class="java.lang.Double">
+		<fieldDescription><![CDATA[/quote/header/taxDetail/totalAmountTax]]></fieldDescription>
+	</field>
+	<field name="totalAmountWithoutTax" class="java.lang.Double">
+		<fieldDescription><![CDATA[/quote/header/taxDetail/totalAmountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="totalAmountWithTax" class="java.lang.Double">
+		<fieldDescription><![CDATA[/quote/header/taxDetail/totalAmountWithTax]]></fieldDescription>
+	</field>
+	<field name="providerCurrencySymbol" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/currency/symbol"/>
+		<fieldDescription><![CDATA[/quote/header/currency/symbol]]></fieldDescription>
+	</field>
+	<field name="baCurrencySymbol" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/currency/baSymbol"/>
+		<fieldDescription><![CDATA[/quote/header/currency/baSymbol]]></fieldDescription>
+	</field>
+	<field name="baCurrencyRate" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/currency/baRate"/>
+		<fieldDescription><![CDATA[/quote/header/currency/baRate]]></fieldDescription>
+	</field>
+	<field name="baCurrencyCode" class="java.lang.String">
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/quote/header/currency/code"/>
+		<fieldDescription><![CDATA[/quote/header/currency/code]]></fieldDescription>
 	</field>
 	<group name="1">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
-			<band height="174">
-				<rectangle radius="10">
-					<reportElement x="16" y="4" width="200" height="170" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="82d9b0aa-0943-4e4d-883f-5fc811128eb7">
+			<band height="177">
+				<rectangle radius="0">
+					<reportElement x="16" y="-63" width="274" height="113" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="82d9b0aa-0943-4e4d-883f-5fc811128eb7">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<graphicElement>
 						<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
 					</graphicElement>
 				</rectangle>
-				<rectangle radius="10">
-					<reportElement x="221" y="4" width="360" height="169" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="938a48da-5aab-4498-b456-ee661a5898ea">
+				<rectangle radius="0">
+					<reportElement x="300" y="-63" width="279" height="113" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="938a48da-5aab-4498-b456-ee661a5898ea">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<graphicElement>
@@ -480,7 +779,7 @@
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement mode="Opaque" x="20" y="7" width="159" height="23" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="0aeff465-795c-4db5-9f5a-eea6c5d0d8f7">
+					<reportElement mode="Opaque" x="17" y="-63" width="159" height="23" forecolor="#030303" backcolor="#F2F4F5" uuid="0aeff465-795c-4db5-9f5a-eea6c5d0d8f7">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -495,10 +794,10 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Vista Sans OT Bold" size="14" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Customer]]></text>
+					<text><![CDATA[Bill to]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="226" y="8" width="159" height="23" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="740e143a-958c-4d3c-9305-79891906ab8a">
+					<reportElement mode="Opaque" x="300" y="-63" width="149" height="23" forecolor="#030303" backcolor="#F2F4F5" uuid="740e143a-958c-4d3c-9305-79891906ab8a">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -513,295 +812,79 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Vista Sans OT Bold" size="14" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Comments]]></text>
+					<text><![CDATA[Sell to]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
-					<reportElement x="49" y="39" width="161" height="17" uuid="e82161bc-e36a-43db-958b-4b529bd310d7">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+				<textField>
+					<reportElement x="20" y="-38" width="266" height="83" uuid="9617d1a3-e88a-4ac2-bfcb-2cea4421044e"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{name_1}.toUpperCase()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[(($F{baQuality}!=null && !String.valueOf($F{baQuality}).isEmpty() && !String.valueOf($F{baQuality}).equals("null")) ? $F{baQuality} + " " : "")
++ (($F{baFirstName}!=null && !String.valueOf($F{baFirstName}).isEmpty() && !String.valueOf($F{baFirstName}).equals("null")) ? $F{baFirstName} + " " : "") 
++ (($F{baName}!=null && !String.valueOf($F{baName}).isEmpty() && !String.valueOf($F{baName}).equals("null")) ? $F{baName} : "") 
++ "\n"
++ (($F{baAddrLine1}!=null && !String.valueOf($F{baAddrLine1}).isEmpty() && !String.valueOf($F{baAddrLine1}).equals("null")) ? $F{baAddrLine1} + "\n" : "")
++ (($F{baAddrLine2}!=null && !String.valueOf($F{baAddrLine2}).isEmpty() && !String.valueOf($F{baAddrLine2}).equals("null")) ? $F{baAddrLine2} + "\n" : "")
++ (($F{baAddrZip}!=null && !String.valueOf($F{baAddrZip}).isEmpty() && !String.valueOf($F{baAddrZip}).equals("null")) ? $F{baAddrZip} + " " : "")
++ (($F{baCity}!=null && !String.valueOf($F{baCity}).isEmpty() && !String.valueOf($F{baCity}).equals("null")) ? $F{baCity} : "")
++ "\n"
++ (($F{baCountry}!=null && !String.valueOf($F{baCountry}).isEmpty() && !String.valueOf($F{baCountry}).equals("null")) ? $F{baCountry} : "")
++ "\n"]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="49" y="56" width="161" height="17" uuid="702d8f78-6177-474f-b04e-ca35f41a113e">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10"/>
+				<textField>
+					<reportElement x="304" y="-38" width="266" height="83" uuid="f0596c31-1b38-473c-b8c8-b5bda22483b8"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{address1}.toUpperCase()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[(($F{caQuality}!=null && !String.valueOf($F{caQuality}).isEmpty() && !String.valueOf($F{caQuality}).equals("null")) ? $F{caQuality} + " " : "")
++ (($F{caFirstName}!=null && !String.valueOf($F{caFirstName}).isEmpty() && !String.valueOf($F{caFirstName}).equals("null")) ? $F{caFirstName} + " " : "") 
++ (($F{caName}!=null && !String.valueOf($F{caName}).isEmpty() && !String.valueOf($F{caName}).equals("null")) ? $F{caName} : "") 
++ "\n"
++ (($F{caAddrLine1}!=null && !String.valueOf($F{caAddrLine1}).isEmpty() && !String.valueOf($F{caAddrLine1}).equals("null")) ? $F{caAddrLine1} + "\n" : "")
++ (($F{caAddrLine2}!=null && !String.valueOf($F{caAddrLine2}).isEmpty() && !String.valueOf($F{caAddrLine2}).equals("null")) ? $F{caAddrLine2} + "\n" : "")
++ (($F{caAddrZip}!=null && !String.valueOf($F{caAddrZip}).isEmpty() && !String.valueOf($F{caAddrZip}).equals("null")) ? $F{caAddrZip} + " " : "")
++ (($F{caCity}!=null && !String.valueOf($F{caCity}).isEmpty() && !String.valueOf($F{caCity}).equals("null")) ? $F{caCity} : "")
++ "\n"
++ (($F{caCountry}!=null && !String.valueOf($F{caCountry}).isEmpty() && !String.valueOf($F{caCountry}).equals("null")) ? $F{caCountry} : "")]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="49" y="77" width="161" height="17" uuid="1ddf6f51-e087-43e6-9b24-0e02cab62dce">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{zipCode}.toUpperCase() + "  " + $F{city}.toUpperCase()]]></textFieldExpression>
-				</textField>
-				<image>
-					<reportElement x="20" y="36" width="21" height="30" uuid="b9c156f1-7bf2-4ad8-aa6d-25e70d0bfc08"/>
-					<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_professional-services.png"]]></imageExpression>
-				</image>
-				<textField isBlankWhenNull="true">
-					<reportElement x="49" y="96" width="161" height="17" uuid="1c75a079-814c-4795-907a-ab6f04ac3611">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{vatNo}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement x="226" y="36" width="342" height="20" uuid="6f3473cf-42ef-4541-801e-992c4f1c5682">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{comment}!=null?$F{comment}:""]]></textFieldExpression>
-				</textField>
+				<subreport>
+					<reportElement x="-1" y="56" width="570" height="74" uuid="e0e44b6e-fe3b-465c-be24-90c4a3640065"/>
+					<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).dataSource("/quote")]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{messagePath}+"/quote-article.jasper"]]></subreportExpression>
+				</subreport>
 			</band>
 		</groupHeader>
 	</group>
 	<group name="2">
 		<groupHeader>
-			<band height="157">
-				<componentElement>
-					<reportElement key="table 6" x="19" y="75" width="565" height="48" isRemoveLineWhenBlank="true" uuid="b800e628-8057-4f6a-8570-9d102ee1dbb3">
-						<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
-					</reportElement>
-					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
-						<datasetRun subDataset="quote_prices_dataSet" uuid="def7d97e-34e1-4e2a-aab0-b0bc12d852d7">
-							<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).dataSource("/quote/details/quotePrices/price")]]></dataSourceExpression>
-						</datasetRun>
-						<jr:column width="186" uuid="9f80f696-f345-43fb-9b9f-e2a751eda2dd">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne1"/>
-							<jr:columnHeader height="10" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="186" height="30" isPrintWhenDetailOverflows="true" uuid="84a4628a-286a-41bc-8ba7-89e282ad4fd5"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{priceType}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="115" uuid="c2c69f48-0650-4a5c-b157-8f7e47805249">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne2"/>
-							<jr:columnHeader height="10" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="115" height="30" isPrintWhenDetailOverflows="true" uuid="b24f86a6-c699-434d-b125-5e14f737e8c4"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))+"€"]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="121" uuid="99a9b9d5-7b03-4421-9053-6c45ea51373b">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne3"/>
-							<jr:columnHeader height="10" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="121" height="30" isPrintWhenDetailOverflows="true" uuid="6c08e40b-5fcc-4a7e-b327-e45fc7321e95"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithtax}))+"€"]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="74" uuid="15c33593-e6da-46c2-90e6-4780eabc0871">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne4"/>
-							<jr:columnHeader height="10" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="74" height="30" isPrintWhenDetailOverflows="true" uuid="4ca2d59c-2814-47f0-8166-720ec2de18e5"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxAmount}))+"€"]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="69" uuid="3d1263e1-a51e-4b8d-9af6-3b3fdafff3e1">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne5"/>
-							<jr:columnHeader height="10" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="69" height="30" isPrintWhenDetailOverflows="true" uuid="89c3f7c2-56dc-43e3-97e3-e9c55ab66447"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxRate}))+"%"]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-					</jr:table>
-				</componentElement>
+			<band height="296">
+				<rectangle>
+					<reportElement x="14" y="237" width="564" height="40" backcolor="#F2F2F2" uuid="b574364c-d694-4cc9-907a-491064641b68"/>
+				</rectangle>
 				<staticText>
-					<reportElement mode="Opaque" x="19" y="67" width="181" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="648babf1-7774-461c-9a56-9dc8b2e82494">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<reportElement x="16" y="249" width="562" height="27" uuid="3fc08cf9-48a2-439e-92e2-f05e3a3c9fcb"/>
+					<textElement>
+						<font fontName="SansSerif" size="10" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Category]]></text>
+					<text><![CDATA[Any amounts owned that are not paid will due shall bear interest, from the time the payment was due until the time paid,          at a rate of 10% per annum compounded annually.]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="209" y="67" width="100" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="b8d2e020-a94f-4d95-acfc-8fc341c9a0fc">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<reportElement x="16" y="237" width="514" height="19" uuid="8847a726-4871-4242-b223-1d7434e57587"/>
+					<textElement>
+						<font fontName="SansSerif" size="10" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Amount w/o tax]]></text>
+					<text><![CDATA[No early payment discount.]]></text>
 				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="318" y="67" width="113" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="48863569-e7a3-4369-9e21-de83ac7dcbc0">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<rectangle radius="0">
+					<reportElement x="15" y="40" width="205" height="191" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="ef23aa63-228b-43c3-bc44-29bc37f3fc8d">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Amout with tax]]></text>
-				</staticText>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
+					</graphicElement>
+				</rectangle>
 				<staticText>
-					<reportElement mode="Opaque" x="440" y="67" width="70" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="222c4e20-ccae-4dea-8dab-7081e0e617e5">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Tax]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="520" y="67" width="64" height="16" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="9332c3d1-6573-443f-ac5c-810c747c1cde">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Tax Rate]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="19" y="34" width="380" height="23" forecolor="#F0F7FA" backcolor="#76818C" uuid="6dce52c6-b75c-4358-944d-2f6e32c93294">
+					<reportElement mode="Opaque" x="16" y="40" width="127" height="23" forecolor="#030303" backcolor="#F2F4F5" uuid="d9421f6a-7328-4791-b9df-cc1fea8ac385">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -814,523 +897,388 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="12.5" isBold="true"/>
+						<font fontName="Vista Sans OT Bold" size="14" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Quote Summary]]></text>
+					<text><![CDATA[Comment]]></text>
 				</staticText>
-				<break>
-					<reportElement x="0" y="136" width="100" height="1" uuid="0853bd4d-096b-4e1d-bb36-5bbfe03dec61"/>
-				</break>
-			</band>
-		</groupHeader>
-	</group>
-	<group name="subCategory"/>
-	<group name="3" isStartNewPage="true">
-		<groupHeader>
-			<band height="182">
-				<componentElement>
-					<reportElement key="table 6" x="12" y="66" width="566" height="50" uuid="e061a819-657c-45e9-8cbe-67351fa8e501">
-						<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+				<rectangle radius="10">
+					<reportElement x="242" y="188" width="327" height="43" forecolor="#F2F4F5" backcolor="#F2F4F5" uuid="00e1c1a7-e593-4bed-9847-0a3fcd38cf94">
+						<property name="com.jaspersoft.studio.element.name" value="coordonnees_container"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="348" y="192" width="160" height="30" forecolor="#0D0101" uuid="2bd63e33-e080-457f-a3f6-fc276d153b09"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="16"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{sumAmountWithTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{sumAmountWithTax})))]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="248" y="157" width="100" height="27" forecolor="#0D0101" uuid="aa7621f4-c480-4ae2-857f-9417e72a30bd"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{caCountryCode}=="FR" || $F{caCountryCode}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{sumAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{sumAmountWithoutTax})))]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="518" y="193" width="48" height="28" forecolor="#0D0101" uuid="3ce339af-e6f9-4e85-a195-f0cdf7eea0c5">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#F2F4F5"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="16" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{providerCurrencySymbol}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="248" y="145" width="100" height="12" forecolor="#0D0101" uuid="2ec5fba6-2ead-4a5f-a7cc-10e6d7fb20be">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#F2F4F5"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Total w/o tax]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="248" y="194" width="100" height="26" forecolor="#0D0101" uuid="07f4f924-4a07-4caf-be41-fa872177f18c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#F2F4F5"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="16" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Net to pay]]></text>
+				</staticText>
+				<line>
+					<reportElement x="248" y="158" width="309" height="1" forecolor="#999999" uuid="a9cbc2e8-1789-43d2-838d-ac82a1144ee9"/>
+					<graphicElement>
+						<pen lineWidth="1.0" lineColor="#CCCCCC"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="374" y="145" width="73" height="12" forecolor="#0D0101" uuid="6f3b8ccd-cce3-478a-b980-fe6f071eb9a0">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#F2F4F5"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Total tax]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="484" y="145" width="73" height="12" forecolor="#0D0101" uuid="4d34a4d2-96c4-4247-ae84-ea671e405637">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#F2F4F5"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Total incl. tax]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="458" y="157" width="99" height="27" forecolor="#0D0101" uuid="9d459e04-5e4e-4986-8323-014df051a770"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{caCountryCode}=="FR" || $F{caCountryCode}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{sumAmountWithTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{sumAmountWithTax})))]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="348" y="157" width="99" height="27" forecolor="#0D0101" uuid="b56a4b47-68c9-476f-ba30-a2f663963d12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{caCountryCode}=="FR" || $F{caCountryCode}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{sumAmountTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{sumAmountTax})))]]></textFieldExpression>
+				</textField>
+				<componentElement>
+					<reportElement key="" positionType="Float" isPrintRepeatedValues="false" x="227" y="28" width="358" height="80" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="78b31ce1-104f-4b7f-a671-7776c1496f63"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
-						<datasetRun subDataset="ba_prices" uuid="a699e93d-5aa3-40cf-867c-8365aee42c78">
-							<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).dataSource("/quote/details/quote/billableAccounts/billableAccount/billingAccountPrices/price")]]></dataSourceExpression>
+						<datasetRun subDataset="taxList" uuid="f15bb70b-0e76-4d0e-9e54-2c887b8f216e">
+							<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}.dataSource("/quote/header/taxDetail/taxes/tax")]]></dataSourceExpression>
 						</datasetRun>
-						<jr:column width="87" uuid="5f9a6320-a48e-4608-b6b0-ba8cf98ba3bc">
-							<jr:columnHeader height="2" rowSpan="1">
+						<jr:column width="30" uuid="b616e49a-baae-4c23-b17f-7b9d0969282b">
+							<jr:tableHeader height="14" rowSpan="1">
 								<box>
-									<pen lineWidth="0.0"/>
-									<topPen lineWidth="0.0"/>
-									<leftPen lineWidth="0.0"/>
-									<bottomPen lineWidth="0.0"/>
-									<rightPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
 								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="30" height="14" uuid="54016890-da20-4008-86e7-52712e6be2d1">
+										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="2">
+										<leftPen lineWidth="0.0"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+									</textElement>
+									<text><![CDATA[VAT]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:detailCell height="15" rowSpan="1">
 								<box>
-									<pen lineWidth="0.0"/>
-									<topPen lineWidth="0.0"/>
-									<leftPen lineWidth="0.0"/>
-									<bottomPen lineWidth="0.0"/>
-									<rightPen lineWidth="0.0"/>
+									<pen lineWidth="0.0" lineColor="#999999"/>
+									<topPen lineWidth="0.0" lineColor="#999999"/>
+									<leftPen lineWidth="0.0" lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineWidth="0.0" lineColor="#999999"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="30" height="15" uuid="8602242b-d25f-4260-87c2-3850a1b8a72b"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{index}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="180" uuid="da2fa8ac-2a8c-4099-a8c3-6850765d0409">
+							<jr:tableHeader height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+								</box>
+								<staticText>
+									<reportElement x="0" y="0" width="180" height="14" uuid="c2f2a7c1-181f-4ef5-946d-5f3b9a636829">
+										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="2">
+										<leftPen lineWidth="0.0"/>
+									</box>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+									</textElement>
+									<text><![CDATA[VAT rate]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:detailCell height="15" rowSpan="1">
+								<box>
+									<pen lineWidth="0.0" lineColor="#999999"/>
+									<topPen lineWidth="0.0" lineColor="#999999"/>
+									<leftPen lineWidth="0.0" lineColor="#999999"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineWidth="0.0" lineColor="#999999"/>
+								</box>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="180" height="15" uuid="fedefd8b-84e7-40ce-a4ac-2ae3f40d3966"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[(($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{percent})))+"%"  : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{percent})))+"%") + (($F{compositeRate}  != null && !$F{compositeRate}.isEmpty()) ? "(" +  $F{compositeRate} + ")" : "")]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="80" uuid="ca2434a7-19b7-4f55-8d78-78b7c08a629b">
+							<jr:tableHeader height="14" rowSpan="1">
+								<box>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
 								</box>
 								<textField>
-									<reportElement isPrintRepeatedValues="false" mode="Opaque" x="0" y="0" width="87" height="30" backcolor="#CCCCCC" uuid="90860549-0aa0-4f7f-9b27-55da951eae09"/>
-									<box>
-										<topPen lineWidth="0.5"/>
-										<leftPen lineWidth="0.5"/>
-										<bottomPen lineWidth="0.5"/>
-										<rightPen lineWidth="0.5"/>
+									<reportElement x="0" y="0" width="80" height="14" uuid="5dd5e923-4b5f-42e3-9cad-ac9ed4d87faf">
+										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="2">
+										<leftPen lineWidth="0.0"/>
 									</box>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{billingAccountCode}]]></textFieldExpression>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA["Price w/o tax"]]></textFieldExpression>
 								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="92" uuid="ba770bf1-8765-4d9f-b311-669fae82c05e">
-							<jr:columnHeader height="2" rowSpan="1">
+							</jr:tableHeader>
+							<jr:tableFooter height="11" rowSpan="1"/>
+							<jr:detailCell height="15" rowSpan="1">
 								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
+									<pen lineWidth="0.0"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="92" height="30" isPrintWhenDetailOverflows="true" uuid="79a77a16-7cf7-470c-b8d0-cd2b295e8cdb"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{priceType}]]></textFieldExpression>
+									<reportElement x="0" y="0" width="80" height="15" isPrintWhenDetailOverflows="true" uuid="374907ae-b19d-472a-9f7c-c004a68f5af0"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithoutTax})))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="87" uuid="9134d350-8cbf-4085-9999-8daabbfdbaab">
-							<jr:columnHeader height="2" rowSpan="1">
+						<jr:column width="68" uuid="29e5757f-174c-4327-83d0-e96724f768df">
+							<jr:tableHeader height="14" rowSpan="1">
 								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
 								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="87" height="30" isPrintWhenDetailOverflows="true" uuid="2107769c-6e18-48ed-a39e-0d5c938a1848"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithoutTax}))+"€"]]></textFieldExpression>
+								<textField>
+									<reportElement x="0" y="0" width="68" height="14" forecolor="#000000" uuid="dcb048fb-a31e-438e-8aab-3d3e179d0892">
+										<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="2">
+										<leftPen lineWidth="0.0"/>
+										<rightPen lineWidth="0.0"/>
+									</box>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+									</textElement>
+									<textFieldExpression><![CDATA["Tax"]]></textFieldExpression>
 								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="94" uuid="fcf14bb3-259d-4c47-9e87-b2a25a89473d">
-							<jr:columnHeader height="2" rowSpan="1">
+							</jr:tableHeader>
+							<jr:tableFooter height="11" rowSpan="1"/>
+							<jr:detailCell height="15" rowSpan="1">
 								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
+									<pen lineWidth="0.0"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="1.0" lineColor="#999999"/>
+									<rightPen lineWidth="0.0"/>
 								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="94" height="30" isPrintWhenDetailOverflows="true" uuid="53423ada-4d55-4b45-b18a-d77b02eb75cc"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{amountWithtax}))+"€"]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="66" uuid="e9c9089f-b869-4a3c-9951-08f5b9b64c99">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="66" height="30" isPrintWhenDetailOverflows="true" uuid="fd62bc24-c1e5-445c-92f0-e8f3af0a6766"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxAmount}))+"€"]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="62" uuid="4b1e6572-7e87-456c-af20-b470232bcea2">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField pattern="#0.000" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="62" height="30" isPrintWhenDetailOverflows="true" uuid="616b0753-a93f-4d36-830e-8074b3c965f7"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{taxRate}))+"%"]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="78" uuid="5dd88f85-b595-4119-915d-aed2f0d66917">
-							<jr:columnHeader height="2" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-							</jr:columnHeader>
-							<jr:detailCell height="30" rowSpan="1">
-								<box>
-									<pen lineWidth="0.25"/>
-									<topPen lineWidth="0.25"/>
-									<leftPen lineWidth="0.25"/>
-									<bottomPen lineWidth="0.25"/>
-									<rightPen lineWidth="0.25"/>
-								</box>
-								<textField isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="78" height="30" isPrintWhenDetailOverflows="true" uuid="98d7fe7c-2c28-4a15-88ea-e516f68d5bf2"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle"/>
-									<textFieldExpression><![CDATA[$F{recurrencePeriodicity}]]></textFieldExpression>
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement x="0" y="0" width="68" height="15" uuid="43195940-f233-4089-acbe-885f248166f6"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+									</textElement>
+									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountTax})))]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 					</jr:table>
 				</componentElement>
-				<staticText>
-					<reportElement mode="Opaque" x="100" y="40" width="92" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="b82b472a-3c0b-4c36-a165-74fc3bf9b300">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="227" y="110" width="358" height="35" forecolor="#878787" uuid="730e3104-e9d7-436f-baf0-00e11484d9ad">
+						<printWhenExpression><![CDATA[$F{vatex} != null && !$F{vatex}.isEmpty()]]></printWhenExpression>
 					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<textElement>
+						<font fontName="Arial" size="9"/>
 					</textElement>
-					<text><![CDATA[Category]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="197" y="40" width="73" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="a807218b-425f-49a9-a8bf-28fdc06f212f">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<textFieldExpression><![CDATA["VAT exoneration reason : " + $F{vatex}.replaceAll("\\|", "/n")]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="19" y="67" width="191" height="152" uuid="9591378c-523f-4c9b-85a9-7914c1671a31"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{comment}==null || $F{comment}.isEmpty()) ? "" : $F{comment}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="228" y="5" width="355" height="19" forecolor="#878787" uuid="f562496e-4728-4906-86f0-03c96d56c8b3">
+						<printWhenExpression><![CDATA[$F{baCurrencyRate} != null && !$F{baCurrencyRate}.isEmpty()]]></printWhenExpression>
 					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<box bottomPadding="2"/>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="Vista Sans OT Reg" size="9" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Amount w/o tax]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="286" y="40" width="72" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="c7b620eb-da5e-43ee-9d92-e8e3702e47d9">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Amout with tax]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="378" y="40" width="57" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="5636c5d3-f3e3-48cc-bae6-0d6fe0da4b71">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Tax]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="447" y="40" width="52" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="a3207727-4f2f-412e-9c39-26c198080ebd">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Tax Rate]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="512" y="40" width="68" height="28" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="e88a064c-ed1f-4fe6-bfd8-629c6593d513">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="7" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Duration]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="19" y="6" width="380" height="23" forecolor="#F0F7FA" backcolor="#76818C" uuid="7f6fc80d-cad7-4747-aaf2-645e142c3de7">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="12.5" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Details - Per Billing account ]]></text>
-				</staticText>
+					<textFieldExpression><![CDATA[(($F{baCurrencyRate}!=null && !String.valueOf($F{baCurrencyRate}).isEmpty() && !String.valueOf($F{baCurrencyRate}).equals("null") && new Double($F{baCurrencyRate}.replace(",", ".")) > 1d) ? "Rate applied against " + ($F{baCurrencyCode} != null ? $F{baCurrencyCode} : "") + " : " + (($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{baCurrencyRate}.replace(",", ".")))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{baCurrencyRate}.replace(",", "."))))) + " " + $F{baCurrencySymbol} : "")]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
 	</group>
-	<group name="4">
-		<groupHeader>
-			<band height="98">
-				<staticText>
-					<reportElement mode="Opaque" x="20" y="9" width="380" height="23" forecolor="#F0F7FA" backcolor="#76818C" uuid="8bb9ba5a-53af-41a6-965d-05ef316251c5">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
-						<pen lineWidth="5.0" lineColor="#FF8C00"/>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="12.5" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Details - Per Billing Account and Articles]]></text>
-				</staticText>
-				<subreport>
-					<reportElement x="0" y="41" width="595" height="40" uuid="daaed693-5b5a-4c19-8b1f-3f963b90319e">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<subreportParameter name="xmlDateFormat">
-						<subreportParameterExpression><![CDATA[$P{xmlDateFormat}]]></subreportParameterExpression>
-					</subreportParameter>
-					<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).dataSource("/quote/details/quote/billableAccounts/billableAccount/quoteLots/quoteLot/categories/category/subCategories/subCategory/accountingArticles/accountingArticle/quoteLines/quoteLine/prices/price")]]></dataSourceExpression>
-					<subreportExpression><![CDATA[$P{messagePath}+"quote_accouting_articles.jasper"]]></subreportExpression>
-				</subreport>
-			</band>
-		</groupHeader>
-	</group>
+	<group name="4"/>
 	<pageHeader>
-		<band height="126">
-			<rectangle radius="10">
-				<reportElement x="359" y="7" width="225" height="115" forecolor="#FFFFFF" backcolor="#F2F4F5" uuid="38170fce-2c50-4a0b-93b9-613397a87fc2"/>
+		<band height="174">
+			<rectangle radius="5">
+				<reportElement x="369" y="25" width="215" height="73" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="38170fce-2c50-4a0b-93b9-613397a87fc2">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 				<graphicElement>
-					<pen lineWidth="0.0" lineColor="rgba(0, 0, 0, 0.0)"/>
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#999999"/>
 				</graphicElement>
 			</rectangle>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
-				<reportElement x="568" y="106" width="17" height="20" uuid="f18bd2ec-dda5-4906-b56e-4048fdedd163"/>
+				<reportElement x="566" y="9" width="17" height="20" uuid="f18bd2ec-dda5-4906-b56e-4048fdedd163"/>
 				<textElement markup="html">
 					<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement mode="Opaque" x="375" y="16" width="105" height="20" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="ca7f4cdd-8185-42c2-842a-dd8b0e19036a">
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
-					<pen lineWidth="5.0" lineColor="#FF8C00"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Quote ]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="375" y="37" width="105" height="20" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="46503a16-5734-40ab-b8dc-74789fc41104">
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
-					<pen lineWidth="5.0" lineColor="#FF8C00"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Version]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="470" y="106" width="95" height="20" uuid="712eefbd-09d6-4bb3-82b4-4f89b43e8350"/>
+				<reportElement x="468" y="9" width="95" height="20" uuid="712eefbd-09d6-4bb3-82b4-4f89b43e8350"/>
 				<textElement textAlignment="Right">
 					<font fontName="Vista Sans OT Bold" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+"/"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement mode="Opaque" x="375" y="58" width="105" height="20" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="1255b053-ef4a-4419-a43f-87dc3104416f">
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
-					<pen lineWidth="5.0" lineColor="#FF8C00"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
+			<textField>
+				<reportElement x="380" y="27" width="198" height="20" uuid="be664544-5902-48e9-9ae7-c26d07ecd4f1"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Duration]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="375" y="80" width="105" height="20" forecolor="#F0F7FA" backcolor="#A9ADB0" uuid="ad2d6dd9-8239-44d1-b98a-8acc6044458e">
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="20" bottomPadding="0" rightPadding="0">
-					<pen lineWidth="5.0" lineColor="#FF8C00"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.5" lineStyle="Solid" lineColor="#FF0000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
+				<textFieldExpression><![CDATA["Quote: " + $F{quoteCode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="74" width="198" height="20" uuid="d2740111-2d63-49a8-82e1-67165a94cf83"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Opport. Duration]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="483" y="16" width="95" height="20" uuid="be664544-5902-48e9-9ae7-c26d07ecd4f1"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{quoteCode}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Version: " + $F{quoteVersion}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="483" y="37" width="95" height="20" uuid="d2740111-2d63-49a8-82e1-67165a94cf83"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+				<reportElement x="380" y="43" width="198" height="20" uuid="3bfec27e-c691-4eb8-a80e-c1de7650c058"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{quoteVersion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Date: " + ($F{caCountryCode}=="US" ? java.time.LocalDate.parse(($F{quoteDate}).substring(0,10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{quoteDate}.substring(0, 10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="483" y="58" width="95" height="20" uuid="3bfec27e-c691-4eb8-a80e-c1de7650c058"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{duration}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="483" y="80" width="95" height="20" uuid="efe02bcc-c712-4cc3-ad43-455a265ce3ec"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{opportunityDuration}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement mode="Transparent" x="61" y="87" width="238" height="38" forecolor="#AB1616" uuid="2280f6a9-5871-43b6-a416-d9e70f4fc1b6"/>
-				<box>
-					<pen lineColor="#A8120F"/>
-				</box>
-				<textElement textAlignment="Left">
-					<font size="29" isBold="true"/>
-				</textElement>
-				<text><![CDATA[My Quote]]></text>
-			</staticText>
 			<image scaleImage="RealSize" hAlign="Left" vAlign="Middle">
-				<reportElement x="0" y="-1" width="190" height="58" uuid="3a507fd9-2958-42dc-b452-26696f92232b"/>
+				<reportElement x="0" y="-1" width="202" height="61" uuid="3a507fd9-2958-42dc-b452-26696f92232b"/>
 				<imageExpression><![CDATA[$P{logoPath}+"Pictos/opensoft.png"]]></imageExpression>
 			</image>
-			<image>
-				<reportElement x="20" y="80" width="43" height="43" uuid="f85acf88-389b-40b5-b0d2-85c726354a29"/>
-				<imageExpression><![CDATA[$P{logoPath}+"Pictos/ico_service-level-agreements.png"]]></imageExpression>
-			</image>
+			<textField>
+				<reportElement x="380" y="59" width="198" height="20" uuid="1dd2dce0-cdf5-416b-aa6e-da9fe01d0134"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Valid until: " + ($F{caCountryCode}=="US" ? java.time.LocalDate.parse(($F{quoteVersionEndDate}).substring(0,10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{quoteVersionEndDate}.substring(0, 10), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<pageFooter>
-		<band height="50">
+		<band height="49">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="7" width="595" height="40" backcolor="#A8120F" uuid="7150daa2-ebf5-4afd-a7e5-a2703b82b037"/>
-				<staticText>
-					<reportElement mode="Transparent" x="110" y="0" width="452" height="40" forecolor="#FFFFFF" backcolor="rgba(255, 255, 255, 0.0)" uuid="25fb8682-7807-406c-bde7-0a13884b251d">
+				<reportElement mode="Opaque" x="0" y="7" width="595" height="40" backcolor="#F2F4F5" uuid="5f6046f5-92c4-4f41-939f-862433cdc80b"/>
+				<textField>
+					<reportElement mode="Transparent" x="10" y="0" width="575" height="40" forecolor="#030303" backcolor="rgba(255, 255, 255, 0.0)" uuid="ed1c1086-d238-4927-b1a2-317f25e4aaad">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1342,21 +1290,22 @@
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 						<font fontName="Vista Sans OT Bold" size="9.6"/>
 					</textElement>
-					<text><![CDATA[Opensoft 
-10 rue Linus Torvalds – 75012 Paris - France 
-Share capital of 17.300 € - Commercial register Paris B 810 129 XXX – SIREN  810 129 XXX – NAF 5829 C
-
-
-
-Edited]]></text>
-				</staticText>
-				<image>
-					<reportElement mode="Opaque" x="10" y="3" width="82" height="34" uuid="ec651dea-822f-4be7-b3ae-f85fe3cd2b9e"/>
-					<imageExpression><![CDATA[$P{logoPath}+"Pictos/opensoft.png"]]></imageExpression>
-				</image>
+					<textFieldExpression><![CDATA[(($F{sellerDescription}!=null && !String.valueOf($F{sellerDescription}).isEmpty() && !String.valueOf($F{sellerDescription}).equals("null")) ? "<style isBold='true'>" + $F{sellerDescription} + "</style> - " : "") +
+(($F{sellerLegalType}!=null && !String.valueOf($F{sellerLegalType}).isEmpty() && !String.valueOf($F{sellerLegalType}).equals("null")) ? $F{sellerLegalType} : "") + 
+(($F{sellerRegNo}!=null && !String.valueOf($F{sellerRegNo}).isEmpty() && !String.valueOf($F{sellerRegNo}).equals("null")) ? "<style isBold='true'> - Reg.nr.: </style>" + $F{sellerRegNo} : "")
++
+(($F{sellerVatNo}!=null && !String.valueOf($F{sellerVatNo}).isEmpty() && !String.valueOf($F{sellerVatNo}).equals("null")) ? "<style isBold='true'> - VAT Number </style>" + $F{sellerVatNo} : "")
++  " - "
++ (($F{sellerAddress1}!=null && !String.valueOf($F{sellerAddress1}).isEmpty() && !String.valueOf($F{sellerAddress1}).equals("null")) ? " " + $F{sellerAddress1} : "")
++ (($F{sellerAddress2}!=null && !String.valueOf($F{sellerAddress2}).isEmpty() && !String.valueOf($F{sellerAddress2}).equals("null")) ? " " + $F{sellerAddress2} : "")
++ (($F{sellerAddress3}!=null && !String.valueOf($F{sellerAddress3}).isEmpty() && !String.valueOf($F{sellerAddress3}).equals("null")) ? " " + $F{sellerAddress3} : "")
++ (($F{sellerPostalCode}!=null && !String.valueOf($F{sellerPostalCode}).isEmpty() && !String.valueOf($F{sellerPostalCode}).equals("null")) ? ", " + $F{sellerPostalCode} : "")+ 
+(($F{sellerCity}!=null && !String.valueOf($F{sellerCity}).isEmpty() && !String.valueOf($F{sellerCity}).equals("null")) ? ", " + $F{sellerCity} : "")
++ (($F{sellerCountryName}!=null && !String.valueOf($F{sellerCountryName}).isEmpty() && !String.valueOf($F{sellerCountryName}).equals("null")) ? ", " + $F{sellerCountryName} : "")]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</pageFooter>

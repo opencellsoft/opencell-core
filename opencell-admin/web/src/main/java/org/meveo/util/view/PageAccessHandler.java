@@ -68,7 +68,7 @@ public class PageAccessHandler implements Serializable {
                 if (navCase == null) {
                     continue;
                 }
-
+                
                 // Replace .xhtml with .jsf and remove any url parameters
                 String targetUrl = navCase.getToViewId(context);
                 targetUrl = targetUrl.substring(0, targetUrl.indexOf(".xhtml")) + ".jsf";

@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -41,6 +44,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
@@ -60,8 +64,8 @@ import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.PricePlanSelectionService;
+import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 
 /**
@@ -244,67 +248,106 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     
     public List<DiscountPlanItem>  getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,Subscription subscription,WalletOperation walletOperation,AccountingArticle accountingArticle,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
             throws BusinessException {
-    	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
-    	
-    	if(discountPlan.getSequence()==null){
-    		discountPlanService.setDiscountPlanSequence(discountPlan);
-    		discountPlanService.update(discountPlan);
-    	} 
-        if(accountingArticle==null && walletOperation!=null) {
-        	accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
+        List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
+
+        if(discountPlan.getSequence()==null){
+            discountPlanService.setDiscountPlanSequence(discountPlan);
+            discountPlanService.update(discountPlan);
         }
-        
+        if(accountingArticle==null && walletOperation!=null) {
+            accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
+        }
+
         ChargeTemplate chargeTemplate = null;
         boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,walletOperation,subscription);
         if (walletOperation != null) {
             chargeTemplate = walletOperation.getChargeInstance().getChargeTemplate();
-            
+
             log.debug("getApplicableDiscountPlanItems accountingArticle={}, discountPlan code={},isDiscountApplicable={}",accountingArticle,discountPlan.getCode(),isDiscountApplicable);
-            
+
             Boolean applyDiscountsOverridenPriceInCharge=  walletOperation.getChargeInstance().getApplyDiscountsOnOverridenPrice();
             boolean applyDiscountsOnOverridenPrice=applyDiscountsOverridenPriceInCharge!=null?applyDiscountsOverridenPriceInCharge:BooleanUtils.isTrue(discountPlan.getApplicableOnOverriddenPrice());
-            
+
             if (walletOperation.isOverrodePrice() && !applyDiscountsOnOverridenPrice) {
                 return Collections.emptyList();
             }
         }
-        
+
         boolean isFixedDpItemIncluded=false;
         if (isDiscountApplicable) {
-        	List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
-        	Long lowPriority=null;
-        	for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-        		isFixedDpItemIncluded=false;
-        		if(chargeTemplate != null && DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
-        			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
-        				continue;
-        		}
-        		if(discountPlanItem.isApplyByArticle()) {
-        			//this DP item will be handled as a percentage dp, so a discount WO/IL will be created on the product level and linked to the discounted WO/IL
-        			isFixedDpItemIncluded=DiscountPlanItemTypeEnum.PERCENTAGE.equals(discountPlanItemType);
-        			if(!isFixedDpItemIncluded) {
-        				continue;
-        			}
-        		}
+            List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+            Long lowPriority=null;
+            for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                isFixedDpItemIncluded=false;
+                if(chargeTemplate != null && DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
+                    if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
+                        continue;
+                }
+                if(discountPlanItem.isApplyByArticle()) {
+                    //this DP item will be handled as a percentage dp, so a discount WO/IL will be created on the product level and linked to the discounted WO/IL
+                    isFixedDpItemIncluded=discountPlanItemType != null ? DiscountPlanItemTypeEnum.PERCENTAGE == discountPlanItemType : DiscountPlanItemTypeEnum.PERCENTAGE == discountPlanItem.getDiscountPlanItemType();
+                    if(!isFixedDpItemIncluded) {
+                        continue;
+                    }
+                }
 
-        		if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
-        			if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority()))
-        					&& isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
-        				lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
+                if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
+                    if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority()))
+                            && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
+                        lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
 
-        				if(discountPlanItem.getSequence()==null) {
-        					setDisountPlanItemSequence(discountPlanItem);
-        					super.update(discountPlanItem);
-        				}
-        				applicableDiscountPlanItems.add(discountPlanItem);
+                        if(discountPlanItem.getSequence()==null) {
+                            setDisountPlanItemSequence(discountPlanItem);
+                            super.update(discountPlanItem);
+                        }
+                        applicableDiscountPlanItems.add(discountPlanItem);
 
-        			}
-        		}   
-        	}
+                    }
+                }
+            }
         }
         log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
         return applicableDiscountPlanItems;
-     }
+    }
+
+    /**
+     * Get applicable discount plan items
+     *
+     * @param billingAccount the billing account
+     * @param discountPlan the discount plan
+     * @param accountingArticle the accounting article
+     * @param applicationDate the application date
+     * @return list of discount plan item
+     * @throws BusinessException the business exception
+     */
+    public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan, AccountingArticle accountingArticle,
+                                                                 Date applicationDate) throws BusinessException {
+        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
+        if (discountPlan.getSequence() == null) {
+            discountPlanService.setDiscountPlanSequence(discountPlan);
+            discountPlanService.update(discountPlan);
+        }
+        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan, applicationDate, null, null);
+        if (isDiscountApplicable) {
+            List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+            Long lowPriority = null;
+            for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                if ((lowPriority == null || lowPriority.equals(discountPlanItem.getPriority()))
+                        && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle, null, null)) {
+                    lowPriority = lowPriority != null ? lowPriority : discountPlanItem.getPriority();
+
+                    if (discountPlanItem.getSequence() == null) {
+                        setDisountPlanItemSequence(discountPlanItem);
+                        super.update(discountPlanItem);
+                    }
+                    applicableDiscountPlanItems.add(discountPlanItem);
+                }
+            }
+        }
+        log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}", discountPlan.getCode(), applicableDiscountPlanItems.size());
+        return applicableDiscountPlanItems;
+    }
+
     public boolean isDiscountPlanItemApplicable(BillingAccount billingAccount,DiscountPlanItem discountPlanItem,AccountingArticle accountingArticle,Subscription subscription,WalletOperation walletOperation)
             throws BusinessException {
     	boolean isApplicable=false;
@@ -356,6 +399,20 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     			dpi.setSequence(sequence+1);
     	}
     }
+
+    public List<DiscountPlanItem> findBySequence(Long discountPlanId, Integer currentSequence){
+        if(discountPlanId == null || currentSequence == null) {
+            log.warn("The discount plan and sequence must not be null");
+            return Collections.emptyList();
+        }
+
+        List<DiscountPlanItem> discountPlanItems = getEntityManager().createNamedQuery("DiscountPlanItem.findBySequence")
+                .setParameter("discountPlanId", discountPlanId)
+                .setParameter("sequence", currentSequence).getResultList();
+        return discountPlanItems;
+    }
+
+
     	
     
 }

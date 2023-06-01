@@ -188,6 +188,8 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.detachFromInvoiceLines", query = "UPDATE RatedTransaction rt set rt.invoiceLine = null, rt.status = 'OPEN' WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoices", query = "UPDATE RatedTransaction r SET r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceLine=null, r.invoiceAgregateF=null WHERE r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice.id IN (:ids)) "),
         @NamedQuery(name = "RatedTransaction.reopenRatedTransactions", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null, r.invoiceLine=null where r.id IN (:rtIds)"),
+        @NamedQuery(name = "RatedTransaction.updatePendingDuplicate", query = "update RatedTransaction r set r.pendingDuplicates= r.pendingDuplicates + :pendingDuplicates, r.pendingDuplicatesToNegate= r.pendingDuplicatesToNegate + :pendingDuplicatesToNegate where r.id in (:rtI)"),
+        @NamedQuery(name = "RatedTransaction.findPendingOrNegateDuplicated", query = "Select r from RatedTransaction r where r.pendingDuplicates > 0 or r.pendingDuplicatesToNegate > 0"),
         @NamedQuery(name = "RatedTransaction.findForAppyInvoicingRuleByIds", query = "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) AND  rt.status = 'OPEN' and rt.rulesContract is not null")
         })
 
@@ -622,12 +624,22 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "rules_contract_id")
     private Contract rulesContract;
     
+    @ManyToOne
+    @JoinColumn(name = "origin_ratedtransaction_id")
+    private RatedTransaction originRatedTransaction;
+    
     /**
   	 * 
   	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
   	 */
   	@Column(name = "sequence")
   	private Integer sequence;
+
+    @Column(name = "pending_duplicates")
+    private Integer pendingDuplicates = 0;
+
+    @Column(name = "pending_duplicates_to_negate")
+    private Integer pendingDuplicatesToNegate = 0;
     
     public RatedTransaction() {
         super();
@@ -789,6 +801,65 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.rulesContract = walletOperation.getRulesContract();
     }
 
+
+    public RatedTransaction(RatedTransaction rateTransactionToDuplicate) {
+
+        super();
+        this.code = rateTransactionToDuplicate.getCode();
+        this.description = rateTransactionToDuplicate.getDescription();
+        this.chargeInstance = rateTransactionToDuplicate.getChargeInstance();
+        this.usageDate = rateTransactionToDuplicate.getUsageDate();
+        this.unitAmountWithoutTax = rateTransactionToDuplicate.getUnitAmountWithoutTax();
+        this.unitAmountWithTax = rateTransactionToDuplicate.getUnitAmountWithTax();
+        this.unitAmountTax = rateTransactionToDuplicate.getUnitAmountTax();
+        this.quantity = rateTransactionToDuplicate.getQuantity();
+        this.amountWithoutTax = rateTransactionToDuplicate.getAmountWithoutTax();
+        this.amountWithTax = rateTransactionToDuplicate.getAmountWithTax();
+        this.inputQuantity = rateTransactionToDuplicate.getInputQuantity();
+        this.rawAmountWithTax = rateTransactionToDuplicate.getRawAmountWithTax();
+        this.rawAmountWithoutTax = rateTransactionToDuplicate.getRawAmountWithoutTax();
+        this.amountTax = rateTransactionToDuplicate.getAmountTax();
+        this.wallet = rateTransactionToDuplicate.getWallet();
+        this.userAccount = rateTransactionToDuplicate.getUserAccount();
+        this.billingAccount = rateTransactionToDuplicate.getBillingAccount();
+        this.seller = rateTransactionToDuplicate.getSeller();
+        this.parameter1 = rateTransactionToDuplicate.getParameter1();
+        this.parameter2 = rateTransactionToDuplicate.getParameter2();
+        this.parameter3 = rateTransactionToDuplicate.getParameter3();
+        this.parameterExtra = rateTransactionToDuplicate.getParameterExtra();
+        this.orderNumber = rateTransactionToDuplicate.getOrderNumber();
+        this.subscription = rateTransactionToDuplicate.getSubscription();
+        this.priceplan = rateTransactionToDuplicate.getPriceplan();
+        this.offerTemplate = rateTransactionToDuplicate.getOfferTemplate();
+        this.startDate = rateTransactionToDuplicate.getStartDate();
+        this.endDate = rateTransactionToDuplicate.getEndDate();
+        this.tax = rateTransactionToDuplicate.getTax();
+        this.taxPercent = rateTransactionToDuplicate.getTaxPercent();
+        this.serviceInstance = rateTransactionToDuplicate.getServiceInstance();
+        this.status = RatedTransactionStatusEnum.OPEN;
+        this.updated = new Date();
+        this.taxClass = rateTransactionToDuplicate.getTaxClass();
+        this.inputUnitOfMeasure = rateTransactionToDuplicate.getInputUnitOfMeasure();
+        this.ratingUnitOfMeasure = rateTransactionToDuplicate.getRatingUnitOfMeasure();
+        this.accountingCode = rateTransactionToDuplicate.getAccountingCode();
+        this.accountingArticle = rateTransactionToDuplicate.getAccountingArticle();
+        this.infoOrder = rateTransactionToDuplicate.getOrderInfo();
+        this.invoicingDate = rateTransactionToDuplicate.getInvoicingDate();
+        this.unityDescription = rateTransactionToDuplicate.getUnityDescription();
+        this.ratingUnitDescription = rateTransactionToDuplicate.getRatingUnitDescription();
+        this.sortIndex = rateTransactionToDuplicate.getSortIndex();
+        this.cfValues = rateTransactionToDuplicate.getCfValues();
+        this.discountPlan = rateTransactionToDuplicate.getDiscountPlan();
+        this.discountPlanItem = rateTransactionToDuplicate.getDiscountPlanItem();
+        this.discountPlanType = rateTransactionToDuplicate.getDiscountPlanType();
+        this.discountValue = rateTransactionToDuplicate.getDiscountValue();
+        this.discountedAmount = rateTransactionToDuplicate.getDiscountedAmount();
+        this.sequence = rateTransactionToDuplicate.getSequence();
+        this.rulesContract = rateTransactionToDuplicate.getRulesContract();
+        this.pendingDuplicates = 0;
+        this.pendingDuplicatesToNegate = 0;
+    }
+    
     public WalletInstance getWallet() {
         return wallet;
     }
@@ -1608,5 +1679,34 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     public void setCreated(Date created) {
         this.created = created;
     }
-	
+
+	/**
+	 * @return the originRatedTransaction
+	 */
+	public RatedTransaction getOriginRatedTransaction() {
+		return originRatedTransaction;
+	}
+
+	/**
+	 * @param originRatedTransaction the originRatedTransaction to set
+	 */
+	public void setOriginRatedTransaction(RatedTransaction originRatedTransaction) {
+		this.originRatedTransaction = originRatedTransaction;
+	}
+
+    public Integer getPendingDuplicates() {
+        return pendingDuplicates;
+    }
+
+    public void setPendingDuplicates(Integer pendingDuplicates) {
+        this.pendingDuplicates = pendingDuplicates;
+    }
+
+    public Integer getPendingDuplicatesToNegate() {
+        return pendingDuplicatesToNegate;
+    }
+
+    public void setPendingDuplicatesToNegate(Integer pendingDuplicatesToNegate) {
+        this.pendingDuplicatesToNegate = pendingDuplicatesToNegate;
+    }
 }

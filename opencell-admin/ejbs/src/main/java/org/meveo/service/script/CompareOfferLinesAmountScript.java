@@ -8,21 +8,16 @@ import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.billing.impl.InvoiceLineService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.meveo.commons.utils.StringUtils;
 
 
 
 @SuppressWarnings("serial")
 public class CompareOfferLinesAmountScript extends Script{
 
-    private static final Logger LOG = LoggerFactory.getLogger(CompareOfferAmountScript.class);
-    
     private final String OFFERS = "offers";
     private final String WITH_OR_WITHOUT_TAX = "withOrWithoutTax";
     private final String OPERATOR = "operator";
@@ -37,10 +32,6 @@ public class CompareOfferLinesAmountScript extends Script{
     @SuppressWarnings("unchecked")
     @Override
     public void execute(Map<String, Object> methodContext) throws BusinessException {
-        methodContext.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> {
-            LOG.info("{}={}", entry.getKey(), entry.getValue());
-        });
-        
         Long invoiceId = ((Invoice) methodContext.get(INVOICE)).getId();
         List<OfferTemplate> offers = (List<OfferTemplate>) methodContext.get(OFFERS);
 
@@ -52,8 +43,7 @@ public class CompareOfferLinesAmountScript extends Script{
         if (!(offers == null || offers.isEmpty())) query.setParameter("offers", offers.stream().map(OfferTemplate::getId).collect(Collectors.toList()));
         List<Object[]> result = query.getResultList();
        
-        methodContext.put(Script.INVOICE_VALIDATION_STATUS, CollectionUtils.isEmpty(result) ? InvoiceValidationStatusEnum.VALID : (InvoiceValidationStatusEnum) methodContext.get(Script.RESULT_VALUE));
+        methodContext.put(Script.INVOICE_VALIDATION_STATUS, CollectionUtils.isEmpty(result) ? true : false);
     }
-    
     
 }

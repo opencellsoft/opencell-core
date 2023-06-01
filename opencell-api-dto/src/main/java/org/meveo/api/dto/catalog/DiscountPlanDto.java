@@ -180,7 +180,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	@Schema(description = "A list of entities (CustomerCategory, Offer, Product, Article).")
 	private List<ApplicableEntityDto> applicableEntities;
 
-	private Boolean applicableOnOverriddenPrice;
+	private boolean applicableOnOverriddenPrice = true;
 	
 	
 	/**
@@ -194,8 +194,8 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 determines whether the discount plan is applicable on the gross or discounted amount
 	 */
 	@Schema(description = "determines whether the discount plan is applicable on the gross or discounted amount")
-	private Boolean applicableOnDiscountedPrice;
-
+	private boolean applicableOnDiscountedPrice = true;
+	
 	/**
 	 determines whether the discount plan will automatically be applied to an offer or a product upon instantiation
 	 */
@@ -252,8 +252,9 @@ public class DiscountPlanDto extends EnableBusinessDto {
 			incompatibleDiscountPlans = discountPlansDto;
 		}
 		this.applicableOnOverriddenPrice = discountPlan.getApplicableOnOverriddenPrice();
-		this.applicableOnDiscountedPrice=BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice());
+		this.applicableOnDiscountedPrice = discountPlan.getApplicableOnDiscountedPrice();
 		this.sequence=discountPlan.getSequence();
+		this.automaticApplication = discountPlan.isAutomaticApplication();
 	}
 
     @Override
@@ -418,11 +419,11 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		this.discountPlanType = discountPlanType;
 	}
 
-	public Boolean getApplicableOnOverriddenPrice() {
+	public boolean isApplicableOnOverriddenPrice() {
 		return applicableOnOverriddenPrice;
 	}
 
-	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
+	public void setApplicableOnOverriddenPrice(boolean applicableOnOverriddenPrice) {
 		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
 	}
 
@@ -434,17 +435,21 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		this.sequence = sequence;
 	}
 
-	public Boolean getApplicableOnDiscountedPrice() {
+	public boolean isApplicableOnDiscountedPrice() {
 		return applicableOnDiscountedPrice;
 	}
 
-	public void setApplicableOnDiscountedPrice(Boolean applicableOnDiscountedPrice) {
+	public void setApplicableOnDiscountedPrice(boolean applicableOnDiscountedPrice) {
 		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
 	}
 
+	public Boolean getAutomaticApplication() {
+		return automaticApplication;
+	}
 
-
-
+	public void setAutomaticApplication(Boolean automaticApplication) {
+		this.automaticApplication = automaticApplication;
+	}
 
 	public String getAllowanceCode() {
 		return allowanceCode;

@@ -3,6 +3,7 @@ package org.meveo.model.catalog;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,15 +24,16 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "cpq_price_plan_matrix_value")
 
+@Cacheable
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_value_sq"), })
 @NamedQueries({ @NamedQuery(name = "PricePlanMatrixValue.findByPricePlanMatrixLine", query = "select p from PricePlanMatrixValue p where p.pricePlanMatrixLine=:pricePlanMatrixLine"),
         @NamedQuery(name = "PricePlanMatrixValue.findByPPVersionForRating", query = "select new org.meveo.model.catalog.PricePlanMatrixValueForRating(pv.pricePlanMatrixColumn.attribute.id, pv.pricePlanMatrixColumn.type, pl.id, pl.ratingAccuracy=0, pv.longValue, pv.doubleValue, pv.stringValue, pv.dateValue, pv.fromDateValue, pv.toDateValue, pv.fromDoubleValue, pv.toDoubleValue, pv.booleanValue) from PricePlanMatrixValue pv right join pv.pricePlanMatrixLine pl where pl.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId order by pl.priority, pl.ratingAccuracy", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
 public class PricePlanMatrixValue extends BaseEntity {
 
-    private static final long serialVersionUID = -2339904876547686701L;
+	private static final long serialVersionUID = -2339904876547686701L;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH )
     @JoinColumn(name = "ppm_column_id")
     @NotNull
     private PricePlanMatrixColumn pricePlanMatrixColumn;

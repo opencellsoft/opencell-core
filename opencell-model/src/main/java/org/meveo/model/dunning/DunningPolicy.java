@@ -73,6 +73,10 @@ public class DunningPolicy extends EnableEntity {
     @Type(type = "numeric_boolean")
     private boolean isActivePolicy;
 
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DunningModeEnum type;
+
     @OneToMany(mappedBy = "dunningPolicy", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DunningPolicyLevel> dunningLevels;
 
@@ -197,5 +201,13 @@ public class DunningPolicy extends EnableEntity {
 
     public void setDunningPolicyRules(List<DunningPolicyRule> dunningPolicyRules) {
         this.dunningPolicyRules = dunningPolicyRules;
+    }
+
+    public DunningModeEnum getType() {
+        return type;
+    }
+
+    public void setType(DunningModeEnum type) {
+        this.type = type;
     }
 }

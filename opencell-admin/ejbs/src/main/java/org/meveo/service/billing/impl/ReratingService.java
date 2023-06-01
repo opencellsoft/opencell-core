@@ -1,6 +1,7 @@
 package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -422,6 +423,18 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                 .getResultList();
         tEdrs = tEdrs.stream().filter(e -> e.getStatus() != EDRStatusEnum.CANCELLED).collect(Collectors.toList());
         WalletOperation newWO = null;
+
+        // when WO has Discounted WO and these discounted WO has TriggeredEDR
+        List<WalletOperation> discountWos=walletOperationService.findByDiscountedWo(operationToRerateId);
+        if(CollectionUtils.isNotEmpty(discountWos) && operationToRerate.getEdr() != null){
+            operationToRerate.setStatus(WalletOperationStatusEnum.CANCELED);
+            operationToRerate.getEdr().setStatus(EDRStatusEnum.OPEN);
+            edrService.update(operationToRerate.getEdr());
+            getEntityManager().createNamedQuery("EDR.deleteByWO")
+                    .setParameter("WO_IDS", List.of(operationToRerate.getId()))
+                    .executeUpdate();
+            return;
+        }
         
 
         // To manage case when 1 WO have more than 1 T.EDR

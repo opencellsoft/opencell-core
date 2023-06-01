@@ -213,7 +213,7 @@ public class RatedTransactionServiceTest {
         br1.setInvoicedBACodeEL("#{rt.getUserAccount().getBillingAccount().getCode()}");
         br1.setCriteriaEL("#{rt.getUserAccount() != null}");
         BillingAccount billingAccountAvant = rt.getBillingAccount();
-        ratedTransactionService.applyInvoicingRules(rts);        
+        ratedTransactionService.applyInvoicingRulesForRTs(rts);        
         BillingAccount originBillingAccountTest = rt.getOriginBillingAccount();
         BillingAccount billingAccountApres = rt.getBillingAccount();
         assertEquals(originBillingAccountTest, billingAccountAvant);
@@ -240,7 +240,7 @@ public class RatedTransactionServiceTest {
         br2.setCriteriaEL("");
         
         BillingAccount billingAccountAvant = rt.getBillingAccount();
-        ratedTransactionService.applyInvoicingRules(rts);        
+        ratedTransactionService.applyInvoicingRulesForRTs(rts);        
         BillingAccount originBillingAccountTest = rt.getOriginBillingAccount();
         BillingAccount billingAccountApres = rt.getBillingAccount();
         assertEquals(originBillingAccountTest, billingAccountAvant);
@@ -266,7 +266,7 @@ public class RatedTransactionServiceTest {
         br2.setInvoicedBACodeEL("");
         br2.setCriteriaEL("");
         
-        ratedTransactionService.applyInvoicingRules(rts);        
+        ratedTransactionService.applyInvoicingRulesForRTs(rts);        
         RatedTransactionStatusEnum statusTest = rt.getStatus();
         String rejectReasonTest = rt.getRejectReason();
         assertTrue(statusTest.equals(RatedTransactionStatusEnum.REJECTED));
@@ -292,7 +292,7 @@ public class RatedTransactionServiceTest {
         br2.setInvoicedBACodeEL("");
         br2.setCriteriaEL("");
         
-        ratedTransactionService.applyInvoicingRules(rts);
+        ratedTransactionService.applyInvoicingRulesForRTs(rts);
         RatedTransactionStatusEnum statusTest = rt.getStatus();
         String rejectReasonTest = rt.getRejectReason();
         assertTrue(statusTest.equals(RatedTransactionStatusEnum.REJECTED));

@@ -146,6 +146,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      */
     public InvoiceBean() {
         super(Invoice.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

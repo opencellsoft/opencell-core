@@ -31,6 +31,8 @@ import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.DatePeriodDto;
+import org.meveo.api.dto.catalog.ConvertedPricePlanInputDto;
+import org.meveo.api.dto.catalog.ConvertedPricePlanVersionDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
@@ -293,8 +295,8 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
     public Response create(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixColumnDto postData) {
         GetPricePlanMatrixColumnResponseDto response = new GetPricePlanMatrixColumnResponseDto();
         try {
-            PricePlanMatrixColumn pricePlanMatrixColumn = pricePlanMatrixColumnApi.create(pricePlanMatrixCode, pricePlanMatrixVersion, postData);
-            response.setPricePlanMatrixColumnDto(new PricePlanMatrixColumnDto(pricePlanMatrixColumn));
+            PricePlanMatrixColumnDto pricePlanMatrixColumn = pricePlanMatrixColumnApi.create(pricePlanMatrixCode, pricePlanMatrixVersion, postData);
+            response.setPricePlanMatrixColumnDto(pricePlanMatrixColumn);
             return Response.created(LinkGenerator.getUriBuilderFromResource(PricePlanRs.class, pricePlanMatrixColumn.getId()).build())
                     .entity(response)
                     .build();
@@ -423,6 +425,100 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 	        }
 
 	        return Response.ok(result).build();
+	}
+
+    @Override
+    public Response deleteConvertedPricePlanMatrixLines(Long pricePlanMatrixVersion, String tradingCurrencyCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            pricePlanMatrixVersionApi.removeAllConvertedPricePlanLinesByVersion(pricePlanMatrixVersion, tradingCurrencyCode);
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result);
+        }
+        return Response.ok(result).build();
+    }
+    
+	public Response createConvertedPricePlanVersion(ConvertedPricePlanVersionDto postData) {
+		ActionStatus result = new ActionStatus();
+		try {
+            result.setEntityId(pricePlanMatrixVersionApi.createConvertedPricePlanVersion(postData).getId());
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+
+	}
+
+	@Override
+    public Response updateConvertedPricePlanVersion(Long cppvId, ConvertedPricePlanVersionDto postData) {
+        ActionStatus result = new ActionStatus();
+        try {
+            pricePlanMatrixVersionApi.updateConvertedPricePlanVersion(cppvId, postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return Response.ok(result).build();
+    }
+
+	@Override
+	public Response deleteConvertedPricePlanVersion(Long cppvId) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.deleteConvertedPricePlanVersion(cppvId);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+	}
+
+	@Override
+	public Response disableAllConvertedPricePlan(ConvertedPricePlanInputDto convertedPricePlanInputDto) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.disableAllConvertedPricePlan(convertedPricePlanInputDto);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+	}
+
+	@Override
+	public Response enableAllConvertedPricePlan(ConvertedPricePlanInputDto convertedPricePlanInputDto) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.enableAllConvertedPricePlan(convertedPricePlanInputDto);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+	}
+
+	@Override
+	public Response enableConvertedVersionPricePlan(Long convertedPricePlanVersionId) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.enableConvertedVersionPricePlan(convertedPricePlanVersionId);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
+	}
+
+	@Override
+	public Response disableConvertedVersionPricePlan(Long convertedPricePlanVersionId) {
+		ActionStatus result = new ActionStatus();
+		try {
+            pricePlanMatrixVersionApi.disableConvertedVersionPricePlan(convertedPricePlanVersionId);
+			return Response.ok(result).build();
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return Response.ok(result).build();
 	}
 
 }

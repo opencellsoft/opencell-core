@@ -4,7 +4,9 @@ import static javax.persistence.FetchType.LAZY;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,6 +38,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
 /** 
@@ -71,11 +74,11 @@ public class OrderOffer extends BusinessCFEntity {
 	private OfferTemplate offerTemplate;
 
 	@OneToMany(mappedBy = "orderOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderProduct> products=new ArrayList<OrderProduct>();
+	private Set<OrderProduct> products = new HashSet<>();
 
 	@OneToMany(mappedBy = "orderOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-	private List<OrderAttribute> orderAttributes = new ArrayList<OrderAttribute>();
+	private List<OrderAttribute> orderAttributes = new ArrayList<>();
 	
 	/**
 	 * discountPlan attached to this orderOffer
@@ -122,6 +125,11 @@ public class OrderOffer extends BusinessCFEntity {
     @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
     
+    /** FrArgs contract. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
+    
 	
     @Override
 	public ICustomFieldEntity[] getParentCFEntities() {
@@ -160,11 +168,11 @@ public class OrderOffer extends BusinessCFEntity {
 	}
 
 	public List<OrderProduct> getProducts() {
-		return products;
+		return new ArrayList<>(this.products);
 	}
 
 	public void setProducts(List<OrderProduct> products) {
-		this.products = products;
+		this.products = new HashSet<>(products);
 	}
 
 	/**
@@ -256,4 +264,13 @@ public class OrderOffer extends BusinessCFEntity {
 	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
 	}
+
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
+	
 }

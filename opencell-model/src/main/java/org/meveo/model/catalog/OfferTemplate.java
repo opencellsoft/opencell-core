@@ -680,7 +680,9 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     public Document getDocument() {
         return document;
     }
+
     public void setDocument(Document document) {
         this.document = document;
     }
+    
 }

@@ -202,14 +202,14 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 
 	@Type(type = "numeric_boolean")
 	@Column(name = "applicable_on_overridden_price")
-	private Boolean applicableOnOverriddenPrice;
+	private boolean applicableOnOverriddenPrice;
 	
 	/**
 	 *determines whether the discount plan is applicable on the gross or discounted amount
 	 */
 	@Type(type = "numeric_boolean")
 	@Column(name = "applicable_on_discounted_price")
-	private Boolean applicableOnDiscountedPrice;
+	private boolean applicableOnDiscountedPrice;
 	
 	/**
 	 *determines whether the discount plan is applicable on the gross or discounted amount
@@ -252,12 +252,21 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@Size(max = 2000)
 	private String expressionEl;
 
+	/**
+	 *determines whether the discount plan will automatically be applied to an offer or a product upon instantiation
+	 */
+    @Type(type = "numeric_boolean")
+    @Column(name = "automatic_application")
+    private boolean automaticApplication = false;
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "allowance_code_id")
     private UntdidAllowanceCode allowanceCode;
-
-	public DiscountPlan() {}
+	
+	public DiscountPlan() {
+		this.applicableOnDiscountedPrice = true;
+		this.applicableOnOverriddenPrice = true;
+	}
 	
 	public DiscountPlan(DiscountPlan dp) {
 
@@ -455,20 +464,20 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.expressionEl = expressionEl;
 	}
 	
-    public Boolean getApplicableOnOverriddenPrice() {
+    public boolean getApplicableOnOverriddenPrice() {
 		return applicableOnOverriddenPrice;
 	}
 
-	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
+	public void setApplicableOnOverriddenPrice(boolean applicableOnOverriddenPrice) {
 		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
 	}
 	
 
-	public Boolean getApplicableOnDiscountedPrice() {
+	public boolean getApplicableOnDiscountedPrice() {
 		return applicableOnDiscountedPrice;
 	}
 
-	public void setApplicableOnDiscountedPrice(Boolean applicableOnDiscountedPrice) {
+	public void setApplicableOnDiscountedPrice(boolean applicableOnDiscountedPrice) {
 		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
 	}
 
@@ -478,6 +487,14 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+	
+	public boolean isAutomaticApplication() {
+		return automaticApplication;
+	}
+
+	public void setAutomaticApplication(boolean autmaticApplication) {
+		this.automaticApplication = autmaticApplication;
 	}
 
 	/**

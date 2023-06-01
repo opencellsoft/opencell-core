@@ -204,7 +204,7 @@ public class CurrencyApi extends BaseApi {
         tradingCurrencyService.remove(tradingCurrency);
     }
 
-    public void update(CurrencyDto postData) throws MeveoApiException, BusinessException {
+    public CurrencyDto update(CurrencyDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -231,9 +231,10 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces() == null ? 2 : postData.getDecimalPlaces());
 
         tradingCurrencyService.update(tradingCurrency);
+        return new CurrencyDto(currency);
     }
 
-    public void createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
+    public CurrencyDto createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -241,10 +242,10 @@ public class CurrencyApi extends BaseApi {
 
         TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCode());
         if (tradingCurrency == null) {
-            create(postData);
+            return create(postData);
         }
         else {
-            update(postData);
+            return update(postData);
         }
     }
 
@@ -425,9 +426,8 @@ public class CurrencyApi extends BaseApi {
             throw new BusinessApiException(resourceMessages.getString("error.exchangeRate.fromDate.isAlreadyTaken"));
         }
 
-        // User cannot set a rate in a paste date
         // Commented related to the same reason of comment line 421 "AEL Update 09/01/2023"
-        // BTW, this duplicated check shall be removed
+        // BTW, this dubplicated check shall be removed
         // User cannot set a rate in a paste date
         /*if (postData.getFromDate().before(setTimeToZero(new Date()))) {
             throw new BusinessApiException(resourceMessages.getString("The date must not be in the past"));

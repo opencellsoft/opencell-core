@@ -57,11 +57,11 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
     /**
      * The product code.
      */
-    private String productCode; // quand on a besoin d'attribut, on a besoin du productCode
+    private String productCode;
 
     private Long productInstanceId;
 
-    private List<AttributeInstanceDto> attributes = new ArrayList();
+    private List<AttributeInstanceDto> attributes = new ArrayList<>();
 
     private Date subscriptionValidityDate;
 
@@ -377,20 +377,20 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
 		this.productCode = productCode;
 	}
 
-    public List<AttributeInstanceDto> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(List<AttributeInstanceDto> attributes) {
-        this.attributes = attributes;
-    }
-
     public Long getProductInstanceId() {
         return productInstanceId;
     }
 
     public void setProductInstanceId(Long productInstanceId) {
         this.productInstanceId = productInstanceId;
+    }
+
+    public List<AttributeInstanceDto> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<AttributeInstanceDto> attributes) {
+        this.attributes = attributes;
     }
 
     @Override

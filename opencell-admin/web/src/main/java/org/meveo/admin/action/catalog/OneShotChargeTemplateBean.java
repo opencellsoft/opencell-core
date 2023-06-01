@@ -84,6 +84,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
      */
     public OneShotChargeTemplateBean() {
         super(OneShotChargeTemplate.class);
+        showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
     }
 
     @Override

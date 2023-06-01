@@ -2341,7 +2341,7 @@ END $$;]]>
         	<column name="updater" type="varchar(100)"/>
         </addColumn>
     </changeSet>
-      
+        
     <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
         <addColumn tableName="billing_subscription">
             <column name="payment_method_id"  type="bigint">
@@ -2848,11 +2848,16 @@ END $$;]]>
             WHERE entity_class = 'Subscription'</sql>
     </changeSet>
 
+    <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
+        <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
+        <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
+    </changeSet>
+
     <changeSet id="#5627_20210107" author="AndriusKarpavicius">
         <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
         <sql>update ${db.schema.adapted}billing_billing_run set skip_validation_script=0 where skip_validation_script is null</sql>
     </changeSet>
-
+   
     <changeSet id="#5680_20201126" author="khalidHORRI">
         <addColumn tableName="billing_invoice">
             <column name="initial_collection_date" type="datetime"/>
@@ -6696,6 +6701,9 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
 
+
+
+
     <changeSet id="#20210222_540_269" author="TarikFA.">
         <dropColumn tableName="cpq_grouped_attributes">
             <column name="product_version_id"></column>
@@ -6714,10 +6722,12 @@ public class OrderAdvancement extends ModuleScript {
             </column>
         </createTable>
 
+
         <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
         <addForeignKeyConstraint baseColumnNames="grouped_attributes" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_groupedattribute_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
+
     </changeSet>
 
     <changeSet id="#20210123_540_280" author="TarikFA.">
@@ -7127,11 +7137,6 @@ public class OrderAdvancement extends ModuleScript {
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
     </changeSet>
 
-    <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
-        <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
-        <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
-    </changeSet>
-    
     <changeSet id="#5884_20210119" author="MohammedELAZZOUZI">
     	<preConditions onFail="MARK_RAN">
 	       <not>
@@ -13662,6 +13667,13 @@ order by date_trunc('month', i.invoice_date) DESC
 				type="${type.boolean}" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#INTRD-14340_20230228" author="HichamHANINE">
+		<addColumn tableName="ar_account_operation">
+			<column name="applied_rate" type="numeric(23, 12)" />
+			<column name="applied_rate_date" type="datetime" />
+		</addColumn>
+	</changeSet>
 
 
        <changeSet id="#20220415_M540_6609" author="Mbarek-Ay">
@@ -15047,6 +15059,78 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <where>id=1</where>
         </update>
     </changeSet>
+    
+    <changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
+    	<createSequence sequenceName="cpq_converted_price_plan_version_seq" startValue="1" />
+        <createTable tableName="cpq_converted_price_plan_version">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_converted_price_plan_version_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="price_plan_matrix_version_id" type="bigint" />
+            <column name="converted_price" type="numeric(23, 12)" />
+            <column name="trading_currency_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="rate" type="numeric(23, 12)" />
+            <column name="use_for_billing_accounts" type="${type.boolean}"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="#INTRD-12609_20221227_converted_ppv-fix" author="a.rouaguebe">
+    	<addColumn tableName="cpq_converted_price_plan_version">
+			 <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+		</addColumn>
+    </changeSet>
+    
+    
+
+    <changeSet id="#INTRD-12614_20221227" author="TarikFA.">
+       <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
+       <createTable tableName="cpq_converted_price_plan_matrix_line">
+       		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_converted_plan_matrix_line" />
+            </column>
+            <column name="version" type="int4" />
+
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            
+            <column name="converted_value" type="numeric(23, 12)" />
+            <column name="trading_currency_id" type="bigint" />
+            <column name="rate" type="numeric(23, 12)" />
+            <column name="use_for_billing_accounts" type="${type.boolean}" />
+            <column name="price_plan_matrix_line_id" type="bigint" />
+       </createTable>
+       
+        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+                                 baseColumnNames="trading_currency_id"
+                                 constraintName="fk_cpq_converted_price_plan_matrix_line_id"
+                                 referencedTableName="billing_trading_currency"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+                                 
+        <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
+                                 baseColumnNames="price_plan_matrix_line_id"
+                                 constraintName="fk_price_plan_matrix_line_id"
+                                 referencedTableName="cpq_price_plan_matrix_line"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+       
+    </changeSet>
 
 	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari">
 		<addColumn tableName="billing_cycle">
@@ -15286,6 +15370,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
         </createTable>
         
+        
+        
         <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
          <createTable tableName="untdid_5189_allowance_code">
             <!-- Generic fields -->
@@ -15362,8 +15448,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
         
     </changeSet>
     
-
-    
     <changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA">
 		<addColumn tableName="billing_cycle">
             <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
@@ -15374,6 +15458,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe">
+    	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
+    	<addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter" />
+    </changeSet>
 
     <changeSet id="#INTRD-12544_20230102" author="bourras">
         <addColumn tableName="cat_offer_template">
@@ -15383,69 +15472,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  constraintName="fk_document_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
-    </changeSet>
-    
-    <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe">
-    	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
-    	<addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter" />
-    </changeSet>
-
-    <changeSet id="#INTRD-12766_20230105" author="bourras">
-        <addColumn tableName="billing_invoice">
-            <column name="converted_invoice_balance" type="numeric(23, 12)"/>
-        </addColumn>
-    </changeSet>
-
-
-    <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
-        <addColumn tableName="report_query">
-        	<column name="query_parameters" type="${type.json}" />
-        </addColumn>
-    </changeSet>
-    
-    <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
-    	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
-	      	<column name="subscription_id"/>
-	  	</createIndex>
-	  	<createIndex indexName="idx__cpq_attribute_instance__parent_id" tableName="cpq_attribute_instance">
-	      	<column name="parent_id"/>
-	  	</createIndex>
-	  	<createIndex indexName="idx__billing_rated_transaction__origin_billing_account" tableName="billing_rated_transaction">
-	      	<column name="origin_billing_account"/>
-	  	</createIndex>
-	  	<createIndex indexName="idx__billing_rated_transaction__rules_contract_id" tableName="billing_rated_transaction">
-	      	<column name="rules_contract_id"/>
-	  	</createIndex>
-	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
-	      	<column name="service_instance_id"/>
-	  	</createIndex>
-    </changeSet>   
-
-    <changeSet id="#INTRD-12766_20230106" author="bourras">
-        <addColumn tableName="billing_linked_invoices">
-            <column name="converted_amount" type="numeric(23, 12)"/>
-        </addColumn>
-    </changeSet>
-    
-    <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari">
-		<dropColumn columnName="validation_script" tableName="billing_invoice_validation_rule" />
-		<addColumn tableName="billing_invoice_validation_rule">
-			<column name="script_instance_id" type="bigint" />
-		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_validation_rule"
-                                 constraintName="fk_validation_rule_meveo_script_instance" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-	</changeSet>
-	
-	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe">
-        <addColumn tableName="report_query">
-        	<column name="advanced_query" type="${type.json}" />
-        </addColumn>
-    </changeSet>
-
-	<changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari">
-        <modifyDataType tableName="cpq_order_offer" columnName="order_line_type" newDataType="varchar(20)" />
     </changeSet>
 
 	<changeSet id="#INTRD-12405_20221226" author="HichamHANINE">
@@ -15529,9 +15555,107 @@ public class AgedBalanceReporting extends ReportExtractScript {
             </column>
 		</addColumn>
 	</changeSet>
+
+    <changeSet id="#INTRD-12766_20230105" author="bourras">
+        <addColumn tableName="billing_invoice">
+            <column name="converted_invoice_balance" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
+    	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
+	      	<column name="subscription_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__cpq_attribute_instance__parent_id" tableName="cpq_attribute_instance">
+	      	<column name="parent_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__origin_billing_account" tableName="billing_rated_transaction">
+	      	<column name="origin_billing_account"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__rules_contract_id" tableName="billing_rated_transaction">
+	      	<column name="rules_contract_id"/>
+	  	</createIndex>
+	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
+	      	<column name="service_instance_id"/>
+	  	</createIndex>
+    </changeSet>   
+
+    <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
+      <addColumn tableName="report_query">
+        <column name="query_parameters" type="${type.json}" />
+      </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-12766_20230106" author="bourras">
+        <addColumn tableName="billing_linked_invoices">
+            <column name="converted_amount" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari">
+		<dropColumn columnName="validation_script" tableName="billing_invoice_validation_rule" />
+		<addColumn tableName="billing_invoice_validation_rule">
+			<column name="script_instance_id" type="bigint" />
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_validation_rule"
+                                 constraintName="fk_validation_rule_meveo_script_instance" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+	</changeSet>
+
+    <changeSet id="#INTRD-12781_20230116" author="zelmeliani">
+        <addColumn tableName="ar_dunning_action">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="dunning_level">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="dunning_policy">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="com_message_template">
+            <column name="type_dunning_mode" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-12799-20230113-query_report_aliases" author="a.rouaguebe">
+		<addColumn tableName="report_query">
+			<column name="aliases" type="${type.json}" />
+		</addColumn>
+	</changeSet>
 	
-	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari">
-        <dropNotNullConstraint tableName="billing_tax" columnName="taxation_category_id"/>
+	<changeSet id="#INTRD-13031_20230118" author="AdilElJaouhari">
+		<addColumn tableName="cat_discount_plan">
+			<column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE">
+        <addColumn tableName="billing_invoice_line">
+            <column name="specific_converted_unit_price" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
+            <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
+            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />			
+			<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari">
+        <modifyDataType tableName="cpq_order_offer" columnName="order_line_type" newDataType="varchar(20)" />
+    </changeSet>
+	
+	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe">
+        <addColumn tableName="report_query">
+        	<column name="advanced_query" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-13009_20230202" author="bourras">
+        <addColumn tableName="finance_settings">
+            <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
     </changeSet>
 
     <changeSet id="#INTRD-13220_20230203" author="AbdellatifBARI">
@@ -15543,8 +15667,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id"
                                  referencedTableName="billing_service_instance"/>
     </changeSet>
-    
-    <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay">
+
+
+	<changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay">
 		<addColumn tableName="cpq_contract_item">
 			<column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
 		</addColumn>
@@ -15552,13 +15677,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
     <changeSet id="#INTRD-12972" author="bourras">
         <dropNotNullConstraint tableName="cpq_contract" columnName="contract_date"/>
-    </changeSet>
-    
-    <changeSet id="#INTRD-13957-20230214" author="houdad">
-        <sql>
-        DELETE FROM untdid_unit;
-        DROP TABLE untdid_unit;
-        </sql>
     </changeSet>
 
     <changeSet id="#INTRD-13883_20230208" author="hichamELHALOUI">
@@ -15579,7 +15697,99 @@ public class AgedBalanceReporting extends ReportExtractScript {
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+    
+    <changeSet id="#INTRD-13957-20230214" author="houdad">
+        <sql>
+        DELETE FROM untdid_unit;
+        DROP TABLE untdid_unit;
+        </sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
+        <addColumn tableName="crm_customer">
+            <column name="parent_customer_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="crm_customer" baseColumnNames="parent_customer_id"
+                                 constraintName="fk_crm_customer_parent_customer_id"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI">
+        <addColumn tableName="billing_invoice_validation_rule">
+            <column name="evaluation_mode" type="varchar(50)" defaultValue="VALIDATION">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet author="HichamHANINE" id="#INTRD-13981_20230222">
+    	<addColumn tableName="ar_matching_code">
+            <column name="converted_matching_amount_credit" type="numeric(23, 12)" />
+            <column name="converted_matching_amount_debit" type="numeric(23, 12)" />
+        </addColumn>
+        <addColumn tableName="ar_matching_amount">
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
+        </addColumn>        
+        <addColumn tableName="ar_account_operation">
+            <column name="converted_net_to_pay" type="numeric(23, 12)" />
+            <column name="converted_amount" type="numeric(23, 12)" />
+            <column name="converted_amount_without_tax" type="numeric(23, 12)" />
+            <column name="converted_tax_amount" type="numeric(23, 12)" />
+            <column name="converted_matching_amount" type="numeric(23, 12)" />
+            <column name="converted_un_matching_amount" type="numeric(23, 12)" />
+            <column name="transactional_currency" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="transactional_currency" baseTableName="ar_account_operation" constraintName="fk_account_operation_trading_currency" 
+        	deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />    
+    </changeSet>
+    
+    <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari">
+    	<dropNotNullConstraint columnName="created" tableName="billing_invoice_validation_rule"/>
+    	<dropNotNullConstraint columnName="fail_status" tableName="billing_invoice_validation_rule"/>
+        <addColumn tableName="billing_invoice_validation_rule">
+            <column name="operator" type="varchar(10)" defaultValue="OR" />
+        </addColumn>
+        <addColumn tableName="billing_invoice_validation_rule">
+            <column name="parent_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="billing_invoice_validation_rule" baseColumnNames="parent_id"
+                                 constraintName="fk_invoice_validation_rule_parent_id"
+                                 referencedTableName="billing_invoice_validation_rule"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+   	<changeSet id="#INTRD-14161_20230221" author="AdilElJaouhari">
+        <renameColumn tableName="accounting_journal_entry" oldColumnName="trading_amount" newColumnName="converted_amount"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14264_20230222" author="TarikFA.">
+    	<addColumn tableName="billing_rated_transaction">
+    		<column name="origin_ratedtransaction_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
+                                 constraintName="fk_origin_ratedtransaction_id"
+                                 referencedTableName="billing_rated_transaction"
+                                 referencedColumnNames="id,status"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+     <changeSet id="#INTRD-14243_invoice_conversion" author="a.rouaguebe">
+    	<addColumn tableName="billing_invoice">
+    		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    	</addColumn>
+    	<addColumn tableName="billing_invoice_agregate">
+    		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
+    	</addColumn>
+    </changeSet>
 
+	<changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe">
+		<addColumn tableName="cpq_contract">
+            <column name="application_el" type="varchar(2000)" />
+		</addColumn>
+	</changeSet>
 
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle">
         <dropProcedure procedureName="listagg_clob_t" />
@@ -15722,6 +15932,119 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </createProcedure>
     </changeSet>
     
+    <changeSet id="#INTRD-14522_20230301" author="TarikFA.">
+    	<addColumn tableName="billing_subscription">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+                                 
+    	<addColumn tableName="quote_offer">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+    	
+        <addForeignKeyConstraint baseTableName="quote_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+         <dropColumn tableName="quote_offer">
+         	<column name="contract_code" />
+         </dropColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-14336_20230227" author="ZBariki">
+        <addColumn tableName="cpq_contract_item">
+            <column name="application_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="billing_wallet_operation">
+            <column name="contract_line_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="billing_wallet_operation" baseColumnNames="contract_line_id"
+                                 constraintName="fk_wo_contract_line_id" referencedTableName="cpq_contract_item"
+                                 referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-14598_20230303" author="zelmeliani">
+        <addColumn tableName="finance_settings">
+            <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+    
+   	<changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari">
+		<addColumn tableName="billing_invoice_line">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+		<addColumn tableName="billing_invoice_agregate">
+			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+
+<!--  
+    <changeSet id="#INTRD-14263_20200304" author="TarikFA.">
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+-->
+
+    <changeSet id="#INTRD-14381-202303202" author="bourras" failOnError="false">
+        <addColumn tableName="billing_invoice_configuration">
+            <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
+        <addColumn tableName="crm_customer_category">
+            <column name="default_seller_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="crm_customer_category" baseColumnNames="default_seller_id"
+                                 constraintName="fk_crm_customer_category_default_seller_id"
+                                 referencedTableName="crm_seller"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+ 	<changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
+    	<addColumn tableName="cpq_order_offer">
+    		<column name="contract_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="cpq_order_offer" baseColumnNames="contract_id"
+                                 constraintName="fk_cpq_order_offer_contract_id"
+                                 referencedTableName="cpq_contract"
+                                 referencedColumnNames="id"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+    
+    <changeSet id="#INTR-14747_20230308" author="TarikFA.">
+    	<update tableName="cat_discount_plan">
+    		<column name="applicable_on_overridden_price" value="1"/>
+    		<where>applicable_on_overridden_price is null</where>
+    	</update>
+    	<update tableName="cat_discount_plan">
+    		<column name="applicable_on_discounted_price" value="1"/>
+    		<where>applicable_on_discounted_price is null</where>
+    	</update>
+    </changeSet>
+
+
+    <changeSet id="#INTRD-14811_20200310" author="TarikFA.">
+        <preConditions onFail="MARK_RAN" >
+            <and>
+                <foreignKeyConstraintExists foreignKeyName="fk_origin_ratedtransaction_id" foreignKeyTableName="billing_rated_transaction" />
+            </and>
+        </preConditions>
+        <comment>Foreign key exist !!</comment>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+
     <changeSet id="#INTRD-14743_20230313" author="TarikFA.">
         <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
             <column name="event_key"/>
@@ -15739,13 +16062,64 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql>
     </changeSet>
     
-    <changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
-     	<addColumn tableName="billing_invoice_line">
-            <column name="user_account_id" type="bigint"></column>
+   	<changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari">
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_net_to_pay" newColumnName="transactional_net_to_pay"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_raw_amount" newColumnName="transactional_raw_amount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_discount_amount" newColumnName="transactional_discount_amount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_without_tax_before_discount" newColumnName="transactional_amount_without_tax_before_discount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_invoice_balance" newColumnName="transactional_invoice_balance"/>
+		
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_unit_price" newColumnName="transactional_unit_price"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_discount_amount" newColumnName="transactional_discount_amount"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_raw_amount" newColumnName="transactional_raw_amount"/>
+		
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari">
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_net_to_pay" newColumnName="transactional_net_to_pay"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_tax_amount" newColumnName="transactional_tax_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_matching_amount" newColumnName="transactional_matching_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_un_matching_amount" newColumnName="transactional_un_matching_amount"/>
+		
+		<renameColumn tableName="billing_linked_invoices" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
+		
+		<renameColumn tableName="ar_matching_amount" oldColumnName="converted_matching_amount" newColumnName="transactional_matching_amount"/>
+		
+		<renameColumn tableName="ar_matching_code" oldColumnName="converted_matching_amount_credit" newColumnName="transactional_matching_amount_credit"/>
+		<renameColumn tableName="ar_matching_code" oldColumnName="converted_matching_amount_debit" newColumnName="transactional_matching_amount_debit"/>
+		
+        <renameColumn tableName="accounting_journal_entry" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
+        
+        <addColumn tableName="ar_account_operation">
+            <column name="transactional_payment_fees" type="numeric(23, 12)"/>
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
-   	</changeSet> 
+    </changeSet>
+    
+    <changeSet id="#INTRD-14597_20230324" author="TarikFA.">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
+            <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-14663_20230327" author="HatimO.">
+        <addColumn tableName="document">
+            <column name="document_version" type="int4" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius">
         <alterSequence sequenceName="rating_cdr_seq" incrementBy="5000"/>
@@ -15753,14 +16127,24 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000"/>
         <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000"/>
     </changeSet>
-    
-    <changeSet id="#INTRD-15733_20230426" author="AndriusKarpavicius">
-        <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
-        <sql>CREATE INDEX billing_redirection_rule_contract_index  ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>
-        <dropUniqueConstraint tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
-        <addUniqueConstraint columnNames="ppm_version_id,code" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
-        <dropUniqueConstraint tableName="cpq_price_plan_version" constraintName="cpq_price_plan_version_UNIC"/>
-        <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
+
+    <changeSet id="#INTRD-15146_20230406" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="billing_accounting_article"
+                                  constraintName="billing_accounting_article_open_order_id_fk"/>
+        <dropColumn tableName="billing_accounting_article" columnName="open_order_id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius">
+        <addColumn tableName="meveo_job_instance">
+            <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
+        </addColumn>
+        <sql>update ${db.schema.adapted}meveo_job_instance set cluster_behavior = 'RUN_IN_PARALLEL' where single_node=0</sql>
+        <dropColumn tableName="meveo_job_instance">
+            <column name="single_node" />
+        </dropColumn>
+        <addColumn tableName="job_execution">
+            <column name="parent_job_result_id" type="bigint" />
+        </addColumn>
     </changeSet>
 
     <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
@@ -15786,52 +16170,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
     <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius">
         <sql>CREATE INDEX rating_edr_wo_index ON ${db.schema.adapted}rating_edr(wallet_operation_id)</sql>
     </changeSet>
+
+	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari">
+        <dropNotNullConstraint tableName="billing_tax" columnName="taxation_category_id"/>
+    </changeSet>
     
-
-    <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius">
-        <addColumn tableName="meveo_job_instance">
-            <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
-        </addColumn>
-        <sql>update ${db.schema.adapted}meveo_job_instance set cluster_behavior = 'RUN_IN_PARALLEL' where single_node=0</sql>
-        <dropColumn tableName="meveo_job_instance">
-            <column name="single_node" />
-        </dropColumn>
-        <addColumn tableName="job_execution">
-            <column name="parent_job_result_id" type="bigint" />
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="#INTRD-15938_20230503" author="AndriusKarpavcius">
-        <addColumn tableName="cpq_price_plan_matrix_line">
-            <column name="accuracy" type="int" defaultValueNumeric="0">
-                 <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <sql>delete from ${db.schema.adapted}cpq_price_plan_matrix_value where long_value is null and double_value is null and string_value is null and date_value is null and from_date_value is null and to_date_value is null and from_double_value is null and to_double_value is null and boolean_value is null</sql>
-        <sql>update ${db.schema.adapted}cpq_price_plan_matrix_line set accuracy = (select count(*) from ${db.schema.adapted}cpq_price_plan_matrix_value where ppml_id=cpq_price_plan_matrix_line.id)</sql>
-    </changeSet>
-
-    <changeSet id="#INTRD-16140_20230510" author="AndriusKarpavicius">
-        <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
-    </changeSet>
-
-
-    <changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius">
-        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
-        <sql>CREATE INDEX cpq_ppl_ppVersion_index ON cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql>
-    </changeSet>
-
-
-    <changeSet id="INTRD-15501_20230413" author="ThangNguyen">
-        <addColumn tableName="billing_billing_run">
-            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="INTRD-16050_20230515" author="ThangNguyen">
-        <addColumn tableName="billing_cycle">
-            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
-        </addColumn>
-    </changeSet>
-
 </databaseChangeLog>

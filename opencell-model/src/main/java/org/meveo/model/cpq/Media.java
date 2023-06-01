@@ -90,7 +90,7 @@ public class Media extends BusinessCFEntity{
 	/**
 	 * media path : current location for the media 
 	 */
-	@Column(name = "media_path", length = 255)
+	@Column(name = "media_path")
 	@Size(max = 255)
 	private String mediaPath;
 

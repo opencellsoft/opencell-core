@@ -28,11 +28,11 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.payments.CreditCardTypeEnum;
 
 /**
- * The Class PayByCardDto.
+ * The Class PayByCardOrSepaDto.
  */
-@XmlRootElement(name = "PayByCard")
+@XmlRootElement(name = "PayByCardOrSepa")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PayByCardDto extends BaseEntityDto {
+public class PayByCardOrSepaDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3586462140358234151L;
@@ -69,11 +69,13 @@ public class PayByCardDto extends BaseEntityDto {
 
     /** The to match. */
     private boolean toMatch;
+    
+   
 
     /**
      * Instantiates a new pay by card dto.
      */
-    public PayByCardDto() {
+    public PayByCardOrSepaDto() {
 
     }
 
@@ -85,8 +87,8 @@ public class PayByCardDto extends BaseEntityDto {
     public String getCustomerAccountCode() {
         return customerAccountCode;
     }
-
-    /**
+  
+	/**
      * Sets the customer account code.
      *
      * @param customerAccountCode the new customer account code

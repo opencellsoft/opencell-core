@@ -38,6 +38,7 @@ public class RevenueScheduleBean extends BaseBean<RevenueSchedule> {
 
 	public RevenueScheduleBean() {
 		super(RevenueSchedule.class);
+		showDeprecatedWarning(DEPRECATED_ADMIN_MESSAGE);
 	}
 
 	@Override

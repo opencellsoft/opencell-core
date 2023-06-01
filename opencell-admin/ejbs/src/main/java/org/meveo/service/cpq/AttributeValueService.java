@@ -122,7 +122,7 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
 
                         AttributeValue attributeValue = new AttributeValue(attributeInstance.getAttribute(), value);
 
-                        log.trace("getAttributeValue value={}, String={},boolean={},double={}", value, attributeValue.getStringValue(), attributeValue.getBooleanValue(), attributeValue.getDoubleValue());
+                        log.debug("getAttributeValue value={}, String={},boolean={},double={}", value, attributeValue.getStringValue(), attributeValue.getBooleanValue(), attributeValue.getDoubleValue());
 
                         return attributeValue;
 
@@ -131,7 +131,10 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
             }
 
         } catch (Exception e) {
-            throw new BusinessException("Failed to calculate attribute "+attributeInstance.getStringValue()+" value", e);
+
+            log.error("Error when trying to get AttributeValue : ", e);
+
+            throw new BusinessException(e.getMessage());
 
         }
 

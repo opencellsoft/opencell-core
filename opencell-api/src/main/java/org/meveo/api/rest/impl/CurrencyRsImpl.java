@@ -30,8 +30,6 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CurrencyRs;
 import org.meveo.api.rest.admin.impl.FileUploadForm;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
-import org.meveo.model.crm.Provider;
-import org.meveo.util.ApplicationProvider;
 
 import java.util.List;
 
@@ -50,10 +48,6 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 
     @Inject
     private CurrencyApi currencyApi;
-
-    @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
 
 	@Override
     public TradingCurrenciesResponseDto list() {
@@ -126,13 +120,13 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
     @Override
     public ActionStatus createOrUpdate(CurrencyDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
         try {
-            currencyApi.createOrUpdate(postData);
+            CurrencyDto currencyDto = currencyApi.createOrUpdate(postData);
+            result.setEntityId(currencyDto.getId());
+            result.setEntityCode(currencyDto.getCode());
         } catch (Exception e) {
             processException(e, result);
         }
-
         return result;
     }
 

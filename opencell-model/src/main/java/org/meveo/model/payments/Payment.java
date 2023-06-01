@@ -55,6 +55,12 @@ public class Payment extends AccountOperation {
     @Type(type = "longText")
     @Column(name = "comment_text")
     private String comment;
+    
+    /**
+     * Transactional amount of financial expenses exluded in the amount
+     */
+    @Column(name = "transactional_payment_fees")
+    private BigDecimal transactionalFees = BigDecimal.ZERO;
 
     /**
      * get the  associated dunning doc if exists
@@ -113,5 +119,19 @@ public class Payment extends AccountOperation {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+	/**
+	 * @return the transactionalFees
+	 */
+	public BigDecimal getTransactionalFees() {
+		return transactionalFees;
+	}
+
+	/**
+	 * @param transactionalFees the transactionalFees to set
+	 */
+	public void setTransactionalFees(BigDecimal transactionalFees) {
+		this.transactionalFees = transactionalFees;
+	}
 
 }

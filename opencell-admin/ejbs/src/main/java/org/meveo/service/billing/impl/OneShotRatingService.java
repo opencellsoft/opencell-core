@@ -144,6 +144,7 @@ public class OneShotRatingService extends RatingService implements Serializable 
             // DIRTY FIX : pression sur une livraison OSO
             // Le service retournait bien le proxy hibernate pour recuperer la TaxClass, mais apres un merge du 15/02, ca ne fonctionne plus
             // Donc je re-recuperer l'objet par son ID et on eteint le feux
+
             Optional.ofNullable(ratingResult.getWalletOperations()).orElse(Collections.emptyList())
                     .forEach(wo -> {
                         if (wo.getTaxClass() != null) {

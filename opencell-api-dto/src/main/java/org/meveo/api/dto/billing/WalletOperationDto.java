@@ -75,7 +75,7 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
     private String accountingArticleLabel;
 
     private String productCode; // serviceInstance code
-    
+
     /** The user account. */
     private String userAccount;
 
@@ -255,7 +255,7 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
             taxCode = walletOperation.getTax().getCode();
         }
         if (walletOperation.getServiceInstance() != null) {
-           this.productCode = walletOperation.getServiceInstance().getCode();
+            this.productCode = walletOperation.getServiceInstance().getCode();
         }
         taxPercent = walletOperation.getTaxPercent();
         unitAmountWithoutTax = walletOperation.getUnitAmountWithoutTax();

@@ -67,7 +67,11 @@ public class PricePlanMatrixLine extends AuditableEntity {
     private BigDecimal value;
 
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
+    
+    @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<ConvertedPricePlanMatrixLine> convertedPricePlanMatrixLines = new HashSet<>();
 
     @Column(name = "priority")
     @NotNull
@@ -137,6 +141,10 @@ public class PricePlanMatrixLine extends AuditableEntity {
         return priority;
     }
 
+    public long getEffectifPriority() {
+        return priority != null ? Long.valueOf(priority).longValue() : id;
+    }
+
     public void setPriority(Integer priority) {
         this.priority = priority != null ? priority : 0;
     }
@@ -186,5 +194,13 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getValue(), getPriority());
+    }
+
+    public Set<ConvertedPricePlanMatrixLine> getConvertedPricePlanMatrixLines() {
+        return convertedPricePlanMatrixLines;
+    }
+
+    public void setConvertedPricePlanMatrixLines(Set<ConvertedPricePlanMatrixLine> convertedPricePlanMatrixLines) {
+        this.convertedPricePlanMatrixLines = convertedPricePlanMatrixLines;
     }
 }

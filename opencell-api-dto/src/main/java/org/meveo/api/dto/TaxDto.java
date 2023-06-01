@@ -109,6 +109,10 @@ public class TaxDto extends BusinessEntityDto {
         this.id = id;
     }
 
+    public TaxDto(Tax tax) {
+        super(tax);
+    }
+
     /**
      * Gets the percent.
      *

@@ -427,6 +427,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Type(type = "numeric_boolean")
     @Column(name = "generate_ao", nullable = false)
     private Boolean generateAO = Boolean.FALSE;
+<<<<<<< HEAD
 
     /**
      * To decide if adding invoice lines incrementally or not.
@@ -434,6 +435,8 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
     private Boolean incrementalInvoiceLines = Boolean.FALSE;
+=======
+>>>>>>> 14.3.X
     
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -1013,6 +1016,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 	public void setGenerateAO(Boolean generateAO) {
 		this.generateAO = generateAO;
 	}
+<<<<<<< HEAD
 
     public Boolean getIncrementalInvoiceLines() {
         return incrementalInvoiceLines;
@@ -1021,4 +1025,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setIncrementalInvoiceLines(Boolean incrementalInvoiceLines) {
         this.incrementalInvoiceLines = incrementalInvoiceLines;
     }
+=======
+>>>>>>> 14.3.X
 }
