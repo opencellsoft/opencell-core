@@ -1,9 +1,12 @@
 package org.meveo.model.cpq.enums;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.catalog.ColumnTypeEnum;
 import org.meveo.model.cpq.AttributeValue;
 
@@ -170,6 +173,17 @@ public enum AttributeTypeEnum {
 	public abstract ColumnTypeEnum getColumnType(Boolean isRange);
 
 	public Object  getValue(AttributeValue attributeValue) {
-		return attributeValue.getStringValue();
+		switch (attributeValue.getAttribute().getAttributeType()) {
+			case INTEGER:
+			case COUNT:
+			case TOTAL:
+			case LIST_NUMERIC:
+			case NUMERIC:
+			// FIXME : to add this cas also
+			//case LIST_MULTIPLE_NUMERIC:
+				return attributeValue.getDoubleValue();
+			default:
+				return attributeValue.getStringValue();
+		}
 	}
 }
