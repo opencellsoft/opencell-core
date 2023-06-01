@@ -1,14 +1,10 @@
 package org.meveo.model.cpq.enums;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.catalog.ColumnTypeEnum;
 import org.meveo.model.cpq.AttributeValue;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -87,6 +83,11 @@ public enum AttributeTypeEnum {
 		@Override
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;
+		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			return attributeValue.getDoubleValue() != null ? attributeValue.getDoubleValue() : attributeValue.getStringValue();
 		}
 	},
 	
@@ -168,22 +169,16 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return ColumnTypeEnum.Boolean;
 		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			return attributeValue.getBooleanValue() != null ? attributeValue.getBooleanValue() : attributeValue.getStringValue();
+		}
 	};
 
 	public abstract ColumnTypeEnum getColumnType(Boolean isRange);
 
 	public Object  getValue(AttributeValue attributeValue) {
-		switch (attributeValue.getAttribute().getAttributeType()) {
-			case INTEGER:
-			case COUNT:
-			case TOTAL:
-			case LIST_NUMERIC:
-			case NUMERIC:
-			// FIXME : to add this cas also
-			//case LIST_MULTIPLE_NUMERIC:
-				return attributeValue.getDoubleValue();
-			default:
-				return attributeValue.getStringValue();
-		}
+		return attributeValue.getStringValue();
 	}
 }
