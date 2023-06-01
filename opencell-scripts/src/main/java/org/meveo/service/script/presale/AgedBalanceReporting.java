@@ -168,7 +168,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 .append("sum (case when ao.dueDate <='" + DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern) + "'  then ao.taxAmount else 0 end ) as sum_90_up_tax,");
         }
         query.append(
-            " ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ")
+            " ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.transactionalAmountWithTax, ao.invoice.billingAccount.id ")
             .append("from ").append(RecordedInvoice.class.getSimpleName()).append(" as ao");
         QueryBuilder qb = new QueryBuilder(query.toString());
         qb.addSql("(ao.matchingStatus='" + MatchingStatusEnum.O + "' or ao.matchingStatus='" + MatchingStatusEnum.P + "') ");
@@ -187,7 +187,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or ao.invoice.paymentStatus = '" + PPAID + "' or ao.invoice.paymentStatus ='" + UNPAID + "')");
         }
         qb.addGroupCriterion(
-            "ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
+            "ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.transactionalAmountWithTax, ao.invoice.billingAccount.id ");
         qb.addPaginationConfiguration(paginationConfiguration);
         return qb.getSqlString();
     }

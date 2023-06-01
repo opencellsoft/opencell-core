@@ -24,6 +24,12 @@ public class SubscriptionPatchDto {
     private Boolean resetRenewalTerms;
     List<String> subscriptionCustomFieldsToCopy;
 
+    /**
+     * A PriceList Code. (Optional)
+     */
+    @XmlElement(required = false)
+    private String priceListCode;
+
     public String getOfferTemplate() {
         return offerTemplate;
     }
@@ -117,4 +123,20 @@ public class SubscriptionPatchDto {
 	public void setSubscriptionCustomFieldsToCopy(List<String> subscriptionCustomFieldsToCopy) {
 		this.subscriptionCustomFieldsToCopy = subscriptionCustomFieldsToCopy;
 	}
+
+    /**
+     * PriceListCode Getter
+     * @return the Code of the PriceList linked to the subscription
+     */
+    public String getPriceListCode() {
+        return priceListCode;
+    }
+
+    /**
+     * PriceListCode Setter
+     * @param priceListCode the code of the PriceList to link to this subscription
+     */
+    public void setPriceListCode(String priceListCode) {
+        this.priceListCode = priceListCode;
+    }
 }

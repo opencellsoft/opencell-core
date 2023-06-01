@@ -208,6 +208,11 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     private String ccedEmails;
 
+    /**
+     * A PriceList Code. (Optional)
+     */
+    @XmlElement(required = false)
+    private String priceListCode;
 
 
     /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
@@ -312,6 +317,9 @@ public class SubscriptionDto extends BusinessEntityDto {
         }
         if (Objects.nonNull(e.getPaymentMethod())) {
             setPaymentMethod(new PaymentMethodDto(e.getPaymentMethod()));
+        }
+        if(Objects.nonNull(e.getPriceList())) {
+            setPriceListCode(e.getPriceList().getCode());
         }
     }
 
@@ -937,5 +945,20 @@ public class SubscriptionDto extends BusinessEntityDto {
 	public void setContractCode(String contractCode) {
 		this.contractCode = contractCode;
 	}
-    
+
+    /**
+     * PriceListCode Getter
+     * @return the Code of the PriceList linked to the subscription
+     */
+    public String getPriceListCode() {
+        return priceListCode;
+    }
+
+    /**
+     * PriceListCode Setter
+     * @param priceListCode the code of the PriceList to link to this subscription
+     */
+    public void setPriceListCode(String priceListCode) {
+        this.priceListCode = priceListCode;
+    }
 }

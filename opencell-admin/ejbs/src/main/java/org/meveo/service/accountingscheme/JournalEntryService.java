@@ -29,6 +29,7 @@ import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.accountingScheme.JournalEntryDirectionEnum;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
@@ -258,9 +259,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         }
     }
 
-    private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code,
-                                           OperationCategoryEnum categoryEnum, BigDecimal amount,
-                                           Tax tax, Long operationNumber) {
+    private JournalEntry buildJournalEntry(AccountOperation ao, AccountingCode code, OperationCategoryEnum categoryEnum, BigDecimal amount, Tax tax, Long operationNumber) {
         JournalEntry firstEntry = new JournalEntry();
         firstEntry.setAccountOperation(ao);
         firstEntry.setAccountingCode(code);
@@ -280,40 +279,41 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         firstEntry.setCurrency(provider.getCurrency() != null ? provider.getCurrency().getCurrencyCode() : "");
         
         firstEntry.setTradingCurrency((ao.getTransactionalCurrency() != null) ? ao.getTransactionalCurrency().getCurrencyCode() : null);
-		firstEntry.setTransactionalAmount((ao.getAppliedRate() != null) ? amount.multiply(ao.getAppliedRate()) : null);
+		firstEntry.setTransactionalAmount((ao.getTransactionalAmount() != null) ? ao.getTransactionalAmount() : ((ao.getAppliedRate() != null) ? amount.multiply(ao.getAppliedRate()) : null));
 
         if (ao instanceof RecordedInvoice) {
-            firstEntry.setSupportingDocumentRef(((RecordedInvoice) ao).getInvoice());
-            firstEntry.setSupportingDocumentType(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getInvoiceType() != null
-                    ? ((RecordedInvoice) ao).getInvoice().getInvoiceType().getCode() : null);
+            Invoice invoice = ((RecordedInvoice) ao).getInvoice();
+			firstEntry.setSupportingDocumentRef(invoice);
+            firstEntry.setSupportingDocumentType(invoice != null && invoice.getInvoiceType() != null ? invoice.getInvoiceType().getCode() : null);
             
 			if (firstEntry.getTradingCurrency() == null) {
-				firstEntry.setTradingCurrency(((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getTradingCurrency() != null
-								? ((RecordedInvoice) ao).getInvoice().getTradingCurrency().getCurrencyCode() : null);
+				firstEntry.setTradingCurrency(invoice != null && invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getCurrencyCode() : null);
 			}
 
 			if (firstEntry.getTransactionalAmount() == null) {
-				firstEntry.setTransactionalAmount(((RecordedInvoice) ao).getInvoice() != null ? ((RecordedInvoice) ao).getInvoice().getTransactionalAmountWithTax() : null);
+				firstEntry.setTransactionalAmount(invoice != null ? invoice.getTransactionalAmountWithTax() : null);
 			}
 
         }
         Map<String, String> accountingInfo = addAccountingInfo(customerAccount);
-        if(accountingInfo != null && !accountingInfo.isEmpty()) {
+        if (accountingInfo != null && !accountingInfo.isEmpty()) {
             firstEntry.setAuxiliaryAccountCode(accountingInfo.get(AUXILIARY_ACCOUNT_CODE));
             firstEntry.setAuxiliaryAccountLabel(accountingInfo.get(AUXILIARY_ACCOUNT_LABEL));
         }
 
-        if(ao != null) {
+        if (ao != null) {
         	firstEntry.setJournalCode(ofNullable(ao.getJournal()).map(Journal::getCode).orElse(null));
         	firstEntry.setReference(ao.getReference());
         	firstEntry.setDocumentType(ao.getType());
         }
-        if(code != null) {
+        
+        if (code != null) {
         	firstEntry.setCategory(code.getChartOfAccountTypeEnum());
         	firstEntry.setAccount(code.getCode());
         	firstEntry.setLabel(code.getDescription());
         }
-        if(customerAccount != null) {
+        
+        if (customerAccount != null) {
         	firstEntry.setCustomerCode(customerAccount.getCode());
         	firstEntry.setCustomerName(customerAccount.getDescription());
         }
@@ -377,6 +377,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                             occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
                             amoutTax,
                             taxAgr.getTax(), recordedInvoice.getOperationNumber());
+                    taxEntry.setTransactionalAmount(transactionAmoutTax);
                     accountingCodeJournal.put(groupKey, taxEntry);
                 } else {
                     JournalEntry entry = accountingCodeJournal.get(groupKey);
@@ -454,6 +455,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
         revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
         revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
+        revenuEntry.setTransactionalAmount(invoiceLine.getAmountWithoutTax());
         return revenuEntry;
     }
 

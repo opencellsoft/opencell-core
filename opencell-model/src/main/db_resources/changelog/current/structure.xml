@@ -16813,6 +16813,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </addColumn>
 </changeSet>
 
+    <changeSet id="#INTRD-16366_20230529" author="zelmeliani">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="price_list_line_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                constraintName="fk_billing_wallet_operation_pli_line"
+                referencedTableName="cat_price_list_line"
+                referencedColumnNames="id"
+                baseColumnNames="price_list_line_id"
+                baseTableName="billing_wallet_operation" />
+    </changeSet>
+
 	<changeSet id="#INTRD-16445_20230526" author="aelmalki">
         <addColumn tableName="ar_account_operation">
             <column name="refunded_payment_id" type="bigint" />

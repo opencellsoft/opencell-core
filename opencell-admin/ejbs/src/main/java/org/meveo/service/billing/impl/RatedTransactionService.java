@@ -790,6 +790,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
+    public Long countRTBySubscriptionForDraftInvoice(Subscription subscription) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countRTBySubscriptionForDraftInvoice")
+            		.setParameter("subscription", subscription)
+            		.getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countRTBySubscriptionForDraftInvoice", e);
+            return 0L;
+        }
+    }
+
     public int moveNotBilledRTToUA(WalletInstance newWallet, Subscription subscription) {
         return getEntityManager().createNamedQuery("RatedTransaction.moveNotBilledRTToUA")
                 .setParameter("newWallet", newWallet)

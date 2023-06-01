@@ -59,6 +59,7 @@ import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
@@ -143,7 +144,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         BigDecimal amountDebit = amount;
         BigDecimal functionalCreditAmount = amount;
         BigDecimal functionalDebitAmount = amount;
-        MathContext mathContext = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        MathContext mathContext =
+                new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         boolean fullMatch = false;
         boolean withWriteOff = false;
         boolean withRefund = false;
@@ -187,7 +189,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             MatchingAmount matchingAmount = new MatchingAmount();
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
                 // Functional Amounts
-                if (functionalCreditAmount.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
+                if (functionalCreditAmount.compareTo(accountOperation.getTransactionalUnMatchingAmount()) >= 0) {
                     fullMatch = true;
                     functionalAmountToMatch = accountOperation.getUnMatchingAmount();
                     functionalCreditAmount = functionalCreditAmount.subtract(functionalAmountToMatch);
@@ -218,7 +220,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
             } else {
                 // Functional Amounts
-                if (functionalDebitAmount.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
+                if (functionalDebitAmount.compareTo(accountOperation.getTransactionalUnMatchingAmount()) >= 0) {
                 	fullMatch = true;
                 	functionalAmountToMatch = accountOperation.getUnMatchingAmount();
                     functionalDebitAmount = functionalDebitAmount.subtract(functionalAmountToMatch);
@@ -287,12 +289,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         .subtract(accountOperation.getTransactionalUnMatchingAmount()));
                 BigDecimal computedMatchingAmount =
                         (accountOperation.getAmount().multiply(accountOperation.getTransactionalMatchingAmount()))
-                                .divide(accountOperation.getTransactionalAmount(),
-                                        new MathContext(appProvider.getInvoiceRounding(),
-                                                appProvider.getInvoiceRoundingMode().getRoundingMode()));
+                                .divide(accountOperation.getTransactionalAmount(), mathContext);
                 accountOperation.setMatchingAmount(computedMatchingAmount);
                 accountOperation.setUnMatchingAmount(accountOperation.getAmount().subtract(computedMatchingAmount));
                 accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
+                matchingAmount.setMatchingAmount(amountToMatch);
                 matchingAmount.setMatchingAmount(amountToMatch);
                 matchingAmount.updateAudit(currentUser);
                 matchingAmount.setAccountOperation(accountOperation);
@@ -300,6 +301,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
                 accountOperation.getMatchingAmounts().add(matchingAmount);
                 matchingCode.getMatchingAmounts().add(matchingAmount);
+                if(aoToMatchLast == null && accountOperation instanceof Payment) {
+                    TradingCurrency transactionalCurrency = accountOperation.getTransactionalCurrency() != null ? accountOperation.getTransactionalCurrency() : null;
+                    TradingCurrency functionalCurrency = null;
+                    Currency currency = appProvider.getCurrency();
+                    if (currency != null && !StringUtils.isBlank(currency.getCurrencyCode())) {
+                        functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
+                    }
+                    if (transactionalCurrency != null && !transactionalCurrency.equals(functionalCurrency)) {
+                        createExchangeGainLoss(accountOperation, matchingAmount, transactionalCurrency, appliedRate);
+                    }
+                }
             }
         }
 
@@ -412,7 +424,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 accountOperation.setUnMatchingAmount(accountOperation.getAmount().subtract(computedMatchingAmount));
                 accountOperation.setMatchingAmount(computedMatchingAmount);
                 matchingAmount.setMatchingAmount(amountToMatch);
-                accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
+                matchingAmount.setTransactionalMatchingAmount(amountToMatch);
+                boolean isMatched = fullMatch && accountOperation.getTransactionalUnMatchingAmount().compareTo(ZERO) == 0;
+                accountOperation.setMatchingStatus(isMatched ? MatchingStatusEnum.L : MatchingStatusEnum.P);
 
                 matchingAmount.updateAudit(currentUser);
                 matchingAmount.setAccountOperation(accountOperation);
@@ -462,36 +476,46 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     }
 
-    private void createExchangeGainLoss(AccountOperation accountOperation, MatchingAmount matchingAmount, TradingCurrency transactionalCurrency, BigDecimal appliedRate) {
+    private void createExchangeGainLoss(AccountOperation accountOperation, MatchingAmount matchingAmount,
+                                        TradingCurrency transactionalCurrency, BigDecimal invoiceRate) {
         Date transactionDate = parseDateWithPattern(dateFormat.format(accountOperation.getTransactionDate()), DATE_FORMAT_PATTERN);
         BigDecimal currentRate = transactionalCurrency.getExchangeRate(transactionDate) != null? transactionalCurrency.getExchangeRate(transactionDate).getExchangeRate() : null;
+        MathContext mathContext = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 
         if (currentRate != null) {
             AccountOperation exchangeDeltaAccountOperation = new AccountOperation();
-            BigDecimal amount = matchingAmount.getMatchingAmount().divide(appliedRate);
-            BigDecimal exchangeAmountDelta = amount.subtract(accountOperation.getMatchingAmount());
-            BigDecimal exchangeAmount = exchangeAmountDelta.abs();
-            if (exchangeAmountDelta.compareTo(ZERO) < 0) {
-                exchangeDeltaAccountOperation.setCode("XCH_GAIN");
-                exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.DEBIT);
-            } else {
-                exchangeDeltaAccountOperation.setCode("XCH_LOSS");
-                exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
+            BigDecimal invoiceAmount = matchingAmount.getMatchingAmount();
+            if(accountOperation.getTransactionalUnMatchingAmount().compareTo(ZERO) > 0) {
+                invoiceAmount = accountOperation.getTransactionalMatchingAmount();
             }
-            exchangeDeltaAccountOperation.setCustomerAccount(accountOperation.getCustomerAccount());
-            exchangeDeltaAccountOperation.setAccountingCode(accountOperation.getAccountingCode());
-            exchangeDeltaAccountOperation.setMatchingStatus(accountOperation.getMatchingStatus());
-            exchangeDeltaAccountOperation.setJournal(accountOperation.getJournal());
-            exchangeDeltaAccountOperation.setAccountCodeClientSide(accountOperation.getAccountCodeClientSide());
-            exchangeDeltaAccountOperation.setTransactionDate(new Date());
-            exchangeDeltaAccountOperation.setAmount(exchangeAmount);
-            exchangeDeltaAccountOperation.setMatchingAmount(exchangeAmount);
-            exchangeDeltaAccountOperation.setTransactionalMatchingAmount(ZERO);
-            exchangeDeltaAccountOperation.setTransactionalAmount(ZERO);
-            exchangeDeltaAccountOperation.setTransactionalUnMatchingAmount(ZERO);
-            exchangeDeltaAccountOperation.setTransactionalAmountWithoutTax(ZERO);
+            BigDecimal computedInvoiceAmount = invoiceAmount.divide(invoiceRate, mathContext);
+            BigDecimal paymentAmount = accountOperation.getTransactionalMatchingAmount()
+                            .divide(accountOperation.getAppliedRate(), mathContext);
+            BigDecimal exchangeAmountDelta = paymentAmount.subtract(computedInvoiceAmount);
+            BigDecimal exchangeAmount = exchangeAmountDelta.abs();
+            if(exchangeAmount.compareTo(ZERO) > 0) {
+                if (exchangeAmountDelta.compareTo(ZERO) < 0) {
+                    exchangeDeltaAccountOperation.setCode("XCH_LOSS");
+                    exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
+                } else {
+                    exchangeDeltaAccountOperation.setCode("XCH_GAIN");
+                    exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.DEBIT);
+                }
+                exchangeDeltaAccountOperation.setCustomerAccount(accountOperation.getCustomerAccount());
+                exchangeDeltaAccountOperation.setAccountingCode(accountOperation.getAccountingCode());
+                exchangeDeltaAccountOperation.setMatchingStatus(accountOperation.getMatchingStatus());
+                exchangeDeltaAccountOperation.setJournal(accountOperation.getJournal());
+                exchangeDeltaAccountOperation.setAccountCodeClientSide(accountOperation.getAccountCodeClientSide());
+                exchangeDeltaAccountOperation.setTransactionDate(new Date());
+                exchangeDeltaAccountOperation.setAmount(exchangeAmount);
+                exchangeDeltaAccountOperation.setMatchingAmount(exchangeAmount);
+                exchangeDeltaAccountOperation.setTransactionalMatchingAmount(ZERO);
+                exchangeDeltaAccountOperation.setTransactionalAmount(ZERO);
+                exchangeDeltaAccountOperation.setTransactionalUnMatchingAmount(ZERO);
+                exchangeDeltaAccountOperation.setTransactionalAmountWithoutTax(ZERO);
 
-            accountOperationService.create(exchangeDeltaAccountOperation);
+                accountOperationService.create(exchangeDeltaAccountOperation);
+            }
         }
     }
 
@@ -707,7 +731,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             }
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
                 cptOccDebit++;
-                amoutDebit = amoutDebit.add(accountOperation.getUnMatchingAmount());
+                amoutDebit = amoutDebit.add(accountOperation.getTransactionalUnMatchingAmount());
             }
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
                 cptOccCredit++;

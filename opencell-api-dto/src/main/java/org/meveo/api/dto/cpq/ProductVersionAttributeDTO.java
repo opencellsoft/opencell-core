@@ -132,7 +132,7 @@ public class ProductVersionAttributeDTO {
         this.description=attribute.getDescription();
         this.disabled=attribute.isDisabled();
         this.attributeType=attribute.getAttributeType(); 
-		this.allowedValues = attribute.getAllowedValues();
+		this.allowedValues = new HashSet<>(attribute.getAllowedValues());
 		
         this.display=productVersionAttribute.isDisplay();
         this.mandatory = productVersionAttribute.isMandatory();

@@ -64,12 +64,15 @@ import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.*;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
+import org.meveo.model.pricelist.PriceList;
+import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
@@ -154,6 +157,9 @@ public class CommercialOrderApi extends BaseApi {
 	@Inject
 	private ContractHierarchyHelper contractHierarchyHelper;
 
+	@Inject
+	private PriceListService priceListService;
+
 	private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
 	
@@ -230,9 +236,17 @@ public class CommercialOrderApi extends BaseApi {
 				throw new EntityDoesNotExistsException("No Access found for code : " + accessDto.getCode() + " and subscription : " + accessDto.getSubscription());
 			order.setAccess(access);
 		}
-		if(Strings.isEmpty(orderDto.getQuoteCode())) {
 
+		if(StringUtils.isNotBlank(orderDto.getPriceListCode())) {
+			PriceList priceList = priceListService.findByCode(orderDto.getPriceListCode());
+			if(priceList == null) {
+				throw new EntityDoesNotExistsException(PriceList.class, orderDto.getPriceListCode());
+			} else if(!PriceListStatusEnum.ACTIVE.equals(priceList.getStatus())) {
+				throw new BusinessApiException("Only Active PriceList can be attached to an order");
+			}
+			order.setPriceList(priceList);
 		}
+
 		order.setStatus(CommercialOrderEnum.DRAFT.toString());
 		order.setStatusDate(Calendar.getInstance().getTime());
 		order.setOrderProgress(orderDto.getOrderProgress()!=null?orderDto.getOrderProgress():0);
@@ -453,6 +467,19 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 			if(bc == null)
 				throw new EntityDoesNotExistsException(BillingCycle.class, orderDto.getBillingCycleCode());
 			order.setBillingCycle(bc);
+		}
+		if(orderDto.getPriceListCode() != null) {
+			if(!orderDto.getPriceListCode().isEmpty()) {
+				PriceList priceList = priceListService.findByCode(orderDto.getPriceListCode());
+				if(priceList == null) {
+					throw new EntityDoesNotExistsException(PriceList.class, orderDto.getPriceListCode());
+				} else if(!PriceListStatusEnum.ACTIVE.equals(priceList.getStatus())) {
+					throw new BusinessApiException("Only Active PriceList can be attached to an order");
+				}
+				order.setPriceList(priceList);
+			} else {
+				order.setPriceList(null);
+			}
 		}
 		commercialOrderService.update(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);

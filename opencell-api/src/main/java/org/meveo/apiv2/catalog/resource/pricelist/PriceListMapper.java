@@ -43,6 +43,10 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
 				.build();	
     }
 	
+	public org.meveo.apiv2.catalog.PriceList toResource(PriceList entity, boolean b) {
+		return this.toResource(entity);
+	}
+	
 	/**
 	 * Get codes from a set of Brands
 	 * @param entity Price List
@@ -312,12 +316,13 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
 	 * @return {@link PriceListStatusEnum}
 	 */
 	private PriceListStatusEnum getStatus(String status) {
-		if(status.equals(PriceListStatusEnum.DRAFT.name()) || status.equals(PriceListStatusEnum.ACTIVE.name()) ||
+		if(status == null) {
+			return null;
+		} else if(status.equals(PriceListStatusEnum.DRAFT.name()) || status.equals(PriceListStatusEnum.ACTIVE.name()) ||
 				status.equals(PriceListStatusEnum.CLOSED.name()) || status.equals(PriceListStatusEnum.ARCHIVED.name())) {
-			PriceListStatusEnum.valueOf(status);			
+			return PriceListStatusEnum.valueOf(status);			
 		} else {
 			throw new BusinessApiException("The price list status can be either Draft, Active, Closed, or Archived");
 		}
-		return null;
 	}
 }
