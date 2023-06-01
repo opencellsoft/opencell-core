@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
@@ -32,6 +33,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.service.base.PersistenceService;
@@ -145,6 +147,21 @@ public class RefundService extends PersistenceService<Refund> {
         Refund refund = new Refund();
         createEntityRefund(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay, refund, occTemplate);
         return refund.getId();
+
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    public void checkExceededCreatedRefundOnPayment(Payment payment) {
+        Query query = getEntityManager().createNamedQuery("Refund.countLinkedPayment");
+        query.setParameter("REFUNDED_PAYMENT_UD", payment.getId());
+
+        BigDecimal countCreatedtRefundOnPayment = (BigDecimal) query.getSingleResult();
+
+        if (countCreatedtRefundOnPayment != null && countCreatedtRefundOnPayment.compareTo(payment.getAmount()) >= 0) {
+           throw new BusinessException("The amount of the refund is greater than the amount due or remaining of the payment to be refunded");
+        }
 
     }
 

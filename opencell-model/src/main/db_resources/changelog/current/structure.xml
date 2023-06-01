@@ -16813,4 +16813,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </addColumn>
 </changeSet>
 
+	<changeSet id="#INTRD-16445_20230526" author="aelmalki">
+        <addColumn tableName="ar_account_operation">
+            <column name="refunded_payment_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="ar_account_operation"
+                baseColumnNames="refunded_payment_id"
+                constraintName="fk_refunded_payment_id"
+                referencedTableName="ar_account_operation"
+                referencedColumnNames="id" />
+    </changeSet>
+
 </databaseChangeLog>

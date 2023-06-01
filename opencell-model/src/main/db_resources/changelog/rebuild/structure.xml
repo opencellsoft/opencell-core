@@ -2153,6 +2153,7 @@
             <column name="applied_rate_date" type="datetime" />
             <column name="transactional_payment_fees" type="numeric(23, 12)" />
 			<column name="error_detail" type="varchar(2000)" />
+			<column name="refunded_payment_id" type="bigint" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -18730,6 +18731,15 @@
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="billing_trading_currency" />
 	</changeSet>
+	
+	<changeSet author="aelmalki" id="#rebuild-fk-INTRD-16445_20230526">
+		<addForeignKeyConstraint
+                baseTableName="ar_account_operation"
+                baseColumnNames="refunded_payment_id"
+                constraintName="fk_refunded_payment_id"
+                referencedTableName="ar_account_operation"
+                referencedColumnNames="id" />
+    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -20111,6 +20121,7 @@
     <changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
     <changeSet id="#INTRD-16396_20230522_pli_quote" author="a.rouaguebe" />
     <changeSet id="#INTRD-15849_20230509" author="TarikFA." />
+	<changeSet id="#INTRD-16445_20230526" author="aelmalki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
