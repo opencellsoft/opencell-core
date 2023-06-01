@@ -410,8 +410,11 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         }
         // Change related OPEN or REJECTED Rated transaction status to CANCELED
         RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
-        if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED)) {
-            ratedTransaction.changeStatus(RatedTransactionStatusEnum.CANCELED);
+        assert ratedTransaction != null;
+        RatedTransactionStatusEnum oldRTStatus = ratedTransaction.getStatus();
+        if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED
+                || ratedTransaction.getStatus() == RatedTransactionStatusEnum.BILLED) {
+            ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
         }
 
         // Check triggered EDRS and check status/rerate each of them
@@ -438,7 +441,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         Map<Long, WalletOperation> oldWOAndNewWO = new HashMap<>();
         boolean isEdrTreated = false;
         if (CollectionUtils.isNotEmpty(tEdrs)) {
-            
+
             // For each EDR that was triggered by WO
             for (EDR edr : tEdrs) {
 
@@ -547,6 +550,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
 
         } else {
             rateNewWO(operationToRerate, useSamePricePlan);
+            ratedTransactionService.update(oldRTStatus, operationToRerate.getRatedTransaction());
         }
         if(!isEdrTreated)
             operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);

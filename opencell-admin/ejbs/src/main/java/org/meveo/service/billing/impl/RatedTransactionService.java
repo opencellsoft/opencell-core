@@ -55,13 +55,13 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
+import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
@@ -85,6 +85,8 @@ import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
@@ -2287,5 +2289,68 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .getResultList();
     }
 
+    /**
+     * Update ratedTransaction and
+     *
+     * @param oldRTStatus RatedTransactionStatusEnum
+     * @param ratedTransaction RatedTransaction
+     */
+    public RatedTransaction update(RatedTransactionStatusEnum oldRTStatus, RatedTransaction ratedTransaction) {
+log.info("update trong RatedTransactionService day ne Thang");
+	    InvoiceLine invoiceLine = ratedTransaction.getInvoiceLine();
+        if (invoiceLine != null) {
+            // if invoice line of ratedTransaction is not BILLED
+log.info("invoiceLine day ne Thang {}", invoiceLine);
+            if (invoiceLine.getStatus() != InvoiceLineStatusEnum.BILLED) {
+                if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.CANCELED || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED
+                        || ratedTransaction.getStatus() == RatedTransactionStatusEnum.RERATED) {
+log.info("RatedTransactionStatusEnum.RERATED day ne Thang {}", ratedTransaction.getStatus());
+                    if (oldRTStatus == RatedTransactionStatusEnum.BILLED || oldRTStatus == RatedTransactionStatusEnum.PROCESSED) {
+                        // if ratedTransaction is the principal RT
+                        if (ratedTransaction.getDiscountedRatedTransaction() == null) {
+log.info("recomputeInvoiceLine day ne Thang");
+                            // recompute the invoiceLine fields by extracting RT amounts and quantity of ratedTransaction
+                            recomputeInvoiceLine(invoiceLine, ratedTransaction);
+                        }
+                        // if ratedTransaction is discounted RT
+                        else {
+                            // update the status of the linked invoiceLine to match the target RT status (CANCELLED, REJECTED, or RERATED)
 
+                        }
+                    }
+                }
+            }
+            else {
+                log.info("Invoice line id = {} created from ratedTransaction id = {} is already billed. Rerating is not allowed",
+                        invoiceLine.getId(), ratedTransaction.getId());
+            }
+        }
+        else {
+            log.info("No invoice line created from ratedTransaction id = {}", ratedTransaction.getId());
+        }
+
+        return super.update(ratedTransaction);
+    }
+
+    /**
+     * Recompute the fields of an existing invoice line during rerating process.
+     * The amounts must be extracted from the generated invoice line since ratedTransaction is in RERATED
+     *
+     * @param invoiceLine instance of InvoiceLine
+     * @param ratedTransaction instance of RatedTransaction
+     */
+    public void recomputeInvoiceLine(InvoiceLine invoiceLine, RatedTransaction ratedTransaction) {
+        InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
+        BigDecimal amountWithoutTax = (invoiceLine.getAmountWithoutTax()).subtract(ratedTransaction.getAmountWithoutTax());
+        BigDecimal amountWithTax = (invoiceLine.getAmountWithTax()).subtract(ratedTransaction.getAmountWithTax());
+        BigDecimal taxPercent = invoiceLine.getTaxRate();
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent,
+                appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+
+        BigDecimal quantity = invoiceLine.getQuantity().subtract(ratedTransaction.getQuantity());
+        Date beginDate = invoiceLine.getValidity().getFrom();
+        Date endDate = invoiceLine.getValidity().getTo();
+
+        linesFactory.update(invoiceLine.getId(), amounts, quantity, beginDate, endDate);
+    }
 }
