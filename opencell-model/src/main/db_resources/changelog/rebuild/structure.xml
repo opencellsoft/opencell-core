@@ -4055,6 +4055,7 @@
 			<column name="transactional_unit_amount_tax" type="numeric(23, 12)" />
 			<column name="trading_currency_id" type="bigint" />
             <column name="contract_line_id" type="bigint" />
+			<column name="price_list_line_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -17212,6 +17213,14 @@
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cpq_media" />
+    </changeSet>
+	<changeSet id="#INTRD-16366_20230529_fk" author="zelmeliani">
+        <addForeignKeyConstraint
+                constraintName="fk_billing_wallet_operation_pli_line"
+                referencedTableName="cat_price_list_line"
+                referencedColumnNames="id"
+                baseColumnNames="price_list_line_id"
+                baseTableName="billing_wallet_operation" />
     </changeSet>
     <!-- end fk -->
 
