@@ -6079,6 +6079,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                 .setParameter("id", invoiceLine.getId()).executeUpdate();
                         }
                     }
+
+                    if (!ilMassUpdates.isEmpty() || !ilUpdates.isEmpty()) {
+                        em.flush();
+                        em.clear();
+                    }
                 }
             }
         }
