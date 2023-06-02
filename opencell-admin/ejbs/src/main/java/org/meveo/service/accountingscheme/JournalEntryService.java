@@ -455,7 +455,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         revenuEntry.setAnalyticCode1(invoiceLine.getAccountingArticle().getAnalyticCode1());
         revenuEntry.setAnalyticCode2(invoiceLine.getAccountingArticle().getAnalyticCode2());
         revenuEntry.setAnalyticCode3(invoiceLine.getAccountingArticle().getAnalyticCode3());
-        revenuEntry.setTransactionalAmount(invoiceLine.getAmountWithoutTax());
+        revenuEntry.setTransactionalAmount(invoiceLine.getTransactionalAmountWithoutTax());
         return revenuEntry;
     }
 
