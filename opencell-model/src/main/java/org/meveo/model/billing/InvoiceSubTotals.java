@@ -61,10 +61,10 @@ public class InvoiceSubTotals extends EnableBusinessEntity {
     private BigDecimal amountWithTax;
 
     @Transient
-    private BigDecimal convertedAmountWithTax;
+    private BigDecimal transactionalAmountWithTax;
     
     @Transient
-    private BigDecimal convertedAmountWithoutTax;
+    private BigDecimal transactionalAmountWithoutTax;
     
     @Override
     public String toString() {
@@ -147,19 +147,20 @@ public class InvoiceSubTotals extends EnableBusinessEntity {
 		this.amountWithTax = amountWithTax;
 	}
 
-	public BigDecimal getConvertedAmountWithTax() {
-		return convertedAmountWithTax;
+	public BigDecimal getTransactionalAmountWithTax() {
+		return transactionalAmountWithTax;
 	}
 
-	public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
-		this.convertedAmountWithTax = convertedAmountWithTax;
+	public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+		this.transactionalAmountWithTax = transactionalAmountWithTax;
 	}
 
-	public BigDecimal getConvertedAmountWithoutTax() {
-		return convertedAmountWithoutTax;
+	public BigDecimal getTransactionalAmountWithoutTax() {
+		return transactionalAmountWithoutTax;
 	}
 
-	public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
-		this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+	public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+		this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
 	}
+
 }

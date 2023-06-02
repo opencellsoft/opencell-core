@@ -115,22 +115,22 @@ public class InvoiceSubTotalsService extends BusinessService<InvoiceSubTotals> {
 			invoiceSubtotals.forEach( ist -> {
 				BigDecimal amountWithTax = BigDecimal.ZERO;
 				BigDecimal amountWithoutTax = BigDecimal.ZERO;
-				BigDecimal convertedAmountWithoutTax = BigDecimal.ZERO;
-				BigDecimal convertedAmountWithTax = BigDecimal.ZERO;
+				BigDecimal transactionalAmountWithoutTax = BigDecimal.ZERO;
+				BigDecimal transactionalAmountWithTax = BigDecimal.ZERO;
 				for (InvoiceLine invl : invoiceLines) {
 				    Boolean evaluateExpr = ist.getSubTotalEl() != null ? ValueExpressionWrapper.evaluateExpression(ist.getSubTotalEl(), Boolean.class, invl) : null;
 					boolean isValid = StringUtils.isNotEmpty(ist.getSubTotalEl()) && evaluateExpr != null ? evaluateExpr : false;
 					if(isValid) {
 						amountWithTax = amountWithTax.add(invl.getAmountWithTax() != null ? invl.getAmountWithTax() : BigDecimal.ZERO);
 						amountWithoutTax = amountWithoutTax.add(invl.getAmountWithoutTax() != null ? invl.getAmountWithoutTax() : BigDecimal.ZERO);
-						convertedAmountWithTax = convertedAmountWithTax.add(invl.getTransactionalAmountWithTax() != null ? invl.getTransactionalAmountWithTax() : BigDecimal.ZERO);
-						convertedAmountWithoutTax = convertedAmountWithoutTax.add(invl.getTransactionalAmountWithoutTax() != null ? invl.getTransactionalAmountWithoutTax() : BigDecimal.ZERO);
+						transactionalAmountWithTax = transactionalAmountWithTax.add(invl.getTransactionalAmountWithTax() != null ? invl.getTransactionalAmountWithTax() : BigDecimal.ZERO);
+						transactionalAmountWithoutTax = transactionalAmountWithoutTax.add(invl.getTransactionalAmountWithoutTax() != null ? invl.getTransactionalAmountWithoutTax() : BigDecimal.ZERO);
 					}
 				}
 				ist.setAmountWithTax(amountWithTax);
 				ist.setAmountWithoutTax(amountWithoutTax);
-				ist.setConvertedAmountWithoutTax(convertedAmountWithoutTax);
-				ist.setConvertedAmountWithTax(convertedAmountWithTax);
+				ist.setTransactionalAmountWithoutTax(transactionalAmountWithoutTax);
+				ist.setTransactionalAmountWithTax(transactionalAmountWithTax);
 			});
 			return invoiceSubtotals;
 		}catch(Exception e) {

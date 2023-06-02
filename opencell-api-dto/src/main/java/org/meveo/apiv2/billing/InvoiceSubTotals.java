@@ -37,12 +37,12 @@ public interface InvoiceSubTotals extends Resource{
 	BigDecimal getAmountWithoutTax();
 
 
-	@Schema(description = "sum of converted the amount with tax")
+	@Schema(description = "sum of transactional the amount with tax")
 	@Nullable
-	BigDecimal getConvertedAmountTax();
+	BigDecimal getTransactionalAmountTax();
 
-	@Schema(description = "sum of converted the amount without tax")
+	@Schema(description = "sum of transactional the amount without tax")
 	@Nullable
-	BigDecimal getConvertedAmountWithoutTax();
+	BigDecimal getTransactionalAmountWithoutTax();
 	
 }
