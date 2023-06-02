@@ -150,8 +150,10 @@ public class JobExecutionService extends BaseService {
                 && (!jobInstance.isLimitToSingleNode() || (jobInstance.isLimitToSingleNode() && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
             
             Map<String, Object> jobParameters = new HashMap<String, Object>();
+            if (params != null) {
+                jobParameters.putAll(params);
+            }
             jobParameters.put(Job.JOB_PARAM_LAUNCHER, jobLauncher);
-            
             clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.execute, jobParameters);
         }
         return jobExecutionResultId;
