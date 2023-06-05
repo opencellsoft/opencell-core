@@ -30,8 +30,8 @@ public class InvoiceSubTotalsMapper extends ResourceMapper<org.meveo.apiv2.billi
 						.code(entity.getCode())
 						.amountTax(entity.getAmountWithTax())
 						.amountWithoutTax(entity.getAmountWithoutTax())
-						.convertedAmountTax(entity.getConvertedAmountWithTax())
-						.convertedAmountWithoutTax(entity.getConvertedAmountWithoutTax())
+						.transactionalAmountTax(entity.getTransactionalAmountWithTax())
+						.transactionalAmountWithoutTax(entity.getTransactionalAmountWithoutTax())
 						.build();
 		}catch(Exception e) {
 			throw new BusinessException(e);
