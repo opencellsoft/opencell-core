@@ -19,6 +19,7 @@
 package org.meveo.api.payment;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -173,7 +174,8 @@ public class PaymentApi extends BaseApi {
 			if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency)) {
 				ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, functionalCurrency, paymentDto.getTransactionDate());
 				if (!Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
-					functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
+					functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(),
+							new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
 					lastApliedRate = exchangeRate.getExchangeRate();
 				}
 			}
