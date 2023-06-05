@@ -8772,6 +8772,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="sequence_id" valueSequenceCurrent="bill_seq_invoice_seq" />
+            <column name="version" value="1" />
 		</insert>
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
@@ -8791,6 +8792,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="sequence_id" valueSequenceCurrent="bill_seq_invoice_seq" />
+            <column name="version" value="1" />
 		</insert>
     
     </changeSet>
@@ -10189,6 +10191,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
 			<column name="sequence_id" valueSequenceCurrent="bill_seq_invoice_seq" />
+            <column name="version" value="1" />
 		</insert>
 	</changeSet>
 	
@@ -10287,6 +10290,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="creator" value="applicationInitializer" />
 			<column name="sequence_id"
 					valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_item_seq')" />
+            <column name="version" value="1" />
 		</insert>
 	</changeSet>
 
@@ -11382,6 +11386,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
+            <column name="version" value="1" />
         </insert>
     </changeSet>
 	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
@@ -11497,6 +11502,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'attribute_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
         
         
@@ -11519,6 +11525,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'user_account_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
         
         
@@ -11541,6 +11548,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'customer_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
         
         
@@ -11563,6 +11571,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'offer_template_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
         
         
@@ -11585,6 +11594,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
         
         
@@ -11607,6 +11617,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'invoicing_plan_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
        
         
@@ -11629,6 +11640,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'invoicing_plan_item_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
         
         
@@ -11651,6 +11663,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'commercial_order_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
       
         
@@ -11673,6 +11686,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'product_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
         
          
@@ -11695,6 +11709,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'product_line_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
         
         
@@ -11717,6 +11732,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'quote_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
         
         
@@ -11739,6 +11755,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'subscription_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
     
     
@@ -11762,6 +11779,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'tag_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
         
         
@@ -11784,6 +11802,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'tag_category_code_sequence')"/>
+            <column name="version" value="1" />
         </insert>
     </changeSet>
 
@@ -11807,6 +11826,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="creator" value="applicationInitializer"/>
 			<column name="sequence_id"
 					valueComputed="(SELECT id from generic_sequence where code = 'CUSTOMER_CODE_SEQUENCE')"/>
+            <column name="version" value="1" />
 		</insert>
 	</changeSet>
 
@@ -11830,6 +11850,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="creator" value="applicationInitializer"/>
 			<column name="sequence_id"
 					valueComputed="(SELECT id from generic_sequence where code = 'MEDIA_CODE_SEQUENCE')"/>
+            <column name="version" value="1" />
 		</insert>
 	</changeSet>
 
@@ -11849,6 +11870,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	</changeSet>
 	
 	<changeSet id="#INTRD-16482_20230526" author="aeljaouhari" />
+	<changeSet id="#INTRD-16247_20230605" author="zelmeliani" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
