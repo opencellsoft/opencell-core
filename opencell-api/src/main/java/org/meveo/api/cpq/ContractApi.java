@@ -332,7 +332,7 @@ public class ContractApi extends BaseApi{
     	final Contract contract = contractService.findByCode(contractItemDto.getContractCode());
     	if(contract == null) {
     		throw new EntityDoesNotExistsException(Contract.class, contractItemDto.getContractCode());
-		} else if (!ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
+		} else if (!currentUser.hasRole("superAdminManagement") && !ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
 			throw new BusinessApiException("Create contract lines for Active contracts is not allowed.");
 		}
     	if(!Strings.isEmpty(contractItemDto.getServiceTemplateCode())) {
