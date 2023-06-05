@@ -103,6 +103,9 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.pricelist.PriceList;
+import org.meveo.model.pricelist.PriceListLine;
+import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
@@ -111,13 +114,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.catalog.impl.ChargeTemplateService;
-import org.meveo.service.catalog.impl.DiscountPlanItemService;
-import org.meveo.service.catalog.impl.DiscountPlanService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.service.catalog.impl.*;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
@@ -128,6 +125,7 @@ import org.meveo.service.script.catalog.TriggeredEdrScript;
 import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
 
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the
@@ -173,6 +171,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     protected CounterInstanceService counterInstanceService;
+
+    @Inject
+    protected PriceListLineService priceListLineService;
 
     final private static BigDecimal HUNDRED = new BigDecimal("100");
     
@@ -679,6 +680,38 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         }
                     }
 
+                } else {
+                	//Get the PriceList from subscription
+                	PriceList priceList =  bareWalletOperation.getChargeInstance().getServiceInstance().getSubscription().getPriceList();
+                	
+                	//Check the PriceList is not null and status is ACTIVE and compare wallet operation date with applicationStartDate and applicationEndDate of the PriceList
+                	if(priceList != null && priceList.getStatus() != null && PriceListStatusEnum.ACTIVE.equals(priceList.getStatus()) && 
+                				priceList.getApplicationStartDate() != null && bareWalletOperation.getOperationDate().after(priceList.getApplicationStartDate()) && 
+                				priceList.getApplicationEndDate() != null && bareWalletOperation.getOperationDate().before(priceList.getApplicationEndDate())) {
+
+                		//Get Charge Template id, Offer Template id and Product id
+                        Long chargeTemplateId = getChargeTemplateId(bareWalletOperation);
+                        Long offerTemplateId = getOfferTemplateId(bareWalletOperation);
+                        Long productId = getProductId(bareWalletOperation);
+
+                        //Get the applicable PriceListLine by Price List id, Charge Template id, Product id and Offer Template id
+                		PriceListLine priceListLine = priceListLineService.getApplicablePriceListLine(priceList.getId(), chargeTemplateId, productId, offerTemplateId);
+
+                        //Check if the PriceListLine is not null, then get the PricePlan, calculate all prices and update WalletOperation
+                        if (priceListLine != null && priceListLine.getPricePlan() != null) {
+                            Amounts unitPrices = determineUnitPrice(priceListLine.getPricePlan(), bareWalletOperation);
+                            unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
+                            unitPriceWithTax = unitPrices.getAmountWithTax();
+                            bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
+                            bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+                            Amounts transactionalUnitPrices = determineTradingUnitPrice(priceListLine.getPricePlan(), bareWalletOperation).orElse(determineUnitPrice(priceListLine.getPricePlan(), bareWalletOperation));
+                            bareWalletOperation.setTransactionalUnitAmountWithoutTax(transactionalUnitPrices.getAmountWithoutTax());
+                            bareWalletOperation.setTransactionalUnitAmountWithTax(transactionalUnitPrices.getAmountWithTax());
+
+                            //Update WalletOperation by setting the PriceListLine
+                            bareWalletOperation.setPriceListLine(priceListLine);
+                        }
+            		}
                 }
 
                 if (unitPriceWithoutTax == null) {
@@ -803,6 +836,54 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             ratingResult.addWalletOperation(discountedWalletOperation);
         }
         return ratingResult;
+    }
+
+    /**
+     * Get Charge Template id
+     * @param bareWalletOperation {@link WalletOperation}
+     * @return Charge Template id
+     */
+    private static Long getChargeTemplateId(WalletOperation bareWalletOperation) {
+        Long chargeTemplateId = null;
+
+        if(bareWalletOperation.getChargeInstance() != null && bareWalletOperation.getChargeInstance().getChargeTemplate() != null) {
+            chargeTemplateId = bareWalletOperation.getChargeInstance().getChargeTemplate().getId();
+        }
+
+        return chargeTemplateId;
+    }
+
+    /**
+     * Get Offer Template Id
+     * @param bareWalletOperation {@link WalletOperation}
+     * @return Offer Template id
+     */
+    private static Long getOfferTemplateId(WalletOperation bareWalletOperation) {
+        Long offerTemplateId = null;
+
+        if(bareWalletOperation.getServiceInstance() != null && bareWalletOperation.getServiceInstance().getSubscription() != null) {
+            offerTemplateId = bareWalletOperation.getServiceInstance().getSubscription().getOffer().getId();
+        } else if(bareWalletOperation.getOfferTemplate() != null) {
+            offerTemplateId = bareWalletOperation.getOfferTemplate().getId();
+        }
+
+        return offerTemplateId;
+    }
+
+    /**
+     * Get Product id
+     * @param bareWalletOperation {@link WalletOperation}
+     * @return Product id
+     */
+    private static Long getProductId(WalletOperation bareWalletOperation) {
+        Long productId = null;
+
+        if(bareWalletOperation.getServiceInstance() != null && bareWalletOperation.getServiceInstance().getProductVersion() != null
+                && bareWalletOperation.getServiceInstance().getProductVersion().getProduct() != null ) {
+            productId = bareWalletOperation.getServiceInstance().getProductVersion().getProduct().getId();
+        }
+
+        return productId;
     }
 
     private Contract lookupSuitableContract(List<Customer> customers, List<Contract> contracts) {
