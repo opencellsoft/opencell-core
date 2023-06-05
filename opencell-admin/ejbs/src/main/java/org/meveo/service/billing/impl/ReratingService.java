@@ -410,9 +410,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         }
         // Change related OPEN or REJECTED Rated transaction status to CANCELED
         RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
-        assert ratedTransaction != null;
-        RatedTransactionStatusEnum oldRTStatus = ratedTransaction.getStatus();
-        if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED) {
+        if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED)) {
             ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
         }
 
@@ -549,7 +547,6 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
 
         } else {
             rateNewWO(operationToRerate, useSamePricePlan);
-            ratedTransactionService.update(oldRTStatus, operationToRerate.getRatedTransaction());
         }
         if(!isEdrTreated)
             operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);

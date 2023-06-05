@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -119,7 +118,6 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.cpq.commercial.OrderLot;
-import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
@@ -2290,43 +2288,70 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Update ratedTransaction and
+     * Update ratedTransaction and rerate
      *
-     * @param oldRTStatus RatedTransactionStatusEnum
+     * @param oldStatus RatedTransactionStatusEnum
      * @param ratedTransaction RatedTransaction
      */
-    public RatedTransaction update(RatedTransactionStatusEnum oldRTStatus, RatedTransaction ratedTransaction) {
-log.info("update trong RatedTransactionService day ne Thang");
-	    InvoiceLine invoiceLine = ratedTransaction.getInvoiceLine();
-        if (invoiceLine != null) {
-            // if invoice line of ratedTransaction is not BILLED
-log.info("invoiceLine day ne Thang {}", invoiceLine);
-            if (invoiceLine.getStatus() != InvoiceLineStatusEnum.BILLED) {
-                if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.CANCELED || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED
-                        || ratedTransaction.getStatus() == RatedTransactionStatusEnum.RERATED) {
-log.info("RatedTransactionStatusEnum.RERATED day ne Thang {}", ratedTransaction.getStatus());
-                    if (oldRTStatus == RatedTransactionStatusEnum.BILLED || oldRTStatus == RatedTransactionStatusEnum.PROCESSED) {
-                        // if ratedTransaction is the principal RT
-                        if (ratedTransaction.getDiscountedRatedTransaction() == null) {
-log.info("recomputeInvoiceLine day ne Thang");
-                            // recompute the invoiceLine fields by extracting RT amounts and quantity of ratedTransaction
-                            recomputeInvoiceLine(invoiceLine, ratedTransaction);
-                        }
-                        // if ratedTransaction is discounted RT
-                        else {
-                            // update the status of the linked invoiceLine to match the target RT status (CANCELLED, REJECTED, or RERATED)
+    public RatedTransaction update(RatedTransactionStatusEnum oldStatus, RatedTransaction ratedTransaction) {
 
+        if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.CANCELED || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED
+                || ratedTransaction.getStatus() == RatedTransactionStatusEnum.RERATED) {
+//            RatedTransaction existingRatedTransaction = findById(ratedTransaction.getId());
+//
+//            if (existingRatedTransaction == null) {
+//                throw new ElementNotFoundException(ratedTransaction.getId(), "ratedTransaction");
+//            }
+
+            if (oldStatus == RatedTransactionStatusEnum.BILLED || oldStatus == RatedTransactionStatusEnum.PROCESSED) {
+                InvoiceLine invoiceLine = ratedTransaction.getInvoiceLine();
+                if (invoiceLine != null) {
+                    // if the status of invoiceLine is not BILLED, we recompute the invoice line
+                    if (invoiceLine.getStatus() != InvoiceLineStatusEnum.BILLED) {
+                        // recompute the invoiceLine fields by extracting RT amounts and quantity of ratedTransaction
+                        recomputeInvoiceLine(invoiceLine, ratedTransaction);
+
+                        getEntityManager().createNamedQuery("RatedTransaction.updateStatusDiscountedRT")
+                                .setParameter("rtStatus", ratedTransaction.getStatus())
+                                .setParameter("idRT", ratedTransaction.getId())
+                                .executeUpdate();
+
+                        InvoiceLineStatusEnum statusToUpdate;
+                        switch (ratedTransaction.getStatus()) {
+                            case CANCELED:
+                                statusToUpdate = InvoiceLineStatusEnum.CANCELED;
+                                break;
+                            case REJECTED:
+                                statusToUpdate = InvoiceLineStatusEnum.REJECTED;
+                                break;
+                            case RERATED:
+                                statusToUpdate = InvoiceLineStatusEnum.RERATED;
+                                break;
+                            default:
+                                throw new IllegalStateException("Unexpected value of status of ratedTransaction : " + ratedTransaction.getStatus());
                         }
+
+                        // update status of invoice lines of discounted RTs
+                        getEntityManager().createNamedQuery("InvoiceLine.updateStatusInvoiceLine")
+                                .setParameter("rtStatus", statusToUpdate)
+                                .setParameter("idRT", ratedTransaction.getInvoiceLine().getId())
+                                .executeUpdate();
+                    }
+                    // if the status of invoiceLine is BILLED, we do nothing, the re-computation of invoice line is not allowed
+                    else {
+                        log.info("Invoice line id = {} created from ratedTransaction id = {} is already billed. " +
+                                        "The re-computation of invoice line is is not allowed",
+                                invoiceLine.getId(), ratedTransaction.getId());
                     }
                 }
+                else {
+                    log.info("No invoice line created from ratedTransaction id = {}", ratedTransaction.getId());
+                }
             }
-            else {
-                log.info("Invoice line id = {} created from ratedTransaction id = {} is already billed. Rerating is not allowed",
-                        invoiceLine.getId(), ratedTransaction.getId());
+            else if (oldStatus == RatedTransactionStatusEnum.OPEN) {
+                log.info("No invoice line created from ratedTransaction id = {} with status {}",
+                        ratedTransaction.getId(), oldStatus);
             }
-        }
-        else {
-            log.info("No invoice line created from ratedTransaction id = {}", ratedTransaction.getId());
         }
 
         return super.update(ratedTransaction);
