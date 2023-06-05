@@ -635,7 +635,7 @@ public class ServiceSingleton {
      * @return generated code
      */
     public String getGenericCode(CustomGenericEntityCode customGenericEntityCode) {
-        return getGenericCode(customGenericEntityCode, null);
+        return getGenericCode(customGenericEntityCode, null, true, null);
     }
 
     /**
@@ -648,19 +648,23 @@ public class ServiceSingleton {
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public String getGenericCode(CustomGenericEntityCode customGenericEntityCode, String prefixOverride) {
+    public String getGenericCode(CustomGenericEntityCode customGenericEntityCode, String prefixOverride, boolean updateSequence, String formatEL) throws BusinessException {
         Sequence sequence = customGenericEntityCode.getSequence();
         String generatedCode = null;
         Map<Object, Object> context = new HashMap<>();
         context.put("entity", customGenericEntityCode.getEntityClass());
+
         if (sequence.getSequenceType() == SEQUENCE) {
-            generatedCode = leftPad(valueOf(sequenceService.generateSequence(sequence).getCurrentNumber()),
-                    sequence.getSequenceSize(), '0');
+            Long lCurrentNumber = sequence.getCurrentNumber();
+            //Do not update sequence if we test only generated code
+            if(updateSequence) {
+                lCurrentNumber = sequenceService.generateSequence(sequence).getCurrentNumber();
+            }
+            generatedCode = leftPad(valueOf(lCurrentNumber), sequence.getSequenceSize(), '0');
         }
 
         if(sequence.getSequenceType() == NUMERIC) {
-            generatedCode =
-                    leftPad((valueOf(random.nextLong()) + now().toEpochMilli()), sequence.getSequenceSize(), '0');
+            generatedCode = leftPad((valueOf(random.nextLong()) + now().toEpochMilli()), sequence.getSequenceSize(), '0');
         }
 
         if(sequence.getSequenceType() == ALPHA_UP) {
@@ -682,9 +686,11 @@ public class ServiceSingleton {
             Generex generex = new Generex(sequence.getSequencePattern());
             generatedCode = generex.random(sequence.getSequenceSize());
         }
+
         context.put(GENERATED_CODE_KEY, generatedCode);
+        String storedFormatEL = formatEL != null ? formatEL : customGenericEntityCode.getFormatEL();
         return prefixOverride == null || prefixOverride.isBlank()
-                ? formatCode(ofNullable(customGenericEntityCode.getFormatEL()).orElse(""), context)
+                ? formatCode(ofNullable(storedFormatEL).orElse(""), context)
                 : prefixOverride + generatedCode;
     }
 
@@ -699,7 +705,7 @@ public class ServiceSingleton {
         return character >= '0' && character <= '9' ? mapper.get(character) : character;
     }
 
-    private String formatCode(String formatEL, Map<Object, Object> context) {
+    private String formatCode(String formatEL, Map<Object, Object> context) throws BusinessException {
         if (formatEL.isEmpty()) {
             return (String) context.get(GENERATED_CODE_KEY);
         }
