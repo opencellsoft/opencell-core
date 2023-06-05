@@ -202,7 +202,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 		
         billingRunService.update(billingRun);
         billingRunService.updateBillingRunStatistics(billingRun);
-        billingRunService.updateBillingRunJobExecution(billingRun.getId(), result);
+        billingRunService.updateBillingRunJobExecution(billingRun, result);
 
     }
 

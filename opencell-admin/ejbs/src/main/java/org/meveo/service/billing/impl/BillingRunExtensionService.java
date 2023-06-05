@@ -89,8 +89,8 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
     
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateBillingRunStatistics(Long billingRunId, BasicStatistics basicStatistics, int count, BillingRunStatusEnum status) {
-        BillingRun billingRun = findById(billingRunId);
+    public BillingRun updateBillingRunStatistics(BillingRun billingRun, BasicStatistics basicStatistics, int count, BillingRunStatusEnum status) {
+    	billingRun = refreshOrRetrieve(billingRun);
         billingRun.setBillableBillingAcountNumber(count);
         billingRun.setPrAmountTax(basicStatistics.getSumAmountTax());
         billingRun.setPrAmountWithTax(basicStatistics.getSumAmountWithTax());
@@ -98,6 +98,7 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
         billingRun.setProcessDate(new Date());
         billingRun.setStatus(status);
         updateNoCheck(billingRun);
+        return billingRun;
     }
 
     @JpaAmpNewTx

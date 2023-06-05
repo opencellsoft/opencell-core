@@ -1022,7 +1022,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      * Return : QueryBuilder
      */
     public QueryBuilder fromFilters(Map<String, Object> filters) {
-    	return getQueryFromFilters(filters, null, null, false);
+    	return getQueryFromFilters(filters, null, false);
     }
     	
     	
@@ -1131,6 +1131,25 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         basicStatistics.setCount(groupedRTs.size());
         return basicStatistics;
     }
+
+	/**
+	 * @param result
+	 * @param aggregationConfiguration
+	 * @param billingRun
+	 * @param be billableEntity
+	 * @param basicStatistics
+	 * @param pageSize 
+	 * @return 
+	 * @return
+	 */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
+	    BasicStatistics ilBasicStatistics = createInvoiceLines(
+	            ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate()),
+                aggregationConfiguration, result, billingRun);
+	    basicStatistics.append(ilBasicStatistics);
+	}
 
     public void deleteByBillingRun(long billingRunId) {
         List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRunId);
