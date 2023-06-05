@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.EJB;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -59,7 +58,6 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -70,7 +68,6 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.medina.impl.CDRService;
 
@@ -111,10 +108,7 @@ public class UsageRatingService extends RatingService implements Serializable {
     @Inject
     @Rejected
     private Event<Serializable> rejectedEdrProducer;
-    
-    @Inject
-    private PricePlanMatrixService pricePlanMatrixService;
-
+        
     @Inject
     private UserAccountService userAccountService;
 
@@ -254,7 +248,7 @@ public class UsageRatingService extends RatingService implements Serializable {
     public void ratePostpaidUsage(Long edrId) throws BusinessException, RatingException {
 
         try {
-            methodCallingUtils.callMethodInNewTx(()->rateUsageInNewTransaction(edrId, false, 0, 0));
+            methodCallingUtils.callMethodInNewTx(()->rateUsage(edrId, false, 0, 0));
 
         } catch (RatingException e) {
             log.trace("Failed to rate EDR {}: {}", edrId, e.getRejectionReason());
@@ -344,9 +338,7 @@ public class UsageRatingService extends RatingService implements Serializable {
      * @throws BusinessException General exception.
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public RatingResult rateUsageInNewTransaction(Long edrId, boolean rateTriggeredEdr, int maxDeep, int currentRatingDepth) throws BusinessException, RatingException {
+    public RatingResult rateUsage(Long edrId, boolean rateTriggeredEdr, int maxDeep, int currentRatingDepth) throws BusinessException, RatingException {
 
         EDR edr = findEdrByIdandSubscription(edrId);
         return rateUsage(edr, false, rateTriggeredEdr, maxDeep, currentRatingDepth, null, false);
@@ -395,7 +387,7 @@ public class UsageRatingService extends RatingService implements Serializable {
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     throw new NoChargeException("No active usage charges are associated with subscription " + subscriptionId);
                 }
-                
+
                 // Just to load all subscription service instances with their attributes to avoid querying service instances and their attributes one by one. 
                 // Done once per subscription (in same tx) - a fix when EDR batch to rate is based on same subscription, or when EDR triggers other EDRs 
                 if (!isSubscriptionInitialized) {
@@ -403,7 +395,7 @@ public class UsageRatingService extends RatingService implements Serializable {
                         .getResultList();
                     UserAccount userAccount = userAccountService.findById(edr.getSubscription().getUserAccount().getId(), Arrays.asList("wallet"));
                 }
-                
+                    
                 // This covers a virtual rating case when estimating usage from a quote. Subscription in that case was not persisted.
             } else if (edr.getSubscription().getServiceInstances() != null) {
                 usageChargeInstances = edr.getSubscription().getServiceInstances().stream().flatMap(si -> si.getUsageChargeInstances().stream()).collect(toList());
@@ -412,58 +404,46 @@ public class UsageRatingService extends RatingService implements Serializable {
                 }
             }
 
-            boolean foundPricePlan = true;
             boolean fullyRated = false;
-            boolean requirePP=false;
+            
             // Find the first matching charge and rate it
             for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
-            	requirePP=true;
+          
                 log.trace("Try to rate EDR {} with charge {}", edr.getId(), usageChargeInstance.getCode());
-                if (usageChargeInstance != null && usageChargeInstance.getChargeTemplate().getRatingScript() != null) {
-        			requirePP=false;
-        		}
-                if (!isChargeMatch(usageChargeInstance, edr,requirePP)) {
+                if (!isChargeMatch(usageChargeInstance, edr)) {
                     continue;
                 }
 
                 log.debug("Will apply matching charge instance id={} for EDR {}", usageChargeInstance.getId(), edr.getId());
 
-                try {
-                    RatingResult localRatedEDRResult = rateEDRonChargeAndCounterAndInstantiateTriggeredEDRs(edr, usageChargeInstance, reservation, isVirtual);
-                    ratingResult.add(localRatedEDRResult);
+                RatingResult localRatedEDRResult = rateEDRonChargeAndCounterAndInstantiateTriggeredEDRs(edr, usageChargeInstance, reservation, isVirtual);
+                ratingResult.add(localRatedEDRResult);
 
-                    if (localRatedEDRResult.getWalletOperations() != null) {
+                if (localRatedEDRResult.getWalletOperations() != null) {
 
-                        if (rateTriggeredEdr && localRatedEDRResult.getTriggeredEDRs() != null && !localRatedEDRResult.getTriggeredEDRs().isEmpty()) {
-                            RatingResult triggeredEDRRatedResult = rateTriggeredEDRs(isVirtual, maxDeep, currentRatingDepth, localRatedEDRResult.getTriggeredEDRs(), reservation);
-                            ratingResult.add(triggeredEDRRatedResult);
+                    if (rateTriggeredEdr && localRatedEDRResult.getTriggeredEDRs() != null && !localRatedEDRResult.getTriggeredEDRs().isEmpty()) {
+                        RatingResult triggeredEDRRatedResult = rateTriggeredEDRs(isVirtual, maxDeep, currentRatingDepth, localRatedEDRResult.getTriggeredEDRs(), reservation);
+                        ratingResult.add(triggeredEDRRatedResult);
+                    }
+
+                    if (localRatedEDRResult.isFullyRated()) {
+                        fullyRated = true;
+
+                        UsageChargeTemplate usageChargeTemplate = usageChargeInstance.getUsageChargeTemplate();
+
+                        boolean triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
+
+                        if (!StringUtils.isBlank(usageChargeTemplate.getTriggerNextChargeEL())) {
+                            triggerNextCharge = evaluateBooleanExpression(usageChargeTemplate.getTriggerNextChargeEL(), edr, localRatedEDRResult.getWalletOperations().get(0));
                         }
-
-                        if (localRatedEDRResult.isFullyRated()) {
-                            fullyRated = true;
-
-                            UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
-
-                            boolean triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
-
-                            if (!StringUtils.isBlank(usageChargeTemplate.getTriggerNextChargeEL())) {
-                                triggerNextCharge = evaluateBooleanExpression(usageChargeTemplate.getTriggerNextChargeEL(), edr, localRatedEDRResult.getWalletOperations().get(0));
-                            }
-                            if (!triggerNextCharge) {
-                                break;
-                            }
+                        if (!triggerNextCharge) {
+                            break;
                         }
                     }
-                } catch (NoPricePlanException e) {
-                    log.debug("Charge {} was matched for EDR {} but does not contain a priceplan", usageChargeInstance.getCode(), edr.getId());
-                    foundPricePlan = false;
                 }
             }
 
-            if (!foundPricePlan) {
-                throw new NoPricePlanException("At least one charge was matched but did not contain an applicable price plan for EDR " + (edr.getId() != null ? edr.getId() : edr));
-
-            } else if (!fullyRated) {
+            if (!fullyRated) {
                 throw new NoChargeException(EDRRejectReasonEnum.NO_MATCHING_CHARGE, "No charge matched to fully rate EDR " + edr.getId());
             }
 
@@ -534,29 +514,17 @@ public class UsageRatingService extends RatingService implements Serializable {
     }
 
     /**
-     * Check if charge filter parameters match those of EDR. Optionally checks if charge has a priceplan associated
+     * Check if charge filter parameters match those of EDR.
      * 
      * @param chargeInstance Charge instance to match against EDR
      * @param edr EDR to check
      * @return true if charge is matched
      * @throws InvalidELException Failed to evaluate EL expression
      */
-    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, boolean requirePP)throws InvalidELException {
+    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr) throws InvalidELException {
 
-        UsageChargeTemplate chargeTemplate;
-        if (chargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
-            chargeTemplate = (UsageChargeTemplate) chargeInstance.getChargeTemplate();
-        } else {
-            chargeTemplate = getEntityManager().find(UsageChargeTemplate.class, chargeInstance.getChargeTemplate().getId());
-        }
-        if (chargeInstance.getServiceInstance() != null) {
-            boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-                .filter(attributeInstance -> chargeInstance.getChargeTemplate().getAttributes().contains(attributeInstance.getAttribute()))
-                .anyMatch(attributeInstance -> attributeInstance.getStringValue() == null || "false".equals(attributeInstance.getStringValue()));
-            if (anyFalseAttribute) {
-                return false;
-            }
-        }
+        UsageChargeTemplate chargeTemplate = chargeInstance.getUsageChargeTemplate();
+        
         String filter1 = chargeTemplate.getFilterParam1();
 
         if (filter1 == null || filter1.equals(edr.getParameter1())) {
@@ -567,14 +535,18 @@ public class UsageRatingService extends RatingService implements Serializable {
                     String filter4 = chargeTemplate.getFilterParam4();
                     if (filter4 == null || filter4.equals(edr.getParameter4())) {
                         String filterExpression = chargeTemplate.getFilterExpression();
-                        if (filterExpression == null || matchExpression(chargeInstance, filterExpression, edr)) {
-                        	 if (requirePP) {
-                                 String chargeCode = chargeTemplate.getCode();
-                                 List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(chargeCode);
-                                 if (chargePricePlans == null || chargePricePlans.isEmpty()) {
-                                     throw new NoPricePlanException("Charge " + chargeCode + " has no price plan defined");
+                        if (filterExpression == null || matchExpression(chargeInstance, filterExpression, edr)) {              	 
+
+                        	 // Check if there is any attribute with value FALSE, indicating that service instance is not active
+                             if (chargeInstance.getServiceInstance() != null) {
+                                 boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+                                     .filter(attributeInstance -> chargeInstance.getChargeTemplate().getAttributes().contains(attributeInstance.getAttribute()))
+                                     .anyMatch(attributeInstance -> attributeInstance.getStringValue() == null || "false".equals(attributeInstance.getStringValue()));
+                                 if (anyFalseAttribute) {
+                                     return false;
                                  }
-                             }
+                             }                        	 
+                        	 
                             return true;
                         }
                     }
@@ -673,8 +645,6 @@ public class UsageRatingService extends RatingService implements Serializable {
         return result;
     }
 
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void rejectEDR(Long edrId, Exception e) {
         EDR edr = edrService.findById(edrId);
         rejectEDR(edr, e, true, true);
