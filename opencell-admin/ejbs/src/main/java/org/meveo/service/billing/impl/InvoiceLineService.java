@@ -38,6 +38,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
@@ -278,7 +279,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     public void validateAdjAmount(Invoice newInvoice) {
         // Check global Invoice Amount
         LinkedInvoice linkedInvoice = findByLinkedInvoiceADJ(newInvoice.getId());
-        validateAdjAmount(newInvoice.getInvoiceLines(), linkedInvoice.getInvoice());
+        if (linkedInvoice != null) {
+            validateAdjAmount(newInvoice.getInvoiceLines(), linkedInvoice.getInvoice());
+        }
 
     }
 
@@ -1393,7 +1396,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
 
     public LinkedInvoice findByLinkedInvoiceADJ(Long invoiceId) {
-        return (LinkedInvoice) getEntityManager().createNamedQuery("LinkedInvoice.findByLinkedInvoiceADJ").setParameter("ID_INVOICE", invoiceId).getSingleResult();
+        List<LinkedInvoice> results = getEntityManager().createNamedQuery("LinkedInvoice.findByLinkedInvoiceADJ")
+                .setParameter("ID_INVOICE", invoiceId)
+                .getResultList();
+
+        if (CollectionUtils.isNotEmpty(results)) {
+            return results.get(0);
+        }
+
+        return null;
     }
 
     public List<BillingAccount> findBillingAccountsBy(List<Long> invoiceLinesIds) {

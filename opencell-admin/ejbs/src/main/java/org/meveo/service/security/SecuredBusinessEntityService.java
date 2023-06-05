@@ -99,7 +99,7 @@ public class SecuredBusinessEntityService extends PersistenceService<SecuredEnti
             // Check if entity's type is restricted to a specific group of
             // entities. i.e. only specific Customers, CA, BA, etc.
             boolean isSameTypeAsParent = getClassForHibernateObject(entity) == entity.getParentEntityType();
-            if (isSameTypeAsParent && entity.getParentEntityType().equals(Seller.class) && !paramBeanFactory.getInstance().getBooleanValue("accessible.entity.allows.access.childs.seller", false)) {
+            if (isSameTypeAsParent && entity.getParentEntityType().equals(Seller.class) && !paramBeanFactory.getInstance().getPropertyAsBoolean("accessible.entity.allows.access.childs.seller", false)) {
                 return false;
             }
             if (!isSameTypeAsParent && securedEntities != null && !securedEntities.isEmpty()) {

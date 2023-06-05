@@ -46,7 +46,6 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.job.Job;
-import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 /**
  * A job implementation to convert Open Wallet operations to Rated transactions
@@ -71,9 +70,6 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
-
-    @Inject
-    private FinanceSettingsService financeSettingsService;
 
     private boolean hasMore = false;
     private StatelessSession statelessSession;
@@ -149,12 +145,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param jobExecutionResult Job execution result
      */
     private void convertWoToRTBatch(List<WalletOperationNative> walletOperations, JobExecutionResultImpl jobExecutionResult) {
-
-        List<Long> rtIds = ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
-
-        if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
-            ratedTransactionService.applyInvoicingRules(rtIds);
-        }
+        ratedTransactionService.createRatedTransactionsInBatch(walletOperations);
     }
 
     private boolean hasMore(JobInstance jobInstance) {

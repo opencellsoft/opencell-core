@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -49,7 +48,6 @@ import org.slf4j.Logger;
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
-@Stateless
 public class TenantCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = 180156064688145292L;

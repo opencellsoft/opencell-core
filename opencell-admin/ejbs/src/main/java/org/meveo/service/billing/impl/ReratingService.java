@@ -415,7 +415,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
             ratedTransaction.changeStatus(RatedTransactionStatusEnum.CANCELED);
         }
 
-        // If walletOperation has produced t.edrs : rerate new logic. If not, continue normally
+        // Check triggered EDRS and check status/rerate each of them
         List<EDR> tEdrs = getEntityManager().createNamedQuery("EDR.getByWO")
                 .setParameter("WO_IDS", List.of(operationToRerate.getId()))
                 .getResultList();
@@ -440,8 +440,10 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         boolean isEdrTreated = false;
         if (CollectionUtils.isNotEmpty(tEdrs)) {
             
+            // For each EDR that was triggered by WO
             for (EDR edr : tEdrs) {
 
+                // Find WOs that triggered EDR has produced
                 List<WalletOperation> triggerWalletOperations = walletOperationService.getEntityManager().createQuery("from WalletOperation o where o.edr.id=:edrId").setParameter("edrId", edr.getId()).getResultList();
                 if(CollectionUtils.isNotEmpty(triggerWalletOperations) && edr.getStatus() == EDRStatusEnum.RATED) {
                     WalletOperation triggerWalletOperation =  triggerWalletOperations.get(0);
@@ -454,6 +456,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                         ratedTransactionService.update(operationToRerate.getRatedTransaction());
                         isEdrTreated = true;
                         continue;
+                        // Cancel WO that was produced by a triggered EDR 
                     }else {
                         triggerWalletOperation.setStatus(WalletOperationStatusEnum.CANCELED);
                         triggerWalletOperation.setRejectReason("Origin wallet operation [id= "+operationToRerateId+"}] has been rerated");
@@ -472,7 +475,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     walletOperationService.update(operationToRerate);
 
                     if (newWO==null) {
-                        // that mean no newWO are created, this is the cas when we have 1 WO woth more than 1 T.EDR, we skip creating of T.EDR
+                        // that mean no newWO are created, this is the case when we have 1 WO with more than 1 T.EDR, we skip creating of T.EDR
                         continue;
                     }
 

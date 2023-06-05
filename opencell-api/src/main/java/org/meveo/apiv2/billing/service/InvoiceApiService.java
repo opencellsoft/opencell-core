@@ -22,6 +22,7 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -228,12 +229,15 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 			invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineResource.getCustomFields(), invoiceLine, false);
 			// Create Invoice Line
 			invoiceLine = invoiceLinesService.createInvoiceLine(invoiceLine);
-			invoice.getInvoiceLines().add(invoiceLine);
 			invoiceLineResource = ImmutableInvoiceLine.copyOf(invoiceLineResource)
 					.withId(invoiceLine.getId())
 					.withAmountWithoutTax(invoiceLine.getAmountWithoutTax())
 					.withAmountWithTax(invoiceLine.getAmountWithTax())
 					.withAmountTax(invoiceLine.getAmountTax());
+			if (CollectionUtils.isEmpty(invoice.getInvoiceLines())){
+				invoice.setInvoiceLines(new ArrayList<>());
+			}
+			invoice.getInvoiceLines().add(invoiceLine);
 			result.addInvoiceLines(invoiceLineResource);
 		}
 
@@ -407,9 +411,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
         if(true==invoice.isApplyBillingRules()) {
             Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
-            List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
+            List<RatedTransaction> rts = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
 			if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
-				billingAccountsAfter = ratedTransactionService.applyInvoicingRulesForRTs(RTs);
+				billingAccountsAfter = ratedTransactionService.applyInvoicingRules(rts);
 			}
         }
         
