@@ -159,6 +159,8 @@ public class SellerApiService extends BaseApi {
 				seller.getCustomerSequences().add(customerSequence);
 			}
 		}
+		seller.setCfValues(postSeller.getCfValues());
+		seller.setLegalEntityType(postSeller.getLegalEntityType());
 		checkVatNum(seller.getVatNo(), seller.getTradingCountry().getCountryCode());
 		sellerService.update(seller);
 	}
