@@ -19,20 +19,20 @@
 package org.meveo.api.rest.impl;
 
 import static java.util.Optional.ofNullable;
-import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
 
 import org.meveo.api.custom.GenericCodeApi;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.custom.GenericCodeDto;
 import org.meveo.api.dto.custom.GenericCodeResponseDto;
 import org.meveo.api.dto.custom.GetGenericCodeResponseDto;
 import org.meveo.api.dto.custom.SequenceDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.GenericCodeRs;
 
+import javax.ejb.EJBException;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -47,9 +47,18 @@ public class GenericCodeRsImpl extends BaseRs implements GenericCodeRs {
 	@Override
 	public GenericCodeResponseDto getGenericCode(GenericCodeDto codeDto) {
 		GenericCodeResponseDto genericCodeResponseDto = new GenericCodeResponseDto();
-		genericCodeResponseDto.setGeneratedCode(genericCodeApi.getGenericCode(codeDto));
-		ofNullable(codeDto.getSequence())
-				.ifPresent(sequenceDto-> genericCodeResponseDto.setSequenceType(sequenceDto.getSequenceType().name()));
+
+		//Check if the formatEL send it from is null, then return an empty value
+		try {
+		if(codeDto.getFormatEL() != null && !codeDto.getFormatEL().isEmpty()) {
+			genericCodeResponseDto.setGeneratedCode(genericCodeApi.getGenericCode(codeDto));
+			ofNullable(codeDto.getSequence())
+					.ifPresent(sequenceDto -> genericCodeResponseDto.setSequenceType(sequenceDto.getSequenceType().name()));
+		}
+		} catch (Exception exception) {
+			processException(processExceptionMessage(exception), genericCodeResponseDto.getActionStatus());
+		}
+
 		return genericCodeResponseDto;
 	}
 
@@ -104,5 +113,12 @@ public class GenericCodeRsImpl extends BaseRs implements GenericCodeRs {
 			processException(exception, result);
 		}
 		return result;
+	}
+
+	private MeveoApiException processExceptionMessage(Exception exception) {
+		if (exception instanceof EJBException) {
+			return new MeveoApiException(exception.getCause().getMessage());
+		}
+		return new MeveoApiException(exception.getMessage());
 	}
 }
