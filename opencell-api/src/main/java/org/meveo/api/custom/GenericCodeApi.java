@@ -12,6 +12,7 @@ import org.meveo.api.dto.custom.GenericCodeDto;
 import org.meveo.api.dto.custom.GetGenericCodeResponseDto;
 import org.meveo.api.dto.custom.SequenceDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.sequence.Sequence;
 import org.meveo.model.sequence.SequenceTypeEnum;
@@ -20,6 +21,7 @@ import org.meveo.service.billing.impl.ServiceSingleton;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 
 import java.util.Optional;
 
@@ -169,15 +171,20 @@ public class GenericCodeApi extends BaseApi {
      * @param genericCodeDto
      * @return generated code
      */
-    public String getGenericCode(GenericCodeDto genericCodeDto) {
+    public String getGenericCode(GenericCodeDto genericCodeDto) throws MeveoApiException {
+        if (StringUtils.isBlank(genericCodeDto.getEntityClass())) {
+            throw new BadRequestException("Entity Class is required");
+        }
         CustomGenericEntityCode customGenericEntityCode = ofNullable(customGenericEntityCodeService
                 .findByClass(genericCodeDto.getEntityClass()))
                 .orElseThrow(() -> new MeveoApiException("No Generic code associated to entity class : " + genericCodeDto.getEntityClass()));
-        String result;
-        if (genericCodeDto.getPrefixOverride() != null) {
-          result = serviceSingleton.getGenericCode(customGenericEntityCode, genericCodeDto.getPrefixOverride());
-        } else {
-            result = serviceSingleton.getGenericCode(customGenericEntityCode);
+        String result = null;
+        if (genericCodeDto.getFormatEL() != null && !genericCodeDto.getFormatEL().isEmpty()) {
+            if (genericCodeDto.getPrefixOverride() != null) {
+                result = serviceSingleton.getGenericCode(customGenericEntityCode, genericCodeDto.getPrefixOverride(), false, genericCodeDto.getFormatEL());
+            } else {
+                result = serviceSingleton.getGenericCode(customGenericEntityCode, null, false, genericCodeDto.getFormatEL());
+            }
         }
         return result;
     }
@@ -210,8 +217,7 @@ public class GenericCodeApi extends BaseApi {
      * @return GenericCodeDto : created or updated generic code
      */
     public GenericCodeDto createOrUpdate(GenericCodeDto input) {
-        CustomGenericEntityCode customGenericEntityCode =
-                customGenericEntityCodeService.findByClass(input.getEntityClass());
+        CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(input.getEntityClass());
         if(customGenericEntityCode == null) {
             return create(input);
         } else {
