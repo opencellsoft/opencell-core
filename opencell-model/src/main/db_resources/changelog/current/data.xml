@@ -20176,4 +20176,10 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+    <changeSet id="#INTRD-16247_20230605" author="zelmeliani">
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="version" value="1"/>
+            <where>version is null</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>
