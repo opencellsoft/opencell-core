@@ -51,11 +51,6 @@ public class PaginationConfiguration implements Serializable {
     private boolean doFetch = true;
     
     /**
-     * Fields to return as query results (regular comma separated field list). If not provided, a full entity will be retrieved
-     */
-    private String selectFields;
-
-    /**
      * Fields that needs to be fetched when selecting (like lists or other entities).
      */
     private List<String> fetchFields;
@@ -335,19 +330,5 @@ public class PaginationConfiguration implements Serializable {
      */
     public boolean isCacheable() {
         return cacheable;
-    }
-
-    /**
-     * @return Fields to return as query results (regular comma separated field list). If not provided, a full entity will be retrieved
-     */
-    public String getSelectFields() {
-        return selectFields;
-    }
-
-    /**
-     * @param selectFields Fields to return as query results (regular comma separated field list). If not provided, a full entity will be retrieved
-     */
-    public void setSelectFields(String selectFields) {
-        this.selectFields = selectFields;
-    }
+    }	
 }

@@ -1136,8 +1136,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         Map<String, Object> filters = config.getFilters();
 
         adaptOrdering(config, filters);
-
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, alias, config.getSelectFields(), config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator(), distinct);
+        
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, alias, config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator(), distinct);
         if (filters != null && !filters.isEmpty()) {
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);
@@ -1798,30 +1798,24 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return map;
         };
     }
-
-    /**
-     * Create Query builder from a map of filters
-     * 
-     * @param filters Map of filters
-     * @param selectFields Fields to return. If null, a complete entity will be returned
-     * @param fetchFields Fields to fetch (join to related tables)
-     * @param distinct Is this a distinct query
-     * @return QueryBuilder
-     */
-    public QueryBuilder getQueryFromFilters(Map<String, Object> filters, String selectFields, List<String> fetchFields, boolean distinct) {
-        QueryBuilder queryBuilder;
-        String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
-        if (!StringUtils.isBlank(filterValue)) {
-            queryBuilder = new QueryBuilder(filterValue, "a", distinct);
-        } else {
-            FilterConverter converter = new FilterConverter(getEntityClass());
-            PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
-            if (!CollectionUtils.isEmpty(fetchFields)) {
-                configuration.setFetchFields(fetchFields);
-            }
-            configuration.setSelectFields(selectFields);
-            queryBuilder = getQuery(configuration, "a", distinct);
-        }
-        return queryBuilder;
-    }
+    
+	/**
+	 * Create Query builder from a map of filters filters : Map of filters Return :
+	 * QueryBuilder
+	 */
+	public QueryBuilder getQueryFromFilters(Map<String, Object> filters, List<String> fetchFields, boolean distinct) {
+		QueryBuilder queryBuilder;
+		String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
+		if (!StringUtils.isBlank(filterValue)) {
+			queryBuilder = new QueryBuilder(filterValue, "a",true);
+		} else {
+			FilterConverter converter = new FilterConverter(RatedTransaction.class);
+			PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
+			if (!CollectionUtils.isEmpty(fetchFields)) {
+				configuration.setFetchFields(fetchFields);
+			}
+			queryBuilder = getQuery(configuration, "a", true);
+		}
+		return queryBuilder;
+	}
 }

@@ -3306,7 +3306,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 || (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation())) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
         }
-        if (!billingRun.isSkipValidationScript()) {
+        if (billingRun.getSkipValidationScript() != null && !billingRun.isSkipValidationScript()) {
             applyAutomaticInvoiceCheck(invoice, true);
         }
         if (invoice.getStatus().equals(InvoiceStatusEnum.REJECTED)) {
