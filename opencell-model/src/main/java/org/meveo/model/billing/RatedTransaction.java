@@ -190,8 +190,9 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.reopenRatedTransactions", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null, r.invoiceLine=null where r.id IN (:rtIds)"),
         @NamedQuery(name = "RatedTransaction.findForAppyInvoicingRuleByIds", query = "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) AND  rt.status = 'OPEN' and rt.rulesContract is not null"),
         @NamedQuery(name = "RatedTransaction.updateStatusDiscountedRT", query = "UPDATE RatedTransaction rt " +
-                "SET rt.status =: rtStatus WHERE rt.discountedRatedTransaction =: idRT AND rt.id IN " +
-                "(SELECT r.id FROM RatedTransaction r WHERE r.invoiceLine.status != 'BILLED')")
+                "SET rt.status =: statusToUpdate WHERE rt.id IN (:ids)"),
+        @NamedQuery(name = "RatedTransaction.getDiscountedRTIds", query = "SELECT rt FROM RatedTransaction rt " +
+                "WHERE rt.invoiceLine.status != 'BILLED' AND rt.discountedRatedTransaction =: id")
         })
 
 @NamedNativeQueries({

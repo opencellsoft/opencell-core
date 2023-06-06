@@ -140,8 +140,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 				"il.amountTax=:amountTax, il.quantity=:quantity, il.validity.from=:beginDate, " +
 				"il.validity.to=:endDate, il.auditable.updated=:now WHERE il.id = :id"),
 		@NamedQuery(name = "InvoiceLine.updateStatusInvoiceLine", query = "UPDATE InvoiceLine il SET " +
-				"il.status =: rtStatus WHERE il.ratedTransactions IN " +
-				"(SELECT rt FROM RatedTransaction rt WHERE rt.discountedRatedTransaction =: idRT) AND il.status != 'BILLED'")
+				"il.status =: statusToUpdate WHERE il.id =: id")
 	})
 public class InvoiceLine extends AuditableCFEntity {
 
