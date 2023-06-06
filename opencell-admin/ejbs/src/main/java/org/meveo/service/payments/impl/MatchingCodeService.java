@@ -288,8 +288,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 accountOperation.setMatchingAmount(computedMatchingAmount);
                 accountOperation.setUnMatchingAmount((accountOperation.getAmount().subtract(computedMatchingAmount)).abs());
                 accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
-                matchingAmount.setMatchingAmount(amountToMatch);
-                matchingAmount.setMatchingAmount(amountToMatch);
+                matchingAmount.setMatchingAmount(accountOperation.getMatchingAmount());
+                matchingAmount.setTransactionalMatchingAmount(accountOperation.getTransactionalMatchingAmount());
                 matchingAmount.updateAudit(currentUser);
                 matchingAmount.setAccountOperation(accountOperation);
                 matchingAmount.setMatchingCode(matchingCode);
@@ -298,7 +298,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 matchingCode.getMatchingAmounts().add(matchingAmount);
                 if(accountOperation instanceof Payment) {
                     paymentRate = accountOperation.getAppliedRate();
-                    paymentAmount = accountOperation.getTransactionalAmount();
+                    paymentAmount = (accountOperation.getTransactionalAmount().subtract(accountOperation.getTransactionalMatchingAmount())).abs();
                 } else {
                     invoiceRate = accountOperation.getAppliedRate();
                 }
@@ -426,7 +426,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 accountOperation.setUnMatchingAmount((accountOperation.getAmount().subtract(computedMatchingAmount)).abs());
                 accountOperation.setMatchingAmount(computedMatchingAmount);
                 matchingAmount.setMatchingAmount(accountOperation.getMatchingAmount());
-                matchingAmount.setMatchingAmount(accountOperation.getTransactionalMatchingAmount());
+                matchingAmount.setTransactionalMatchingAmount(accountOperation.getTransactionalMatchingAmount());
                 boolean isMatched = fullMatch && accountOperation.getTransactionalUnMatchingAmount().compareTo(ZERO) == 0;
                 accountOperation.setMatchingStatus(isMatched ? MatchingStatusEnum.L : MatchingStatusEnum.P);
 
@@ -439,7 +439,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
                 if(accountOperation instanceof Payment) {
                     paymentRate = accountOperation.getAppliedRate();
-                    paymentAmount = accountOperation.getTransactionalAmount();
+                    paymentAmount = (accountOperation.getTransactionalAmount().subtract(accountOperation.getTransactionalMatchingAmount())).abs();
                 } else {
                     invoiceRate = accountOperation.getAppliedRate();
                 }
