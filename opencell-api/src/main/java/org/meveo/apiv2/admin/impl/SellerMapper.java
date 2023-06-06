@@ -142,7 +142,6 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 							.prefix(customerSequence.getGenericSequence() != null ? customerSequence.getGenericSequence().getPrefix() : null)
 							.sequenceSize(customerSequence.getGenericSequence() != null ? customerSequence.getGenericSequence().getSequenceSize() : null)
 							.currentSequenceNb(customerSequence.getGenericSequence() != null ? customerSequence.getGenericSequence().getCurrentSequenceNb() : null)
-							.description(customerSequence.getDescription())
 							.build()
 			);
 		});
@@ -282,7 +281,6 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 				genericSequence.setSequenceSize(cusSeq.getSequenceSize());
 				customerSequence.setGenericSequence(genericSequence);
 				customerSequence.setCode(cusSeq.getCode());
-				customerSequence.setDescription(cusSeq.getDescription());
 				seller.getCustomerSequences().add(customerSequence);
 			});
 		}
