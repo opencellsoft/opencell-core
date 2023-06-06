@@ -213,7 +213,12 @@ public class QuoteVersion extends AuditableCFEntity implements IReferenceEntity{
 	 * @param quoteProducts the quoteProducts to set
 	 */
 	public void setQuoteProducts(List<QuoteProduct> quoteProducts) {
-		this.quoteProducts = quoteProducts;
+		if (quoteProducts == null) {
+			this.quoteProducts = quoteProducts;
+		} else {
+			this.quoteProducts.clear();
+			this.quoteProducts.addAll(quoteProducts);
+		}
 	}
 
 	/**
