@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -51,6 +52,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.DeducedCounter;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
@@ -534,7 +536,9 @@ public class UsageRatingService implements Serializable {
                     }
                 }
             }
-
+         // Apply accumulator counters
+            incrementAccumulatorCounterValues(walletOperations, ratedEDRResult, isVirtual);
+            
             if (ratedEDRResult.isFullyRated()) {
                 edr.changeStatus(EDRStatusEnum.RATED);
 
@@ -556,6 +560,24 @@ public class UsageRatingService implements Serializable {
         return walletOperations;
     }
 
+    private void incrementAccumulatorCounterValues(List<WalletOperation> walletOperations, RatingResult ratingResult, boolean isVirtual){
+
+        if (walletOperations.isEmpty()) {
+            return;
+        }
+        Map<ChargeInstance, List<WalletOperation>> groupedWOByChargeInstance = walletOperations.stream().collect(Collectors.groupingBy(wo -> wo.getChargeInstance()));
+
+        for (Entry<ChargeInstance, List<WalletOperation>> groupedWos : groupedWOByChargeInstance.entrySet()) {
+            ChargeInstance chargeInstance = groupedWos.getKey();
+            if (chargeInstance.getCounterInstances() != null && !chargeInstance.getCounterInstances().isEmpty()) {
+                List<CounterValueChangeInfo> counterChangeInfo = counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, groupedWos.getValue(), isVirtual);
+                for (CounterValueChangeInfo counterValueChangeInfo : counterChangeInfo) {
+                    ratingResult.addCounterChange(counterValueChangeInfo.getCounterPeriodId(), counterValueChangeInfo.getDeltaValue());
+                }
+            }
+        }
+    }
+    
     /**
      * Rate Triggered EDR.
      *
