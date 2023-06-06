@@ -1608,7 +1608,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (walletOperation.getSubscription() != null) {
             discountPlanInstances.addAll(walletOperation.getSubscription().getUserAccount().getBillingAccount().getAllDiscountPlanInstances());
         }
-        var accountingArticle = walletOperation.getAccountingArticle()!=null?walletOperation.getAccountingArticle():accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+        var accountingArticle = walletOperation.getAccountingArticle()!=null?walletOperation.getAccountingArticle():accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, walletOperation);
         List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem>  fixedDiscountPlanItems = new ArrayList<>();
         if(!discountPlanInstances.isEmpty()) {
