@@ -81,6 +81,7 @@ import javax.persistence.Query;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.Version;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -168,7 +169,6 @@ public class EntityExportImportService implements Serializable {
 
     private static final long serialVersionUID = 5141462881249084547L;
     public static final String EXPORT_PARAM_XML = "xml";
-
     public static String EXPORT_PARAM_DELETE = "delete";
     public static String EXPORT_PARAM_ZIP = "zip";
     public static String EXPORT_PARAM_REMOTE_INSTANCE = "remoteInstance";
@@ -181,7 +181,6 @@ public class EntityExportImportService implements Serializable {
     protected static final String CSV_EXTENTION = ".csv";
     protected static final String XSLT_EXTENTION = ".xslt";
     protected static final String SEP = "_";
-    protected static final String ENTITY_FILE_HEADER = ".entity type, entity code";
 
     @Inject
     @CurrentUser
@@ -750,7 +749,7 @@ public class EntityExportImportService implements Serializable {
      */
     @Asynchronous
     @SuppressWarnings({ "deprecation" })
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @Transactional
     public Future<ExportImportStatistics> importEntities(File fileToImport, String filename, boolean preserveId, boolean preserveCode, boolean ignoreNotFoundFK, Provider forceToProvider, boolean checkForStatus) {
         forceToProvider = appProvider;
         log.info("Importing file {} and forcing to provider {}", filename, forceToProvider);
@@ -856,7 +855,7 @@ public class EntityExportImportService implements Serializable {
     }
 
 
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @Transactional
     public ExportImportStatistics importEntitiesSynchronously(File fileToImport, String filename, boolean preserveId, boolean preserveCode, boolean ignoreNotFoundFK, boolean checkForStatus) throws StatusChangeViolationException {
         Provider forceToProvider = appProvider;
         log.info("Importing file {} and forcing to provider {}", filename, forceToProvider);
@@ -887,7 +886,7 @@ public class EntityExportImportService implements Serializable {
             version = reader.getAttribute("version");
 
             // Conversion is required when version from a file and the current model changset version does not match
-            boolean conversionRequired = !this.currentExportModelVersionChangeset.equals(version);
+            boolean conversionRequired = this.currentExportModelVersionChangeset != null ? !this.currentExportModelVersionChangeset.equals(version) : false;
 
             log.debug("Importing a file from a {} version. Current version is {}. Conversion is required {}", version, this.currentExportModelVersionChangeset, conversionRequired);
 
