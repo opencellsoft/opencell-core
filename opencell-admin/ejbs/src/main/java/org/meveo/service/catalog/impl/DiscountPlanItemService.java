@@ -255,7 +255,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     		discountPlanService.update(discountPlan);
     	} 
         if(accountingArticle==null && walletOperation!=null) {
-        	accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance());
+        	accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
         }
         
         ChargeTemplate chargeTemplate = null;
