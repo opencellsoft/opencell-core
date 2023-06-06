@@ -16198,11 +16198,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
     </changeSet>
     
-    
-    <changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius">
+    <changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius" failOnError="false">
         <dropIndex tableName="cat_price_plan_matrix" indexName="cat_price_plan_event_c_index"/>
-        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
         <dropIndex tableName="cpq_price_plan_matrix_line" indexName="cpq_price_plan_matrix_line__ppm_version_id__idx"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-15938_20230511-2" author="AndriusKarpavicius">
+        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
         <sql>CREATE INDEX cpq_ppl_ppVersion_index ON ${db.schema.adapted}cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql>
     </changeSet>
 
