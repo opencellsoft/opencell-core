@@ -2271,6 +2271,9 @@ public class CpqQuoteApi extends BaseApi {
 			dpi.copyEffectivityDates(discountPlan);
 			dpi.setDiscountPlanInstanceStatus(discountPlan);
 			dpi.setCfValues(discountPlan.getCfValues());
+            // this method is called only in the quote case, and in the quote neither the subscription nor the service is created
+            // so we can not attach the unsaved transient instance to session one.
+            /*
 			dpi.setSubscription(subscription);
 			dpi.setServiceInstance(serviceInstance);
 
@@ -2281,6 +2284,7 @@ public class CpqQuoteApi extends BaseApi {
 				dpi.assignEntityToDiscountPlanInstances(subscription);
 				subscription.getDiscountPlanInstances().add(dpi);
 			}
+			**/
 		}
     				
     }
