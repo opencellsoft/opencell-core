@@ -1353,6 +1353,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
                 (invoice.getInvoiceType().getInvoiceValidationScript() != null
                         || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
+            invoice = invoiceService.refreshOrRetrieve(invoice);
             if(invoice.getInvoiceType().getInvoiceValidationScript() != null) {
                 ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
                 if (scriptInstance != null) {
@@ -1469,7 +1470,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 	
 	private ScriptInterface injectScriptParameters(Map<String, Object> methodContext, InvoiceValidationRule validationRule) {
-		ScriptInstance scriptInstance = validationRule.getValidationScript();
+		ScriptInstance scriptInstance = scriptInstanceService.refreshOrRetrieve(validationRule.getValidationScript());
 		ScriptInterface validationRuleScript = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
 		if(scriptInstance != null && !MapUtils.isEmpty(validationRule.getRuleValues())){
 		    scriptInstance.getScriptParameters().stream().forEach(sp -> {
