@@ -144,9 +144,44 @@ public class PricePlanSelectionServiceTest {
         assertThat(ppmLine.getDescription()).isEqualTo("Price2");
         assertThat(ppmLine.getPriceWithoutTax()).isEqualTo(valueOf(15));
     }
+    @Test
+    public void determinePPLineByQuoteAttribute_3() {
+        PricePlanMatrixVersion pricePlanMatrixVersion = createPricePlanMatrixVersion();
+        QuoteProduct quoteProduct = createQuoteProduct();
+        QuoteAttribute monthlyQuotedAttribute = createQuoteAttribute(attributes.get("billing_cycle"), quoteProduct);
+        monthlyQuotedAttribute.setStringValue("Annually");
+        QuoteAttribute sevenTeenEngagementDuration = createQuoteAttribute(attributes.get("engagement_duration"), quoteProduct);
+        sevenTeenEngagementDuration.setDoubleValue(12.0);
+        PricePlanMatrixLine ppmLine = pricePlanSelectionService.determinePricePlanLine(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
+        assertThat(ppmLine.getDescription()).isEqualTo("Price3");
+        assertThat(ppmLine.getPriceWithoutTax()).isEqualTo(valueOf(18));
+    }
+    @Test
+    public void determinePPLineByQuoteAttribute_singlePPValue() {
+        JPAQuerySimulation<PricePlanMatrixValueForRating> ppValueForRatingQuery = new JPAQuerySimulation<PricePlanMatrixValueForRating>() {
+            @Override
+            public List<PricePlanMatrixValueForRating> getResultList() {
+                return getPricePlanValuesForRatingShort();
+            }
+        };
+        when(entityManager.createNamedQuery(eq("PricePlanMatrixValue.findByPPVersionForRating"), eq(PricePlanMatrixValueForRating.class))).thenAnswer(new Answer<JPAQuerySimulation<PricePlanMatrixValueForRating>>() {
+            public JPAQuerySimulation<PricePlanMatrixValueForRating> answer(InvocationOnMock invocation) throws Throwable {
+                return ppValueForRatingQuery;
+            }
+        });
+        PricePlanMatrixVersion pricePlanMatrixVersion = createPricePlanMatrixVersion();
+        QuoteProduct quoteProduct = createQuoteProduct();
+        QuoteAttribute monthlyQuotedAttribute = createQuoteAttribute(attributes.get("billing_cycle"), quoteProduct);
+        monthlyQuotedAttribute.setStringValue("Monthly");
+        QuoteAttribute sevenTeenEngagementDuration = createQuoteAttribute(attributes.get("engagement_duration"), quoteProduct);
+        sevenTeenEngagementDuration.setDoubleValue(19.0);
+        PricePlanMatrixLine ppmLine = pricePlanSelectionService.determinePricePlanLine(pricePlanMatrixVersion, Set.of(monthlyQuotedAttribute, sevenTeenEngagementDuration));
+        assertThat(ppmLine.getDescription()).isEqualTo("Price1");
+        assertThat(ppmLine.getPriceWithoutTax()).isEqualTo(valueOf(24));
+    }
 
     @Test(expected = NoPricePlanException.class)
-    public void determinePPLineNoConcreteMatchNoDefault() {
+    public void determinePPLineNoConcreteMatchNoDefaultPPLineReturnedFromDB() {
 
         JPAQuerySimulation<PricePlanMatrixValueForRating> ppValueForRatingQuery = new JPAQuerySimulation<PricePlanMatrixValueForRating>() {
             @Override
@@ -175,7 +210,7 @@ public class PricePlanSelectionServiceTest {
     }
 
     @Test
-    public void determinePPLineNoConcreteMatchMatchDefault() {
+    public void determinePPLineNoConcreteMatch_SoMatchDefault() {
 
         PricePlanMatrixVersion pricePlanMatrixVersion = createPricePlanMatrixVersion();
 
@@ -275,8 +310,7 @@ public class PricePlanSelectionServiceTest {
 
                 // Default PP line has no values
                 if (includeDefaultPP) {
-                    PricePlanMatrixValueForRating ppValueForRating = new PricePlanMatrixValueForRating();
-                    ppValueForRating.setPricePlanMatrixLineId(ppLine.getId());
+                    PricePlanMatrixValueForRating ppValueForRating = new PricePlanMatrixValueForRating(null, null, ppLine.getId(), true, null, null, null, null, null, null, null, null, null);
 
                     ppValuesForRating.add(ppValueForRating);
                 }
@@ -303,6 +337,16 @@ public class PricePlanSelectionServiceTest {
             }
         }
         return ppValuesForRating;
+    }
+
+    private List<PricePlanMatrixValueForRating> getPricePlanValuesForRatingShort() {
+        List<PricePlanMatrixValueForRating> shortList = new ArrayList<PricePlanMatrixValueForRating>();
+        for (PricePlanMatrixValueForRating ppValue : getPricePlanValuesForRating(false)) {
+            if (ppValue.getPricePlanMatrixLineId() == 1 && "Monthly".equals(ppValue.getStringValue())) {
+                shortList.add(ppValue);
+            }
+        }
+        return shortList;
     }
 
     private Map<Long, PricePlanMatrixLine> getPricePlanLines() {
@@ -350,11 +394,11 @@ public class PricePlanSelectionServiceTest {
 
         PricePlanMatrixValue twelveSubscriptionDurationValue = new PricePlanMatrixValue();
         twelveSubscriptionDurationValue.setPricePlanMatrixColumn(subscriptionDurationColumn);
-        twelveSubscriptionDurationValue.setLongValue(12L);
+        twelveSubscriptionDurationValue.setDoubleValue(12D);
 
         PricePlanMatrixValue twentyFourSubscriptionDurationValue = new PricePlanMatrixValue();
         twentyFourSubscriptionDurationValue.setPricePlanMatrixColumn(subscriptionDurationColumn);
-        twentyFourSubscriptionDurationValue.setLongValue(24L);
+        twentyFourSubscriptionDurationValue.setDoubleValue(24D);
 
         subscriptionDurationColumn.setPricePlanMatrixValues(Set.of(twelveSubscriptionDurationValue, twentyFourSubscriptionDurationValue));
 
@@ -391,11 +435,11 @@ public class PricePlanSelectionServiceTest {
         ppLines.put(annuallyPrice4Line.getId(), annuallyPrice4Line);
 
         PricePlanMatrixLine defaultPriceLine = new PricePlanMatrixLine();
-        annuallyPrice4Line.setId(5L);
-        annuallyPrice4Line.setPriceWithoutTax(valueOf(18));
-        annuallyPrice4Line.setDescription("Default Price");
-        annuallyPrice4Line.setRatingAccuracy(0);
-        ppLines.put(annuallyPrice4Line.getId(), annuallyPrice4Line);
+        defaultPriceLine.setId(5L);
+        defaultPriceLine.setPriceWithoutTax(valueOf(18));
+        defaultPriceLine.setDescription("Default Price");
+        defaultPriceLine.setRatingAccuracy(0);
+        ppLines.put(defaultPriceLine.getId(), defaultPriceLine);
 
         return ppLines;
     }

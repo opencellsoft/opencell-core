@@ -25,7 +25,7 @@ import org.meveo.model.BaseEntity;
 
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_value_sq"), })
 @NamedQueries({ @NamedQuery(name = "PricePlanMatrixValue.findByPricePlanMatrixLine", query = "select p from PricePlanMatrixValue p where p.pricePlanMatrixLine=:pricePlanMatrixLine"),
-        @NamedQuery(name = "PricePlanMatrixValue.findByPPVersionForRating", query = "select new org.meveo.model.catalog.PricePlanMatrixValueForRating(pv.pricePlanMatrixColumn.attribute.id, pv.pricePlanMatrixColumn.type, pl.id, pl.ratingAccuracy=0, pv.longValue, pv.doubleValue, pv.stringValue, pv.dateValue, pv.fromDateValue, pv.toDateValue, pv.fromDoubleValue, pv.toDoubleValue, pv.booleanValue) from PricePlanMatrixValue pv right join pv.pricePlanMatrixLine pl where pl.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId order by pl.priority, pl.ratingAccuracy", hints = {
+        @NamedQuery(name = "PricePlanMatrixValue.findByPPVersionForRating", query = "select new org.meveo.model.catalog.PricePlanMatrixValueForRating(pc.attribute.id, pc.type, pl.id, pl.ratingAccuracy=0, pv.longValue, pv.doubleValue, pv.stringValue, pv.dateValue, pv.fromDateValue, pv.toDateValue, pv.fromDoubleValue, pv.toDoubleValue, pv.booleanValue) from PricePlanMatrixValue pv right join pv.pricePlanMatrixLine pl left join pv.pricePlanMatrixColumn pc where pl.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId order by pl.priority, pl.ratingAccuracy desc, pl.id", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
 public class PricePlanMatrixValue extends BaseEntity {
 

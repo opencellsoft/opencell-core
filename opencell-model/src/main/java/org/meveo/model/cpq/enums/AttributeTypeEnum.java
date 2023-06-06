@@ -1,11 +1,10 @@
 package org.meveo.model.cpq.enums;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.meveo.model.catalog.ColumnTypeEnum;
 import org.meveo.model.cpq.AttributeValue;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -84,6 +83,11 @@ public enum AttributeTypeEnum {
 		@Override
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;
+		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			return attributeValue.getDoubleValue() != null ? attributeValue.getDoubleValue() : attributeValue.getStringValue();
 		}
 	},
 	
@@ -164,6 +168,11 @@ public enum AttributeTypeEnum {
 		@Override
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return ColumnTypeEnum.Boolean;
+		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			return attributeValue.getBooleanValue() != null ? attributeValue.getBooleanValue() : attributeValue.getStringValue();
 		}
 	};
 
