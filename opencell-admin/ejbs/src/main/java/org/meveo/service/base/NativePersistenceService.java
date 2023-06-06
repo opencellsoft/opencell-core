@@ -81,6 +81,7 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.model.shared.DateUtils;
@@ -89,6 +90,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.expressions.NativeExpressionFactory;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.util.MeveoParamBean;
 
 import static java.util.stream.Collectors.joining;
@@ -147,6 +149,9 @@ public class NativePersistenceService extends BaseService {
 
     @Inject
     protected Event<CustomTableEvent> entityChangeEventProducer;
+
+    @Inject
+    private GenericNotificationService genericNotificationService;
 
     /**
      * Find record by its identifier
@@ -1684,5 +1689,17 @@ public class NativePersistenceService extends BaseService {
         }
 
         fieldDataTypeMappings = fieldMappings;
+    }
+
+    /**
+     * Check if event of a given type is enabled for a given table
+     * 
+     * @param tableName Table name to check
+     * @param eventType Event type
+     * @return True if events of such event type exist for a given table
+     */
+    protected boolean areEventsEnabled(String tableName, NotificationEventTypeEnum eventType) {
+        List<Notification> notifications = genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.CREATED, new CustomTableEvent(tableName, null, null, eventType));
+        return notifications != null && !notifications.isEmpty();
     }
 }

@@ -1,7 +1,9 @@
 package org.meveo.admin.async;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.hibernate.ScrollableResults;
 import org.hibernate.exception.GenericJDBCException;
@@ -65,28 +67,77 @@ public class SynchronizedIterator<T> implements Iterator<T> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public synchronized T next() {
+    public T next() {
 
-        if (iterator != null && iterator.hasNext()) {
-            position++;
-            return iterator.next();
+        synchronized (this) {
+            if (iterator != null && iterator.hasNext()) {
+                position++;
+                return iterator.next();
 
-        } else if (scrollableResults != null) {
-            try {
-                if (scrollableResults.next()) {
-                    position++;
-                    return (T) scrollableResults.get(0);
-                } else {
+            } else if (scrollableResults != null) {
+                try {
+                    if (scrollableResults.next()) {
+                        position++;
+                        return (T) scrollableResults.get(0);
+                    } else {
+                        return null;
+                    }
+                } catch (GenericJDBCException e) {
+                    Logger log = LoggerFactory.getLogger(getClass());
+                    log.error("Failed to scroll to the next record: {}", e.getMessage());
                     return null;
                 }
-            } catch (GenericJDBCException e) {
-                Logger log = LoggerFactory.getLogger(getClass());
-                log.error("Failed to scroll to the next record: {}", e.getMessage());
+
+            } else {
                 return null;
             }
 
-        } else {
-            return null;
+        }
+    }
+
+    /**
+     * A synchronized implementation of Iterator.next(). Will return null if no more values are available
+     * 
+     * @param nrItems Number of items to return
+     * @return Returns a list of the next X elements, or null if no more elements are found
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> next(int nrItems) {
+
+        synchronized (this) {
+
+            List<T> items = new ArrayList<T>(nrItems);
+
+            for (int i = 0; i < nrItems; i++) {
+                T item = null;
+                if (iterator != null && iterator.hasNext()) {
+                    position++;
+                    item = iterator.next();
+
+                } else if (scrollableResults != null) {
+                    try {
+                        if (scrollableResults.next()) {
+                            position++;
+                            item = (T) scrollableResults.get(0);
+                        } else {
+                            break;
+                        }
+                    } catch (GenericJDBCException e) {
+                        Logger log = LoggerFactory.getLogger(getClass());
+                        log.error("Failed to scroll to the next record: {}", e.getMessage());
+                        break;
+                    }
+
+                } else {
+                    break;
+                }
+                items.add(item);
+            }
+            if (items.isEmpty()) {
+                return null;
+            } else {
+                return items;
+            }
         }
     }
 
