@@ -1090,8 +1090,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 BigDecimal quantity = ((BigDecimal) groupedRT.get("accumulated_quantity")).add((BigDecimal) groupedRT.get("quantity"));
                 Date beginDate = (Date) groupedRT.get("begin_date");
                 Date endDate = (Date) groupedRT.get("end_date");
+                BigDecimal unitPrice = new BigDecimal(123);
 
-                linesFactory.update(invoiceLineId, amounts, quantity, beginDate, endDate);
+                linesFactory.update(invoiceLineId, amounts, quantity, beginDate, endDate, unitPrice);
                 basicStatistics.addToAmountWithoutTax(amounts[0]);
                 basicStatistics.addToAmountWithTax(amounts[1]);
                 basicStatistics.addToAmountTax(amounts[2]);

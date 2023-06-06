@@ -17,6 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -28,6 +29,7 @@ import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -2387,7 +2389,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal quantity = invoiceLine.getQuantity().subtract(ratedTransaction.getQuantity());
         Date beginDate = invoiceLine.getValidity().getFrom();
         Date endDate = invoiceLine.getValidity().getTo();
+        BigDecimal unitPrice = invoiceLine.getUnitPrice();
+        BillingRun billingRun = invoiceLine.getBillingRun();
+        if (billingRun != null
+                && billingRun.getBillingCycle() != null
+                && !billingRun.getBillingCycle().isDisableAggregation()
+                && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
+            MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
+        }
 
-        linesFactory.update(invoiceLine.getId(), amounts, quantity, beginDate, endDate);
+        linesFactory.update(invoiceLine.getId(), amounts, quantity, beginDate, endDate, unitPrice);
     }
 }

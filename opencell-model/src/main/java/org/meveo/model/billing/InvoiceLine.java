@@ -138,7 +138,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.updateByIncrementalMode", query = "UPDATE InvoiceLine il SET " +
 				"il.amountWithoutTax=:amountWithoutTax, il.amountWithTax=:amountWithTax, " +
 				"il.amountTax=:amountTax, il.quantity=:quantity, il.validity.from=:beginDate, " +
-				"il.validity.to=:endDate, il.auditable.updated=:now WHERE il.id = :id"),
+				"il.validity.to=:endDate, il.auditable.updated=:now, il.unitPrice=:unitPrice WHERE il.id=:id"),
 		@NamedQuery(name = "InvoiceLine.updateStatusInvoiceLine", query = "UPDATE InvoiceLine il SET " +
 				"il.status =: statusToUpdate WHERE il.id =: id")
 	})

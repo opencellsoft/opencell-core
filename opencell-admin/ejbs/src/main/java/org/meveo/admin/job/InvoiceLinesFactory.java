@@ -194,13 +194,14 @@ public class InvoiceLinesFactory {
      * @param endDate endDate
      */
     public void update(Long invoiceLineId, BigDecimal[] amounts, BigDecimal quantity, Date beginDate,
-                       Date endDate) throws BusinessException {
+                       Date endDate, BigDecimal unitPrice) throws BusinessException {
         invoiceLineService.getEntityManager()
                 .createNamedQuery("InvoiceLine.updateByIncrementalMode")
                 .setParameter("id", invoiceLineId).setParameter("amountWithoutTax", amounts[0])
                 .setParameter("amountWithTax", amounts[1]).setParameter("amountTax", amounts[2])
                 .setParameter("quantity", quantity).setParameter("beginDate", beginDate)
-                .setParameter("endDate", endDate).setParameter("now", new Date()).executeUpdate();
+                .setParameter("endDate", endDate).setParameter("now", new Date())
+                .setParameter("unitPrice", unitPrice).executeUpdate();
     }
 
     /**
