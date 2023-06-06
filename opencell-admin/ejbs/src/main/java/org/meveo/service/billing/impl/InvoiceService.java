@@ -178,6 +178,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -362,6 +363,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private OpenOrderService openOrderService;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
     /**
      * folder for pdf .
@@ -6693,7 +6697,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public BigDecimal getCurrentRate(Invoice toUpdate, Date exchangeDate) {
         BigDecimal currentRate = null;
         if (toUpdate.getTradingCurrency() != null) {
-            ExchangeRate exchangeRate = toUpdate.getTradingCurrency().getExchangeRate(exchangeDate);
+            TradingCurrency tradingCurrency = tradingCurrencyService.refreshOrRetrieve(toUpdate.getTradingCurrency());
+            ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
             if (exchangeRate != null) {
                 currentRate = exchangeRate.getExchangeRate();
             }
