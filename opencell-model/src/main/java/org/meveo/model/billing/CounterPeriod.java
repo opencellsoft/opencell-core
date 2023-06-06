@@ -77,7 +77,7 @@ import java.util.Map.Entry;
                 + "AND cp.periodStartDate<=:date AND cp.periodEndDate>:date AND cp.counterInstance.code=:counterCode")
 
 })
-public class CounterPeriod extends BusinessEntity {
+public class CounterPeriod extends BusinessEntity implements Cloneable {
     private static final long serialVersionUID = -4924601467998738157L;
 
     /**
@@ -353,5 +353,27 @@ public class CounterPeriod extends BusinessEntity {
             }
         }
         return matchedLevels;
+    }
+    
+    @Override
+    public CounterPeriod clone() throws CloneNotSupportedException {
+        CounterPeriod clone = new CounterPeriod();
+
+        if (accumulatedValues != null) {
+            clone.setAccumulatedValues(new HashMap<String, BigDecimal>(accumulatedValues));
+        }
+        clone.setValue(getValue());
+        clone.setPeriodStartDate(getPeriodStartDate());
+        clone.setPeriodEndDate(getPeriodEndDate());
+        clone.setCode(code);
+        clone.setDescription(description);
+        clone.setLevel(level);
+        clone.setCounterType(counterType);
+        clone.setNotificationLevels(notificationLevels);
+        clone.setAccumulator(accumulator);
+        clone.setAccumulatorType(accumulatorType);
+        clone.setCounterInstance(counterInstance);
+
+        return clone;
     }
 }

@@ -17,7 +17,10 @@
  */
 package org.meveo.model.rating;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.meveo.model.billing.WalletOperation;
 
@@ -44,6 +47,7 @@ public class RatingResult {
      */
     private WalletOperation walletOperation;
 
+    private Map<Long, BigDecimal> counterChanges;
     /**
      * @return A list of EDRs that were triggered as part of this EDR processing
      */
@@ -84,5 +88,32 @@ public class RatingResult {
      */
     public void setWalletOperation(WalletOperation walletOperation) {
         this.walletOperation = walletOperation;
+    }
+
+    /**
+     * Add a counter period change
+     * 
+     * @param counterPeriodId Counter period identifier
+     * @param delta Delta value
+     */
+    public void addCounterChange(Long counterPeriodId, BigDecimal delta) {
+
+        if (counterChanges == null) {
+            counterChanges = new HashMap<Long, BigDecimal>();
+        }
+        BigDecimal counterDelta = counterChanges.get(counterPeriodId);
+        if (counterDelta == null) {
+            counterChanges.put(counterPeriodId, delta);
+        } else {
+            counterChanges.put(counterPeriodId, counterDelta.add(delta));
+        }
+    }
+
+    public Map<Long, BigDecimal> getCounterChanges() {
+        return counterChanges;
+    }
+
+    public void setCounterChanges(Map<Long, BigDecimal> counterChanges) {
+        this.counterChanges = counterChanges;
     }
 }

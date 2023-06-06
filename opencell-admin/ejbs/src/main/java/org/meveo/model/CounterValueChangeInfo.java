@@ -26,6 +26,16 @@ import java.math.BigDecimal;
  * @author Andrius Karpavicius
  */
 public class CounterValueChangeInfo {
+
+    /**
+     * Counter period identifier
+     */
+    private Long counterPeriodId;
+
+    /**
+     * Is this an accumulator counter
+     */
+    private boolean accumulator;
     /**
      * Previous counter value
      */
@@ -48,6 +58,16 @@ public class CounterValueChangeInfo {
         this.newValue = newValue;
     }
 
+    public CounterValueChangeInfo(Long counterPeriodId, Boolean isAccumulator, BigDecimal previousValue, BigDecimal deltaValue, BigDecimal newValue) {
+        this(previousValue, deltaValue, newValue);
+        this.previousValue = previousValue;
+        this.deltaValue = deltaValue;
+        this.newValue = newValue;
+        this.counterPeriodId = counterPeriodId;
+        this.accumulator = isAccumulator;
+    }
+    
+
     public BigDecimal getPreviousValue() {
         return previousValue;
     }
@@ -63,5 +83,25 @@ public class CounterValueChangeInfo {
     @Override
     public String toString() {
         return "from " + previousValue + " by " + deltaValue + " to " + newValue;
+    }
+
+    public Long getCounterPeriodId() {
+        return counterPeriodId;
+    }
+
+    public boolean isAccumulator() {
+        return accumulator;
+    }
+
+    public void setCounterPeriodId(Long counterPeriodId) {
+        this.counterPeriodId = counterPeriodId;
+    }
+
+    public void setAccumulator(boolean accumulator) {
+        this.accumulator = accumulator;
+    }
+
+    public boolean isChange() {
+        return deltaValue != null && deltaValue.compareTo(BigDecimal.ZERO) != 0;
     }
 }
