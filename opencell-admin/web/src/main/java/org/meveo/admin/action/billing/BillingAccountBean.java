@@ -153,6 +153,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     public String instantiateDiscountPlan() throws BusinessException {
         if (entity.getDiscountPlan() != null) {
             DiscountPlan dp = entity.getDiscountPlan();
+            entity = billingAccountService.refreshOrRetrieve(entity);
             entity = billingAccountService.instantiateDiscountPlan(entity, dp);
             entity.setDiscountPlan(null);
         }
