@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.ContractDto;
 import org.meveo.api.dto.cpq.ContractItemDto;
 import org.meveo.api.dto.cpq.ContractListResponsDto;
+import org.meveo.api.dto.cpq.TradingContractItemDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.*;
 import org.meveo.api.security.config.annotation.FilterProperty;
@@ -31,6 +33,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -39,12 +42,14 @@ import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
+import org.meveo.model.cpq.contract.TradingContractItem;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -55,6 +60,7 @@ import org.meveo.service.cpq.BillingRuleService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.TradingContractItemService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -92,6 +98,10 @@ public class ContractApi extends BaseApi{
 	private BillingRuleService billingRuleService;
 	@Inject
 	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+	@Inject
+	private TradingContractItemService tradingContractItemService;
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 	
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
@@ -100,6 +110,7 @@ public class ContractApi extends BaseApi{
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 
+	final private static BigDecimal HUNDRED = new BigDecimal("100");
 
 	public Long createContract(ContractDto dto) {
 
@@ -613,5 +624,88 @@ public class ContractApi extends BaseApi{
 		});
 
 		return duplicate;
+	}
+	
+    public TradingContractItem createTradingContractItem(TradingContractItemDto dto) throws MeveoApiException, BusinessException {
+    	TradingContractItem entity = dtoToEntity(dto, new TradingContractItem());
+        tradingContractItemService.create(entity);
+        return entity;
+    }
+	
+    public TradingContractItem updateTradingContractItem(Long tradingContractItemId, TradingContractItemDto dto) throws MeveoApiException, BusinessException {
+    	TradingContractItem entity = dtoToEntity(dto, checkIdAndGetEntity(tradingContractItemId));
+        tradingContractItemService.update(entity);
+        return entity;
+    }
+
+    public void deleteTradingContractItem(Long tradingContractItemId) throws MeveoApiException, BusinessException {
+    	TradingContractItem tradingContractItem = checkIdAndGetEntity(tradingContractItemId);
+    	
+        if (!ContractStatusEnum.DRAFT.toString().equals(tradingContractItem.getContractItem().getContract().getStatus())) {
+            throw new InvalidParameterException("Suppression is not allowed since the contract status is not DRAFT");
+        }
+        
+    	tradingContractItemService.remove(tradingContractItem);
+    }
+    
+    private TradingContractItem dtoToEntity(TradingContractItemDto dto, TradingContractItem entity) {
+        if (dto.getTradingCurrency() == null || (StringUtils.isBlank(dto.getTradingCurrency().getCode()) && dto.getTradingCurrency().getId() == null)) {
+            missingParameters.add("tradingCurrency");
+        }
+        if (org.meveo.commons.utils.StringUtils.isBlank(dto.getContractItemId())) {
+            missingParameters.add("contractItemId");
+        }
+        handleMissingParameters();
+        
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCodeOrId(dto.getTradingCurrency().getCode(), dto.getTradingCurrency().getId());
+        if (tradingCurrency == null) {
+            throw new EntityDoesNotExistsException(TradingCurrency.class, dto.getTradingCurrency().getCode(), "code", String.valueOf(dto.getTradingCurrency().getId()), "id");
+        }
+
+        if (appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
+            throw new InvalidParameterException("Trading currency couldn't be the same as functional currency");
+        }
+        
+        if (tradingCurrency.isDisabled()) {
+            throw new InvalidParameterException("Trading currency should not be archived");
+        }
+
+        ContractItem contractItem = contractItemService.findById(dto.getContractItemId());
+        if (contractItem == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dto.getContractItemId());
+        }
+        
+        if (!ContractStatusEnum.DRAFT.toString().equals(contractItem.getContract().getStatus())) {
+            throw new InvalidParameterException("Creation and modification is not allowed since the contract status is not DRAFT");
+        }
+        
+        TradingContractItem tdpi = tradingContractItemService.findByContractItemAndCurrency(contractItem, tradingCurrency);
+        if (tdpi != null && !tdpi.getId().equals(entity.getId())) {
+            throw new BusinessException("Trading contract item already exist for contract item " + contractItem.getId() + " and currency " + tradingCurrency.getCurrencyCode());
+        }
+        
+        if (ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) && dto.getTradingValue().compareTo(HUNDRED) > 0) {
+        	throw new InvalidParameterException("Trading value is not allowed for contract line type PERCENTAGE");
+        }
+
+        entity.setContractItem(contractItem);
+        entity.setTradingCurrency(tradingCurrency);
+        entity.setRate(dto.getRate());
+        entity.setTradingValue(dto.getTradingValue());
+        
+        return entity;
+    }
+    
+	private TradingContractItem checkIdAndGetEntity(Long tradingContractItemId) {
+		if (org.meveo.commons.utils.StringUtils.isBlank(tradingContractItemId)) {
+            missingParameters.add("id");
+            handleMissingParameters();
+        }
+    	
+    	TradingContractItem tradingContractItem = tradingContractItemService.findById(tradingContractItemId);
+    	if (tradingContractItem == null) {
+            throw new EntityDoesNotExistsException(TradingContractItem.class, tradingContractItemId);
+        }
+		return tradingContractItem;
 	}
 }

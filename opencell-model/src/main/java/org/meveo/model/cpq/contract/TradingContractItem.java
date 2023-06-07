@@ -19,9 +19,9 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.TradingCurrency;
 
 @Entity
-@Table(name = "cat_trading_discount_plan_item")
+@Table(name = "cpq_trading_contract_item")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cat_trading_discount_plan_item_seq"), })
+        @Parameter(name = "sequence_name", value = "cpq_trading_contract_item_seq"), })
 @NamedQueries({
 		@NamedQuery(name = "TradingContractItem.getByContractItemAndCurrency", query = "SELECT tci from TradingContractItem tci where tci.contractItem =:contractItem and tci.tradingCurrency = :tradingCurrency") 
 })

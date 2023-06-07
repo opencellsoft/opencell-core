@@ -18,6 +18,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.ContractDto;
 import org.meveo.api.dto.cpq.ContractItemDto;
 import org.meveo.api.dto.cpq.ContractListResponsDto;
+import org.meveo.api.dto.cpq.TradingContractItemDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetContractDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListContractDtoResponse;
@@ -232,4 +233,61 @@ public interface ContractRs extends IBaseRs {
 					)
 				})
 	Response duplicateContract(@Parameter(description = "Contract Code", required = true) @PathParam("contractCode") String contractCode);
+	
+    /**
+     * Create a new trading contract item.
+     *
+     * @param postData A trading contract item's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/contractLines/tradingContractItem")
+	@Operation(
+			summary=" Create a new trading contract item. ",
+			description="Create a new trading contract item. ",
+			operationId="POST_TradingContractItem_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(schema=@Schema(implementation= ActionStatus.class))
+				)}
+	)
+    Response createTradingContractItem(TradingContractItemDto postData);
+    
+    /**
+     * Update a trading contract item.
+     *
+     * @param postData A trading contract item's data
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/contractLines/tradingContractItem/{id}")
+	@Operation(
+			summary="Update an existing trading contract item. ",
+			description="Update an existing new trading contract item. ",
+			operationId="PUT_TradingContractItem_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(schema=@Schema(implementation= ActionStatus.class))
+				)}
+	)
+    Response updateTradingContractItem(@Parameter(description = "ID of trading contract item to update", required = true)  @PathParam("id") Long tradingContractItemId, TradingContractItemDto postData);
+    
+    /**
+     * Delete a trading contract item.
+     *
+     * @param postData A trading contract item's data
+     * @return Request processing status
+     */
+    @DELETE
+    @Path("/contractLines/tradingContractItem/{id}")
+	@Operation(
+			summary="Delete an existing trading contract item. ",
+			description="Delete an existing trading contract item. ",
+			operationId="DELETE_TradingContractItem_delete",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(schema=@Schema(implementation= ActionStatus.class))
+				)}
+	)
+    Response deleteTradingContractItem(@Parameter(description = "ID of trading contract item to delete") @PathParam("id") Long tradingContractItemId);
 }

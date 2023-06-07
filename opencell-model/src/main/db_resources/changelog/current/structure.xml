@@ -16846,7 +16846,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="rate" type="numeric(23, 12)" />
 		</createTable>
 		<addForeignKeyConstraint
-			baseColumnNames="discount_plan_item_id"
+			baseColumnNames="contract_item_id"
 			baseTableName="cpq_trading_contract_item"
 			constraintName="cpq_trading_contract_item_contract_item_fk" deferrable="false"
 			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
