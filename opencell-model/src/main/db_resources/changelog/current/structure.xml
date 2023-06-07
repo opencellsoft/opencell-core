@@ -16825,4 +16825,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 baseTableName="billing_wallet_operation" />
     </changeSet>
 
+    <changeSet id="#INTRD-16713_20230606" author="TarikFA.">
+        <addColumn tableName="billing_invoice">
+            <column name="auto_matching" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
+
 </databaseChangeLog>

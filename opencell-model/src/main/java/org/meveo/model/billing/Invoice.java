@@ -770,6 +770,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "conversion_from_billing_currency")
     @Type(type = "numeric_boolean")
     private boolean conversionFromBillingCurrency = false;
+	
+	@Column(name = "auto_matching")
+	@Type(type = "numeric_boolean")
+	private boolean autoMatching;
     
     public Invoice() {
 	}
@@ -2043,5 +2047,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
 		return amount != null ? amount.multiply(rate) : ZERO;
 	}
-
+	
+	public boolean isAutoMatching() {
+		return autoMatching;
+	}
+	
+	public void setAutoMatching(boolean autoMatching) {
+		this.autoMatching = autoMatching;
+	}
 }
