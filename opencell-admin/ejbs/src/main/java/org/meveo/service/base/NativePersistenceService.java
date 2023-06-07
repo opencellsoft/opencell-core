@@ -977,17 +977,33 @@ public class NativePersistenceService extends BaseService {
     }
 
     public QueryBuilder getAggregateQuery(String tableName, PaginationConfiguration config, Long id) {
+        return getAggregateQuery(tableName, config, id, null, null);
+    }
+
+    public QueryBuilder getAggregateQuery(String tableName, PaginationConfiguration config, Long id, String extraCondition,
+                                          String leftJoinClause) {
         tableName = addCurrentSchema(tableName);
-        Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
 
         String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), null) : "";
         if (!fieldsToRetrieve.isEmpty()) {
             config.getFetchFields().remove("id");
         }
 
-        QueryBuilder queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, "") + " from " + tableName + " a ", "a");
+        QueryBuilder queryBuilder;
+        if (leftJoinClause != null) {
+            queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, "") + " from "
+                    + tableName + " a " + leftJoinClause, "a");
+        }
+        else {
+            queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, "") + " from " + tableName + " a ", "a");
+        }
+
         if (id != null) {
             queryBuilder.addSql(" a.id ='" + id + "'");
+        }
+
+        if (extraCondition != null) {
+            queryBuilder.addSql(extraCondition);
         }
 
         if (config == null) {
@@ -1011,8 +1027,7 @@ public class NativePersistenceService extends BaseService {
         }
 
         queryBuilder.addPaginationConfiguration(config, "a");
-
-        String fieldsToGroupBy = config.getGroupBy() != null ? retrieveFields(new ArrayList<>(config.getGroupBy()), predicate.negate()) : "";
+        String fieldsToGroupBy = config.getGroupBy() != null ? retrieveFields(new ArrayList<>(config.getGroupBy()), null) : "";
 
         if (!fieldsToGroupBy.isEmpty()) {
             queryBuilder.addGroupCriterion(fieldsToGroupBy);

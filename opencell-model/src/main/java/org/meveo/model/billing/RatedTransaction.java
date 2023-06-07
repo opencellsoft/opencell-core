@@ -190,7 +190,11 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.reopenRatedTransactions", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null, r.invoiceLine=null where r.id IN (:rtIds)"),
         @NamedQuery(name = "RatedTransaction.updatePendingDuplicate", query = "update RatedTransaction r set r.pendingDuplicates= r.pendingDuplicates + :pendingDuplicates, r.pendingDuplicatesToNegate= r.pendingDuplicatesToNegate + :pendingDuplicatesToNegate where r.id in (:rtI)"),
         @NamedQuery(name = "RatedTransaction.findPendingOrNegateDuplicated", query = "Select r from RatedTransaction r where r.pendingDuplicates > 0 or r.pendingDuplicatesToNegate > 0"),
-        @NamedQuery(name = "RatedTransaction.findForAppyInvoicingRuleByIds", query = "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) AND  rt.status = 'OPEN' and rt.rulesContract is not null")
+        @NamedQuery(name = "RatedTransaction.findForAppyInvoicingRuleByIds", query = "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) AND  rt.status = 'OPEN' and rt.rulesContract is not null"),
+        @NamedQuery(name = "RatedTransaction.updateStatusDiscountedRT", query = "UPDATE RatedTransaction rt " +
+                "SET rt.status =: statusToUpdate WHERE rt.id IN (:ids)"),
+        @NamedQuery(name = "RatedTransaction.getDiscountedRTIds", query = "SELECT rt FROM RatedTransaction rt " +
+                "WHERE rt.invoiceLine.status != 'BILLED' AND rt.discountedRatedTransaction =: id")
         })
 
 @NamedNativeQueries({
