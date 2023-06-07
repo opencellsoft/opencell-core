@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -44,6 +45,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Stateless
 public class PricePlanSelectionService implements Serializable {
 
     private static final long serialVersionUID = 6228282058872986933L;
