@@ -7,19 +7,24 @@ import java.util.stream.Collectors;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.catalog.ImmutablePriceList;
 import org.meveo.apiv2.generic.ResourceMapper;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Country;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.shared.Title;
+import org.meveo.service.api.EntityToDtoConverter;
 
 public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.PriceList, PriceList> {
+
+	private EntityToDtoConverter entityToDtoConverter = (EntityToDtoConverter) EjbUtils.getServiceInterface(EntityToDtoConverter.class.getSimpleName());
 
 	@Override
 	protected org.meveo.apiv2.catalog.PriceList toResource(PriceList entity) {
@@ -40,6 +45,7 @@ public class PriceListMapper extends ResourceMapper<org.meveo.apiv2.catalog.Pric
 				.legalEntities(getLegalEntitiesCodes(entity))
 				.sellers(getSellersCodes(entity))
 				.paymentMethods(getPaymentMethodCode(entity))
+				.customFields(entityToDtoConverter.getCustomFieldsDTO(entity))
 				.build();	
     }
 	
