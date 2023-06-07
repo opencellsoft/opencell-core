@@ -17,6 +17,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.RatingResult;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -264,9 +265,12 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     		wo.setCode(woToRerate.getCode());
     		wo.setTradingCurrency(woToRerate.getBillingAccount().getTradingCurrency());
     		walletOperationService.update(wo);
-    		if (wo.getRatedTransaction() != null) {
-    			wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
-    			ratedTransactionService.update(wo.getRatedTransaction());
+
+    		RatedTransaction ratedTransaction = wo.getRatedTransaction();
+    		if (ratedTransaction != null) {
+                RatedTransactionStatusEnum oldStatus = ratedTransaction.getStatus();
+                ratedTransaction.setStatus(RatedTransactionStatusEnum.CANCELED);
+    			ratedTransactionService.update(oldStatus, ratedTransaction);
     		}
     	}
     }

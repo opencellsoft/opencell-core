@@ -106,4 +106,11 @@ public class AggregationConfiguration {
 		// TODO Auto-generated method stub
 		return type ;
 	}
+
+	@Override
+	public String toString() {
+		return "AggregationConfiguration [enterprise : " + enterprise + ", dateAggregationOption : " + dateAggregationOption
+				+ ", aggregationPerUnitAmount : " + aggregationPerUnitAmount + ", useAccountingArticleLabel : " + useAccountingArticleLabel
+				+ ", ignoreSubscriptions : " + ignoreSubscriptions + ", ignoreOrders : " + ignoreOrders  + ", BillingEntityTypeEnum : " + type + "]";
+	}
 }

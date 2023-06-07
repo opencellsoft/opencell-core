@@ -413,7 +413,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         // Change related OPEN or REJECTED Rated transaction status to CANCELED
         RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
         if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED)) {
-            ratedTransaction.changeStatus(RatedTransactionStatusEnum.CANCELED);
+            ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
         }
 
         // Check triggered EDRS and check status/rerate each of them

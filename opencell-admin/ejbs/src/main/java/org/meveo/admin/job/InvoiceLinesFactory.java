@@ -145,7 +145,7 @@ public class InvoiceLinesFactory {
                 && billingRun.getBillingCycle() != null
                 && !billingRun.getBillingCycle().isDisableAggregation()
                 && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
-            BigDecimal unitAmount = (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO);
+            BigDecimal unitAmount = (BigDecimal) data.getOrDefault("sum_without_tax", ZERO);
             BigDecimal quantity = (BigDecimal) data.getOrDefault("quantity", ZERO);
             MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
             BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity, mc);
@@ -201,6 +201,24 @@ public class InvoiceLinesFactory {
         }
         ofNullable(openOrderNumber).ifPresent(invoiceLine::setOpenOrderNumber);
         return invoiceLine;
+    }
+
+    /**
+     * @param invoiceLineId id of invoice line to be updated
+     * @param amounts amount of tax, amount with tax, amount without tax
+     * @param quantity quantity
+     * @param beginDate beginDate
+     * @param endDate endDate
+     */
+    public void update(Long invoiceLineId, BigDecimal[] amounts, BigDecimal quantity, Date beginDate,
+                       Date endDate, BigDecimal unitPrice) throws BusinessException {
+        invoiceLineService.getEntityManager()
+                .createNamedQuery("InvoiceLine.updateByIncrementalMode")
+                .setParameter("id", invoiceLineId).setParameter("amountWithoutTax", amounts[0])
+                .setParameter("amountWithTax", amounts[1]).setParameter("amountTax", amounts[2])
+                .setParameter("quantity", quantity).setParameter("beginDate", beginDate)
+                .setParameter("endDate", endDate).setParameter("now", new Date())
+                .setParameter("unitPrice", unitPrice).executeUpdate();
     }
 
     /**
