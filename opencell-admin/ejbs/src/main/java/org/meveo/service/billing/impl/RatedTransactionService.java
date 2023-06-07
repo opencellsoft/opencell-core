@@ -2355,7 +2355,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     // if the status of invoiceLine is BILLED, we do nothing, the re-computation of invoice line is not allowed
                     else {
                         log.info("Invoice line id = {} created from ratedTransaction id = {} is already billed. " +
-                                        "The re-computation of invoice line is is not allowed",
+                                        "The re-computation of invoice line is not allowed",
                                 invoiceLine.getId(), ratedTransaction.getId());
                     }
                 }
