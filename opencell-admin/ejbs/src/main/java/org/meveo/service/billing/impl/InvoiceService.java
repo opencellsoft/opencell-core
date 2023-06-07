@@ -2590,7 +2590,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (isDraft) {
                     drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate(),
                         generateInvoiceRequestDto.getLastTransactionDate());
-                    update(invoice);
                 } else {
                     drafWalletOperationIds = new ArrayList<>();
                     invoice.setStatus(InvoiceStatusEnum.VALIDATED);
