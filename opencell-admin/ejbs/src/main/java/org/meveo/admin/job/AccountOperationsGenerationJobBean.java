@@ -73,7 +73,7 @@ public class AccountOperationsGenerationJobBean extends IteratorBasedJobBean<Lon
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createAccountOperations, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createAccountOperations, null, null, null);
         script = null;
     }
 

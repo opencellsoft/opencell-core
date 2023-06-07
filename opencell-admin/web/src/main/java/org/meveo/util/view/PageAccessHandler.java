@@ -6,8 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.NavigationCase;
 import javax.faces.context.FacesContext;
@@ -15,6 +14,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import org.meveo.cache.AuthorizationCacheContainerProvider;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 
 /**
@@ -23,7 +25,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
  * @author Andrius Karpavicius
  */
 @Named
-@SessionScoped
+@RequestScoped
 public class PageAccessHandler implements Serializable {
 
     private static final long serialVersionUID = 8756738833715989536L;
@@ -31,12 +33,12 @@ public class PageAccessHandler implements Serializable {
     @Inject
     private HttpServletRequest httpRequest;
 
-    private Map<String, Boolean> pageAccess;
+    @Inject
+    private AuthorizationCacheContainerProvider authorizationCache;
 
-    @PostConstruct
-    public void init() {
-        pageAccess = new HashMap<String, Boolean>();
-    }
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     /**
      * Check if outcome, as defined in faces-config.xml file, in a given scope is allowed for a current user. </br>
@@ -59,14 +61,17 @@ public class PageAccessHandler implements Serializable {
         // Checked cached outcome results and gather a list of outcomes/urls to check
         for (String outcome : outcomes) {
 
-            Boolean isAccessible = pageAccess.get(outcome + "-" + scope);
+            Boolean isAccessible = authorizationCache.isAuthorized(currentUser.getAuthenticationTokenId(), outcome + "-" + scope);
             if (isAccessible == null) {
 
                 NavigationCase navCase = navigationHandler.getNavigationCase(context, null, outcome);
                 if (navCase == null) {
                     continue;
                 }
+
+                // Replace .xhtml with .jsf and remove any url parameters
                 String targetUrl = navCase.getToViewId(context);
+                targetUrl = targetUrl.substring(0, targetUrl.indexOf(".xhtml")) + ".jsf";
 
                 outcomesToCheck.add(outcome);
                 urlsToCheck.add(targetUrl);
@@ -80,16 +85,19 @@ public class PageAccessHandler implements Serializable {
         if (!urlsToCheck.isEmpty()) {
             boolean[] urlAccessible = CurrentUserProvider.isLinkAccesible((HttpServletRequest) context.getExternalContext().getRequest(), scope, urlsToCheck.toArray(new String[urlsToCheck.size()]));
 
+            Map<String, Boolean> checkResults = new HashMap<String, Boolean>(outcomesToCheck.size() * 2);
+
             for (int i = 0; i < outcomesToCheck.size(); i++) {
                 boolean isUrlAccesible = urlAccessible[i];
 
-                pageAccess.put(outcomesToCheck.get(i) + "-" + scope, isUrlAccesible);
-                pageAccess.put(urlsToCheck.get(i) + "-" + scope, isUrlAccesible);
+                checkResults.put(outcomesToCheck.get(i) + "-" + scope, isUrlAccesible);
+                checkResults.put(urlsToCheck.get(i) + "-" + scope, isUrlAccesible);
 
                 if (isUrlAccesible) {
                     finalIsAccessible = true;
                 }
             }
+            authorizationCache.addAuthorization(currentUser.getAuthenticationTokenId(), checkResults);
         }
 
         return finalIsAccessible;
@@ -104,12 +112,17 @@ public class PageAccessHandler implements Serializable {
      */
     public boolean isURLAccesible(String scope, String url) {
 
-        Boolean isAccessible = pageAccess.get(url + "-" + scope);
+        // Omit checking access for JSF resources
+        if (url.startsWith("/javax.faces.resource/")) {
+            return true;
+        }
+
+        Boolean isAccessible = authorizationCache.isAuthorized(currentUser.getAuthenticationTokenId(), url + "-" + scope);
         if (isAccessible == null) {
 
             boolean[] isAccessibles = CurrentUserProvider.isLinkAccesible(httpRequest, scope, url);
             isAccessible = isAccessibles[0];
-            pageAccess.put(url + "-" + scope, isAccessible);
+            authorizationCache.addAuthorization(currentUser.getAuthenticationTokenId(), url + "-" + scope, isAccessible);
         }
 
         if (isAccessible) {
@@ -130,5 +143,14 @@ public class PageAccessHandler implements Serializable {
         requestURI = requestURI.substring(requestURI.substring(1).indexOf("/") + 1);
 
         return isURLAccesible(scope, requestURI);
+    }
+
+    /**
+     * Check if current request URL with a current scope (HTTP method) is allowed for a current user in Keycloak authorization rules.
+     * 
+     * @return True if it is accessible
+     */
+    public boolean isCurrentURLAccesible() {
+        return isCurrentURLAccesible(httpRequest.getMethod());
     }
 }

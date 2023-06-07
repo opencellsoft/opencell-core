@@ -2,13 +2,22 @@ package org.meveo.api.dto.cpq;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.ProductVersionAttribute;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -18,70 +27,156 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 public class ProductVersionAttributeDTO {
 	
-    @Schema(description = "Code of attribute", required = true)
-    @NotNull
-    private String attributeCode;
-    
+	@Schema(description = "attribute id")
+	private Long id;
+	
+	@Deprecated(since = "V12")
+	@Schema(description = "Code of attribute")
+	private String code;
+	
+	@Schema(description = "description")
+	private String description;
+	
+	@Schema(description = "description")
+	private Boolean disabled;
+
+	@Schema(description = "Corresponding to minimum one shot charge template code",
+			example = "possible value are : INFO, LIST_TEXT, LIST_MULTIPLE_TEXT, LIST_NUMERIC, "
+					+ "LIST_MULTIPLE_NUMERIC, TEXT, NUMERIC, INTEGER, DATE, CALENDAR, EMAIL, PHONE, TOTAL, COUNT, EXPRESSION_LANGUAGE")
+	private AttributeTypeEnum attributeType;
+
+	@Schema(description = "Corresponding to predefined allowed values")
+	private Set<String> allowedValues;
+
+	@Schema(description = "diplay the attribute")
+	private boolean display;
+
+	@NotNull
+	@Schema(description = "indicate if the attribute is mandatory")
+	private boolean mandatory=Boolean.FALSE;
+
+	@Schema(description = "indicate if the attribute is selectable")
+	private boolean selectable=Boolean.TRUE;
+
+	@Schema(description = "indicate if the attribute is ruled")
+	private boolean ruled=Boolean.FALSE;
+
+	@Schema(description = "number of decimal for attribute if the type of attribute is a NUMBER")
+	private Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
+
+	@Schema(description = "indicate if the attribute is read only")
+	private boolean readOnly = Boolean.FALSE;
+
+	@Schema(description = "Code of attribute", required = true)
+	@NotNull
+	private String attributeCode;
+
     @Schema(description = "attribute order in the GUI")
     private Integer sequence = 0;
 
     @Schema(description = "Indicate if the attribute has a mandatory EL")
     private String mandatoryWithEl;
 
-    @Schema(description = "indicate if the attribute is read only")
-    protected boolean readOnly = Boolean.FALSE;
-    
     @Schema(description = "default value for attribute")
-    protected String defaultValue;
+    private String defaultValue;
 
 	@Schema(description = "Validation type", example = "Possible value are: EL, REGEX")
-	protected AttributeValidationType validationType;
+	private AttributeValidationType validationType;
 
 	@Schema(description = "Validation pattern")
-	protected String validationPattern;
+	private String validationPattern;
 
 	@Schema(description = "Validation label")
-	protected String validationLabel;
-    /**
-     * Mandatory
+	private String validationLabel;
+	@Schema(description = "list of commercial rule code", example = "commercialRuleCodes : [CODE_1, CODE_2,..]")
+	private List<String> commercialRuleCodes=new ArrayList<>();
+
+	@Schema(description = "replaced value")
+	private Object assignedValue;
+
+	 
+    @Schema(description = "list of charge template code", example = "chargeTemplateCodes : [CODE_1, CODE_2,..]")
+    private List<String> chargeTemplateCodes = new ArrayList<>();
+	 /**
+     * The lower number, the higher the priority is
      */
-    @NotNull
-    @Schema(description = "indicate if the attribute is mandatory")
-    protected boolean mandatory=Boolean.FALSE;
+    @Schema(description = "The lower number, the higher the priority is")
+    private Integer priority ;
     
-    @Schema(description = "indicate if the attribute is ruled")
-    private boolean ruled=Boolean.FALSE;
-  
-    @Schema(description = "list of commercial rule header codes", example = "commercialRuleCodes : [CODE_1, CODE_2,..]")
-    protected List<String> commercialRuleCodes=new ArrayList<>();
     
-    @Schema(description = "replaced value")
-    protected Object assignedValue;
+    /** The media codes. */ 
+    @Schema(description = "list of media code", example = "mediaCodes : [CODE_1, CODE_2,..]")
+    private Set<String> mediaCodes = new HashSet<>();
     
-    @Schema(description = "indicate if the attribute is selectable")
-    protected boolean selectable=Boolean.TRUE;
-	  /**
-	   * 
-	   */
-	  /**
-     * Display
-     */
-    @Schema(description = "diplay the attribute")
-    protected boolean display;
+    /** The tags */ 
+    @Schema(description = "list of tag code", example = "tags : [CODE_1, CODE_2,..]")
+    private List<String> tagCodes=new ArrayList<>();
+     
+    @Schema(description = "list of assigned attribute code", example = "assignedAttributeCodes : [CODE_1, CODE_2,..]")
+    private List<String> assignedAttributeCodes=new ArrayList<>();
+
+    @Schema(description = "list of custom field associated to attribute")
+    private CustomFieldsDto customFields;
+
+    @Schema(description = "grouped attributes")
+	private List<GroupedAttributeDto> groupedAttributes;
     
     public ProductVersionAttributeDTO() {
         super();
     }
-    public ProductVersionAttributeDTO(ProductVersionAttribute pva) {
+    public ProductVersionAttributeDTO(ProductVersionAttribute productVersionAttribute) {
+    	Attribute attribute=productVersionAttribute.getAttribute();
+        if(attribute != null) {
+        this.id=attribute.getId();
+        this.code=attribute.getCode();
+        this.description=attribute.getDescription();
+        this.disabled=attribute.isDisabled();
+        this.attributeType=attribute.getAttributeType(); 
+		this.allowedValues = new HashSet<>(attribute.getAllowedValues());
+		
+        this.display=productVersionAttribute.isDisplay();
+        this.mandatory = productVersionAttribute.isMandatory();
+        this.unitNbDecimal=attribute.getUnitNbDecimal();
+        this.readOnly=productVersionAttribute.getReadOnly();
+        this.validationType = productVersionAttribute.getValidationType();
+        this.validationPattern = productVersionAttribute.getValidationPattern();
+        this.validationLabel = productVersionAttribute.getValidationLabel();
+        if (!attribute.getChargeTemplates().isEmpty()) {
+        	for (ChargeTemplate charge:attribute.getChargeTemplates()) {
+        		this.chargeTemplateCodes.add(charge.getCode());
+        	}
+        }
+        if (!attribute.getCommercialRules().isEmpty()) {
+        	for (CommercialRuleHeader rule:attribute.getCommercialRules()) {
+        		this.commercialRuleCodes.add(rule.getCode());
+        	}
+        }   
+        if(!attribute.getMedias().isEmpty()){
+			this.mediaCodes = attribute.getMedias().stream()
+								.map(tag -> tag.getCode())
+								.collect(Collectors.toSet());
+		} 
+        if(!attribute.getTags().isEmpty()){
+			this.tagCodes = attribute.getTags().stream()
+								.map(tag -> tag.getCode())
+								.collect(Collectors.toList());
+		}
+        if (!attribute.getAssignedAttributes().isEmpty()) {
+        	for (Attribute attr:attribute.getAssignedAttributes()) {
+        		assignedAttributeCodes.add(attr.getCode());
+        	}
+        }
+    	if(attribute.getGroupedAttributes()!=null && !attribute.getGroupedAttributes().isEmpty()){
+			this.groupedAttributes = attribute.getGroupedAttributes().stream()
+					.map(ga -> new GroupedAttributeDto(ga))
+					.collect(Collectors.toList());
+		}
         
-        if(pva.getAttribute() != null)
-        	this.attributeCode = pva.getAttribute().getCode();
-        this.sequence = pva.getSequence();
-        this.mandatoryWithEl = pva.getMandatoryWithEl();
-        mandatory=pva.isMandatory();
-        display=pva.isDisplay();
-        readOnly = pva.getReadOnly();
-        defaultValue = pva.getDefaultValue();
+        this.attributeCode = productVersionAttribute.getAttribute().getCode();
+        this.sequence = productVersionAttribute.getSequence();
+        this.mandatoryWithEl = productVersionAttribute.getMandatoryWithEl(); 
+        this.defaultValue = productVersionAttribute.getDefaultValue();  
+        }
     }
     /**
      * @return the sequence
@@ -245,6 +340,91 @@ public class ProductVersionAttributeDTO {
 	public void setSelectable(boolean selectable) {
 		this.selectable = selectable;
 	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public Boolean getDisabled() {
+		return disabled;
+	}
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
+	}
+	public AttributeTypeEnum getAttributeType() {
+		return attributeType;
+	}
+	public void setAttributeType(AttributeTypeEnum attributeType) {
+		this.attributeType = attributeType;
+	}
+	public Set<String> getAllowedValues() {
+		return allowedValues;
+	}
+	public void setAllowedValues(Set<String> allowedValues) {
+		this.allowedValues = allowedValues;
+	}
+	public Integer getUnitNbDecimal() {
+		return unitNbDecimal;
+	}
+	public void setUnitNbDecimal(Integer unitNbDecimal) {
+		this.unitNbDecimal = unitNbDecimal;
+	}
+	public List<String> getChargeTemplateCodes() {
+		return chargeTemplateCodes;
+	}
+	public void setChargeTemplateCodes(List<String> chargeTemplateCodes) {
+		this.chargeTemplateCodes = chargeTemplateCodes;
+	}
+	public Integer getPriority() {
+		return priority;
+	}
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
+	public Set<String> getMediaCodes() {
+		return mediaCodes;
+	}
+	public void setMediaCodes(Set<String> mediaCodes) {
+		this.mediaCodes = mediaCodes;
+	}
+	public List<String> getTagCodes() {
+		return tagCodes;
+	}
+	public void setTagCodes(List<String> tagCodes) {
+		this.tagCodes = tagCodes;
+	}
+	public List<String> getAssignedAttributeCodes() {
+		return assignedAttributeCodes;
+	}
+	public void setAssignedAttributeCodes(List<String> assignedAttributeCodes) {
+		this.assignedAttributeCodes = assignedAttributeCodes;
+	}
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
+	public List<GroupedAttributeDto> getGroupedAttributes() {
+		return groupedAttributes;
+	}
+	public void setGroupedAttributes(List<GroupedAttributeDto> groupedAttributes) {
+		this.groupedAttributes = groupedAttributes;
+	}
+	
 	
 	
 }

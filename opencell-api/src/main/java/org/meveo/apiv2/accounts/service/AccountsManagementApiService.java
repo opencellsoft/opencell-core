@@ -1,5 +1,6 @@
 package org.meveo.apiv2.accounts.service;
 
+import static java.util.Optional.ofNullable;
 import static org.meveo.apiv2.accounts.ApplyOneShotChargeListModeEnum.PROCESS_ALL;
 import static org.meveo.apiv2.accounts.ApplyOneShotChargeListModeEnum.ROLLBACK_ON_ERROR;
 
@@ -249,6 +250,28 @@ public class AccountsManagementApiService {
         if (action == OpenTransactionsActionEnum.MOVE_AND_RERATE) {
             count += walletOperationService.moveAndRerateNotBilledWOToUA(newWallet, subscription);
             count += ratedTransactionService.moveAndRerateNotBilledRTToUA(newWallet, subscription);
+        }
+        
+        if (action == OpenTransactionsActionEnum.FAIL_DRAFT) {
+            Long countRTDraft = ratedTransactionService.countRTBySubscriptionForDraftInvoice(subscription);
+            if (countRTDraft > 0) {
+                throw new ConflictException("Cannot move subscription {id=[id], code=[code]} with rated items on DRAFT invoices".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode));
+            }
+        }
+        
+        if (action == OpenTransactionsActionEnum.FAIL_OPEN_AND_DRAFT) {
+            Long countRT = ratedTransactionService.countNotBilledRTBySubscription(subscription);
+            if (countRT > 0) {
+                throw new ConflictException("Cannot move subscription {id=[id], code=[code]} with OPEN rated items".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode));
+            }
+            
+            Long countRTDraft = ratedTransactionService.countRTBySubscriptionForDraftInvoice(subscription);
+            if (countRTDraft > 0) {
+                throw new ConflictException("Cannot move subscription {id=[id], code=[code]} with rated items on DRAFT invoices".replace("[id]", subscription.getId().toString())
+                    .replace("[code]", subscriptionCode));
+            }
         }
 
         // Attache to new user account
@@ -672,5 +695,25 @@ public class AccountsManagementApiService {
 		lDto.setError(new CdrError(errorMessage));
 		
 		return lDto;
+	}
+	
+	public List<Long> getAllParentCustomers(String customerCode) {
+		if (StringUtils.isBlank(customerCode)) {
+			throw new BusinessApiException("Customer code is mandatory");
+		}
+		
+        Customer customer = ofNullable(customerService.findByCode(customerCode)).orElseThrow(() -> new EntityDoesNotExistsException(Customer.class, customerCode));
+
+        return getAllParentCustomerIds(customer, new ArrayList<Long>());
+	}
+	
+	private List<Long> getAllParentCustomerIds(Customer customer, List<Long> ids) {
+		Customer parent = customer.getParentCustomer();
+		if (parent == null) {
+			return ids;
+		} else {
+			ids.add(parent.getId());
+			return getAllParentCustomerIds(parent, ids);
+		}
 	}
 }

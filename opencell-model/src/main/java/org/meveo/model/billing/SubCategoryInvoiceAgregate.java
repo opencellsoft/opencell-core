@@ -669,7 +669,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         this.itemNumber++;
         this.invoiceLinesToAssociate.add(invoiceLine);
 
-        BigDecimal amount = isEnterprise? invoiceLine.getAmountWithoutTax(): invoiceLine.getAmountWithTax();
         if(addAmounts) {
             if (isEnterprise) {
                 addAmountWithoutTax(invoiceLine.getAmountWithoutTax());
@@ -688,6 +687,19 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
             subcategoryInvoiceAgregate.addAmounts(invoiceLine.getAmountWithoutTax(), invoiceLine.getAmountWithTax(), invoiceLine.getAmountTax());
             amountsByTax.put(invoiceLine.getTax(), subcategoryInvoiceAgregate);
         }
+    }
+    
+    public String getCategoryAggKey() {
+    	return ""+(this.userAccount==null?"":this.userAccount.getId())+this.invoiceSubCategory.getInvoiceCategory().getId();
+    }
+    
+    @Transient
+    private List<Long> ilIDs=new ArrayList<>();
+    public void addILs(List<Long> ilIDs) {
+    	this.ilIDs.addAll(ilIDs);
+    }
+    public List<Long> getIlIDs() {
+    	return this.ilIDs;
     }
 
     /**

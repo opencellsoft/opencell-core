@@ -19,6 +19,7 @@ import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetOrderOfferDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
@@ -48,7 +49,8 @@ public interface CommercialOrderRs {
 	            @ApiResponse(responseCode="200", description = "The order is succeffully created",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
 	            @ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 	            @ApiResponse(responseCode = "302", description = "The order already exist", content = @Content(schema = @Schema(implementation = EntityAlreadyExistsException.class))),
-	            @ApiResponse(responseCode = "404", description = "One of attached fields is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+	            @ApiResponse(responseCode = "404", description = "One of attached fields is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(responseCode = "400", description = "Only Active PriceList can be attached to an Order", content = @Content(schema = @Schema(implementation = BusinessApiException.class)))
 	    })
 	public Response create(CommercialOrderDto orderDto);
 
@@ -60,7 +62,8 @@ public interface CommercialOrderRs {
 	    responses = {
 	            @ApiResponse(responseCode="200", description = "The order is succeffully updated",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
 	            @ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
-	            @ApiResponse(responseCode = "404", description = "One of attached fields is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+	            @ApiResponse(responseCode = "404", description = "One of attached fields is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))),
+				@ApiResponse(responseCode = "400", description = "Only Active PriceList can be attached to an Order", content = @Content(schema = @Schema(implementation = BusinessApiException.class)))
 	    })
 	public Response update(CommercialOrderDto orderDto);
 

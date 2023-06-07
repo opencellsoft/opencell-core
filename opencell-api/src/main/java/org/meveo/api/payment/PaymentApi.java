@@ -19,13 +19,14 @@
 package org.meveo.api.payment;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -38,7 +39,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationsDto;
-import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentHistoryDto;
@@ -156,12 +157,29 @@ public class PaymentApi extends BaseApi {
             throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
         }
 
-		BigDecimal convertedAmount = paymentDto.getAmount();
-		BigDecimal functionalAmount = convertedAmount;
-		String transactionalcurrency = paymentDto.getTransactionalcurrency();
+		BigDecimal functionalAmount = paymentDto.getAmount();
+		BigDecimal transactionalAmount = paymentDto.getAmount();
+		TradingCurrency functionalCurrency = appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode() != null ? tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode()) : null;
+		TradingCurrency transactionalCurrency = null;
+		BigDecimal lastApliedRate = BigDecimal.ONE;
 
-		if (transactionalcurrency != null && !StringUtils.isBlank(transactionalcurrency)) {
-			functionalAmount = checkAndCalculateFunctionalAmount(paymentDto, convertedAmount, functionalAmount, transactionalcurrency);
+		String transactionalcurrencyCode = paymentDto.getTransactionalcurrency();
+		if (transactionalcurrencyCode != null && !StringUtils.isBlank(transactionalcurrencyCode)) {
+
+			transactionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrencyCode);
+			checkTransactionalCurrency(transactionalcurrencyCode, transactionalCurrency);
+
+			transactionalAmount = paymentDto.getAmount();
+
+			if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency)) {
+				ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, functionalCurrency, paymentDto.getTransactionDate());
+				if (!Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
+					functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(),
+							new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
+					lastApliedRate = exchangeRate.getExchangeRate();
+				}
+			}
+
 		}
 
         Payment payment = new Payment();
@@ -171,9 +189,11 @@ public class PaymentApi extends BaseApi {
         payment.setAmount(functionalAmount);
         payment.setUnMatchingAmount(functionalAmount);
         payment.setMatchingAmount(BigDecimal.ZERO);
-		payment.setConvertedAmount(convertedAmount);
-		payment.setConvertedUnMatchingAmount(convertedAmount);
-		payment.setConvertedMatchingAmount(convertedAmount);
+		payment.setTransactionalMatchingAmount(BigDecimal.ZERO);
+		payment.setTransactionalAmount(transactionalAmount);
+		payment.setTransactionalAmountWithoutTax(transactionalAmount);
+		payment.setAmountWithoutTax(functionalAmount);
+		payment.setTransactionalUnMatchingAmount(transactionalAmount);
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());
         payment.setDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
@@ -197,6 +217,8 @@ public class PaymentApi extends BaseApi {
         payment.setPaymentInfo6(paymentDto.getPaymentInfo6());
         payment.setBankCollectionDate(paymentDto.getBankCollectionDate());
 		payment.setCollectionDate(paymentDto.getCollectionDate() == null ? paymentDto.getBankCollectionDate() : paymentDto.getCollectionDate());
+		payment.setTransactionalCurrency(transactionalCurrency != null ? transactionalCurrency : functionalCurrency);
+		payment.setAppliedRate(lastApliedRate);
 
         // populate customFields
         try {
@@ -228,39 +250,19 @@ public class PaymentApi extends BaseApi {
 
     }
 
-	private BigDecimal checkAndCalculateFunctionalAmount(PaymentDto paymentDto, BigDecimal convertedAmount, BigDecimal functionalAmount, String transactionalcurrency) {
-
-		TradingCurrency transactionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency);
-		TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
-		checkTransactionalCurrency(paymentDto, transactionalcurrency, transactionalCurrency);
-
-		Date exchangeDate = paymentDto.getTransactionDate() != null ? paymentDto.getTransactionDate() : new Date();
-		ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, transactionalCurrency, exchangeDate);
-
-		return calculateFunctionalAmount(convertedAmount, functionalAmount, transactionalCurrency, functionalCurrency, exchangeRate);
-	}
-
-	private ExchangeRate getExchangeRate(TradingCurrency tradingCurrency, TradingCurrency functionalCurrency, Date exchangeDate) {
+	private ExchangeRate getExchangeRate(TradingCurrency tradingCurrency, TradingCurrency functionalCurrency, Date transactionDate) {
+		Date exchangeDate = transactionDate != null ? transactionDate : new Date();
 		ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
-		if (exchangeRate == null && !functionalCurrency.equals(tradingCurrency)) {
-			throw new BusinessException("No valid exchange rate found for currency " + tradingCurrency.getCurrencyCode()
+		if (exchangeRate == null || exchangeRate.getExchangeRate() == null) {
+			throw new EntityDoesNotExistsException("No valid exchange rate found for currency " + tradingCurrency.getCurrencyCode()
 					+ " on " + exchangeDate);
 		}
 		return exchangeRate;
 	}
 
-	private BigDecimal calculateFunctionalAmount(BigDecimal convertedAmount, BigDecimal functionalAmount, TradingCurrency tradingCurrency, TradingCurrency functionalCurrency, ExchangeRate exchangeRate) {
-		if (appProvider.getCurrency() != null) {
-			if (functionalCurrency != tradingCurrency && exchangeRate.getExchangeRate() != BigDecimal.ZERO) {
-				functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
-			}
-		}
-		return functionalAmount;
-	}
-
-	private void checkTransactionalCurrency(PaymentDto paymentDto, String transactionalcurrency, TradingCurrency tradingCurrency) {
+	private void checkTransactionalCurrency(String transactionalcurrency, TradingCurrency tradingCurrency) {
 		if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
-			throw new BusinessException("Currency " + transactionalcurrency +
+			throw new InvalidParameterException("Currency " + transactionalcurrency +
 					" is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
 		}
 	}
@@ -268,7 +270,7 @@ public class PaymentApi extends BaseApi {
 
 	private void matchPayment(PaymentDto paymentDto, CustomerAccount customerAccount, Payment payment)
 			throws BusinessApiException, BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		List<Long> listReferenceToMatch = new ArrayList<Long>();
+		List<Long> listReferenceToMatch = new ArrayList<>();
 		if (paymentDto.getListAoIdsForMatching()!=null && !paymentDto.getListAoIdsForMatching().isEmpty() ) {
 			listReferenceToMatch.addAll(paymentDto.getListAoIdsForMatching());
 		} else if (paymentDto.getListOCCReferenceforMatching() != null) {
@@ -282,7 +284,7 @@ public class PaymentApi extends BaseApi {
 		        listReferenceToMatch.add(accountOperationToMatch.get(0).getId());
 		    }
 		}
-		List<AccountOperation> aosToPaid = new ArrayList<AccountOperation>();
+		List<AccountOperation> aosToPaid = new ArrayList<>();
 		for(Long id : listReferenceToMatch ) {
 			AccountOperation ao = accountOperationService.findById(id);
 			if(ao == null) {
@@ -291,16 +293,23 @@ public class PaymentApi extends BaseApi {
 			aosToPaid.add(ao);
 		}
 		 Collections.sort(aosToPaid, Comparator.comparing(AccountOperation::getDueDate));
-
-		for(AccountOperation ao :aosToPaid ) {			
+		if(checkAccountOperationCurrency(aosToPaid, paymentDto.getTransactionalcurrency())) {
+			throw new BusinessApiException("Transaction currency is different from account operation currency");
+		}
+		for(AccountOperation ao :aosToPaid ) {
 			if(BigDecimal.ZERO.compareTo(payment.getUnMatchingAmount()) == 0) {
 				break;
 			}
-			List<Long> aosIdsToMatch = new ArrayList<Long>();
+			List<Long> aosIdsToMatch = new ArrayList<>();
 			aosIdsToMatch.add(ao.getId());
 			aosIdsToMatch.add(payment.getId());
-			matchingCodeService.matchOperations(null, customerAccount.getCode(), aosIdsToMatch, null, MatchingTypeEnum.A);			
+			matchingCodeService.matchOperations(null, customerAccount.getCode(), aosIdsToMatch, payment.getId(), MatchingTypeEnum.A);
 		}
+	}
+
+	private boolean checkAccountOperationCurrency(List<AccountOperation> aosToPaid, String transactionalCurrency) {
+		return aosToPaid.stream()
+				.anyMatch(accountOperation -> !accountOperation.getTransactionalCurrency().getCurrencyCode().equalsIgnoreCase(transactionalCurrency));
 	}
 
 
@@ -408,15 +417,57 @@ public class PaymentApi extends BaseApi {
 		return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
 	}
 
+	
+	
+	
+	/**
+	 * 
+	 * @param sepaPaymentRequestDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PaymentResponseDto payBySepa(PayByCardOrSepaDto sepaPaymentRequestDto)
+			throws Exception {
+
+		if (StringUtils.isBlank(sepaPaymentRequestDto.getCtsAmount())) {
+			missingParameters.add("ctsAmount");
+		}
+
+		if (StringUtils.isBlank(sepaPaymentRequestDto.getCustomerAccountCode())) {
+			missingParameters.add("customerAccountCode");
+		}
+
+		if (sepaPaymentRequestDto.isToMatch() && sepaPaymentRequestDto.getAoToPay() == null
+				|| sepaPaymentRequestDto.getAoToPay().isEmpty()) {
+			missingParameters.add("aoToPay");
+		}
+
+		handleMissingParameters();
+
+		CustomerAccount customerAccount = customerAccountService
+				.findByCode(sepaPaymentRequestDto.getCustomerAccountCode());
+		if (customerAccount == null) {
+			throw new EntityDoesNotExistsException(CustomerAccount.class,
+					sepaPaymentRequestDto.getCustomerAccountCode());
+		}
+
+		PaymentMethodEnum preferedMethod = customerAccount.getPreferredPaymentMethodType();
+		if (preferedMethod != null && PaymentMethodEnum.DIRECTDEBIT != preferedMethod) {
+			throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
+		}
+
+		return paymentService.payByMandat(customerAccount, sepaPaymentRequestDto.getCtsAmount(),
+				sepaPaymentRequestDto.getAoToPay(), sepaPaymentRequestDto.isCreateAO(),
+				sepaPaymentRequestDto.isToMatch(), null);
+	}
+
+	
 	/**
 	 * @param cardPaymentRequestDto card payment request
 	 * @return payment by card response
-	 * @throws Exception exception
-	 * @throws NoAllOperationUnmatchedException no all operation matched exception
-	 * @throws UnbalanceAmountException         balance exception
-	 * @throws MeveoApiException                opencell's api exception
+	 * @throws Exception 
 	 */
-	public PaymentResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
+	public PaymentResponseDto payByCard(PayByCardOrSepaDto cardPaymentRequestDto)
 			throws Exception {
 
 		if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
@@ -446,10 +497,8 @@ public class PaymentApi extends BaseApi {
 				missingParameters.add("cardType");
 			}
 		}
-		if (cardPaymentRequestDto.isToMatch()) {
-			if (cardPaymentRequestDto.getAoToPay() == null || cardPaymentRequestDto.getAoToPay().isEmpty()) {
-				missingParameters.add("aoToPay");
-			}
+		if (cardPaymentRequestDto.isToMatch() && cardPaymentRequestDto.getAoToPay() == null || cardPaymentRequestDto.getAoToPay().isEmpty()) {			
+				missingParameters.add("aoToPay");			
 		}
 
 		handleMissingParameters();

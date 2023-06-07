@@ -90,7 +90,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     private void registerJob(Job job) {
 
         boolean clearTimers = false;
-        synchronized (jobTimers) {
+        synchronized (jobClasses) {
 
             if (!jobClasses.containsKey(job.getJobCategory())) {
                 jobClasses.put(job.getJobCategory(), new ArrayList<>());
@@ -104,7 +104,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             if (cfts != null && !cfts.isEmpty()) {
                 try {
                     customFieldTemplateService.createMissingTemplates(EntityCustomizationUtils.getAppliesTo(job.getClass(), null), cfts.values());
-                } catch (BusinessException e) {
+                } catch (Exception e) {
                     log.error("Failed to registed missing CF templates for job " + job.getClass());
                 }
             }

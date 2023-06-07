@@ -411,9 +411,9 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             selectedPaymentMethod = new WirePaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
             selectedPaymentMethod = new DDPaymentMethod();
-        } else if (newPaymentMethodType == PaymentMethodEnum.PAYPAL) {
+        } else if (newPaymentMethodType == PaymentMethodEnum.PAYPALPAYMENTLINK) {
             selectedPaymentMethod = new PaypalPaymentMethod();
-        } else if (newPaymentMethodType == PaymentMethodEnum.STRIPE) {
+        } else if (newPaymentMethodType == PaymentMethodEnum.STRIPEDIRECTLINK) {
             selectedPaymentMethod = new StripePaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.CASH) {
             selectedPaymentMethod = new CashPaymentMethod();

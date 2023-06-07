@@ -18,9 +18,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixLineDto extends BaseEntityDto {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3498847257781821440L;
 
     @Schema(description = "The price plan line id")
@@ -56,8 +53,8 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 	@Schema(description = "The EL Value")
 	private String valueEL;
 
-	@Schema(description = "list of converted price plan matrix line")
-	private List<ConvertedPricePlanMatrixLineDto> convertedPricePlanMatrixLines = new ArrayList<>();
+	@Schema(description = "list of trading price plan matrix line")
+	private List<TradingPricePlanMatrixLineDto> tradingPricePlanMatrixLines = new ArrayList<>();
 	
 	
 
@@ -77,6 +74,10 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 		pricePlanMatrixValues = pricePlanMatrixLine.getPricePlanMatrixValues()
 				.stream()
 				.map(value -> new PricePlanMatrixValueDto(value))
+				.collect(Collectors.toList());
+		tradingPricePlanMatrixLines = pricePlanMatrixLine.getTradingPricePlanMatrixLines()
+				.stream()
+				.map(line -> new TradingPricePlanMatrixLineDto(line))
 				.collect(Collectors.toList());
 	}
 
@@ -174,17 +175,11 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 		this.value = value;
 	}
 
-	/**
-	 * @return the convertedPricePlanMatrixLines
-	 */
-	public List<ConvertedPricePlanMatrixLineDto> getConvertedPricePlanMatrixLines() {
-		return convertedPricePlanMatrixLines;
+	public List<TradingPricePlanMatrixLineDto> getTradingPricePlanMatrixLines() {
+		return tradingPricePlanMatrixLines;
 	}
 
-	/**
-	 * @param convertedPricePlanMatrixLines the convertedPricePlanMatrixLines to set
-	 */
-	public void setConvertedPricePlanMatrixLines(List<ConvertedPricePlanMatrixLineDto> convertedPricePlanMatrixLines) {
-		this.convertedPricePlanMatrixLines = convertedPricePlanMatrixLines;
+	public void setTradingPricePlanMatrixLines(List<TradingPricePlanMatrixLineDto> tradingPricePlanMatrixLines) {
+		this.tradingPricePlanMatrixLines = tradingPricePlanMatrixLines;
 	}
 }

@@ -19,14 +19,20 @@
 package org.meveo.event.monitoring;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.jms.Destination;
 import javax.jms.JMSContext;
 import javax.jms.JMSDestinationDefinition;
 import javax.jms.JMSDestinationDefinitions;
+import javax.jms.JMSProducer;
 import javax.jms.Topic;
 
 import org.meveo.commons.utils.EjbUtils;
@@ -91,7 +97,7 @@ public class ClusterEventPublisher implements Serializable {
             String code = entity instanceof BusinessEntity ? ((BusinessEntity) entity).getCode() : null;
             ClusterEventDto eventDto = new ClusterEventDto(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), (Long) entity.getId(), code, action, EjbUtils.getCurrentClusterNode(),
                 currentUser.getProviderCode(), currentUser.getUserName(), additionalInformation);
-            log.trace("Publishing data synchronization between cluster nodes event {}", eventDto);
+            log.debug("Publishing data synchronization between cluster nodes event {}", eventDto);
 
             // For create and update CRUD actions, send message with a delivery delay of two seconds, so data is saved to DB already before another node process the message
             if (action == CrudActionEnum.create || action == CrudActionEnum.update) {
@@ -102,6 +108,51 @@ public class ClusterEventPublisher implements Serializable {
 
         } catch (Exception e) {
             log.error("Failed to publish data synchronization between cluster nodes event", e);
+        }
+    }
+
+    /**
+     * Publish event about some action on a given entity
+     * 
+     * @param entity Entity that triggered event
+     * @param action Action performed
+     * @param additionalInformation Additional information about the action
+     */
+    @Asynchronous
+    public void publishEventAsync(IEntity entity, CrudActionEnum action, Map<String, Object> additionalInformation, String providerCode, String username) {
+
+        if (!EjbUtils.isRunningInClusterMode()) {
+            return;
+        }
+
+        try {
+            String code = entity instanceof BusinessEntity ? ((BusinessEntity) entity).getCode() : null;
+            ClusterEventDto eventDto = new ClusterEventDto(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), (Long) entity.getId(), code, action, EjbUtils.getCurrentClusterNode(), providerCode,
+                username, additionalInformation);
+            log.debug("Publishing data synchronization between cluster nodes event {}", eventDto);
+
+            context.createProducer().send(topic, eventDto);
+
+        } catch (Exception e) {
+            log.error("Failed to publish data synchronization between cluster nodes event", e);
+        }
+    }
+
+    /**
+     * Publish multiple items to a queue or a topic
+     * 
+     * @param <T>
+     * @param destination Queue or a topic to publish to
+     * @param iterator Iterator of a data to publish
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public <T> void publish(Destination destination, Iterator<T> iterator) {
+
+        JMSProducer jmsProducer = context.createProducer();
+        T itemToProcess = iterator.next();
+        while (itemToProcess != null) {
+            jmsProducer.send(destination, (Serializable) itemToProcess);
+            itemToProcess = iterator.next();
         }
     }
 }

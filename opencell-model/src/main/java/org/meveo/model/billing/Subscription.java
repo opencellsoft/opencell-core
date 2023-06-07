@@ -63,6 +63,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Email;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -93,6 +94,7 @@ import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 
@@ -467,9 +469,26 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
     private OrderOffer orderOffer;
     
     
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
     private List<AttributeInstance> attributeInstances = new ArrayList<>();
 
+    
+
+    /**
+     * Usage charge instances related to subscription
+     */
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OrderBy("priority")
+    @Where(clause = "charge_type='U'")
+    private List<UsageChargeInstance> usageChargeInstances;
+
+    /**
+     * Default PriceList (Optional)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "price_list_id")
+    private PriceList priceList;
+    
     /**
      * This method is called implicitly by hibernate, used to enable
 	 * encryption for custom fields of this entity
@@ -1286,4 +1305,32 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
 		this.contract = contract;
 	}
 	
+	/**
+	 * @return Usage charge instances related to subscription
+	 */
+	public List<UsageChargeInstance> getUsageChargeInstances() {
+        return usageChargeInstances;
+    }
+	/**
+	 * @param usageChargeInstances Usage charge instances related to subscription
+	 */
+	public void setUsageChargeInstances(List<UsageChargeInstance> usageChargeInstances) {
+        this.usageChargeInstances = usageChargeInstances;
+    }
+
+    /**
+     * PriceList Getter
+     * @return the priceList
+     */
+    public PriceList getPriceList() {
+        return priceList;
+    }
+
+    /**
+     * PriceList Setter
+     * @param priceList value to set
+     */
+    public void setPriceList(PriceList priceList) {
+        this.priceList = priceList;
+    }
 }

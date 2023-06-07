@@ -43,6 +43,8 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerToTransfertOperationDto;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
@@ -72,6 +74,7 @@ import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
@@ -250,45 +253,88 @@ public class AccountOperationApi extends BaseApi {
         }
 
         BigDecimal functionalAmount = postData.getAmount();
-        BigDecimal functionalMatchingAmount = postData.getMatchingAmount();
-        BigDecimal functionalUnMatchingAmount = postData.getUnMatchingAmount();
-        BigDecimal convertedAmount = postData.getAmount();
-        BigDecimal convertedMatchingAmount = postData.getMatchingAmount() != null ? postData.getMatchingAmount() : BigDecimal.ZERO;
-        BigDecimal convertedUnMatchingAmount = postData.getUnMatchingAmount();
+        BigDecimal transactionalAmount = postData.getAmount();
+
+        BigDecimal functionalMatchingAmount = postData.getMatchingAmount() != null ? postData.getMatchingAmount() : BigDecimal.ZERO;
+        BigDecimal transactionalMatchingAmount = postData.getMatchingAmount() != null ? postData.getMatchingAmount() : BigDecimal.ZERO;
+
+        BigDecimal functionalUnMatchingAmount = getFunctionalUnMatchingAmount(postData);
+        BigDecimal transactionalUnMatchingAmount = postData.getUnMatchingAmount();
+
         String transactionalcurrency = postData.getTransactionalCurrency();
+
+        BigDecimal functionalAmountWithoutTax = getAmountWithoutTax(postData);
+        BigDecimal transactionalAmountWithoutTax = getAmountWithoutTax(postData);
+
+        BigDecimal functionalTaxAmount = getTaxAmount(postData);
+        BigDecimal transactionalTaxAmount = getTaxAmount(postData);
+
+        BigDecimal lastAppliedRate = BigDecimal.ONE;
+        TradingCurrency tradingCurrency = null;
+
+        TradingCurrency functionalCurrency = null;
+        Currency currency = appProvider.getCurrency();
+        if (currency != null && !StringUtils.isBlank(currency.getCurrencyCode())) {
+            functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
+        }
 
         if(transactionalcurrency != null && !StringUtils.isBlank(transactionalcurrency)){
 
-            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency);
-            TradingCurrency functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode());
+            tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrency);
+            if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
+                throw new InvalidParameterException("Currency " + transactionalcurrency +
+                        " is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
+            }
 
-            checkTransactionalCurrency(tradingCurrency);
+            if (!tradingCurrency.equals(functionalCurrency)) {
+            	
+                Date exchangeDate = postData.getTransactionDate() != null ? postData.getTransactionDate() : new Date();
+                ExchangeRate exchangeRate = getExchangeRate(tradingCurrency,transactionalcurrency,exchangeDate);
 
-            Date exchangeDate = postData.getTransactionDate() != null ? postData.getTransactionDate() : new Date();
-            ExchangeRate exchangeRate = getExchangeRate(transactionalcurrency, tradingCurrency, functionalCurrency, exchangeDate);
+                if (transactionalAmount != null && transactionalAmount.intValue() != 0) {
+                    functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode());
+                }
 
-            if (appProvider.getCurrency() != null && !functionalCurrency.equals(tradingCurrency)) {
-                functionalAmount = convertedAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
-                functionalMatchingAmount = convertedMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
-                functionalUnMatchingAmount = convertedUnMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, RoundingMode.HALF_UP);
+                if (transactionalMatchingAmount != null && transactionalMatchingAmount.intValue() != 0) {
+                    functionalMatchingAmount = transactionalMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, appProvider.getInvoiceRoundingMode().getRoundingMode());
+                }
+
+                transactionalUnMatchingAmount = postData.getUnMatchingAmount() != null ? postData.getUnMatchingAmount() : postData.getAmount();
+
+                if (transactionalUnMatchingAmount != null && transactionalUnMatchingAmount.intValue() != 0) {
+                    functionalUnMatchingAmount = transactionalUnMatchingAmount.divide(exchangeRate.getExchangeRate(), 2, appProvider.getInvoiceRoundingMode().getRoundingMode());
+                }
+
+                if (transactionalTaxAmount != null && transactionalTaxAmount.intValue() != 0) {
+                    functionalTaxAmount = transactionalTaxAmount.divide(exchangeRate.getExchangeRate(), 2, appProvider.getInvoiceRoundingMode().getRoundingMode());
+                }
+
+                if (transactionalAmountWithoutTax != null && transactionalAmountWithoutTax.intValue() != 0) {
+                    functionalAmountWithoutTax = transactionalAmountWithoutTax.divide(exchangeRate.getExchangeRate(), 2, appProvider.getInvoiceRoundingMode().getRoundingMode());
+                }
+                lastAppliedRate = exchangeRate.getExchangeRate();
             }
         }
 
         accountOperation.setAmount(functionalAmount);
-        accountOperation.setMatchingAmount(functionalMatchingAmount != null ? functionalMatchingAmount : BigDecimal.ZERO);
+        accountOperation.setAppliedRate(lastAppliedRate);
+        accountOperation.setMatchingAmount(functionalMatchingAmount);
+        accountOperation.setTransactionalMatchingAmount(transactionalMatchingAmount);
         accountOperation.setUnMatchingAmount(functionalUnMatchingAmount);
-        accountOperation.setConvertedAmount(convertedAmount);
-        accountOperation.setConvertedMatchingAmount(convertedMatchingAmount);
-        accountOperation.setConvertedUnMatchingAmount(convertedUnMatchingAmount);
-
-        accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
-
+        accountOperation.setTransactionalAmount(transactionalAmount);
+        accountOperation.setTransactionalUnMatchingAmount(transactionalUnMatchingAmount);
+        accountOperation.setAmountWithoutTax(functionalAmountWithoutTax);
+        accountOperation.setTransactionalAmountWithoutTax(transactionalAmountWithoutTax);
+        accountOperation.setTransactionalTaxAmount(transactionalTaxAmount);
+        accountOperation.setTaxAmount(functionalTaxAmount);
+        accountOperation.setTransactionalCurrency(tradingCurrency != null ? tradingCurrency : functionalCurrency);
         accountOperation.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         accountOperation.setCustomerAccount(customerAccount);
         accountOperation.setBankLot(postData.getBankLot());
         accountOperation.setBankReference(postData.getBankReference());
         accountOperation.setDepositDate(postData.getDepositDate());
         accountOperation.setBankCollectionDate(postData.getBankCollectionDate());
+        accountOperation.setTransactionDate(postData.getTransactionDate() != null ? postData.getTransactionDate() : new Date());
 
         accountOperation.setMatchingStatus(postData.getMatchingStatus());
         if (postData.getMatchingStatus() == null) {
@@ -303,7 +349,6 @@ public class AccountOperationApi extends BaseApi {
         if (!StringUtils.isBlank(postData.getPaymentMethod())) {
             accountOperation.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
         }
-        accountOperation.setTaxAmount(postData.getTaxAmount());
         accountOperation.setOrderNumber(postData.getOrderNumber());
         accountOperation.setCollectionDate(postData.getCollectionDate() == null ? postData.getBankCollectionDate() : postData.getCollectionDate());
 
@@ -378,24 +423,64 @@ public class AccountOperationApi extends BaseApi {
                 accountOperation.getMatchingAmounts().add(matchingAmount);
             }
         }
+        accountOperation.setComment(postData.getComment());
         return accountOperation.getId();
     }
 
-    private static ExchangeRate getExchangeRate(String transactionalcurrency, TradingCurrency tradingCurrency, TradingCurrency functionalCurrency, Date exchangeDate) {
+    private BigDecimal getTaxAmount(AccountOperationDto postData) {
+        BigDecimal taxAmount = null;
+        if (postData.getAmountWithoutTax() != null && postData.getAmount() != null) {
+            taxAmount = postData.getAmount().subtract(postData.getAmountWithoutTax());
+        } else if (postData.getTaxAmount() != null) {
+            taxAmount = postData.getTaxAmount();
+        }
+        return taxAmount;
+    }
+
+    private BigDecimal getAmountWithoutTax(AccountOperationDto postData) {
+
+        BigDecimal amountWithoutTax = null;
+        BigDecimal amount = postData.getAmount();
+        BigDecimal taxAmount = postData.getTaxAmount();
+        BigDecimal amountWithoutTaxInput = postData.getAmountWithoutTax();
+
+        if (amount != null && taxAmount != null && amountWithoutTaxInput != null) {
+            BigDecimal total = amountWithoutTaxInput.add(taxAmount);
+            if (total.compareTo(amount) == 0) {
+                amountWithoutTax = amountWithoutTaxInput;
+            } else {
+                throw new BusinessException("The amount without tax or tax amount is not correct");
+            }
+        } else if (amount != null && taxAmount != null) {
+            amountWithoutTax = amount.subtract(taxAmount);
+        } else if (amountWithoutTaxInput != null && amount != null && amountWithoutTaxInput.compareTo(amount) > 0) {
+            throw new BusinessException("The amount without tax or tax amount is not correct");
+        } else {
+            amountWithoutTax = amountWithoutTaxInput;
+        }
+        return amountWithoutTax;
+    }
+
+    private static BigDecimal getFunctionalUnMatchingAmount(AccountOperationDto postData) {
+        BigDecimal functionalUnMatchingAmount;
+        if (postData.getUnMatchingAmount() != null) {
+            functionalUnMatchingAmount = postData.getUnMatchingAmount();
+        } else if (postData.getAmount() != null) {
+            functionalUnMatchingAmount = postData.getAmount();
+        } else {
+            functionalUnMatchingAmount = BigDecimal.ZERO;
+        }
+        return functionalUnMatchingAmount;
+    }
+
+    private static ExchangeRate getExchangeRate(TradingCurrency tradingCurrency, String transactionalCurrency, Date exchangeDate) {
         ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
 
-        if (exchangeRate == null && !functionalCurrency.equals(tradingCurrency)) {
-            throw new BusinessException("No valid exchange rate found for currency " + transactionalcurrency
+        if (exchangeRate == null || exchangeRate.getExchangeRate() == null) {
+            throw new EntityDoesNotExistsException("No valid exchange rate found for currency " + transactionalCurrency
                     + " on " + exchangeDate);
         }
         return exchangeRate;
-    }
-
-    private void checkTransactionalCurrency(TradingCurrency tradingCurrency) {
-        if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
-            throw new BusinessException("Currency " + tradingCurrency.getCurrencyCode() +
-                    " is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
-        }
     }
 
     /**
@@ -779,7 +864,7 @@ public class AccountOperationApi extends BaseApi {
         if(transferOperationsDto == null) {
             throw new MissingParameterException(List.of("accountOperationsList", "toCustomerAccount"));
         }
-        
+
         if(CollectionUtils.isEmpty(transferOperationsDto.getAccountOperationsList())) {
             missingParameters.add("accountOperationsList");
         }
@@ -791,9 +876,9 @@ public class AccountOperationApi extends BaseApi {
             missingParameters.add("toCustomerAccount.id or toCustomerAccount.code");
         }
         handleMissingParameters();
-        
+
         CustomerAccount toCA = null;
-        
+
         if(toCostumerAccount.getId() != null) {
             toCA = customerAccountService.findById(toCostumerAccount.getId());
             if(toCA == null) {
@@ -806,10 +891,10 @@ public class AccountOperationApi extends BaseApi {
                 throw new EntityDoesNotExistsException(CustomerAccount.class, toCostumerAccount.getCode());
             }
         }
-       
+
         AccountOperation accountOperation = null;
         TransferCustomerAccountDto transferCustomerAccountDto = new TransferCustomerAccountDto();
-        
+
         for (Long aoId : transferOperationsDto.getAccountOperationsList()) {
             accountOperation = accountOperationService.findById(aoId);
             if(accountOperation == null) {
@@ -818,12 +903,12 @@ public class AccountOperationApi extends BaseApi {
             transferCustomerAccountDto.setFromCustomerAccountCode(accountOperation.getCustomerAccount().getCode());
             transferCustomerAccountDto.setToCustomerAccountCode(toCA.getCode());
             transferCustomerAccountDto.setAmount(accountOperation.getAmount());
-            
+
             accountOperationService.transferAccountOperation(accountOperation, transferCustomerAccountDto);
-            
+
             accountOperation.setReference(accountOperationService.getRefrence(accountOperation.getId(), accountOperation.getReference() , AccountOperationActionEnum.s.name()));
-            
+
         }
-        
+
     }
 }

@@ -22,6 +22,7 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -68,7 +69,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -127,12 +127,18 @@ public class StorageFactory {
                 secretAccessKey = tmpParamBean.getProperty("S3.secretAccessKey", "secretAccessKey");
             }
 
+            S3Configuration serviceConfiguration = S3Configuration.builder()
+                    .checksumValidationEnabled(false)
+                    .chunkedEncodingEnabled(false)
+                    .build();
+
             S3Client client =
                     S3Client.builder().forcePathStyle(true).region(Region.of(region))
                     .endpointOverride(URI.create(endpointUrl))
                             .credentialsProvider(
                                     StaticCredentialsProvider.create(
                                             AwsBasicCredentials.create(accessKeyId, secretAccessKey)))
+                            .serviceConfiguration(serviceConfiguration)
                             .build();
 
             boolean validParameters = false;

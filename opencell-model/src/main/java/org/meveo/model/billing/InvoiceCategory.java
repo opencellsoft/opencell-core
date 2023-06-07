@@ -42,6 +42,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.I18nDescripted;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.payments.OCCTemplate;
 
@@ -65,7 +66,7 @@ import org.meveo.model.payments.OCCTemplate;
                 @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
 
         @NamedQuery(name = "invoiceCategory.getInvoiceCatNotAssociated", query = "from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null) ") })
-public class InvoiceCategory extends BusinessCFEntity {
+public class InvoiceCategory extends BusinessCFEntity implements I18nDescripted {
 
     private static final long serialVersionUID = 1L;
 

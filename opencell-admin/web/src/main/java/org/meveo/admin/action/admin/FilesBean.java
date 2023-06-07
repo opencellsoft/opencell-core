@@ -176,8 +176,11 @@ public class FilesBean implements Serializable {
         String invoiceXmlDir = getFilePath() + File.separator + DirectoriesConstants.INVOICES_ROOT_FOLDER + File.separator + "xml";
         String jasperDir = getFilePath() + File.separator + DirectoriesConstants.JASPER_ROOT_FOLDER;
         String priceplanVersionsDir = getFilePath() + File.separator + DirectoriesConstants.IMPORTS_ROOT_FOLDER + File.separator + "priceplan_versions";
+        importDir = getFilePath() + File.separator + DirectoriesConstants.IMPORTS_ROOT_FOLDER + File.separator + "cdr" + File.separator + "flatFile" + File.separator;
+        String cdrFlatFileDirIn = importDir + DirectoriesConstants.INPUT_SUBFOLDER;
+        String cdrFlatFileDirOut = importDir + DirectoriesConstants.OUTPUT_SUBFOLDER;
         List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR, accountDirWARN, accountDirKO, subDirIN,
-            subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir, invoiceXmlDir, jasperDir, priceplanVersionsDir);
+            subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir, invoiceXmlDir, jasperDir, priceplanVersionsDir, cdrFlatFileDirIn, cdrFlatFileDirOut);
         for (String custDirs : filePaths) {
             File subDir = new File(custDirs);
             if (!subDir.exists()) {
@@ -241,7 +244,7 @@ public class FilesBean implements Serializable {
         } else {
             log.debug("setSelectedFolder " + selectedFolder);
             if (this.selectedFolder == null) {
-                this.selectedFolder = File.separator + selectedFolder;
+                this.selectedFolder = selectedFolder;
             } else {
                 this.selectedFolder += File.separator + selectedFolder;
             }
@@ -446,7 +449,7 @@ public class FilesBean implements Serializable {
 
     private void copyUnZippedFile(String filePath, InputStream in) {
         try {
-            FileUtils.unzipFile(filePath, in);
+            FileUtils.unzipFileInFileSystem(filePath, in);
             buildFileList();
         } catch (Exception e) {
             log.debug("error when upload zip file for new UI", e);

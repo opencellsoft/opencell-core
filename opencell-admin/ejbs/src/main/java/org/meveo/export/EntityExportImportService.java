@@ -38,10 +38,20 @@ import java.lang.reflect.TypeVariable;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.concurrent.Future;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -71,6 +81,7 @@ import javax.persistence.Query;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.Version;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -88,9 +99,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.proxy.HibernateProxy;
-import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -110,7 +121,8 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
@@ -124,7 +136,6 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
 import org.slf4j.Logger;
 
 import com.thoughtworks.xstream.MarshallingStrategy;
@@ -146,10 +157,6 @@ import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.XppReader;
 import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
-import com.thoughtworks.xstream.security.ArrayTypePermission;
-import com.thoughtworks.xstream.security.NoTypePermission;
-import com.thoughtworks.xstream.security.NullPermission;
-import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
 /**
  * @author Andrius Karpavicius
@@ -162,7 +169,6 @@ public class EntityExportImportService implements Serializable {
 
     private static final long serialVersionUID = 5141462881249084547L;
     public static final String EXPORT_PARAM_XML = "xml";
-
     public static String EXPORT_PARAM_DELETE = "delete";
     public static String EXPORT_PARAM_ZIP = "zip";
     public static String EXPORT_PARAM_REMOTE_INSTANCE = "remoteInstance";
@@ -173,7 +179,8 @@ public class EntityExportImportService implements Serializable {
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
     protected static final String CSV_EXTENTION = ".csv";
-    protected static final String ENTITY_FILE_HEADER = ".entity type, entity code";
+    protected static final String XSLT_EXTENTION = ".xslt";
+    protected static final String SEP = "_";
 
     @Inject
     @CurrentUser
@@ -742,7 +749,7 @@ public class EntityExportImportService implements Serializable {
      */
     @Asynchronous
     @SuppressWarnings({ "deprecation" })
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @Transactional
     public Future<ExportImportStatistics> importEntities(File fileToImport, String filename, boolean preserveId, boolean preserveCode, boolean ignoreNotFoundFK, Provider forceToProvider, boolean checkForStatus) {
         forceToProvider = appProvider;
         log.info("Importing file {} and forcing to provider {}", filename, forceToProvider);
@@ -848,7 +855,7 @@ public class EntityExportImportService implements Serializable {
     }
 
 
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @Transactional
     public ExportImportStatistics importEntitiesSynchronously(File fileToImport, String filename, boolean preserveId, boolean preserveCode, boolean ignoreNotFoundFK, boolean checkForStatus) throws StatusChangeViolationException {
         Provider forceToProvider = appProvider;
         log.info("Importing file {} and forcing to provider {}", filename, forceToProvider);
@@ -879,7 +886,7 @@ public class EntityExportImportService implements Serializable {
             version = reader.getAttribute("version");
 
             // Conversion is required when version from a file and the current model changset version does not match
-            boolean conversionRequired = !this.currentExportModelVersionChangeset.equals(version);
+            boolean conversionRequired = this.currentExportModelVersionChangeset != null ? !this.currentExportModelVersionChangeset.equals(version) : false;
 
             log.debug("Importing a file from a {} version. Current version is {}. Conversion is required {}", version, this.currentExportModelVersionChangeset, conversionRequired);
 
@@ -2321,7 +2328,7 @@ public class EntityExportImportService implements Serializable {
                 }
                 attributeClassAdded = true;
             }
-            super.addAttribute(key, value);
+            super.addAttribute(key, value != null ? value : "");
         }
 
         @Override
@@ -2456,14 +2463,14 @@ public class EntityExportImportService implements Serializable {
      * Load export model version update changesets
      */
     private void loadExportModelVersionChangesets() {
-        Set<String> changesets = new Reflections("exportVersions", new ResourcesScanner()).getResources(Pattern.compile("changeSet_.*\\.xslt"));
-        ArrayList<String> sortedChangesets = new ArrayList<String>();
-        sortedChangesets.addAll(changesets);
-        Collections.sort(sortedChangesets);
+    	List<String> returnListFilesPath = new ArrayList<>();
+    	File folder = new File(Thread.currentThread().getContextClassLoader().getResource("./exportVersions").getPath());
+        org.meveo.commons.utils.FileUtils.listAllFiles(folder, returnListFilesPath, XSLT_EXTENTION);
+        Collections.sort(returnListFilesPath);
 
         exportModelVersionChangesets = new LinkedHashMap<String, String>();
-        for (String changesetFile : sortedChangesets) {
-            String version = changesetFile.substring(changesetFile.indexOf("_") + 1, changesetFile.indexOf(".xslt"));
+        for (String changesetFile : returnListFilesPath) {
+            String version = changesetFile.substring(changesetFile.indexOf(SEP) + 1, changesetFile.indexOf(XSLT_EXTENTION));
             exportModelVersionChangesets.put(version, changesetFile);
             currentExportModelVersionChangeset = version;
         }

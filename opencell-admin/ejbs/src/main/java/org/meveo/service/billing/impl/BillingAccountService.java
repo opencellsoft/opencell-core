@@ -25,19 +25,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
-import org.apache.commons.lang3.StringUtils;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -72,10 +72,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     /** The user account service. */
     @Inject
     private UserAccountService userAccountService;
-
-    /** The billing run service. */
-    @EJB
-    private BillingRunService billingRunService;
 
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
@@ -575,4 +571,22 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         		.setParameter("id", baId)
         		.getSingleResult();
     }
+
+	public List<? extends IBillableEntity> findBillingAccountsToInvoice(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("BillingAccount.listByOpenILFromBillingRun", BillingAccount.class)
+		.setParameter("billingRun", billingRun)
+		.getResultList();
+	}
+	
+	public boolean isExonerated(BillingAccount ba, Boolean customerCategoryExoneratedFromTaxes, String exonerationTaxEl) {
+		if (customerCategoryExoneratedFromTaxes.booleanValue()) {
+			return true;
+		}
+		if (!StringUtils.isBlank(exonerationTaxEl)) {
+			ba = refreshOrRetrieve(ba);
+			return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(exonerationTaxEl, "ba", ba);
+		}
+		return false;
+	}
+	
 }

@@ -189,17 +189,17 @@ public class CustomerApi extends AccountEntityApi {
             missingParameters.add("name.lastName");
         }
 
+        Customer customer = new Customer();
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
+        }
+
         handleMissingParameters(postData);
 
         // check if customer already exists
         if (!StringUtils.isBlank(postData.getCode()) && customerService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
-        }
-
-        Customer customer = new Customer();
-
-        if (StringUtils.isBlank(postData.getCode())) {
-            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
         }
 
         dtoToEntity(customer, postData, checkCustomFields, businessAccountModel, associatedSeller);
@@ -342,14 +342,16 @@ public class CustomerApi extends AccountEntityApi {
             customer.setIsCompany(postData.getIsCompany());
         }
         
-        if (postData.getParentCustomerCode() != null) {
+        if (!StringUtils.isBlank(postData.getParentCustomerCode())) {
 			customer.setParentCustomer(ofNullable(customerService.findByCode(postData.getParentCustomerCode()))
 					.orElseThrow(() -> new BusinessException("No customer parent found with the given code : " + postData.getParentCustomerCode())));
 			if(!canBeLinked(customer.getParentCustomer(), customer)) {
                 throw new BusinessException(String.format("A customer’s ascendant cannot be one of its descendants. Customer %s is %s of %s", 
                 		customer.getParentCustomer().getCode(), childOrDescendant(customer.getParentCustomer(), customer), customer.getCode()));
 			}
-        }
+		} else if ("".equals(postData.getParentCustomerCode())) {
+			customer.setParentCustomer(null);
+		}
         
         if (postData.getChildrenCustomersCodes() != null) {
         	customer.setChildrenCustomers(postData.getChildrenCustomersCodes().stream().map(code -> ofNullable(customerService.findByCode(code))
@@ -361,19 +363,19 @@ public class CustomerApi extends AccountEntityApi {
         	});
         }
         
-        if (!org.apache.commons.lang3.StringUtils.isEmpty(postData.getSeller())) {
+        if (!StringUtils.isBlank(postData.getSeller())) {
             Seller seller = associatedSeller != null ? associatedSeller : sellerService.findByCode(postData.getSeller());
             if (seller == null) {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
             }
             customer.setSeller(seller);
+        } else if ("".equals(postData.getSeller())){
+            customer.setSeller(null);
         } else if (isNew) {
 			customer.setSeller((customer.getParentCustomer() != null && customer.getParentCustomer().getSeller() != null)? 
 							customer.getParentCustomer().getSeller() : customer.getCustomerCategory().getDefaultSeller());
         }
-        else{
-            customer.setSeller(null);
-        }
+        
 
     }
     

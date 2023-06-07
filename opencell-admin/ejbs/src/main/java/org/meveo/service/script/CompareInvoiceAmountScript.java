@@ -27,7 +27,7 @@ public class CompareInvoiceAmountScript extends Script {
 		contextMap.put("invoice", invoice);
 		
 		boolean result = ValueExpressionWrapper.evaluateToBoolean(
-				"#{invoice.amount" + StringUtils.camelcase(withOrWithTaxParameter) + " " + operator + " " + value + "}", contextMap);
+				"#{invoice.amount" + StringUtils.camelcase(withOrWithTaxParameter) + ".longValue() " + operator + " " + value + "}", contextMap);
 
 		context.put(Script.INVOICE_VALIDATION_STATUS, result);
 	}

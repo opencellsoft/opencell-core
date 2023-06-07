@@ -51,9 +51,9 @@ import org.meveo.model.billing.WalletOperation;
  */
 @Entity
 @Table(name = "rating_edr")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_edr_seq"), @Parameter(name = "increment_size", value = "500") })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "rating_edr_seq"), @Parameter(name = "increment_size", value = "5000") })
 @NamedQueries({
-        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_'),case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
+        @NamedQuery(name = "EDR.getEdrsForCache", query = "select case when e.originRecord is null then '' else e.originRecord end as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
 
         @NamedQuery(name = "EDR.listToRateIds", query = "SELECT e.id from EDR e where e.status='OPEN' order by e.id"),
         @NamedQuery(name = "EDR.findByIdWithSubscription", query = "SELECT e from EDR e left join fetch e.subscription where e.status='OPEN' and e.id=:id "),
@@ -88,9 +88,9 @@ import org.meveo.model.billing.WalletOperation;
         @NamedQuery(name = "EDR.getEdrsBetweenTwoDateByStatus", query = "SELECT e from EDR e join fetch e.subscription where e.status in (:status) AND :firstTransactionDate<=e.eventDate and e.eventDate<=:lastTransactionDate and e.id >:lastId order by e.id"),
         @NamedQuery(name = "EDR.updateEdrsToReprocess", query = "update EDR e  set e.status='OPEN',e.rejectReason = NULL, e.timesTried=(case when e.timesTried is null then 1 else (e.timesTried+1) end) where e.id in :ids"),
         @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN',rejectReason = NULL where e.status='REJECTED' and e.id in :ids"),
-        @NamedQuery(name = "EDR.countNbrEdrByOriginRecord", query = "SELECT count(e) from EDR e where e.originRecord =:originRecord"),
         @NamedQuery(name = "EDR.findEDREventVersioning", query = "SELECT e from EDR e where e.status in ('OPEN', 'REJECTED', 'RATED', 'CANCELLED') and e.eventKey=:eventKey and e.eventVersion != null order by e.eventVersion DESC"),
-        @NamedQuery(name = "EDR.getByWO", query = "SELECT edr FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)")
+        @NamedQuery(name = "EDR.getByWO", query = "SELECT edr FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)"),
+        @NamedQuery(name = "EDR.deleteByWO", query = "DELETE FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)")
     })
 public class EDR extends BaseEntity {
 
@@ -317,6 +317,9 @@ public class EDR extends BaseEntity {
     @Column(name = "event_version")
     private Integer eventVersion;
 
+    /**
+     * Wallet operation that triggered the EDR
+     */
     @JoinColumn(name = "wallet_operation_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private WalletOperation walletOperation;

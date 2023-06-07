@@ -139,24 +139,20 @@ public class EdrService extends PersistenceService<EDR> {
     }
 
     /**
-     * Check if EDR exits matching an origin batch and record numbers
+     * Check if EDR exits matching an origin record numbers
      *
-     * @param originBatch original batch
      * @param originRecord origin record
      * @return True if EDR was found
      */
-    public boolean isEDRExistsByBatchAndRecordId(String originBatch, String originRecord) {
+    public boolean isEDRExistsByRecordId(String originRecord) {
 
         try {
 
-            StringBuilder selectQuery = new StringBuilder("select e.id from EDR e where ").append(originBatch == null ? "e.originBatch is null " : "e.originBatch=:originBatch").append(" and ")
+            StringBuilder selectQuery = new StringBuilder("select e.id from EDR e where ")
                 .append(originRecord == null ? "e.originRecord is null " : "e.originRecord=:originRecord");
 
             Query query = getEntityManager().createQuery(selectQuery.toString());
 
-            if (originBatch != null) {
-                query.setParameter("originBatch", originBatch);
-            }
             if (originRecord != null) {
                 query.setParameter("originRecord", originRecord);
             }
@@ -174,24 +170,23 @@ public class EdrService extends PersistenceService<EDR> {
     /**
      * Check if EDR, identified by batch and a record, was processed already
      *
-     * @param originBatch original batch
      * @param originRecord original record
      * @return true/false
      */
-    public boolean isDuplicateFound(String originBatch, String originRecord) {
+    public boolean isDuplicateFound(String originRecord) {
         if (!deduplicateEdrs) {
             return false;
         }
         
         boolean isDuplicate = false;
         if (useInMemoryDeduplication) {
-            isDuplicate = cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originBatch, originRecord);
+            isDuplicate = cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originRecord);
             if (!isDuplicate && !inMemoryDeduplicationPrepopulated) {
-                isDuplicate = isEDRExistsByBatchAndRecordId(originBatch, originRecord);
-                cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originBatch, originRecord);
+                isDuplicate = isEDRExistsByRecordId(originRecord);
+                cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originRecord);
             }
         } else {
-            isDuplicate = isEDRExistsByBatchAndRecordId(originBatch, originRecord);
+            isDuplicate = isEDRExistsByRecordId(originRecord);
         }
         return isDuplicate;
     }
@@ -201,7 +196,7 @@ public class EdrService extends PersistenceService<EDR> {
         super.create(edr);
 
         if (deduplicateEdrs && useInMemoryDeduplication) {
-            cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(edr.getOriginBatch(), edr.getOriginRecord());
+            cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(edr.getOriginRecord());
         }
     }
 
@@ -514,10 +509,5 @@ public class EdrService extends PersistenceService<EDR> {
      */
     public static boolean isDuplicateCheckOn() {
         return deduplicateEdrs;
-    }
-
-    public boolean isEDRExistByOriginRecord(String originRecord) {
-        Long count = ((Long) getEntityManager().createNamedQuery("EDR.countNbrEdrByOriginRecord").setParameter("originRecord", originRecord).getSingleResult());
-        return count > 0;
     }
 }

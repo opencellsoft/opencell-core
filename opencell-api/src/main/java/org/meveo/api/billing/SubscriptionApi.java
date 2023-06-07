@@ -19,14 +19,7 @@
 package org.meveo.api.billing;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -161,6 +154,8 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.pricelist.PriceList;
+import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.audit.AuditableFieldService;
@@ -184,6 +179,7 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.EmailTemplateService;
@@ -322,6 +318,9 @@ public class SubscriptionApi extends BaseApi {
 	@Inject
 	private ContractHierarchyHelper contractHierarchyHelper;
 
+    @Inject
+    private PriceListService priceListService;
+
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     private void setRenewalTermination(SubscriptionRenewal renewal, String terminationReason) throws EntityDoesNotExistsException {
@@ -364,7 +363,7 @@ public class SubscriptionApi extends BaseApi {
     public Subscription create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            addGenericCodeIfAssociated(Subscription.class.getName(), postData);
+            postData.setCode(customGenericEntityCodeService.getGenericEntityCode(new Subscription()));
         }
         if (StringUtils.isBlank(postData.getUserAccount())) {
             missingParameters.add("userAccount");
@@ -586,6 +585,18 @@ public class SubscriptionApi extends BaseApi {
 		if (!StringUtils.isBlank(postData.getContractCode())) {
 			subscription.setContract(contractHierarchyHelper.checkContractHierarchy(subscription.getUserAccount().getBillingAccount(), postData.getContractCode()));
 		}
+
+        if (StringUtils.isNotBlank(postData.getPriceListCode())) {
+            PriceList priceList = priceListService.findByCode(postData.getPriceListCode());
+            if (priceList == null) {
+                throw new EntityDoesNotExistsException(PriceList.class, postData.getPriceListCode());
+            } else if(!PriceListStatusEnum.ACTIVE.equals(priceList.getStatus())) {
+                throw new BusinessException("Only Active PriceList can be attached to a subscription");
+            }
+            subscription.setPriceList(priceList);
+        } else if(postData.getPriceListCode() != null) {
+            subscription.setPriceList(null);
+        }
 		
         // populate customFields
         try {
@@ -1798,6 +1809,10 @@ public class SubscriptionApi extends BaseApi {
                 existedSubscriptionDto.setAutoEndOfEngagement(subscriptionDto.getAutoEndOfEngagement());
             }
 
+            if(subscriptionDto.getPriceListCode() != null) {
+                existedSubscriptionDto.setPriceListCode(subscriptionDto.getPriceListCode());
+            }
+
             update(existedSubscriptionDto);
         }
 
@@ -2140,10 +2155,14 @@ public class SubscriptionApi extends BaseApi {
                 serviceToUpdate.setMinimumLabelEl(postData.getMinimumLabelEl());
             }
             
-            if(postData.getPriceVersionDate() != null) {
-            	serviceToUpdate.setPriceVersionDate(postData.getPriceVersionDate());
-            	serviceToUpdate.setPriceVersionDateSetting(PriceVersionDateSettingEnum.MANUAL);
-            }
+			if (serviceToUpdateDto.getPriceVersionDate() != null) {
+				serviceToUpdate.setPriceVersionDate(serviceToUpdateDto.getPriceVersionDate());
+				serviceToUpdate.setPriceVersionDateSetting(PriceVersionDateSettingEnum.MANUAL);
+			} else if (PriceVersionDateSettingEnum.MANUAL.equals(serviceToUpdate.getPriceVersionDateSetting())) {
+				throw new InvalidParameterException("the priceVersionDate must not be empty for MANUAL Setting");
+			} else {
+				serviceToUpdate.setPriceVersionDate(null);
+			}
            
             // populate customFields
             try {
@@ -2222,11 +2241,19 @@ public class SubscriptionApi extends BaseApi {
                     if (subscription.getOffer().getAllowedDiscountPlans() != null && subscription.getOffer().getAllowedDiscountPlans().contains(dp)) {
                         continue;
                     }
-                    subscriptionService.instantiateDiscountPlan(subscription, dp);
+                    serviceInstanceService.instantiateDiscountPlan(serviceToUpdate, dp, false);
                 }
             }
-            removeDiscountPlanInstanceForSubscription(subscription, serviceToUpdateDto.getDiscountPlanForTermination());
             serviceInstanceService.update(serviceToUpdate);
+            if(CollectionUtils.isNotEmpty(serviceToUpdateDto.getDiscountPlanForTermination())){
+                serviceToUpdateDto.getDiscountPlanForTermination().forEach(discountPlanCode -> {
+                    DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
+                    if(discountPlan != null) {
+                        serviceToUpdate.getDiscountPlanInstances().removeIf(dp -> dp.getDiscountPlan() != null &&  dp.getDiscountPlan().getId().equals(discountPlan.getId()));
+                    }
+                });
+
+            }
         }
     }
 
@@ -2901,6 +2928,16 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setContract(contractHierarchyHelper.checkContractHierarchy(userAccount.getBillingAccount(), postData.getContractCode()));
 		}
 
+        if (StringUtils.isNotBlank(postData.getPriceListCode())) {
+            PriceList priceList = priceListService.findByCode(postData.getPriceListCode());
+            if (priceList == null) {
+                throw new EntityDoesNotExistsException(PriceList.class, postData.getPriceListCode());
+            } else if(!PriceListStatusEnum.ACTIVE.equals(priceList.getStatus())) {
+                throw new BusinessException("Only Active PriceList can be attached to a subscription");
+            }
+            subscription.setPriceList(priceList);
+        }
+
         // subscription.setTerminationDate(postData.getTerminationDate());
 
         SubscriptionRenewal subscriptionRenewal = null;
@@ -3128,6 +3165,10 @@ public class SubscriptionApi extends BaseApi {
 
         if (isNotBlank(subscriptionPatchDto.getNewSubscriptionCode())) {
             existingSubscriptionDto.setCode(subscriptionPatchDto.getNewSubscriptionCode());
+        }
+
+        if (StringUtils.isNotBlank(subscriptionPatchDto.getPriceListCode())) {
+            existingSubscriptionDto.setPriceListCode(subscriptionPatchDto.getPriceListCode());
         }
 
         Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto, subscriptionPatchDto.getSubscriptionCustomFieldsToCopy(), false);
@@ -3375,7 +3416,6 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setCode(product.getCode());
                 serviceInstance.setProductVersion(pVersion);
             }
-
             // add attributes
             for (AttributeInstanceDto attributeInstanceDto : postData.getAttributes()) {
                 AttributeInstance attributeInstance = new AttributeInstance();

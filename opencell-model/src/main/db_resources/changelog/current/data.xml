@@ -3130,7 +3130,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importServicesJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/services/outputs"}],
@@ -3166,7 +3166,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importSubscriptionsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/subscriptions/outputs"}],
@@ -3199,7 +3199,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="following_job_id" value="null" />
             <column name="uuid" value="importAccesPointsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/accessPoints/outputs"}],
@@ -3286,7 +3286,7 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="description" value="Process customer payments file job"/>
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="uuid" value="ProcessCustomerPaymentsFileJob" />
@@ -7563,7 +7563,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="following_job_id" value="null" />
             <column name="uuid" value="ImportCustomerBankDetailsJob" />
             <column name="run_on_nodes" value="null" />
-            <column name="single_node" value="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="cf_values" value="null" />
             <column name="verbose_report" value="1" />
         </insert>
@@ -8231,39 +8231,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
     </changeSet>
     
-   	<changeSet id="#INTRD-10572_20221018" author="HichamHANINE">
-   		<update tableName="crm_customer_category">
-			<column name="tax_category_id" value="-1" />
-			<where>id in (-1,-2)</where>
-		</update>
-		<update tableName="billing_tax_mapping">
-			<column name="tax_category_id" value="-1" />
-			<where>tax_category_id = -3</where>
-		</update>
-		<update tableName="billing_billing_account">
-			<column name="tax_category_id" value="-1" />
-			<where>tax_category_id = -3</where>
-		</update>
-		<update tableName="billing_tax_category">			
-			<column name="code" value="REGULAR1"/>        
-			<where>id = -3</where>
-		</update>
-		<update tableName="billing_tax_category">			
-			<column name="code" value="REGULAR"/>
-            <column name="description_i18n" value='{"FRA":"Standard","ENG":"Regular"}'/>
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="uuid" value="billing_tax_category_regular" />            
-			<where>id = -1</where>
-		</update>
-		<delete tableName="billing_tax_category">
-			<where>id = -3</where>
-		</delete>
-    </changeSet>
-
 	<changeSet id="#INTRD-10692_20221019_ajd_occ_template" author="a.rouaguebe">
 		<insert tableName="ar_occ_template">
-			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="id" valueNumeric="-71" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
@@ -8302,7 +8272,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 
 	<changeSet id="#INTRD-10772_20221025_ajd_occ_template" author="e.bourras">
 		<insert tableName="ar_occ_template">
-			<column name="id" valueSequenceNext="ar_occ_template_seq" />
+			<column name="id" valueNumeric="-72" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="updated" valueDate="${db.current.time}" />
@@ -9083,7 +9053,7 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="creator" value="opencell.admin" />
 			<column name="updater" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 		</insert>
 	</changeSet>
@@ -9663,7 +9633,7 @@ public class CdrMassImportScript extends GenericMassImportScript {
 			<column name="code" value="CsvImportCDR" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10577,7 +10547,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportCustomerJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10597,7 +10567,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportCustomerAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10617,7 +10587,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportPaymentMethodJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10637,7 +10607,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportBillingAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -10657,7 +10627,7 @@ public class CustomerJobNotification extends Script {
 			<column name="code" value="massImportUserAccountJob" />
 			<column name="creator" value="opencell.admin" />
 			<column name="job_speed" value="NORMAL" />
-			<column name="single_node" valueNumeric="1" />
+			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="cf_values">
@@ -11477,7 +11447,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportSubscriptionJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -11497,7 +11467,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportServiceInstanceJob" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -11517,7 +11487,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportAttributeInstance" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -11537,7 +11507,7 @@ public class SubscriptionJobNotification extends Script {
             <column name="code" value="massImportAccessPoint" />
             <column name="creator" value="opencell.admin" />
             <column name="job_speed" value="NORMAL" />
-            <column name="single_node" valueNumeric="1" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
             <column name="cf_values">
@@ -15459,6 +15429,19 @@ public class CdrFlatFileImportScript extends Script {
 				
 		]]>
 		</sql>
+		
+		<update tableName="cat_discount_plan">
+			<column name="allowance_code_id" valueComputed="(SELECT id from untdid_5189_allowance_code where code = '95')"></column>
+			<where>allowance_code_id is null</where>
+		</update>
+        <addNotNullConstraint tableName="cat_discount_plan" columnName="allowance_code_id" />
+        <addForeignKeyConstraint baseTableName="cat_discount_plan"
+								 baseColumnNames="allowance_code_id"
+								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
+								 referencedTableName="untdid_5189_allowance_code"
+								 referencedColumnNames="id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 		</changeSet>
 		
 		<changeSet id="#INTRD-12085_20221221" author="HatimOUDAD">
@@ -16504,11 +16487,17 @@ public class ValidateBRScript extends ValidateBR {
     	</update>
     </changeSet>
 
-    <changeSet id="#INTRD-13314_20230123" author="zelmeliani">
+    <changeSet id="#INTRD-13314_20230123-f" author="zelmeliani" failOnError="false">
         <update tableName="billing_tax_mapping">
             <column name="tax_category_id" value="-3"/>
             <where>tax_category_id=-1</where>
         </update>
+        <update tableName="billing_tax_mapping">
+            <column name="tax_class_id" value="-5"/>
+            <where>tax_class_id in (-1, -2)</where>
+        </update>        
+    </changeSet>
+    <changeSet id="#INTRD-13314_20230123" author="zelmeliani">        
         <update tableName="crm_customer_category">
             <column name="tax_category_id" value="-3"/>
             <where>tax_category_id=-1</where>
@@ -16521,10 +16510,6 @@ public class ValidateBRScript extends ValidateBR {
             <where>id=-1 and code = 'Tax category'</where>
         </delete>
 
-        <update tableName="billing_tax_mapping">
-            <column name="tax_class_id" value="-5"/>
-            <where>tax_class_id in (-1, -2)</where>
-        </update>
         <update tableName="cat_charge_template">
             <column name="tax_class_id" value="-5"/>
             <where>tax_class_id in (-1, -2)</where>
@@ -20057,15 +20042,187 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
     
-    <changeSet id="#INTRD-13867_20230220" author="aeljaouhari">
-        <sql>
-	        update public.accounting_journal_entry set 
-		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco 
-		        	where ac.id = btc.currency_id and inv.trading_currency_id = btc.id and inv.id = aco.invoice_id and aco.id =  accounting_operation_id),
-		        converted_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco 
-		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
-        </sql>
+    <changeSet id="#INTRD-14122_20230221" author="hichamELHALOUI">
+    <insert tableName="cpq_tag_type">
+        <column name="id" value="-1"/>
+        <column name="created" valueDate="${db.current.time}" />
+        <column name="code" value="tunnel"/>
+        <column name="description" value="Tunnel"/>
+    </insert>
+        <insert tableName="cpq_tag">
+        <column name="id" value="-1"/>
+        <column name="created" valueDate="${db.current.time}" />
+        <column name="code" value="featured"/>
+        <column name="description" value="Featured"/>
+        <column name="tag_type_id" value="-1" />
+    </insert>
+	
+	<update tableName="crm_customer">
+		<column name="customer_category_id" valueComputed="(SELECT id FROM crm_customer_category WHERE code = 'CLIENT')" />
+		<where>customer_category_id = (SELECT id FROM crm_customer_category WHERE code = 'PROSPECT')</where>
+	</update>
+    <delete tableName="crm_customer_category">
+        <where>code='PROSPECT'</where>
+    </delete>
+	
+    <insert tableName="crm_customer_category">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="uuid" value="CCC_B2B" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B" />
+            <column name="description" value="B2B" />
+            <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
+            <column name="tax_category_id" valueNumeric="-3" />
+    </insert>
+    <insert tableName="crm_customer_category">
+                <column name="id" valueNumeric="-4" />
+                <column name="version" valueNumeric="0" />
+                <column name="uuid" value="CCC_regular_account" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="regular account" />
+                <column name="description" value="regular account" />
+                <column name="accounting_code_id" valueComputed="(select id from billing_accounting_code where code = '410000000')" />
+                <column name="tax_category_id" valueNumeric="-3" />
+    </insert>
+     <update tableName="billing_invoice_cat">
+			<column name="description" value="Security Deposit" />
+			<where> code = 'ICAT_SECURITY_DEPOSIT'</where>
+		</update>
+
+        <insert tableName="cat_offer_template_category">
+                <column name="id" valueNumeric="-1" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="new" />
+                <column name="name" value="New" />
+        </insert>
+        <insert tableName="cat_offer_template_category">
+                <column name="id" valueNumeric="-2" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="standard" />
+                <column name="name" value="Standard" />
+        </insert>
+
+         <insert tableName="cat_channel">
+                <column name="id" valueNumeric="-1" />
+                <column name="version" valueNumeric="0" />
+                <column name="created" valueDate="${db.current.time}" />
+                <column name="code" value="backoffice" />
+                <column name="description" value="Backoffice" />
+        </insert>
+
+        <update tableName="crm_provider_pay_methods">
+			<column name="payment_method" value="STRIPEDIRECTLINK" />
+			<where> payment_method = 'STRIPE'</where>
+		</update>
+
+        <update tableName="crm_provider_pay_methods">
+			<column name="payment_method" value="PAYPALPAYMENTLINK" />
+			<where> payment_method = 'PAYPAL'</where>
+		</update>
+
+        <update tableName="adm_currency">
+            <column name="symbol" value="$"  />
+            <where> currency_code = 'USD'</where>
+        </update>
+		
+		<update tableName="billing_billing_account">
+			<column name="legal_entity_type_id" valueComputed="(SELECT id FROM adm_title WHERE code = 'CIE')" />
+			<where>legal_entity_type_id = (SELECT id FROM adm_title WHERE code = 'ASSOC')</where>
+		</update>
+		
+        <delete tableName="adm_title">
+            <where>code = 'ASSOC'</where>
+        </delete>
+
+        <update tableName="adm_title">
+            <column name="code" value="Company" />
+            <column name="description" value="Company" />
+            <where>code = 'CIE'</where>
+        </update>
+
+                <insert tableName="adm_title">
+            <column name="id" valueNumeric="-8" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SA" />
+            <column name="description" value="French joint-stock company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société Anonyme","ENG":"French joint-stock company"}' />
+        </insert>
+
+         <insert tableName="adm_title">
+            <column name="id" valueNumeric="-9" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SARL" />
+            <column name="description" value="French limited liability company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société a responsabilité limitée","ENG":"French limited liability company"}' />
+        </insert>
+
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-10" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="SAS" />
+            <column name="description" value="Simplified joint-stock corporation" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société par actions simplifiée","ENG":"Simplified joint-stock corporation"}' />
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-11" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="PLC" />
+            <column name="description" value="Public limited company" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"société ouverte à responsabilité limitée","ENG":"Public limited company"}' />
+        </insert>
+
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-12" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="LTD" />
+            <column name="description" value="Private company limited by shares" />
+            <column name="is_company" valueNumeric="1" />
+            <column name="description_i18n" value='{"FRA":"Société privée limité par actions","ENG":"Private company limited by shares"}' />
+        </insert>
+
     </changeSet>
+    
+    <changeSet id="#INTRD-14122_20230221-FIX" author="hichamELHALOUI">
+    	<preConditions onFail="MARK_RAN">
+		    <sqlCheck expectedResult="0">
+		        SELECT COUNT(1)
+		        FROM cat_channel
+		        WHERE lower(code)='web'
+		    </sqlCheck>
+		</preConditions>
+	      <insert tableName="cat_channel">
+	                <column name="id" valueNumeric="-2" />
+	                <column name="version" valueNumeric="0" />
+	                <column name="created" valueDate="${db.current.time}" />
+	                <column name="code" value="web" />
+	                <column name="description" value="Web" />
+	        </insert>
+     </changeSet>
+    
+    
+    
 
     <changeSet id="#INTRD-13867_20230301" author="AbdellatifBARI">
         <delete tableName="meveo_job_instance">
@@ -20134,7 +20291,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	
 	<changeSet id="#INTRD-14126_20230307" author="aelmalki">
         <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
+            <column name="id" valueNumeric="-75" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
@@ -20147,22 +20304,10 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
         </insert>
     </changeSet>
-	
-	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308">
-		<update tableName="ar_account_operation">
-			<column name="converted_amount" valueComputed="amount"/>
-			<column name="converted_amount_without_tax" valueComputed="amount_without_tax"/>
-			<column name="converted_tax_amount" valueComputed="tax_amount"/>
-			<column name="converted_matching_amount" valueComputed="matching_amount"/>
-			<column name="converted_un_matching_amount" valueComputed="un_matching_amount"/>
-			<column name="transactional_currency" valueComputed="(SELECT currency_id from crm_provider where id = 1)"></column>
-			<where>transactional_currency is null</where>
-		</update>
-	</changeSet>
 
     <changeSet id="#INTRD-14786_20230309" author="bourras">
         <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
+            <column name="id" valueNumeric="-73" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
@@ -20175,7 +20320,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
         <insert tableName="ar_occ_template">
-            <column name="id" valueSequenceNext="ar_occ_template_seq" />
+            <column name="id" valueNumeric="-74" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
@@ -20188,5 +20333,631 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
     </changeSet>
+    
+    <changeSet author="houdad" id="#INTRD-15126_20230322">
+		<update tableName="ar_payment_token">
+			<column name="token_type" value="PAYPALPAYMENTLINK"/>
+			<where> token_type ='PAYPAL'</where>
+		</update>
+		<update tableName="ar_payment_token">
+			<column name="token_type" value="STRIPEDIRECTLINK"/>
+			<where> token_type ='STRIPE'</where>
+		</update>
+	</changeSet>
 	
+	<changeSet id="#INTRD-15191_20230328" author="aelmalki">
+		<update tableName="billing_trading_currency">
+			<column name="symbol" value="$" />
+			<where>currency_id=49</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI">
+        <update tableName="cat_offer_template_category">
+            <column name="order_level" valueNumeric="0" />
+            <where> id in (-1, -2)</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-15228_20230327" author="hichamELHALOUI">
+		<update tableName="adm_currency">
+			<column name="symbol" value="$" />
+			<where> currency_code = 'USD'</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="#INTRD-15186_20230328" author="zelmeliani">  
+        <sql>SELECT setval('iso_icd_seq', 208, true)</sql> 
+        <sql>SELECT setval('untdid_5189_allowance_code_seq', 19, true)</sql> 
+        <sql>SELECT setval('untdid_1001_invoice_code_type_seq', 43, true)</sql> 
+        <sql>SELECT setval('untdid_4451_invoice_subject_code_seq', 383, true)</sql> 
+        <sql>SELECT setval('untdid_4461_payment_means_seq', 83, true)</sql> 
+        <sql>SELECT setval('untdid_5305_taxation_category_seq', 9, true)</sql> 
+        <sql>SELECT setval('untdid_vatex_seq', 57, true)</sql> 
+        <sql>SELECT setval('untdid_2475_vat_payment_option_seq', 3, true)</sql> 
+    </changeSet>
+    
+    	<changeSet id="#INTRD-5882__23-03-2022" author="Mohammed_ELAZZOUZI">
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="waitingMillis"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Waiting before next launch (ms)"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:1"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="nbRuns"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Number of parallel execution"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:0"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="maxInvoiceLinesPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Maximum of maxInvoiceLines generated per transaction"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="0"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="maxBAsPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoicingJobV2"/>
+            <column name="description" value="commit interval"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="#INTRD-14750_20230331" author="TarikFA.">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-65" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
+            <column name="created" valueDate="2023-03-31 15:51:00.000" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="DuplicateRatedTransactionJob" />
+            <column name="code" value="DuplicateRatedTransactionJob" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="uuid" value="DuplicateRatedTransactionJob-UUID" />
+        </insert>
+    </changeSet>
+    
+    <changeSet id="#INTRD-13978_20230407" author="HOudad">
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="attribute_code_sequence"/>
+            <column name="description" value="attribute code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.Attribute"/>
+            <column name="format_el" value="#{'AT-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'attribute_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="user_account_code_sequence"/>
+            <column name="description" value="consumer code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.billing.UserAccount"/>
+            <column name="format_el" value="#{'UA-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'user_account_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="customer_code_sequence"/>
+            <column name="description" value="customer code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.billing.BillingAccount"/>
+            <column name="format_el" value="#{'CU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'customer_code_sequence')"/>
+        </insert>
+        
+        
+         <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="offer_template_code_sequence"/>
+            <column name="description" value="offer code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.catalog.OfferTemplate"/>
+            <column name="format_el" value="#{'OF-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'offer_template_code_sequence')"/>
+        </insert>
+        
+        
+         <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="discount_plan_code_sequence"/>
+            <column name="description" value="discount plan code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.catalog.DiscountPlan"/>
+            <column name="format_el" value="#{'DP-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="invoicing_plan_code_sequence"/>
+            <column name="description" value="invoice plan code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.commercial.InvoicingPlan"/>
+            <column name="format_el" value="#{'IP-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'invoicing_plan_code_sequence')"/>
+        </insert>
+       
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="invoicing_plan_item_code_sequence"/>
+            <column name="description" value="invoice plan line code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.commercial.InvoicingPlanItem"/>
+            <column name="format_el" value="#{'IPL-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'invoicing_plan_item_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="commercial_order_code_sequence"/>
+            <column name="description" value="order code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.commercial.CommercialOrder"/>
+            <column name="format_el" value="#{'ORD-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'commercial_order_code_sequence')"/>
+        </insert>
+      
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="product_code_sequence"/>
+            <column name="description" value="product code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.Product"/>
+            <column name="format_el" value="#{'PR-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'product_code_sequence')"/>
+        </insert>
+        
+         
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="product_line_code_sequence"/>
+            <column name="description" value="product line code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.ProductLine"/>
+            <column name="format_el" value="#{'PF-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'product_line_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="quote_code_sequence"/>
+            <column name="description" value="quote code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.CpqQuote"/>
+            <column name="format_el" value="#{'QU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'quote_code_sequence')"/>
+        </insert>
+        
+        
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="subscription_code_sequence"/>
+            <column name="description" value="subscription code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.billing.Subscription"/>
+            <column name="format_el" value="#{'SU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'subscription_code_sequence')"/>
+        </insert>
+    
+    
+    
+      <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="tag_code_sequence"/>
+            <column name="description" value="tag code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.tags.Tag"/>
+            <column name="format_el" value="#{'TG-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'tag_code_sequence')"/>
+        </insert>
+        
+        
+         <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="tag_category_code_sequence"/>
+            <column name="description" value="tag category code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.tags.TagType"/>
+            <column name="format_el" value="#{'TC-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'tag_category_code_sequence')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="INTRD-15458_2023_04_17" author="ZBariki">
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="CUSTOMER_CODE_SEQUENCE"/>
+            <column name="description" value="Customer code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.crm.Customer"/>
+            <column name="format_el" value="#{'CUS-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'CUSTOMER_CODE_SEQUENCE')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="INTRD-15467_2023_04_17" author="ZBariki">
+        <insert tableName="generic_sequence">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="code" value="MEDIA_CODE_SEQUENCE"/>
+            <column name="description" value="Media code sequence"/>
+            <column name="sequence_type" value="SEQUENCE"/>
+            <column name="sequence_size" valueNumeric="6"/>
+            <column name="current_number" valueNumeric="1"/>
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
+            <column name="entity_class" value="org.meveo.model.cpq.Media"/>
+            <column name="format_el" value="#{'MED-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="sequence_id"
+                    valueComputed="(SELECT id from generic_sequence where code = 'MEDIA_CODE_SEQUENCE')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="INTRD-15467-15458_2023_04_18" author="ZBariki">
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="format_el" value="#{'CU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="updated" valueDate="${db.current.time}"/>
+            <column name="updater" value="applicationInitializer"/>
+            <where>entity_class = 'org.meveo.model.crm.Customer'</where>
+        </update>
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="format_el" value="#{'M-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="updated" valueDate="${db.current.time}"/>
+            <column name="updater" value="applicationInitializer"/>
+            <where>entity_class = 'org.meveo.model.cpq.Media'</where>
+        </update>
+    </changeSet>
+	
+	<changeSet id="INTRD-15222_20230424" author="aelmalki" failOnError="false">
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" valueComputed="(select id from billing_invoice_type where code = 'ADJ')"/>
+            <column name="applies_to_id" valueComputed="(select id from billing_invoice_type where code = 'COMMERCIAL_ORDER')"/>
+        </insert>
+    </changeSet>
+    
+    <changeSet id="INTRD-15841_20230502" author="aeljaouhari">
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Invoice"/>
+			<column name="description_i18n" value='{"FRA":"Facture","ENG":"Invoice"}'/>
+			<where>code = 'COM'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Credit note"/>
+			<column name="description_i18n" value='{"FRA":"Avoir","ENG":"Credit note"}'/>
+			<where>code = 'ADJ'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Quote"/>
+			<column name="description_i18n" value='{"FRA":"Devis","ENG":"Quote"}'/>
+			<where>code = 'QUOTE'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Call for advance payment"/>
+			<column name="description_i18n" value='{"FRA":"Appel de payment d&apos;avance","ENG":"Call for advance payment"}'/>
+			<where>code = 'ADV'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Security deposit"/>
+			<column name="description_i18n" value='{"FRA":"Dépôt de garantie","ENG":"Security deposit"}'/>
+			<where>code = 'SECURITY_DEPOSIT'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Refundable credit note"/>
+			<column name="description_i18n" value='{"FRA":"Avoir remboursable","ENG":"Refundable credit note"}'/>
+			<where>code = 'ADJ_REF'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Credit note on invoice"/>
+			<column name="description_i18n" value='{"FRA":"Avoir sur facture","ENG":"Credit note on invoice"}'/>
+			<where>code = 'ADJ_INV'</where>
+		</update>
+		<update tableName="billing_invoice_type">
+			<column name="description" value="Commercial order"/>
+			<column name="description_i18n" value='{"FRA":"Commande","ENG":"Commercial order"}'/>
+			<where>code = 'COMMERCIAL_ORDER'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="INTRD-15899_20230505" author="aelmalki">
+		<update tableName="billing_tax_category">
+			<column name="untdid_taxation_category_id" valueComputed="(SELECT id FROM untdid_5305_taxation_category WHERE code = 'E')"/>
+			<where>code = 'EXEMPTED'</where>
+		</update>
+		<update tableName="billing_tax_category">
+			<column name="untdid_taxation_category_id" valueComputed="(SELECT id FROM untdid_5305_taxation_category WHERE code = 'S')"/>
+			<where>code = 'REGULAR'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki">
+		<update tableName="billing_billing_account">
+			<column name="tax_category_id" valueComputed="(SELECT id FROM billing_tax_category WHERE code = 'REGULAR')"/>
+			<where>tax_category_id is null</where>
+		</update>
+	</changeSet>
+
+    <changeSet id="#INTRD-16102_priceliststatusjob" author="a.rouaguebe">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="PriceListStatusJob" />
+            <column name="code" value="PriceListStatusJob" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="timerentity_id"
+                    valueComputed="(SELECT id from meveo_timer where code = 'Daily-midnight')" />
+            <column name="uuid" value="PriceListStatusJob_Job" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="#INTRD-13682_20230510" author="AbdellatifBARI">
+        <update tableName="adm_notification">
+            <column name="event_expression_filter" value="#{event.jobInstance.code.toLowerCase().startsWith('massimport')}" />
+            <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
+        </update>
+    </changeSet>
+
+	<changeSet id="#INTRD-16296_20230517" author="aeljaouhari">
+		<update tableName="billing_invoice_type">
+			<column name="description_i18n" value='{"FRA":"Appel de paiement d&apos;avance","ENG":"Call for advance payment"}' />
+			<where>code = 'ADV'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="#INTRD-16482_20230526" author="aeljaouhari">
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-46" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="666000000" />
+			<column name="description" value="Exchange loss" />
+			<column name="chart_of_account_type" value="LIABILITIES" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+			<column name="migrated" value="0" />
+			<column name="disabled" value="0" />
+		</insert>		
+		<insert tableName="billing_accounting_code">
+			<column name="id" valueNumeric="-47" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="766000000" />
+			<column name="description" value="Exchange gain" />
+			<column name="chart_of_account_type" value="ASSETS" />
+			<column name="chart_of_account_view_type" value="REGULAR" />
+			<column name="migrated" value="0" />
+			<column name="disabled" value="0" />
+		</insert>		
+		<update tableName="ar_occ_template">
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='666000000')"/>
+			<where>code='XCH_LOSS'</where>
+		</update>
+		<update tableName="ar_occ_template">
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='766000000')"/>
+			<where>code='XCH_GAIN'</where>
+		</update>
+	</changeSet>
+    
+    <changeSet id="#INTRD-16247_20230605" author="zelmeliani">
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="version" value="1"/>
+            <where>version is null</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>

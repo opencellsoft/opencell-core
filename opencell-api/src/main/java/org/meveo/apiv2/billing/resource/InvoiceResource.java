@@ -393,4 +393,14 @@ public interface InvoiceResource {
     Response updateValidateInvoice(
                     @Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
                     @Parameter(description = "the Invoice object", required = true) InvoicePatchInput input);
+	
+	@PUT
+	@Path("/{id}/setCustomRate")
+	@Operation(summary = "Set custom rate",  description = "Set custom rate", 
+	responses = {
+	@ApiResponse(responseCode = "200", description = "the rate is successfully updated"),
+	@ApiResponse(responseCode = "404", description = "The invoice entity doesn't exist"),
+	@ApiResponse(responseCode = "400", description = "Action is failed") })
+	Response setCustomRate(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
+			@Parameter(description = "invoice exchange rate", required = false) InvoiceExchangeRateInput input);	
 }

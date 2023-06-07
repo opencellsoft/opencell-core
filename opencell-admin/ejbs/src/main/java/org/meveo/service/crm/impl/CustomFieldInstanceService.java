@@ -50,7 +50,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.custom.CustomTableRecordDto;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.PersistenceUtils;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
@@ -117,13 +116,12 @@ public class CustomFieldInstanceService extends BaseService {
     @Inject
 	private CustomTableService customTableService;
 
-    static boolean accumulateCF = true;
+    private static boolean accumulateCF = false;
 
-    @PostConstruct
-    private void init() {
-        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "false"));
-    }
-
+    // @PostConstruct
+    // private void init() {
+    // accumulateCF = ParamBeanFactory.getAppScopeInstance().getPropertyAsBoolean("accumulateCF", false);
+    // }
 
     /**
      * Find a list of entities of a given class and matching given code. In case classname points to CustomEntityTemplate, find CustomEntityInstances of a CustomEntityTemplate code

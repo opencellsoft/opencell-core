@@ -70,6 +70,7 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.tax.TaxCategory;
 
 /**
@@ -94,6 +95,27 @@ import org.meveo.model.tax.TaxCategory;
         @NamedQuery(name = "BillingAccount.getUnbilledByBCWithStartDate", query = "select ba.id from BillingAccount ba where ba.billingCycle=:billingCycle and (ba.nextInvoiceDate is null or ba.nextInvoiceDate>=:minNextInvoiceDate) and (ba.nextInvoiceDate is null or ba.nextInvoiceDate<:maxNextInvoiceDate) and (ba.billingRun is null OR ba.billingRun<>:billingRun)"),
         @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount"),
         @NamedQuery(name = "BillingAccount.getCountByParent", query = "select count(*) from BillingAccount ba where ba.customerAccount=:parent"),
+        @NamedQuery(name = "BillingAccount.listByOpenILFromBillingRun", query = "select distinct b from InvoiceLine il join il.billingAccount b where il.billingRun=:billingRun and il.status='OPEN'"),
+		@NamedQuery(name = "BillingAccount.getBillingAccountDetailsItems", query = "select distinct b.id, s.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, m2.id, m2.paymentType, string_agg(concat(CAST(dpi.discountPlan.id as string),'|',CAST(dpi.startDate AS string),'|',CAST(dpi.endDate AS string)),','),"
+				+ " sum(case when ao.transactionCategory = 'DEBIT' then ao.unMatchingAmount else (-1 * ao.unMatchingAmount) end) "
+				+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc left join c.seller s "
+				+ " left join ca.paymentMethods m "
+				+ " left join ca.accountOperations ao "
+				+ " left join b.paymentMethod m2 "
+				+ " left join b.discountPlanInstances dpi "
+				+ " where b.id IN (:baIDs) and (m is null or m.preferred=true) and (ao is null or (ao.matchingStatus in (:aoStatus)))"
+				+ " group by b.id, s.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, m2.id, m2.paymentType"
+				+ " order by b.id"),
+		@NamedQuery(name = "BillingAccount.getBillingAccountDetailsItemsLimitAOsByDate", query = "select distinct b.id, s.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, m2.id, m2.paymentType, string_agg(concat(CAST(dpi.discountPlan.id as string),'|',CAST(dpi.startDate AS string),'|',CAST(dpi.endDate AS string)),','),"
+				+ " sum(case when ao.transactionCategory = 'DEBIT' then ao.unMatchingAmount else (-1 * ao.unMatchingAmount) end) "
+				+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc left join c.seller s "
+				+ " left join ca.paymentMethods m "
+				+ " left join ca.accountOperations ao on ao.customerAccount.id=ca.id and (ao.matchingStatus in (:aoStatus) and ao.dueDate<:dueDate) "
+				+ " left join b.paymentMethod m2 "
+				+ " left join b.discountPlanInstances dpi "
+				+ " where b.id IN (:baIDs) and (m is null or m.preferred=true) "
+				+ " group by b.id, s.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, m2.id, m2.paymentType"
+				+ " order by b.id"),
 		@NamedQuery(name = "BillingAccount.getCountByCreditCategory", query = "select count(*) from BillingAccount ba where ba.id=:id and ba.customerAccount.creditCategory.id in (:creditCategoryIds)") })
 public class BillingAccount extends AccountEntity implements IInvoicingMinimumApplicable, IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
@@ -307,6 +329,10 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
     @Size(max = 2000)
     private String ccedEmails;
 
+    @Column(name = "exemption_reason", length = 2000)
+    @Size(max = 2000)
+    private String exemptionReason;
+
     /**
      * Account tax category
      **/
@@ -363,6 +389,13 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "icd_id")
     private IsoIcd icdId;
+
+    /**
+     * Default PriceList (Optional)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "price_list_id")
+    private PriceList priceList;
     
     public IsoIcd getIcdId() {
         return icdId;
@@ -842,5 +875,30 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
         return ofNullable(tradingLanguage)
                 .map(TradingLanguage::getLanguageCode)
                 .orElse(null);
+    }
+
+    public String getExemptionReason() {
+        return exemptionReason;
+    }
+
+    public void setExemptionReason(String exemptionReason) {
+        this.exemptionReason = exemptionReason;
+    }
+
+
+    /**
+     * PriceList Getter
+     * @return the value
+     */
+    public PriceList getPriceList() {
+        return priceList;
+    }
+
+    /**
+     * PriceList Setter
+     * @param priceList : value to Set
+     */
+    public void setPriceList(PriceList priceList) {
+        this.priceList = priceList;
     }
 }

@@ -721,7 +721,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
             PricePlanMatrixVersionDto ppmVersionDto = new PricePlanMatrixVersionDto(ppmVersion, false);
 
             List<PricePlanMatrixLine> ppmLines = getEntityManager().createNamedQuery("PricePlanMatrixLine.findByPricePlanMatrixVersion")
-                    .setParameter("pricePlanMatrixVersion", ppmVersion).getResultList();
+                    .setParameter("pricePlanMatrixVersionId", ppmVersion.getId()).getResultList();
 
             if (returnPricePlanMatrixLine) {
                 ppmVersionDto.setLines(ppmLines.stream().map(PricePlanMatrixLineDto::new).collect(Collectors.toSet()));

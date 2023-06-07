@@ -9107,6 +9107,25 @@ public class OrderAdvancement extends ModuleScript {
             <column name="validation_label" type="varchar(255)" />
     	</addColumn>
 
+        <sql>INSERT INTO ${db.schema.adapted}offer_template_attribute
+             (id, attribute_id, offer_template_id, mandatory, read_only, sequence,
+              display, default_value, validation_label, validation_pattern, validation_type)
+            SELECT nextval('offer_template_attribute_seq') as next_id,att.id as attribute_id, coa.offer_template_id,
+                    att.mandatory, att.read_only, att.sequence,
+                    att.display, att.default_value, att.validation_label, att.validation_pattern, att.validation_type
+             FROM ${db.schema.adapted}cpq_attribute att left join ${db.schema.adapted}cpq_offer_attributes coa
+                 on att.id = coa.attribute_id
+             WHERE att.id = coa.attribute_id;</sql>
+        <sql>UPDATE ${db.schema.adapted}cpq_product_version_attributes cpva
+             SET display = att.display,
+                 read_only = att.read_only,
+                 mandatory = att.mandatory,
+                 default_value = att.default_value,
+                 validation_type = att.validation_type,
+                 validation_pattern = att.validation_pattern,
+                 validation_label = att.validation_label
+                 FROM ${db.schema.adapted}cpq_attribute att
+             WHERE cpva.attribute_id = att.id;</sql>
 		<dropColumn tableName="cpq_attribute">
 			<column name="mandatory"/>
 			<column name="read_only"/>
@@ -9297,6 +9316,10 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
     <changeSet id="#INTRD-2322-20211018" author="khalidHORRI" failOnError="true">
+    <dropForeignKeyConstraint baseTableName="dunning_policy_level" constraintName="fk_dunning_policy_level_dunning_level"/>
+    <dropForeignKeyConstraint baseTableName="dunning_level_dunning_action" constraintName="dunning_level_dunning_action_pkey_const"/>
+    <dropForeignKeyConstraint baseTableName="dunning_level_instance" constraintName="fk_dunning_level_instance_dunning_level"/>
+		
 		<dropTable tableName="dunning_level" />
         <createSequence sequenceName="dunning_level_seq" startValue="1" />
         <createTable tableName="dunning_level">
@@ -9883,7 +9906,8 @@ public class OrderAdvancement extends ModuleScript {
         <dropForeignKeyConstraint baseTableName="ar_customer_account" constraintName="fk_9i811xvc40e19t613cmpvwmu9" />
         <dropForeignKeyConstraint baseTableName="billing_billing_account" constraintName="fk_fky4ah96o9fohkx7u569phxxr" />
         <dropForeignKeyConstraint baseTableName="billing_user_account" constraintName="fk_alpl7r5p2nm43w0ro26ckcqnb" />
-
+        <dropForeignKeyConstraint baseTableName="com_contact" constraintName="fk9im60lcguu9v09p3dds2f4a3h" />
+        <dropForeignKeyConstraint baseTableName="crm_seller" constraintName="fkjscoerhfwoc4i65w3pxpls10o" />
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_rt_ua"/>
         <dropForeignKeyConstraint baseTableName="document" constraintName="document_account_entity_id_fk"/>
 
@@ -15725,18 +15749,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="allowance_code_id" type="bigint">
             </column>
 		</addColumn>
-        <update tableName="cat_discount_plan">
-			<column name="allowance_code_id" valueComputed="(SELECT id from untdid_5189_allowance_code where code = '95')"></column>
-			<where>allowance_code_id is null</where>
-		</update>
-        <addNotNullConstraint tableName="cat_discount_plan" columnName="allowance_code_id" />
-        <addForeignKeyConstraint baseTableName="cat_discount_plan"
-								 baseColumnNames="allowance_code_id"
-								 constraintName="fk_discount_plan_untdid_5189_allowance_code"
-								 referencedTableName="untdid_5189_allowance_code"
-								 referencedColumnNames="id"
-								 deferrable="false" initiallyDeferred="false"
-								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
 
     <changeSet id="#INTRD-12972" author="bourras">
@@ -15782,6 +15794,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />    
     </changeSet>
     
+   	<changeSet author="HichamHANINE" id="#INTRD-14562_20230308" failOnError="false">
+		<update tableName="ar_account_operation">
+			<column name="converted_amount" valueComputed="amount"/>
+			<column name="converted_amount_without_tax" valueComputed="amount_without_tax"/>
+			<column name="converted_tax_amount" valueComputed="tax_amount"/>
+			<column name="converted_matching_amount" valueComputed="matching_amount"/>
+			<column name="converted_un_matching_amount" valueComputed="un_matching_amount"/>
+			<column name="transactional_currency" valueComputed="(SELECT id FROM billing_trading_currency btc where currency_id = (SELECT currency_id from crm_provider where id = 1))"></column>
+			<where>transactional_currency is null</where>
+		</update>
+	</changeSet>
+
     <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari">
     	<dropNotNullConstraint columnName="created" tableName="billing_invoice_validation_rule"/>
     	<dropNotNullConstraint columnName="fail_status" tableName="billing_invoice_validation_rule"/>
@@ -15801,6 +15825,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <renameColumn tableName="accounting_journal_entry" oldColumnName="trading_amount" newColumnName="converted_amount"/>
     </changeSet>
     
+     <changeSet id="#INTRD-13867_20230220" author="aeljaouhari" failOnError="false">
+        <sql>
+	        update public.accounting_journal_entry set
+		        trading_currency = (select ac.currency_code from adm_currency ac, billing_trading_currency btc, billing_invoice inv, ar_account_operation aco
+		        	where ac.id = btc.currency_id and inv.trading_currency_id = btc.id and inv.id = aco.invoice_id and aco.id =  accounting_operation_id),
+		        converted_amount = (select inv.amount_without_tax from billing_invoice inv, ar_account_operation aco
+		        	where inv.id = aco.invoice_id and aco.id =  accounting_operation_id)
+        </sql>
+    </changeSet>
+
     <changeSet id="#INTRD-14264_20230222" author="TarikFA.">
     	<addColumn tableName="billing_rated_transaction">
     		<column name="origin_ratedtransaction_id" type="bigint" />
@@ -16073,7 +16107,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </changeSet>
  -->
 
-    <changeSet id="#INTRD-14381-202303202" author="bourras">
+    <changeSet id="#INTRD-14381-202303202" author="bourras" failOnError="false">
         <addColumn tableName="billing_invoice_configuration">
             <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
@@ -16111,6 +16145,684 @@ public class AgedBalanceReporting extends ReportExtractScript {
     		<where>applicable_on_discounted_price is null</where>
     	</update>
     </changeSet>
+    
+  	<changeSet id="#INTRD-15043_20230317" author="AdilElJaouhari">
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_net_to_pay" newColumnName="transactional_net_to_pay"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_raw_amount" newColumnName="transactional_raw_amount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_discount_amount" newColumnName="transactional_discount_amount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_without_tax_before_discount" newColumnName="transactional_amount_without_tax_before_discount"/>
+		<renameColumn tableName="billing_invoice" oldColumnName="converted_invoice_balance" newColumnName="transactional_invoice_balance"/>
+		
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_unit_price" newColumnName="transactional_unit_price"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_discount_amount" newColumnName="transactional_discount_amount"/>
+		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_raw_amount" newColumnName="transactional_raw_amount"/>
+		
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
+		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
+    </changeSet>
 
+    <changeSet id="#INTRD-14811_20200310" author="TarikFA.">
+        <preConditions onFail="MARK_RAN" >
+            <and>
+                <foreignKeyConstraintExists foreignKeyName="fk_origin_ratedtransaction_id" foreignKeyTableName="billing_rated_transaction" />
+            </and>
+        </preConditions>
+        <comment>Foreign key exist !!</comment>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+
+	<changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari">
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_net_to_pay" newColumnName="transactional_net_to_pay"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_tax_amount" newColumnName="transactional_tax_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_matching_amount" newColumnName="transactional_matching_amount"/>
+		<renameColumn tableName="ar_account_operation" oldColumnName="converted_un_matching_amount" newColumnName="transactional_un_matching_amount"/>
+		
+		<renameColumn tableName="billing_linked_invoices" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
+		
+		<renameColumn tableName="ar_matching_amount" oldColumnName="converted_matching_amount" newColumnName="transactional_matching_amount"/>
+		
+		<renameColumn tableName="ar_matching_code" oldColumnName="converted_matching_amount_credit" newColumnName="transactional_matching_amount_credit"/>
+		<renameColumn tableName="ar_matching_code" oldColumnName="converted_matching_amount_debit" newColumnName="transactional_matching_amount_debit"/>
+		
+        <renameColumn tableName="accounting_journal_entry" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
+        
+        <addColumn tableName="ar_account_operation">
+            <column name="transactional_payment_fees" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-14597_20230324" author="TarikFA.">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
+            <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14663_20230327" author="HatimO.">
+        <addColumn tableName="document">
+            <column name="document_version" type="int4" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-14743_20230313" author="TarikFA.">
+        <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
+            <column name="event_key"/>
+        </createIndex>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14743_20230315" author="TarikFA.">
+        <sql>CREATE INDEX rt_customer_id_contract_index ON ${db.schema.adapted}cpq_contract (customer_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_billing_account_id_contract_index ON ${db.schema.adapted}cpq_contract (billing_account_id) where status='ACTIVE'</sql>
+        <sql>CREATE INDEX rt_customer_account_contract_index ON ${db.schema.adapted}cpq_contract (customer_account_id) where status='ACTIVE'</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14743_20230316" author="TarikFA.">
+        <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
+        <sql>CREATE INDEX cpq_price_plan_matrix_line__ppm_version_id__idx ON cpq_price_plan_matrix_line(ppm_version_id)</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-14966_20230329" author="HatimO.">
+        <addUniqueConstraint columnNames="code, document_version" constraintName="document_code_version_key" tableName="document" />
+    </changeSet>
+
+    <changeSet id="#5882_20220325" author="MohammedELAZZOUZI">
+     	<addColumn tableName="billing_invoice_line">
+            <column name="user_account_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+   	</changeSet> 
+
+    <changeSet id="#INTRD-14743_20230331" author="AndriusKarpavicius">
+        <alterSequence sequenceName="rating_cdr_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="rating_edr_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="billing_wallet_operation_seq" incrementBy="5000"/>
+        <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="5000"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-15146_20230406" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="billing_accounting_article"
+                                  constraintName="billing_accounting_article_open_order_id_fk"/>
+        <dropColumn tableName="billing_accounting_article" columnName="open_order_id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="discounted_amount" type="numeric(23,12)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius">
+        <addColumn tableName="meveo_job_instance">
+            <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
+        </addColumn>
+        <sql>update ${db.schema.adapted}meveo_job_instance set cluster_behavior = 'RUN_IN_PARALLEL' where single_node=0</sql>
+        <dropColumn tableName="meveo_job_instance">
+            <column name="single_node" />
+        </dropColumn>
+        <addColumn tableName="job_execution">
+            <column name="parent_job_result_id" type="bigint" />
+        </addColumn>
+    </changeSet>
+
+   
+    <changeSet id="#INTRD-15233_20230425" author="AndriusKarpavicius">
+        <sql>CREATE INDEX cpq_contract_item_code_index ON ${db.schema.adapted}cpq_contract_item(lower(code));</sql>
+        <sql>CREATE INDEX cpq_contract_item_contract_index ON ${db.schema.adapted}cpq_contract_item(cpq_contract_id);</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-15729_20230425" author="AndriusKarpavicius">
+        <dropIndex tableName="rating_cdr" indexName="rating_cdr_index"/>
+        <sql>CREATE INDEX rating_cdr_ob_index ON ${db.schema.adapted}rating_cdr(origin_batch)</sql>
+        <sql>CREATE INDEX rating_cdr_or_index ON ${db.schema.adapted}rating_cdr(origin_record)</sql>
+        <dropIndex tableName="rating_edr" indexName="rating_edr_index"/>
+        <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_record)</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-15733_20230425" author="AndriusKarpavicius">
+        <sql>CREATE INDEX rating_edr_wo_index ON ${db.schema.adapted}rating_edr(wallet_operation_id)</sql>
+    </changeSet>
+	
+	<changeSet author="aelmalki" id="#INTRD-15664-20230501">
+        <createSequence sequenceName="ar_unmatching_code_seq"/>
+        <createSequence sequenceName="ar_unmatching_amount_seq"/>
+		
+        <createTable tableName="ar_unmatching_code">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_unmatching_code_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="unmatching_amount_credit" type="numeric(23, 12)" />
+            <column name="unmatching_amount_debit" type="numeric(23, 12)" />
+			<column name="transactional_unmatching_amount_credit" type="numeric(23, 12)" />
+            <column name="transactional_unmatching_amount_debit" type="numeric(23, 12)" />
+            <column name="unmatching_date" type="date" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+		
+		<createTable tableName="ar_unmatching_amount">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_unmatching_amount_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="unmatching_amount" type="numeric(23, 12)" />
+            <column name="transactional_unmatching_amount" type="numeric(23, 12)" />
+
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="account_operation_id" type="bigint" />
+            <column name="unmatching_code_id" type="bigint" />
+        </createTable>
+		
+		
+		<addForeignKeyConstraint baseColumnNames="account_operation_id" baseTableName="ar_unmatching_amount" constraintName="fk_eurt0sf36q7w68zx58bn" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+			
+		<addForeignKeyConstraint baseColumnNames="unmatching_code_id" baseTableName="ar_unmatching_amount" constraintName="fk_qwvfl1elw6vgzi7vp5dc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_unmatching_code" />
+			
+    </changeSet>
+    
+  	<changeSet id="#INTRD-15841_20230502" author="AdilElJaouhari">
+        <addColumn tableName="billing_invoice_type">
+            <column name="description_i18n" type="${type.json}"></column>
+        </addColumn>
+    </changeSet>
+
+	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari">
+        <dropNotNullConstraint tableName="billing_tax" columnName="taxation_category_id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-15881_20230504" author="zelmeliani">
+        <addColumn tableName="finance_settings">
+            <column name="enable_price_list" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+    
+  	<changeSet id="#INTRD-15899_20230505" author="aelmalki">
+        <addColumn tableName="billing_billing_account">
+            <column name="exemption_reason" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+
+	<changeSet id="#INTRD-15899_20230505-taxation-FK" author="aelmalki">
+     	<addColumn tableName="billing_tax_category">
+            <column name="untdid_taxation_category_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="untdid_taxation_category_id" baseTableName="billing_tax_category" constraintName="fk_untdid_taxation_category"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" 
+			referencedColumnNames="id" referencedTableName="untdid_5305_taxation_category" />
+   	</changeSet>
+
+   	
+   	
+    <changeSet id="#INTRD-15849_20230509" author="TarikFA.">
+    		<createTable tableName="billing_seller_media">
+    			<column name="seller_id" type="bigint" />
+    			<column name="media_id" type="bigint" />
+    		</createTable>
+       	 <addUniqueConstraint columnNames="seller_id, media_id" constraintName="seller_id_media_id_unique_key" tableName="billing_seller_media" />
+        <addForeignKeyConstraint baseColumnNames="seller_id" 
+        						 baseTableName="billing_seller_media" 
+        						 constraintName="fk_media_seller_id" 
+        						 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            					 onUpdate="NO ACTION" referencedColumnNames="id" 
+            					 referencedTableName="crm_seller" />
+        <addForeignKeyConstraint baseColumnNames="media_id" 
+        						 baseTableName="billing_seller_media" 
+        						 constraintName="fk_seller_media_id" 
+        						 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            					 onUpdate="NO ACTION" referencedColumnNames="id" 
+            					 referencedTableName="cpq_media" />
+    </changeSet>
+
+
+    <changeSet id="#INTRD-16031_20230508" author="zelmeliani">
+        <createSequence sequenceName="price_list_seq" startValue="1" />
+
+        <createTable tableName="price_list">
+	    	<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="price_list_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(300)" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}" />
+            <column name="valid_from" type="datetime" />
+            <column name="valid_until" type="datetime" />
+            <column name="application_start_date" type="datetime" />
+            <column name="application_end_date" type="datetime" />
+            <column name="status" type="varchar(50)" />
+        </createTable>
+    </changeSet>
+
+	<changeSet id="#INTRD-15823_20230510" author="AdilElJaouhari">
+		<createSequence sequenceName="cat_trading_discount_plan_item_seq" startValue="1" />
+		<createTable tableName="cat_trading_discount_plan_item">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"	primaryKeyName="cat_trading_discount_plan_item_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="discount_plan_item_id" type="bigint" />
+			<column name="transactional_discount_value" type="numeric(23, 12)" />
+			<column name="trading_currency_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="rate" type="numeric(23, 12)" />
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="discount_plan_item_id"
+			baseTableName="cat_trading_discount_plan_item"
+			constraintName="cat_trading_discount_plan_item_fk" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id"
+			referencedTableName="cat_discount_plan_item" />
+		<addForeignKeyConstraint
+			baseColumnNames="trading_currency_id"
+			baseTableName="cat_trading_discount_plan_item"
+			constraintName="cat_trading_discount_plan_trading_currency_fk"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="billing_trading_currency" />
+	</changeSet>
+
+    <changeSet id="#INTRD-16039_20230512" author="a.rouaguebe">
+
+        <renameSequence oldSequenceName="price_list_seq" newSequenceName="cat_price_list_seq" />
+        <renameTable oldTableName="price_list" newTableName="cat_price_list" />
+
+        <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
+        <createTable tableName="cat_price_list_line">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_price_list_line_pk" />
+            </column>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}"/>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(300)" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="price_list_id" type="bigint" />
+            <column name="offer_category_id" type="bigint" />
+            <column name="offer_template_id" type="bigint" />
+            <column name="product_id" type="bigint" />
+            <column name="charge_template_id" type="bigint" />
+            <column name="price_plan_id" type="bigint" />
+            <column name="price_list_type" type="varchar(25)" />
+            <column name="application_el" type="varchar(255)" />
+            <column name="rate" type="numeric(23, 12)" />
+        </createTable>
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_offer_category"
+                referencedTableName="cat_offer_template_category"
+                referencedColumnNames="id"
+                baseColumnNames="offer_category_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_offer_template"
+                referencedTableName="cat_offer_template"
+                referencedColumnNames="id"
+                baseColumnNames="offer_template_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_cpq_product"
+                referencedTableName="cpq_product"
+                referencedColumnNames="id"
+                baseColumnNames="product_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_charge_template"
+                referencedTableName="cat_charge_template"
+                referencedColumnNames="id"
+                baseColumnNames="charge_template_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_price_plan"
+                referencedTableName="cat_price_plan_matrix"
+                referencedColumnNames="id"
+                baseColumnNames="price_plan_id"
+                baseTableName="cat_price_list_line" />
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id"
+                baseColumnNames="price_list_id"
+                baseTableName="cat_price_list_line" />
+    </changeSet>
+
+	<changeSet id="#INTRD-15823_20230510_rename" author="AdilElJaouhari">
+		<renameColumn tableName="cat_trading_discount_plan_item" oldColumnName="transactional_discount_value" newColumnName="trading_discount_value"/>
+	</changeSet>
+	
+	<changeSet id="#INTRD-16219_20230511" author="aelmalki">
+        <addColumn tableName="ar_account_operation">
+            <column name="error_detail" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+
+	<changeSet id="#INTRD-16166_20230512" author="aelmalki">
+        <addColumn tableName="ar_payment_token">
+            <column name="mandate_change_action" type="varchar(20)" defaultValue="NONE">
+                <constraints nullable="false" />
+			</column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-16040_20230516" author="a.rouaguebe">
+        <addColumn tableName="cat_price_list_line">
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="product_line_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                constraintName="fk_pli_line_product_line"
+                referencedTableName="cpq_product_line"
+                referencedColumnNames="id"
+                baseColumnNames="product_line_id"
+                baseTableName="cat_price_list_line" />
+    </changeSet>
+    <changeSet id="#INTRD-16036_20230516" author="zelmeliani" >
+        <createTable tableName="cat_price_list_customer_brand">
+            <column name="price_list_id" type="bigint" />
+            <column name="customer_brand_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, customer_brand_id" constraintName="cat_price_list_customer_brand_pkey" tableName="cat_price_list_customer_brand" />
+
+        <createTable tableName="cat_price_list_customer_category">
+            <column name="price_list_id" type="bigint" />
+            <column name="customer_category_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, customer_category_id" constraintName="cat_price_list_customer_category_pkey" tableName="cat_price_list_customer_category" />
+
+        <createTable tableName="cat_price_list_credit_category">
+            <column name="price_list_id" type="bigint" />
+            <column name="credit_category_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, credit_category_id" constraintName="cat_price_list_credit_category_pkey" tableName="cat_price_list_credit_category" />
+
+        <createTable tableName="cat_price_list_country">
+            <column name="price_list_id" type="bigint" />
+            <column name="country_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, country_id" constraintName="cat_price_list_country_pkey" tableName="cat_price_list_country" />
+
+        <createTable tableName="cat_price_list_currency">
+            <column name="price_list_id" type="bigint" />
+            <column name="currency_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, currency_id" constraintName="cat_price_list_currency_pkey" tableName="cat_price_list_currency" />
+
+        <createTable tableName="cat_price_list_legal_entity">
+            <column name="price_list_id" type="bigint" />
+            <column name="legal_entity_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, legal_entity_id" constraintName="cat_price_list_legal_entity_pkey" tableName="cat_price_list_legal_entity" />
+
+        <createTable tableName="cat_price_list_payment_method">
+            <column name="price_list_id" type="bigint" />
+            <column name="payment_method_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, payment_method_id" constraintName="cat_price_list_payment_method_pkey" tableName="cat_price_list_payment_method" />
+
+        <createTable tableName="cat_price_list_seller">
+            <column name="price_list_id" type="bigint" />
+            <column name="seller_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="price_list_id, seller_id" constraintName="cat_price_list_seller_pkey" tableName="cat_price_list_seller" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_customer_brand"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_customer_brand_pli_fk"
+			referencedTableName="cat_price_list"
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_customer_brand"
+			baseColumnNames="customer_brand_id"
+			constraintName="cat_price_list_customer_brand_cb_fk"
+			referencedTableName="crm_customer_brand"
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_customer_category"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_customer_category_pli_fk"
+			referencedTableName="cat_price_list"
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_customer_category"
+			baseColumnNames="customer_category_id"
+			constraintName="cat_price_list_customer_category_cc_fk"
+			referencedTableName="crm_customer_category"
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_credit_category"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_credit_category_pli_fk"
+			referencedTableName="cat_price_list"
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_credit_category"
+			baseColumnNames="credit_category_id"
+			constraintName="cat_price_list_credit_category_cc_fk"
+			referencedTableName="ar_credit_category"
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_country"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_country_pli_fk"
+			referencedTableName="cat_price_list"
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_country"
+			baseColumnNames="country_id"
+			constraintName="cat_price_list_country_c_fk"
+			referencedTableName="adm_country"
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_currency"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_currency_pli_fk"
+			referencedTableName="cat_price_list"
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_currency"
+			baseColumnNames="currency_id"
+			constraintName="cat_price_list_currency_c_fk"
+			referencedTableName="adm_currency"
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_legal_entity"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_legal_entity_pli_fk"
+			referencedTableName="cat_price_list"
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_legal_entity"
+			baseColumnNames="legal_entity_id"
+			constraintName="cat_price_list_legal_entity_le_fk"
+			referencedTableName="adm_title"
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_payment_method"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_payment_method_pli_fk"
+			referencedTableName="cat_price_list"
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_payment_method"
+			baseColumnNames="payment_method_id"
+			constraintName="cat_price_list_payment_method_pm_fk"
+			referencedTableName="ar_payment_token"
+            referencedColumnNames="id" />
+
+        <addForeignKeyConstraint
+			baseTableName="cat_price_list_seller"
+			baseColumnNames="price_list_id"
+			constraintName="cat_price_list_seller_pli_fk"
+			referencedTableName="cat_price_list"
+            referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			baseTableName="cat_price_list_seller"
+			baseColumnNames="seller_id"
+			constraintName="cat_price_list_seller_s_fk"
+			referencedTableName="crm_seller"
+            referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-16256_20230515" author="ZBariki">
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_amount_without_tax"
+                      newColumnName="transactional_amount_without_tax"/>
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_amount_with_tax"
+                      newColumnName="transactional_amount_with_tax"/>
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_amount_tax"
+                      newColumnName="transactional_amount_tax"/>
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_unit_amount_without_tax"
+                      newColumnName="transactional_unit_amount_without_tax"/>
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_unit_amount_with_tax"
+                      newColumnName="transactional_unit_amount_with_tax"/>
+        <renameColumn tableName="billing_wallet_operation" oldColumnName="converted_unit_amount_tax"
+                      newColumnName="transactional_unit_amount_tax"/>
+
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_amount_without_tax"
+                      newColumnName="transactional_amount_without_tax"/>
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_amount_with_tax"
+                      newColumnName="transactional_amount_with_tax"/>
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_amount_tax"
+                      newColumnName="transactional_amount_tax"/>
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_unit_amount_without_tax"
+                      newColumnName="transactional_unit_amount_without_tax"/>
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_unit_amount_with_tax"
+                      newColumnName="transactional_unit_amount_with_tax"/>
+        <renameColumn tableName="billing_rated_transaction" oldColumnName="converted_unit_amount_tax"
+                      newColumnName="transactional_unit_amount_tax"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-16203_20230519_ba_pricelist" author="a.rouaguebe">
+        <addColumn tableName="billing_billing_account">
+            <column name="price_list_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="billing_billing_account"
+                baseColumnNames="price_list_id"
+                constraintName="fk_ba_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-16374_20230519" author="zelmeliani">
+        <dropPrimaryKey constraintName="cat_price_list_payment_method_pkey" tableName="cat_price_list_payment_method" />
+        <dropForeignKeyConstraint baseTableName="cat_price_list_payment_method" constraintName="cat_price_list_payment_method_pm_fk" />
+        <renameColumn tableName="cat_price_list_payment_method" oldColumnName="payment_method_id" newColumnName="payment_method"/>
+        <modifyDataType tableName="cat_price_list_payment_method" columnName="payment_method" newDataType="varchar(50)"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-15044_20230517" author="AdilElJaouhari">
+    	<renameTable newTableName="cpq_trading_price_plan_version" oldTableName="cpq_converted_price_plan_version"/>
+    	<renameColumn tableName="cpq_trading_price_plan_version" oldColumnName="converted_price" newColumnName="trading_price"/>
+    	<renameSequence newSequenceName="cpq_trading_price_plan_version_seq" oldSequenceName="cpq_converted_price_plan_version_seq" />
+    	<renameTable newTableName="cpq_trading_price_plan_matrix_line" oldTableName="cpq_converted_price_plan_matrix_line"/>
+    	<renameColumn tableName="cpq_trading_price_plan_matrix_line" oldColumnName="converted_value" newColumnName="trading_value"/>
+    	<renameSequence newSequenceName="cpq_trading_price_plan_matrix_line_sq" oldSequenceName="cpq_converted_price_plan_matrix_line_sq" />
+	</changeSet>
+
+
+
+    <changeSet id="#INTRD-16396_20230522_pli_quote" author="a.rouaguebe">
+        <addColumn tableName="cpq_quote_version">
+            <column name="price_list_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="cpq_quote_version"
+                baseColumnNames="price_list_id"
+                constraintName="fk_cpq_quote_version_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+        <addColumn tableName="cpq_commercial_order">
+            <column name="price_list_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="cpq_commercial_order"
+                baseColumnNames="price_list_id"
+                constraintName="fk_cpq_commercial_order_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+        <addColumn tableName="billing_subscription">
+            <column name="price_list_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="billing_subscription"
+                baseColumnNames="price_list_id"
+                constraintName="fk_billing_subscription_price_list"
+                referencedTableName="cat_price_list"
+                referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="INTRD-15501_20230413" author="ThangNguyen">
+    <addColumn tableName="billing_billing_run">
+        <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+    </addColumn>
+</changeSet>
+
+    <changeSet id="#INTRD-16366_20230529" author="zelmeliani">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="price_list_line_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint
+                constraintName="fk_billing_wallet_operation_pli_line"
+                referencedTableName="cat_price_list_line"
+                referencedColumnNames="id"
+                baseColumnNames="price_list_line_id"
+                baseTableName="billing_wallet_operation" />
+    </changeSet>
 
 </databaseChangeLog>

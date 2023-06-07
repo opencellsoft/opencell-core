@@ -90,7 +90,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
      * Number of Rated transactions that fall in this aggregate
      */
     @Column(name = "item_number")
-    protected Integer itemNumber;
+    protected Integer itemNumber=0;
 
     /**
      * Description
@@ -162,23 +162,23 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     private boolean conversionFromBillingCurrency = false;
 
     /**
-     * Aggregate converted amount without tax
+     * Aggregate transactional amount without tax
      */
-    @Column(name = "converted_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    protected BigDecimal convertedAmountWithoutTax = ZERO;
+    @Column(name = "transactional_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal transactionalAmountWithoutTax = ZERO;
 
     /**
-     * Aggregate converted tax amount
+     * Aggregate transactional tax amount
      */
-    @Column(name = "converted_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    protected BigDecimal convertedAmountTax = ZERO;
+    @Column(name = "transactional_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal transactionalAmountTax = ZERO;
 
     /**
-     * Aggregate converted amount with tax
+     * Aggregate transactional amount with tax
      */
-    @Column(name = "converted_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    protected BigDecimal convertedAmountWithTax = ZERO;
-
+    @Column(name = "transactional_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal transactionalAmountWithTax = ZERO;
+    
     public TradingCurrency getTradingCurrency() {
         return tradingCurrency;
     }
@@ -317,47 +317,47 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	}
 
 	/**
-	 * @return the convertedAmountWithoutTax
+	 * @return the transactionalAmountWithoutTax
 	 */
-	public BigDecimal getConvertedAmountWithoutTax() {
-		return convertedAmountWithoutTax;
+	public BigDecimal getTransactionalAmountWithoutTax() {
+		return transactionalAmountWithoutTax;
 	}
 
 	/**
-	 * @param convertedAmountWithoutTax the convertedAmountWithoutTax to set
+	 * @param transactionalAmountWithoutTax the transactionalAmountWithoutTax to set
 	 */
-	public void setConvertedAmountWithoutTax(BigDecimal convertedAmountWithoutTax) {
-		this.convertedAmountWithoutTax = convertedAmountWithoutTax;
+	public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+		this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
 	}
 
 	/**
-	 * @return the convertedAmountTax
+	 * @return the transactionalAmountTax
 	 */
-	public BigDecimal getConvertedAmountTax() {
-		return convertedAmountTax;
+	public BigDecimal getTransactionalAmountTax() {
+		return transactionalAmountTax;
 	}
 
 	/**
-	 * @param convertedAmountTax the convertedAmountTax to set
+	 * @param transactionalAmountTax the transactionalAmountTax to set
 	 */
-	public void setConvertedAmountTax(BigDecimal convertedAmountTax) {
-		this.convertedAmountTax = convertedAmountTax;
+	public void setTransactionalAmountTax(BigDecimal transactionalAmountTax) {
+		this.transactionalAmountTax = transactionalAmountTax;
 	}
 
 	/**
-	 * @return the convertedAmountWithTax
+	 * @return the transactionalAmountWithTax
 	 */
-	public BigDecimal getConvertedAmountWithTax() {
-		return convertedAmountWithTax;
+	public BigDecimal getTransactionalAmountWithTax() {
+		return transactionalAmountWithTax;
 	}
 
 	/**
-	 * @param convertedAmountWithTax the convertedAmountWithTax to set
+	 * @param transactionalAmountWithTax the transactionalAmountWithTax to set
 	 */
-	public void setConvertedAmountWithTax(BigDecimal convertedAmountWithTax) {
-		this.convertedAmountWithTax = convertedAmountWithTax;
+	public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+		this.transactionalAmountWithTax = transactionalAmountWithTax;
 	}
-
+	
 	public void addAmount(BigDecimal amountToAdd) {
         if (amount == null) {
             amount = new BigDecimal("0");
@@ -419,6 +419,60 @@ public abstract class InvoiceAgregate extends AuditableEntity {
         }
     }
 
+    public void addTransactionAmountWithTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountWithTax == null) {
+            	transactionalAmountWithTax = new BigDecimal("0");
+            }
+            transactionalAmountWithTax = transactionalAmountWithTax.add(deltaAmount);
+        }
+    }
+
+    public void subtractTransactionAmountWithTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountWithTax == null) {
+            	transactionalAmountWithTax = new BigDecimal("0");
+            }
+            transactionalAmountWithTax = transactionalAmountWithTax.subtract(deltaAmount);
+        }
+    }
+
+    public void addTransactionAmountWithoutTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountWithoutTax == null) {
+            	transactionalAmountWithoutTax = new BigDecimal("0");
+            }
+            transactionalAmountWithoutTax = transactionalAmountWithoutTax.add(deltaAmount);
+        }
+    }
+
+    public void subtractTransactionAmountWithoutTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountWithoutTax == null) {
+            	transactionalAmountWithoutTax = new BigDecimal("0");
+            }
+            transactionalAmountWithoutTax = transactionalAmountWithoutTax.subtract(deltaAmount);
+        }
+    }
+
+    public void addTransactionAmountTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountTax == null) {
+            	transactionalAmountTax = new BigDecimal("0");
+            }
+            transactionalAmountTax = transactionalAmountTax.add(deltaAmount);
+        }
+    }
+
+    public void subtractTransactionAmountTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (transactionalAmountTax == null) {
+            	transactionalAmountTax = new BigDecimal("0");
+            }
+            transactionalAmountTax = transactionalAmountTax.subtract(deltaAmount);
+        }
+    }
+
     public void resetAmounts() {
         setAmount(new BigDecimal(0));
         setAmountTax(new BigDecimal(0));
@@ -434,14 +488,11 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @PrePersist
     @PreUpdate
     public void prePersistOrUpdate() {
-        if (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency) {
+        if (!this.useSpecificPriceConversion) {
             BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
-            this.convertedAmountWithoutTax = this.amountWithoutTax != null
-                    ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
-            this.convertedAmountTax = this.amountTax != null
-                    ? this.amountTax.multiply(appliedRate) : ZERO;
-            this.convertedAmountWithTax = this.amountWithTax != null
-                    ? this.amountWithTax.multiply(appliedRate) : ZERO;
+            this.transactionalAmountWithoutTax = this.amountWithoutTax != null ? this.amountWithoutTax.multiply(appliedRate) : ZERO;
+            this.transactionalAmountTax = this.amountTax != null ? this.amountTax.multiply(appliedRate) : ZERO;
+            this.transactionalAmountWithTax = this.amountWithTax != null ? this.amountWithTax.multiply(appliedRate) : ZERO;
         }
     }
 }

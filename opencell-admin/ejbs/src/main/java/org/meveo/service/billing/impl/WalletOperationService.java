@@ -997,5 +997,25 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     	}
     	super.create(walletOperation);
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<WalletOperation> findByDiscountedWo(Long discountedWalletOperation) {
+    	List<WalletOperation> result = new ArrayList<>();
+        try {
+        	result=getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.discountedWalletOperation = :discountedWalletOperation")
+                    .setParameter("discountedWalletOperation", discountedWalletOperation)
+                    .getResultList();
+        } catch (NoResultException exception) {
+        	return Collections.emptyList();
+        }
+        return result;
+    }
 
+    public void cancelDiscountedWalletOperation(List<Long> ids) {
+        if(org.apache.commons.collections.CollectionUtils.isNotEmpty(ids)) {
+            getEntityManager().createNamedQuery("WalletOperation.cancelDisountedWallet").setParameter("walletOperationIds", ids).executeUpdate();
+        }else{
+            log.warn("can not cancel discounted wallet operation, cause the list is empty");
+        }
+    }
 }

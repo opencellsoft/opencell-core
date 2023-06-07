@@ -1,0 +1,125 @@
+{
+	"info": {
+		"_postman_id": "753d8f7e-9ebe-45d7-9f18-4a87de7f0740",
+		"name": "INTRD-10867 - Multi currency for fixed amount discounts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23793433"
+	},
+	"item": [
+		{
+			"name": "Create TradingDiscountPlanItem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"discountPlanItemId\": 24,\n    \"tradingCurrency\": {\n        \"id\":\"5\"\n    },\n    \"tradingDiscountValue\": 334,\n    \"rate\": 1.5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/catalog/discountPlanItem/tradingDiscountPlanItem",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"catalog",
+						"discountPlanItem",
+						"tradingDiscountPlanItem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update TradingDiscountPlanItem",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"discountPlanItemId\": 24,\n    \"tradingCurrency\": {\n        \"id\":\"5\"\n    },\n    \"tradingDiscountValue\": 320,\n    \"rate\": 1.2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/catalog/discountPlanItem/tradingDiscountPlanItem/1",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"catalog",
+						"discountPlanItem",
+						"tradingDiscountPlanItem",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get TradingDiscountPlanItem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/v2/generic/all/tradingDiscountPlanItem",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"v2",
+						"generic",
+						"all",
+						"tradingDiscountPlanItem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete TradingDiscountPlanItem",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/catalog/discountPlanItem/tradingDiscountPlanItem/2",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"catalog",
+						"discountPlanItem",
+						"tradingDiscountPlanItem",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

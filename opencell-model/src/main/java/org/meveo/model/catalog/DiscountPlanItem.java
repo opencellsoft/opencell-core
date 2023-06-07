@@ -35,6 +35,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
@@ -76,7 +77,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
             @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 		@NamedQuery(name = "DiscountPlanItem.getFixedDiscountPlanItemsByDP", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled is false and dpi.discountPlan.id=:discountPlanId AND dpi.discountPlanItemType='FIXED' order by dpi.priority ASC, id", hints = {
 	            @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-	    @NamedQuery(name = "DiscountPlanItem.getMaxSequence", query = "SELECT max(dpi.sequence) from DiscountPlanItem dpi where dpi.discountPlan.id=:discountPlanId")
+	    @NamedQuery(name = "DiscountPlanItem.getMaxSequence", query = "SELECT max(dpi.sequence) from DiscountPlanItem dpi where dpi.discountPlan.id=:discountPlanId"),
+		@NamedQuery(name = "DiscountPlanItem.findBySequence", query = "Select dpi from DiscountPlanItem  dpi where  dpi.discountPlan.id=:discountPlanId and dpi.sequence=:sequence")
 })
 public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity {
 
@@ -174,7 +176,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
 
-	  /**
+	/**
      * list of accountingArticle attached
      */
     @ManyToMany(fetch = FetchType.LAZY)
@@ -223,6 +225,12 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	@Column(name = "description", length = 255)
 	private String description;
+	
+	/**
+     * list of trading discount plan item attached
+     */
+	@OneToMany(mappedBy = "discountPlanItem", fetch = FetchType.LAZY)
+    private Set<TradingDiscountPlanItem> tradingDiscountPlanItems = new HashSet<>();
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -500,9 +508,13 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 		return finalSequence;
 	
 	}
-	
-	
-	
-	
+
+	public Set<TradingDiscountPlanItem> getTradingDiscountPlanItems() {
+		return tradingDiscountPlanItems;
+	}
+
+	public void setTradingDiscountPlanItems(Set<TradingDiscountPlanItem> tradingDiscountPlanItems) {
+		this.tradingDiscountPlanItems = tradingDiscountPlanItems;
+	}
 
 }

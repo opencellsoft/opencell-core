@@ -26,7 +26,12 @@ import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.ExchangeRate;
+import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
@@ -36,6 +41,7 @@ import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGatewayRumSequence;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.sequence.Sequence;
@@ -48,7 +54,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
-import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -68,6 +74,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.String.valueOf;
 import static java.time.Instant.now;
@@ -143,14 +150,30 @@ public class ServiceSingleton {
     @Inject
     private JobInstanceService jobInstanceService;
 
+    @Inject
+    private FinanceSettingsService financeSettingsService;
+
     private static Map<Character, Character> mapper = Map.of('0', 'Q',
             '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
             'V', '6', 'W', '7', 'X', '8', 'Y', '9', 'Z');
 
-    private static final String GENERATED_CODE_KEY = "generatedCode";
+    private static Map<Long, AtomicInteger> invoicingTempNumber = new HashMap<>();
+    
+	private static final String GENERATED_CODE_KEY = "generatedCode";
 
     private Random random = new SecureRandom();
 
+    public String getTempInvoiceNumber(Long billingRunId){
+    	// #MEL when remove brs from this map?
+    	if(!invoicingTempNumber.containsKey(billingRunId)) {
+    		AtomicInteger counter = new AtomicInteger(0);
+    		invoicingTempNumber.put(billingRunId, counter);
+    	}
+    	AtomicInteger counter = invoicingTempNumber.get(billingRunId);
+    	final String index = ""+counter.incrementAndGet();
+    	return ""+billingRunId+"-"+("000000000"+index).substring(index.length());
+    }
+    
 
     /**
      * Gets the sequence from the seller or its parent hierarchy. Otherwise return the sequence from invoiceType.
@@ -598,10 +621,13 @@ public class ServiceSingleton {
     }
 
     public void triggersJobs() {
-        Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob", "TriggerReminderDunningLevel_Job").stream()
-                .map(jobInstanceService::findByCode)
-                .filter(Objects::nonNull)
-                .forEach(jibInstance -> jobExecutionService.executeJob(jibInstance, null, JobLauncherEnum.TRIGGER));
+    	FinanceSettings lastOne = financeSettingsService.getFinanceSetting();
+        if (lastOne != null && lastOne.isActivateDunning()) {
+        	Arrays.asList("DunningCollectionPlan_Job", "TriggerCollectionPlanLevelsJob", "TriggerReminderDunningLevel_Job").stream()
+        	.map(jobInstanceService::findByCode)
+        	.filter(Objects::nonNull)
+        	.forEach(jibInstance -> jobExecutionService.executeJob(jibInstance, null, JobLauncherEnum.TRIGGER));
+        }
     }
 
     /**
@@ -628,7 +654,7 @@ public class ServiceSingleton {
      * @return generated code
      */
     public String getGenericCode(CustomGenericEntityCode customGenericEntityCode) {
-        return getGenericCode(customGenericEntityCode, null);
+        return getGenericCode(customGenericEntityCode, null, true, null);
     }
 
     /**
@@ -641,19 +667,23 @@ public class ServiceSingleton {
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public String getGenericCode(CustomGenericEntityCode customGenericEntityCode, String prefixOverride) {
+    public String getGenericCode(CustomGenericEntityCode customGenericEntityCode, String prefixOverride, boolean updateSequence, String formatEL) throws BusinessException {
         Sequence sequence = customGenericEntityCode.getSequence();
         String generatedCode = null;
         Map<Object, Object> context = new HashMap<>();
         context.put("entity", customGenericEntityCode.getEntityClass());
+
         if (sequence.getSequenceType() == SEQUENCE) {
-            generatedCode = leftPad(valueOf(sequenceService.generateSequence(sequence).getCurrentNumber()),
-                    sequence.getSequenceSize(), '0');
+            Long lCurrentNumber = sequence.getCurrentNumber();
+            //Do not update sequence if we test only generated code
+            if(updateSequence) {
+                lCurrentNumber = sequenceService.generateSequence(sequence).getCurrentNumber();
+            }
+            generatedCode = leftPad(valueOf(lCurrentNumber), sequence.getSequenceSize(), '0');
         }
 
         if(sequence.getSequenceType() == NUMERIC) {
-            generatedCode =
-                    leftPad((valueOf(random.nextLong()) + now().toEpochMilli()), sequence.getSequenceSize(), '0');
+            generatedCode = leftPad((valueOf(random.nextLong()) + now().toEpochMilli()), sequence.getSequenceSize(), '0');
         }
 
         if(sequence.getSequenceType() == ALPHA_UP) {
@@ -675,9 +705,11 @@ public class ServiceSingleton {
             Generex generex = new Generex(sequence.getSequencePattern());
             generatedCode = generex.random(sequence.getSequenceSize());
         }
+
         context.put(GENERATED_CODE_KEY, generatedCode);
+        String storedFormatEL = formatEL != null ? formatEL : customGenericEntityCode.getFormatEL();
         return prefixOverride == null || prefixOverride.isBlank()
-                ? formatCode(ofNullable(customGenericEntityCode.getFormatEL()).orElse(""), context)
+                ? formatCode(ofNullable(storedFormatEL).orElse(""), context)
                 : prefixOverride + generatedCode;
     }
 
@@ -692,7 +724,7 @@ public class ServiceSingleton {
         return character >= '0' && character <= '9' ? mapper.get(character) : character;
     }
 
-    private String formatCode(String formatEL, Map<Object, Object> context) {
+    private String formatCode(String formatEL, Map<Object, Object> context) throws BusinessException {
         if (formatEL.isEmpty()) {
             return (String) context.get(GENERATED_CODE_KEY);
         }

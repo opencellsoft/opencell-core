@@ -17,14 +17,26 @@
  */
 package org.meveo.service.billing.impl;
 
-import static java.math.BigDecimal.*;
+import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -57,7 +69,27 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingProcessTypesEnum;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunAutomaticActionEnum;
+import org.meveo.model.billing.BillingRunList;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.BillingRunTypeEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceValidationStatusEnum;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.PostInvoicingReportsDTO;
+import org.meveo.model.billing.PreInvoicingReportsDTO;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -685,9 +717,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                         : orderService.findOrders(billingCycle);
             }
 
-            return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+            return v11Process? billingAccountService.findBillingAccountsToInvoice(billingRun) : billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 
         } else {
+        	if(v11Process) {
+        		return billingAccountService.findBillingAccountsToInvoice(billingRun);
+        	}
             if(billingRun.isExceptionalBR() &&
                     ((billingRun.getExceptionalILIds() != null && billingRun.getExceptionalILIds().isEmpty()) ||
                             (billingRun.getExceptionalRTIds() != null && billingRun.getExceptionalRTIds().isEmpty()))) {
@@ -708,6 +743,20 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             return result;
         }
     }
+    
+	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
+		Map<String, Object> filters = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
+		if(filters==null && billingRun.getBillingCycle() != null) {
+			filters=new TreeMap<>();
+			filters.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
+		} 
+		if(filters==null){
+			throw new BusinessException("No filter found for billingRun "+billingRun.getId());
+		}
+		filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
+		QueryBuilder queryBuilder = ratedTransactionService.getQueryFromFilters(filters, Arrays.asList("billingAccount.id"), true);
+		return queryBuilder.getQuery(getEntityManager()).getResultList();
+	}
 
     /**
      * Gets entities that are associated with a billing run
@@ -980,7 +1029,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             log.info("Remove all postpaid invoices that not reach to the invoicing threshold {}", excludedPrepaidInvoices);
             ratedTransactionService.deleteSupplementalRTs(excludedPrepaidInvoices);
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
-            invoiceLinesService.cancelIlByInvoices(excludedPrepaidInvoices);
+            invoiceLinesService.uninvoiceILs(excludedPrepaidInvoices);//reopen ILs not created from  RTs
+            invoiceLinesService.cancelIlByInvoices(excludedPrepaidInvoices);//cancell ILs created from RTs 
             invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
@@ -1340,9 +1390,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         JobInstance jobInstance = jobInstances.get(0);
         Map<String, Object> params = new HashMap<>();
         params.put("BillingRuns", Arrays.asList(new EntityReferenceWrapper(BillingRun.class.getName(), null, billingRun.getId().toString())));
-        jobInstance.setRunTimeValues(params);
 
-        jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.API);
+        jobExecutionService.executeJob(jobInstance, params, JobLauncherEnum.API);
 
     }
 
@@ -1553,7 +1602,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param jobInstanceId the job instance id
      * @throws BusinessException
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis,
                                                  Long jobInstanceId, JobExecutionResultImpl jobExecutionResult, boolean v11Process) throws BusinessException {
         List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun, v11Process);
@@ -1611,8 +1660,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             try {
                 List<Invoice> invoices = invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
-                        billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, true) : null,
-                        null, null, null, minAmountForAccounts,
+                        null, null, null, null, minAmountForAccounts,
                         false, automaticInvoiceCheck, false);
                 jobExecutionResult.addNbItemsToProcess(invoices.size());
                 jobExecutionResult.addNbItemsCorrectlyProcessed(invoices.size());
@@ -1658,9 +1706,25 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         QueryBuilder queryBuilder;
         Filter filter = new Filter();
         if(invoicingV2) {
-            filter.setPollingQuery("SELECT il FROM InvoiceLine il WHERE il.id in (" +
-                    billingRun.getExceptionalILIds().stream().map(String::valueOf)
-                            .collect(joining(",")) + ") AND il.status = 'OPEN'");
+            final int maxValue =
+                    getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+            final String queryPrefix = "SELECT il from InvoiceLine il WHERE il.id in ";
+            if (billingRun.getExceptionalILIds().size() > maxValue) {
+                List<List<Long>> rtSubLists = partition(billingRun.getExceptionalILIds(), maxValue);
+                List<String> subListIds = new ArrayList<>();
+                for(List<Long> ids : rtSubLists) {
+                    subListIds.add("(" + ids.stream()
+                            .map(String::valueOf)
+                            .collect(joining(",")) + ")");
+                }
+                filter.setPollingQuery(queryPrefix + subListIds.stream()
+                        .map(String::valueOf)
+                        .collect(joining(" OR id in ")));
+            } else {
+                filter.setPollingQuery(queryPrefix + " (" +
+                        billingRun.getExceptionalILIds().stream().map(String::valueOf)
+                                .collect(joining(",")) + ")");
+            }
         } else {
             Map<String, Object> filters = billingRun.getFilters();
             String filterValue = QueryBuilder.getFilterByKey(filters, "SQL");
@@ -1669,7 +1733,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             } else {
                 FilterConverter converter = new FilterConverter(RatedTransaction.class);
                 PaginationConfiguration configuration = new PaginationConfiguration(converter.convertFilters(filters));
-                queryBuilder = ratedTransactionService.getQuery(configuration);
+                queryBuilder = ratedTransactionService.getQuery(configuration, "rt", false);
             }
             filter.setPollingQuery(buildPollingQuery(queryBuilder));
         }
@@ -1727,4 +1791,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
     
+	public List<Long> getBAsHavingOpenILs(BillingRun billingRun) {
+		return getEntityManager().createNamedQuery("InvoiceLine.getBAsHavingOpenILsByBR",Long.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+	}
 }

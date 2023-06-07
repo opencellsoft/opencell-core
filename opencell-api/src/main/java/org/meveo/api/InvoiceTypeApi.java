@@ -21,10 +21,12 @@ package org.meveo.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -306,6 +308,9 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
         if (dto.getDescription() != null) {
             entity.setDescription(StringUtils.isEmpty(dto.getDescription()) ? null : dto.getDescription());
         }
+        if (dto.getLanguageDescriptions() != null) {
+        	entity.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getLanguageDescriptions(), null));
+		}
         if (dto.getOccTemplateCodeEl() != null) {
             entity.setOccTemplateCodeEl(StringUtils.isEmpty(dto.getOccTemplateCodeEl()) ? null : dto.getOccTemplateCodeEl());
         }
@@ -401,6 +406,13 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
                 throw new EntityDoesNotExistsException(UntdidVatPaymentOption.class, dto.getVatPaymentOption());
             }
             entity.setUntdidVatPaymentOption(untdidVatPaymentOption);
+        }else {
+        	UntdidVatPaymentOption untdidVatPaymentOption = untdidVatPaymentOptionService.getByCode("3");
+        	entity.setUntdidVatPaymentOption(
+        	    Optional.ofNullable(untdidVatPaymentOption)
+        	        .orElseGet(() -> untdidVatPaymentOptionService.list().stream().findFirst()
+        	            .orElseThrow(() -> new EntityNotFoundException("No UntdidVatPaymentOption entities found.")))
+        	);
         }
 
         // populate customFields

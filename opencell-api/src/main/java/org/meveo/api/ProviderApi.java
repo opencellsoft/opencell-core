@@ -658,6 +658,9 @@ public class ProviderApi extends BaseApi {
             if (invoiceConfigurationDto.getDisplayTaxDetails() != null) {
                 invoiceConfiguration.setDisplayTaxDetails(invoiceConfigurationDto.getDisplayTaxDetails());
             }
+            if (invoiceConfigurationDto.getDisplayRatedItems() != null) {
+                invoiceConfiguration.setDisplayRatedItems(invoiceConfigurationDto.getDisplayRatedItems());
+            }
         }
         return provider;
     }

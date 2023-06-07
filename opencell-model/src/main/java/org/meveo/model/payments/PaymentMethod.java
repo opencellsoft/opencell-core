@@ -71,7 +71,7 @@ import org.meveo.model.document.Document;
                 "left join Subscription sub on sub.paymentMethod.id = pm.id " +
                 "left join BillingAccount ba on ba.paymentMethod.id = pm.id " +
                 "left join Invoice inv on inv.paymentMethod.id = pm.id where pm.id = :pmId and pm.disabled = false and inv.status = org.meveo.model.billing.InvoiceStatusEnum.VALIDATED"),
-        @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForDDRequestItem", query = "SELECT ca.id, ca.code, ca.description, pm.class, pm.bankCoordinates.bic, pm.bankCoordinates.iban, pm.alias, pm.mandateIdentification, pm.mandateDate FROM CustomerAccount ca JOIN DDPaymentMethod pm on ca.id = pm.customerAccount.id JOIN AccountOperation ao on ca.id = ao.customerAccount.id  WHERE ao.ddRequestItem.id = :id AND pm.preferred = true ORDER BY ao.id ASC"),
+        @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForDDRequestItem", query = "SELECT ca.id, ca.code, ca.description, pm.class, pm.bankCoordinates.bic, pm.bankCoordinates.iban, pm.alias, pm.mandateIdentification, pm.mandateDate, pm.mandateChangeAction, pm.id FROM CustomerAccount ca JOIN DDPaymentMethod pm on ca.id = pm.customerAccount.id JOIN AccountOperation ao on ca.id = ao.customerAccount.id  WHERE ao.ddRequestItem.id = :id AND pm.preferred = true ORDER BY ao.id ASC"),
         @NamedQuery(name = "PaymentMethod.getNumberOfTokenId", query = "select count(*) from  PaymentMethod pm where pm.tokenId = :tokenId and pm.disabled = false")})
 public abstract class PaymentMethod extends EnableCFEntity {
 
@@ -170,6 +170,10 @@ public abstract class PaymentMethod extends EnableCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_means")
     private UntdidPaymentMeans paymentMeans;
+
+    @Column(name = "mandate_change_action", length = 20)
+    @Enumerated(EnumType.STRING)
+    protected MandateChangeAction mandateChangeAction = MandateChangeAction.NONE;
 
     public UntdidPaymentMeans getPaymentMeans() {
         return paymentMeans;
@@ -312,8 +316,15 @@ public abstract class PaymentMethod extends EnableCFEntity {
 	public void setToken3DsId(String token3DsId) {
 		this.token3DsId = token3DsId;
 	}
-	
-    
+
+    public MandateChangeAction getMandateChangeAction() {
+        return mandateChangeAction;
+    }
+
+    public void setMandateChangeAction(MandateChangeAction mandateChangeAction) {
+        this.mandateChangeAction = mandateChangeAction;
+    }
+
     public void anonymize(String code) {
         setInfo1(code);
         setInfo2(code);

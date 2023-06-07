@@ -47,14 +47,13 @@ public class Payment extends AccountOperation {
      * Amount of financial expenses exluded in the amount
      */
     @Column(name = "payment_fees")
-    private BigDecimal fees = BigDecimal.ZERO;
-
+    private BigDecimal fees = BigDecimal.ZERO;    
+    
     /**
-     * Comments Text free if litigation or special conditions
+     * Transactional amount of financial expenses exluded in the amount
      */
-    @Type(type = "longText")
-    @Column(name = "comment_text")
-    private String comment;
+    @Column(name = "transactional_payment_fees")
+    private BigDecimal transactionalFees = BigDecimal.ZERO;
 
     /**
      * get the  associated dunning doc if exists
@@ -100,18 +99,18 @@ public class Payment extends AccountOperation {
         this.fees = fees;
     }
 
-    /**
-     * @return the comment
-     */
-    public String getComment() {
-        return comment;
-    }
+	/**
+	 * @return the transactionalFees
+	 */
+	public BigDecimal getTransactionalFees() {
+		return transactionalFees;
+	}
 
-    /**
-     * @param comment the comment to set
-     */
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+	/**
+	 * @param transactionalFees the transactionalFees to set
+	 */
+	public void setTransactionalFees(BigDecimal transactionalFees) {
+		this.transactionalFees = transactionalFees;
+	}
 
 }

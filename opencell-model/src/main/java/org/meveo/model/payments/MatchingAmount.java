@@ -63,10 +63,10 @@ public class MatchingAmount extends AuditableEntity {
     private BigDecimal matchingAmount;
 
     /**
-     * Converted Amount matched
+     * Transactional Amount matched
      */
-    @Column(name = "converted_matching_amount", precision = 23, scale = 12)
-    private BigDecimal convertedMatchingAmount;
+    @Column(name = "transactional_matching_amount", precision = 23, scale = 12)
+    private BigDecimal transactionalMatchingAmount;
     
     public MatchingAmount() {
     }
@@ -125,12 +125,12 @@ public class MatchingAmount extends AuditableEntity {
         return false;
     }
 
-    public BigDecimal getConvertedMatchingAmount() {
-        return convertedMatchingAmount;
+    public BigDecimal getTransactionalMatchingAmount() {
+        return transactionalMatchingAmount;
     }
 
-    public void setConvertedMatchingAmount(BigDecimal convertedMatchingAmount) {
-        this.convertedMatchingAmount = convertedMatchingAmount;
+    public void setTransactionalMatchingAmount(BigDecimal transactionalMatchingAmount) {
+        this.transactionalMatchingAmount = transactionalMatchingAmount;
     }
 
 }

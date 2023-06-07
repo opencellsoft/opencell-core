@@ -121,6 +121,10 @@ public class AttributeDTO extends EnableBusinessDto {
 	@XmlElementWrapper(name = "groupedAttributes")
 	@XmlElement(name ="groupedAttributes")
 	private List<GroupedAttributeDto> groupedAttributes;
+	
+	
+	@Schema(description = "replaced value")
+	private Object assignedValue;
 
     
     public AttributeDTO() {
@@ -136,7 +140,9 @@ public class AttributeDTO extends EnableBusinessDto {
     public AttributeDTO(Attribute attribute) {
         super(attribute);
         priority=attribute.getPriority();
-        allowedValues=attribute.getAllowedValues();
+        if (attribute.getAllowedValues() != null) {
+            allowedValues = new HashSet<String>(attribute.getAllowedValues());
+        }
         attributeType=attribute.getAttributeType();
         unitNbDecimal = attribute.getUnitNbDecimal(); 
         this.setDisabled(attribute.isDisabled());
@@ -372,5 +378,15 @@ public class AttributeDTO extends EnableBusinessDto {
 
 	public void setGroupedAttributes(List<GroupedAttributeDto> groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
+	}
+	
+	public Object getAssignedValue() {
+		return assignedValue;
+	}
+
+
+
+	public void setAssignedValue(Object assignedValue) {
+		this.assignedValue = assignedValue;
 	}
 }

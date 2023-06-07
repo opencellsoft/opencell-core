@@ -34,9 +34,14 @@ public class OrderPriceService extends BusinessService<OrderPrice> {
     
     @SuppressWarnings("unchecked")
 	public List<Object[]> getGroupedOrderPrices(Long orderId){
+    	  return getGroupedOrderPrices(orderId, PriceTypeEnum.ONE_SHOT_OTHER);
+    }
+
+    @SuppressWarnings("unchecked")
+	public List<Object[]> getGroupedOrderPrices(Long orderId, PriceTypeEnum priceType){
     	  return getEntityManager().createNamedQuery("OrderPrice.sumPricesByArticle")
                   .setParameter("orderId", orderId)
-                  .setParameter("priceType", PriceTypeEnum.ONE_SHOT_OTHER)
+                  .setParameter("priceType", priceType)
                   .setParameter("priceLevel", PriceLevelEnum.PRODUCT)
                   .getResultList();
     }

@@ -46,10 +46,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.meveo.admin.job.FlatFileProcessingJob;
-import org.meveo.admin.job.SortingFilesEnum;
 import org.meveo.admin.storage.StorageFactory;
-import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -503,6 +500,58 @@ public final class FileUtils {
     }
 
     /**
+     * unzip files into folder in file system
+     *
+     * @param folder folder name
+     * @param in input stream
+     * @throws Exception exception
+     */
+    public static void unzipFileInFileSystem(String folder, InputStream in) throws Exception {
+        folder = folder.replace("/", File.separator);
+        ZipInputStream zis = null;
+        BufferedInputStream bis = null;
+        CheckedInputStream cis = null;
+        try {
+            cis = new CheckedInputStream(in, new CRC32());
+            zis = new ZipInputStream(cis);
+            bis = new BufferedInputStream(zis);
+            ZipEntry entry = null;
+            File fileout = null;
+            while ((entry = zis.getNextEntry()) != null) {
+                fileout = new File(folder + File.separator + entry.getName());
+                if (!fileout.toString().startsWith(folder)) {
+                    throw new IOException("Entry is outside of the target directory");
+                }
+                if (entry.isDirectory()) {
+                    if (!fileout.exists()) {
+                        fileout.mkdirs();
+                    }
+                    continue;
+                }
+                if (!fileout.exists()) {
+                    new File(fileout.getParent()).mkdirs();
+                }
+                try (OutputStream fos = new FileOutputStream(fileout)) {
+                    try (BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                        int b = -1;
+                        while ((b = bis.read()) != -1) {
+                            bos.write(b);
+                        }
+                        bos.flush();
+                        fos.flush();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(bis);
+            IOUtils.closeQuietly(zis);
+            IOUtils.closeQuietly(cis);
+        }
+    }
+
+    /**
      * Compress a folder with sub folders and its files into byte array.
      * 
      * @param sourceFolder source folder
@@ -810,4 +859,29 @@ public final class FileUtils {
     public static void deleteDirectory(File dir) throws IOException {
         org.apache.commons.io.FileUtils.deleteDirectory(dir);
     }
+    
+    /**
+     * Get list of files in a folder
+     * @param pFolder Folder
+     * @param pReturnListFilesPath A list of files path
+     * @param pExtension Extension
+     */
+    public static void listAllFiles(File pFolder, List<String> pReturnListFilesPath, String pExtension) {
+		try {
+			if(pFolder.exists() && pFolder.isDirectory())  {
+				File[] fileNames = pFolder.listFiles();
+		        for (File file : fileNames) {
+		            if (file.isDirectory()) {
+		                listAllFiles(file, pReturnListFilesPath, pExtension);
+		            } else {
+		            	if(file.getCanonicalPath().endsWith(pExtension)) {
+		            		pReturnListFilesPath.add(file.getCanonicalPath());
+		            	}
+		            }
+		        }
+			}
+		} catch (IOException e) {
+			logger.error("Failed to get file name in a folder {}", e);
+		}
+	}
 }

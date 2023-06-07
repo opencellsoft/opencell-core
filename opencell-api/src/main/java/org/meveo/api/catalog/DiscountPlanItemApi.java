@@ -22,35 +22,42 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
+import org.meveo.api.dto.catalog.TradingDiscountPlanItemDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.TradingDiscountPlanItem;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.TradingDiscountPlanItemService;
 
 /**
  * 
@@ -77,9 +84,14 @@ public class DiscountPlanItemApi extends BaseApi {
     private PricePlanMatrixService pricePlanMatrixService;
 
     @Inject
-    private AccountingArticleService accountingArticleService; 
-
-
+    private AccountingArticleService accountingArticleService;
+    
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
+    
+    @Inject
+    private TradingDiscountPlanItemService tradingDiscountPlanItemService;
+    
     /**
      * creates a discount plan item
      * 
@@ -106,7 +118,13 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityAlreadyExistsException(DiscountPlanItem.class, postData.getCode());
         }
         discountPlanItem = toDiscountPlanItem(postData, null);
-        
+        DiscountPlan discountPlan = discountPlanItem.getDiscountPlan();
+        if(BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || (appProvider.isActivateCascadingDiscounts() && !discountPlan.getApplicableOnDiscountedPrice())){
+            List<DiscountPlanItem> items = discountPlanItemService.findBySequence(discountPlan.getId(), discountPlanItem.getSequence());
+            if(CollectionUtils.isNotEmpty(items)) {
+                throw  new BusinessApiException("The sequence of this discount plan item already exist");
+            }
+        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlanItem, true);
@@ -120,6 +138,9 @@ public class DiscountPlanItemApi extends BaseApi {
         
         discountPlanItemService.create(discountPlanItem);
         discountPlanItem.setCode(discountPlanItem.getId().toString());
+        if(postData.getSequence() == null) {
+        	discountPlanItemService.setDisountPlanItemSequence(discountPlanItem);
+        }
         discountPlanItemService.update(discountPlanItem);
         return discountPlanItem;
     }
@@ -145,7 +166,18 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityDoesNotExistsException(DiscountPlanItem.class, postData.getCode());
         }
         discountPlanItem = toDiscountPlanItem(postData, discountPlanItem);
-        
+        DiscountPlan discountPlan = discountPlanItem.getDiscountPlan();
+        if(BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || (appProvider.isActivateCascadingDiscounts() && !discountPlan.getApplicableOnDiscountedPrice())){
+            List<DiscountPlanItem> items = discountPlanItemService.findBySequence(discountPlan.getId(), discountPlanItem.getSequence());
+            Long discountPlanItemId = discountPlanItem.getId();
+            items = items.stream().filter(dpi -> dpi.getId() != discountPlanItemId).collect(Collectors.toList());
+            if(CollectionUtils.isNotEmpty(items)) {
+                throw  new BusinessApiException("The sequence of this discount plan item already exist");
+            }
+        }
+        if(postData.getSequence() == null) {
+        	discountPlanItemService.setDisountPlanItemSequence(discountPlanItem);
+        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlanItem, false);
@@ -382,4 +414,83 @@ public class DiscountPlanItemApi extends BaseApi {
             discountPlanItemService.disable(discountPlanItem);
         }
     }
+    
+    public TradingDiscountPlanItem createTradingDiscountPlanItem(TradingDiscountPlanItemDto dto) throws MeveoApiException, BusinessException {
+    	TradingDiscountPlanItem entity = dtoToEntity(dto, new TradingDiscountPlanItem());
+        tradingDiscountPlanItemService.create(entity);
+        return entity;
+    }
+    
+    public TradingDiscountPlanItem updateTradingDiscountPlanItem(Long tradingDiscountPlanItemId, TradingDiscountPlanItemDto dto) throws MeveoApiException, BusinessException {
+    	TradingDiscountPlanItem entity = dtoToEntity(dto, checkIdAndGetEntity(tradingDiscountPlanItemId));
+        tradingDiscountPlanItemService.update(entity);
+        return entity;
+    }
+
+    public void deleteTradingDiscountPlanItem(Long tradingDiscountPlanItemId) throws MeveoApiException, BusinessException {
+    	TradingDiscountPlanItem tradingDiscountPlanItem = checkIdAndGetEntity(tradingDiscountPlanItemId);
+    	
+        if (!DiscountPlanStatusEnum.DRAFT.equals(tradingDiscountPlanItem.getDiscountPlanItem().getDiscountPlan().getStatus())) {
+            throw new InvalidParameterException("Suppression is not allowed since the discount plan is not DRAFT");
+        }
+        
+    	tradingDiscountPlanItemService.remove(tradingDiscountPlanItem);
+    }
+    
+    private TradingDiscountPlanItem dtoToEntity(TradingDiscountPlanItemDto dto, TradingDiscountPlanItem entity) {
+        if (dto.getTradingCurrency() == null || (StringUtils.isBlank(dto.getTradingCurrency().getCode()) && dto.getTradingCurrency().getId() == null)) {
+            missingParameters.add("tradingCurrency");
+        }
+        if (org.meveo.commons.utils.StringUtils.isBlank(dto.getDiscountPlanItemId())) {
+            missingParameters.add("discountPlanItemId");
+        }
+        handleMissingParameters();
+        
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCodeOrId(dto.getTradingCurrency().getCode(), dto.getTradingCurrency().getId());
+        if (tradingCurrency == null) {
+            throw new EntityDoesNotExistsException(TradingCurrency.class, dto.getTradingCurrency().getCode(), "code", String.valueOf(dto.getTradingCurrency().getId()), "id");
+        }
+
+        if (appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
+            throw new InvalidParameterException("Trading currency couldn't be the same as functional currency");
+        }
+        
+        if (tradingCurrency.isDisabled()) {
+            throw new InvalidParameterException("Trading currency should not be archived");
+        }
+
+        DiscountPlanItem discountPlanItem = discountPlanItemService.findById(dto.getDiscountPlanItemId());
+        if (discountPlanItem == null) {
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dto.getDiscountPlanItemId());
+        }
+        
+        if (!DiscountPlanStatusEnum.DRAFT.equals(discountPlanItem.getDiscountPlan().getStatus())) {
+            throw new InvalidParameterException("Creation and modification is not allowed since the discount plan is not DRAFT");
+        }
+        
+        TradingDiscountPlanItem tdpi = tradingDiscountPlanItemService.findByDiscountPlanItemAndCurrency(discountPlanItem, tradingCurrency);
+        if (tdpi != null && !tdpi.getId().equals(entity.getId())) {
+            throw new BusinessException("Trading discount plan item already exist for discount Plan " + discountPlanItem.getId() + " and currency " + tradingCurrency.getCurrencyCode());
+        }
+
+        entity.setDiscountPlanItem(discountPlanItem);
+        entity.setTradingCurrency(tradingCurrency);
+        entity.setRate(dto.getRate());
+        entity.setTradingDiscountValue(dto.getTradingDiscountValue());
+        
+        return entity;
+    }
+    
+	private TradingDiscountPlanItem checkIdAndGetEntity(Long tradingDiscountPlanItemId) {
+		if (org.meveo.commons.utils.StringUtils.isBlank(tradingDiscountPlanItemId)) {
+            missingParameters.add("id");
+            handleMissingParameters();
+        }
+    	
+    	TradingDiscountPlanItem tradingDiscountPlanItem = tradingDiscountPlanItemService.findById(tradingDiscountPlanItemId);
+    	if (tradingDiscountPlanItem == null) {
+            throw new EntityDoesNotExistsException(TradingDiscountPlanItem.class, tradingDiscountPlanItemId);
+        }
+		return tradingDiscountPlanItem;
+	}
 }

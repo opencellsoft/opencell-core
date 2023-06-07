@@ -76,9 +76,16 @@ public class PaginationConfiguration implements Serializable {
     private Integer limit;
 
     /**
+     * Shall query results be cached - see Hibernate query cache behavior
+     */
+    private boolean cacheable = false;
+    
+    /**
      * Operator to use when building where statement
      */
     private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
+
+    private boolean distinctQuery = Boolean.FALSE;
 
     /**
      * 
@@ -131,6 +138,11 @@ public class PaginationConfiguration implements Serializable {
     public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Object... sortFieldsAndOrder) {
     	this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, sortFieldsAndOrder);
     	this.joinType=joinType;
+    }
+
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Boolean distinct, Object... sortFieldsAndOrder) {
+        this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, joinType, sortFieldsAndOrder);
+        this.distinctQuery = distinct;
     }
     
     /**
@@ -324,5 +336,28 @@ public class PaginationConfiguration implements Serializable {
 
     public void setLimit(Integer limit) {
         this.limit = limit;
+    }
+
+	/**
+	 * @param cacheable Shall query results be cached - see Hibernate query cache behavior
+	 */
+    public void setCacheable(boolean cacheable) {
+        this.cacheable = cacheable;
+    }
+
+    /**
+     * @return Shall query results be cached - see Hibernate query cache behavior
+     */
+    public boolean isCacheable() {
+        return cacheable;
+    }
+
+
+    public boolean isDistinctQuery() {
+        return distinctQuery;
+    }
+
+    public void setDistinctQuery(boolean distinctQuery) {
+        this.distinctQuery = distinctQuery;
     }
 }

@@ -1,13 +1,17 @@
 package org.meveo.apiv2.billing.impl;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import liquibase.pro.packaged.S;
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.apiv2.billing.CancellationInput;
 import org.meveo.apiv2.billing.DuplicateRTDto;
 import org.meveo.apiv2.billing.RatedTransactionInput;
 import org.meveo.apiv2.billing.resource.RatedTransactionResource;
@@ -35,8 +39,9 @@ public class RatedTransactionResourceImpl implements RatedTransactionResource {
 	@Override
 	public Response updateRatedTransaction(Long id, RatedTransactionInput input) {
 		final RatedTransaction ratedTransaction = findRatedTransactionEligibleToUpdate(id);
-		ratedTransactionApiService.update(ratedTransaction, input.getDescription(), input.getUnitAmountWithoutTax(), input.getQuantity(), input.getParameter1(),
-				input.getParameter2(), input.getParameter3(), input.getParameterExtra());
+		ratedTransactionApiService.update(ratedTransaction, input.getDescription(),
+				input.getUnitAmountWithoutTax(), input.getQuantity(), input.getParameter1(),
+				input.getParameter2(), input.getParameter3(), input.getParameterExtra(), input.getUsageDate());
 
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(RatedTransactionResource.class, id).build())
 				.build();
@@ -67,6 +72,19 @@ public class RatedTransactionResourceImpl implements RatedTransactionResource {
 
 	@Override
 	public Response duplication(DuplicateRTDto duplicateRTDto) {
-		return Response.ok().entity(ratedTransactionApiService.duplication(duplicateRTDto.getFilters(), duplicateRTDto.getMode(), duplicateRTDto.getNegateAmount(), duplicateRTDto.getReturnRts())).build();
+		return Response.ok().entity(ratedTransactionApiService.duplication(duplicateRTDto.getFilters(), duplicateRTDto.getMode(), duplicateRTDto.getNegateAmount(), duplicateRTDto.getReturnRts(), duplicateRTDto.getStartJob())).build();
+	}
+
+	@Override
+	public Response cancellation(CancellationInput cancellationInput) {
+		Map.Entry<String, String> response =
+				ratedTransactionApiService.cancelRatedTransactions(new HashMap<>(cancellationInput.getFilters()),
+						cancellationInput.getFailOnIncorrectStatus(),
+						cancellationInput.getReturnRTs());
+		 return Response
+				 .ok()
+				 .entity("{\"actionStatus\":{\"status\":\"" + response.getKey()
+						 + "\",\"message\":\"" + response.getValue() + "\"}")
+				 .build();
 	}
 }

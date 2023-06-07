@@ -7,6 +7,7 @@ import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -31,7 +33,6 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.billing.*;
 import org.meveo.apiv2.billing.impl.InvoiceMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
@@ -41,15 +42,12 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionAction;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.service.billing.impl.InvoiceLineService;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.LinkedInvoiceService;
-import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
@@ -82,6 +80,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	private FinanceSettingsService financeSettingsService;
 	
 	private List<String> fieldToFetch = asList("invoiceLines");
+
+	@Inject
+	private InvoiceTypeService invoiceTypeService;
 
 	@Override
 	public List<Invoice> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -231,7 +232,16 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 					.withAmountWithoutTax(invoiceLine.getAmountWithoutTax())
 					.withAmountWithTax(invoiceLine.getAmountWithTax())
 					.withAmountTax(invoiceLine.getAmountTax());
+			if (CollectionUtils.isEmpty(invoice.getInvoiceLines())){
+				invoice.setInvoiceLines(new ArrayList<>());
+			}
+			invoice.getInvoiceLines().add(invoiceLine);
 			result.addInvoiceLines(invoiceLineResource);
+		}
+
+		String listAdjustmentCode = paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ, ADJ_INV, ADJ_REF");
+		if (listAdjustmentCode.contains(invoice.getInvoiceType().getCode())) {
+			invoiceLinesService.validateAdjAmount(invoice);
 		}
 
 		invoiceService.calculateInvoice(invoice);
@@ -255,14 +265,21 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	 * @param lineId Invoice Line Id
 	 */
 	public void updateLine(Invoice invoice, InvoiceLineInput invoiceLineInput, Long lineId) {
-		// Get Invoice Line to update using Invoice Line Input
-		org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.getInvoiceLineForUpdate(invoice, invoiceLineInput.getInvoiceLine(), lineId);
+		// Get Invoice Line to update
+		org.meveo.model.billing.InvoiceLine invoiceLine = invoiceLinesService.findInvoiceLine(invoice, lineId);
+		DiscountPlan discountPlan = null;
+		if (invoice.getStatus() != VALIDATED) {
+			if (invoiceLine != null) {
+				discountPlan = invoiceLine.getDiscountPlan();
+			}
+			invoiceLine = invoiceLinesService.initInvoiceLineFromResource(invoiceLineInput.getInvoiceLine(), invoiceLine);
+		}
 		// Populate Custom fields
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
 		// for adjustment
-		invoiceLine = invoiceLinesService.adjustment(invoiceLine);
+		invoiceLine = invoiceLinesService.adjustment(invoiceLine, invoice);
         // Update Invoice Line
-		invoiceLinesService.update(invoiceLine);
+		invoiceLinesService.updateInvoiceLine(invoiceLine, invoiceLineInput.getInvoiceLine(), discountPlan);
 		invoiceService.getEntityManager().flush();
 		invoiceService.calculateInvoice(invoice);
 		BigDecimal lastApliedRate = invoiceService.getCurrentRate(invoice,invoice.getInvoiceDate());
@@ -394,7 +411,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
             List<RatedTransaction> RTs = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
 			if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
-				billingAccountsAfter = ratedTransactionService.applyInvoicingRules(RTs);
+				billingAccountsAfter = ratedTransactionService.applyInvoicingRulesForRTs(RTs);
 			}
         }
         
@@ -455,15 +472,21 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	    if (invoice.getStatus() != InvoiceStatusEnum.VALIDATED) {
             throw new ForbiddenException("Invoice should be Validated");
         }
+
+		String invoiceType = invoice.getInvoiceType() != null ? invoice.getInvoiceType().getCode() : "";
+		boolean invoiceTypeForbidden = invoiceTypeService.getListAdjustementCode().contains(invoiceType);
+		if(invoiceTypeForbidden) {
+			throw new ForbiddenException("You cannot create ADJ from another ADJ invoice");
+		}
 	    
 	    if (invoice.getInvoiceType().getOccTemplate().getOccCategory() != OperationCategoryEnum.DEBIT) {
-	        throw new ForbiddenException("occCategory must equal DEBIT as invoice type");
+	        throw new ForbiddenException("You cannot make a credit note over another");
         }
 	    
 	    if (invoiceLinesToReplicate.getGlobalAdjustment() == null) {
             throw new MissingParameterException("globalAdjustment");
         }
-	    
+
 	    try {
 	        adjInvoice = invoiceService.createAdjustment(invoice, invoiceLinesToReplicate);
 
@@ -476,7 +499,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
     	    invoiceService.update(invoice);
 	    }
 	    catch (Exception e) {
-	        throw new BusinessApiException("Error when creating adjustment");
+	        throw new BusinessApiException(e.getMessage());
         }
 	    
 	    adjInvoice = invoiceService.findById(adjInvoice.getId(), asList("invoiceLines", "invoiceType", "invoiceType.occTemplate", "linkedInvoices"));
@@ -519,4 +542,11 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		customFieldEntity = invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), customFieldEntity, false);
         return invoiceService.updateValidatedInvoice(invoice, invoiceResource.getComment(), customFieldEntity.getCfValues());
     }
+	
+	/**
+	 * @param invoice
+	 */
+	public void setInvoiceExchangeRate(Invoice invoice, BigDecimal exchangeRate) {
+		invoiceService.refreshConvertedAmounts(invoice, exchangeRate, new Date());
+	}
 }

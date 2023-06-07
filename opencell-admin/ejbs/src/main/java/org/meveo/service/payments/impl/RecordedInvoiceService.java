@@ -275,12 +275,12 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             BigDecimal remainingAmountTaxForRecordedIncoice = invoice.getAmountTax();
             
             //            
-            BigDecimal remainingConvertedAmountWithoutTaxForRecordedIncoice = (invoice.getConvertedAmountWithoutTax() == null)?BigDecimal.ZERO:invoice.getConvertedAmountWithoutTax();
-            BigDecimal remainingConvertedAmountWithTaxForRecordedIncoice = useInvoiceBalance?invoice.getConvertedInvoiceBalance() : invoice.getConvertedAmountWithTax();
-            if (remainingConvertedAmountWithTaxForRecordedIncoice == null) {
-                remainingConvertedAmountWithTaxForRecordedIncoice = BigDecimal.ZERO;
+            BigDecimal remainingTransactionalAmountWithoutTaxForRecordedIncoice = (invoice.getTransactionalAmountWithoutTax() == null)?BigDecimal.ZERO:invoice.getTransactionalAmountWithoutTax();
+            BigDecimal remainingTransactionalAmountWithTaxForRecordedIncoice = useInvoiceBalance?invoice.getTransactionalInvoiceBalance() : invoice.getTransactionalAmountWithTax();
+            if (remainingTransactionalAmountWithTaxForRecordedIncoice == null) {
+                remainingTransactionalAmountWithTaxForRecordedIncoice = BigDecimal.ZERO;
             }                
-            BigDecimal remainingConvertedAmountTaxForRecordedIncoice = (invoice.getConvertedAmountTax() == null)?BigDecimal.ZERO:invoice.getConvertedAmountTax();
+            BigDecimal remainingTransactionalAmountTaxForRecordedIncoice = (invoice.getTransactionalAmountTax() == null)?BigDecimal.ZERO:invoice.getTransactionalAmountTax();
             
             boolean allowMultipleAOperInvoice = "true".equalsIgnoreCase(ParamBean.getInstance().getProperty("ao.generateMultipleAOperInvoice", "true"));
             //cannot dispatch invoiceBalance between categories, if this is needed by a client, we will have to decide how to change all amounts according to invoiceBalance.
@@ -292,13 +292,13 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     BigDecimal remainingAmountWithTaxForCat = BigDecimal.ZERO;
                     BigDecimal remainingAmountTaxForCat = BigDecimal.ZERO;
                     //
-                    BigDecimal remainingConvertedAmountWithoutTaxForCat = BigDecimal.ZERO;
-                    BigDecimal remainingConvertedAmountWithTaxForCat = BigDecimal.ZERO;
-                    BigDecimal remainingConvertedAmountTaxForCat = BigDecimal.ZERO;
+                    BigDecimal remainingTransactionalAmountWithoutTaxForCat = BigDecimal.ZERO;
+                    BigDecimal remainingTransactionalAmountWithTaxForCat = BigDecimal.ZERO;
+                    BigDecimal remainingTransactionalAmountTaxForCat = BigDecimal.ZERO;
                     for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : catAgregate.getSubCategoryInvoiceAgregates()) {
-                        BigDecimal subCatInvAgrConvAmountWithoutTax = (subCategoryInvoiceAgregate.getConvertedAmountWithoutTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getConvertedAmountWithoutTax();
-                        BigDecimal subCatInvAgrConvAmountWithTax = (subCategoryInvoiceAgregate.getConvertedAmountWithTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getConvertedAmountWithTax();
-                        BigDecimal subCatInvAgrConvAmountTax = (subCategoryInvoiceAgregate.getConvertedAmountTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getConvertedAmountTax();
+                        BigDecimal subCatInvAgrTransAmountWithoutTax = (subCategoryInvoiceAgregate.getTransactionalAmountWithoutTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getTransactionalAmountWithoutTax();
+                        BigDecimal subCatInvAgrTransAmountWithTax = (subCategoryInvoiceAgregate.getTransactionalAmountWithTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getTransactionalAmountWithTax();
+                        BigDecimal subCatInvAgrTransAmountTax = (subCategoryInvoiceAgregate.getTransactionalAmountTax() == null)?BigDecimal.ZERO : subCategoryInvoiceAgregate.getTransactionalAmountTax();
                         
                         if ((subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate() != null
                                 && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
@@ -306,13 +306,13 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                                         && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
                             RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = 
                                 createRecordedInvoice(subCategoryInvoiceAgregate.getAmountWithoutTax(),
-                                    subCatInvAgrConvAmountWithoutTax,
-                                    subCategoryInvoiceAgregate.getAmountWithTax(), subCatInvAgrConvAmountWithTax, 
-                                    subCategoryInvoiceAgregate.getAmountTax(), subCatInvAgrConvAmountTax, 
+                                    subCatInvAgrTransAmountWithoutTax,
+                                    subCategoryInvoiceAgregate.getAmountWithTax(), subCatInvAgrTransAmountWithTax, 
+                                    subCategoryInvoiceAgregate.getAmountTax(), subCatInvAgrTransAmountTax, 
                                     null, null, invoice,
                                     subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate()
                                             : subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative(),
-                                    subCatInvAgrConvAmountWithoutTax.compareTo(BigDecimal.ZERO) > 0 ? subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate()
+                                    subCatInvAgrTransAmountWithoutTax.compareTo(BigDecimal.ZERO) > 0 ? subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate()
                                                     : subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative(),
                                     false);
                             recordedInvoiceCatAgregate.setSubCategoryInvoiceAgregate(subCategoryInvoiceAgregate);
@@ -322,29 +322,29 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                             remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithTax());
                             remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountTax());
                             //
-                            remainingConvertedAmountWithoutTaxForRecordedIncoice = remainingConvertedAmountWithoutTaxForRecordedIncoice.subtract(subCatInvAgrConvAmountWithoutTax);
-                            remainingConvertedAmountWithTaxForRecordedIncoice = remainingConvertedAmountWithTaxForRecordedIncoice.subtract(subCatInvAgrConvAmountWithTax);
-                            remainingConvertedAmountTaxForRecordedIncoice = remainingConvertedAmountTaxForRecordedIncoice.subtract(subCatInvAgrConvAmountTax);
+                            remainingTransactionalAmountWithoutTaxForRecordedIncoice = remainingTransactionalAmountWithoutTaxForRecordedIncoice.subtract(subCatInvAgrTransAmountWithoutTax);
+                            remainingTransactionalAmountWithTaxForRecordedIncoice = remainingTransactionalAmountWithTaxForRecordedIncoice.subtract(subCatInvAgrTransAmountWithTax);
+                            remainingTransactionalAmountTaxForRecordedIncoice = remainingTransactionalAmountTaxForRecordedIncoice.subtract(subCatInvAgrTransAmountTax);
                             
                         } else {
                             remainingAmountWithoutTaxForCat = remainingAmountWithoutTaxForCat.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
                             remainingAmountWithTaxForCat = remainingAmountWithTaxForCat.add(subCategoryInvoiceAgregate.getAmountWithTax());
                             remainingAmountTaxForCat = remainingAmountTaxForCat.add(subCategoryInvoiceAgregate.getAmountTax());
                             //
-                            remainingConvertedAmountWithoutTaxForCat = remainingConvertedAmountWithoutTaxForCat.add(subCatInvAgrConvAmountWithoutTax);
-                            remainingConvertedAmountWithTaxForCat = remainingConvertedAmountWithTaxForCat.add(subCatInvAgrConvAmountWithTax);
-                            remainingConvertedAmountTaxForCat = remainingConvertedAmountTaxForCat.add(subCatInvAgrConvAmountTax);
+                            remainingTransactionalAmountWithoutTaxForCat = remainingTransactionalAmountWithoutTaxForCat.add(subCatInvAgrTransAmountWithoutTax);
+                            remainingTransactionalAmountWithTaxForCat = remainingTransactionalAmountWithTaxForCat.add(subCatInvAgrTransAmountWithTax);
+                            remainingTransactionalAmountTaxForCat = remainingTransactionalAmountTaxForCat.add(subCatInvAgrTransAmountTax);
                         }
                     }
                     if ((catAgregate.getInvoiceCategory().getOccTemplate() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
                             || (catAgregate.getInvoiceCategory().getOccTemplateNegative() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
                         RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = 
-                            createRecordedInvoice(remainingAmountWithoutTaxForCat, remainingConvertedAmountWithoutTaxForCat, 
-                                remainingAmountWithTaxForCat, remainingConvertedAmountWithTaxForCat,
-                                remainingAmountTaxForCat, remainingConvertedAmountTaxForCat, null, null, invoice,
+                            createRecordedInvoice(remainingAmountWithoutTaxForCat, remainingTransactionalAmountWithoutTaxForCat, 
+                                remainingAmountWithTaxForCat, remainingTransactionalAmountWithTaxForCat,
+                                remainingAmountTaxForCat, remainingTransactionalAmountTaxForCat, null, null, invoice,
                                 catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
                                         : catAgregate.getInvoiceCategory().getOccTemplateNegative(),
-                                catAgregate.getConvertedAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
+                                catAgregate.getTransactionalAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
                                                 : catAgregate.getInvoiceCategory().getOccTemplateNegative(),
                                 false);
                         recordedInvoiceCatAgregate.setCategoryInvoiceAgregate(catAgregate);
@@ -354,9 +354,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                         remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(remainingAmountWithTaxForCat);
                         remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(remainingAmountTaxForCat);
                         //
-                        remainingConvertedAmountWithoutTaxForRecordedIncoice = remainingConvertedAmountWithoutTaxForRecordedIncoice.subtract(remainingConvertedAmountWithoutTaxForCat);
-                        remainingConvertedAmountWithTaxForRecordedIncoice = remainingConvertedAmountWithTaxForRecordedIncoice.subtract(remainingConvertedAmountWithTaxForCat);
-                        remainingConvertedAmountTaxForRecordedIncoice = remainingConvertedAmountTaxForRecordedIncoice.subtract(remainingConvertedAmountTaxForCat);
+                        remainingTransactionalAmountWithoutTaxForRecordedIncoice = remainingTransactionalAmountWithoutTaxForRecordedIncoice.subtract(remainingTransactionalAmountWithoutTaxForCat);
+                        remainingTransactionalAmountWithTaxForRecordedIncoice = remainingTransactionalAmountWithTaxForRecordedIncoice.subtract(remainingTransactionalAmountWithTaxForCat);
+                        remainingTransactionalAmountTaxForRecordedIncoice = remainingTransactionalAmountTaxForRecordedIncoice.subtract(remainingTransactionalAmountTaxForCat);
                     }
 
                 }
@@ -392,41 +392,41 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 occTemplate = givenOccTemplate;
             }
             
-            OCCTemplate occConvertedTemplate = null;
+            OCCTemplate occTransactionalTemplate = null;
             if (givenOccTemplate == null) {
-                if (remainingConvertedAmountWithTaxForRecordedIncoice != null && remainingConvertedAmountWithTaxForRecordedIncoice.compareTo(BigDecimal.ZERO) < 0) {
+                if (remainingTransactionalAmountWithTaxForRecordedIncoice != null && remainingTransactionalAmountWithTaxForRecordedIncoice.compareTo(BigDecimal.ZERO) < 0) {
                     String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateNegativeCodeEl(), invoice, invoice.getBillingRun());
                     if (!StringUtils.isBlank(occTemplateCode)) {
-                        occConvertedTemplate = occTemplateService.findByCode(occTemplateCode);
+                        occTransactionalTemplate = occTemplateService.findByCode(occTemplateCode);
                     }
 
-                    if (occConvertedTemplate == null) {
-                        occConvertedTemplate = invoice.getInvoiceType().getOccTemplateNegative();
+                    if (occTransactionalTemplate == null) {
+                        occTransactionalTemplate = invoice.getInvoiceType().getOccTemplateNegative();
                     }
 
                 } else {
                     String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateCodeEl(), invoice, invoice.getBillingRun());
                     if (!StringUtils.isBlank(occTemplateCode)) {
-                        occConvertedTemplate = occTemplateService.findByCode(occTemplateCode);
+                        occTransactionalTemplate = occTemplateService.findByCode(occTemplateCode);
                     }
 
-                    if (occConvertedTemplate == null) {
-                        occConvertedTemplate = invoice.getInvoiceType().getOccTemplate();
-                        if (occConvertedTemplate == null) {
+                    if (occTransactionalTemplate == null) {
+                        occTransactionalTemplate = invoice.getInvoiceType().getOccTemplate();
+                        if (occTransactionalTemplate == null) {
                             return null;
                         }
                     }
 
                 }
             } else {
-                occConvertedTemplate = givenOccTemplate;
+                occTransactionalTemplate = givenOccTemplate;
             }
 
             RecordedInvoice recordedInvoice = 
-                createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingConvertedAmountWithoutTaxForRecordedIncoice, 
-                    remainingAmountWithTaxForRecordedIncoice, remainingConvertedAmountWithTaxForRecordedIncoice,
-                    remainingAmountTaxForRecordedIncoice, remainingConvertedAmountTaxForRecordedIncoice, 
-                    invoice.getNetToPay(), invoice.getConvertedNetToPay(), invoice, occTemplate, occConvertedTemplate, true);
+                createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingTransactionalAmountWithoutTaxForRecordedIncoice, 
+                    remainingAmountWithTaxForRecordedIncoice, remainingTransactionalAmountWithTaxForRecordedIncoice,
+                    remainingAmountTaxForRecordedIncoice, remainingTransactionalAmountTaxForRecordedIncoice, 
+                    invoice.getNetToPay(), invoice.getTransactionalNetToPay(), invoice, occTemplate, occTransactionalTemplate, true);
 
             // Link the recorded invoice to subscription
             recordedInvoice.setSubscription(invoice.getSubscription());
@@ -463,10 +463,10 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountConvertedWithoutTax, 
-            BigDecimal amountWithTax, BigDecimal amountConvertedWithTax, BigDecimal amountTax, BigDecimal amountConvertedTax, 
-            BigDecimal netToPay, BigDecimal netConvertedToPay, Invoice invoice, OCCTemplate occTemplate, 
-            OCCTemplate occConvertedTemplate, boolean isRecordedInvoice)
+    private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountTransactionalWithoutTax, 
+            BigDecimal amountWithTax, BigDecimal amountTransactionalWithTax, BigDecimal amountTax, BigDecimal amountTransactionalTax, 
+            BigDecimal netToPay, BigDecimal netTransactionalToPay, Invoice invoice, OCCTemplate occTemplate, 
+            OCCTemplate occTransactionalTemplate, boolean isRecordedInvoice)
             throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
         InvoiceType invoiceType = invoice.getInvoiceType();
@@ -481,7 +481,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         if (isRecordedInvoice) {
             recordedInvoice = (T) new RecordedInvoice();
             recordedInvoice.setNetToPay(netToPay);
-            recordedInvoice.setConvertedNetToPay(netConvertedToPay);
+            recordedInvoice.setTransactionalNetToPay(netTransactionalToPay);
             
             List<String> orderNums = new ArrayList<>();
             if (invoice.getOrders() != null) {
@@ -535,14 +535,17 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         recordedInvoice.setAmountWithoutTax(amountWithoutTax);
         recordedInvoice.setTaxAmount(amountTax);
         
-        recordedInvoice.setConvertedAmount(amountConvertedWithTax);
-        recordedInvoice.setConvertedAmountWithoutTax(amountConvertedWithoutTax);
-        recordedInvoice.setConvertedTaxAmount(amountConvertedTax);        
-        recordedInvoice.setConvertedUnMatchingAmount(amountConvertedWithTax);
-        recordedInvoice.setConvertedMatchingAmount(BigDecimal.ZERO);
+        recordedInvoice.setTransactionalAmount(amountTransactionalWithTax);
+        recordedInvoice.setTransactionalAmountWithoutTax(amountTransactionalWithoutTax);
+        recordedInvoice.setTransactionalTaxAmount(amountTransactionalTax);        
+        recordedInvoice.setTransactionalUnMatchingAmount(amountTransactionalWithTax);
+        recordedInvoice.setTransactionalMatchingAmount(BigDecimal.ZERO);
         
         recordedInvoice.setSeller(invoice.getSeller());
         recordedInvoice.setCollectionDate(invoice.getInitialCollectionDate());
+        recordedInvoice.setAppliedRate(invoice.getLastAppliedRate());
+        recordedInvoice.setTransactionalCurrency(invoice.getTradingCurrency());
+        
         try {
             recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
         } catch (Exception e) {
@@ -581,29 +584,48 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     	String datePattern = "yyyy-MM-dd";
         StringBuilder query = new StringBuilder("Select ao.customerAccount.id, sum (case when ao.dueDate >= '")
                 .append(DateUtils.formatDateWithPattern(startDate, datePattern))
-                .append("'  then  ao.unMatchingAmount else 0 end ) as notYetDue,");
+                .append("'  then  ao.unMatchingAmount else 0 end ) as notYetDue,")
+                .append("sum (case when ao.dueDate >= '")
+                .append(DateUtils.formatDateWithPattern(startDate, datePattern))
+                .append("'  then  ao.transactionalUnMatchingAmount else 0 end ) as transactional_notYetDue,");
     	if(stepInDays != null && numberOfPeriods != null) {
     	    String alias;
     	    int step;
     	    if(numberOfPeriods > 1) {
                 query.append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_1_" + stepInDays + ",")
                         .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_1_" + stepInDays + "_awt,")
-                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.taxAmount else 0 end ) as sum_1_" + stepInDays + "_tax,");
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.taxAmount else 0 end ) as sum_1_" + stepInDays + "_tax,")
+
+
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.transactionalAmountWithoutTax else 0 end ) as transactional_sum_1_" + stepInDays + ",")
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.transactionalMatchingAmount else 0 end ) as transactional_sum_1_" + stepInDays + "_awt,")
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.transactionalTaxAmount else 0 end ) as transactional_sum_1_" + stepInDays + "_tax,");
                 for (int iteration = 1; iteration < numberOfPeriods - 1; iteration++) {
                     step = iteration * stepInDays;
-                    alias = "as sum_"+ (stepInDays * iteration + 1) + "_" + (step * 2);
+                    alias = "sum_"+ (stepInDays * iteration + 1) + "_" + (step * 2);
                     query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then ao.amountWithoutTax else 0 end ) ")
-                            .append(alias).append(" , ")
+                            .append("as " + alias).append(" , ")
                             .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then ao.unMatchingAmount  else 0 end ) ")
-                            .append(alias).append("_awt, ")
+                            .append("as " + alias).append("_awt, ")
                             .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then  ao.taxAmount else 0 end ) ")
-                            .append(alias).append("_tax, ");
+                            .append("as " + alias).append("_tax, ")
+
+                            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then ao.transactionalAmountWithoutTax else 0 end ) ")
+                            .append("as transactional_" + alias).append(" , ")
+                            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then ao.transactionalUnMatchingAmount  else 0 end ) ")
+                            .append("as transactional_" + alias).append("_awt, ")
+                            .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -(step + stepInDays)), datePattern)+"' then  ao.transactionalTaxAmount else 0 end ) ")
+                            .append("as transactional_" + alias).append("_tax, ");
                 }
             }
             step = numberOfPeriods > 1  ? stepInDays * (numberOfPeriods - 1) : stepInDays;
             query.append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then ao.amountWithoutTax else 0 end ) as sum_" + step + "_up,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then ao.unMatchingAmount else 0 end ) as sum_" + step + "_up_awt,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' then ao.taxAmount else 0 end ) as sum_" + step + "_up_tax,");
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' then ao.taxAmount else 0 end ) as sum_" + step + "_up_tax,")
+
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then ao.transactionalAmountWithoutTax else 0 end ) as transactional_sum_" + step + "_up,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"'  then ao.transactionalUnMatchingAmount else 0 end ) as transactional_sum_" + step + "_up_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -step), datePattern)+"' then ao.transactionalTaxAmount else 0 end ) as transactional_sum_" + step + "_up_tax,");
         } else {
     	    query.append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.amountWithoutTax else 0 end ) as sum_1_30,")
     	            .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.unMatchingAmount else 0 end ) as sum_1_30_awt,")
@@ -616,9 +638,22 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.taxAmount else 0 end ) as sum_61_90_tax,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.amountWithoutTax else 0 end ) as sum_90_up,")
                     .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.unMatchingAmount else 0 end ) as sum_90_up_awt,")
-                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.taxAmount else 0 end ) as sum_90_up_tax,");
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.taxAmount else 0 end ) as sum_90_up_tax,")
+
+                    .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.transactionalAmountWithoutTax else 0 end ) as transactional_sum_1_30,")
+                    .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.transactionalUnMatchingAmount else 0 end ) as transactional_sum_1_30_awt,")
+                    .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' then ao.transactionalTaxAmount else 0 end ) as transactional_sum_1_30_tax,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.transactionalAmountWithoutTax  else 0 end ) as transactional_sum_31_60,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.transactionalUnMatchingAmount else 0 end ) as transactional_sum_31_60_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -30), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' then ao.transactionalTaxAmount else 0 end ) as transactional_sum_31_60_tax,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.transactionalAmountWithoutTax else 0 end ) as transactional_sum_61_90,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.transactionalUnMatchingAmount else 0 end ) as transactional_sum_61_90_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -60), datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"' then ao.transactionalTaxAmount else 0 end ) as transactional_sum_61_90_tax,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.transactionalAmountWithoutTax else 0 end ) as transactional_sum_90_up,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.transactionalUnMatchingAmount else 0 end ) as transactional_sum_90_up_awt,")
+                    .append("sum (case when ao.dueDate <='"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -90), datePattern)+"'  then ao.transactionalTaxAmount else 0 end ) as transactional_sum_90_up_tax,");
         }
-        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ")
+        query.append(" ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.transactionalAmountWithTax, ao.invoice.billingAccount.id ")
                 .append("from ")
                 .append(RecordedInvoice.class.getSimpleName())
                 .append(" as ao");
@@ -629,8 +664,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         ofNullable(customerAccountDescription).ifPresent(caDescription -> qb.addSql("UPPER(ao.customerAccount.description) like '%" + caDescription.toUpperCase() +"%'"));
         ofNullable(sellerDescription).ifPresent(sDescription -> qb.addSql("UPPER(ao.seller.description) like ('%" + sDescription.toUpperCase() +"%')"));
         ofNullable(sellerCode).ifPresent(sel -> qb.addSql("UPPER(ao.seller.code) like '%" + sellerCode.toUpperCase() +"%'"));
-        ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
-        ofNullable(tradingCurrency).ifPresent(fc -> qb.addSql("ao.invoice.tradingCurrency.currency.currencyCode = '" + fc + "'"));
+        ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("UPPER(ao.invoice.invoiceNumber) like '%" + invNumber.toUpperCase() +"%'"));
+        ofNullable(tradingCurrency)
+                .ifPresent(fc -> qb.addSql("ao.transactionalCurrency.currency.currencyCode = '" + fc + "'"));
 
         if (startDueDate != null && endDueDate != null) {
             qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
@@ -643,7 +679,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or ao.invoice.paymentStatus = '" + PPAID + "' or ao.invoice.paymentStatus ='" + UNPAID + "')");
         }
 
-        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.convertedAmountWithTax, ao.invoice.billingAccount.id ");
+        qb.addGroupCriterion("ao.customerAccount.id, ao.customerAccount.dunningLevel, ao.customerAccount.name, ao.customerAccount.description, ao.seller.description, ao.seller.code, ao.dueDate, ao.amount, ao.invoice.tradingCurrency.currency.currencyCode, ao.invoice.id, ao.invoice.invoiceNumber, ao.invoice.amountWithTax, ao.customerAccount.code, ao.invoice.transactionalAmountWithTax, ao.invoice.billingAccount.id ");
         qb.addPaginationConfiguration(paginationConfiguration);
 
         return qb.getQuery(getEntityManager()).getResultList();

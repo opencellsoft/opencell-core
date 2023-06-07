@@ -19,6 +19,7 @@ package org.meveo.event.monitoring;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
@@ -31,9 +32,11 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.job.Job;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
@@ -74,6 +77,10 @@ public class ClusterEventMonitor implements MessageListener {
 
     @Inject
     private JobExecutionService jobExecutionService;
+    
+    @Inject
+    @Named
+    private NativePersistenceService nativePersistenceService;
 
     /**
      * @see MessageListener#onMessage(Message)
@@ -85,7 +92,7 @@ public class ClusterEventMonitor implements MessageListener {
                 if (EjbUtils.getCurrentClusterNode().equals(eventDto.getSourceNode())) {
                     return;
                 }
-                log.info("Received cluster synchronization event message {}", eventDto);
+                log.info("{} Received cluster synchronization event message {}", EjbUtils.getCurrentClusterNode(), eventDto);
 
                 processClusterEvent(eventDto);
 
@@ -113,13 +120,20 @@ public class ClusterEventMonitor implements MessageListener {
 
             if (eventDto.getAction() == CrudActionEnum.execute) {
                 JobLauncherEnum jobLauncher = eventDto.getAdditionalInfo() != null && eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER) != null
-                        ? JobLauncherEnum.valueOf((String) eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER))
+                        ? (JobLauncherEnum) eventDto.getAdditionalInfo().get(Job.JOB_PARAM_LAUNCHER)
                         : null;
+
                 jobExecutionService.executeJob(jobInstanceService.findById(eventDto.getId()), null, jobLauncher, false);
+
+            } else if (eventDto.getAction() == CrudActionEnum.executeWorker) {
+                JobLauncherEnum jobLauncher = JobLauncherEnum.WORKER;
+
+                jobExecutionService.executeJob(jobInstanceService.findById(eventDto.getId()), eventDto.getAdditionalInfo(), jobLauncher, false);
 
             } else if (eventDto.getAction() == CrudActionEnum.stop) {
                 jobExecutionService.stopJobByForce(jobInstanceService.findById(eventDto.getId()), false);
 
+                // Any modify/update
             } else {
                 jobInstanceService.scheduleUnscheduleJob(eventDto.getId());
             }
@@ -127,7 +141,11 @@ public class ClusterEventMonitor implements MessageListener {
         } else if (eventDto.getClazz().equals(CustomFieldTemplate.class.getSimpleName())) {
             CustomFieldTemplate cft = customFieldTemplateService.findById(eventDto.getId());
             cfValueAccumulator.refreshCfAccumulationRules(cft);
-
+            // Refresh native table field to data type mapping
+            if (cft.getAppliesTo().startsWith(CustomEntityTemplate.CFT_PREFIX) && (eventDto.getAction() == CrudActionEnum.create || eventDto.getAction() == CrudActionEnum.update)) {
+                nativePersistenceService.refreshTableFieldMapping(CustomEntityTemplate.getCodeFromAppliesTo(cft.getAppliesTo()));
+            }
+            
         } else if (eventDto.getClazz().equals(CustomEntityTemplate.class.getSimpleName())) {
 
             if (eventDto.getAction() == CrudActionEnum.create || eventDto.getAction() == CrudActionEnum.enable) {

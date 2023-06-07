@@ -116,24 +116,11 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
                     Object value = ValueExpressionWrapper.evaluateExpression(attributeInstance.getStringValue(), Object.class, parameters);
 
                     if (value != null) {
-
-                        AttributeValue<AttributeValue> attributeValue = (AttributeValue) BeanUtils.cloneBean(attributeInstance);
-
-                        attributeValue.setId(null);
-
-                        if (value instanceof Boolean) {
-
-                            attributeValue.setBooleanValue((Boolean) value);
-
-                        } else if (NumberUtils.isCreatable(value.toString().trim()) && !shouldEvaluateNumericValueAsString(attributeValue)) {
-
-                            attributeValue.setDoubleValue(Double.valueOf(value.toString().trim()));
-
-                        } else {
-
-                            attributeValue.setStringValue((String) value);
-
+                        if (NumberUtils.isCreatable(value.toString().trim()) && !shouldEvaluateNumericValueAsString(attributeInstance)) {
+                            value = Double.valueOf(String.valueOf(NumberUtils.createNumber(value.toString().trim())));
                         }
+
+                        AttributeValue attributeValue = new AttributeValue(attributeInstance.getAttribute(), value);
 
                         log.debug("getAttributeValue value={}, String={},boolean={},double={}", value, attributeValue.getStringValue(), attributeValue.getBooleanValue(), attributeValue.getDoubleValue());
 
@@ -154,7 +141,7 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
         return (AttributeValue) attributeInstance;
     }
 
-    private boolean shouldEvaluateNumericValueAsString(AttributeValue<AttributeValue> attributeValue) {
+    private boolean shouldEvaluateNumericValueAsString(AttributeValue attributeValue) {
         return attributeValue.getStringValue().contains("serviceInstance.code");
     }
 }

@@ -66,16 +66,13 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 	 */
 	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear) {
 	    AccountingPeriodStatusEnum accountingPeriodStatus = AccountingPeriodStatusEnum.valueOf(status);
-        if(entity.isUseSubAccountingCycles() && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
-			throw new ValidationException("the accounting period " + fiscalYear + " has sub-accounting periods option activated");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
+        if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
 			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
 		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
 			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
 		} else {		    
-	        if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
-	            boolean isUserHaveThisRole = currentUser.hasRole(API_FINANCE_MANAGEMENT);
-	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, status, isUserHaveThisRole);                
+			if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
+	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, status);                
             }
 		    
 			AuditLog auditLog = createAuditLog(entity, status);
@@ -90,37 +87,6 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		return entity;
 	}
 	
-	/**
-	 * Update the status of a fiscal year after checking the subAccountingCycles and also status
-	 * @param entity {@link AccountingPeriod}
-	 * @param status Status
-	 * @param fiscalYear Fiscal Year
-	 * @return {@link AccountingPeriod}
-	 */
-	public AccountingPeriod updateStatus(AccountingPeriod entity, String status, String fiscalYear, AccountingPeriodActionLevelEnum level) {
-	    AccountingPeriodStatusEnum accountingPeriodStatus = AccountingPeriodStatusEnum.valueOf(status);
-        if(entity.isUseSubAccountingCycles() && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
-			throw new ValidationException("the accounting period " + fiscalYear + " has sub-accounting periods option activated");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.CLOSED) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)){
-			throw new ValidationException("the accounting period " + fiscalYear + " is already closed");
-		} else if(entity.getAccountingPeriodStatus().equals(AccountingPeriodStatusEnum.OPEN) && accountingPeriodStatus.equals(AccountingPeriodStatusEnum.OPEN)) {
-			throw new ValidationException("the accounting period " + fiscalYear + " is already opened");
-		} else {	
-	        if (accountingPeriodStatus.equals(AccountingPeriodStatusEnum.CLOSED)) {
-	            subAccountingPeriodService.updateSubPeriodsWithStatus(entity, fiscalYear, status, level);                
-            }
-		    
-			AuditLog auditLog = createAuditLog(entity, status);
-			entity.setAccountingPeriodStatus(accountingPeriodStatus);
-			update(entity);
-
-			if(auditLog.getEntity() != null) {
-				auditLogService.create(auditLog);
-			}
-		}
-
-		return entity;
-	}
 
 	/**
 	 * Create auditLog by passing the Accounting Period ans status
@@ -350,6 +316,18 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
 		}
 	}
 
+	public AccountingPeriod findAccountingPeriodByDate(Date date) {
+		try {
+			return getEntityManager().createNamedQuery("AccountingPeriod.findAPByDate", entityClass)
+					.setParameter("date", date)
+					.setMaxResults(1)
+					.getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No {} of AccountingPeriodYear {} found", getEntityClass().getSimpleName(), date);
+			return null;
+		}
+	}
+
 	public AccountingPeriod findOpenAccountingPeriodByDate(Date date) {
         try {
             return getEntityManager().createNamedQuery("AccountingPeriod.findOpenAPByDate", entityClass)
@@ -361,4 +339,15 @@ public class AccountingPeriodService extends PersistenceService<AccountingPeriod
             return null;
         }
     }
+
+	public AccountingPeriod findOpenAccountingPeriod() {
+		try {
+			return getEntityManager().createNamedQuery("AccountingPeriod.findOpenAP", entityClass)
+					.setMaxResults(1)
+					.getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No open {} found", getEntityClass().getSimpleName());
+			return null;
+		}
+	}
 }

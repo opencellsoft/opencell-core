@@ -531,7 +531,7 @@ public class FlatFileValidator {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void executeJob(String jobCode, List<String> flatFilesNames) throws BusinessException {
         JobInstance jobInstance = jobInstanceService.findByCode(jobCode);
-        if (jobInstance != null && isAllowedToExecute(jobInstance)) {
+        if (jobInstance != null && jobExecutionService.isAllowedToExecute(jobInstance)) {
             try {
                 if (flatFilesNames == null || flatFilesNames.isEmpty()) {
                     log.error("No file found");
@@ -580,28 +580,6 @@ public class FlatFileValidator {
         FileFormat fileFormat = flatFile != null ? flatFile.getFileFormat() : null;
         if (flatFile != null && flatFile.getStatus() == FileStatusEnum.WELL_FORMED && fileFormat != null) {
             flatFileValidator.executeJob(fileFormat.getJobCode(), new ArrayList<>(Arrays.asList(flatFile.getFileCurrentName())));
-        }
-    }
-
-    /**
-     * Check if job can be run on a current server or cluster node if deployed in cluster environment
-     *
-     * @param jobInstance JobInstance entity
-     * @return True if it can be executed locally
-     */
-    public boolean isAllowedToExecute(JobInstance jobInstance) {
-        if (jobInstance == null || jobInstance.getId() == null) {
-            return false;
-        }
-
-        JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
-        if (isRunning == JobRunningStatusEnum.NOT_RUNNING) {
-            return true;
-        } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS) {
-            return false;
-        } else {
-            String nodeToCheck = EjbUtils.getCurrentClusterNode();
-            return jobInstance.isRunnableOnNode(nodeToCheck);
         }
     }
 }

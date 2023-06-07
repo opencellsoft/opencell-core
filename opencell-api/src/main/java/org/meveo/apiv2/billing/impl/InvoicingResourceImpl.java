@@ -8,6 +8,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.apiv2.billing.CancelBillingRunInput;
 import org.meveo.apiv2.billing.ExceptionalBillingRun;
 import org.meveo.apiv2.billing.ImmutableExceptionalBillingRun;
 import org.meveo.apiv2.billing.resource.InvoicingResource;
@@ -71,8 +72,8 @@ public class InvoicingResourceImpl implements InvoicingResource {
     }
     
     @Override
-    public Response cancelBillingRun(Long billingRunId) {
-        BillingRun billingRun = invoicingApiService.cancelBillingRun(billingRunId)
+    public Response cancelBillingRun(Long billingRunId, CancelBillingRunInput input) {
+        BillingRun billingRun = invoicingApiService.cancelBillingRun(billingRunId, input.getRatedTransactionAction())
                 .orElseThrow(() -> new NotFoundException("Billing run with id " + billingRunId + " does not exists"));
         return ok()
                 .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Billing run status successfully canceled\"},\"id\":" + billingRun.getId() + "}")

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import org.meveo.apiv2.billing.CancellationInput;
 import org.meveo.apiv2.billing.DuplicateRTDto;
 import org.meveo.apiv2.billing.Invoice;
 import org.meveo.apiv2.billing.RatedTransactionInput;
@@ -72,4 +73,13 @@ public interface RatedTransactionResource {
 	@Operation(summary = "duplicate list of rated transaction fron their ids", tags = {
 			"RatedTransaction" })
 	Response duplication(@Parameter(description = "dto contains list of id for rated transaction", required = true) DuplicateRTDto duplicateRTDto);
+
+	@POST
+	@Path("/cancellation")
+	@Operation(summary = "This endpoint allows to cancel list of ratedTransactions using a filter",
+			tags = { "RatedTransaction" }, description = "cancel an existing ratedTransaction",
+			responses = {
+			@ApiResponse(responseCode = "200", description = "RatedTransactions successfully canceled")})
+	Response cancellation(
+			@Parameter(description = "Cancellation object", required = true) CancellationInput cancellationInput);
 }

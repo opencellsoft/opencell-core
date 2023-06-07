@@ -155,19 +155,23 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      * Connect.
      */
     private void connect() {
-        ParamBean paramBean = paramBean();
-        //Init properties
-        paramBean.getProperty("connect.api.authorizationType", "V1HMAC");
-        paramBean.getProperty("connect.api.connectTimeout", "5000");
-        paramBean.getProperty("connect.api.endpoint.host", CHANGE_IT);
-        paramBean.getProperty("connect.api.endpoint.scheme", CHANGE_IT);
-        paramBean.getProperty("connect.api.integrator", "");
-        paramBean.getProperty("connect.api.socketTimeout", "300000");        
-        CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
-        communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
-        communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
-        client = Factory.createClient(communicatorConfiguration);
-        marshaller = DefaultMarshaller.INSTANCE;
+    	try {
+	    	ParamBean paramBean = paramBean();
+	        //Init properties
+	        paramBean.getProperty("connect.api.authorizationType", "V1HMAC");
+	        paramBean.getProperty("connect.api.connectTimeout", "5000");
+	        paramBean.getProperty("connect.api.endpoint.host", CHANGE_IT);
+	        paramBean.getProperty("connect.api.endpoint.scheme", CHANGE_IT);
+	        paramBean.getProperty("connect.api.integrator", "");
+	        paramBean.getProperty("connect.api.socketTimeout", "300000");        
+	        CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
+	        communicatorConfiguration.setApiKeyId(paymentGateway.getApiKey());
+	        communicatorConfiguration.setSecretApiKey(paymentGateway.getSecretKey());
+	        client = Factory.createClient(communicatorConfiguration);
+	        marshaller = DefaultMarshaller.INSTANCE;
+    	}catch (Exception e) {
+    		throw new BusinessException("Make sure you have a valid account on Ingenico, and it is well configured on Opencell.");
+		}
     }
 
     private ParamBean paramBean() {
@@ -324,7 +328,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		customer.setMandateAddress(address);
     		customer.setPersonalInformation(personalInformation);
     		if(isEntreprise) {
-    			customer.setCompanyName(formatIngenicoData(customerAccount.getName().getLastName(), true));
+    			String customerLastName=customerAccount.getName().getLastName();
+    			if (customerLastName.length() > 40) {
+    			    customerLastName = customerLastName.substring(0, 40);
+    			}
+    			customer.setCompanyName(formatIngenicoData(customerLastName, true));
     		}
     		
     		CreateMandateRequest body = new CreateMandateRequest();

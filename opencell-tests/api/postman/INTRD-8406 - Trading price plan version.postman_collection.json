@@ -1,0 +1,213 @@
+{
+	"info": {
+		"_postman_id": "b51d925e-bef1-4b33-8d48-beadc0275758",
+		"name": "INTRD-8406 - trading price plan version",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23793433"
+	},
+	"item": [
+		{
+			"name": "setup",
+			"item": [
+				{
+					"name": "X01 - Create OneshotCharge Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{oneShotChargeCode}}\",\r\n    \"description\": \"Desc {{oneShotChargeCode}}\",\r\n    \"oneShotChargeTemplateType\": \"SUBSCRIPTION\",\r\n    \"linkedAttributes\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/oneShotChargeTemplate/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"oneShotChargeTemplate",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "X02 - Create Oneshot Price Plan Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{oneshotPricePlanCode}}\",\r\n    \"eventCode\": \"{{oneShotChargeCode}}\",\r\n    \"description\": \"This is {{oneShotChargeCode}} price plan description\",\r\n    \"amountWithoutTax\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "X03 - Create Oneshot Price Plan Version Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pricePlanMatrixCode\": \"{{oneshotPricePlanCode}}\",\r\n    \"label\": \"Label {{oneshotPricePlanCode}}\",\r\n    \"validity\": {\r\n        \"from\": \"2022-07-24\"\r\n    },\r\n    \"amountWithoutTax\": 100,\r\n    \"isMatrix\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixVersion"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create TPPV",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"pricePlanMatrixVersionId\": 1,\n    \"tradingCurrency\": {\n        \"id\":\"5\"\n    },\n    \"tradingPrice\": 303,\n    \"rate\": 3,\n    \"useForBillingAccounts\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/catalog/pricePlan/tradingPricePlanVersion",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"catalog",
+						"pricePlan",
+						"tradingPricePlanVersion"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update TPPV",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"pricePlanMatrixVersionId\": 1,\n    \"tradingCurrency\": {\n        \"id\":\"-1\"\n    },\n    \"tradingPrice\": 404,\n    \"rate\": 4,\n    \"useForBillingAccounts\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/catalog/pricePlan/tradingPricePlanVersion/1",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"catalog",
+						"pricePlan",
+						"tradingPricePlanVersion",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get TPPV",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/v2/generic/all/tradingPricePlanVersion",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"v2",
+						"generic",
+						"all",
+						"tradingPricePlanVersion"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete TPPV",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/catalog/pricePlan/tradingPricePlanVersion/1",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"catalog",
+						"pricePlan",
+						"tradingPricePlanVersion",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

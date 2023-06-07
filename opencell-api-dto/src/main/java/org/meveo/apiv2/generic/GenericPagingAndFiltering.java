@@ -55,4 +55,9 @@ public interface GenericPagingAndFiltering {
     
     @Nullable
     JoinType getJoinType();
+
+    @Value.Default
+    default boolean getIsFilter(){
+        return false;
+    }
 }

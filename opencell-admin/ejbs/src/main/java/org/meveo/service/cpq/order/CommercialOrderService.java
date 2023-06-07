@@ -92,15 +92,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 	@Inject
 	private ProductService productService;
-	@Inject
-	private OrderProductService orderProductService;
-
-	@Override
-	public void create(CommercialOrder entity) throws BusinessException {
-		if(StringUtils.isBlank(entity.getCode()))
-			entity.setCode(UUID.randomUUID().toString());
-		super.create(entity);
-	}
 	
 	public CommercialOrder findByOrderNumer(String orderNumber) throws  BusinessException{
 		QueryBuilder queryBuilder = new QueryBuilder(CommercialOrder.class, "co");
@@ -215,6 +206,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscription.setContract((offer.getContract() != null)? offer.getContract() : order.getContract());
 				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
 				subscription.setSalesPersonName(order.getSalesPersonName());
+				subscription.setPriceList(order.getPriceList());
 				subscriptionService.create(subscription);
 				if(offer.getDiscountPlan()!=null) {
 					discountPlans.add(offer.getDiscountPlan());
@@ -536,7 +528,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
 				recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
 				recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
-				recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			}
 			if (serviceInstance.getDeliveryDate().after(new Date())) {
 				serviceInstance.setStatus(InstanceStatusEnum.PENDING);

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 
 /**
  * Sub category invoice aggregate amounts by tax
@@ -29,6 +30,21 @@ public class SubcategoryInvoiceAgregateAmount implements Serializable, Cloneable
      * Tax amount
      */
     private BigDecimal amountTax = BigDecimal.ZERO;
+
+    /**
+     * Transactional Amount without tax
+     */
+    private BigDecimal transactionalAmountWithoutTax = BigDecimal.ZERO;
+
+    /**
+     * Transactional Amount with tax
+     */
+    private BigDecimal transactionalAmountWithTax = BigDecimal.ZERO;
+
+    /**
+     * Transactional Tax amount
+     */
+    private BigDecimal transactionalAmountTax = BigDecimal.ZERO;
 
     /**
      * Instantiate
@@ -118,6 +134,51 @@ public class SubcategoryInvoiceAgregateAmount implements Serializable, Cloneable
     }
 
     /**
+	 * @return the transactionalAmountWithoutTax
+	 */
+    @Transient
+	public BigDecimal getTransactionalAmountWithoutTax() {
+		return transactionalAmountWithoutTax;
+	}
+
+	/**
+	 * @param transactionalAmountWithoutTax the transactionalAmountWithoutTax to set
+	 */
+	public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+		this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
+	}
+
+	/**
+	 * @return the transactionalAmountWithTax
+	 */
+	@Transient
+	public BigDecimal getTransactionalAmountWithTax() {
+		return transactionalAmountWithTax;
+	}
+
+	/**
+	 * @param transactionalAmountWithTax the transactionalAmountWithTax to set
+	 */
+	public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+		this.transactionalAmountWithTax = transactionalAmountWithTax;
+	}
+
+	/**
+	 * @return the transactionalAmountTax
+	 */
+	@Transient
+	public BigDecimal getTransactionalAmountTax() {
+		return transactionalAmountTax;
+	}
+
+	/**
+	 * @param transactionalAmountTax the transactionalAmountTax to set
+	 */
+	public void setTransactionalAmountTax(BigDecimal transactionalAmountTax) {
+		this.transactionalAmountTax = transactionalAmountTax;
+	}
+
+	/**
      * Get one of the amounts requested
      * 
      * @param isWithTax Should return amount with tax
@@ -155,6 +216,28 @@ public class SubcategoryInvoiceAgregateAmount implements Serializable, Cloneable
 
         if (amountTaxToAdd != null) {
             this.amountTax = this.amountTax.add(amountTaxToAdd);
+        }
+    }
+
+    /**
+     * Add given converted amounts
+     * 
+     * @param transactionalAmountWithoutTax Amount without tax
+     * @param transactionalAmountWithTax Amount with tax
+     * @param transactionalAmountTax Amount tax
+     */
+    public void addTransactionalAmounts(BigDecimal transactionalAmountWithoutTax, BigDecimal transactionalAmountWithTax, BigDecimal transactionalAmountTax) {
+
+        if (transactionalAmountWithoutTax != null) {
+            this.transactionalAmountWithoutTax = this.transactionalAmountWithoutTax.add(transactionalAmountWithoutTax);
+        }
+
+        if (transactionalAmountWithTax != null) {
+            this.transactionalAmountWithTax = this.transactionalAmountWithTax.add(transactionalAmountWithTax);
+        }
+
+        if (transactionalAmountTax != null) {
+            this.transactionalAmountTax = this.transactionalAmountTax.add(transactionalAmountTax);
         }
     }
 

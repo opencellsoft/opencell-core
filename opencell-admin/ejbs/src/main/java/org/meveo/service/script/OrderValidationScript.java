@@ -12,7 +12,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -100,6 +99,7 @@ public class OrderValidationScript extends Script {
             subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
             subscription.setOrder(order);
             subscription.setContract((offer.getContract() != null)? offer.getContract() : order.getContract());
+            subscription.setPriceList(order.getPriceList());
 
             commercialOrderService.processSubscriptionAttributes(subscription, offer.getOfferTemplate(), offer.getOrderAttributes());
             subscriptionService.create(subscription);
@@ -182,7 +182,6 @@ public class OrderValidationScript extends Script {
         for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
             recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
             recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
-            recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
         }
         subscription.addServiceInstance(serviceInstance);
         return serviceInstance;

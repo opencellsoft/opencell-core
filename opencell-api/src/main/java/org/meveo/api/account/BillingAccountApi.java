@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -86,6 +87,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.shared.Title;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -100,6 +102,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.cpq.TagService;
@@ -195,6 +198,9 @@ public class BillingAccountApi extends AccountEntityApi {
     
     @Inject
     private TitleService titleService;
+
+    @Inject
+    private PriceListService priceListService;
 
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -446,6 +452,10 @@ public class BillingAccountApi extends AccountEntityApi {
             if (tradingCurrency == null) {
                 throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getTradingCurrency());
             }
+            if(tradingCurrency.isDisabled())
+            {
+                throw new BusinessApiException("The billing account should not have a disabled trading currency");
+            }
             billingAccount.setTradingCurrency(tradingCurrency);
         }else if(billingAccount.getCustomerAccount().getTradingCurrency() != null) {
             billingAccount.setTradingCurrency(billingAccount.getCustomerAccount().getTradingCurrency());
@@ -612,6 +622,27 @@ public class BillingAccountApi extends AccountEntityApi {
             if(providerService.getProvider() != null) {
                 billingAccount.setIcdId(providerService.getProvider().getIcdId());
             }            
+        }
+
+        // exemptionReason is mandatory billingAccount.taxCategory==EXEMPTED
+        if ("EXEMPTED".equalsIgnoreCase(postData.getTaxCategoryCode()) && StringUtils.isBlank(postData.getExemptionReason())) {
+            throw new BusinessApiException("Exemption Reason is mandatory for EXEMPTED TaxCategory");
+        }
+
+        if (StringUtils.isNotBlank(postData.getExemptionReason())) {
+            billingAccount.setExemptionReason(postData.getExemptionReason());
+        } else {
+            billingAccount.setExemptionReason(null);
+        }
+
+        // Optional default PriceList
+        if(Objects.nonNull(postData.getPriceListCode())) {
+            if(postData.getPriceListCode().isBlank()) {
+                billingAccount.setPriceList(null);
+            } else {
+                PriceList priceList = Optional.ofNullable(priceListService.findByCode(postData.getPriceListCode())).orElseThrow(() -> new EntityDoesNotExistsException(PriceList.class, postData.getPriceListCode()));
+                billingAccount.setPriceList(priceList);
+            }
         }
 
         // Update payment method information in a customer account.

@@ -22,8 +22,6 @@ import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.IEntity;
 
-import static java.math.BigDecimal.ZERO;
-
 @Entity
 @Table(name = "billing_linked_invoices", uniqueConstraints = @UniqueConstraint(columnNames = { "id", "linked_invoice_id" }))
 @NamedQueries({ 
@@ -31,13 +29,11 @@ import static java.math.BigDecimal.ZERO;
     @NamedQuery(name = "LinkedInvoice.deleteAllAdjLink", query = "delete from LinkedInvoice l  where l.linkedInvoiceValue.id in (select inv.id from Invoice inv where inv.invoiceType.code = 'ADJ')"),
     @NamedQuery(name = "LinkedInvoice.deleteByInvoiceIdAndType", query = "delete from LinkedInvoice l where l.id.id = :invoiceId and l.type = (:type)"),
     @NamedQuery(name = "LinkedInvoice.find", query = "select l from LinkedInvoice l where l.id.id = :invoiceId and l.linkedInvoiceValue.id = :linkedInvoiceId"),
-    @NamedQuery(name = "LinkedInvoice.removeLinkedAdvances", query = "DELETE FROM LinkedInvoice li where li.id.id in (:invoiceIds) and li.type='ADVANCEMENT_PAYMENT'")
+    @NamedQuery(name = "LinkedInvoice.removeLinkedAdvances", query = "DELETE FROM LinkedInvoice li where li.id.id in (:invoiceIds) and li.type='ADVANCEMENT_PAYMENT'"),
+    @NamedQuery(name = "LinkedInvoice.findByLinkedInvoiceADJ", query = "SELECT li FROM LinkedInvoice li WHERE li.linkedInvoiceValue.id = :ID_INVOICE AND li.type='ADJUSTMENT'")
     
 })
-@SuppressWarnings("serial")
 public class LinkedInvoice implements IEntity, Serializable {
-
-    
 
     public static final int NB_PRECISION = 23;
     public static final int NB_DECIMALS = 12;
@@ -60,15 +56,15 @@ public class LinkedInvoice implements IEntity, Serializable {
     @Enumerated(EnumType.STRING)
     private InvoiceTypeEnum type;
 
-    @Column(name = "converted_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal convertedAmount;
+    @Column(name = "transactional_amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal transactionalAmount;
 
     @PrePersist
     @PreUpdate
     public void prePersistOrUpdate() {
-        if (this.convertedAmount != null) {
+        if (this.transactionalAmount != null) {
             BigDecimal appliedRate = getInvoice().getLastAppliedRate();
-            this.amount = this.convertedAmount.divide(appliedRate, 2, RoundingMode.HALF_UP);
+            this.amount = this.transactionalAmount.divide(appliedRate, 2, RoundingMode.HALF_UP);
         }
     }
 
@@ -79,21 +75,31 @@ public class LinkedInvoice implements IEntity, Serializable {
     }
 
 
-    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal convertedAmount, InvoiceTypeEnum type) {
+    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal transactionalAmount, InvoiceTypeEnum type) {
         super();
         this.id = id;
         this.linkedInvoiceValue = linkedInvoiceValue;
-        this.convertedAmount = convertedAmount;
+        this.transactionalAmount = transactionalAmount;
         this.type = type;
     }
 
+    public LinkedInvoice(Invoice id, Invoice linkedInvoiceValue, BigDecimal amount, BigDecimal transactionalAmount, InvoiceTypeEnum type) {
+        super();
+        this.id = id;
+        this.linkedInvoiceValue = linkedInvoiceValue;
+        this.transactionalAmount = transactionalAmount;
+        this.amount = amount;
+        this.type = type;
+    }
     
     public LinkedInvoice() {
         
     }
+    
     public Long getId() {
-        return this.id!=null? this.id.getId() : null;
-  }
+        return this.id!=null? this.id.getId() : null;  
+    }
+    
     public Invoice getInvoice() {
         return  this.id;
     }
@@ -126,12 +132,12 @@ public class LinkedInvoice implements IEntity, Serializable {
         this.type = type;
     }
 
-    public BigDecimal getConvertedAmount() {
-        return convertedAmount;
+    public BigDecimal getTransactionalAmount() {
+        return transactionalAmount;
     }
 
-    public void setConvertedAmount(BigDecimal convertedAmount) {
-        this.convertedAmount = convertedAmount;
+    public void setTransactionalAmount(BigDecimal transactionalAmount) {
+        this.transactionalAmount = transactionalAmount;
     }
 
 

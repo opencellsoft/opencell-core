@@ -66,7 +66,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ColumnTypeEnum;
-import org.meveo.model.catalog.ConvertedPricePlanVersion;
+import org.meveo.model.catalog.TradingPricePlanVersion;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -123,11 +123,11 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     private PricePlanMatrixService pricePlanMatrixService;
     
     @Inject
-    private ConvertedPricePlanVersionService convertedPricePlanVersionService;
+    private TradingPricePlanVersionService tradingPricePlanVersionService;
     
     @Inject
     private TradingCurrencyService tradingCurrencyService;
-    
+
 	@Inject
 	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
     
@@ -208,9 +208,9 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
             for (PricePlanMatrixVersion pv : pvs) {
                 DatePeriod validity = pv.getValidity();
-                List<ConvertedPricePlanVersion> listConvertedPricePlanVersion = convertedPricePlanVersionService.getListConvertedPricePlanVersionByPpmvId(pv.getId());
-                for (ConvertedPricePlanVersion cppv : listConvertedPricePlanVersion) {
-                    convertedPricePlanVersionService.remove(cppv);
+                List<TradingPricePlanVersion> listTradingPricePlanVersion = tradingPricePlanVersionService.getListTradingPricePlanVersionByPpmvId(pv.getId());
+                for (TradingPricePlanVersion cppv : listTradingPricePlanVersion) {
+                    tradingPricePlanVersionService.remove(cppv);
                 }                
                 if(validity == null) {
                     remove(pv);
@@ -265,8 +265,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 create(newPv);
                 for(int i=2; i < split.length; i++) {
                     String[] unitPriceLineSplit = split[i].split(COLUMN_SEPARATOR);
-                    ConvertedPricePlanVersion cppv = new ConvertedPricePlanVersion();
-                    cppv.setConvertedPrice(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
+                    TradingPricePlanVersion cppv = new TradingPricePlanVersion();
+                    cppv.setTradingPrice(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
                     String tradingCurrencyCode = unitPriceLineSplit[1].toUpperCase();
                     TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(tradingCurrencyCode); 
                     if(tradingCurrency == null) {
@@ -276,7 +276,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     cppv.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
                     cppv.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
                     cppv.setPricePlanMatrixVersion(newPv);
-                    convertedPricePlanVersionService.create(cppv);
+                    tradingPricePlanVersionService.create(cppv);
                 }
             } else if (StringUtils.isNotBlank(header)) {
                 // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start
@@ -394,8 +394,12 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return duplicate(pricePlanMatrixVersion, pricePlanMatrix, validity, null, priceVersionType, setNewVersion);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrix pricePlanMatrix, DatePeriod validity, VersionStatusEnum status, PriceVersionTypeEnum priceVersionType, boolean setNewVersion) {
+        return duplicate(pricePlanMatrixVersion, pricePlanMatrix, validity, status, priceVersionType, setNewVersion, null);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrix pricePlanMatrix, DatePeriod validity, VersionStatusEnum status, PriceVersionTypeEnum priceVersionType, boolean setNewVersion, Integer currentVersion) {
         var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
         var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
 
@@ -410,8 +414,10 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         if(priceVersionType != null){
             duplicate.setPriceVersionType(priceVersionType);
         }
-        if(!setNewVersion) {
-            Integer lastVersion = getLastVersion(pricePlanMatrixVersion.getPricePlanMatrix());
+        if(currentVersion != null) {
+            duplicate.setCurrentVersion(currentVersion);
+        } else if(!setNewVersion) {
+            Integer lastVersion = getLastVersion(pricePlanMatrix);
             duplicate.setCurrentVersion(lastVersion + 1);
         }else {
             duplicate.setCurrentVersion(1);
@@ -455,13 +461,12 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
 	/**
 	 * get pricePlanVersion Valid for the given operationDate
-	 * @param ppmCode
-	 * @param serviceInstance
-	 * @param operationDate
-	 * @return PricePlanMatrixVersion
+	 * @param ppmId Price plan ID
+	 * @param serviceInstance Service instance
+	 * @param operationDate Operation date
+	 * @return PricePlanMatrixVersion Matched Price plan version
 	 */
-
-	public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
+	public PricePlanMatrixVersion getPublishedVersionValideForDate(Long ppmId, ServiceInstance serviceInstance, Date operationDate) {
 		Date operationDateParam = new Date();
 		if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
 			operationDateParam = operationDate;
@@ -472,19 +477,70 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 				operationDateParam = serviceInstance.getPriceVersionDate();
 		}
 
+        if(operationDateParam != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(operationDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            operationDateParam = calendar.getTime();
+        }
+
         List<PricePlanMatrixVersion> result= this.getEntityManager()
                 .createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class)
-                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam)
+                .setParameter("pricePlanMatrixId", ppmId).setParameter("operationDate", operationDateParam)
                 .getResultList();
         if(CollectionUtils.isEmpty(result)) {
         	return null;
         }
         if(result.size()>1) {
-        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmCode+"' matching date: "+ operationDate);
+        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmId+"' matching date: "+ operationDate);
         }
 		return result.get(0);
 	}
 
+    /**
+     * Get a valid Price plan version for the given operationDate.
+     * 
+     * @param ppmCode Price plan code
+     * @param serviceInstance Service instance
+     * @param operationDate Operation date
+     * @return PricePlanMatrixVersion Matched Price plan version
+     */
+    public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
+        Date operationDateParam = new Date();
+        if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
+            operationDateParam = operationDate;
+        } else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())
+            || PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())
+            || PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
+                operationDateParam = serviceInstance.getPriceVersionDate();
+        }
+
+        if(operationDateParam != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(operationDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            operationDateParam = calendar.getTime();
+        }
+
+        List<PricePlanMatrixVersion> result= this.getEntityManager()
+                .createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDateByPpmCode", PricePlanMatrixVersion.class)
+                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam)
+                .getResultList();
+        if(CollectionUtils.isEmpty(result)) {
+            return null;
+        }
+        if(result.size()>1) {
+            throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmCode+"' matching date: "+ operationDate);
+        }
+        return result.get(0);
+    }
+    
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws NoPricePlanException {
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
         if (chargeInstance.getServiceInstance() != null) {
@@ -686,7 +742,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         public String export(Set<PricePlanMatrixVersion> pricePlanMatrixVersions, String fileType){
             List<Long> ppmvIds = pricePlanMatrixVersions.stream().map(PricePlanMatrixVersion::getId).collect(toList());            
-            List<Map<String, Object>> ppmvMaps = convertedPricePlanVersionService.getPPVWithCPPVByPpmvId(ppmvIds);            
+            List<Map<String, Object>> ppmvMaps = tradingPricePlanVersionService.getPPVWithCPPVByPpmvId(ppmvIds);            
             if (pricePlanMatrixVersions != null && !pricePlanMatrixVersions.isEmpty()) {
                 Set<Path> filePaths = pricePlanMatrixVersions.stream().map(ppv -> saveAsRecord(buildFileName(ppv), ppv, fileType, ppmvMaps)).collect(Collectors.toSet());
                 if (filePaths.size() > 1) {
@@ -714,7 +770,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
                 });
                 
-                line.getConvertedPricePlanMatrixLines().iterator().forEachRemaining(cppmv -> {
+                line.getTradingPricePlanMatrixLines().iterator().forEachRemaining(cppmv -> {
                     String codeCurrency = "";
                     if(cppmv.getTradingCurrency().getCurrency() != null) {
                         codeCurrency = cppmv.getTradingCurrency().getCurrency().getCurrencyCode();
