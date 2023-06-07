@@ -12409,6 +12409,35 @@
         </createTable>
     </changeSet>
     
+    <changeSet id="#INTRD-8753_20220727_001-rebuild" author="anas.rouaguebe">
+		<createTable tableName="billing_redirection_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="contract_id" type="bigint" />
+            <column name="priority" type="int4">
+            	<constraints nullable="false" />
+            </column>
+            <column name="criteria_el" type="varchar(2000)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="invoice_ba_code_el" type="varchar(2000)">
+			    <constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -16881,6 +16910,130 @@
         <sql><![CDATA[ alter table ${db.schema.adapted}adm_notif_webhooks add constraint adm_notif_webhooks_http_port_check check (http_port <= 65535)]]></sql>
     </changeSet>
 
+    <!-- start index -->
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-index-996">
+        <sql>CREATE INDEX invoice_billing_run_index ON ${db.schema.adapted}billing_invoice_agregate(billing_run_id)</sql>
+        <sql>CREATE INDEX transaction_billing_account_index ON ${db.schema.adapted}billing_rated_transaction(billing_account__id)</sql>
+        <sql>CREATE INDEX transaction_billing_index ON ${db.schema.adapted}billing_rated_transaction(invoice_id,wallet_id, invoice_sub_category_id)</sql>
+        <sql>CREATE INDEX invoice_agre_index ON ${db.schema.adapted}billing_invoice_agregate(invoice_id)</sql>
+        <sql>CREATE INDEX billing_chrginst_wallet_index ON ${db.schema.adapted}billing_chrginst_wallet(wallet_instance_id)</sql>
+        <sql>CREATE INDEX ar_customer_account_credit_cat_index ON ${db.schema.adapted}ar_customer_account(credit_category_id)</sql>
+        <sql>CREATE INDEX meveo_module_index ON ${db.schema.adapted}meveo_module(script_instance_id)</sql>
+        <sql>CREATE INDEX crm_seller_ctb_index ON ${db.schema.adapted}crm_seller(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX crm_customer_ctb_index ON ${db.schema.adapted}crm_customer(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX ar_customer_account_ctb_index ON ${db.schema.adapted}ar_customer_account(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX billing_billing_account_ctb_index ON ${db.schema.adapted}billing_billing_account(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX billing_user_account_ctb_index ON ${db.schema.adapted}billing_user_account(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX meveo_module_item_index ON ${db.schema.adapted}meveo_module_item(module_id)</sql>
+        <sql>CREATE INDEX billing_service_instance_index ON ${db.schema.adapted}billing_service_instance(subscription_id)</sql>
+        <sql>CREATE INDEX billing_user_account_ba_index ON ${db.schema.adapted}billing_user_account(billing_account_id)</sql>
+        <sql>CREATE INDEX billing_billing_account_ca_index ON ${db.schema.adapted}billing_billing_account(customer_account_id)</sql>
+        <sql>CREATE INDEX crm_customer_index ON ${db.schema.adapted}crm_customer(customer_brand_id)</sql>
+        <sql>CREATE INDEX ar_payment_customer_index ON ${db.schema.adapted}ar_payment_token(customer_account_id)</sql>
+        <sql>CREATE INDEX billing_subscription_index ON ${db.schema.adapted}billing_subscription(user_account_id)</sql>
+        <sql>CREATE INDEX cat_serv_trm_charge_template_index ON ${db.schema.adapted}cat_serv_trm_charge_template(service_template_id)</sql>
+        <sql>CREATE INDEX cat_serv_usage_charge_template_index ON ${db.schema.adapted}cat_serv_usage_charge_template(service_template_id)</sql>
+        <sql>CREATE INDEX cat_serv_usage_wallet_template_index ON ${db.schema.adapted}cat_serv_usage_wallet_template(service_usage_templt_id)</sql>
+        <sql>CREATE INDEX cat_calendar_days_index ON ${db.schema.adapted}cat_calendar_days(calendar_id)</sql>
+        <sql>CREATE INDEX cat_triggered_edr_index ON ${db.schema.adapted}cat_triggered_edr(meveo_instance_id)</sql>
+        <sql>CREATE INDEX billing_invoice_index ON ${db.schema.adapted}billing_invoice(invoice_id, invoice_type_id)</sql>
+        <sql>CREATE INDEX billing_wallet_operation_index ON ${db.schema.adapted}billing_wallet_operation(wallet_id, charge_instance_id)</sql>
+        <sql>CREATE INDEX billing_wallet_index ON ${db.schema.adapted}billing_wallet(user_account_id,cat_wallet_template_id)</sql>
+        <sql>CREATE INDEX billing_reservation_index ON ${db.schema.adapted}billing_reservation(subscription_id, user_account_id,wallet_id)</sql>
+        <sql>CREATE INDEX cat_calendar_join_cal_1_id ON ${db.schema.adapted}cat_calendar(join_cal_1_id);</sql>
+        <sql>CREATE INDEX cat_calendar_join_cal_2_id ON ${db.schema.adapted}cat_calendar(join_cal_2_id);</sql>
+        <sql>CREATE INDEX bc_instance_inv_cal_id ON ${db.schema.adapted}billing_charge_instance(invoicing_calendar_id);</sql>
+        <sql>CREATE INDEX invoicing_calendar_id_index ON ${db.schema.adapted}cat_offer_template(invoicing_calendar_id);</sql>
+        <sql>CREATE INDEX cb_product_template_id_index ON ${db.schema.adapted}cat_business_product_model(product_template_id);</sql>
+        <sql>CREATE INDEX cat_product_wallet_template_id_index ON ${db.schema.adapted}cat_product_wallet_template(wallet_template_id);</sql>
+        <sql>CREATE INDEX adm_sc_instance_id_index ON ${db.schema.adapted}adm_script_sourc_role(script_instance_id);</sql>
+        <sql>CREATE INDEX cat_bsm_st_id_index ON ${db.schema.adapted}cat_business_serv_model(service_template_id);</sql>
+        <sql>CREATE INDEX cat_st_inv_cal_id_index ON ${db.schema.adapted}cat_service_template(invoicing_calendar_id);</sql>
+        <sql>CREATE INDEX cat_st_serv_mod_id_index ON ${db.schema.adapted}cat_service_template(business_service_model_id);</sql>
+        <sql>CREATE INDEX cat_rct_service_template_index ON ${db.schema.adapted}cat_serv_rec_charge_template(service_template_id);</sql>
+        <sql>CREATE INDEX cat_rwt_wallet_template_index ON ${db.schema.adapted}cat_serv_rec_wallet_template(wallet_template_id);</sql>
+        <sql>CREATE INDEX cat_su_wallet_template_index ON ${db.schema.adapted}cat_serv_usage_wallet_template(wallet_template_id);</sql>
+        <sql>CREATE INDEX cat_ofrt_bp_model_index ON ${db.schema.adapted}cat_offer_template(business_product_model_id);</sql>
+        <sql>CREATE INDEX cat_ofrt_valid_to_index ON ${db.schema.adapted}cat_offer_template(valid_to);</sql>
+        <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema.adapted}cat_offer_template(valid_from);</sql>
+        <sql>CREATE INDEX cat_ofrpt_ofr_template_index ON ${db.schema.adapted}cat_offer_product_template(offer_template_id);</sql>
+        <sql>CREATE INDEX cat_ofrpt_pr_template_index ON ${db.schema.adapted}cat_offer_product_template(product_template_id);</sql>
+
+        <sql>CREATE INDEX crm_seller_bam_id_index ON ${db.schema.adapted}crm_seller(bam_id);</sql>
+        <sql>CREATE INDEX crm_customer_bam_id_index ON ${db.schema.adapted}crm_customer(bam_id);</sql>
+        <sql>CREATE INDEX ar_customer_account_bam_id_index ON ${db.schema.adapted}ar_customer_account(bam_id);</sql>
+        <sql>CREATE INDEX billing_billing_account_bam_id_index ON ${db.schema.adapted}billing_billing_account(bam_id);</sql>
+        <sql>CREATE INDEX billing_user_account_bam_id_index ON ${db.schema.adapted}billing_user_account(bam_id);</sql>
+
+        <sql>CREATE INDEX crm_seller_title_id_index ON ${db.schema.adapted}crm_seller(title_id);</sql>
+        <sql>CREATE INDEX crm_customer_title_id_index ON ${db.schema.adapted}crm_customer(title_id);</sql>
+        <sql>CREATE INDEX ar_customer_account_title_id_index ON ${db.schema.adapted}ar_customer_account(title_id);</sql>
+        <sql>CREATE INDEX billing_billing_account_title_id_index ON ${db.schema.adapted}billing_billing_account(title_id);</sql>
+        <sql>CREATE INDEX billing_user_account_title_id_index ON ${db.schema.adapted}billing_user_account(title_id);</sql>
+        <sql>CREATE INDEX com_contact_title_id_index ON ${db.schema.adapted}com_contact(title_id);</sql>
+
+        <sql>CREATE INDEX crm_seller_primary_contact_index ON ${db.schema.adapted}crm_seller(primary_contact);</sql>
+        <sql>CREATE INDEX crm_customer_primary_contact_index ON ${db.schema.adapted}crm_customer(primary_contact);</sql>
+        <sql>CREATE INDEX ar_customer_account_primary_contact_index ON ${db.schema.adapted}ar_customer_account(primary_contact);</sql>
+        <sql>CREATE INDEX billing_billing_account_primary_contact_index ON ${db.schema.adapted}billing_billing_account(primary_contact);</sql>
+        <sql>CREATE INDEX billing_user_account_primary_contact_index ON ${db.schema.adapted}billing_user_account(primary_contact);</sql>
+        <sql>CREATE INDEX com_contact_primary_contact_index ON ${db.schema.adapted}com_contact(primary_contact);</sql>
+
+        <sql>CREATE INDEX crm_customer_cust_category_index ON ${db.schema.adapted}crm_customer(customer_category_id);</sql>
+
+        <sql>CREATE INDEX ord_quote_version_index ON ${db.schema.adapted}ord_quote(version);</sql>
+        <sql>CREATE INDEX billing_invoice_version_index ON ${db.schema.adapted}billing_invoice(version);</sql>
+        <sql>CREATE INDEX ord_order_payment_index ON ${db.schema.adapted}ord_order(payment_method_id);</sql>
+        <sql>CREATE INDEX ord_order_quote_index ON ${db.schema.adapted}ord_order(quote_id);</sql>
+        <sql>CREATE INDEX ord_order_item_ua_index ON ${db.schema.adapted}ord_order_item(user_account_id);</sql>
+        <sql>CREATE INDEX ord_order_item_order_index ON ${db.schema.adapted}ord_order_item(order_id);</sql>
+        <sql>CREATE INDEX ord_order_item_sub_index ON ${db.schema.adapted}ord_order_item(subscription_id);</sql>
+        <sql>CREATE INDEX cat_offer_serv_templates_svtmpte_index ON ${db.schema.adapted} cat_offer_serv_templates(service_template_id);</sql>
+       <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema.adapted} cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
+        <sql>CREATE INDEX billing_wallet_ua_index ON ${db.schema.adapted} billing_wallet (user_account_id);</sql>
+        <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema.adapted}cat_offer_serv_templates(offer_template_id);</sql>
+        <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id);</sql>
+        <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
+        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
+        <sql>CREATE INDEX medina_access_user_id_index ON ${db.schema.adapted}medina_access(acces_user_id)</sql>
+        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id)</sql>
+        <sql>CREATE INDEX counter_period_ci_id ON ${db.schema.adapted}billing_counter_period(counter_instance_id)</sql>
+        <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_record)</sql>
+        <sql>CREATE INDEX rating_edr_wo_index ON ${db.schema.adapted}rating_edr(wallet_operation_id)</sql>
+        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
+        <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
+        <sql>CREATE INDEX billing_invoice_agregate_category_inv_agg ON ${db.schema.adapted}billing_invoice_agregate(category_invoice_agregate)</sql>
+        <sql>CREATE INDEX billing_invoice_billing_account_id ON ${db.schema.adapted}billing_invoice(billing_account_id)</sql>
+        <sql>CREATE INDEX medina_access_subscription_id ON ${db.schema.adapted}medina_access(subscription_id)</sql>
+        <sql>CREATE INDEX wf_instance_entity_id_idx ON ${db.schema.adapted}wf_instance(entity_instance_id)</sql>
+        <sql>CREATE INDEX billing_charge_serv_inst_index ON ${db.schema.adapted}billing_charge_instance(service_instance_id)</sql>
+        <sql>create index billing_invoice_agregate_tax_invoice_agregate_idx on ${db.schema.adapted}billing_invoice_agregate (tax_invoice_agregate)</sql>
+        <sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
+        <sql>create index ar_account_operation_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (cat_inv_agregate_id)</sql>
+        <sql>create index ar_account_operation_sub_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (sub_cat_inv_agregate_id)</sql>
+        <sql>CREATE INDEX rating_cdr_ob_index ON ${db.schema.adapted}rating_cdr(origin_batch)</sql>
+        <sql>CREATE INDEX rating_cdr_or_index ON ${db.schema.adapted}rating_cdr(origin_record)</sql>
+        <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>
+        <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>     
+        <sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation (ddrequest_item_id)</sql>
+        <sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation (reference)</sql>
+        <sql>CREATE INDEX audit_field_changes_history_index on ${db.schema.adapted}audit_field_changes_history (lower(entity_class), entity_id)</sql>
+    	<sql>CREATE INDEX flat_file_orig_name_index on ${db.schema.adapted}flat_file (lower(file_original_name))</sql>
+        <sql>CREATE INDEX job_execution_job_id_index on ${db.schema.adapted}job_execution (job_instance_id)</sql>
+        <sql>CREATE INDEX ord_order_status_index on ${db.schema.adapted}ord_order (status)</sql>
+        <sql>CREATE INDEX billing_service_instance_st_index on ${db.schema.adapted}billing_service_instance (service_template_id)</sql>
+        <sql>CREATE INDEX billing_wallet_operation_sub_index on ${db.schema.adapted}billing_wallet_operation (subscription_id)</sql>
+        <sql>CREATE INDEX billing_invoice_br_index on ${db.schema.adapted}billing_invoice (billing_run_id)</sql>
+    	<sql>CREATE INDEX idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id)</sql>
+    	<sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
+    	<sql>CREATE INDEX cpq_attribute_instance_service_instance_idx ON cpq_attribute_instance(service_instance_id)</sql>
+    	<sql>CREATE INDEX billing_wallet_operation_charge_instance_idx ON billing_wallet_operation(charge_instance_id)</sql>
+        <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
+        <sql>CREATE INDEX billing_redirection_rule_contract_index ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>
+        <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
+    </changeSet>
+
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
         <sql>CREATE INDEX adm_title_index ON ${db.schema.adapted}adm_title((lower(code)))</sql>
         <sql>CREATE INDEX crm_customer_brand_index ON ${db.schema.adapted}crm_customer_brand((lower(code)))</sql>
@@ -17478,159 +17631,6 @@
     	
         <addForeignKeyConstraint baseColumnNames="mediation_setting_id" baseTableName="edr_versioning_rule" constraintName="fk_edr_versioning_rule_mediation_setting" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
-    </changeSet>
-
-	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
-		<createTable tableName="billing_redirection_rule">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-
-            <column name="contract_id" type="bigint" />
-            <column name="priority" type="int4">
-            	<constraints nullable="false" />
-            </column>
-            <column name="criteria_el" type="varchar(2000)">
-            	<constraints nullable="false" />
-            </column>
-            <column name="invoice_ba_code_el" type="varchar(2000)">
-			    <constraints nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-
-    <!-- start index -->
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-index-996">
-        <sql>CREATE INDEX invoice_billing_run_index ON ${db.schema.adapted}billing_invoice_agregate(billing_run_id)</sql>
-        <sql>CREATE INDEX transaction_billing_account_index ON ${db.schema.adapted}billing_rated_transaction(billing_account__id)</sql>
-        <sql>CREATE INDEX transaction_billing_index ON ${db.schema.adapted}billing_rated_transaction(invoice_id,wallet_id, invoice_sub_category_id)</sql>
-        <sql>CREATE INDEX invoice_agre_index ON ${db.schema.adapted}billing_invoice_agregate(invoice_id)</sql>
-        <sql>CREATE INDEX billing_chrginst_wallet_index ON ${db.schema.adapted}billing_chrginst_wallet(wallet_instance_id)</sql>
-        <sql>CREATE INDEX ar_customer_account_credit_cat_index ON ${db.schema.adapted}ar_customer_account(credit_category_id)</sql>
-        <sql>CREATE INDEX meveo_module_index ON ${db.schema.adapted}meveo_module(script_instance_id)</sql>
-        <sql>CREATE INDEX crm_seller_ctb_index ON ${db.schema.adapted}crm_seller(primary_contact, title_id, bam_id)</sql>
-        <sql>CREATE INDEX crm_customer_ctb_index ON ${db.schema.adapted}crm_customer(primary_contact, title_id, bam_id)</sql>
-        <sql>CREATE INDEX ar_customer_account_ctb_index ON ${db.schema.adapted}ar_customer_account(primary_contact, title_id, bam_id)</sql>
-        <sql>CREATE INDEX billing_billing_account_ctb_index ON ${db.schema.adapted}billing_billing_account(primary_contact, title_id, bam_id)</sql>
-        <sql>CREATE INDEX billing_user_account_ctb_index ON ${db.schema.adapted}billing_user_account(primary_contact, title_id, bam_id)</sql>
-        <sql>CREATE INDEX meveo_module_item_index ON ${db.schema.adapted}meveo_module_item(module_id)</sql>
-        <sql>CREATE INDEX billing_service_instance_index ON ${db.schema.adapted}billing_service_instance(subscription_id)</sql>
-        <sql>CREATE INDEX billing_user_account_ba_index ON ${db.schema.adapted}billing_user_account(billing_account_id)</sql>
-        <sql>CREATE INDEX billing_billing_account_ca_index ON ${db.schema.adapted}billing_billing_account(customer_account_id)</sql>
-        <sql>CREATE INDEX crm_customer_index ON ${db.schema.adapted}crm_customer(customer_brand_id)</sql>
-        <sql>CREATE INDEX ar_payment_customer_index ON ${db.schema.adapted}ar_payment_token(customer_account_id)</sql>
-        <sql>CREATE INDEX billing_subscription_index ON ${db.schema.adapted}billing_subscription(user_account_id)</sql>
-        <sql>CREATE INDEX cat_serv_trm_charge_template_index ON ${db.schema.adapted}cat_serv_trm_charge_template(service_template_id)</sql>
-        <sql>CREATE INDEX cat_serv_usage_charge_template_index ON ${db.schema.adapted}cat_serv_usage_charge_template(service_template_id)</sql>
-        <sql>CREATE INDEX cat_serv_usage_wallet_template_index ON ${db.schema.adapted}cat_serv_usage_wallet_template(service_usage_templt_id)</sql>
-        <sql>CREATE INDEX cat_calendar_days_index ON ${db.schema.adapted}cat_calendar_days(calendar_id)</sql>
-        <sql>CREATE INDEX cat_triggered_edr_index ON ${db.schema.adapted}cat_triggered_edr(meveo_instance_id)</sql>
-        <sql>CREATE INDEX billing_invoice_index ON ${db.schema.adapted}billing_invoice(invoice_id, invoice_type_id)</sql>
-        <sql>CREATE INDEX billing_wallet_operation_index ON ${db.schema.adapted}billing_wallet_operation(wallet_id, charge_instance_id)</sql>
-        <sql>CREATE INDEX billing_wallet_index ON ${db.schema.adapted}billing_wallet(user_account_id,cat_wallet_template_id)</sql>
-        <sql>CREATE INDEX billing_reservation_index ON ${db.schema.adapted}billing_reservation(subscription_id, user_account_id,wallet_id)</sql>
-        <sql>CREATE INDEX cat_calendar_join_cal_1_id ON ${db.schema.adapted}cat_calendar(join_cal_1_id);</sql>
-        <sql>CREATE INDEX cat_calendar_join_cal_2_id ON ${db.schema.adapted}cat_calendar(join_cal_2_id);</sql>
-        <sql>CREATE INDEX bc_instance_inv_cal_id ON ${db.schema.adapted}billing_charge_instance(invoicing_calendar_id);</sql>
-        <sql>CREATE INDEX invoicing_calendar_id_index ON ${db.schema.adapted}cat_offer_template(invoicing_calendar_id);</sql>
-        <sql>CREATE INDEX cb_product_template_id_index ON ${db.schema.adapted}cat_business_product_model(product_template_id);</sql>
-        <sql>CREATE INDEX cat_product_wallet_template_id_index ON ${db.schema.adapted}cat_product_wallet_template(wallet_template_id);</sql>
-        <sql>CREATE INDEX adm_sc_instance_id_index ON ${db.schema.adapted}adm_script_sourc_role(script_instance_id);</sql>
-        <sql>CREATE INDEX cat_bsm_st_id_index ON ${db.schema.adapted}cat_business_serv_model(service_template_id);</sql>
-        <sql>CREATE INDEX cat_st_inv_cal_id_index ON ${db.schema.adapted}cat_service_template(invoicing_calendar_id);</sql>
-        <sql>CREATE INDEX cat_st_serv_mod_id_index ON ${db.schema.adapted}cat_service_template(business_service_model_id);</sql>
-        <sql>CREATE INDEX cat_rct_service_template_index ON ${db.schema.adapted}cat_serv_rec_charge_template(service_template_id);</sql>
-        <sql>CREATE INDEX cat_rwt_wallet_template_index ON ${db.schema.adapted}cat_serv_rec_wallet_template(wallet_template_id);</sql>
-        <sql>CREATE INDEX cat_su_wallet_template_index ON ${db.schema.adapted}cat_serv_usage_wallet_template(wallet_template_id);</sql>
-        <sql>CREATE INDEX cat_ofrt_bp_model_index ON ${db.schema.adapted}cat_offer_template(business_product_model_id);</sql>
-        <sql>CREATE INDEX cat_ofrt_valid_to_index ON ${db.schema.adapted}cat_offer_template(valid_to);</sql>
-        <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema.adapted}cat_offer_template(valid_from);</sql>
-        <sql>CREATE INDEX cat_ofrpt_ofr_template_index ON ${db.schema.adapted}cat_offer_product_template(offer_template_id);</sql>
-        <sql>CREATE INDEX cat_ofrpt_pr_template_index ON ${db.schema.adapted}cat_offer_product_template(product_template_id);</sql>
-
-        <sql>CREATE INDEX crm_seller_bam_id_index ON ${db.schema.adapted}crm_seller(bam_id);</sql>
-        <sql>CREATE INDEX crm_customer_bam_id_index ON ${db.schema.adapted}crm_customer(bam_id);</sql>
-        <sql>CREATE INDEX ar_customer_account_bam_id_index ON ${db.schema.adapted}ar_customer_account(bam_id);</sql>
-        <sql>CREATE INDEX billing_billing_account_bam_id_index ON ${db.schema.adapted}billing_billing_account(bam_id);</sql>
-        <sql>CREATE INDEX billing_user_account_bam_id_index ON ${db.schema.adapted}billing_user_account(bam_id);</sql>
-
-        <sql>CREATE INDEX crm_seller_title_id_index ON ${db.schema.adapted}crm_seller(title_id);</sql>
-        <sql>CREATE INDEX crm_customer_title_id_index ON ${db.schema.adapted}crm_customer(title_id);</sql>
-        <sql>CREATE INDEX ar_customer_account_title_id_index ON ${db.schema.adapted}ar_customer_account(title_id);</sql>
-        <sql>CREATE INDEX billing_billing_account_title_id_index ON ${db.schema.adapted}billing_billing_account(title_id);</sql>
-        <sql>CREATE INDEX billing_user_account_title_id_index ON ${db.schema.adapted}billing_user_account(title_id);</sql>
-        <sql>CREATE INDEX com_contact_title_id_index ON ${db.schema.adapted}com_contact(title_id);</sql>
-
-        <sql>CREATE INDEX crm_seller_primary_contact_index ON ${db.schema.adapted}crm_seller(primary_contact);</sql>
-        <sql>CREATE INDEX crm_customer_primary_contact_index ON ${db.schema.adapted}crm_customer(primary_contact);</sql>
-        <sql>CREATE INDEX ar_customer_account_primary_contact_index ON ${db.schema.adapted}ar_customer_account(primary_contact);</sql>
-        <sql>CREATE INDEX billing_billing_account_primary_contact_index ON ${db.schema.adapted}billing_billing_account(primary_contact);</sql>
-        <sql>CREATE INDEX billing_user_account_primary_contact_index ON ${db.schema.adapted}billing_user_account(primary_contact);</sql>
-        <sql>CREATE INDEX com_contact_primary_contact_index ON ${db.schema.adapted}com_contact(primary_contact);</sql>
-
-        <sql>CREATE INDEX crm_customer_cust_category_index ON ${db.schema.adapted}crm_customer(customer_category_id);</sql>
-
-        <sql>CREATE INDEX ord_quote_version_index ON ${db.schema.adapted}ord_quote(version);</sql>
-        <sql>CREATE INDEX billing_invoice_version_index ON ${db.schema.adapted}billing_invoice(version);</sql>
-        <sql>CREATE INDEX ord_order_payment_index ON ${db.schema.adapted}ord_order(payment_method_id);</sql>
-        <sql>CREATE INDEX ord_order_quote_index ON ${db.schema.adapted}ord_order(quote_id);</sql>
-        <sql>CREATE INDEX ord_order_item_ua_index ON ${db.schema.adapted}ord_order_item(user_account_id);</sql>
-        <sql>CREATE INDEX ord_order_item_order_index ON ${db.schema.adapted}ord_order_item(order_id);</sql>
-        <sql>CREATE INDEX ord_order_item_sub_index ON ${db.schema.adapted}ord_order_item(subscription_id);</sql>
-        <sql>CREATE INDEX cat_offer_serv_templates_svtmpte_index ON ${db.schema.adapted} cat_offer_serv_templates(service_template_id);</sql>
-        <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema.adapted} cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
-        <sql>CREATE INDEX billing_wallet_ua_index ON ${db.schema.adapted} billing_wallet (user_account_id);</sql>
-        <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema.adapted}cat_offer_serv_templates(offer_template_id);</sql>
-        <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id);</sql>
-        <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
-        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
-        <sql>CREATE INDEX medina_access_user_id_index ON ${db.schema.adapted}medina_access(acces_user_id)</sql>
-        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id)</sql>
-        <sql>CREATE INDEX counter_period_ci_id ON ${db.schema.adapted}billing_counter_period(counter_instance_id)</sql>
-        <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_record)</sql>
-        <sql>CREATE INDEX rating_edr_wo_index ON ${db.schema.adapted}rating_edr(wallet_operation_id)</sql>
-        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
-        <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
-        <sql>CREATE INDEX billing_invoice_agregate_category_inv_agg ON ${db.schema.adapted}billing_invoice_agregate(category_invoice_agregate)</sql>
-        <sql>CREATE INDEX billing_invoice_billing_account_id ON ${db.schema.adapted}billing_invoice(billing_account_id)</sql>
-        <sql>CREATE INDEX medina_access_subscription_id ON ${db.schema.adapted}medina_access(subscription_id)</sql>
-        <sql>CREATE INDEX wf_instance_entity_id_idx ON ${db.schema.adapted}wf_instance(entity_instance_id)</sql>
-        <sql>CREATE INDEX billing_charge_serv_inst_index ON ${db.schema.adapted}billing_charge_instance(service_instance_id)</sql>
-        <sql>create index billing_invoice_agregate_tax_invoice_agregate_idx on ${db.schema.adapted}billing_invoice_agregate (tax_invoice_agregate)</sql>
-        <sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
-        <sql>create index ar_account_operation_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (cat_inv_agregate_id)</sql>
-        <sql>create index ar_account_operation_sub_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (sub_cat_inv_agregate_id)</sql>
-        <sql>CREATE INDEX rating_cdr_ob_index ON ${db.schema.adapted}rating_cdr(origin_batch)</sql>
-        <sql>CREATE INDEX rating_cdr_or_index ON ${db.schema.adapted}rating_cdr(origin_record)</sql>
-        <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>
-        <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
-        <sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation (ddrequest_item_id)</sql>
-        <sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation (reference)</sql>
-        <sql>CREATE INDEX audit_field_changes_history_index on ${db.schema.adapted}audit_field_changes_history (lower(entity_class), entity_id)</sql>
-        <sql>CREATE INDEX flat_file_orig_name_index on ${db.schema.adapted}flat_file (lower(file_original_name))</sql>
-        <sql>CREATE INDEX job_execution_job_id_index on ${db.schema.adapted}job_execution (job_instance_id)</sql>
-        <sql>CREATE INDEX ord_order_status_index on ${db.schema.adapted}ord_order (status)</sql>
-        <sql>CREATE INDEX billing_service_instance_st_index on ${db.schema.adapted}billing_service_instance (service_template_id)</sql>
-        <sql>CREATE INDEX billing_wallet_operation_sub_index on ${db.schema.adapted}billing_wallet_operation (subscription_id)</sql>
-        <sql>CREATE INDEX billing_invoice_br_index on ${db.schema.adapted}billing_invoice (billing_run_id)</sql>
-        <sql>CREATE INDEX idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id)</sql>
-        <sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
-        <sql>CREATE INDEX cpq_attribute_instance_service_instance_idx ON cpq_attribute_instance(service_instance_id)</sql>
-        <sql>CREATE INDEX billing_wallet_operation_charge_instance_idx ON billing_wallet_operation(charge_instance_id)</sql>
-        <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
-        <sql>CREATE INDEX billing_redirection_rule_contract_index ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>
-        <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
     </changeSet>
 
     <changeSet id="#INTRD-8701_20220801_rebuild" author="ZBariki">
@@ -19604,10 +19604,10 @@
     <changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15733_20230426" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15938_20230511-2" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe"/>
     <changeSet id="#INTRD-15501_20230413" author="ThangNguyen" />
     <changeSet id="#INTRD-16050_20230515" author="ThangNguyen" />
-    
-    
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
