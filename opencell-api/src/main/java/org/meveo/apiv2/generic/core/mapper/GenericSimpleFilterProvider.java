@@ -56,7 +56,7 @@ class GenericSimpleFilterProvider extends SimpleFilterProvider {
     }
     
     boolean isNestedEntityCandidate(Set<String> nestedEntities, String current) {
-        return nestedEntities.contains(current);
+        return nestedEntities != null && nestedEntities.contains(current);
     }
     String getPathToRoot(JsonGenerator gen){
         return gen.getOutputContext().pathAsPointer(false).toString().replaceFirst("/", "").replaceAll("\\d+/", "").replaceAll("/", ".");
