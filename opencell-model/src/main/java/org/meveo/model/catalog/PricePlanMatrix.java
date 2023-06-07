@@ -21,8 +21,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Cacheable;
@@ -31,6 +33,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -372,13 +376,18 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @JoinColumn(name = "charge_template_id")
     private ChargeTemplate chargeTemplate;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_price_plan_charge", joinColumns = @JoinColumn(name = "price_plan_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
+    private Set<ChargeTemplate> chargeTemplates = new HashSet<>();
+
     @OneToMany(mappedBy = "pricePlan", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ContractItem> contractItems;
     /**
 	 * Discount plan items
 	 */
 	@OneToMany(mappedBy = "pricePlanMatrix", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<DiscountPlanItem> discountPlanItems = new ArrayList<>();  
+	private List<DiscountPlanItem> discountPlanItems = new ArrayList<>();
+
 	
     public String getEventCode() {
         return eventCode;
@@ -890,6 +899,14 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 
     public void setChargeTemplate(ChargeTemplate chargeTemplate) {
         this.chargeTemplate = chargeTemplate;
+    }
+
+    public Set<ChargeTemplate> getChargeTemplates() {
+        return chargeTemplates;
+    }
+
+    public void setChargeTemplates(Set<ChargeTemplate> chargeTemplates) {
+        this.chargeTemplates = chargeTemplates;
     }
 
     public List<ContractItem> getContractItems() {
