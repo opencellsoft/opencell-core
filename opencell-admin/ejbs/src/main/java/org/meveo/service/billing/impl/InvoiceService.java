@@ -5321,6 +5321,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BillingRun nextBR = null;
             if(BillingRunStatusEnum.REJECTED.equals(billingRunStatusEnum)) {
                 nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), null);
+                billingAccountService.getEntityManager().flush();
             }
             if (nextBR != null) {
                 getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
