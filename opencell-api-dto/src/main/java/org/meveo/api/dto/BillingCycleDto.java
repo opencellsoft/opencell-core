@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.DateAggregationOption;
@@ -205,6 +206,12 @@ public class BillingCycleDto extends BusinessEntityDto {
     private Boolean ignoreSubscriptions;
     
     private Boolean ignoreOrders;
+
+    /**
+     * To decide to use incremental invoice lines or not.
+     */
+    @Schema(description = "Use incremental mode in invoice lines or not", nullable = true)
+    private Boolean incrementalInvoiceLines;
 
     public String getLastTransactionDateDelayEL() {
 		return lastTransactionDateDelayEL;
@@ -755,5 +762,23 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     public void setIgnoreOrders(Boolean ignoreOrders) {
         this.ignoreOrders = ignoreOrders;
+    }
+
+    /**
+     * Set the incrementalInvoiceLines
+     *
+     * @param incrementalInvoiceLines Boolean true if using incremental mode, false otherwise
+     */
+    public void setIncrementalInvoiceLines(Boolean incrementalInvoiceLines) {
+        this.incrementalInvoiceLines = incrementalInvoiceLines;
+    }
+
+    /**
+     * Get the incrementalInvoiceLines
+     *
+     * @return incrementalInvoiceLines
+     */
+    public Boolean getIncrementalInvoiceLines() {
+        return incrementalInvoiceLines;
     }
 }
