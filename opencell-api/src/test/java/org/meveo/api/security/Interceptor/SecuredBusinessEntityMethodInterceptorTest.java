@@ -82,11 +82,11 @@ public class SecuredBusinessEntityMethodInterceptorTest {
     @Before
     public void setUp() {
 
-        when(userService.getEntityManager()).thenReturn(entityManager);
         when(roleService.getEntityManager()).thenReturn(entityManager);
 
         TypedQuery<Object> query = getQuerySimulation();
-        when(entityManager.createNamedQuery(any(), any())).thenReturn(query);
+	    when(entityManager.createNamedQuery(any(), any())).thenReturn(query);
+	    when(currentUser.getUserName()).thenReturn("opencell.admin");
     }
 
     /**
