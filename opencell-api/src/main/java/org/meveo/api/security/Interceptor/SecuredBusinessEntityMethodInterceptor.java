@@ -210,10 +210,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         List<SecuredEntity> allSecuredEntities = new ArrayList<>();
         User user;
         try {
-            user = userService.getEntityManager()
-                    .createNamedQuery("User.getByUsername", User.class)
-                    .setParameter("username", currentUser.getUserName().toLowerCase())
-                    .getSingleResult();
+            user = userService.findByUsername(currentUser.getUserName().toLowerCase());
         } catch (NoResultException ex) {
             throw new AccessDeniedException("No User with username " + currentUser.getUserName() + " exists in DB.");
         }
