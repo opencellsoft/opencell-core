@@ -1888,6 +1888,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             fieldToFetch.add("ivl.quantity as accumulated_quantity");
             fieldToFetch.add("ivl.validity.from as begin_date");
             fieldToFetch.add("ivl.validity.to as end_date");
+            fieldToFetch.add("ivl.unitPrice as unit_price");
         }
 
         if (BILLINGACCOUNT != type || !ignoreSubscription) {
