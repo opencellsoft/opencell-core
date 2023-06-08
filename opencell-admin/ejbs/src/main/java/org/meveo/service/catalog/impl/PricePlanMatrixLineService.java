@@ -3,49 +3,45 @@ package org.meveo.service.catalog.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.ws.rs.core.Response;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.criterion.MatchMode;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.api.dto.catalog.TradingPricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.TradingPricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.AttributeCategoryEnum;
-import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.ProviderService;
-
-import com.paypal.api.payments.Currency;
 
 @Stateless
 public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatrixLine> {
@@ -109,10 +105,11 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         pricePlanMatrixLine.setPriority(dtoData.getPriority());
         pricePlanMatrixLine.setDescription(dtoData.getDescription());
         pricePlanMatrixLine.setPricePlanMatrixValues(getPricePlanMatrixValues(dtoData, pricePlanMatrixLine));
+        pricePlanMatrixLine.setRatingAccuracy(pricePlanMatrixLine.getPricePlanMatrixValues().size());
         BigDecimal value = dtoData.getValue() != null? dtoData.getValue():dtoData.getPriceWithoutTax();
         pricePlanMatrixLine.setValue(value);
 
-        super.create(pricePlanMatrixLine);
+        create(pricePlanMatrixLine);
         return new PricePlanMatrixLineDto(pricePlanMatrixLine);
     }
 
@@ -151,11 +148,12 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
         pricePlanMatrixLine.getPricePlanMatrixValues().clear();
         pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
+        pricePlanMatrixLine.setRatingAccuracy(pricePlanMatrixLine.getPricePlanMatrixValues().size());
         pricePlanMatrixLine.setPricePlanMatrixVersion(pricePlanMatrixVersion);
         pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
         BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
         pricePlanMatrixLine.setValue(value);
-        PricePlanMatrixLine update = super.update(pricePlanMatrixLine);
+        PricePlanMatrixLine update = update(pricePlanMatrixLine);
         return new PricePlanMatrixLineDto(update);
     }
 
@@ -218,18 +216,17 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         for (TradingPricePlanMatrixLineDto tppmlDto : listTppmlDto) {
             TradingPricePlanMatrixLine cppml = new TradingPricePlanMatrixLine();
             cppml.setTradingValue(tppmlDto.getTradingValue());
-            cppml.setRate(tppmlDto.getRate());            
-            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(tppmlDto.getTradingCurrency().getCode()); 
-            if(tradingCurrency == null) {
-                throw new MeveoApiException("Trading currency doesn't exist for  ( code : " +  tppmlDto.getTradingCurrency().getCode());
-            }            
+            cppml.setRate(tppmlDto.getRate());
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(tppmlDto.getTradingCurrency().getCode());
+            if (tradingCurrency == null) {
+                throw new MeveoApiException("Trading currency doesn't exist for  ( code : " + tppmlDto.getTradingCurrency().getCode());
+            }
             cppml.setTradingCurrency(tradingCurrency);
             cppml.setTradingValue(tppmlDto.getTradingValue());
             cppml.setUseForBillingAccounts(tppmlDto.getUseForBillingAccounts());
             cppml.setPricePlanMatrixLine(pricePlanMatrixLine);
-            tradingPricePlanMatrixLineService.create(cppml);
             listTppml.add(cppml);
-        }        
+        }
         return listTppml;
     }
 
@@ -239,83 +236,6 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, ppmLineId);
         }
         return new PricePlanMatrixLineDto(ppmLine);
-    }
-
-    public List<PricePlanMatrixLine> loadMatchedLinesForProductQuote(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, Long productQuoteId) throws BusinessException{
-        List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(pricePlanMatrixVersion, attributeValues, null);
-        if (matchedPrices.isEmpty()) {
-            throw new BusinessApiException("No price match with quote product id: " + productQuoteId + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
-        }else if(matchedPrices.size() >= 2 && matchedPrices.get(0).getEffectifPriority() == matchedPrices.get(1).getEffectifPriority())
-            throw new BusinessException("Many prices lines with the same priority match with quote product id: "+ productQuoteId + " using price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ")");
-        return List.of(matchedPrices.get(0));
-    }
-    
-    public PricePlanMatrixLine loadMatchedLinesForServiceInstance(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, WalletOperation walletOperation)
-            throws NoPricePlanException {
-        List<PricePlanMatrixLine> matchedPrices = getMatchedPriceLines(pricePlanMatrixVersion, attributeValues, walletOperation);
-       
-        if (matchedPrices.isEmpty()) {
-            throw new NoPricePlanException("No price match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ") using attribute : " + attributeValues.stream().map(AttributeValue::getValue));
-        
-        } else if (matchedPrices.size() >= 2 && matchedPrices.get(0).getEffectifPriority() == matchedPrices.get(1).getEffectifPriority()) {
-            throw new NoPricePlanException("Many prices lines with the same priority match with price plan matrix: (code : " + pricePlanMatrixVersion.getPricePlanMatrix().getCode() + ", version: " + pricePlanMatrixVersion.getCurrentVersion() + ") using attribute : " + attributeValues.stream().map(AttributeValue::getValue));
-        }
-        return matchedPrices.get(0);
-    }
-
-    private List<PricePlanMatrixLine> getMatchedPriceLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
-        List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
-//        List<PricePlanMatrixLine> priceLinesSorted = priceLines.stream()
-//                .sorted(Comparator.comparing(PricePlanMatrixLine::getId))
-//                .collect(Collectors.toList());
-//        int i = 0;
-//        for (PricePlanMatrixLine ppml : priceLinesSorted) {
-//            ppml.setPriority(i++);
-//        }
-            
-        addBusinessAttributeValues(pricePlanMatrixVersion.getColumns().stream().filter(column->AttributeCategoryEnum.BUSINESS.equals(column.getAttribute().getAttributeCategory())).map(column->column.getAttribute()).collect(Collectors.toList()),attributeValues, walletOperation);
-        if(attributeValues.isEmpty()) {
-            return priceLines.stream()
-                    .filter(PricePlanMatrixLine::isDefaultLine)
-                    .collect(Collectors.toList());
-        }
-        else {
-            List<PricePlanMatrixLine> results = priceLines.stream()
-                    .filter(line -> line.match(attributeValues))
-                    .collect(Collectors.toList());
-
-            if (CollectionUtils.isNotEmpty(results) && results.size() > 1) {
-                // in case we have more than one result, remove the default one (without values)
-                results.removeIf(pricePlanMatrixLine -> CollectionUtils.isEmpty(pricePlanMatrixLine.getPricePlanMatrixValues()));
-
-                // if we still have more than one value, get the one with biggest values : values are the number of matched values with passed attributes
-                if (results.size() > 1) {
-                    return filterByMostMatchedResultValues(results);
-                    // if we have more than result, the called method shall be use priority as already developped
-                }
-            }
-
-            return results;
-        }
-    }
-
-    /**
-     * @param businessAttributes
-     * @param attributeValues
-     * @param walletOperation
-     */
-    private void addBusinessAttributeValues(List<Attribute> businessAttributes, Set<AttributeValue> attributeValues, WalletOperation walletOperation) {
-        businessAttributes.stream().forEach(attribute->attributeValues.add(getBusinessAttributeValue(attribute, walletOperation)));
-    }
-
-    /**
-     * @param attribute
-     * @return
-     */
-    private AttributeValue getBusinessAttributeValue(Attribute attribute, WalletOperation op) {
-        Object value=ValueExpressionWrapper.evaluateExpression(attribute.getElValue(), Object.class, op);
-        AttributeValue<AttributeValue> attributeValue= new AttributeValue<AttributeValue>(attribute, value);
-        return attributeValue;
     }
 
     public void removeAll(Set<PricePlanMatrixLine> linesToRemove) {
@@ -358,14 +278,11 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
             BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
             pricePlanMatrixLine.setValue(value);
-            create(pricePlanMatrixLine); 
-            Set<TradingPricePlanMatrixLine> convertedPricePlanMatrixLines = getTppmlFromDto(pricePlanMatrixLineDto, pricePlanMatrixLine);
-            pricePlanMatrixLine.getTradingPricePlanMatrixLines().clear();
-            pricePlanMatrixLine.getTradingPricePlanMatrixLines().addAll(convertedPricePlanMatrixLines);            
-            update(pricePlanMatrixLine);            
-            Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
-            pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
-            pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
+            pricePlanMatrixLine.setPricePlanMatrixValues(getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine));
+            pricePlanMatrixLine.setRatingAccuracy(pricePlanMatrixLine.getPricePlanMatrixValues().size());
+            pricePlanMatrixLine.setTradingPricePlanMatrixLines(getTppmlFromDto(pricePlanMatrixLineDto, pricePlanMatrixLine));
+            create(pricePlanMatrixLine);
+                        
             lines.add(pricePlanMatrixLine);
         }
         ppmVersion.getLines().clear();
@@ -391,18 +308,20 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 pricePlanMatrixLine.getPricePlanMatrixValues().clear();
                 pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
                 Set<TradingPricePlanMatrixLine> tradingPricePlanMatrixLines = getTradingPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider);
+                pricePlanMatrixLine.getTradingPricePlanMatrixLines().clear();
                 pricePlanMatrixLine.getTradingPricePlanMatrixLines().addAll(tradingPricePlanMatrixLines);
+                pricePlanMatrixLine.setRatingAccuracy(pricePlanMatrixLine.getPricePlanMatrixValues().size());
                 update(pricePlanMatrixLine);
             }
             else {                
-                converterPricePlanMatrixLineFromDto(ppmVersion, pricePlanMatrixLineDto, pricePlanMatrixLine);                
+                converterPricePlanMatrixLineFromDto(ppmVersion, pricePlanMatrixLineDto, pricePlanMatrixLine);               
+                pricePlanMatrixLine.setPricePlanMatrixValues(getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine));
+                pricePlanMatrixLine.setRatingAccuracy(pricePlanMatrixLine.getPricePlanMatrixValues().size());
+                pricePlanMatrixLine.setTradingPricePlanMatrixLines(getTradingPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider));
                 create(pricePlanMatrixLine);                
+ 
                 pricePlanMatrixLineDto.setPpmLineId(pricePlanMatrixLine.getId());
-                Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
-                pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
-                pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);      
-                Set<TradingPricePlanMatrixLine> convertedPricePlanMatrixLines = getTradingPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider);
-                pricePlanMatrixLine.getTradingPricePlanMatrixLines().addAll(convertedPricePlanMatrixLines);          
+       
                 ppmVersion.getLines().add(pricePlanMatrixLine);
             }
 
@@ -431,11 +350,10 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                 checkDuplicateTradingCurrency.add(tradingCurrencyToAdd.getCurrencyCode());
             }
             TradingPricePlanMatrixLine convPPML =  new TradingPricePlanMatrixLine(convertedPPML.getTradingValue(), tradingCurrencyToAdd, convertedPPML.getRate(), convertedPPML.getUseForBillingAccounts(), pricePlanMatrixLine);
-            tradingPricePlanMatrixLineService.create(convPPML);
+
             tradingPricePlanMatrixLines.add(convPPML);
         }
         
-      pricePlanMatrixLine.getTradingPricePlanMatrixLines().clear();
         return tradingPricePlanMatrixLines;
     }
     
@@ -476,42 +394,6 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             }
         }
     }
-
-
-    private List<PricePlanMatrixLine> filterByMostMatchedResultValues(List<PricePlanMatrixLine> ppmls) {
-        if (CollectionUtils.isEmpty(ppmls)) {
-            return Collections.emptyList();
-        }
-
-        // Create a map with COUNT of value, List on PricePlanMatrixLines
-        Map<Integer, List<PricePlanMatrixLine>> groupByCountValue = new HashMap<>();
-        // Put the result in map
-        ppmls.forEach(p -> {
-            if (CollectionUtils.isEmpty(p.getPricePlanMatrixValues())) {
-                return;
-            }
-            List<PricePlanMatrixLine> list = groupByCountValue.get(p.getPricePlanMatrixValues().size());
-            if (list == null) {
-                List<PricePlanMatrixLine> newList = new ArrayList<>();
-                newList.add(p);
-                groupByCountValue.put(p.getPricePlanMatrixValues().size(), newList);
-            } else {
-                list.add(p);
-            }
-        });
-
-        // Reverse order to get the result with the most matched values
-        Map<Integer, List<PricePlanMatrixLine>> reverdeOrderResults = groupByCountValue.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-
-        // return list with the most values : 1 or more
-        return reverdeOrderResults.get(Collections.max(reverdeOrderResults.entrySet(),
-                Comparator.comparingInt(Map.Entry::getKey)).getKey());
-
-    }
-
     public List<PricePlanMatrixLine> search(Map<String, Object> searchInfo) {
         Query query = getEntityManager().createQuery(buildQuery(searchInfo), PricePlanMatrixLine.class);
         injectParamsIntoQuery(searchInfo, query);

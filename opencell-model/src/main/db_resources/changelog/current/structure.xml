@@ -16832,6 +16832,37 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </changeSet>
 
 
+    <changeSet id="#INTRD-15733_20230426" author="AndriusKarpavicius">
+        <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
+        <sql>CREATE INDEX billing_redirection_rule_contract_index  ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>
+        <dropUniqueConstraint tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+        <addUniqueConstraint columnNames="ppm_version_id,code" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+        <dropUniqueConstraint tableName="cpq_price_plan_version" constraintName="cpq_price_plan_version_UNIC"/>
+        <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
+    </changeSet>
+
+    <changeSet id="#INTRD-15938_20230503" author="AndriusKarpavcius">
+        <addColumn tableName="cpq_price_plan_matrix_line">
+            <column name="accuracy" type="int" defaultValueNumeric="0">
+                 <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>delete from ${db.schema.adapted}cpq_price_plan_matrix_value where long_value is null and double_value is null and string_value is null and date_value is null and from_date_value is null and to_date_value is null and from_double_value is null and to_double_value is null and boolean_value is null</sql>
+        <sql>update ${db.schema.adapted}cpq_price_plan_matrix_line set accuracy = (select count(*) from ${db.schema.adapted}cpq_price_plan_matrix_value where ppml_id=cpq_price_plan_matrix_line.id)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-16140_20230510" author="AndriusKarpavicius">
+        <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
+    </changeSet>
+
+
+    <changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius">
+        <dropIndex tableName="cat_price_plan_matrix" indexName="cat_price_plan_event_c_index"/>
+        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
+        <dropIndex tableName="cpq_price_plan_matrix_line" indexName="cpq_price_plan_matrix_line__ppm_version_id__idx"/>
+        <sql>CREATE INDEX cpq_ppl_ppVersion_index ON ${db.schema.adapted}cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql>
+    </changeSet>
+
     <changeSet id="#INTRD-16361_20230606" author="a.rouaguebe">
         <createTable tableName="cat_price_plan_charge">
             <column name="price_plan_id" type="bigint" />
