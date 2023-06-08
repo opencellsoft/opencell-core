@@ -58,8 +58,7 @@
 	                                   rendered="#{paymentGatewayBean.entity.type==PaymentGatewayTypeEnum.NATIF}"  autocompleteBean="#{paymentGatewayBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>																				
 					</h:panelGroup>
 					<hftl:formField label="#{messages['paymentGateway.paymentMethod']}" field="paymentMethodType"  listValues="#{paymentGatewayBean.getAllowedPaymentMethods()}" listenerUpdate="cardTypeP" />
-					<hftl:formField  id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="country" valueLabelField="description" listBean="#{countryBean}" componentWidth="10" />
-					<hftl:formField label="#{messages['currency.codeCurrency']}" field="tradingCurrency"  valueLabelField="currencyCode" id="currencySelectId" listBean="#{tradingCurrencyBean}" componentWidth="10"/>
+					<hftl:formField  id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="country" valueLabelField="description" listBean="#{countryBean}" componentWidth="10" />					
 					<h:panelGroup id="cardTypeP">
 						<hftl:formField label="#{messages['paymentGateway.cardType']}" field="cardType" rendered="#{paymentGatewayBean.entity.paymentMethodType==PaymentMethodEnum.CARD}"  />
 					</h:panelGroup>
