@@ -6131,7 +6131,6 @@
     <changeSet id="#INTRD-15228_20230327" author="hichamELHALOUI" />
   	<changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI" />
     <changeSet id="#INTRD-14750_20230331" author="TarikFA." />
-    <changeSet id="#INTRD-16278_20230606" author="anasseh" />	
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
