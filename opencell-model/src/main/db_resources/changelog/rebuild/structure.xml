@@ -12568,6 +12568,35 @@
             <column name="charge_id" type="bigint" />
         </createTable>
     </changeSet>
+    
+    <changeSet id="#INTRD-8753_20220727_001-rebuild" author="anas.rouaguebe">
+		<createTable tableName="billing_redirection_rule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="contract_id" type="bigint" />
+            <column name="priority" type="int4">
+            	<constraints nullable="false" />
+            </column>
+            <column name="criteria_el" type="varchar(2000)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="invoice_ba_code_el" type="varchar(2000)">
+			    <constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
     <!-- end tables -->
 
@@ -17961,35 +17990,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="mediation_setting" />
     </changeSet>
 
-	<changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe">
-		<createTable tableName="billing_redirection_rule">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rule_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-
-            <column name="contract_id" type="bigint" />
-            <column name="priority" type="int4">
-            	<constraints nullable="false" />
-            </column>
-            <column name="criteria_el" type="varchar(2000)">
-            	<constraints nullable="false" />
-            </column>
-            <column name="invoice_ba_code_el" type="varchar(2000)">
-			    <constraints nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-
     <changeSet id="#INTRD-8701_20220801_rebuild" author="ZBariki">
         <createTable tableName="billing_tax_composition">
             <column name="main_tax_id" type="bigint">
@@ -20144,6 +20144,7 @@
     <changeSet id="#INTRD-16140_20230510" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-15733_20230426" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe"/>
     
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
