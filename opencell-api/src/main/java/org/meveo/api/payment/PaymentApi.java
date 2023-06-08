@@ -309,7 +309,8 @@ public class PaymentApi extends BaseApi {
 
 	private boolean checkAccountOperationCurrency(List<AccountOperation> aosToPaid, String transactionalCurrency) {
 		return aosToPaid.stream()
-				.anyMatch(accountOperation -> !accountOperation.getTransactionalCurrency().getCurrencyCode().equalsIgnoreCase(transactionalCurrency));
+				.anyMatch(accountOperation -> ! accountOperation.getCode().endsWith("_SD") &&
+						!accountOperation.getTransactionalCurrency().getCurrencyCode().equalsIgnoreCase(transactionalCurrency));
 	}
 
 
