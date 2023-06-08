@@ -23,7 +23,7 @@ public class PriceListResourceImpl implements PriceListResource {
     @Override
 	public Response create(org.meveo.apiv2.catalog.PriceList priceList) {
     	PriceList entity = mapper.toEntity(priceList);
-    	PriceList savedPriceList = priceListApiService.create(entity);
+    	PriceList savedPriceList = priceListApiService.create(entity, priceList.getCustomFields());
 		return ok(LinkGenerator.getUriBuilderFromResource(PriceListResource.class, savedPriceList.getId()).build())
 				.entity(mapper.toResource(savedPriceList))
 				.build();
@@ -32,7 +32,7 @@ public class PriceListResourceImpl implements PriceListResource {
     @Override
 	public Response update(org.meveo.apiv2.catalog.PriceList priceList, String priceListCode) {
     	PriceList entity = mapper.toEntity(priceList);
-    	PriceList updated = priceListApiService.update(entity, priceListCode).get();
+    	PriceList updated = priceListApiService.update(entity, priceListCode, priceList.getCustomFields()).get();
 		return ok(LinkGenerator.getUriBuilderFromResource(DunningLevelResource.class, updated.getId()).build())
 				.entity(mapper.toResource(updated))
 				.build();

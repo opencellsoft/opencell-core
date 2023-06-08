@@ -16825,6 +16825,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 baseTableName="billing_wallet_operation" />
     </changeSet>
 
+    <changeSet id="#INTRD-16713_20230606" author="TarikFA.">
+        <addColumn tableName="billing_invoice">
+            <column name="auto_matching" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
+
     <changeSet id="#INTRD-15733_20230426" author="AndriusKarpavicius">
         <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
         <sql>CREATE INDEX billing_redirection_rule_contract_index  ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>

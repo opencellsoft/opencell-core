@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.apiv2.models.Resource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -92,5 +93,9 @@ public interface PriceList extends Resource {
 	@Schema(description = "The Price List payment sellers")
 	@JsonProperty("sellers")
 	List<String> getSellers();
+
+	@Nullable
+	@Schema(description = "list of the custom field if any")
+	CustomFieldsDto getCustomFields();
 
 }

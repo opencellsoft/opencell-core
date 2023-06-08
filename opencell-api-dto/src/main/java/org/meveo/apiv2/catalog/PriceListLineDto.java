@@ -64,7 +64,7 @@ public interface PriceListLineDto extends Resource {
     @Nullable
     @Value.Default
     @Schema(description = "rate of priceList type", example = "possible value are : PERCENTAGE, FIXED")
-    default PriceListTypeEnum getPriceListRateType() { return PriceListTypeEnum.PERCENTAGE; }
+    default PriceListTypeEnum getPriceListRateType() { return PriceListTypeEnum.FIXED; }
 
     @Nullable
     @Schema(description = "list of the custom field if any")
