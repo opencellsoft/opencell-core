@@ -157,7 +157,7 @@
 								<h:outputText value="#{messages[node.type eq 'child'?entity.status.label:entity.cumulativeStatus.label]}" />
 							</p:column>
 							
-							<hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" show="#{node.type eq 'child'}" />
+							<hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" show="#{node.type eq 'child' or entity.getWorkerJobExecutionResults().isEmpty()}" />
 						</p:treeTable>
 					</h:form>
 				</p:fieldset>

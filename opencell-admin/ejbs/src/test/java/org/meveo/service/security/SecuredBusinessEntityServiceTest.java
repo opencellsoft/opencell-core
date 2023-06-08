@@ -46,7 +46,7 @@ public class SecuredBusinessEntityServiceTest {
     @Before
     public void setUp() {
         Mockito.when(paramBeanFactory.getInstance()).thenReturn(paramBean);
-        Mockito.when(paramBean.getBooleanValue("accessible.entity.allows.access.childs.seller", false)).thenReturn(false);
+        Mockito.when(paramBean.getPropertyAsBoolean("accessible.entity.allows.access.childs.seller", false)).thenReturn(false);
 
     }
 
@@ -110,7 +110,7 @@ public class SecuredBusinessEntityServiceTest {
 
     @Test
     public void should_not_access_other_sellers_hierarchy_even_if_seller_hierarchy_enabled() {
-        Mockito.when(paramBean.getBooleanValue("accessible.entity.allows.access.childs.seller", false)).thenReturn(true);
+        Mockito.when(paramBean.getPropertyAsBoolean("accessible.entity.allows.access.childs.seller", false)).thenReturn(true);
         Map<String, AccountEntity> hierarchy = new TreeMap<String, AccountEntity>();
         Seller parent = new Seller();
         parent.setCode("parent");
@@ -140,7 +140,7 @@ public class SecuredBusinessEntityServiceTest {
 
     @Test
     public void should_access_all_super_seller_hierarchy_if_enabled() {
-        Mockito.when(paramBean.getBooleanValue("accessible.entity.allows.access.childs.seller", false)).thenReturn(true);
+        Mockito.when(paramBean.getPropertyAsBoolean("accessible.entity.allows.access.childs.seller", false)).thenReturn(true);
 
         Map<String, AccountEntity> hierarchy = new TreeMap<String, AccountEntity>();
         Seller parent = new Seller();
