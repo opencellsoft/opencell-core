@@ -28,7 +28,6 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CreditCategory;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
@@ -179,7 +178,7 @@ public class PriceListApiService extends BaseApi {
 
                 priceListToUpdate.getLines()
                                  .stream()
-                                 .filter(pll -> pll.getRate() != null || (pll.getPricePlan()!= null && !pll.getPricePlan().getVersions().isEmpty()  && pll.getPricePlan()
+                                 .filter(pll -> pll.getRate() != null || pll.getAmount() != null || (pll.getPricePlan()!= null && !pll.getPricePlan().getVersions().isEmpty()  && pll.getPricePlan()
                                                                                                           .getVersions()
                                                                                                           .stream()
                                                                                                           .anyMatch(ppv -> ppv.getStatus().equals(VersionStatusEnum.PUBLISHED))))
