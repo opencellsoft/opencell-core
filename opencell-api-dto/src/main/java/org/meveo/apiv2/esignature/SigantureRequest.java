@@ -24,4 +24,7 @@ public interface SigantureRequest {
 	String getExternal_id();
 	@Nullable
 	List<FilesSignature> getFilesToSign();
+	
+	@Nullable
+	List<Signers> getSigners();
 }

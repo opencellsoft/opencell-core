@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.admin.Seller;
+import org.meveo.apiv2.esignature.SigantureRequest;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -32,5 +33,5 @@ public interface SignatureRequestResource {
 							)
 					)}
 	)
-	Response create();
+	Response sigantureRequest(SigantureRequest sigantureRequest);
 }

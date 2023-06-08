@@ -14,6 +14,5 @@ public interface FilesSignature {
 	String getFilePath();
 	@Nullable
 	NatureDocument getNature();
-	@Nullable
 	boolean getParse_anchors();
 }
