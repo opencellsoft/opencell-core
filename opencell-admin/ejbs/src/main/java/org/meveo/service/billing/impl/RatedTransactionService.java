@@ -2368,7 +2368,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
 
-        return super.update(ratedTransaction);
+        return update(ratedTransaction);
     }
 
     /**
