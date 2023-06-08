@@ -135,9 +135,8 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	/**
      * Charge code
      */
-    @Column(name = "event_code", length = 255, nullable = false)
+    @Column(name = "event_code", length = 255, nullable = true)
     @Size(min = 1, max = 255)
-    @NotNull
     private String eventCode;
 
     /**
@@ -376,7 +375,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @JoinColumn(name = "charge_template_id")
     private ChargeTemplate chargeTemplate;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "cat_price_plan_charge", joinColumns = @JoinColumn(name = "price_plan_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
     private Set<ChargeTemplate> chargeTemplates = new HashSet<>();
 
@@ -648,6 +647,8 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
+        } else if (id != null && other.getId() != null && !id.equals(other.getId())) {
+            return false;
         }
 
         if (criteria1Value == null) {

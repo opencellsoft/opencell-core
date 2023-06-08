@@ -16831,5 +16831,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="charge_id" type="bigint" />
         </createTable>
     </changeSet>
+    
+    <changeSet id="#INTRD-16362_20230607_ppm_eventcode" author="a.rouaguebe">
+        <dropNotNullConstraint tableName="cat_price_plan_matrix" columnName="event_code"></dropNotNullConstraint>
+    </changeSet>
 
 </databaseChangeLog>
