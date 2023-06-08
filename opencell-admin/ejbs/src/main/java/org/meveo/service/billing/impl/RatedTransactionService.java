@@ -2292,10 +2292,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Update ratedTransaction and rerate
+     * Based on ratedTransaction and its old status, decide to update or not the corresponding invoice line using EDR Versioning
      *
-     * @param oldStatus RatedTransactionStatusEnum
-     * @param ratedTransaction RatedTransaction
+     * @param oldStatus RatedTransactionStatusEnum old status of ratedTransaction to be checked to perform
+     *                  appropriate actions
+     * @param ratedTransaction RatedTransaction containing necessary information to update corresponding invoice line
+     *                         if allowed
      */
     public RatedTransaction update(RatedTransactionStatusEnum oldStatus, RatedTransaction ratedTransaction) {
 
@@ -2360,12 +2362,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     }
                 }
                 else {
-                    log.info("No invoice line created from ratedTransaction id = {}", ratedTransaction.getId());
+                    log.debug("No invoice line created from ratedTransaction id = {} with status {}",
+                            ratedTransaction.getId(), oldStatus);
                 }
-            }
-            else if (oldStatus == RatedTransactionStatusEnum.OPEN) {
-                log.info("No invoice line created from ratedTransaction id = {} with status {}",
-                        ratedTransaction.getId(), oldStatus);
             }
         }
 
