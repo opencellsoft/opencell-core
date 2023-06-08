@@ -194,6 +194,7 @@ import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.ValidationRuleTypeEnum;
 import org.meveo.model.billing.WalletInstance;
@@ -228,6 +229,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -412,6 +414,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private OpenOrderService openOrderService;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
     /**
      * folder for pdf .
@@ -1414,6 +1419,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
                 (invoice.getInvoiceType().getInvoiceValidationScript() != null
                         || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
+            invoice = invoiceService.refreshOrRetrieve(invoice);
             if(invoice.getInvoiceType().getInvoiceValidationScript() != null) {
                 ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
                 if (scriptInstance != null) {
@@ -1532,7 +1538,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 	
 	private ScriptInterface injectScriptParameters(Map<String, Object> methodContext, InvoiceValidationRule validationRule) {
-		ScriptInstance scriptInstance = validationRule.getValidationScript();
+		ScriptInstance scriptInstance = scriptInstanceService.refreshOrRetrieve(validationRule.getValidationScript());
 		ScriptInterface validationRuleScript = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
 		if(scriptInstance != null && !MapUtils.isEmpty(validationRule.getRuleValues())){
 		    scriptInstance.getScriptParameters().stream().forEach(sp -> {
@@ -2584,7 +2590,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (isDraft) {
                     drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate(),
                         generateInvoiceRequestDto.getLastTransactionDate());
-                    update(invoice);
                 } else {
                     drafWalletOperationIds = new ArrayList<>();
                     invoice.setStatus(InvoiceStatusEnum.VALIDATED);
@@ -5391,6 +5396,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BillingRun nextBR = null;
             if(BillingRunStatusEnum.REJECTED.equals(billingRunStatusEnum)) {
                 nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), null);
+                billingAccountService.getEntityManager().flush();
             }
             if (nextBR != null) {
                 getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
@@ -6801,7 +6807,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public BigDecimal getCurrentRate(Invoice toUpdate, Date exchangeDate) {
         BigDecimal currentRate = null;
         if (toUpdate.getTradingCurrency() != null) {
-            ExchangeRate exchangeRate = toUpdate.getTradingCurrency().getExchangeRate(exchangeDate);
+            TradingCurrency tradingCurrency = tradingCurrencyService.refreshOrRetrieve(toUpdate.getTradingCurrency());
+            ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
             if (exchangeRate != null) {
                 currentRate = exchangeRate.getExchangeRate();
             }

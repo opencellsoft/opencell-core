@@ -16825,13 +16825,20 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 baseTableName="billing_wallet_operation" />
     </changeSet>
 
+    <changeSet id="#INTRD-16713_20230606" author="TarikFA.">
+        <addColumn tableName="billing_invoice">
+            <column name="auto_matching" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
+
     <changeSet id="#INTRD-16361_20230606" author="a.rouaguebe">
         <createTable tableName="cat_price_plan_charge">
             <column name="price_plan_id" type="bigint" />
             <column name="charge_id" type="bigint" />
         </createTable>
     </changeSet>
-    
+
     <changeSet id="#INTRD-16362_20230607_ppm_eventcode" author="a.rouaguebe">
         <dropNotNullConstraint tableName="cat_price_plan_matrix" columnName="event_code"></dropNotNullConstraint>
     </changeSet>

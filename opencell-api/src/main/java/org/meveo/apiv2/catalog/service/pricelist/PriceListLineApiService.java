@@ -9,8 +9,10 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.catalog.PriceListLineDto;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
@@ -34,6 +36,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -126,6 +129,8 @@ public class PriceListLineApiService extends BaseApi {
             ChargeTemplate chargeTemplate = chargeTemplateService.findByCode(postDto.getChargeTemplateCode());
             if(chargeTemplate == null) {
                 throw new EntityDoesNotExistsException(ChargeTemplate.class, postDto.getChargeTemplateCode());
+            } else if (!Arrays.asList(ChargeTemplateStatusEnum.DRAFT, ChargeTemplateStatusEnum.ACTIVE).contains(chargeTemplate.getStatus())) {
+                throw new BusinessApiException("Only Draft and Active charges can be used");
             }
 
             checkChargeTemplateCompatibility(entityToSave, chargeTemplate);
@@ -354,6 +359,8 @@ public class PriceListLineApiService extends BaseApi {
                 ChargeTemplate chargeTemplate = chargeTemplateService.findByCode(postDto.getChargeTemplateCode());
                 if (chargeTemplate == null) {
                     throw new EntityDoesNotExistsException(ChargeTemplate.class, postDto.getChargeTemplateCode());
+                } else if (!Arrays.asList(ChargeTemplateStatusEnum.DRAFT, ChargeTemplateStatusEnum.ACTIVE).contains(chargeTemplate.getStatus())) {
+                    throw new BusinessApiException("Only Draft and Active charges can be used");
                 }
                 priceListLineToUpdate.setChargeTemplate(chargeTemplate);
             }
@@ -375,7 +382,6 @@ public class PriceListLineApiService extends BaseApi {
         if(priceListLineToUpdate.getChargeTemplate()!= null) {
             checkChargeTemplateCompatibility(priceListLineToUpdate, priceListLineToUpdate.getChargeTemplate());
         }
-
 
         if(postDto.getRate() != null) {
             priceListLineToUpdate.setRate(BigDecimal.valueOf(postDto.getRate()));
@@ -434,6 +440,9 @@ public class PriceListLineApiService extends BaseApi {
         }
         if(StringUtils.isBlank(postDto.getChargeTemplateCode())) {
             missingFields.add("chargeTemplateCode");
+        }
+        if(StringUtils.isNotBlank(postDto.getOfferTemplateCode()) && StringUtils.isBlank(postDto.getProductCode())) {
+            missingFields.add("productCode");
         }
         if(StringUtils.isBlank(postDto.getPriceListRateType())) {
             missingFields.add("priceListRateType");
