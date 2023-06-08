@@ -21,8 +21,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Cacheable;
@@ -31,6 +33,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -41,7 +45,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -148,9 +151,8 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	/**
      * Charge code
      */
-    @Column(name = "event_code", length = 255, nullable = false)
+    @Column(name = "event_code", length = 255, nullable = true)
     @Size(min = 1, max = 255)
-    @NotNull
     private String eventCode;
 
     /**
@@ -389,7 +391,11 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @JoinColumn(name = "charge_template_id")
     private ChargeTemplate chargeTemplate;
 
-    @OneToMany(mappedBy = "pricePlan", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "cat_price_plan_charge", joinColumns = @JoinColumn(name = "price_plan_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
+    private Set<ChargeTemplate> chargeTemplates = new HashSet<>();
+
+    @OneToMany(mappedBy = "pricePlan", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ContractItem> contractItems;
     /**
 	 * Discount plan items
@@ -656,6 +662,8 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
+        } else if (id != null && other.getId() != null && !id.equals(other.getId())) {
+            return false;
         }
 
         if (criteria1Value == null) {
@@ -907,6 +915,14 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 
     public void setChargeTemplate(ChargeTemplate chargeTemplate) {
         this.chargeTemplate = chargeTemplate;
+    }
+
+    public Set<ChargeTemplate> getChargeTemplates() {
+        return chargeTemplates;
+    }
+
+    public void setChargeTemplates(Set<ChargeTemplate> chargeTemplates) {
+        this.chargeTemplates = chargeTemplates;
     }
 
     public List<ContractItem> getContractItems() {

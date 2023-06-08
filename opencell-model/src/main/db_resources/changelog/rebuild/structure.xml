@@ -4553,9 +4553,7 @@
             <column name="criteria_el" type="varchar(2000)" />
             <column name="end_rating_date" type="datetime" />
             <column name="end_subscription_date" type="datetime" />
-            <column name="event_code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
+            <column name="event_code" type="varchar(255)" />
             <column name="max_quantity" type="numeric(35, 12)" />
             <column name="max_subscr_age" type="bigint" />
             <column name="min_quantity" type="numeric(35, 12)" />
@@ -12564,6 +12562,13 @@
        	 <addUniqueConstraint columnNames="seller_id, media_id" constraintName="seller_id_media_id_unique_key" tableName="billing_seller_media" />
     </changeSet>
 
+    <changeSet id="#INTRD-16361_20230606_rebuild" author="a.rouaguebe">
+        <createTable tableName="cat_price_plan_charge">
+            <column name="price_plan_id" type="bigint" />
+            <column name="charge_id" type="bigint" />
+        </createTable>
+    </changeSet>
+
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -20130,6 +20135,8 @@
     <changeSet id="#INTRD-15849_20230509" author="TarikFA." />
     <changeSet id="#INTRD-16366_20230529" author="zelmeliani" />
     <changeSet id="#INTRD-16374_20230519" author="zelmeliani" />
+    <changeSet id="#INTRD-16361_20230606" author="a.rouaguebe" />
+    <changeSet id="#INTRD-16362_20230607_ppm_eventcode" author="a.rouaguebe" />
     <changeSet id="#INTRD-16713_20230606" author="TarikFA." />
 
     <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>

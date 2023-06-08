@@ -20,6 +20,9 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -37,11 +40,13 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
@@ -114,9 +119,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     @Override
     public PricePlanMatrix create(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getEventCode())) {
-            missingParameters.add("eventCode");
-        }
+
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(PricePlanMatrix.class.getName(), postData);
         }
@@ -137,9 +140,22 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         PricePlanMatrix pricePlanMatrix = new PricePlanMatrix();
         pricePlanMatrix.setCode(postData.getCode());
-        pricePlanMatrix.setEventCode(postData.getEventCode());
         if (postData.isDisabled() != null) {
             pricePlanMatrix.setDisabled(postData.isDisabled());
+        }
+
+        if (!ListUtils.isEmtyCollection(postData.getChargeTemplateCodes())) {
+            Set<ChargeTemplate> charges = postData.getChargeTemplateCodes()
+                    .stream()
+                    .map(c -> Optional.ofNullable(chargeTemplateServiceAll.findByCode(c))
+                            .orElseThrow(() -> new EntityDoesNotExistsException(ChargeTemplate.class, c)))
+                    .collect(Collectors.toSet());
+            pricePlanMatrix.setChargeTemplates(charges);
+        } else if (StringUtils.isNotBlank(postData.getEventCode())) {
+            ChargeTemplate chargeTemplate = Optional.ofNullable(chargeTemplateServiceAll.findByCode(postData.getCode()))
+                    .orElseThrow(() -> new EntityDoesNotExistsException(ChargeTemplate.class, postData.getCode()));
+            pricePlanMatrix.setChargeTemplates(Set.of(chargeTemplate));
+            pricePlanMatrix.setEventCode(postData.getEventCode());
         }
 
         if (!StringUtils.isBlank(postData.getSeller())) {
@@ -263,9 +279,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     @Override
     public PricePlanMatrix update(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getEventCode())) {
-            missingParameters.add("eventCode");
-        }
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -277,7 +290,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         if (pricePlanMatrix == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, postData.getCode());
         }
-        pricePlanMatrix.setEventCode(postData.getEventCode());
 
         if (!StringUtils.isBlank(postData.getSeller())) {
             Seller seller = sellerService.findByCode(postData.getSeller());
@@ -285,6 +297,20 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
             }
             pricePlanMatrix.setSeller(seller);
+        }
+
+        if (!ListUtils.isEmtyCollection(postData.getChargeTemplateCodes())) {
+            Set<ChargeTemplate> charges = postData.getChargeTemplateCodes()
+                    .stream()
+                    .map(c -> Optional.ofNullable(chargeTemplateServiceAll.findByCode(c))
+                            .orElseThrow(() -> new EntityDoesNotExistsException(ChargeTemplate.class, c)))
+                    .collect(Collectors.toSet());
+            pricePlanMatrix.setChargeTemplates(charges);
+        } else if (StringUtils.isNotBlank(postData.getEventCode())) {
+            ChargeTemplate chargeTemplate = Optional.ofNullable(chargeTemplateServiceAll.findByCode(postData.getCode()))
+                    .orElseThrow(() -> new EntityDoesNotExistsException(ChargeTemplate.class, postData.getCode()));
+            pricePlanMatrix.setChargeTemplates(Set.of(chargeTemplate));
+            pricePlanMatrix.setEventCode(postData.getEventCode());
         }
 
         if (!StringUtils.isBlank(postData.getCountry())) {
