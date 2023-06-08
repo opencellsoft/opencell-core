@@ -1200,6 +1200,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     public RatingResult rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
     	RatingResult ratingResult = new RatingResult();
         WalletOperation operation = walletOperationToRerate.getUnratedClone();
+        operation.setOperationDate(operation.getEdr() != null ? operation.getEdr().getEventDate() : operation.getOperationDate());
+        operation.setOperationDate(operation.getEdr() != null ? operation.getEdr().getEventDate() : operation.getOperationDate());
         PricePlanMatrix priceplan = operation.getPriceplan();
         WalletInstance wallet = operation.getWallet();
         UserAccount userAccount = wallet.getUserAccount();
@@ -1367,7 +1369,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         for (Entry<ChargeInstance, List<WalletOperation>> groupedWos : groupedWOByChargeInstance.entrySet()) {
             ChargeInstance chargeInstance = groupedWos.getKey();
             if (chargeInstance.getAccumulatorCounterInstances() != null && !chargeInstance.getAccumulatorCounterInstances().isEmpty()) {
-                List<CounterValueChangeInfo> counterChangeInfo = counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, groupedWos.getValue(), isVirtual,true);
+                List<CounterValueChangeInfo> counterChangeInfo = counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, groupedWos.getValue(), isVirtual);
                 ratingResult.addCounterChange(counterChangeInfo);
             }
         }
