@@ -9,8 +9,8 @@ public enum DeliveryMode {
 		this.value = value;
 	}
 	
-	public DeliveryMode getValue(DeliveryMode deliveryMode) {
-		return deliveryMode != null ? deliveryMode : NONE;
+	public String getValue(DeliveryMode deliveryMode) {
+		return deliveryMode != null ? deliveryMode.value : NONE.value;
 	}
 	
 	public String getValue(){
