@@ -3286,8 +3286,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void assignInvoiceNumberAndRecalculateDates(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
         Invoice invoice = findById(invoiceId);
-        assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
-
         BillingAccount billingAccount = invoice.getBillingAccount();
         //Recalculate dates :
         BillingCycle billingCycle = billingAccount.getBillingCycle();
@@ -3315,6 +3313,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         //Assign invoice number :
         billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
+        assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
         invoice.setStatus(InvoiceStatusEnum.VALIDATED);
         // /!\ DO NOT REMOVE THIS LINE, A LasyInitializationException is throw and the invoice is not generated.
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
