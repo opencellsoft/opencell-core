@@ -5021,6 +5021,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoiceDTO.isCheckAlreadySent()) {
             invoice.setEmailSentDate(invoiceDTO.getEmailSentDate());
         }
+        invoice.setAutoMatching(invoiceDTO.isAutoMatching());
         invoice.setStatus(InvoiceStatusEnum.VALIDATED);
         invoice.setDontSend(invoiceDTO.isSentByEmail());
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
@@ -5396,6 +5397,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BillingRun nextBR = null;
             if(BillingRunStatusEnum.REJECTED.equals(billingRunStatusEnum)) {
                 nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), null);
+                billingAccountService.getEntityManager().flush();
             }
             if (nextBR != null) {
                 getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
@@ -5475,7 +5477,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
 
-        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, invoiceType, comment, seller);
+        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, invoiceType, comment, seller,
+                resource.getAutoMatching() != null ? resource.getAutoMatching() : false);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
@@ -5488,7 +5491,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new EntityDoesNotExistsException(InvoiceType.class, "SECURITY_DEPOSIT");
         }
         Seller defaultSeller = securityDepositInput.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-		Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "", defaultSeller);
+		Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "", defaultSeller, false);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
@@ -5505,7 +5508,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param comment Comment
      * @return {@link Invoice}
      */
-    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order, BillingAccount billingAccount, InvoiceType advType, String comment, Seller seller) {
+    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order, BillingAccount billingAccount, InvoiceType advType, String comment, Seller seller, boolean isAutoMatching) {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(advType);
         invoice.setBillingAccount(billingAccount);
@@ -5527,6 +5530,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setStatus(InvoiceStatusEnum.NEW);
         invoice.setAmountWithoutTaxBeforeDiscount(BigDecimal.ZERO);
         invoice.setComment(comment);
+        invoice.setAutoMatching(isAutoMatching);
         return invoice;
     }
 

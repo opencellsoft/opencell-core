@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -52,8 +53,9 @@ import org.meveo.model.admin.Seller;
             + " and (br.contract.customerAccount.id is null or br.contract.customerAccount.id=:customerAccountId) "
             + " and (br.contract.customer.id is null or br.contract.customer.id=:customerId) "
             + " and (br.contract.seller.id is null) "
-            + " order by br.contract.billingAccount.id, br.contract.customerAccount.id, br.contract.customer.id, br.contract.seller.id, br.priority NULLS LAST")
-}) 
+            + " order by br.contract.billingAccount.id, br.contract.customerAccount.id, br.contract.customer.id, br.contract.seller.id, br.priority NULLS LAST"),
+    @NamedQuery(name = "BillingRule.findByContractIdForRating", query = "select id, criteriaEL, invoicedBACodeEL from BillingRule where contract.id=:contractId order by priority NULLS LAST", hints = {
+            @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
 public class BillingRule extends EnableEntity {
 
 	private static final long serialVersionUID = 1727135182839389638L;

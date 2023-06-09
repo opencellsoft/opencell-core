@@ -149,7 +149,7 @@ public class PriceListLineApiService extends BaseApi {
         if(StringUtils.isNotBlank(postDto.getPricePlanCode())) {
             PricePlanMatrix ppm = pricePlanMatrixService.findByCode(postDto.getPricePlanCode());
             if(ppm == null) {
-                throw new EntityDoesNotExistsException(PricePlanMatrix.class, postDto.getCode());
+                throw new EntityDoesNotExistsException(PricePlanMatrix.class, postDto.getPricePlanCode());
             }
             entityToSave.setPricePlan(ppm);
         }
@@ -415,7 +415,7 @@ public class PriceListLineApiService extends BaseApi {
             if(StringUtils.isNotBlank(postDto.getPricePlanCode())) {
                 PricePlanMatrix ppm = pricePlanMatrixService.findByCode(postDto.getPricePlanCode());
                 if(ppm == null) {
-                    throw new EntityDoesNotExistsException(PricePlanMatrix.class, postDto.getCode());
+                    throw new EntityDoesNotExistsException(PricePlanMatrix.class, postDto.getPricePlanCode());
                 }
                 priceListLineToUpdate.setPricePlan(ppm);
             } else {

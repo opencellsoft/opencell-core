@@ -41,6 +41,7 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
     private TradingCountryService tradingCountryService;
 
     @Override
+    @TransactionAttribute
     public OneShotChargeTemplate create(OneShotChargeTemplateDto oneShotChargeTemplateDto) throws MeveoApiException, BusinessException {
 
         checkOneChargeTemplateDto(oneShotChargeTemplateDto);
