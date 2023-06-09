@@ -245,6 +245,11 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
      */
     private boolean anonymize;
 
+    /** Reference table associated with the entity clazz if informed*/
+    @XmlElement
+    private String referenceTable;
+
+
     /**
      * Instantiates a new custom field template dto.
      */
@@ -942,5 +947,23 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
 
     public void setAnonymize(boolean anonymize) {
         this.anonymize = anonymize;
+    }
+
+    /**
+     * Gets the reference table.
+     *
+     * @return the reference table.
+     */
+    public String getReferenceTable() {
+        return referenceTable;
+    }
+
+    /**
+     * Sets the reference table.
+     *
+     * @param referenceTable the reference table.
+     */
+    public void setReferenceTable(String referenceTable) {
+        this.referenceTable = referenceTable;
     }
 }
