@@ -1,7 +1,6 @@
 package org.meveo.service.catalog.impl;
 
 import static org.meveo.model.pricelist.PriceListStatusEnum.ACTIVE;
-import static org.meveo.model.pricelist.PriceListStatusEnum.DRAFT;
 
 import java.util.Date;
 import java.util.List;
@@ -20,7 +19,7 @@ public class PriceListService extends BusinessService<PriceList> {
 	 */
 	public List<PriceList> getExpiredOpenPriceList() {
 		TypedQuery<PriceList> query = getEntityManager().createNamedQuery("PriceList.getExpiredOpenPriceList", PriceList.class);
-        return query.setParameter("untilDate", new Date()).setParameter("openStatus", List.of(DRAFT, ACTIVE)).getResultList();
+        return query.setParameter("untilDate", new Date()).getResultList();
     }
 
 	/**
