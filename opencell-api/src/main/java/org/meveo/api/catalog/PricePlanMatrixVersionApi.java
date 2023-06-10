@@ -31,6 +31,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.TradingCurrency;
@@ -261,9 +262,10 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanMatrixVersionDto.getPricePlanMatrixCode());
         }
 
-        if (pricePlanMatrix.getChargeTemplate() != null && PriceVersionTypeEnum.PERCENTAGE.equals(pricePlanMatrixVersionDto.getPriceVersionType())){
-            log.error("The priceVersionType property should not be percentage, The price plan is linked to the charge: "+pricePlanMatrix.getChargeTemplate().getCode());
-            throw new MeveoApiException("The priceVersionType property should not be percentage, The price plan is linked to the charge: "+pricePlanMatrix.getChargeTemplate().getCode());
+        // TODO #ARE,
+        if (!ListUtils.isEmtyCollection(pricePlanMatrix.getChargeTemplates()) && PriceVersionTypeEnum.PERCENTAGE.equals(pricePlanMatrixVersionDto.getPriceVersionType())){
+            log.error("The priceVersionType property should not be percentage"); // TODO #ARE, The price plan is linked to the charge: "+pricePlanMatrix.getChargeTemplate().getCode());
+            throw new MeveoApiException("The priceVersionType property should not be percentage"); // TODO #ARE, The price plan is linked to the charge: "+pricePlanMatrix.getChargeTemplate().getCode());
         }
         Boolean isMatrix = pricePlanMatrixVersionDto.getMatrix() != null && pricePlanMatrixVersionDto.getMatrix();
         if (!isMatrix && PriceVersionTypeEnum.PERCENTAGE.equals(pricePlanMatrixVersionDto.getPriceVersionType())){

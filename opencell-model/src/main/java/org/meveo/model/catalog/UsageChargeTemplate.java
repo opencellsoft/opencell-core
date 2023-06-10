@@ -52,11 +52,11 @@ import org.meveo.model.cpq.Attribute;
                 + " and u.disabled=false"),
 
         @NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgNotAssociated", query = "select count(*) from UsageChargeTemplate u where (u.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateUsage serv) "
-                + " OR u.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) ", hints = {
+                + " OR not exists elements(u.pricePlans) ) ", hints = {
                         @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
 
         @NamedQuery(name = "usageChargeTemplate.getUsagesChrgNotAssociated", query = "from UsageChargeTemplate u where (u.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateUsage serv) "
-                + " OR u.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) ") })
+                + " OR not exists elements(u.pricePlans) ) ") })
 public class UsageChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = 1L;

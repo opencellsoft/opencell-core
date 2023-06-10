@@ -554,16 +554,20 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         }
 
         if (pricePlanMatrixVersion.getValidity() == null || pricePlanMatrixVersion.getValidity().getTo() == null || pricePlanMatrixVersion.getValidity().getTo().after(new Date())) {
-            String eventCode = pricePlanMatrixVersion.getPricePlanMatrix().getEventCode();
+            List<Long> chargeIds = pricePlanMatrixVersion.getPricePlanMatrix()
+                                                            .getChargeTemplates()
+                                                            .stream()
+                                                            .map(ChargeTemplate::getId)
+                                                            .collect(toList());
 
-            List<Long> subscriptionsIds = this.getEntityManager().createNamedQuery("Subscription.getSubscriptionIdsUsingProduct", Long.class).setParameter("eventCode", eventCode)
+            List<Long> subscriptionsIds = this.getEntityManager().createNamedQuery("Subscription.getSubscriptionIdsUsingProduct", Long.class).setParameter("chargeIds", chargeIds)
                 .getResultList();
             result.put("subscriptions", subscriptionsIds);
 
-            List<Long> quotesIds = this.getEntityManager().createNamedQuery("CpqQuote.getQuoteIdsUsingCharge", Long.class).setParameter("eventCode", eventCode).getResultList();
+            List<Long> quotesIds = this.getEntityManager().createNamedQuery("CpqQuote.getQuoteIdsUsingCharge", Long.class).setParameter("chargeIds", chargeIds).getResultList();
             result.put("quotes", quotesIds);
 
-            List<Long> ordersIds = this.getEntityManager().createNamedQuery("CommercialOrder.getOrderIdsUsingCharge", Long.class).setParameter("eventCode", eventCode)
+            List<Long> ordersIds = this.getEntityManager().createNamedQuery("CommercialOrder.getOrderIdsUsingCharge", Long.class).setParameter("chargeIds", chargeIds)
                 .getResultList();
             result.put("orders", ordersIds);
         }
@@ -756,11 +760,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             final String fileNameSeparator = "_-_";
             StringBuilder fileName = new StringBuilder();
             fileName.append(ppmv.getId());
+            /* TODO #ARE
             if (ppmv.getPricePlanMatrix() != null && ppmv.getPricePlanMatrix().getChargeTemplate() != null) {
                 ChargeTemplate chargeTemplate = ppmv.getPricePlanMatrix().getChargeTemplate();
                 fileName.append(fileNameSeparator + chargeTemplate.getId());
                 fileName.append(fileNameSeparator + chargeTemplate.getDescription()).append(fileNameSeparator + chargeTemplate.getCode());
             }
+            */
             fileName.append(fileNameSeparator + ppmv.getLabel());
             fileName.append(fileNameSeparator);
             if (ppmv.getValidity() != null) {

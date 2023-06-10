@@ -126,7 +126,6 @@ public class ContractApiTest {
         // Price Plan
         PricePlanMatrix pricePlan = new PricePlanMatrix();
         pricePlan.setCode("PPM-CODE");
-        pricePlan.setEventCode(ciSource.getCode());
         PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
         ppmv.setLabel("PV_01");
         ppmv.setVersion(1);
@@ -220,7 +219,6 @@ public class ContractApiTest {
         assertThat(ciToCheck.getPricePlan()).isNotNull();
         PricePlanMatrix ppmToCheck = ciToCheck.getPricePlan();
         assertThat(ppmToCheck.getCode()).isEqualTo(pricePlan.getCode()+"-COPY");
-        assertThat(ppmToCheck.getEventCode()).isEqualTo(ciToCheck.getCode());
         assertThat(ppmToCheck.getVersions()).isNotEmpty();
         assertThat(ppmToCheck.getVersions().size()).isEqualTo(pricePlan.getVersions().size());
         assertThat(ppmToCheck.getVersions().get(0).getStatus()).isEqualTo(VersionStatusEnum.DRAFT);

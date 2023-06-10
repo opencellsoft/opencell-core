@@ -16860,7 +16860,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropIndex tableName="cpq_price_plan_matrix_line" indexName="cpq_price_plan_matrix_line__ppm_version_id__idx"/>
     </changeSet>
     
-    <changeSet id="#INTRD-15938_20230511-2" author="AndriusKarpavicius">
+    <changeSet id="#INTRD-15938_20230511-2" author="AndriusKarpavicius" failOnError="false">
         <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
         <sql>CREATE INDEX cpq_ppl_ppVersion_index ON ${db.schema.adapted}cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql>
     </changeSet>
@@ -16874,6 +16874,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
     <changeSet id="#INTRD-16362_20230607_ppm_eventcode" author="a.rouaguebe">
         <dropNotNullConstraint tableName="cat_price_plan_matrix" columnName="event_code"></dropNotNullConstraint>
+    </changeSet>
+
+    <changeSet id="#INTRD-16363_20230608_migrate_ppm" author="a.rouaguebe">
+        <sql>insert into ${db.schema.adapted}cat_price_plan_charge(price_plan_id, charge_id)
+             select cppm.id, cct.id  from ${db.schema.adapted}cat_price_plan_matrix cppm join ${db.schema.adapted}cat_charge_template cct on cct.code = cppm.event_code</sql>
     </changeSet>
 
 </databaseChangeLog>
