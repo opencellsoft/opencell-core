@@ -471,10 +471,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             ratedTransaction.setDiscountValue(walletOperation.getDiscountValue());
             ratedTransaction.setDiscountedAmount(walletOperation.getDiscountedAmount());
             ratedTransaction.setSequence(walletOperation.getSequence());
-            if (walletOperation.getRulesContractId() != null) {
-                ratedTransaction.setRulesContract(em.getReference(Contract.class, walletOperation.getRulesContractId()));
-            }
-
+			if(walletOperation.getRulesContractId() != null) {
+				ratedTransaction.setRulesContract(em.getReference(Contract.class, walletOperation.getRulesContractId()));
+			}
             if (cftEndPeriodEnabled) {
                 customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
             }
