@@ -104,4 +104,13 @@ public class PriceListService extends BusinessService<PriceList> {
     	
 		return jpqlQuery;
 	}
+
+	/**
+	 * Get Active Price List
+	 * @return List of {@link PriceList}
+	 */
+	public List<PriceList> getActivePriceList() {
+		TypedQuery<PriceList> query = getEntityManager().createNamedQuery("PriceList.getActivePriceList", PriceList.class);
+		return query.getResultList();
+	}
 }

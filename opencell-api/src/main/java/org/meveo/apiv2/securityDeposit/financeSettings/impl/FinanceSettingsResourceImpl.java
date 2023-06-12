@@ -46,16 +46,17 @@ public class FinanceSettingsResourceImpl implements FinanceSettingsResource {
             throw new EntityDoesNotExistsException("security deposit settings with id " + id + " does not exist.");
         }
         if(financeSettings.getOpenOrderSetting() != null && financeSettings.getOpenOrderSetting().getId() != null) {
-            OpenOrderSetting openOrderSettingToUpdate =
-                    ofNullable(openOrderSettingService.findById(financeSettings.getOpenOrderSetting().getId()))
+            OpenOrderSetting openOrderSettingToUpdate = ofNullable(openOrderSettingService.findById(financeSettings.getOpenOrderSetting().getId()))
                             .orElseThrow(() -> new EntityDoesNotExistsException("security deposit settings with id " + id + " does not exist."));
-            openOrderSettingToUpdate =
-                    openOrderSettingMapper.toEntity(openOrderSettingToUpdate, financeSettings.getOpenOrderSetting());
+            openOrderSettingToUpdate = openOrderSettingMapper.toEntity(openOrderSettingToUpdate, financeSettings.getOpenOrderSetting());
             openOrderSettingService.checkParameters(openOrderSettingToUpdate);
             financeSettingsToUpdate.setOpenOrderSetting(openOrderSettingToUpdate);
         } else if(financeSettings.getOpenOrderSetting() != null) {
             financeSettingsToUpdate.setOpenOrderSetting(createOpenOrderSetting(financeSettings.getOpenOrderSetting()));
         }
+
+        //Check Active Price List before disabling the price list feature
+        financeSettingsService.checkPriceList(financeSettingsToUpdate, financeSettings);
         financeSettingsToUpdate = financeSettingsMapper.toEntity(financeSettingsToUpdate, financeSettings);
         financeSettingsService.update(financeSettingsToUpdate);
         return Response.ok().entity(buildResponse(financeSettingsMapper.toResource(financeSettingsToUpdate))).build();
