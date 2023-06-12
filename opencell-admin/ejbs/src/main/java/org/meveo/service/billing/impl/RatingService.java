@@ -1037,6 +1037,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     public RatingResult rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         WalletOperation operation = walletOperationToRerate.getUnratedClone();
+        operation.setOperationDate(operation.getEdr() != null ? operation.getEdr().getEventDate() : operation.getOperationDate());
         RatingResult ratingResult = new RatingResult();
         PricePlanMatrix priceplan = operation.getPriceplan();
         WalletInstance wallet = operation.getWallet();
