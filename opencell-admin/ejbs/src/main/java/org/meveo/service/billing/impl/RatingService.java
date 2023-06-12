@@ -712,7 +712,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                     throw new BusinessException("No tax found for the chargeInstance " + bareWalletOperation.getChargeInstance().getId() + "/" + bareWalletOperation.getChargeInstance().getCode());
                                 }
                             }
-                            discountedWalletOperation = rateDiscountedWalletOperation(bareWalletOperation, unitPriceWithoutTax, amount, discountRate, billingAccount, pricePlanMatrixLine);
+                            discountedWalletOperation = rateDiscountedWalletOperation(bareWalletOperation, unitPriceWithoutTax, amount, discountRate, bareWalletOperation.getBillingAccount(), pricePlanMatrixLine);
                         }
                     }
                 }
@@ -1256,7 +1256,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         discountWalletOperation.setOperationDate(bareWalletOperation.getOperationDate()); 
         discountWalletOperation.setChargeInstance(chargeInstance);
         discountWalletOperation.setInputQuantity(quantity);
-        discountWalletOperation.setCurrency(bareWalletOperation.getCurrency()!=null?bareWalletOperation.getCurrency():billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
+	    discountWalletOperation.setCurrency(bareWalletOperation.getCurrency()!=null?bareWalletOperation.getCurrency():billingAccount != null ? billingAccount.getCustomerAccount().getTradingCurrency().getCurrency(): bareWalletOperation.getCurrency());
         discountWalletOperation.setDiscountedWO(bareWalletOperation); 
         discountWalletOperation.setDiscountPlanType(DiscountPlanItemTypeEnum.PERCENTAGE);
         discountWalletOperation.setDiscountValue(discountValue);
@@ -1265,6 +1265,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         discountWalletOperation.setSubscription(bareWalletOperation.getSubscription());
         discountWalletOperation.setUserAccount(bareWalletOperation.getUserAccount());
         discountWalletOperation.setContract(bareWalletOperation.getContract());
+	    discountWalletOperation.setRulesContract(bareWalletOperation.getRulesContract());
         if (pricePlanMatrixLine != null) {
             discountWalletOperation.setPricePlanMatrixVersion(pricePlanMatrixLine.getPricePlanMatrixVersion());
             discountWalletOperation.setPriceplan(pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix());
