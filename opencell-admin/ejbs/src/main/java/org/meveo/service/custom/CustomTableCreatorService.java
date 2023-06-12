@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -183,7 +184,12 @@ public class CustomTableCreatorService implements Serializable {
 
         if (cft.getDefaultValue() != null) {
             if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-                column.setDefaultValueDate(new Timestamp(DateUtils.parseDate(cft.getDefaultValue()).getTime()));
+                Date date = DateUtils.parseDate(cft.getDefaultValue());
+                if (date != null) {
+                    column.setDefaultValueDate(new Timestamp(date.getTime()));
+                } else {
+                    column.setDefaultValueDate(cft.getDefaultValue());
+                }
             } else {
                 column.setDefaultValue(cft.getDefaultValue());
             }
