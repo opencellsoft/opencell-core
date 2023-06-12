@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -33,6 +34,7 @@ import org.hibernate.Session;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.slf4j.Logger;
 
@@ -180,7 +182,11 @@ public class CustomTableCreatorService implements Serializable {
         setColumnType(cft, column);
 
         if (cft.getDefaultValue() != null) {
-            column.setDefaultValue(cft.getDefaultValue());
+            if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+                column.setDefaultValueDate(new Timestamp(DateUtils.parseDate(cft.getDefaultValue()).getTime()));
+            } else {
+                column.setDefaultValue(cft.getDefaultValue());
+            }
         }
 
         addColumnChange.addColumn(column);
