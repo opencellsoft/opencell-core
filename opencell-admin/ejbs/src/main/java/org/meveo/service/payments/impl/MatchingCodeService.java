@@ -58,6 +58,7 @@ import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
+import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
@@ -122,6 +123,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     @Inject
     private UnMatchingAmountService unMatchingAmountService;
+    @Inject
+    private OCCTemplateService occTemplateService;
 
     private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
@@ -518,16 +521,21 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             BigDecimal exchangeAmountDelta = computedPaymentAmount.subtract(computedInvoiceAmount);
             BigDecimal exchangeAmount = exchangeAmountDelta.abs();
             if(exchangeAmount.compareTo(ZERO) > 0) {
+                OCCTemplate template = null;
                 if (exchangeAmountDelta.compareTo(ZERO) < 0) {
                     exchangeDeltaAccountOperation.setCode("XCH_LOSS");
-                    exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
+                    template = occTemplateService.findByCode(exchangeDeltaAccountOperation.getCode());
+                    exchangeDeltaAccountOperation.setTransactionCategory(template.getOccCategory());
+                    exchangeDeltaAccountOperation.setDescription(template.getDescription());
                 } else {
                     exchangeDeltaAccountOperation.setCode("XCH_GAIN");
-                    exchangeDeltaAccountOperation.setTransactionCategory(OperationCategoryEnum.DEBIT);
+                    template = occTemplateService.findByCode(exchangeDeltaAccountOperation.getCode());
+                    exchangeDeltaAccountOperation.setTransactionCategory(template.getOccCategory());
+                    exchangeDeltaAccountOperation.setDescription(template.getDescription());
                 }
                 exchangeDeltaAccountOperation.setCustomerAccount(accountOperation.getCustomerAccount());
                 exchangeDeltaAccountOperation.setAccountingCode(accountOperation.getAccountingCode());
-                exchangeDeltaAccountOperation.setMatchingStatus(accountOperation.getMatchingStatus());
+                exchangeDeltaAccountOperation.setMatchingStatus(MatchingStatusEnum.L);
                 exchangeDeltaAccountOperation.setJournal(accountOperation.getJournal());
                 exchangeDeltaAccountOperation.setAccountCodeClientSide(accountOperation.getAccountCodeClientSide());
                 exchangeDeltaAccountOperation.setTransactionDate(new Date());
@@ -645,7 +653,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 BigDecimal calculatedMatchingAmount = operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount());
                 BigDecimal calculatedUnMatchingAmount = baseUnMatchingAmount.add(matchingAmount.getMatchingAmount());
                 operation.setUnMatchingAmount(calculatedUnMatchingAmount);
-                operation.setTransactionalUnMatchingAmount(calculatedUnMatchingAmount);
                 operation.setMatchingAmount(calculatedMatchingAmount);
                 operation.setTransactionalUnMatchingAmount(operation.
                         getTransactionalUnMatchingAmount().add(ofNullable(matchingAmount.getTransactionalMatchingAmount()).orElse(ZERO)));
@@ -675,8 +682,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         }
                     }
                 }
-                operation.getMatchingAmounts().remove(matchingAmount);
-                accountOperationService.update(operation);
+                if(matchingAmount.getAccountOperation() != null
+                        && ("XCH_LOSS".equalsIgnoreCase(matchingAmount.getAccountOperation().getCode())
+                        || "XCH_LOSS".equalsIgnoreCase(matchingAmount.getAccountOperation().getCode()))) {
+                    accountOperationService.remove(matchingAmount.getAccountOperation());
+                } else {
+                    operation.getMatchingAmounts().remove(matchingAmount);
+                    accountOperationService.update(operation);
+                }
                 log.info("cancel one accountOperation!");
 
                 // Build unMatchingAmount instance

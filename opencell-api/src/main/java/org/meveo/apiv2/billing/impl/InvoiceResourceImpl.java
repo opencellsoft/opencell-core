@@ -161,14 +161,14 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 		Set<InvoiceMatchedOperation> result = new HashSet<>();
 
-		Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
+		ofNullable(accountOperations).orElse(Collections.emptyList())
 				.forEach(accountOperation -> {
 					AccountOperation invoiceAo = accountOperationService.findById(accountOperation.getId(), List.of("matchingAmounts"));
 
-					Optional.ofNullable(invoiceAo.getMatchingAmounts()).orElse(Collections.emptyList())
+					ofNullable(invoiceAo.getMatchingAmounts()).orElse(Collections.emptyList())
 							.forEach(matchingAmount -> {
 								MatchingCode matchingCode = matchingCodeService.findById(matchingAmount.getMatchingCode().getId(), List.of("matchingAmounts"));
-								Optional.ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
+								ofNullable(matchingCode.getMatchingAmounts()).orElse(Collections.emptyList())
 										.forEach(matchingAmountAo -> {
 											switch (accountOperation.getTransactionCategory()) {
 												// For payment history, the rule is : when we hava an AO DEBIT we should have AO payment CREDIT and vice versa
@@ -211,7 +211,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 				.paymentId(accountOperation.getId())
 				.matchingAmountId(matchingAmountPrimary.getId())
 				.paymentCode(accountOperation.getCode())
-				.paymentDescription(accountOperation.getDescription())
+				.paymentDescription(ofNullable(accountOperation.getDescription()).orElse(""))
 				.paymentStatus(accountOperation.getMatchingStatus() != null ? accountOperation.getMatchingStatus().getLabel() : "")
 				.paymentDate(matchingAmountPrimary.getMatchingCode().getMatchingDate())
 				.paymentMethod(accountOperation.getPaymentMethod() != null ? accountOperation.getPaymentMethod().getLabel() : "")
