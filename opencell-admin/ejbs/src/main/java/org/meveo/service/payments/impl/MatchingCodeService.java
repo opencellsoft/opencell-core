@@ -88,6 +88,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     private static final String PPL_INSTALLMENT = "PPL_INSTALLMENT";
     private static final String PPL_CREATION = "PPL_CREATION";
     private static final String INVOICE_TYPE_SECURITY_DEPOSIT = "SECURITY_DEPOSIT";
+    private static final String XCH_LOSS = "XCH_LOSS";
+    private static final String XCH_GAIN = "XCH_GAIN";
 
     @Inject
     private CustomerAccountService customerAccountService;
@@ -517,12 +519,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             if(exchangeAmount.compareTo(ZERO) > 0) {
                 OCCTemplate template = null;
                 if (exchangeAmountDelta.compareTo(ZERO) < 0) {
-                    exchangeDeltaAccountOperation.setCode("XCH_LOSS");
+                    exchangeDeltaAccountOperation.setCode(XCH_LOSS);
                     template = occTemplateService.findByCode(exchangeDeltaAccountOperation.getCode());
                     exchangeDeltaAccountOperation.setTransactionCategory(template.getOccCategory());
                     exchangeDeltaAccountOperation.setDescription(template.getDescription());
                 } else {
-                    exchangeDeltaAccountOperation.setCode("XCH_GAIN");
+                    exchangeDeltaAccountOperation.setCode(XCH_GAIN);
                     template = occTemplateService.findByCode(exchangeDeltaAccountOperation.getCode());
                     exchangeDeltaAccountOperation.setTransactionCategory(template.getOccCategory());
                     exchangeDeltaAccountOperation.setDescription(template.getDescription());
@@ -673,8 +675,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     }
                 }
                 if(matchingAmount.getAccountOperation() != null
-                        && ("XCH_LOSS".equalsIgnoreCase(matchingAmount.getAccountOperation().getCode())
-                        || "XCH_LOSS".equalsIgnoreCase(matchingAmount.getAccountOperation().getCode()))) {
+                        && (XCH_LOSS.equalsIgnoreCase(matchingAmount.getAccountOperation().getCode())
+                        || XCH_GAIN.equalsIgnoreCase(matchingAmount.getAccountOperation().getCode()))) {
                     accountOperationService.remove(matchingAmount.getAccountOperation());
                 } else {
                     operation.getMatchingAmounts().remove(matchingAmount);
