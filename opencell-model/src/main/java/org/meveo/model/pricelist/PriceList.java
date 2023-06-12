@@ -40,7 +40,7 @@ import org.meveo.model.shared.Title;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_price_list_seq"), })
 @NamedQueries({
-		@NamedQuery(name = "PriceList.getExpiredOpenPriceList", query = "SELECT pl FROM PriceList pl WHERE pl.validUntil <= :untilDate AND pl.status in :openStatus"),
+		@NamedQuery(name = "PriceList.getExpiredOpenPriceList", query = "SELECT pl FROM PriceList pl WHERE pl.validUntil <= :untilDate AND pl.status != 'CLOSED'"),
 		@NamedQuery(name = "PriceList.getActivePriceList", query = "SELECT pl FROM PriceList pl WHERE pl.status = 'ACTIVE'")
 })
 public class PriceList extends BusinessCFEntity {
