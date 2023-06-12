@@ -44,6 +44,8 @@ import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
@@ -92,13 +94,16 @@ public class ContractApi extends BaseApi{
 	private BillingRuleService billingRuleService;
 	@Inject
 	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+	@Inject
+	@CurrentUser
+	private MeveoUser currentUser;
 	
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
 	private static final String CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN = "Date end (%s) must be great than date begin (%s)";
 	private static final String CONTRACT_STAT_DIFF_TO_DRAFT = "Only Draft status of contract can be edit";
-
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
+	private static final String ROLE_ADVANCED_USER = "ADVANCED_USER";
 
 
 	public Long createContract(ContractDto dto) {
@@ -181,6 +186,7 @@ public class ContractApi extends BaseApi{
 				break;
 		}
 	}
+
 	public void updateContract(ContractDto dto) {
 
 		// check mandatory param
@@ -199,9 +205,9 @@ public class ContractApi extends BaseApi{
 		if(contract == null)
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
 		//check the status of the contract
-		if(!ContractStatusEnum.DRAFT.toString().equals(contract.getStatus())) {
+		if(!ContractStatusEnum.DRAFT.toString().equals(contract.getStatus()) && !currentUser.hasRole(ROLE_ADVANCED_USER)) {
 			throw new MeveoApiException(CONTRACT_STAT_DIFF_TO_DRAFT);
-		}else {
+		} else {
 			checkStatus(dto.getStatus());
 			contract.setStatus(dto.getStatus());
 		}
