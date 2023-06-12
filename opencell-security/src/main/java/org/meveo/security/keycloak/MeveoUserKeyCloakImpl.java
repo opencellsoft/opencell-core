@@ -41,6 +41,8 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
 
     private static final long serialVersionUID = 1864122036421892837L;
 
+    private static final String OPENCELL_PORTAL = "opencell-portal";
+
     /**
      * Field in token containing provider code
      */
@@ -59,9 +61,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
     /**
      * Current user constructor
      * 
-     * @param Access token Access token
-     * @param additionalRoles Additional roles to assign
-     * @param roleToPermissionMapping Role to permission mapping
+     * @param accessToken token Access token
      */
     public MeveoUserKeyCloakImpl(AccessToken accessToken) {
 
@@ -87,6 +87,11 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             this.roles.addAll(accessToken.getResourceAccessClaim(clientName).getRoles());
         }
 
+        //Add all portal roles to the list of roles
+        if(accessToken.getResourceAccessClaim() != null && accessToken.getResourceAccessClaim().get(OPENCELL_PORTAL) != null) {
+            this.roles.addAll(accessToken.getResourceAccessClaim().get(OPENCELL_PORTAL).getRoles());
+        }
+
         this.locale = accessToken.getClaimValueAsString("locale");
         this.authenticated = true;
 
@@ -103,8 +108,6 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
      * @param securityContext Current JAAS security context
      * @param forcedUserName Forced authentication username (when authenticated with @RunAs in job or any other timer trigger or at server startup)
      * @param forcedProvider Forced provider (when authenticated with @RunAs in job or any other timer trigger or at server startup)
-     * @param additionalRoles Additional roles to assign
-     * @param roleToPermissionMapping Role to permission mapping
      */
     public MeveoUserKeyCloakImpl(SessionContext securityContext, String forcedUserName, String forcedProvider) {
 
