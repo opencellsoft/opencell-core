@@ -1241,7 +1241,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	discountWalletOperation.setCreated(new Date()); 
     	discountWalletOperation.setSeller(bareWalletOperation.getSeller());
 	    discountWalletOperation.setBillingAccount(billingAccount);
-	    discountWalletOperation.setBillingAccount(billingAccount);
     	discountWalletOperation.setWallet(bareWalletOperation.getWallet());
     	discountWalletOperation.setOfferTemplate(bareWalletOperation.getOfferTemplate());
     	discountWalletOperation.setServiceInstance(bareWalletOperation.getServiceInstance());
