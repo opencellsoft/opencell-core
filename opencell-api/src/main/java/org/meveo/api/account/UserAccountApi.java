@@ -53,6 +53,7 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -124,7 +125,7 @@ public class UserAccountApi extends AccountEntityApi {
 
     public UserAccount create(UserAccountDto postData, boolean checkCustomFields,
                               BusinessAccountModel businessAccountModel, BillingAccount associatedBA) throws MeveoApiException, BusinessException {
-	
+
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(UserAccount.class.getName(), postData);
         }
@@ -143,7 +144,7 @@ public class UserAccountApi extends AccountEntityApi {
         UserAccount userAccount = new UserAccount();
 
         dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, associatedBA);
-        
+
         if(StringUtils.isNotBlank(postData.getParentUserAccountCode())) {
     		UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
     		if (parentUserAccount != null) {
@@ -152,16 +153,16 @@ public class UserAccountApi extends AccountEntityApi {
 					userAccount.setParentUserAccount(parentUserAccount);
 				}else {
 					 throw new BusinessApiException("User accounts within the same hierarchy, should belong to the same billing account");
-				}    			
+				}
     			attachSubUserAccounts(postData,parentUserAccount,billingAccount);
-    			
+
     		} else {
     		    throw new EntityDoesNotExistsException(UserAccount.class, postData.getParentUserAccountCode());
     		}
         }
-        
+
 		userAccountParent(postData, userAccount);
-		
+
 
         if (postData.getIsCompany() != null) {
             userAccount.setIsCompany(postData.getIsCompany());
@@ -224,14 +225,17 @@ public class UserAccountApi extends AccountEntityApi {
 		}
 	}
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = UserAccount.class))
     public UserAccount update(UserAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
         return update(postData, true);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = UserAccount.class))
     public UserAccount update(UserAccountDto postData, boolean checkCustomFields) throws MeveoApiException {
         return update(postData, true, null);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = UserAccount.class))
     public UserAccount update(UserAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -251,7 +255,7 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         dtoToEntity(userAccount, postData, checkCustomFields, businessAccountModel, null);
-        
+
         if(StringUtils.isNotBlank(postData.getParentUserAccountCode())) {
             UserAccount parentUserAccount = userAccountService.findByCode(postData.getParentUserAccountCode());
             if (parentUserAccount != null) {
@@ -260,7 +264,7 @@ public class UserAccountApi extends AccountEntityApi {
 					userAccount.setParentUserAccount(parentUserAccount);
 				}else {
 					 throw new BusinessApiException("User accounts within the same hierarchy, should belong to the same billing account");
-				}    			
+				}
                 List<UserAccount> subUserAccounts = new ArrayList<>();
         		for (String subUserAccountcode : postData.getUserAccountCodes()) {
         			UserAccount subUserAccount = userAccountService.findByCode(subUserAccountcode);
@@ -269,7 +273,7 @@ public class UserAccountApi extends AccountEntityApi {
         					subUserAccounts.add(subUserAccount);
         				}else {
         					 throw new BusinessApiException("User accounts within the same hierarchy, should belong to the same billing account");
-        				}        				
+        				}
         			}else {
         				 throw new EntityDoesNotExistsException(UserAccount.class, subUserAccountcode);
         			}
@@ -281,7 +285,7 @@ public class UserAccountApi extends AccountEntityApi {
         }else {
             userAccount.setParentUserAccount(null);
         }
-        		
+
         userAccountParent(postData, userAccount);
         userAccount = userAccountService.update(userAccount);
 
@@ -335,11 +339,11 @@ public class UserAccountApi extends AccountEntityApi {
             userAccount.setBusinessAccountModel(businessAccountModel);
         }
         userAccount.setIsCompany(postData.getIsCompany());
-        
+
         if (postData.getIsConsumer() != null) {
             userAccount.setIsConsumer(postData.getIsConsumer());
         }
-        
+
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), userAccount, isNew, checkCustomFields);
@@ -449,6 +453,7 @@ public class UserAccountApi extends AccountEntityApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = UserAccount.class))
     public UserAccount createOrUpdate(UserAccountDto postData) throws MeveoApiException, BusinessException {
 
         if (!StringUtils.isBlank(postData.getCode()) && userAccountService.findByCode(postData.getCode()) != null) {
