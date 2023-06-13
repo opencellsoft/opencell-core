@@ -2294,20 +2294,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Based on ratedTransaction and its old status, decide to update or not the corresponding invoice line using EDR Versioning
      *
-     * @param oldStatus RatedTransactionStatusEnum old status of ratedTransaction to be checked to perform
-     *                  appropriate actions
+     * @param newStatus RatedTransactionStatusEnum new status of ratedTransaction to be updated
      * @param ratedTransaction RatedTransaction containing necessary information to update corresponding invoice line
      *                         if allowed
      */
-    public RatedTransaction update(RatedTransactionStatusEnum oldStatus, RatedTransaction ratedTransaction) {
+    public RatedTransaction update(RatedTransaction ratedTransaction, RatedTransactionStatusEnum newStatus) {
 
-        if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.CANCELED || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED
-                || ratedTransaction.getStatus() == RatedTransactionStatusEnum.RERATED) {
-//            RatedTransaction existingRatedTransaction = findById(ratedTransaction.getId());
-//
-//            if (existingRatedTransaction == null) {
-//                throw new ElementNotFoundException(ratedTransaction.getId(), "ratedTransaction");
-//            }
+        if (newStatus == RatedTransactionStatusEnum.CANCELED || newStatus == RatedTransactionStatusEnum.REJECTED
+                || newStatus == RatedTransactionStatusEnum.RERATED) {
+            RatedTransactionStatusEnum oldStatus = ratedTransaction.getStatus();
+            ratedTransaction.setStatus(newStatus);
 
             if (oldStatus == RatedTransactionStatusEnum.BILLED || oldStatus == RatedTransactionStatusEnum.PROCESSED) {
                 InvoiceLine invoiceLine = ratedTransaction.getInvoiceLine();
@@ -2380,12 +2376,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public void recomputeInvoiceLine(InvoiceLine invoiceLine, RatedTransaction ratedTransaction) {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
-        BigDecimal amountWithoutTax = (invoiceLine.getAmountWithoutTax()).subtract(ratedTransaction.getAmountWithoutTax());
-        BigDecimal amountWithTax = (invoiceLine.getAmountWithTax()).subtract(ratedTransaction.getAmountWithTax());
-        BigDecimal taxPercent = invoiceLine.getTaxRate();
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent,
-                appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        BigDecimal deltaAmountWithoutTax = ratedTransaction.getAmountWithoutTax().negate();
+        BigDecimal deltaAmountWithTax = ratedTransaction.getAmountWithTax().negate();
+        BigDecimal deltaAmountTax = ratedTransaction.getAmountTax().negate();
+        BigDecimal[] deltaAmounts = new BigDecimal[] {deltaAmountWithoutTax, deltaAmountWithTax, deltaAmountTax};
 
+        BigDecimal amountWithoutTax = (invoiceLine.getAmountWithoutTax()).subtract(ratedTransaction.getAmountWithoutTax());
+        BigDecimal deltaQuantity = ratedTransaction.getQuantity().negate();
         BigDecimal quantity = invoiceLine.getQuantity().subtract(ratedTransaction.getQuantity());
         Date beginDate = invoiceLine.getValidity().getFrom();
         Date endDate = invoiceLine.getValidity().getTo();
@@ -2399,6 +2396,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
         }
 
-        linesFactory.update(invoiceLine.getId(), amounts, quantity, beginDate, endDate, unitPrice);
+        linesFactory.update(invoiceLine.getId(), deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);
     }
 }
