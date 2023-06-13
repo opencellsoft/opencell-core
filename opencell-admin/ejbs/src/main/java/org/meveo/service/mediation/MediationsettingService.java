@@ -264,9 +264,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 
     		RatedTransaction ratedTransaction = wo.getRatedTransaction();
     		if (ratedTransaction != null) {
-                RatedTransactionStatusEnum oldStatus = ratedTransaction.getStatus();
-                ratedTransaction.setStatus(RatedTransactionStatusEnum.CANCELED);
-    			ratedTransactionService.update(oldStatus, ratedTransaction);
+    			ratedTransactionService.update(ratedTransaction, RatedTransactionStatusEnum.CANCELED);
     		}
     	}
     }
@@ -286,8 +284,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                     if (CollectionUtils.isNotEmpty(walletOperations)) {
                         WalletOperation trigWallet = walletOperations.get(0);
                         trigWallet.setStatus(WalletOperationStatusEnum.CANCELED);
-                        if (trigWallet.getRatedTransaction() != null) {
-                            trigWallet.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+                        RatedTransaction ratedTransaction = trigWallet.getRatedTransaction();
+                        if (ratedTransaction != null) {
+                            ratedTransactionService.update(ratedTransaction, RatedTransactionStatusEnum.CANCELED);
                         }
                         walletOperationService.cancelDiscountedWalletOperation(walletOperations.stream().map(WalletOperation::getId).collect(Collectors.toList()));
                     }
