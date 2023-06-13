@@ -548,6 +548,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
             for (RatedTransaction ratedTransaction : openedRT) {
                 aggregateHandler.addRT(entity.getInvoiceDate(), ratedTransaction);
+                ratedTransactionsToSave.add(ratedTransaction);
             }
             setRtxHasImported(true);
             updateAmountsAndLines();
@@ -681,6 +682,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     		}
     	}
         if(entity.getId() == null) {
+            // for new Invoice, status should be already DARFT instead of CREATED
+            entity.setStatus(InvoiceStatusEnum.DRAFT);
             invoiceService.create(entity);
         }
         if (!ratedTransactionsToRemove.isEmpty()) {
@@ -760,7 +763,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         if (preferedPaymentMethod != null) {
             entity.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
-    	if(entity.getInvoiceNumber() == null) {
+        // do not assign invoice number (and so on pass it to GENERATED)
+        // only in case that its status is already DRAFT (and not CREATED or REJECTED)
+    	if(entity.getStatus() == InvoiceStatusEnum.DRAFT && entity.getInvoiceNumber() == null) {
 	        entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
 	        try {
 	            entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
@@ -921,6 +926,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     newRT.setInvoice(entity);
 
                     aggregateHandler.addRT(entity.getInvoiceDate(), newRT);
+                    ratedTransactionsToSave.add(newRT);
                 }
             } else {
                 for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
@@ -933,6 +939,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 for (RatedTransaction rt : ratedTransactions) {
                     if (rt.getWallet() == null) {
                         aggregateHandler.addRT(entity.getInvoiceDate(), rt);
+                        ratedTransactionsToSave.add(rt);
                     }
                 }
 
