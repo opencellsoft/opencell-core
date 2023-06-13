@@ -1086,7 +1086,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                         .orElse((BigDecimal) groupedRT.get("tax_percent"));
                 BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, appProvider.isEntreprise(), appProvider.getRounding(),
                         appProvider.getRoundingMode().getRoundingMode());
+                BigDecimal deltaAmountWithoutTax = (BigDecimal) groupedRT.get("sum_without_tax");
+                BigDecimal deltaAmountWithTax = (BigDecimal) groupedRT.get("sum_with_tax");
+                BigDecimal deltaAmountTax = deltaAmountWithTax.subtract(deltaAmountWithoutTax);
+                BigDecimal[] deltaAmounts = new BigDecimal[] {deltaAmountWithoutTax, deltaAmountWithTax, deltaAmountTax};
 
+                BigDecimal deltaQuantity = (BigDecimal) groupedRT.get("quantity");
                 BigDecimal quantity = ((BigDecimal) groupedRT.get("accumulated_quantity")).add((BigDecimal) groupedRT.get("quantity"));
                 Date beginDate = (Date) groupedRT.get("begin_date");
                 Date endDate = (Date) groupedRT.get("end_date");
@@ -1098,7 +1103,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
                 }
 
-                linesFactory.update(invoiceLineId, amounts, quantity, beginDate, endDate, unitPrice);
+                linesFactory.update(invoiceLineId, deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);
                 basicStatistics.addToAmountWithoutTax(amounts[0]);
                 basicStatistics.addToAmountWithTax(amounts[1]);
                 basicStatistics.addToAmountTax(amounts[2]);
