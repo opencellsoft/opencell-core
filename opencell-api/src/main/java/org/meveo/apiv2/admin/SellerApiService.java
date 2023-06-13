@@ -113,6 +113,7 @@ public class SellerApiService extends BaseApi {
 		seller.setAddress(postSeller.getAddress());
 		seller.setLegalType(postSeller.getLegalType());
 		seller.setRegistrationNo(postSeller.getRegistrationNo());
+		seller.setLegalEntityType(postSeller.getLegalEntityType());
 		if(CollectionUtils.isNotEmpty(postSeller.getMedias())){
 			seller.getMedias().clear();
 			seller.getMedias().addAll(postSeller.getMedias());

@@ -18,5 +18,8 @@ public interface CustomerSequence extends Resource {
 	@Nullable
 	public Long getCurrentSequenceNb();
 	
+	@Nullable
+	public String getDescription();
+	
 	
 }
