@@ -42,6 +42,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
@@ -71,6 +72,9 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     
     @Inject
     private RoleService roleService;
+
+    @Inject
+    CustomTableService customTableService;
 
     private static boolean useCETCache = true;
 
@@ -446,4 +450,30 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         clusterEventPublisher.publishEvent(cet, CrudActionEnum.enable);
         return cet;
     }
+
+    /**
+     * Gets the reference table
+     * @param cft the custom field template
+     * @return the reference table
+     */
+    public String getReferenceTable(CustomFieldTemplate cft) {
+        String referenceTable = null;
+        CustomEntityTemplate relatedEntity = findByCode(cft.tableName());
+        if (relatedEntity != null) {
+            if (relatedEntity.isStoreAsTable()) {
+                referenceTable = relatedEntity.getDbTablename();
+            } else {
+                referenceTable = customTableService.getTableNameForClass(CustomEntityInstance.class);
+            }
+        } else if (!StringUtils.isBlank(cft.getEntityClazz())) {
+            try {
+                referenceTable = customTableService.getTableNameForClass(Class.forName(cft.getEntityClazz()));
+            } catch (ClassNotFoundException e) {
+                log.error("Cannot find referenced clazz : {}", cft.getEntityClazz(), e);
+            }
+        }
+        return referenceTable;
+    }
+
+
 }
