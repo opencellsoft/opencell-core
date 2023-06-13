@@ -2657,21 +2657,40 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .collect(toList());
             
             if (!ratedTransactionIds.isEmpty()) {
+                Subscription subscription = getSubscriptionFromRT(ratedTransactions);
                 List<Map<String, Object>> groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
                 AggregationConfiguration configuration = new AggregationConfiguration(appProvider.isEntreprise());
                 List<InvoiceLine> invoiceLines = new ArrayList<>();
                 invoiceLinesService.createInvoiceLines(groupedRTs, configuration,
                         null, null, invoiceLines, generateInvoiceRequestDto.getOpenOrderCode());
-                invoices = createAggregatesAndInvoiceUsingIL(entity, null, filter, null, invoiceDate,
+                invoices = createAggregatesAndInvoiceUsingILAndSubscription(entity, null, filter, null, invoiceDate,
                         firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft,
                         !generateInvoiceRequestDto.getSkipValidation(), false, invoiceLines,
-                        generateInvoiceRequestDto.getOpenOrderCode());
+                        generateInvoiceRequestDto.getOpenOrderCode(), subscription);
             }
         } else {
             MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
             invoices = createAgregatesAndInvoice(entity, null, filter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft, !generateInvoiceRequestDto.getSkipValidation());
         }
         return invoices;
+    }
+
+    private Subscription getSubscriptionFromRT(List<RatedTransaction> ratedTransactions) {
+        if (CollectionUtils.isEmpty(ratedTransactions)) {
+           return null;
+        }
+
+        Set<Subscription> subscriptions = ratedTransactions.stream()
+                .map(RatedTransaction::getSubscription)
+                .collect(Collectors.toSet());
+
+        if (CollectionUtils.isEmpty(subscriptions) || subscriptions.size() > 1) {
+            // If we have more than one subscription for different selected RatedTransaction, the generated invoice shall not have a Subscription
+            return null;
+        }
+
+        return subscriptions.iterator().next();
+
     }
 
     /**
@@ -5794,6 +5813,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             MinAmountForAccounts minAmountForAccounts, boolean isDraft, boolean automaticInvoiceCheck, boolean isDepositInvoice) throws BusinessException {
         return createAggregatesAndInvoiceUsingIL(entityToInvoice, billingRun, filter, filterParams, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft, automaticInvoiceCheck, isDepositInvoice, null,null);
     }
+
+    public List<Invoice> createAggregatesAndInvoiceUsingIL(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,Map<String, Object> filterParams, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
+                                                           MinAmountForAccounts minAmountForAccounts, boolean isDraft, boolean automaticInvoiceCheck, boolean isDepositInvoice, List<InvoiceLine> invoiceLines, String openOrderCode) throws BusinessException {
+        return createAggregatesAndInvoiceUsingILAndSubscription(entityToInvoice, billingRun, filter,filterParams, invoiceDate, firstTransactionDate, lastTransactionDate,
+                minAmountForAccounts, isDraft, automaticInvoiceCheck, isDepositInvoice, invoiceLines, openOrderCode, null);
+    }
     
     /**
      * Creates invoices and their aggregates
@@ -5813,9 +5838,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
-    
-    public List<Invoice> createAggregatesAndInvoiceUsingIL(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,Map<String, Object> filterParams, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
-            MinAmountForAccounts minAmountForAccounts, boolean isDraft, boolean automaticInvoiceCheck, boolean isDepositInvoice, List<InvoiceLine> invoiceLines, String openOrderCode) throws BusinessException {
+    public List<Invoice> createAggregatesAndInvoiceUsingILAndSubscription(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,Map<String, Object> filterParams, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
+            MinAmountForAccounts minAmountForAccounts, boolean isDraft, boolean automaticInvoiceCheck, boolean isDepositInvoice, List<InvoiceLine> invoiceLines, String openOrderCode, Subscription subscription) throws BusinessException {
         log.debug("Will create invoice and aggregates for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
 
         if (billingRun == null) {
@@ -5906,8 +5930,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 commit();
             }
 
-            return createAggregatesAndInvoiceFromIls(entityToInvoice, billingRun, filter,filterParams, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft, billingCycle, ba, paymentMethod, invoiceType, balance,
-                automaticInvoiceCheck, hasMin, null, null, invoiceLines, openOrderCode);
+            return createAggregatesAndInvoiceFromIlsAndSubscription(entityToInvoice, billingRun, filter,filterParams, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft, billingCycle, ba, paymentMethod, invoiceType, balance,
+                automaticInvoiceCheck, hasMin, null, null, invoiceLines, openOrderCode, subscription);
         } catch (Exception e) {
             log.error("Error for entity {}", entityToInvoice.getCode(), e);
             if (entityToInvoice instanceof BillingAccount) {
@@ -5925,9 +5949,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Invoice> createAggregatesAndInvoiceFromIls(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,Map<String, Object> filterParams, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft,
+    private List<Invoice> createAggregatesAndInvoiceFromIls(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter, Map<String, Object> filterParams, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft,
+                                                            BillingCycle defaultBillingCycle, BillingAccount billingAccount, PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balance, boolean automaticInvoiceCheck, boolean hasMin,
+                                                            Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum, List<InvoiceLine> existingInvoiceLines, String openOrderCode) throws BusinessException {
+        return createAggregatesAndInvoiceFromIlsAndSubscription(entityToInvoice, billingRun, filter, filterParams, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft,
+                defaultBillingCycle, billingAccount, defaultPaymentMethod, defaultInvoiceType, balance, automaticInvoiceCheck, hasMin,
+                existingInvoice, invoiceProcessTypeEnum, existingInvoiceLines, openOrderCode, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Invoice> createAggregatesAndInvoiceFromIlsAndSubscription(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,Map<String, Object> filterParams, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft,
             BillingCycle defaultBillingCycle, BillingAccount billingAccount, PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balance, boolean automaticInvoiceCheck, boolean hasMin,
-            Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum, List<InvoiceLine> existingInvoiceLines, String openOrderCode) throws BusinessException {
+            Invoice existingInvoice, InvoiceProcessTypeEnum invoiceProcessTypeEnum, List<InvoiceLine> existingInvoiceLines, String openOrderCode, Subscription subscription) throws BusinessException {
         List<Invoice> invoiceList = new ArrayList<>();
         boolean moreInvoiceLinesExpected = true;
         Map<String, InvoiceAggregateProcessingInfo> invoiceLineGroupToInvoiceMap = new HashMap<>();
@@ -5999,6 +6032,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     Invoice invoice = invoiceAggregateProcessingInfo.invoice;
                     invoice.setHasMinimum(hasMin);
+                    if (subscription != null) {
+                        invoice.setSubscription(subscription);
+                    }
 
                     // TODO check  appendInvoiceAggregatesIL(entityToInvoice,
                     appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(), false, invoiceAggregateProcessingInfo, !allIlsInOneRun);
