@@ -1431,6 +1431,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         discountWalletOperation.setUserAccount(bareWalletOperation.getUserAccount());
         discountWalletOperation.setContract(bareWalletOperation.getContract());
         discountWalletOperation.setContractLine(bareWalletOperation.getContractLine());
+	    discountWalletOperation.setRulesContract(bareWalletOperation.getRulesContract());
         if (pricePlanMatrixLine != null) {
             discountWalletOperation.setPricePlanMatrixVersion(pricePlanMatrixLine.getPricePlanMatrixVersion());
             discountWalletOperation.setPriceplan(pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix());
