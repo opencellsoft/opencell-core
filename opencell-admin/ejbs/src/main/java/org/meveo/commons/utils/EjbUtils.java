@@ -149,8 +149,14 @@ public class EjbUtils {
         return System.getProperty("jboss.node.name");
     }
 
+    /**
+     * Application is running in cluster mode if environment variable "APP_CLUSTER=true". <br/>
+     * Running in cluster mode requires MQ being enabled as messages are exchanged to synchronize some actions and data between nodes
+     * 
+     * @return Is Opencell running in cluster
+     */
     public static boolean isRunningInClusterMode() {
-        String nodeName = System.getProperty("jboss.node.name");
-        return  nodeName!= null && nodeName.startsWith("opencell");
+        String isClusterOn = System.getenv("APP_CLUSTER");
+        return isClusterOn != null && Boolean.parseBoolean(isClusterOn);
     }
 }
