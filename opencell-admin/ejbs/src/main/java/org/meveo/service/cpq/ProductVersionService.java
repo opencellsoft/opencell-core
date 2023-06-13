@@ -128,8 +128,8 @@ public class ProductVersionService extends
     	duplicate.setStatus(VersionStatusEnum.DRAFT);
     	duplicate.setStatusDate(Calendar.getInstance().getTime());
     	duplicate.setTags(new HashSet<>());
-    	duplicate.setAttributes(new ArrayList<>());
-    	duplicate.setGroupedAttributes(new ArrayList<GroupedAttributes>());
+    	duplicate.setAttributes(new HashSet<>());
+    	duplicate.setGroupedAttributes(new HashSet<>());
 
 
         try {
