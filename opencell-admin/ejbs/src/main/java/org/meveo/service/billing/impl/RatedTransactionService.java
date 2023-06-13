@@ -42,7 +42,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -670,7 +672,37 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setDiscountedAmount(aggregatedWo.getDiscountedAmount());
         ratedTransaction.setDiscountValue(aggregatedWo.getDiscountValue());
 
+        BillingAccount billingAccount = ratedTransaction.getBillingAccount();
+        CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+        Customer customer = customerAccount.getCustomer();
+
+        if(ratedTransaction.getRulesContract() == null) {
+            //Get the list of customers (current and parents)
+            List<Customer> customers = new ArrayList<>();
+            getCustomer(customer, customers);
+            List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
+            //Get contract by list of customer ids, billing account and customer account
+            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, aggregatedWo.getOperationDate());
+            Contract contractWithRules = contractService.lookupSuitableContract(customers, contracts, true);
+
+            ratedTransaction.setRulesContract(contractWithRules);
+        }
+
+        applyInvoicingRules(ratedTransaction);
+
         return ratedTransaction;
+    }
+
+
+    /**
+     * Get the customer and all parent customers
+     * @param pCustomer Customer
+     * @param pCustomerList List of customers (current customer and all parents)
+     */
+    private void getCustomer(Customer pCustomer, List<Customer> pCustomerList) {
+        if(pCustomer != null) {
+            pCustomerList.add(pCustomer);
+        }
     }
 
     private void setPricePlan(RatedTransaction ratedTransaction) {
