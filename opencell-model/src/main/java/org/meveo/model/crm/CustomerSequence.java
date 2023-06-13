@@ -32,6 +32,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.sequence.GenericSequence;
 
+import java.util.Objects;
+
 /**
  * Customer numbering sequence
  * 
@@ -75,5 +77,18 @@ public class CustomerSequence extends BusinessEntity {
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
-
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof CustomerSequence)) return false;
+		if (!super.equals(o)) return false;
+		CustomerSequence that = (CustomerSequence) o;
+		return Objects.equals(getGenericSequence(), that.getGenericSequence()) && Objects.equals(getSeller(), that.getSeller());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), getGenericSequence(), getSeller());
+	}
 }

@@ -41,6 +41,7 @@ import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
@@ -131,7 +132,7 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 		return  invoiceTypeSellerSeqs;
 	}
 	
-	private List<org.meveo.apiv2.admin.CustomerSequence> getCustomerSequence(List<CustomerSequence> customerSequences) {
+	private List<org.meveo.apiv2.admin.CustomerSequence> getCustomerSequence(Set<CustomerSequence> customerSequences) {
 		if(CollectionUtils.isEmpty(customerSequences)) return Collections.emptyList();
 		var customerSequenceResult = new ArrayList<org.meveo.apiv2.admin.CustomerSequence>();
 		customerSequences.forEach(customerSequence -> {
@@ -142,6 +143,7 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 							.prefix(customerSequence.getGenericSequence() != null ? customerSequence.getGenericSequence().getPrefix() : null)
 							.sequenceSize(customerSequence.getGenericSequence() != null ? customerSequence.getGenericSequence().getSequenceSize() : null)
 							.currentSequenceNb(customerSequence.getGenericSequence() != null ? customerSequence.getGenericSequence().getCurrentSequenceNb() : null)
+							.description(customerSequence.getDescription())
 							.build()
 			);
 		});
@@ -275,6 +277,7 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 					customerSequence = new CustomerSequence();
 				}
 				customerSequence.setSeller(seller);
+				customerSequence.setDescription(cusSeq.getDescription());
 				GenericSequence genericSequence = new GenericSequence();
 				genericSequence.setCurrentSequenceNb(cusSeq.getCurrentSequenceNb());
 				genericSequence.setPrefix(cusSeq.getPrefix());
