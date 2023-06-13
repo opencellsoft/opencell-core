@@ -34,6 +34,7 @@ import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
@@ -339,10 +340,12 @@ public class SellerApi extends AccountEntityApi {
         }
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = Seller.class))
     public Seller update(SellerDto postData) throws MeveoApiException, BusinessException {
         return update(postData, true);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = Seller.class))
     public Seller update(SellerDto postData, boolean checkCustomField) throws MeveoApiException, BusinessException {
         return update(postData, checkCustomField, null);
     }
@@ -360,6 +363,7 @@ public class SellerApi extends AccountEntityApi {
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = Seller.class))
     public Seller update(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -585,6 +589,7 @@ public class SellerApi extends AccountEntityApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = Seller.class))
     public Seller createOrUpdate(SellerDto postData) throws MeveoApiException, BusinessException {
         Seller seller = sellerService.findByCode(postData.getCode());
         if (seller == null) {
