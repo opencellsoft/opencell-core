@@ -1865,7 +1865,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "SUM(a.amountWithTax) as sum_with_tax", "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
                     "min(a.startDate) as start_date", "max(a.endDate) as end_date",
                     "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id",
-                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
+                    "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id", "discountPlanType as discount_plan_type", "discountValue as discount_value"));
         } else {
             fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
                     "billingAccount.id as billing_account__id", "description as label", "quantity AS quantity", "amountWithoutTax as sum_without_tax",
@@ -1968,30 +1968,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
 
             leftJoinClauseBd.append("AND ivl.billingRun.id = ").append(billingRunId).append(" ");
+            leftJoinClauseBd.append(" AND ivl.discountValue is null and a.discountValue is null ");
         }
 
         QueryBuilder queryBuilder = nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig,
                 null, extraCondition, leftJoinClauseBd.toString());
         return queryBuilder.getQueryAsString();
-    }
-
-    private String buildGroupByClause(AggregationConfiguration aggregationConfiguration) {
-        String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption());
-        boolean ignoreSubscription = BILLINGACCOUNT == aggregationConfiguration.getType() && aggregationConfiguration.isIgnoreSubscriptions();
-        String ignoreSubscriptionClause = ignoreSubscription
-                ? "" : ", a.subscription.id, a.serviceInstance, a.chargeInstance.id ";
-        String ignoreOrders = aggregationConfiguration.isIgnoreOrders()
-                ? "" : ", a.subscription.order.id, a.infoOrder.order.id, a.orderNumber";
-        String unitAmount = appProvider.isEntreprise() ? "a.unitAmountWithoutTax" : "a.unitAmountWithTax";
-        String aggregateWithUnitAmount = aggregationConfiguration.isAggregationPerUnitAmount() ? "" : ", " + unitAmount;
-        String useAccountingLabel = aggregationConfiguration.isUseAccountingArticleLabel() ? "" : ", a.description";
-        if(aggregationConfiguration.getDateAggregationOption() == NO_DATE_AGGREGATION) {
-            usageDateAggregation = "a." + usageDateAggregation;
-        }
-        return " group by a.billingAccount.id, a.accountingCode.id" + useAccountingLabel + aggregateWithUnitAmount + ","
-                + " a.offerTemplate, " + usageDateAggregation + ignoreSubscriptionClause
-                + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.productVersion.id "
-                + ", a.accountingArticle.id, a.discountedRatedTransaction";
     }
 
     private Map<String, String> buildMapToInvoiceLineTable(AggregationConfiguration aggregationConfiguration) {
@@ -2003,6 +1985,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             put("infoOrder.productVersion.id", "productVersion.id");
             put("accountingArticle.id", "accountingArticle.id");
             put("discountedRatedTransaction", "discountedInvoiceLine");
+            put("discountValue", "discountValue");
+            put("discountPlanType", "discountPlanType");
         }};
 
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption());
