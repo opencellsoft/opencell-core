@@ -211,7 +211,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private final static String MODE_DETAILED_W_SERVICES = "detailedWithServices";
 
     private boolean amountsAndlinesUpdated=false;
-    
+
     @Inject
     private InvoiceAgregateService invoiceAgregateService;
 
@@ -283,7 +283,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     /**
-     * 
+     *
      * @return is detailed with aggregation input by services
      */
     public boolean isDetailedWithServices() {
@@ -585,6 +585,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
             for (RatedTransaction ratedTransaction : openedRT) {
                 aggregateHandler.addRT(entity.getInvoiceDate(), ratedTransaction);
+                ratedTransactionsToSave.add(ratedTransaction);
             }
             setRtxHasImported(true);
             updateAmountsAndLines();
@@ -800,9 +801,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         if (preferedPaymentMethod != null) {
             entity.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
-    	if(entity.getInvoiceNumber() == null) {
-    		entity.setStatus(InvoiceStatusEnum.VALIDATED);
-	        entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
+        // do not assign invoice number only in case that the invoice could be changed to status VALIDATED
+        // (means its status is NEW or DRAFT)
+    	if(canChangeInvoiceStatusTo(InvoiceStatusEnum.VALIDATED) && entity.getInvoiceNumber() == null) {
+	        entity.setStatus(InvoiceStatusEnum.VALIDATED);
+            entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
 	        try {
 	            entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
 	        } catch (Exception e) {
@@ -966,6 +969,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     newRT.setInvoice(entity);
 
                     aggregateHandler.addRT(entity.getInvoiceDate(), newRT);
+                    ratedTransactionsToSave.add(newRT);
                 }
             } else {
                 for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
@@ -978,6 +982,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 for (RatedTransaction rt : ratedTransactions) {
                     if (rt.getWallet() == null) {
                         aggregateHandler.addRT(entity.getInvoiceDate(), rt);
+                        ratedTransactionsToSave.add(rt);
                     }
                 }
 
@@ -1506,7 +1511,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         this.amountWithTax = amountWithTax;
     }
 
-    
+
 
     public ServiceTemplate getSelectedServiceTemplate() {
         return selectedServiceTemplate;
