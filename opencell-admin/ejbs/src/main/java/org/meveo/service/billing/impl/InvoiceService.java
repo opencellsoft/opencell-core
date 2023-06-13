@@ -1354,6 +1354,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 (invoice.getInvoiceType().getInvoiceValidationScript() != null
                         || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
             invoice = invoiceService.refreshOrRetrieve(invoice);
+            InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
             if(invoice.getInvoiceType().getInvoiceValidationScript() != null) {
                 ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
                 if (scriptInstance != null) {
@@ -1374,8 +1375,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
                 }
-            } else if (invoice.getInvoiceType().getInvoiceValidationRules() != null
-                    && !invoice.getInvoiceType().getInvoiceValidationRules().isEmpty()) {
+            } else if (invoiceType.getInvoiceValidationRules() != null
+                    && !invoiceType.getInvoiceValidationRules().isEmpty()) {
 				List<InvoiceValidationRule> invoiceValidationRules = invoice.getInvoiceType().getInvoiceValidationRules()
 						.stream().filter(rule -> Objects.isNull(rule.getParentRule())).collect(Collectors.toList());
                 sort(invoiceValidationRules, comparingInt(InvoiceValidationRule::getPriority));
@@ -2522,7 +2523,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (isDraft) {
                     drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate(),
                         generateInvoiceRequestDto.getLastTransactionDate());
-                    update(invoice);
                 } else {
                     drafWalletOperationIds = new ArrayList<>();
                     invoice.setStatus(InvoiceStatusEnum.VALIDATED);
@@ -3249,7 +3249,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void assignInvoiceNumberAndRecalculateDates(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
         Invoice invoice = findById(invoiceId);
-        assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
 
         BillingAccount billingAccount = invoice.getBillingAccount();
         //Recalculate dates :
@@ -3278,6 +3277,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         //Assign invoice number :
         billingAccount = incrementBAInvoiceDate(invoice.getBillingRun(), billingAccount);
+        assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
         invoice.setStatus(InvoiceStatusEnum.VALIDATED);
         // /!\ DO NOT REMOVE THIS LINE, A LasyInitializationException is throw and the invoice is not generated.
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
@@ -5321,6 +5321,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BillingRun nextBR = null;
             if(BillingRunStatusEnum.REJECTED.equals(billingRunStatusEnum)) {
                 nextBR = billingRunService.findOrCreateNextQuarantineBR(billingRun.getId(), null);
+                billingAccountService.getEntityManager().flush();
             }
             if (nextBR != null) {
                 getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
