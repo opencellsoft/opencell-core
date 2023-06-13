@@ -55,6 +55,7 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.*;
 import org.meveo.model.crm.BusinessAccountModel;
@@ -197,14 +198,17 @@ public class CustomerAccountApi extends AccountEntityApi {
         return customerAccount;
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = CustomerAccount.class))
     public CustomerAccount update(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         return update(postData, true);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = CustomerAccount.class))
     public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
         return update(postData, true, null);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = CustomerAccount.class))
     public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -232,7 +236,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     /**
      * Populate entity with fields from DTO entity
-     * 
+     *
      * @param customerAccount Entity to populate
      * @param postData DTO entity object to populate from
      * @param checkCustomFields Should a check be made if CF field is required
@@ -591,6 +595,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = CustomerAccount.class))
     public CustomerAccount createOrUpdate(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(postData.getCode()) && customerAccountService.findByCode(postData.getCode()) != null) {
             return update(postData);
@@ -722,7 +727,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     /**
      * Returns list of counters at a given date for a customer account.
-     * 
+     *
      * @param customerAccountCode the customer account code
      * @param date the selected date
      * @return a counter instance list
