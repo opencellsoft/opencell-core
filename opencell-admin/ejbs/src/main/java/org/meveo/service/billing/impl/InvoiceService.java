@@ -1403,6 +1403,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
                 (invoice.getInvoiceType().getInvoiceValidationScript() != null
                         || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
+            invoice = invoiceService.refreshOrRetrieve(invoice);
+            InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
             if(invoice.getInvoiceType().getInvoiceValidationScript() != null) {
                 ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
                 if (scriptInstance != null) {
@@ -1427,9 +1429,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
                 }
-            } else if(invoice.getInvoiceType().getInvoiceValidationRules() != null
-                    && !invoice.getInvoiceType().getInvoiceValidationRules().isEmpty()) {
-                List<InvoiceValidationRule> invoiceValidationRules = invoice.getInvoiceType().getInvoiceValidationRules();
+            } else if(invoiceType.getInvoiceValidationRules() != null
+                    && !invoiceType.getInvoiceValidationRules().isEmpty()) {
+                List<InvoiceValidationRule> invoiceValidationRules = invoiceType.getInvoiceValidationRules();
                 sort(invoiceValidationRules, comparingInt(InvoiceValidationRule::getPriority));
                 Iterator<InvoiceValidationRule> validationRuleIterator = invoiceValidationRules.iterator();
                 boolean noValidationError = true;
