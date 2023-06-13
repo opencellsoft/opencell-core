@@ -142,6 +142,8 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
+import org.meveo.service.cpq.BillingRuleService;
+import org.meveo.service.cpq.ContractService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
@@ -230,16 +232,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     @Named
     private NativePersistenceService nativePersistenceService;
-    
+
     @Inject
     private DiscountPlanService discountPlanService;
 
     @Inject
     private DiscountPlanItemService discountPlanItemService;
-    
+
+    @Inject
+    private ContractService contractService;
+
     @Inject
     private FinanceSettingsService financeSettingsService;
-    
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
      *
@@ -353,7 +358,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         boolean cftEndPeriodEnabled = customFieldTemplateService.areCFTEndPeriodEventsEnabled(new RatedTransaction());
 
         boolean billingRedirectionEnabled = financeSettingsService.isBillingRedirectionRulesEnabled();
-        
+
         String providerCode = currentUser.getProviderCode();
         final String schemaPrefix = providerCode != null ? EntityManagerProvider.convertToSchemaName(providerCode) + "." : "";
 
@@ -657,6 +662,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setStartDate(aggregatedWo.getStartDate());
         ratedTransaction.setEndDate(aggregatedWo.getEndDate());
         ratedTransaction.setCreated(new Date());
+        if(aggregatedWo.getRulesContract() != null && aggregatedWo.getRulesContract().getId() != null) {
+            ratedTransaction.setRulesContract(contractService.refreshOrRetrieve(aggregatedWo.getRulesContract()));
+        }
         // ratedTransaction.setEdr(aggregatedWo.getEdr());
         WalletInstance wallet = walletService.refreshOrRetrieve(aggregatedWo.getWallet());
         ratedTransaction.setWallet(wallet);
@@ -2228,7 +2236,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setParameter("ids", rtIds)
                 .getResultList();
     }
-	
+
 	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> findByFilter(Map<String, Object> filters) {
         PaginationConfiguration configuration = getPaginationConfigurationFromFilter(filters);
@@ -2257,5 +2265,5 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         filters = genericRequestMapper.evaluateFilters(filters, entityClass);
         return new PaginationConfiguration(filters);
     }
-    
+
 }
