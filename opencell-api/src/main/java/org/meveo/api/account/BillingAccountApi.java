@@ -60,6 +60,7 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.BeanUtils;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.billing.BankCoordinates;
@@ -195,7 +196,7 @@ public class BillingAccountApi extends AccountEntityApi {
     
     @Inject
     private TagService tagService;
-    
+
     @Inject
     private TitleService titleService;
 
@@ -301,14 +302,17 @@ public class BillingAccountApi extends AccountEntityApi {
 		}
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = BillingAccount.class))
     public BillingAccount update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return update(postData, true);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = BillingAccount.class))
     public BillingAccount update(BillingAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
         return update(postData, true, null);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = BillingAccount.class))
     public BillingAccount update(BillingAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -586,11 +590,11 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
             }
         }
-        
+
         if(postData.getIsCompany() != null) {
         	billingAccount.setIsCompany(postData.getIsCompany());
         }
-        
+
         if(postData.getLegalEntityType() != null) {
         	var titleDto = postData.getLegalEntityType();
         	if(StringUtils.isEmpty(titleDto.getCode()))
@@ -773,6 +777,7 @@ public class BillingAccountApi extends AccountEntityApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = BillingAccount.class))
     public BillingAccount createOrUpdate(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(postData.getCode()) && billingAccountService.findByCode(postData.getCode()) != null) {
             return update(postData);
