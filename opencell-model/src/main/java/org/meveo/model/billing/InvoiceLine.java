@@ -148,9 +148,9 @@ import org.meveo.model.cpq.offer.QuoteOffer;
                 + " from  InvoiceLine il  where il.billingRun.id=:billingRunId and il.discountPlanItem is not null group by il.subscription.id, il.commercialOrder.id , il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
 		@NamedQuery(name = "InvoiceLine.getAdjustmentAmount", query = "SELECT SUM(li.amount) FROM Invoice i JOIN i.linkedInvoices li WHERE i.id= :ID_INVOICE and li.type = 'ADJUSTMENT'"),
 		@NamedQuery(name = "InvoiceLine.updateByIncrementalMode", query = "UPDATE InvoiceLine il SET " +
-		"il.amountWithoutTax=:amountWithoutTax, il.amountWithTax=:amountWithTax, " +
-		"il.amountTax=:amountTax, il.quantity=:quantity, il.validity.from=:beginDate, " +
-		"il.validity.to=:endDate, il.auditable.updated=:now, il.unitPrice=:unitPrice WHERE il.id=:id"),
+				"il.amountWithoutTax=il.amountWithoutTax+:deltaAmountWithoutTax, il.amountWithTax=il.amountWithTax+:deltaAmountWithTax, " +
+				"il.amountTax=il.amountTax+:deltaAmountTax, il.quantity=il.quantity+:deltaQuantity, il.validity.from=:beginDate, " +
+				"il.validity.to=:endDate, il.auditable.updated=:now, il.unitPrice=:unitPrice WHERE il.id=:id"),
 		@NamedQuery(name = "InvoiceLine.updateStatusInvoiceLine", query = "UPDATE InvoiceLine il SET " +
 				"il.status =: statusToUpdate WHERE il.id =: id")
 	})

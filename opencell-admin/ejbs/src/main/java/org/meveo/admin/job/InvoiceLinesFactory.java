@@ -205,18 +205,19 @@ public class InvoiceLinesFactory {
 
     /**
      * @param invoiceLineId id of invoice line to be updated
-     * @param amounts amount of tax, amount with tax, amount without tax
-     * @param quantity quantity
+     * @param deltaAmounts difference of amount of tax, difference of amount with tax, difference of amount without tax
+     *                     to be updated
+     * @param deltaQuantity difference of quantity to be updated
      * @param beginDate beginDate
      * @param endDate endDate
      */
-    public void update(Long invoiceLineId, BigDecimal[] amounts, BigDecimal quantity, Date beginDate,
+    public void update(Long invoiceLineId, BigDecimal[] deltaAmounts, BigDecimal deltaQuantity, Date beginDate,
                        Date endDate, BigDecimal unitPrice) throws BusinessException {
         invoiceLineService.getEntityManager()
                 .createNamedQuery("InvoiceLine.updateByIncrementalMode")
-                .setParameter("id", invoiceLineId).setParameter("amountWithoutTax", amounts[0])
-                .setParameter("amountWithTax", amounts[1]).setParameter("amountTax", amounts[2])
-                .setParameter("quantity", quantity).setParameter("beginDate", beginDate)
+                .setParameter("id", invoiceLineId).setParameter("deltaAmountWithoutTax", deltaAmounts[0])
+                .setParameter("deltaAmountWithTax", deltaAmounts[1]).setParameter("deltaAmountTax", deltaAmounts[2])
+                .setParameter("deltaQuantity", deltaQuantity).setParameter("beginDate", beginDate)
                 .setParameter("endDate", endDate).setParameter("now", new Date())
                 .setParameter("unitPrice", unitPrice).executeUpdate();
     }
