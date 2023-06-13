@@ -1349,6 +1349,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
                 (invoice.getInvoiceType().getInvoiceValidationScript() != null
                         || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
+            invoice = invoiceService.refreshOrRetrieve(invoice);
+            InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
             if(invoice.getInvoiceType().getInvoiceValidationScript() != null) {
                 ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
                 if (scriptInstance != null) {
@@ -1369,8 +1371,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
                 }
-            } else if (invoice.getInvoiceType().getInvoiceValidationRules() != null
-                    && !invoice.getInvoiceType().getInvoiceValidationRules().isEmpty()) {
+            } else if (invoiceType.getInvoiceValidationRules() != null
+                    && !invoiceType.getInvoiceValidationRules().isEmpty()) {
 				List<InvoiceValidationRule> invoiceValidationRules = invoice.getInvoiceType().getInvoiceValidationRules()
 						.stream().filter(rule -> Objects.isNull(rule.getParentRule())).collect(Collectors.toList());
                 sort(invoiceValidationRules, comparingInt(InvoiceValidationRule::getPriority));
