@@ -176,12 +176,12 @@ public class ContractService extends BusinessService<Contract>  {
 	}
 
 	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
-		return getContractByAccount(customersID, billingAccount, customerAccount, bareWalletOperation != null ? bareWalletOperation.getOperationDate() : null);
+		return getContractByAccount(customersID, billingAccount, customerAccount, bareWalletOperation, null);
 	}
 
-	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, Date operationDate) {
+	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation, Date operationDate) {
 		try {
-			Date updateOD = bareWalletOperation != null ? bareWalletOperation.getOperationDate() : null;
+			Date updateOD = bareWalletOperation != null ? bareWalletOperation.getOperationDate() : operationDate;
 			if(operationDate != null) {
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(operationDate);

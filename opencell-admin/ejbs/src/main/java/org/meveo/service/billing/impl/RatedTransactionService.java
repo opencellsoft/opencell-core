@@ -690,14 +690,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         Customer customer = customerAccount.getCustomer();
 
-        log.info(" ------ Rule contract {}", ratedTransaction.getRulesContract());
         if(ratedTransaction.getRulesContract() == null) {
             //Get the list of customers (current and parents)
             List<Customer> customers = new ArrayList<>();
             getCustomer(customer, customers);
             List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
             //Get contract by list of customer ids, billing account and customer account
-            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, aggregatedWo.getOperationDate());
+            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, null, aggregatedWo.getOperationDate());
             Contract contractWithRules = contractService.lookupSuitableContract(customers, contracts, true);
 
             ratedTransaction.setRulesContract(contractWithRules);
