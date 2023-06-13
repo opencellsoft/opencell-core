@@ -358,6 +358,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         TaxInfo taxInfo = taxMappingService.determineTax(selectedCharge, seller, ua, usageDate);
 
         if(entity.getId() == null) {
+            // for new Invoice, status should be already DARFT instead of CREATED
+            entity.setStatus(InvoiceStatusEnum.DRAFT);
             invoiceService.create(entity);
         }
         // AKK check what happens with tax
