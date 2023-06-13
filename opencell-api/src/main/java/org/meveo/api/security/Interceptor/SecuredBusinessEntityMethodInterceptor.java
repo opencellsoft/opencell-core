@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
+import javax.persistence.NoResultException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -158,6 +159,11 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
                     boolean isAllowed = false;
                     for (BusinessEntity entity : entities) {
                         log.debug("Checking if entity={} is allowed for currentUser", entity);
+                        if (entityIsBeingCreated(methodName, entity)) {
+                            log.debug("New entity is being created by calling createOrUpdate(). Check is OK");
+                            isAllowed =true;
+                            break;
+                        }
                         if (entity != null && securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
                             log.debug("Checked entity is OK");
                             isAllowed =true;
@@ -178,6 +184,34 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         log.debug("Method {}.{} results will be filtered using {} filter.", objectName, methodName, filter);
         result = filter.filterResult(sbeConfig.getFilterResultsConfig(), result, currentUser, allSecuredEntitiesMap);
         return result;
+    }
+
+    /**
+     * Checking if the entity to validate is not about to be created by
+     * calling createOrUpdate on the intercepted API
+     * @param methodName method name intercepted
+     * @param entity to be validated by SecuredEntities check
+     * @return if the entity is being created or not
+     */
+    private boolean entityIsBeingCreated(String methodName, BusinessEntity entity) {
+        if ("createOrUpdate".equals(methodName) && entity.getId() == null && entity.getCode() != null) {
+            try {
+                Object entityFound = userService.getEntityManager()
+                        .createQuery("select e from " + entity.getClass().getSimpleName() + " e where lower(code)=:code")
+                        .setParameter("code", entity.getCode().toLowerCase())
+                        .setMaxResults(1).getSingleResult();
+                if (entityFound != null) {
+                    return false;
+                }
+            } catch (NoResultException e) {
+                return true;
+            } catch (Exception e) {
+                //If query couldn't be executed then return false
+                // to continue SecuredEntities checking
+                return false;
+            }
+        }
+        return false;
     }
 
     /**

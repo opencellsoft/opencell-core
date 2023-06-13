@@ -36,6 +36,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.BeanUtils;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
@@ -211,14 +212,17 @@ public class BillingAccountApi extends AccountEntityApi {
         return billingAccount;
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = BillingAccount.class))
     public BillingAccount update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return update(postData, true);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = BillingAccount.class))
     public BillingAccount update(BillingAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
         return update(postData, true, null);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = BillingAccount.class))
     public BillingAccount update(BillingAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -593,6 +597,7 @@ public class BillingAccountApi extends AccountEntityApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = BillingAccount.class))
     public BillingAccount createOrUpdate(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode());
         if (billingAccount == null) {
