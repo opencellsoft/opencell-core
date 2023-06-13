@@ -22,6 +22,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
@@ -94,6 +95,8 @@ public class InvoiceLinesFactory {
         ofNullable(data.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, ((Number)id).longValue())));
         ofNullable(data.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, ((Number)id).longValue())));
         ofNullable(data.get("article_id")).ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.getEntityManager().getReference(AccountingArticle.class, (Number)id)));
+        ofNullable(data.get("discount_plan_type")).ifPresent(id -> invoiceLine.setDiscountPlanType((DiscountPlanItemTypeEnum) data.get("discount_plan_type")));
+        ofNullable(data.get("discount_value")).ifPresent(id -> invoiceLine.setDiscountValue((BigDecimal) data.get("discount_value")));
         log.debug("discounted_Ratedtransaction_id={},{}",data.get("discounted_ratedtransaction_id"),iLIdsRtIdsCorrespondence.size());
         if(data.get("discounted_ratedtransaction_id")!=null) {
         	Long discountedILId = iLIdsRtIdsCorrespondence.get(((Number)data.get("discounted_ratedtransaction_id")).longValue());
@@ -107,8 +110,6 @@ public class InvoiceLinesFactory {
                         if(discountRatedTransaction!=null) {
                             invoiceLine.setDiscountPlan(discountRatedTransaction.getDiscountPlan());
                             invoiceLine.setDiscountPlanItem(discountRatedTransaction.getDiscountPlanItem());
-                            invoiceLine.setDiscountPlanType(discountRatedTransaction.getDiscountPlanType());
-                            invoiceLine.setDiscountValue(discountRatedTransaction.getDiscountValue());
                             invoiceLine.setSequence(discountRatedTransaction.getSequence());
                             invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount() == null ? discountRatedTransaction.getDiscountValue():
                             	invoiceLine.getDiscountAmount().add(discountRatedTransaction.getDiscountValue()));
