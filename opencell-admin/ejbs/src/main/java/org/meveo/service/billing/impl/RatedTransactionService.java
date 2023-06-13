@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -145,6 +144,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.BillingRulesService;
+import org.meveo.service.cpq.ContractService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.tax.TaxClassService;
@@ -241,6 +241,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private DiscountPlanItemService discountPlanItemService;
+
+    @Inject
+    private ContractService contractService;
     
     /**
      * Check if Billing account has any not yet billed Rated transactions
@@ -474,10 +477,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             ratedTransaction.setDiscountValue(walletOperation.getDiscountValue());
             ratedTransaction.setDiscountedAmount(walletOperation.getDiscountedAmount());
             ratedTransaction.setSequence(walletOperation.getSequence());
-            if (walletOperation.getRulesContractId() != null) {
-                ratedTransaction.setRulesContract(em.getReference(Contract.class, walletOperation.getRulesContractId()));
-            }
-
+			if(walletOperation.getRulesContractId() != null) {
+				ratedTransaction.setRulesContract(em.getReference(Contract.class, walletOperation.getRulesContractId()));
+			}
             if (cftEndPeriodEnabled) {
                 customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
             }
@@ -650,6 +652,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setStartDate(aggregatedWo.getStartDate());
         ratedTransaction.setEndDate(aggregatedWo.getEndDate());
         ratedTransaction.setCreated(new Date());
+        if(aggregatedWo.getRulesContract() != null && aggregatedWo.getRulesContract().getId() != null) {
+            ratedTransaction.setRulesContract(contractService.refreshOrRetrieve(aggregatedWo.getRulesContract()));
+        }
         // ratedTransaction.setEdr(aggregatedWo.getEdr());
         WalletInstance wallet = walletService.refreshOrRetrieve(aggregatedWo.getWallet());
         ratedTransaction.setWallet(wallet);
