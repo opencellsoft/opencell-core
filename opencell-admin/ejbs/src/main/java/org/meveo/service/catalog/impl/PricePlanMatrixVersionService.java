@@ -610,7 +610,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 			trading.getTradingCurrency(), 
                 			trading.getRate(), 
                 			trading.isUseForBillingAccounts(), 
-                			ppml);
+                			duplicateLine);
                 	
                 	duplicateLine.getTradingPricePlanMatrixLines().add(tppml);
                 });

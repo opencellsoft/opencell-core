@@ -1,6 +1,8 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,11 +11,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.billing.TradingCurrency;
 
@@ -59,6 +63,13 @@ public class TradingPricePlanMatrixLine  extends AuditableEntity {
         this.rate = rate;
         this.useForBillingAccounts = useForBillingAccounts;
         this.pricePlanMatrixLine = pricePlanMatrixLine;
+    }
+    
+    @PrePersist
+    private void prePersist() {
+    	if (auditable == null)
+    		auditable = new Auditable();
+    	auditable.setCreated(new Date());
     }
 
     /**
@@ -129,6 +140,30 @@ public class TradingPricePlanMatrixLine  extends AuditableEntity {
 	 */
 	public void setPricePlanMatrixLine(PricePlanMatrixLine pricePlanMatrixLine) {
 		this.pricePlanMatrixLine = pricePlanMatrixLine;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ Objects.hash(pricePlanMatrixLine, rate, tradingCurrency, tradingValue, useForBillingAccounts);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TradingPricePlanMatrixLine other = (TradingPricePlanMatrixLine) obj;
+		return Objects.equals(pricePlanMatrixLine, other.pricePlanMatrixLine) && Objects.equals(rate, other.rate)
+				&& Objects.equals(tradingCurrency, other.tradingCurrency)
+				&& Objects.equals(tradingValue, other.tradingValue)
+				&& useForBillingAccounts == other.useForBillingAccounts;
 	}
 	
 }
