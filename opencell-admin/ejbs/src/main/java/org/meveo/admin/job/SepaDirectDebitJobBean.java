@@ -17,8 +17,6 @@
  */
 package org.meveo.admin.job;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +30,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -127,29 +126,33 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 
+
+		Long nbRuns = 1L;
+		Long waitingMillis = 0L;
+
 		try {
-			Long nbRuns = new Long(1);
-			Long waitingMillis = new Long(0);
-
-			try {
-				nbRuns = (Long) this.getParamOrCFValue(jobInstance, "SepaJob_nbRuns");
-				waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "SepaJob_waitingMillis");
-				if (nbRuns == -1) {
-					nbRuns = (long) Runtime.getRuntime().availableProcessors();
-				}
-
-			} catch (Exception e) {
-				nbRuns = new Long(1);
-				waitingMillis = new Long(0);
-				log.warn("Cant get nbRuns and waitingMillis customFields for " + jobInstance.getCode(), e.getMessage());
+			nbRuns = (Long) this.getParamOrCFValue(jobInstance, "SepaJob_nbRuns");
+			waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "SepaJob_waitingMillis");
+			if (nbRuns == -1) {
+				nbRuns = (long) Runtime.getRuntime().availableProcessors();
 			}
+
+		} catch (Exception e) {
+			nbRuns = 1L;
+			waitingMillis = 0L;
+			log.warn("Cant get nbRuns and waitingMillis customFields for :{} : {}", jobInstance.getCode(),
+					e.getMessage());
+		}
+		try {
 			DDRequestBuilder ddRequestBuilder = null;
 			Seller seller = null;
 			String ddRequestBuilderCode = null;
 			String sellerCode = null;
-			PaymentOrRefundEnum paymentOrRefundEnum = PaymentOrRefundEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "SepaJob_paymentOrRefund")).toUpperCase());
+			PaymentOrRefundEnum paymentOrRefundEnum = PaymentOrRefundEnum
+					.valueOf(((String) this.getParamOrCFValue(jobInstance, "SepaJob_paymentOrRefund")).toUpperCase());
 			if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder") != null) {
-				ddRequestBuilderCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder")).getCode();
+				ddRequestBuilderCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance,
+						"SepaJob_ddRequestBuilder")).getCode();
 				ddRequestBuilder = ddRequestBuilderService.findByCode(ddRequestBuilderCode);
 			} else {
 				throw new BusinessException("Can't find ddRequestBuilder");
@@ -163,10 +166,11 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			}
 
 			DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
-			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder, seller, paymentOrRefundEnum);
+			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder, seller,
+					paymentOrRefundEnum);
 
 			if (CollectionUtils.isNotEmpty(ddrequestOps)) {
-				log.debug("ddrequestOps found:" + ddrequestOps.size());				
+				log.debug("ddrequestOps found:{}", ddrequestOps.size());
 			} else {
 				final String msg = "ddrequestOps IS EMPTY !";
 				log.debug(msg);
@@ -186,27 +190,41 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
 						log.debug("start filterAoToPayOrRefund...");
-						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
-						log.debug("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());
+						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface,
+								jobInstance, ddrequestLotOp);
+						log.debug("end filterAoToPayOrRefund listAoToPay.size:{}", listAoToPay.size());
 						result.setNbItemsToProcess(listAoToPay.size());
-						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
-						log.debug("end createDDRquestLot");
-						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
-							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
-							log.debug("end addItems");
-							dDRequestLOTService.generateDDRquestLotFile(dDRequestLOTService.findById(ddRequestLOT.getId(), Arrays.asList("ddrequestItems") ), ddRequestBuilderInterface, appProvider);
-							log.debug("end generateDDRquestLotFile");
-							result.addReport(ddRequestLOT.getRejectedCause());
-							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
-							log.debug("end createPaymentsOrRefundsForDDRequestLot");							
+						int nbOpsByLot = listAoToPay.size();
+
+						if (ddRequestBuilder.getNbOperationPerFile() != null && ddRequestBuilder.getNbOperationPerFile().intValue() > 0) {
+							nbOpsByLot = ddRequestBuilder.getNbOperationPerFile().intValue();
+						}
+
+						for (List<AccountOperation> listAoToPayTprocess : ListUtils.partition(listAoToPay,nbOpsByLot)) {
+
+							DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp,
+									listAoToPayTprocess, ddRequestBuilder, result);
+							log.debug("end createDDRquestLot");
+							if (ddRequestLOT != null && "true".equals( paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
+								dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPayTprocess,ddRequestBuilder, result);
+								log.debug("end addItems");
+								dDRequestLOTService.generateDDRquestLotFile(
+										dDRequestLOTService.findById(ddRequestLOT.getId(),Arrays.asList("ddrequestItems")),ddRequestBuilderInterface, appProvider);
+								log.debug("end generateDDRquestLotFile");
+								result.addReport(ddRequestLOT.getRejectedCause());
+								dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns,waitingMillis, result);
+								log.debug("end createPaymentsOrRefundsForDDRequestLot");
+							}
 						}
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
-						dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), nbRuns, waitingMillis, result);
+						dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(),
+								nbRuns, waitingMillis, result);
 						result.registerSucces();
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
-						dDRequestLOTService.generateDDRquestLotFile(ddrequestLotOp.getDdrequestLOT(), ddRequestBuilderInterface, appProvider);
+						dDRequestLOTService.generateDDRquestLotFile(ddrequestLotOp.getDdrequestLOT(),
+								ddRequestBuilderInterface, appProvider);
 						result.registerSucces();
 					}
 					ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
@@ -223,7 +241,8 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
 					dDRequestLotOpService.update(ddrequestLotOp);
 					result.registerError(ddrequestLotOp.getId(), e.getMessage());
-					result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
+					result.addReport(
+							"ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
 				}
 			}
 		} catch (Exception e) {
