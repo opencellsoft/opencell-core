@@ -6978,20 +6978,28 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice createAdjustment(Invoice invoice, InvoiceLinesToReplicate invoiceLinesToReplicate) {
 
         List<InvoiceLineRTs> invoiceLineRTs = invoiceLinesToReplicate.getInvoiceLinesRTs();
+        InvoiceType invoiceType = null;
+
+        if (StringUtils.isNotBlank(invoiceLinesToReplicate.getAdjType())) {
+            if (!invoiceTypeService.getListAdjustementCode().contains(invoiceLinesToReplicate.getAdjType())) {
+                throw new BusinessException("The type with code '" +invoiceLinesToReplicate.getAdjType() +"' is not a valid InvoiceType Adjustment");
+            }
+            invoiceType = invoiceTypeService.findByCode(invoiceLinesToReplicate.getAdjType());
+        }
 
         if (invoiceLineRTs != null && !invoiceLineRTs.isEmpty()) {
-            return createAdjustmentFromRatedTransactions(invoice, invoiceLineRTs);
+            return createAdjustmentFromRatedTransactions(invoice, invoiceLineRTs, invoiceType);
         } else {
-            return createAdjustment(invoice, invoiceLinesToReplicate.getInvoiceLinesIds());
+            return createAdjustment(invoice, invoiceLinesToReplicate.getInvoiceLinesIds(), invoiceType);
         }
     }
 
-    private Invoice createAdjustmentFromRatedTransactions(Invoice invoice, List<InvoiceLineRTs> invoiceLineRTs) {
+    private Invoice createAdjustmentFromRatedTransactions(Invoice invoice, List<InvoiceLineRTs> invoiceLineRTs, InvoiceType type) {
 
         List<Long> invoiceLinesIds = invoiceLineRTs.stream().map(InvoiceLineRTs::getInvoiceLineId).collect(toList());
 
         Invoice adjustmentInvoice = duplicateAndUpdateInvoiceLines(invoice, invoiceLineRTs, invoiceLinesIds);
-        populateAdjustmentInvoice(invoice, adjustmentInvoice);
+        populateAdjustmentInvoice(adjustmentInvoice, type);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
         addLinkedInvoice(invoice, adjustmentInvoice);
 
@@ -7038,9 +7046,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds) {        
+    public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds, InvoiceType type) {
         Invoice adjustmentInvoice = duplicateByType(invoice, invoiceLinesIds, true);
-        populateAdjustmentInvoice(invoice, adjustmentInvoice);
+        populateAdjustmentInvoice(adjustmentInvoice, type);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
         addLinkedInvoice(invoice, adjustmentInvoice);
 
@@ -7079,9 +7087,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
-    private void populateAdjustmentInvoice(Invoice invoice, Invoice duplicatedInvoice) {
+    private void populateAdjustmentInvoice(Invoice duplicatedInvoice, InvoiceType type) {
         duplicatedInvoice.setInvoiceDate(new Date());
-        duplicatedInvoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
+        duplicatedInvoice.setInvoiceType(type != null ? type : invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
         duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
         getEntityManager().flush();
