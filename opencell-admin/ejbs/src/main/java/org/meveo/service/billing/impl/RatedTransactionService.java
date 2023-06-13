@@ -676,7 +676,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         Customer customer = customerAccount.getCustomer();
 
-        log.info(" ------ Rule contract {}", ratedTransaction.getRulesContract());
         if(ratedTransaction.getRulesContract() == null) {
             //Get the list of customers (current and parents)
             List<Customer> customers = new ArrayList<>();
