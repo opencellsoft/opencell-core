@@ -70,6 +70,7 @@ import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.TradingPricePlanMatrixLine;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
@@ -498,6 +499,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     duplicateLine.setValue(BigDecimal.ZERO);
                 }
 
+                ppml.getTradingPricePlanMatrixLines().forEach(trading -> {
+                	TradingPricePlanMatrixLine tppml = new TradingPricePlanMatrixLine(trading.getTradingValue(), 
+                			trading.getTradingCurrency(), 
+                			trading.getRate(), 
+                			trading.isUseForBillingAccounts(), 
+                			duplicateLine);
+                	
+                	duplicateLine.getTradingPricePlanMatrixLines().add(tppml);
+                });
+                
                 pricePlanMatrixLineService.create(duplicateLine);
 
                 ids.put(ppml.getId(), duplicateLine);
