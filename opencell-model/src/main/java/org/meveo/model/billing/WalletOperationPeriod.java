@@ -61,6 +61,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
@@ -486,6 +487,10 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
 
     @Column(name = "discount_value")
     private BigDecimal discountValue;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rules_contract_id")
+    private Contract rulesContract;
 
     /**
      * Constructor
@@ -1190,5 +1195,13 @@ public class WalletOperationPeriod extends BaseEntity implements ICustomFieldEnt
 
     public void setDiscountValue(BigDecimal discountValue) {
         this.discountValue = discountValue;
+    }
+
+    public Contract getRulesContract() {
+        return rulesContract;
+    }
+
+    public void setRulesContract(Contract rulesContract) {
+        this.rulesContract = rulesContract;
     }
 }
