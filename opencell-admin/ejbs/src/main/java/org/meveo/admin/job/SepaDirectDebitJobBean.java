@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -204,16 +205,31 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						    listAoToPay = listAoToPay.stream()
 	                                .filter(accountOperation -> (!OperationActionEnum.NONE.equals(accountOperation.getOperationAction())))
 	                                .collect(Collectors.toList());
-                        }						
-						ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder);
-						dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
+                        }
+						int nbOpsByLot = listAoToPay.size();
 
-						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
-							dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider, result);
-							log.info("file generated.");
-							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis,
-									result);
+						if (ddRequestBuilder.getNbOperationPerFile() != null && ddRequestBuilder.getNbOperationPerFile().intValue() > 0) {
+							nbOpsByLot = ddRequestBuilder.getNbOperationPerFile().intValue();
+						}
+
+						for (List<AccountOperation> listAoToPayTprocess : ListUtils.partition(listAoToPay,nbOpsByLot)) {
+							ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPayTprocess, ddRequestBuilder);
+							if (ddRequestLOT == null) {
+								result.setNbItemsToProcess(0);
+								result.registerSucces();
+								result.addReport("no invoice to process");
+								return;
+							}
 							
+							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPayTprocess, ddRequestBuilder, result);
+	
+							if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
+								dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider, result);
+								log.info("file generated.");
+								dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis,
+										result);
+								
+							}
 						}
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
