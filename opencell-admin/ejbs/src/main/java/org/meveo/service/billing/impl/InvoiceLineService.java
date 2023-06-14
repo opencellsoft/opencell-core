@@ -15,9 +15,9 @@ import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -1086,12 +1086,24 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                         .orElse((BigDecimal) groupedRT.get("tax_percent"));
                 BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, appProvider.isEntreprise(), appProvider.getRounding(),
                         appProvider.getRoundingMode().getRoundingMode());
+                BigDecimal deltaAmountWithoutTax = (BigDecimal) groupedRT.get("sum_without_tax");
+                BigDecimal deltaAmountWithTax = (BigDecimal) groupedRT.get("sum_with_tax");
+                BigDecimal deltaAmountTax = deltaAmountWithTax.subtract(deltaAmountWithoutTax);
+                BigDecimal[] deltaAmounts = new BigDecimal[] {deltaAmountWithoutTax, deltaAmountWithTax, deltaAmountTax};
 
+                BigDecimal deltaQuantity = (BigDecimal) groupedRT.get("quantity");
                 BigDecimal quantity = ((BigDecimal) groupedRT.get("accumulated_quantity")).add((BigDecimal) groupedRT.get("quantity"));
                 Date beginDate = (Date) groupedRT.get("begin_date");
                 Date endDate = (Date) groupedRT.get("end_date");
 
-                linesFactory.update(invoiceLineId, amounts, quantity, beginDate, endDate);
+                BigDecimal unitPrice = (BigDecimal) groupedRT.get("unit_price");
+                if (billingRun.getBillingCycle() != null && !billingRun.getBillingCycle().isDisableAggregation()
+                        && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
+                    MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                    unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
+                }
+
+                linesFactory.update(invoiceLineId, deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);
                 basicStatistics.addToAmountWithoutTax(amounts[0]);
                 basicStatistics.addToAmountWithTax(amounts[1]);
                 basicStatistics.addToAmountTax(amounts[2]);

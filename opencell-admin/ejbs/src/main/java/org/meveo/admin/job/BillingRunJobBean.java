@@ -142,6 +142,8 @@ public class BillingRunJobBean extends BaseJobBean {
                     billingRun.setLastTransactionDate(billingRun.getProcessDate());
                 }
 
+                billingRun.setIncrementalInvoiceLines(billingCycle.getIncrementalInvoiceLines());
+
                 billingRunService.create(billingRun);
                 result.registerSucces();
             }
