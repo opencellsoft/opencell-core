@@ -7,9 +7,11 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.ContractApi;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.ContractDto;
 import org.meveo.api.dto.cpq.ContractItemDto;
 import org.meveo.api.dto.cpq.ContractListResponsDto;
+import org.meveo.api.dto.cpq.TradingContractItemDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetContractDtoResponse;
 import org.meveo.api.dto.response.cpq.GetContractLineDtoResponse;
@@ -154,4 +156,44 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 			return errorResponse(e);
 		}
 	}
+
+	@Override
+	public Response createTradingContractItem(TradingContractItemDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			result.setEntityId(contractApi.createTradingContractItem(postData).getId());
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return Response.ok(result).build();
+	}
+
+	@Override
+	public Response updateTradingContractItem(Long tradingContractItemId, TradingContractItemDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			result.setEntityId(contractApi.updateTradingContractItem(tradingContractItemId, postData).getId());
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return Response.ok(result).build();
+	}
+
+	@Override
+	public Response deleteTradingContractItem(Long tradingContractItemId) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			contractApi.deleteTradingContractItem(tradingContractItemId);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return Response.ok(result).build();
+	}
+
 }

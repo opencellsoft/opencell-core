@@ -1,7 +1,9 @@
 package org.meveo.model.cpq.contract;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
@@ -38,9 +41,6 @@ import org.meveo.model.cpq.Product;
         @Parameter(name = "sequence_name", value = "cpq_contract_item_seq")})
 public class ContractItem extends EnableBusinessCFEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5080807655628692787L;
 	
 	/**
@@ -90,7 +90,6 @@ public class ContractItem extends EnableBusinessCFEntity {
 	 */
 	@Column(name = "rate")
 	private Double rate;
-	
 
     /**
      * Amount without tax
@@ -106,7 +105,6 @@ public class ContractItem extends EnableBusinessCFEntity {
 	@Column(name = "rate_type", length = 50)
 	private ContractRateTypeEnum contractRateType = ContractRateTypeEnum.PERCENTAGE;
 	
-	
 	@Type(type = "numeric_boolean")
 	@Column(name = "separate_discount")
 	private boolean separateDiscount = false;
@@ -116,20 +114,24 @@ public class ContractItem extends EnableBusinessCFEntity {
 	private String applicationEl;
 	
 	/**
+     * list of trading contract item attached
+     */
+	@OneToMany(mappedBy = "contractItem", fetch = FetchType.LAZY)
+    private Set<TradingContractItem> tradingContractItems = new HashSet<>();
+	
+	/**
 	 * @return the contract
 	 */
 	public Contract getContract() {
 		return contract;
 	}
 
-
 	/**
-	 * @param contarct the contarct to set
+	 * @param contract the contract to set
 	 */
-	public void setContract(Contract contarct) {
-		this.contract = contarct;
+	public void setContract(Contract contract) {
+		this.contract = contract;
 	}
-
 
 	/**
 	 * @return the commercialOffer
@@ -138,14 +140,12 @@ public class ContractItem extends EnableBusinessCFEntity {
 		return offerTemplate;
 	}
 
-
 	/**
 	 * @param offerTemplate the commercialOffer to set
 	 */
 	public void setOfferTemplate(OfferTemplate offerTemplate) {
 		this.offerTemplate = offerTemplate;
 	}
-
 
 	/**
 	 * @return the product
@@ -154,14 +154,12 @@ public class ContractItem extends EnableBusinessCFEntity {
 		return product;
 	}
 
-
 	/**
 	 * @param product the product to set
 	 */
 	public void setProduct(Product product) {
 		this.product = product;
 	}
-
 
 	/**
 	 * @return the pricePlan
@@ -170,14 +168,12 @@ public class ContractItem extends EnableBusinessCFEntity {
 		return pricePlan;
 	}
 
-
 	/**
 	 * @param pricePlan the pricePlan to set
 	 */
 	public void setPricePlan(PricePlanMatrix pricePlan) {
 		this.pricePlan = pricePlan;
 	}
-
 
 	/**
 	 * @return the chargeTemplate
@@ -186,14 +182,12 @@ public class ContractItem extends EnableBusinessCFEntity {
 		return chargeTemplate;
 	}
 
-
 	/**
 	 * @param chargeTemplate the chargeTemplate to set
 	 */
 	public void setChargeTemplate(ChargeTemplate chargeTemplate) {
 		this.chargeTemplate = chargeTemplate;
 	}
-
 
 	/**
 	 * @return the serviceTemplate
@@ -202,14 +196,12 @@ public class ContractItem extends EnableBusinessCFEntity {
 		return serviceTemplate;
 	}
 
-
 	/**
 	 * @param serviceTemplate the serviceTemplate to set
 	 */
 	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
 		this.serviceTemplate = serviceTemplate;
 	}
-
 
 	/**
 	 * @return the rate
@@ -218,7 +210,6 @@ public class ContractItem extends EnableBusinessCFEntity {
 		return rate;
 	}
 
-
 	/**
 	 * @param rate the rate to set
 	 */
@@ -226,14 +217,12 @@ public class ContractItem extends EnableBusinessCFEntity {
 		this.rate = rate;
 	}
 
-
 	/**
 	 * @return the amountWithoutTax
 	 */
 	public BigDecimal getAmountWithoutTax() {
 		return amountWithoutTax;
 	}
-
 
 	/**
 	 * @param amountWithoutTax the amountWithoutTax to set
@@ -245,7 +234,6 @@ public class ContractItem extends EnableBusinessCFEntity {
 	public ContractRateTypeEnum getContractRateType() {
 		return contractRateType;
 	}
-
 
 	public void setContractRateType(ContractRateTypeEnum contractRateType) {
 		this.contractRateType = contractRateType;
@@ -259,6 +247,22 @@ public class ContractItem extends EnableBusinessCFEntity {
 		this.applicationEl = applicationEl;
 	}
 
+	public boolean isSeparateDiscount() {
+		return separateDiscount;
+	}
+
+	public void setSeparateDiscount(boolean separateDiscount) {
+		this.separateDiscount = separateDiscount;
+	}
+
+	public Set<TradingContractItem> getTradingContractItems() {
+		return tradingContractItems;
+	}
+
+	public void setTradingContractItems(Set<TradingContractItem> tradingContractItems) {
+		this.tradingContractItems = tradingContractItems;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -268,19 +272,6 @@ public class ContractItem extends EnableBusinessCFEntity {
 		return result;
 	}
 	
-	
-
-
-	public boolean isSeparateDiscount() {
-		return separateDiscount;
-	}
-
-
-	public void setSeparateDiscount(boolean separateDiscount) {
-		this.separateDiscount = separateDiscount;
-	}
-
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -298,6 +289,4 @@ public class ContractItem extends EnableBusinessCFEntity {
 				&& Objects.equals(serviceTemplate, other.serviceTemplate);
 	}
 
-    
-	
 }

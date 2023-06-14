@@ -1,0 +1,128 @@
+{
+	"info": {
+		"_postman_id": "d89fd554-7912-4406-8796-a0591257b5dd",
+		"name": "INTRD-15978 - Multi currency impacts on Framework agreements",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23793433"
+	},
+	"item": [
+		{
+			"name": "Create TradingContractItem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"contractItemId\": 1,\n    \"tradingCurrency\": {\n        \"id\": \"9\"\n    },\n    \"tradingValue\": 80,\n    \"rate\": 1.5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/cpq/contracts/contractLines/tradingContractItem",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"cpq",
+						"contracts",
+						"contractLines",
+						"tradingContractItem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update TradingContractItem",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"contractItemId\": 1,\n    \"tradingCurrency\": {\n        \"id\":\"9\"\n    },\n    \"tradingValue\": 20,\n    \"rate\": 1.2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/cpq/contracts/contractLines/tradingContractItem/1",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"cpq",
+						"contracts",
+						"contractLines",
+						"tradingContractItem",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get TradingContractItem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/v2/generic/all/tradingContractItem",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"v2",
+						"generic",
+						"all",
+						"tradingContractItem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete TradingDiscountPlanItem",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.url}}/cpq/contracts/contractLines/tradingContractItem/1",
+					"host": [
+						"{{opencell.url}}"
+					],
+					"path": [
+						"cpq",
+						"contracts",
+						"contractLines",
+						"tradingContractItem",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

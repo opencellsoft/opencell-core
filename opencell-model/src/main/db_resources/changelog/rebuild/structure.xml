@@ -477,6 +477,7 @@
         <createSequence sequenceName="cat_price_list_seq" startValue="1" />
         <createSequence sequenceName="cat_trading_discount_plan_item_seq" startValue="1" />
         <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
+        <createSequence sequenceName="cpq_trading_contract_item_seq" startValue="1" />
     </changeSet>
 
 
@@ -18748,6 +18749,41 @@
 			baseColumnNames="trading_currency_id"
 			baseTableName="cat_trading_discount_plan_item"
 			constraintName="cat_trading_discount_plan_trading_currency_fk"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="billing_trading_currency" />
+	</changeSet>
+	
+	<changeSet id="#INTRD-16600_20230531" author="AdilElJaouhari">
+		<createTable tableName="cpq_trading_contract_item">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"	primaryKeyName="cpq_trading_contract_item_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="contract_item_id" type="bigint" />
+			<column name="trading_value" type="numeric(23, 12)" />
+			<column name="trading_currency_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="rate" type="numeric(23, 12)" />
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="contract_item_id"
+			baseTableName="cpq_trading_contract_item"
+			constraintName="cpq_trading_contract_item_contract_item_fk" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id"
+			referencedTableName="cpq_contract_item" />
+		<addForeignKeyConstraint
+			baseColumnNames="trading_currency_id"
+			baseTableName="cpq_trading_contract_item"
+			constraintName="cpq_trading_contract_item_trading_currency_fk"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="billing_trading_currency" />
