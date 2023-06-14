@@ -613,7 +613,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
             
             //Get contract by list of customer ids, billing account and customer account
-            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, bareWalletOperation);
+            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, bareWalletOperation, null);
 
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise())
                     || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {

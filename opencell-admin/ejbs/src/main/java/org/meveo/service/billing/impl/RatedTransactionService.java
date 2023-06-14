@@ -43,6 +43,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -675,7 +676,37 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setDiscountedAmount(aggregatedWo.getDiscountedAmount());
         ratedTransaction.setDiscountValue(aggregatedWo.getDiscountValue());
 
+        if(ratedTransaction.getRulesContract() == null) {
+            BillingAccount billingAccount = billingAccountService.getBAFetchingCaAndCustomer(ba.getId());
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            Customer customer = customerAccount.getCustomer();
+            //Get the list of customers (current and parents)
+            List<Customer> customers = new ArrayList<>();
+            getCustomer(customer, customers);
+            List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
+            //Get contract by list of customer ids, billing account and customer account
+            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, null, aggregatedWo.getOperationDate());
+            Contract contractWithRules = contractService.lookupSuitableContract(customers, contracts, true);
+
+            ratedTransaction.setRulesContract(contractWithRules);
+        }
+
+        applyInvoicingRulesForRTs(List.of(ratedTransaction));
+
         return ratedTransaction;
+    }
+
+
+    /**
+     * Get the customer and all parent customers
+     * @param pCustomer Customer
+     * @param pCustomerList List of customers (current customer and all parents)
+     */
+    private void getCustomer(Customer pCustomer, List<Customer> pCustomerList) {
+        pCustomerList.add(pCustomer);
+        if(pCustomer.getParentCustomer() != null) {
+            getCustomer(pCustomer.getParentCustomer(), pCustomerList);
+        }
     }
 
     private void setPricePlan(RatedTransaction ratedTransaction) {
