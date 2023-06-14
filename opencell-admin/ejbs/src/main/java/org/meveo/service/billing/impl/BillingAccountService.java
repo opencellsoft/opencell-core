@@ -588,5 +588,15 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		}
 		return false;
 	}
-	
+
+    public BillingAccount getBAFetchingCaAndCustomer(Long id) {
+        if(id == null) {
+            return null;
+        }
+
+        return getEntityManager().createNamedQuery("BillingAccount.getBaFetchCaAndCustomer", BillingAccount.class)
+                .setParameter("id", id)
+                .getSingleResult();
+
+    }
 }

@@ -115,7 +115,8 @@ import org.meveo.model.tax.TaxCategory;
 				+ " where b.id IN (:baIDs) and (m is null or m.preferred=true) "
 				+ " group by b.id, s.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, m2.id, m2.paymentType"
 				+ " order by b.id"),
-		@NamedQuery(name = "BillingAccount.getCountByCreditCategory", query = "select count(*) from BillingAccount ba where ba.id=:id and ba.customerAccount.creditCategory.id in (:creditCategoryIds)") })
+		@NamedQuery(name = "BillingAccount.getCountByCreditCategory", query = "select count(*) from BillingAccount ba where ba.id=:id and ba.customerAccount.creditCategory.id in (:creditCategoryIds)"),
+            @NamedQuery(name = "BillingAccount.getBaFetchCaAndCustomer", query = "select ba from BillingAccount ba left join fetch ba.customerAccount as ca left join fetch ca.customer as c where ba.id = :id ")})
 public class BillingAccount extends AccountEntity implements IInvoicingMinimumApplicable, IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
