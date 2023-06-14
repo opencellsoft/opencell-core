@@ -673,7 +673,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setDiscountValue(aggregatedWo.getDiscountValue());
 
         if(ratedTransaction.getRulesContract() == null) {
-            BillingAccount billingAccount = ratedTransaction.getBillingAccount();
+            BillingAccount billingAccount = billingAccountService.getBAFetchingCaAndCustomer(ba.getId());
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
             Customer customer = customerAccount.getCustomer();
             //Get contract by list of customer ids, billing account and customer account
