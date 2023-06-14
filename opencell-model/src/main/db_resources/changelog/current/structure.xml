@@ -15836,4 +15836,23 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+
+
+    <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres">
+        <dropView viewName="billing_wallet_operation_period" />
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+                  FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
+        </createView>
+    </changeSet>
+    <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="oracle">
+        <dropView viewName="billing_wallet_operation_period" />
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (trunc(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id)) = trunc(o.start_date)) then 0 else 1 end) as flag
+                  FROM billing_wallet_operation o WHERE o.status = 'OPEN') o
+        </createView>
+    </changeSet>
+
 </databaseChangeLog>
