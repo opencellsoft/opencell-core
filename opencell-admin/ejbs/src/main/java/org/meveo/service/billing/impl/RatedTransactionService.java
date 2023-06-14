@@ -697,12 +697,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setDiscountedAmount(aggregatedWo.getDiscountedAmount());
         ratedTransaction.setDiscountValue(aggregatedWo.getDiscountValue());
 
-        BillingAccount billingAccount = ratedTransaction.getBillingAccount();
-        CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-        Customer customer = customerAccount.getCustomer();
-
-        log.info(" ------ Rule contract {}", ratedTransaction.getRulesContract());
         if(ratedTransaction.getRulesContract() == null) {
+            BillingAccount billingAccount = billingAccountService.getBAFetchingCaAndCustomer(ba.getId());
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            Customer customer = customerAccount.getCustomer();
             //Get the list of customers (current and parents)
             List<Customer> customers = new ArrayList<>();
             getCustomer(customer, customers);
@@ -726,8 +724,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param pCustomerList List of customers (current customer and all parents)
      */
     private void getCustomer(Customer pCustomer, List<Customer> pCustomerList) {
-        if(pCustomer != null) {
-            pCustomerList.add(pCustomer);
+        pCustomerList.add(pCustomer);
+        if(pCustomer.getParentCustomer() != null) {
+            getCustomer(pCustomer.getParentCustomer(), pCustomerList);
         }
     }
 
@@ -2178,7 +2177,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         return false;
     }
-    
+
     private Boolean checkCriteriaEL(RatedTransaction rt, String expression) throws BusinessException {
         if (StringUtils.isBlank(expression)) {
             return null;
