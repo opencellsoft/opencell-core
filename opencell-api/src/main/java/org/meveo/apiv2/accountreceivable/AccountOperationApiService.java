@@ -166,7 +166,8 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				.collect(Collectors.toList());
 
 		// Check existence of all passed accountOperation
-		List<AccountOperation> aos = accountOperationService.findByIds(aoIds);
+		List<AccountOperation> aos = new ArrayList<>();
+		aoIds.forEach(aoId -> aos.add(accountOperationService.findById(aoId)));
 
 		if (aoIds.size() != aos.size()) {
 			throw new EntityDoesNotExistsException("One or more AccountOperations passed for matching are not found");
@@ -220,7 +221,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			if(aos.size()>0) {
 			    TradingCurrency theFirstTradingCurrency = aos.get(0).getTransactionalCurrency();
 			    for (AccountOperation accountOperation : aos) {
-			        if(theFirstTradingCurrency != accountOperation.getTransactionalCurrency()) {
+			        if(theFirstTradingCurrency.getId() != accountOperation.getTransactionalCurrency().getId()) {
 	                    throw new BusinessApiException(resourceMessages.getString("accountOperation.error.sameCurrency"));
                     }
 	                Long aoId = accountOperation.getId();
