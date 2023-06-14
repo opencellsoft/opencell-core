@@ -686,11 +686,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setDiscountedAmount(aggregatedWo.getDiscountedAmount());
         ratedTransaction.setDiscountValue(aggregatedWo.getDiscountValue());
 
-        BillingAccount billingAccount = ratedTransaction.getBillingAccount();
-        CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-        Customer customer = customerAccount.getCustomer();
-
         if(ratedTransaction.getRulesContract() == null) {
+            BillingAccount billingAccount = ratedTransaction.getBillingAccount();
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            Customer customer = customerAccount.getCustomer();
             //Get the list of customers (current and parents)
             List<Customer> customers = new ArrayList<>();
             getCustomer(customer, customers);
