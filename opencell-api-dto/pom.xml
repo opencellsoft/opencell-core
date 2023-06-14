@@ -9,7 +9,7 @@
 		<version>11.1.28-SNAPSHOT</version>
 	</parent>
 	<artifactId>opencell-api-dto</artifactId>
-	<name>Opencell API DTO</name>
+	<name>Opencell API DTO</name>	
 
 	<dependencies>
 
@@ -67,6 +67,13 @@
                     <configuration>
                         <useIncrementalCompilation>false</useIncrementalCompilation>
                     	<release>11</release>
+                    	<annotationProcessorPaths>
+                    	<path>
+	                        <groupId>org.immutables</groupId>
+	                        <artifactId>value</artifactId>
+	                		<version>${immutable.version}</version>
+                    	</path>
+                </annotationProcessorPaths>
                     </configuration>
                    	<dependencies>
                     	<dependency>

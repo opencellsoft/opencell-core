@@ -39,6 +39,7 @@
 		<swagger.version>2.0.7</swagger.version>
 		<springfox.swagger.version>2.8.0</springfox.swagger.version>
 		<swagger.ui.version>2.8.0</swagger.ui.version>
+		<immutable.version>2.7.4</immutable.version>
 
         <sonar.projectKey>opencell-core</sonar.projectKey>
         <sonar.organization>opencellsoft</sonar.organization>
@@ -637,7 +638,7 @@
             <dependency>
                 <groupId>org.immutables</groupId>
                 <artifactId>value</artifactId>
-                <version>2.7.4</version>
+                <version>${immutable.version}</version>
                 <scope>compile</scope>
             </dependency>
         </dependencies>
