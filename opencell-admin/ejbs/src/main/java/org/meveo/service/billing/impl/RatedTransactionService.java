@@ -42,7 +42,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -669,6 +671,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setDiscountPlanItem(discountPlanItemService.refreshOrRetrieve(aggregatedWo.getDiscountPlanItem()));
         ratedTransaction.setDiscountedAmount(aggregatedWo.getDiscountedAmount());
         ratedTransaction.setDiscountValue(aggregatedWo.getDiscountValue());
+
+        if(ratedTransaction.getRulesContract() == null) {
+            BillingAccount billingAccount = billingAccountService.getBAFetchingCaAndCustomer(ba.getId());
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            Customer customer = customerAccount.getCustomer();
+            //Get contract by list of customer ids, billing account and customer account
+            List<Contract> contracts = contractService.getContractByAccount(List.of(customer.getId()), billingAccount, customerAccount, aggregatedWo.getOperationDate());
+            Contract contractWithRules = contractService.lookupSuitableContract(List.of(customer), contracts, true);
+
+            ratedTransaction.setRulesContract(contractWithRules);
+        }
+
+        applyInvoicingRules(ratedTransaction);
 
         return ratedTransaction;
     }
