@@ -12451,7 +12451,7 @@
             WHERE o.status = 'OPEN') o
         </createView>
     </changeSet>
-    
+
     <changeSet id="#INTRD-12614_20221227_BUILD_TABLE" author="TarikFA.">
        <createTable tableName="cpq_converted_price_plan_matrix_line">
        		<column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -12464,7 +12464,7 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            
+
             <column name="converted_value" type="numeric(23, 12)" />
             <column name="trading_currency_id" type="bigint" />
             <column name="rate" type="numeric(23, 12)" />
@@ -16597,9 +16597,9 @@
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="exchange_rate" constraintName="fk_exchange_rate_trading_currency_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-13981_20230222-fk" author="HichamHANINE">
-        <addForeignKeyConstraint baseColumnNames="transactional_currency" baseTableName="ar_account_operation" constraintName="fk_account_operation_trading_currency" 
+        <addForeignKeyConstraint baseColumnNames="transactional_currency" baseTableName="ar_account_operation" constraintName="fk_account_operation_trading_currency"
         	deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
@@ -16819,8 +16819,8 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
 
     </changeSet>
-    
-    
+
+
      <changeSet id="#INTRD-12614_20221227_fk" author="hichamELHALOUI">
         <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
                                  baseColumnNames="trading_currency_id"
@@ -16829,8 +16829,8 @@
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-                                 
-                                 
+
+
         <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
                                  baseColumnNames="price_plan_matrix_line_id"
                                  constraintName="fk_price_plan_matrix_line_id"
@@ -16845,7 +16845,7 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14522_20230301_fk" author="TarikFA.">
         <addForeignKeyConstraint baseTableName="billing_subscription" baseColumnNames="contract_id"
                                  constraintName="fk_contract_id"
@@ -16853,8 +16853,8 @@
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-                                 
-    	
+
+
         <addForeignKeyConstraint baseTableName="quote_offer" baseColumnNames="contract_id"
                                  constraintName="fk_contract_id"
                                  referencedTableName="cpq_contract"
@@ -16981,7 +16981,7 @@
         <sql>CREATE INDEX rating_cdr_or_index ON ${db.schema.adapted}rating_cdr(origin_record)</sql>
         <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>     
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
         <sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation (ddrequest_item_id)</sql>
         <sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation (reference)</sql>
         <sql>CREATE INDEX audit_field_changes_history_index on ${db.schema.adapted}audit_field_changes_history (lower(entity_class), entity_id)</sql>
@@ -17877,7 +17877,7 @@
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-11780_20221128_fk" author="AdilElJaouhari">
         <addForeignKeyConstraint baseTableName="billing_invoice"
                                  baseColumnNames="invoice_validation_rule_id"
@@ -18148,8 +18148,8 @@
         
         
     </changeSet>
-    
-    
+
+
 
 	<changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
         <createTable tableName="cpq_converted_price_plan_version">
@@ -18172,7 +18172,7 @@
             <column name="use_for_billing_accounts" type="${type.boolean}"/>
         </createTable>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-12405_20221226-rebuild" author="HichamHANINE">
 		<addForeignKeyConstraint baseTableName="billing_billing_account"
 								 baseColumnNames="icd_id"
@@ -18234,21 +18234,21 @@
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
         <addForeignKeyConstraint baseTableName="crm_customer" baseColumnNames="parent_customer_id"
                                  constraintName="fk_crm_customer_parent_customer_id"
                                  referencedTableName="crm_customer"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
         <addForeignKeyConstraint baseTableName="crm_customer_category" baseColumnNames="default_seller_id"
                                  constraintName="fk_crm_customer_category_default_seller_id"
                                  referencedTableName="crm_seller"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
         <addForeignKeyConstraint baseTableName="cpq_order_offer" baseColumnNames="contract_id"
                                  constraintName="fk_cpq_order_offer_contract_id"
@@ -18257,7 +18257,7 @@
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-    
+
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -19530,7 +19530,7 @@
 	<changeSet id="#INTR-12382_20221219" author="HichamHANINE" />
 	<changeSet id="#INTRD-12677_20221229" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-10544_20221207" author="HatimOUDAD" />
-	
+
     <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe" />
 	<changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA" />
     <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe" />
@@ -19573,7 +19573,7 @@
 	<changeSet id="#INTRD-14381-202303202" author="bourras" />
 	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA." />
 	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA." />
-	
+
     <changeSet id="#INTRD-14743_20230313" author="TarikFA." />
     <changeSet id="#INTRD-14743_20230315" author="TarikFA." />
     <changeSet id="#INTRD-14743_20230316" author="TarikFA." />
@@ -19590,8 +19590,10 @@
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari"/>
 
     <changeSet id="#INTRD-4064_20211218" author="AndriusKarpavicius"/>
-    
-    
+    <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres" />
+    <changeSet id="INTRD-16780_20230614_oracle" author="a.rouaguebe" dbms="oracle" />
+
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
