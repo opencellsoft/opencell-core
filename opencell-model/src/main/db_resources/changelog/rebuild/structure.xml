@@ -19409,6 +19409,8 @@
     <changeSet id="#INTRD-16050_20230515" author="ThangNguyen" />
     <changeSet id="#INTRD-8753_20220727_001" author="anas.rouaguebe" />
     <changeSet id="#INTRD-15733_20230426" author="AndriusKarpavicius" />
+    <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres" />
+    <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="oracle" />
 
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
