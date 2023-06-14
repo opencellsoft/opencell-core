@@ -676,13 +676,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             BillingAccount billingAccount = ratedTransaction.getBillingAccount();
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
             Customer customer = customerAccount.getCustomer();
-            //Get the list of customers (current and parents)
-            List<Customer> customers = new ArrayList<>();
-            getCustomer(customer, customers);
-            List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
             //Get contract by list of customer ids, billing account and customer account
-            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, aggregatedWo.getOperationDate());
-            Contract contractWithRules = contractService.lookupSuitableContract(customers, contracts, true);
+            List<Contract> contracts = contractService.getContractByAccount(List.of(customer.getId()), billingAccount, customerAccount, aggregatedWo.getOperationDate());
+            Contract contractWithRules = contractService.lookupSuitableContract(List.of(customer), contracts, true);
 
             ratedTransaction.setRulesContract(contractWithRules);
         }
@@ -690,18 +686,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         applyInvoicingRules(ratedTransaction);
 
         return ratedTransaction;
-    }
-
-
-    /**
-     * Get the customer and all parent customers
-     * @param pCustomer Customer
-     * @param pCustomerList List of customers (current customer and all parents)
-     */
-    private void getCustomer(Customer pCustomer, List<Customer> pCustomerList) {
-        if(pCustomer != null) {
-            pCustomerList.add(pCustomer);
-        }
     }
 
     private void setPricePlan(RatedTransaction ratedTransaction) {
