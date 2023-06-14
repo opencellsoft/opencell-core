@@ -37,7 +37,7 @@ import org.meveo.model.payments.CustomerAccount;
 	@NamedQuery(name = "Contract.findBillingAccount", query = "select c from Contract c  left join fetch  c.billingAccount cb where cb.code=:codeBillingAccount"),
 	@NamedQuery(name = "Contract.findCustomerAccount", query = "select c from Contract c left join c.customerAccount cc where cc.code=:codeCustomerAccount"),
 	@NamedQuery(name = "Contract.findCustomer", query = "select c from Contract c left join c.customer cc where cc.code=:codeCustomer"),
-    @NamedQuery(name = "Contract.findByAccounts", query = "select c from Contract c where c.status='ACTIVE' and (c.beginDate<=:operationDate and c.endDate>:operationDate) "
+    @NamedQuery(name = "Contract.findByAccounts", query = "select c from Contract c where c.status='ACTIVE' and (cast(:operationDate as date) is null or (c.beginDate<=:operationDate and c.endDate>:operationDate)) "
     		+ " and (c.customer.id is null or c.customer.id in :customerId) "
 				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  order by c.contractDate desc , c.auditable.created desc ", hints = {
 				@QueryHint(name = "org.hibernate.cacheable", value = "TRUE")
