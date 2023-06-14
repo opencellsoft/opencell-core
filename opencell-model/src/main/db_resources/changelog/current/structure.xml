@@ -2341,7 +2341,7 @@ END $$;]]>
         	<column name="updater" type="varchar(100)"/>
         </addColumn>
     </changeSet>
-        
+
     <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
         <addColumn tableName="billing_subscription">
             <column name="payment_method_id"  type="bigint">
@@ -2857,7 +2857,7 @@ END $$;]]>
         <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
         <sql>update ${db.schema.adapted}billing_billing_run set skip_validation_script=0 where skip_validation_script is null</sql>
     </changeSet>
-   
+
     <changeSet id="#5680_20201126" author="khalidHORRI">
         <addColumn tableName="billing_invoice">
             <column name="initial_collection_date" type="datetime"/>
@@ -13667,7 +13667,7 @@ order by date_trunc('month', i.invoice_date) DESC
 				type="${type.boolean}" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-14340_20230228" author="HichamHANINE">
 		<addColumn tableName="ar_account_operation">
 			<column name="applied_rate" type="numeric(23, 12)" />
@@ -15059,7 +15059,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <where>id=1</where>
         </update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
     	<createSequence sequenceName="cpq_converted_price_plan_version_seq" startValue="1" />
         <createTable tableName="cpq_converted_price_plan_version">
@@ -15078,7 +15078,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="use_for_billing_accounts" type="${type.boolean}"/>
         </createTable>
     </changeSet>
-    
+
     <changeSet id="#INTRD-12609_20221227_converted_ppv-fix" author="a.rouaguebe">
     	<addColumn tableName="cpq_converted_price_plan_version">
 			 <column name="created" type="datetime">
@@ -15087,8 +15087,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="updated" type="datetime" />
 		</addColumn>
     </changeSet>
-    
-    
+
+
 
     <changeSet id="#INTRD-12614_20221227" author="TarikFA.">
        <createSequence sequenceName="cpq_converted_price_plan_matrix_line_sq" startValue="1" />
@@ -15105,14 +15105,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            
+
             <column name="converted_value" type="numeric(23, 12)" />
             <column name="trading_currency_id" type="bigint" />
             <column name="rate" type="numeric(23, 12)" />
             <column name="use_for_billing_accounts" type="${type.boolean}" />
             <column name="price_plan_matrix_line_id" type="bigint" />
        </createTable>
-       
+
         <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
                                  baseColumnNames="trading_currency_id"
                                  constraintName="fk_cpq_converted_price_plan_matrix_line_id"
@@ -15120,8 +15120,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-                                 
-                                 
+
+
         <addForeignKeyConstraint baseTableName="cpq_converted_price_plan_matrix_line"
                                  baseColumnNames="price_plan_matrix_line_id"
                                  constraintName="fk_price_plan_matrix_line_id"
@@ -15129,7 +15129,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-       
+
     </changeSet>
 
 	<changeSet id="#INTRD-12478_20221226" author="AdilElJaouhari">
@@ -15370,8 +15370,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
         </createTable>
         
-        
-        
+
+
         <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
          <createTable tableName="untdid_5189_allowance_code">
             <!-- Generic fields -->
@@ -15447,7 +15447,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         
         
     </changeSet>
-    
+
     <changeSet id="#INTRD-12668-20230102" author="AmineBENAICHA">
 		<addColumn tableName="billing_cycle">
             <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
@@ -15458,7 +15458,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-12794-20230102-counter_instance" author="a.rouaguebe">
     	<dropPrimaryKey tableName="billing_chrg_inst_counter" constraintName="billing_chrg_inst_counter_pkey" />
     	<addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter" />
@@ -15561,7 +15561,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="converted_invoice_balance" type="numeric(23, 12)"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
     	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
 	      	<column name="subscription_id"/>
@@ -15578,7 +15578,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
 	      	<column name="service_instance_id"/>
 	  	</createIndex>
-    </changeSet>   
+    </changeSet>
 
     <changeSet id="#INTRD-12720-20221230-query_report" author="a.rouaguebe">
       <addColumn tableName="report_query">
@@ -15591,7 +15591,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="converted_amount" type="numeric(23, 12)"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13065_20230112" author="AdilElJaouhari">
 		<dropColumn columnName="validation_script" tableName="billing_invoice_validation_rule" />
 		<addColumn tableName="billing_invoice_validation_rule">
@@ -15623,13 +15623,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="aliases" type="${type.json}" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-13031_20230118" author="AdilElJaouhari">
 		<addColumn tableName="cat_discount_plan">
 			<column name="automatic_application" type="${type.boolean}" defaultValueNumeric="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-13204_20230119" author="HichamHANINE">
         <addColumn tableName="billing_invoice_line">
             <column name="specific_converted_unit_price" type="numeric(23, 12)" />
@@ -15637,15 +15637,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="specific_converted_amount_with_tax" type="numeric(23, 12)" />
             <column name="specific_converted_amount_tax" type="numeric(23, 12)" />
             <column name="specific_converted_discount_amount" type="numeric(23, 12)" />
-            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />			
+            <column name="specific_converted_raw_amount" type="numeric(23, 12)" />
 			<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-12651-20230123" author="AdilElJaouhari">
         <modifyDataType tableName="cpq_order_offer" columnName="order_line_type" newDataType="varchar(20)" />
     </changeSet>
-	
+
 	<changeSet id="#INTRD-12819-20221220-qb_advanced_query" author="a.rouaguebe">
         <addColumn tableName="report_query">
         	<column name="advanced_query" type="${type.json}" />
@@ -15697,14 +15697,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-13957-20230214" author="houdad">
         <sql>
         DELETE FROM untdid_unit;
         DROP TABLE untdid_unit;
         </sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
         <addColumn tableName="crm_customer">
             <column name="parent_customer_id" type="bigint"/>
@@ -15714,7 +15714,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="crm_customer"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13468_20230126" author="hichamELHALOUI">
         <addColumn tableName="billing_invoice_validation_rule">
             <column name="evaluation_mode" type="varchar(50)" defaultValue="VALIDATION">
@@ -15722,7 +15722,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             </column>
         </addColumn>
     </changeSet>
-    
+
     <changeSet author="HichamHANINE" id="#INTRD-13981_20230222">
     	<addColumn tableName="ar_matching_code">
             <column name="converted_matching_amount_credit" type="numeric(23, 12)" />
@@ -15730,7 +15730,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
         <addColumn tableName="ar_matching_amount">
             <column name="converted_matching_amount" type="numeric(23, 12)" />
-        </addColumn>        
+        </addColumn>
         <addColumn tableName="ar_account_operation">
             <column name="converted_net_to_pay" type="numeric(23, 12)" />
             <column name="converted_amount" type="numeric(23, 12)" />
@@ -15740,11 +15740,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="converted_un_matching_amount" type="numeric(23, 12)" />
             <column name="transactional_currency" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="transactional_currency" baseTableName="ar_account_operation" constraintName="fk_account_operation_trading_currency" 
+        <addForeignKeyConstraint baseColumnNames="transactional_currency" baseTableName="ar_account_operation" constraintName="fk_account_operation_trading_currency"
         	deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />    
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-13604_20230206" author="AdilElJaouhari">
     	<dropNotNullConstraint columnName="created" tableName="billing_invoice_validation_rule"/>
     	<dropNotNullConstraint columnName="fail_status" tableName="billing_invoice_validation_rule"/>
@@ -15759,11 +15759,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
    	<changeSet id="#INTRD-14161_20230221" author="AdilElJaouhari">
         <renameColumn tableName="accounting_journal_entry" oldColumnName="trading_amount" newColumnName="converted_amount"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14264_20230222" author="TarikFA.">
     	<addColumn tableName="billing_rated_transaction">
     		<column name="origin_ratedtransaction_id" type="bigint" />
@@ -15775,7 +15775,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-    
+
      <changeSet id="#INTRD-14243_invoice_conversion" author="a.rouaguebe">
     	<addColumn tableName="billing_invoice">
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
@@ -15942,11 +15942,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-                                 
+
     	<addColumn tableName="quote_offer">
     		<column name="contract_id" type="bigint" />
     	</addColumn>
-    	
+
         <addForeignKeyConstraint baseTableName="quote_offer" baseColumnNames="contract_id"
                                  constraintName="fk_contract_id"
                                  referencedTableName="cpq_contract"
@@ -15970,13 +15970,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-14598_20230303" author="zelmeliani">
         <addColumn tableName="finance_settings">
             <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
-    
+
    	<changeSet id="#INTRD-14402_20230301" author="AdilElJaouhari">
 		<addColumn tableName="billing_invoice_line">
 			<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
@@ -15989,7 +15989,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 
-<!--  
+<!--
     <changeSet id="#INTRD-14263_20200304" author="TarikFA.">
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
     </changeSet>
@@ -16010,7 +16010,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="crm_seller"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
  	<changeSet id="#INTRD-14632_20230306" author="AdilElJaouhari">
     	<addColumn tableName="cpq_order_offer">
     		<column name="contract_id" type="bigint" />
@@ -16022,7 +16022,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-    
+
     <changeSet id="#INTR-14747_20230308" author="TarikFA.">
     	<update tableName="cat_discount_plan">
     		<column name="applicable_on_overridden_price" value="1"/>
@@ -16071,19 +16071,19 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		<renameColumn tableName="billing_invoice" oldColumnName="converted_discount_amount" newColumnName="transactional_discount_amount"/>
 		<renameColumn tableName="billing_invoice" oldColumnName="converted_amount_without_tax_before_discount" newColumnName="transactional_amount_without_tax_before_discount"/>
 		<renameColumn tableName="billing_invoice" oldColumnName="converted_invoice_balance" newColumnName="transactional_invoice_balance"/>
-		
+
 		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_unit_price" newColumnName="transactional_unit_price"/>
 		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
 		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
 		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
 		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_discount_amount" newColumnName="transactional_discount_amount"/>
 		<renameColumn tableName="billing_invoice_line" oldColumnName="converted_raw_amount" newColumnName="transactional_raw_amount"/>
-		
+
 		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_without_tax" newColumnName="transactional_amount_without_tax"/>
 		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_with_tax" newColumnName="transactional_amount_with_tax"/>
 		<renameColumn tableName="billing_invoice_agregate" oldColumnName="converted_amount_tax" newColumnName="transactional_amount_tax"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-15114_20230323" author="AdilElJaouhari">
 		<renameColumn tableName="ar_account_operation" oldColumnName="converted_net_to_pay" newColumnName="transactional_net_to_pay"/>
 		<renameColumn tableName="ar_account_operation" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
@@ -16091,21 +16091,21 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		<renameColumn tableName="ar_account_operation" oldColumnName="converted_tax_amount" newColumnName="transactional_tax_amount"/>
 		<renameColumn tableName="ar_account_operation" oldColumnName="converted_matching_amount" newColumnName="transactional_matching_amount"/>
 		<renameColumn tableName="ar_account_operation" oldColumnName="converted_un_matching_amount" newColumnName="transactional_un_matching_amount"/>
-		
+
 		<renameColumn tableName="billing_linked_invoices" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
-		
+
 		<renameColumn tableName="ar_matching_amount" oldColumnName="converted_matching_amount" newColumnName="transactional_matching_amount"/>
-		
+
 		<renameColumn tableName="ar_matching_code" oldColumnName="converted_matching_amount_credit" newColumnName="transactional_matching_amount_credit"/>
 		<renameColumn tableName="ar_matching_code" oldColumnName="converted_matching_amount_debit" newColumnName="transactional_matching_amount_debit"/>
-		
+
         <renameColumn tableName="accounting_journal_entry" oldColumnName="converted_amount" newColumnName="transactional_amount"/>
-        
+
         <addColumn tableName="ar_account_operation">
             <column name="transactional_payment_fees" type="numeric(23, 12)"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14597_20230324" author="TarikFA.">
         <addColumn tableName="billing_rated_transaction">
             <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
@@ -16174,7 +16174,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	<changeSet id="#INTRD-13646_20230131" author="AdilElJaouhari">
         <dropNotNullConstraint tableName="billing_tax" columnName="taxation_category_id"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-15733_20230426" author="AndriusKarpavicius">
         <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
         <sql>CREATE INDEX billing_redirection_rule_contract_index  ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>
@@ -16183,7 +16183,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropUniqueConstraint tableName="cpq_price_plan_version" constraintName="cpq_price_plan_version_UNIC"/>
         <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-15938_20230503" author="AndriusKarpavcius">
         <addColumn tableName="cpq_price_plan_matrix_line">
             <column name="accuracy" type="int" defaultValueNumeric="0">
@@ -16193,19 +16193,36 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>delete from ${db.schema.adapted}cpq_price_plan_matrix_value where long_value is null and double_value is null and string_value is null and date_value is null and from_date_value is null and to_date_value is null and from_double_value is null and to_double_value is null and boolean_value is null</sql>
         <sql>update ${db.schema.adapted}cpq_price_plan_matrix_line set accuracy = (select count(*) from ${db.schema.adapted}cpq_price_plan_matrix_value where ppml_id=cpq_price_plan_matrix_line.id)</sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-16140_20230510" author="AndriusKarpavicius">
         <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius" failOnError="false">
         <dropIndex tableName="cat_price_plan_matrix" indexName="cat_price_plan_event_c_index"/>
         <dropIndex tableName="cpq_price_plan_matrix_line" indexName="cpq_price_plan_matrix_line__ppm_version_id__idx"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-15938_20230511-2" author="AndriusKarpavicius">
         <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
         <sql>CREATE INDEX cpq_ppl_ppVersion_index ON ${db.schema.adapted}cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql>
+    </changeSet>
+
+    <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres">
+        <dropView viewName="billing_wallet_operation_period" />
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+                  FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
+        </createView>
+    </changeSet>
+    <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="oracle">
+        <dropView viewName="billing_wallet_operation_period" />
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (trunc(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id)) = trunc(o.start_date)) then 0 else 1 end) as flag
+                  FROM billing_wallet_operation o WHERE o.status = 'OPEN') o
+        </createView>
     </changeSet>
 
 </databaseChangeLog>
