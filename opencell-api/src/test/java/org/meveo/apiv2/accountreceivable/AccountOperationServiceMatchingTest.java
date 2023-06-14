@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.AcountReceivable.AccountOperationAndSequence;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -43,6 +44,9 @@ public class AccountOperationServiceMatchingTest {
     @Test
     public void matchOperationsNominal() throws Exception {
         AccountOperation ao = buildAo("ABC", 1L);
+        TradingCurrency tradingCurrency = new TradingCurrency();
+        tradingCurrency.setId(1L);
+        ao.setTransactionalCurrency(tradingCurrency);
         Mockito.when(customerAccountService.findById(any())).thenReturn(ao.getCustomerAccount());
         Mockito.when(accountOperationService.findById(1L)).thenReturn(ao);
         Mockito.doNothing().when(paymentPlanService).toComplete(any());
