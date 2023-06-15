@@ -397,7 +397,19 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     public List<PricePlanMatrixLine> search(Map<String, Object> searchInfo) {
         Query query = getEntityManager().createQuery(buildQuery(searchInfo), PricePlanMatrixLine.class);
         injectParamsIntoQuery(searchInfo, query);
-        return  query.getResultList();
+        List<PricePlanMatrixLine> lines =  query.getResultList();
+        lines.sort((ppml1, ppml2) -> {
+        	List<PricePlanMatrixValue> ppmvs1 = ppml1.getSortedPricePlanMatrixValues();
+        	List<PricePlanMatrixValue> ppmvs2 = ppml2.getSortedPricePlanMatrixValues();
+        	for (int i = 0; i < ppmvs1.size(); i++) {
+        		int eval = compareValuePricePlanMatrixLine(ppmvs1.get(i), ppmvs2.get(i));
+        		if (eval != 0) {
+        			return eval;
+        		}
+        	}
+        	return 1;
+        });
+        return lines;
     }
 
     private String buildQuery(Map<String, Object> searchInfo) {
@@ -539,4 +551,26 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
             query.setParameter("priceWithoutTax", BigDecimal.valueOf(Double.valueOf(searchInfo.getOrDefault("priceWithoutTax", 0.0)+"")));
         }
     }
+    
+    private int compareValuePricePlanMatrixLine(PricePlanMatrixValue ppmv1, PricePlanMatrixValue ppmv2) {
+    	PricePlanMatrixColumn column = ppmv1.getPricePlanMatrixColumn();
+		switch (column.getType()) {
+		case String:
+			return (ppmv1.getStringValue() == null && ppmv2.getStringValue() == null) ? 0 : (ppmv1.getStringValue() == null) ? 1	: (ppmv2.getStringValue() == null) ? -1 : ppmv1.getStringValue().compareTo(ppmv2.getStringValue());
+		case Long:
+			return (ppmv1.getLongValue() == null && ppmv2.getLongValue() == null) ? 0 : (ppmv1.getLongValue() == null) ? 1 : (ppmv2.getLongValue() == null) ? -1 : ppmv1.getLongValue().compareTo(ppmv2.getLongValue());
+		case Double:
+			return (ppmv1.getDoubleValue() == null && ppmv2.getDoubleValue() == null) ? 0 : (ppmv1.getDoubleValue() == null) ? 1 : (ppmv2.getDoubleValue() == null) ? -1 : ppmv1.getDoubleValue().compareTo(ppmv2.getDoubleValue());
+		case Boolean:
+			return (ppmv1.getBooleanValue() == null && ppmv2.getBooleanValue() == null) ? 0 : (ppmv1.getBooleanValue() == null) ? 1 : (ppmv2.getBooleanValue() == null) ? -1 : ppmv1.getBooleanValue().compareTo(ppmv2.getBooleanValue());
+		case Range_Date:
+			return (ppmv1.getFromDateValue() == null && ppmv2.getFromDateValue() == null) ? 0 : (ppmv1.getFromDateValue() == null) ? -1 : (ppmv2.getFromDateValue() == null) ? 1 : ppmv1.getFromDateValue().compareTo(ppmv2.getFromDateValue());
+		case Range_Numeric:
+			return (ppmv1.getFromDoubleValue() == null && ppmv2.getFromDoubleValue() == null) ? 0 : (ppmv1.getFromDoubleValue() == null) ? -1 : (ppmv2.getFromDoubleValue() == null) ? 1 : ppmv1.getFromDoubleValue().compareTo(ppmv2.getFromDoubleValue());
+		default:
+			break;
+		}
+		return 0;
+    }
+    
 }

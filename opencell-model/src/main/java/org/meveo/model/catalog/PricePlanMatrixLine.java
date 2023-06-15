@@ -2,9 +2,12 @@ package org.meveo.model.catalog;
 
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -197,5 +200,11 @@ public class PricePlanMatrixLine extends AuditableEntity {
 
     public void setTradingPricePlanMatrixLines(Set<TradingPricePlanMatrixLine> tradingPricePlanMatrixLines) {
         this.tradingPricePlanMatrixLines = tradingPricePlanMatrixLines;
+    }
+    
+	public List<PricePlanMatrixValue> getSortedPricePlanMatrixValues() {
+		return pricePlanMatrixValues.stream()
+				.sorted(Comparator.comparing(ppmv -> ppmv.getPricePlanMatrixColumn().getPosition()))
+				.collect(Collectors.toList());
     }
 }
