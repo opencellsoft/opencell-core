@@ -2688,10 +2688,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         cancelInvoiceAdvances(invoice, null, true);
         List<Long> invoicesIds = new ArrayList<>();
         invoicesIds.add(invoice.getId());
-        invoiceLinesService.cancelIlByInvoices(invoicesIds);
         if (remove) {
+            invoiceLinesService.cancelIlForRemoveByInvoices(invoicesIds);
             super.remove(invoice);
         } else {
+            invoiceLinesService.cancelIlByInvoices(invoicesIds);
             cancelInvoiceById(invoice.getId());
         }
         updateBillingRunStatistics(invoice);
