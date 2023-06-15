@@ -123,7 +123,6 @@ public class RecurringRatingJobBean extends IteratorBasedJobBean<Long> {
         } else {
             if (ratingStatus.getStatus() != RatingStatusEnum.NOT_RATED_FALSE_FILTER) {
                 jobExecutionResult.unRegisterSucces(); // Reduce success as success is added automatically in main loop of IteratorBasedJobBean
-                jobExecutionResult.registerWarning(chargeInstanceId + " not rated");
             }
         }
     }
