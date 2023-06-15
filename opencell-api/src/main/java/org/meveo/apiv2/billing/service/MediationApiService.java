@@ -340,6 +340,9 @@ public class MediationApiService {
                         returnWalletOperationDetails, returnEDRs, cdrListResult, virtualCounters, counterUpdates, generateRTs));
             }
 
+            // Update total amounts and wallet operation count based on charged CDRs
+            cdrListResult.updateAmountAndWOCountStatistics();
+            
             // Gather counter update summary information
             if (returnCounters) {
                 List<CounterPeriod> counterPeriods = counterInstanceService.getCounterUpdates();
@@ -386,11 +389,6 @@ public class MediationApiService {
         boolean noNeedToRollback = false;
 
         String originRecordEL = appProvider.getCdrDeduplicationKeyEL();
-
-        cdrProcessingResult.setAmountWithTax(BigDecimal.ZERO);
-        cdrProcessingResult.setAmountWithoutTax(BigDecimal.ZERO);
-        cdrProcessingResult.setAmountTax(BigDecimal.ZERO);
-        cdrProcessingResult.setWalletOperationCount(0);
 
         while (true) {
 
@@ -530,7 +528,7 @@ public class MediationApiService {
                     log.error("Failed to process a CDR line: {} from api. Reason: {}", cdr.getLine(), errorReason);
                 }
 
-                // In case of rollback only an error will be reported, irrelevant of how many CDRs were processed already
+                // In case of rollback only an error will be reported, irrelevant of how many CDRs were processed already and it will be recorded in position 0
                 if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
                     cdrProcessingResult.setChargedCDRs(new ChargeCDRResponseDto[1]);
                     position = 0;
@@ -555,7 +553,7 @@ public class MediationApiService {
                     continue;
                 }
 
-                // Trim array to the last populated position, so not to return null elemenst in array more than needed
+                // Trim array to the last populated position, so not to return null elements in array more than needed
                 if (cdrProcessingResult.getMode() == STOP_ON_FIRST_FAIL) {
                     cdrProcessingResult.setChargedCDRs(Arrays.copyOf(cdrProcessingResult.getChargedCDRs(), position + 1));
                     break;
@@ -576,17 +574,6 @@ public class MediationApiService {
                 }
             }
         }
-
-        Arrays.stream(cdrProcessingResult.getChargedCDRs()).forEach(cdrCharge -> {
-            if (cdrCharge != null) {
-                cdrProcessingResult.setAmountWithTax(cdrProcessingResult.getAmountWithTax().add(cdrCharge.getAmountWithTax() != null ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
-                cdrProcessingResult.setAmountWithoutTax(cdrProcessingResult.getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
-                cdrProcessingResult.setAmountTax(cdrProcessingResult.getAmountTax().add(cdrCharge.getAmountTax() != null ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
-                cdrProcessingResult.setWalletOperationCount(cdrProcessingResult.getWalletOperationCount() + (cdrCharge.getWalletOperationCount() != null ? cdrCharge.getWalletOperationCount() : 0));
-            } else {
-                log.warn("cdrProcessingResult amouts and WOCount will have default 0 value, due to cdrCharge null");
-            }
-        });
     }
 
     private void validate(CdrListInput postData) {
