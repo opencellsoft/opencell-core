@@ -19411,7 +19411,8 @@
     <changeSet id="#INTRD-15733_20230426" author="AndriusKarpavicius" />
     <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres" />
     <changeSet id="INTRD-16780_20230614_oracle" author="a.rouaguebe" dbms="oracle" />
-
+    <changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
+	<changeSet id="INTRD-16050_20230515" author="ThangNguyen" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
