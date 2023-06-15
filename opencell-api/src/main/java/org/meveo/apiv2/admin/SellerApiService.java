@@ -55,8 +55,6 @@ public class SellerApiService extends BaseApi {
 			}
 			seller.setSeller(parentSeller);
 		}
-		checkVatNum(seller.getVatNo(), seller.getTradingCountry().getCountryCode());
-		
 		if(CollectionUtils.isNotEmpty(seller.getInvoiceTypeSequence())){
 			var invoiceTypeIds = seller.getInvoiceTypeSequence().stream()
 											.filter(invoiceTypeSellerSequence -> invoiceTypeSellerSequence.getInvoiceType() != null)
@@ -160,7 +158,6 @@ public class SellerApiService extends BaseApi {
 				seller.getCustomerSequences().add(customerSequence);
 			}
 		}
-		checkVatNum(seller.getVatNo(), seller.getTradingCountry().getCountryCode());
 		sellerService.update(seller);
 	}
 	
@@ -173,17 +170,6 @@ public class SellerApiService extends BaseApi {
 		}
 	}
 	
-	private void checkVatNum(String vatNo, String countryCode) {
-		
-		try{
-			boolean valExist = validationByNumberCountryService.getValByValNbCountryCode(vatNo, countryCode);
-			if(!valExist){
-				throw new BusinessException("The Val Number : " + vatNo + " is incorrect !");
-			}
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage());
-		}
-	}
 	
 	private void checkField(String fieldData, String fieldError, List<String> missingParameters) {
 		if(StringUtils.isEmpty(fieldData)){
