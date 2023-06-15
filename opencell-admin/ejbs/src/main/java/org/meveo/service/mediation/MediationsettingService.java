@@ -219,9 +219,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 							wallet.getEdr().setStatus(EDRStatusEnum.CANCELLED);
 							edrService.update(wallet.getEdr());
 						}
-						if (wallet.getRatedTransaction() != null && wallet.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED) {
-							wallet.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
-							ratedTransactionService.update(wallet.getRatedTransaction());
+                        RatedTransaction ratedTransaction = wallet.getRatedTransaction();
+						if (ratedTransaction != null) {
+							ratedTransactionService.update(ratedTransaction, RatedTransactionStatusEnum.CANCELED);
 						}
 					}
 				}
