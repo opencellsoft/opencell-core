@@ -221,6 +221,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 				.matchingDate(matchingCode.getMatchingDate())
 				.rejectedCode(accountOperation.getRejectedPayment() != null ?  accountOperation.getRejectedPayment().getRejectedCode() : "")
 				.rejectedDescription(accountOperation.getRejectedPayment() != null ?  accountOperation.getRejectedPayment().getRejectedDescription() : "")
+				.transactionalAmount(accountOperation.getTransactionalAmount())
 				.build();
 	}
 
