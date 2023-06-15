@@ -33,6 +33,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -137,7 +138,7 @@ public class ProductVersion extends AuditableEntity{
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "productVersion", orphanRemoval = true)
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private List<ProductVersionAttribute> attributes = new ArrayList<ProductVersionAttribute>();
+    private Set<ProductVersionAttribute> attributes = new HashSet<ProductVersionAttribute>();
 	
 	/**
 	 * list of grouped attribute attached to this product version
@@ -145,11 +146,11 @@ public class ProductVersion extends AuditableEntity{
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 				name = "cpq_product_version_grouped_attributes",
-				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),
-				inverseJoinColumns = @JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")				
+				joinColumns = @JoinColumn(name = "product_version_id"),
+				inverseJoinColumns = @JoinColumn(name = "grouped_attributes_id")
 			)
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private List<GroupedAttributes> groupedAttributes = new ArrayList<GroupedAttributes>();
+    private Set<GroupedAttributes> groupedAttributes = new HashSet<GroupedAttributes>();
     
     
 	public ProductVersion() {}
@@ -165,7 +166,7 @@ public class ProductVersion extends AuditableEntity{
 			this.setProduct(copy.getProduct());
 		}
 		this.setTags(new HashSet<>());
-		this.setAttributes(new ArrayList<>());
+		this.setAttributes(new HashSet<>());
 		this.setShortDescription(copy.getShortDescription());
 		this.setLongDescription(copy.getLongDescription());
 		this.setValidity(copy.getValidity()); 
@@ -246,14 +247,14 @@ public class ProductVersion extends AuditableEntity{
 	/**
 	 * @return the groupedAttributes
 	 */
-	public List<GroupedAttributes> getGroupedAttributes() {
+	public Set<GroupedAttributes> getGroupedAttributes() {
 		return groupedAttributes;
 	}
 
 	/**
 	 * @param groupedAttributes the groupedAttributes to set
 	 */
-	public void setGroupedAttributes(List<GroupedAttributes> groupedAttributes) {
+	public void setGroupedAttributes(Set<GroupedAttributes> groupedAttributes) {
 		this.groupedAttributes = groupedAttributes;
 	}
 	
@@ -297,14 +298,14 @@ public class ProductVersion extends AuditableEntity{
 	/**
 	 * @return the productAttributes
 	 */
-	public List<ProductVersionAttribute> getAttributes() {
+	public Set<ProductVersionAttribute> getAttributes() {
 		return attributes;
 	}
 
 	/**
 	 * @param productAttributes the productAttributes to set
 	 */
-	public void setAttributes(List<ProductVersionAttribute> productAttributes) {
+	public void setAttributes(Set<ProductVersionAttribute> productAttributes) {
 		this.attributes = productAttributes;
 	}
 

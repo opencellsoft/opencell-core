@@ -17,6 +17,8 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "cpq_product_version_attributes")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -233,5 +235,18 @@ public String getValidationLabel() {
 public void setValidationLabel(String validationLabel) {
 	this.validationLabel = validationLabel;
 }
-
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof ProductVersionAttribute)) return false;
+		if (!super.equals(o)) return false;
+		ProductVersionAttribute that = (ProductVersionAttribute) o;
+		return isMandatory() == that.isMandatory() && isDisplay() == that.isDisplay() && Objects.equals(getProductVersion(), that.getProductVersion()) && Objects.equals(getSequence(), that.getSequence()) && Objects.equals(getAttribute(), that.getAttribute()) && Objects.equals(getMandatoryWithEl(), that.getMandatoryWithEl()) && Objects.equals(getReadOnly(), that.getReadOnly()) && Objects.equals(getDefaultValue(), that.getDefaultValue()) && getValidationType() == that.getValidationType() && Objects.equals(getValidationPattern(), that.getValidationPattern()) && Objects.equals(getValidationLabel(), that.getValidationLabel());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), getProductVersion(), getSequence(), getAttribute(), getMandatoryWithEl(), isMandatory(), isDisplay(), getReadOnly(), getDefaultValue(), getValidationType(), getValidationPattern(), getValidationLabel());
+	}
 }

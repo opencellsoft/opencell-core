@@ -98,7 +98,7 @@ public class AttributeService extends BusinessService<Attribute>{
         }
     }
 
-    public <T extends AttributeValue<?>> void validateAttributes(List<ProductVersionAttribute> productVersionAttributes, List<T> attributeInstances) {
+    public <T extends AttributeValue<?>> void validateAttributes(Set<ProductVersionAttribute> productVersionAttributes, List<T> attributeInstances) {
         if (CollectionUtils.isEmpty(productVersionAttributes)) {
             return;
         }

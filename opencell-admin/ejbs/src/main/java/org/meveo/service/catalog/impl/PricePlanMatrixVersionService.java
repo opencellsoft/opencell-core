@@ -50,7 +50,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.NoPricePlanException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -60,10 +60,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ColumnTypeEnum;
 import org.meveo.model.catalog.TradingPricePlanVersion;
@@ -72,7 +70,7 @@ import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.catalog.TradingPricePlanMatrixLine;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
@@ -81,7 +79,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.cpq.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,9 +112,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
     @Inject
     private AuditLogService auditLogService;
-
-    @Inject
-    private AttributeInstanceService attributeInstanceService;
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
@@ -459,106 +453,6 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return result.isEmpty() ? null : result.get(0);
     }
 
-	/**
-	 * get pricePlanVersion Valid for the given operationDate
-	 * @param ppmId Price plan ID
-	 * @param serviceInstance Service instance
-	 * @param operationDate Operation date
-	 * @return PricePlanMatrixVersion Matched Price plan version
-	 */
-	public PricePlanMatrixVersion getPublishedVersionValideForDate(Long ppmId, ServiceInstance serviceInstance, Date operationDate) {
-		Date operationDateParam = new Date();
-		if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
-			operationDateParam = operationDate;
-		} else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())
-			|| PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())
-			|| PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())
-			|| PriceVersionDateSettingEnum.MANUAL.equals(serviceInstance.getPriceVersionDateSetting())) {
-				operationDateParam = serviceInstance.getPriceVersionDate();
-		}
-
-        if(operationDateParam != null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(operationDate);
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            operationDateParam = calendar.getTime();
-        }
-
-        List<PricePlanMatrixVersion> result= this.getEntityManager()
-                .createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class)
-                .setParameter("pricePlanMatrixId", ppmId).setParameter("operationDate", operationDateParam)
-                .getResultList();
-        if(CollectionUtils.isEmpty(result)) {
-        	return null;
-        }
-        if(result.size()>1) {
-        	throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmId+"' matching date: "+ operationDate);
-        }
-		return result.get(0);
-	}
-
-    /**
-     * Get a valid Price plan version for the given operationDate.
-     * 
-     * @param ppmCode Price plan code
-     * @param serviceInstance Service instance
-     * @param operationDate Operation date
-     * @return PricePlanMatrixVersion Matched Price plan version
-     */
-    public PricePlanMatrixVersion getPublishedVersionValideForDate(String ppmCode, ServiceInstance serviceInstance, Date operationDate) {
-        Date operationDateParam = new Date();
-        if(serviceInstance==null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
-            operationDateParam = operationDate;
-        } else if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())
-            || PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())
-            || PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
-                operationDateParam = serviceInstance.getPriceVersionDate();
-        }
-
-        if(operationDateParam != null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(operationDate);
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            operationDateParam = calendar.getTime();
-        }
-
-        List<PricePlanMatrixVersion> result= this.getEntityManager()
-                .createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDateByPpmCode", PricePlanMatrixVersion.class)
-                .setParameter("pricePlanMatrixCode", ppmCode).setParameter("operationDate", operationDateParam)
-                .getResultList();
-        if(CollectionUtils.isEmpty(result)) {
-            return null;
-        }
-        if(result.size()>1) {
-            throw new BusinessException("More than one pricePlaneVersion for pricePlan '"+ppmCode+"' matching date: "+ operationDate);
-        }
-        return result.get(0);
-    }
-    
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, WalletOperation walletOperation) throws NoPricePlanException {
-        ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-        if (chargeInstance.getServiceInstance() != null) {
-
-     	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
-                    .stream()
-                    .map(attributeInstance -> attributeInstanceService.getAttributeValue(attributeInstance, walletOperation))
-                    .collect(Collectors.toSet());
-     	   return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, walletOperation);
-        }
-
-        return null;
-    }
-
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues) throws NoPricePlanException {
-        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, null);
-    }
-
     @SuppressWarnings("unchecked")
     public PricePlanMatrixVersion getLastPricePlanMatrixtVersion(String ppmCode) {
         List<PricePlanMatrixVersion> pricesVersions = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion").setParameter("pricePlanMatrixCode", ppmCode)
@@ -605,6 +499,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     duplicateLine.setValue(BigDecimal.ZERO);
                 }
 
+                ppml.getTradingPricePlanMatrixLines().forEach(trading -> {
+                	TradingPricePlanMatrixLine tppml = new TradingPricePlanMatrixLine(trading.getTradingValue(), 
+                			trading.getTradingCurrency(), 
+                			trading.getRate(), 
+                			trading.isUseForBillingAccounts(), 
+                			duplicateLine);
+                	
+                	duplicateLine.getTradingPricePlanMatrixLines().add(tppml);
+                });
+                
                 pricePlanMatrixLineService.create(duplicateLine);
 
                 ids.put(ppml.getId(), duplicateLine);

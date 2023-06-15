@@ -78,6 +78,7 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
@@ -124,7 +125,7 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
 
-        Long id = super.create(tableName, values, true, true); // Force to return ID as we need it to retrieve data for Elastic Search population
+        Long id = super.create(tableName, values, true, true);
         values.put("id", id);
 
         return id;
@@ -147,18 +148,18 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     /**
-     * Insert multiple values into table with optionally not updating ES nor triggering notifications. Will execute in a new transaction
+     * Insert multiple values into table with optionally not triggering notifications.
      *
      * @param tableName Table name to insert values to
      * @param customEntityTemplateCode Custom entity template, corresponding to a custom table, code
      * @param values Values to insert
-     * @param triggerNotifications Should notifications be fired for each record. If false, Notifications have to be handled by some other means
+     * @param fireNotifications Should notifications be fired for each record. If false, Notifications have to be handled by some other means
      * @throws BusinessException General exception
      */
-    private void createInNewTx(String tableName, String customEntityTemplateCode, List<Map<String, Object>> values, boolean triggerNotifications) throws BusinessException {
+    private void create(String tableName, String customEntityTemplateCode, List<Map<String, Object>> values, boolean fireNotifications) throws BusinessException {
 
         // Insert record to db, with ID returned and trigger notifications
-        if (triggerNotifications) {
+        if (fireNotifications) {
 
             create(tableName, values, true);
 
@@ -375,8 +376,7 @@ public class CustomTableService extends NativePersistenceService {
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public int importData(CustomEntityTemplate customEntityTemplate, InputStream inputStream, boolean append) throws BusinessException {
+    private int importData(CustomEntityTemplate customEntityTemplate, InputStream inputStream, boolean append) throws BusinessException {
 
         // Custom table fields. Fields will be sorted by their GUI 'field' position.
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo());
@@ -431,7 +431,7 @@ public class CustomTableService extends NativePersistenceService {
                 if (importedLines >= 500) {
 
                     List<Map<String, Object>> valuesConverted = convertValues(values, cftsMap, false);
-                    methodCallingUtils.callMethodInNewTx(() -> createInNewTx(tableName, customEntityTemplate.getCode(), valuesConverted, updateESImediately));
+                    methodCallingUtils.callMethodInNewTx(() -> create(tableName, customEntityTemplate.getCode(), valuesConverted, updateESImediately));
 
                     values.clear();
                     importedLines = 0;
@@ -450,7 +450,7 @@ public class CustomTableService extends NativePersistenceService {
 
             // Save to DB remaining records
             List<Map<String, Object>> valuesConverted = convertValues(values, cftsMap, false);
-            methodCallingUtils.callMethodInNewTx(() -> createInNewTx(tableName, customEntityTemplate.getCode(), valuesConverted, updateESImediately));
+            methodCallingUtils.callMethodInNewTx(() -> create(tableName, customEntityTemplate.getCode(), valuesConverted, updateESImediately));
 
             log.info("Imported {} lines to {} table", importedLinesTotal, tableName);
 
@@ -514,15 +514,15 @@ public class CustomTableService extends NativePersistenceService {
         }
         }
 
-        // By default will update ES immediately. If more than 1000 records are being updated, ES will be updated in batch way - reconstructed from a table
-        boolean updateESImediately = append && values.size() <= 1000;
+        // By default will notifications will be fired immediately. If more than 1000 records are being updated, notifications will be fired asynchronously - reconstructed from a table
+        boolean triggerNotifications = append && areEventsEnabled(tableName, NotificationEventTypeEnum.CREATED) && values.size() <= 1000;
 
         for (Map<String, Object> value : values) {
 
             // Save to DB every 1000 records
             if (importedLines >= 1000) {
                 List<Map<String, Object>> valuesPartialConverted = convertValues(valuesPartial, cftsMap, false);
-                methodCallingUtils.callMethodInNewTx(() -> createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartialConverted, updateESImediately));
+                methodCallingUtils.callMethodInNewTx(() -> create(tableName, customEntityTemplate.getCode(), valuesPartialConverted, triggerNotifications));
 
                 valuesPartial.clear();
                 importedLines = 0;
@@ -536,7 +536,7 @@ public class CustomTableService extends NativePersistenceService {
 
         // Save to DB remaining records
         List<Map<String, Object>> valuesPartialConverted = convertValues(valuesPartial, cftsMap, false);
-        methodCallingUtils.callMethodInNewTx(() -> createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartialConverted, updateESImediately));
+        methodCallingUtils.callMethodInNewTx(() -> create(tableName, customEntityTemplate.getCode(), valuesPartialConverted, triggerNotifications));
 
         return importedLinesTotal;
     }

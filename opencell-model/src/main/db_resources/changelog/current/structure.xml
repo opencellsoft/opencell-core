@@ -16832,4 +16832,102 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </changeSet>
 
 
+    <changeSet id="#INTRD-15733_20230426" author="AndriusKarpavicius">
+        <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
+        <sql>CREATE INDEX billing_redirection_rule_contract_index  ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>
+        <dropUniqueConstraint tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+        <addUniqueConstraint columnNames="ppm_version_id,code" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+        <dropUniqueConstraint tableName="cpq_price_plan_version" constraintName="cpq_price_plan_version_UNIC"/>
+        <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
+    </changeSet>
+
+    <changeSet id="#INTRD-15938_20230503" author="AndriusKarpavcius">
+        <addColumn tableName="cpq_price_plan_matrix_line">
+            <column name="accuracy" type="int" defaultValueNumeric="0">
+                 <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <sql>delete from ${db.schema.adapted}cpq_price_plan_matrix_value where long_value is null and double_value is null and string_value is null and date_value is null and from_date_value is null and to_date_value is null and from_double_value is null and to_double_value is null and boolean_value is null</sql>
+        <sql>update ${db.schema.adapted}cpq_price_plan_matrix_line set accuracy = (select count(*) from ${db.schema.adapted}cpq_price_plan_matrix_value where ppml_id=cpq_price_plan_matrix_line.id)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-16140_20230510" author="AndriusKarpavicius">
+        <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
+    </changeSet>
+
+ 	<changeSet id="#INTRD-15938_20230511" author="AndriusKarpavicius" failOnError="false">
+        <dropIndex tableName="cat_price_plan_matrix" indexName="cat_price_plan_event_c_index"/>
+        <dropIndex tableName="cpq_price_plan_matrix_line" indexName="cpq_price_plan_matrix_line__ppm_version_id__idx"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-15938_20230511-2" author="AndriusKarpavicius">
+        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
+        <sql>CREATE INDEX cpq_ppl_ppVersion_index ON ${db.schema.adapted}cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-16361_20230606" author="a.rouaguebe">
+        <createTable tableName="cat_price_plan_charge">
+            <column name="price_plan_id" type="bigint" />
+            <column name="charge_id" type="bigint" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#INTRD-16362_20230607_ppm_eventcode" author="a.rouaguebe">
+        <dropNotNullConstraint tableName="cat_price_plan_matrix" columnName="event_code"></dropNotNullConstraint>
+    </changeSet>
+    
+    <changeSet id="#INTRD-16600_20230531" author="AdilElJaouhari">
+		<createSequence sequenceName="cpq_trading_contract_item_seq" startValue="1" />
+		<createTable tableName="cpq_trading_contract_item">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true"	primaryKeyName="cpq_trading_contract_item_pkey" />
+			</column>
+			<column name="version" type="int4" />
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />
+			<column name="contract_item_id" type="bigint" />
+			<column name="trading_value" type="numeric(23, 12)" />
+			<column name="trading_currency_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="rate" type="numeric(23, 12)" />
+		</createTable>
+		<addForeignKeyConstraint
+			baseColumnNames="contract_item_id"
+			baseTableName="cpq_trading_contract_item"
+			constraintName="cpq_trading_contract_item_contract_item_fk" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id"
+			referencedTableName="cpq_contract_item" />
+		<addForeignKeyConstraint
+			baseColumnNames="trading_currency_id"
+			baseTableName="cpq_trading_contract_item"
+			constraintName="cpq_trading_contract_item_trading_currency_fk"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="billing_trading_currency" />
+	</changeSet>
+    
+
+    <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres">
+        <dropView viewName="billing_wallet_operation_period" />
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (DATE(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id )) = DATE(o.start_date)) then 0 else 1 end) as flag
+                  FROM ${db.schema.adapted}billing_wallet_operation o WHERE o.status='OPEN' ) o
+        </createView>
+    </changeSet>
+    <changeSet id="INTRD-16780_20230614_oracle" author="a.rouaguebe" dbms="oracle">
+        <dropView viewName="billing_wallet_operation_period" />
+        <createView viewName="billing_wallet_operation_period">
+            select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id ) as period
+            from (select o.*, (case when (trunc(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id)) = trunc(o.start_date)) then 0 else 1 end) as flag
+                  FROM billing_wallet_operation o WHERE o.status = 'OPEN') o
+        </createView>
+    </changeSet>
+
 </databaseChangeLog>

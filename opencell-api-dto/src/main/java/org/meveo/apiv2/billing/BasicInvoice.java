@@ -56,4 +56,8 @@ public interface BasicInvoice extends Resource {
 	@Nullable
 	Resource getSeller();
 
+	@Schema
+	@Nullable
+	Boolean getAutoMatching();
+
 }

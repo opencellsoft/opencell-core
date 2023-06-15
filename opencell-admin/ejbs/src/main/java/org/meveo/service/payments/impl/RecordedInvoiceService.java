@@ -598,7 +598,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
 
                         .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.transactionalAmountWithoutTax else 0 end ) as transactional_sum_1_" + stepInDays + ",")
-                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.transactionalMatchingAmount else 0 end ) as transactional_sum_1_" + stepInDays + "_awt,")
+                        .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.transactionalUnMatchingAmount else 0 end ) as transactional_sum_1_" + stepInDays + "_awt,")
                         .append("sum (case when ao.dueDate <'"+DateUtils.formatDateWithPattern(startDate, datePattern)+"' and ao.dueDate >'"+DateUtils.formatDateWithPattern(DateUtils.addDaysToDate(startDate, -stepInDays), datePattern)+"' then ao.transactionalTaxAmount else 0 end ) as transactional_sum_1_" + stepInDays + "_tax,");
                 for (int iteration = 1; iteration < numberOfPeriods - 1; iteration++) {
                     step = iteration * stepInDays;

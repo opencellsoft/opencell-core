@@ -126,22 +126,13 @@ public class EntityCustomizationDto extends BaseEntityDto {
      * Convert CustomEntityTemplate instance to CustomEntityTemplateDto object including the fields and actions.
      * 
      * @param clazz class
-     * @param cetFields Fields (CustomFieldTemplate) that are part of CustomEntityTemplate
      * @param cetActions Actions (EntityActionScript) available on CustomEntityTemplate
      * @return A CustomEntityTemplateDto object with fields set
      */
     @SuppressWarnings("rawtypes")
-    public static EntityCustomizationDto toDTO(Class clazz, Collection<CustomFieldTemplate> cetFields, Collection<EntityCustomAction> cetActions) {
+    public static EntityCustomizationDto toDTO(Class clazz, Collection<EntityCustomAction> cetActions) {
         EntityCustomizationDto dto = new EntityCustomizationDto();
         dto.setClassname(clazz.getName());
-
-        if (cetFields != null) {
-            List<CustomFieldTemplateDto> fields = new ArrayList<>();
-            for (CustomFieldTemplate cft : cetFields) {
-                fields.add(new CustomFieldTemplateDto(cft));
-            }
-            dto.setFields(fields);
-        }
 
         if (cetActions != null) {
             List<EntityCustomActionDto> actions = new ArrayList<>();

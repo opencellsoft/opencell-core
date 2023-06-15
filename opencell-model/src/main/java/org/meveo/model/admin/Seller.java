@@ -19,7 +19,9 @@ package org.meveo.model.admin;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -141,7 +143,7 @@ public class Seller extends AccountEntity implements IWFEntity {
      * Customer invoice numbering sequences
      */
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CustomerSequence> customerSequences = new ArrayList<>();
+    private Set<CustomerSequence> customerSequences = new HashSet<>();
 
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaymentGateway> paymentGateways = new ArrayList<>();
@@ -339,11 +341,11 @@ public class Seller extends AccountEntity implements IWFEntity {
         return getSeller().findSellerForInvoiceNumberingSequence(cfName, date, invoiceType);
     }
 
-    public List<CustomerSequence> getCustomerSequences() {
+    public Set<CustomerSequence> getCustomerSequences() {
         return customerSequences;
     }
 
-    public void setCustomerSequences(List<CustomerSequence> customerSequences) {
+    public void setCustomerSequences(Set<CustomerSequence> customerSequences) {
         this.customerSequences = customerSequences;
     }
 

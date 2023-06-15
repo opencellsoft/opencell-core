@@ -1,17 +1,18 @@
 package org.meveo.service.catalog.impl;
 
+import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+
 import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.service.base.BusinessService;
-
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import java.util.List;
 
 @Stateless
 public class PriceListLineService extends BusinessService<PriceListLine> {
 
     /**
      * Get applicable PriceListLine using the following criteria
+     * 
      * @param pPriceListId PriceList id
      * @param pOfferTemplateId Offer Template id
      * @param pProductId Product id
@@ -30,10 +31,10 @@ public class PriceListLineService extends BusinessService<PriceListLine> {
         }
 
         if (pChargeTemplateId != null) {
-            lStringBuilder.append(" AND pll.chargeTemplate.id = :chargeTemplate");
+            lStringBuilder.append(" AND pll.chargeTemplate.id = :chargeTemplateId");
         }
 
-        Query query = getEntityManager().createQuery(lStringBuilder.toString());
+        TypedQuery<PriceListLine> query = getEntityManager().createQuery(lStringBuilder.toString(), PriceListLine.class);
         query.setParameter("priceListId", pPriceListId);
 
         if (pOfferTemplateId != null) {
@@ -45,10 +46,13 @@ public class PriceListLineService extends BusinessService<PriceListLine> {
         }
 
         if (pChargeTemplateId != null) {
-            query.setParameter("chargeTemplate", pChargeTemplateId);
+            query.setParameter("chargeTemplateId", pChargeTemplateId);
         }
 
-        List<PriceListLine> applicablePriceListLine = query.getResultList();
-        return !applicablePriceListLine.isEmpty() ? applicablePriceListLine.get(0) : null;
+        try {
+            return query.setMaxResults(1).setHint("org.hibernate.cacheable", true).setHint("org.hibernate.readOnly", true).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

@@ -1,7 +1,5 @@
 package org.meveo.apiv2.accountreceivable;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -10,7 +8,6 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,18 +104,22 @@ public class AccountOperationApiServiceTest {
         Currency eCurrency1 = new Currency();
         eCurrency1.setCurrencyCode("USD");//EUR
         eTradingCurrency1.setCurrency(eCurrency1);
+        eTradingCurrency1.setId(1L);
         TradingCurrency eTradingCurrency2 = new TradingCurrency();
+        eTradingCurrency2.setId(2L);
         Currency eCurrency2 = new Currency();
         eCurrency2.setCurrencyCode("EUR");
-        
+
         aoP1.setTransactionalCurrency(eTradingCurrency1);
         aoP2.setTransactionalCurrency(eTradingCurrency2);
         aoInvoice.setTransactionalCurrency(eTradingCurrency1);
         List<Long> aoIds = List.of(2L, 3L, 4L);
         List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1, aoP2);
 
-        Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
-        
+        Mockito.when(accountOperationService.findById(2L)).thenReturn(aoInvoice);
+        Mockito.when(accountOperationService.findById(3L)).thenReturn(aoP1);
+        Mockito.when(accountOperationService.findById(4L)).thenReturn(aoP2);
+
         Exception exception = assertThrows(BusinessApiException.class, () -> {
             accountOperationApiService.matchOperations(operationAndSequence);
         });
@@ -129,7 +130,7 @@ public class AccountOperationApiServiceTest {
         }
     }
         
-    @Test
+    @Test(expected = BusinessApiException.class)
     public void shouldMatchOperationAndUseAmountFromDto() throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
         List<AccountOperationAndSequence> operationAndSequence = initOperationSequence();
 
@@ -137,13 +138,12 @@ public class AccountOperationApiServiceTest {
         AccountOperation aoP1 = init("P", 3L, new BigDecimal(2000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(2000), AccountOperationStatus.POSTED);
         AccountOperation aoP2 = init("P", 4L, new BigDecimal(3000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(3000), AccountOperationStatus.POSTED);
         
-        List<Long> aoIds = List.of(2L, 3L, 4L);
-        List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1, aoP2);
 
-        Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
+        Mockito.when(accountOperationService.findById(2L)).thenReturn(aoInvoice);
+        Mockito.when(accountOperationService.findById(3L)).thenReturn(aoP1);
+        Mockito.when(accountOperationService.findById(4L)).thenReturn(aoP2);
         Mockito.when(customerAccountService.findCustomerAccount(anyLong(), anyString())).thenReturn(aoInvoice.getCustomerAccount());
-        Mockito.doNothing().when(paymentPlanService).toComplete(anyList());
-        
+
         MatchingReturnObject matchingReturnObject1 = new MatchingReturnObject();
         matchingReturnObject1.setOk(true);
         
@@ -164,9 +164,7 @@ public class AccountOperationApiServiceTest {
         matchingReturnObject2.getPartialMatchingOcc().add(PartialMatchingOccToSelect);
        
         Mockito.when(matchingCodeService.matchOperations(anyLong(), anyString(), anyList(), anyLong(), any(BigDecimal.class))).thenReturn(matchingReturnObject1).thenReturn(matchingReturnObject2);
-        
-        //Mockito.when(matchingCodeService.matchOperations(aoInvoice.getCustomerAccount().getId(), aoInvoice.getCustomerAccount().getCode(), ) )
-        
+
         accountOperationApiService.matchOperations(operationAndSequence);
     }
     
@@ -178,12 +176,9 @@ public class AccountOperationApiServiceTest {
 
         AccountOperation aoInvoice = init("I", 2L, new BigDecimal(9000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(9000), AccountOperationStatus.POSTED);
         AccountOperation aoP1 = init("P", 3L, new BigDecimal(2000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(2000), AccountOperationStatus.POSTED);
-        
-        List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1);
 
-        Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
-        //Mockito.when(matchingCodeService.matchOperations(aoInvoice.getCustomerAccount().getId(), aoInvoice.getCustomerAccount().getCode(), ) )
-        
+        Mockito.when(accountOperationService.findById(2L)).thenReturn(aoInvoice);
+
         Exception exception = assertThrows(BusinessApiException.class, () -> {
             accountOperationApiService.matchOperations(operationAndSequence);
         });
@@ -199,10 +194,8 @@ public class AccountOperationApiServiceTest {
 
         AccountOperation aoInvoice = init("I", 2L, new BigDecimal(9000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(9000), AccountOperationStatus.POSTED);
         AccountOperation aoP1 = init("P", 3L, new BigDecimal(2000), BigDecimal.ZERO, MatchingStatusEnum.O, new BigDecimal(2000), AccountOperationStatus.POSTED);
-        
-        List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1);
 
-        Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
+        Mockito.when(accountOperationService.findById(2L)).thenReturn(aoInvoice);
         Mockito.when(customerAccountService.findCustomerAccount(anyLong(), anyString())).thenReturn(aoInvoice.getCustomerAccount());
         
         Exception exception = assertThrows(BusinessApiException.class, () -> {
