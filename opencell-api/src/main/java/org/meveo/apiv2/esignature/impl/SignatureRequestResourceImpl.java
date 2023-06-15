@@ -13,6 +13,6 @@ public class SignatureRequestResourceImpl implements SignatureRequestResource {
 	private SignatureRequestApiService signatureRequestApiService;
 	@Override
 	public Response sigantureRequest(SigantureRequest sigantureRequest) {
-		return null;
+		return Response.ok(signatureRequestApiService.youSignRequest(sigantureRequest)).build();
 	}
 }

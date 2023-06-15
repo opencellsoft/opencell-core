@@ -177,7 +177,7 @@ public class SellerApiService extends BaseApi {
 		try{
 			boolean valExist = validationByNumberCountryService.getValByValNbCountryCode(vatNo, countryCode);
 			if(!valExist){
-				throw new BusinessException("The Val Number : " + vatNo + " is incorrect !");
+				throw new BusinessException("The Vat Number : " + vatNo + " is incorrect !");
 			}
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage());

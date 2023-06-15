@@ -5,7 +5,8 @@ public class IntiateSignatureRequest {
 	private String name;
 	private String delivery_mode;
 	
-	
+	public IntiateSignatureRequest() {
+	}
 	public IntiateSignatureRequest(String name, String delivery_mode) {
 		this.name = name;
 		this.delivery_mode = delivery_mode;

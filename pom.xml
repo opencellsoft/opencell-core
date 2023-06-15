@@ -62,22 +62,22 @@
         <!-- </repository> -->
         <repository>
             <id>opencell-repo</id>
-            <url>http://libs.opencellsoft.com/</url>
+            <url>https://libs.opencellsoft.com/</url>
         </repository>
         <repository>
             <id>opencell-nexus</id>
-            <url>http://nexus.int.opencell.work/repository/maven-snapshots/</url>
+            <url>https://nexus.int.opencell.work/repository/maven-snapshots/</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>opencast-public</id>
-            <url>http://nexus.opencast.org/nexus/content/repositories/public/</url>
+            <url>https://nexus.opencast.org/nexus/content/repositories/public/</url>
         </pluginRepository>
         <pluginRepository>
             <id>central-maven</id>
-            <url>http://central.maven.org/maven2/</url>
+            <url>https://central.maven.org/maven2/</url>
         </pluginRepository>
     </pluginRepositories>
 

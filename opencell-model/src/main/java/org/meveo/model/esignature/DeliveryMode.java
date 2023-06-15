@@ -1,19 +1,11 @@
 package org.meveo.model.esignature;
 
 public enum DeliveryMode {
-	NONE("none"), EMAIL("email");
+	none, email;
 	
-	private String value;
-	
-	DeliveryMode(String value){
-		this.value = value;
-	}
 	
 	public String getValue(DeliveryMode deliveryMode) {
-		return deliveryMode != null ? deliveryMode.value : NONE.value;
+		return deliveryMode != null ? deliveryMode.toString() : none.toString();
 	}
 	
-	public String getValue(){
-		return this.value;
-	}
 }
