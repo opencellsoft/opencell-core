@@ -150,7 +150,10 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                 }
             }
 
-            taxMapping.setPriority(getNextPriority(taxMappings));
+            // auto generate priority only if it hasn't been set by user
+            if(taxMapping.getPriority() == 0) {
+                taxMapping.setPriority(getNextPriority(taxMappings));
+            }
         }
     }
 
