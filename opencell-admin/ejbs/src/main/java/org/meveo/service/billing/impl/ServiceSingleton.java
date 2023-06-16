@@ -689,6 +689,7 @@ public class ServiceSingleton {
 
         context.put(GENERATED_CODE_KEY, generatedCode);
         String storedFormatEL = formatEL != null ? formatEL : customGenericEntityCode.getFormatEL();
+
         return prefixOverride == null || prefixOverride.isBlank()
                 ? formatCode(ofNullable(storedFormatEL).orElse(""), context)
                 : prefixOverride + generatedCode;
