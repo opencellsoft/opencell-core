@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -401,11 +402,14 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         lines.sort((ppml1, ppml2) -> {
         	List<PricePlanMatrixValue> ppmvs1 = ppml1.getSortedPricePlanMatrixValues();
         	List<PricePlanMatrixValue> ppmvs2 = ppml2.getSortedPricePlanMatrixValues();
-        	for (int i = 0; i < ppmvs1.size(); i++) {
-        		int eval = compareValuePricePlanMatrixLine(ppmvs1.get(i), ppmvs2.get(i));
-        		if (eval != 0) {
-        			return eval;
-        		}
+        	for (PricePlanMatrixValue ppmv1 : ppmvs1) {
+        		Optional<PricePlanMatrixValue> ppmv2 = ppmvs2.stream().filter(ppmv -> ppmv.getPricePlanMatrixColumn().getCode().equals(ppmv1.getPricePlanMatrixColumn().getCode())).findAny();
+				if (ppmv2.isPresent()) {
+					int eval = compareValuePricePlanMatrixLine(ppmv1, ppmv2.get());
+					if (eval != 0) {
+						return eval;
+					}
+				}
         	}
         	return 1;
         });
