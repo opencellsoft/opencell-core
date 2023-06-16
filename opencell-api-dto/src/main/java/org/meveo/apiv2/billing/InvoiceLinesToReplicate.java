@@ -18,6 +18,10 @@ public interface InvoiceLinesToReplicate {
     @Nullable
     Boolean getGlobalAdjustment();
 
+    /** Invoice ADJ Type Code */
+    @Nullable
+    String getAdjType();
+
 	@Schema(description = "Containing list of invoice line Ids to replicate in the new adjustment.")
 	List<Long> getInvoiceLinesIds();
 

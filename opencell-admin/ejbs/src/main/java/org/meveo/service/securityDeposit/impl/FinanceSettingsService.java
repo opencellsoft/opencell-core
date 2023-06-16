@@ -18,9 +18,11 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.securityDeposit.AuxiliaryAccounting;
 import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
 @Stateless
@@ -30,6 +32,9 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
     public static final String AUXILIARY_ACCOUNT_LABEL = "auxiliaryAccountLabel";
     @Inject
     private OCCTemplateService occTemplateService;
+
+    @Inject
+    private PriceListService priceListService;
 
     private static final String OCC_CODE_KEY = "accountOperationsGenerationJob.occCode";
     private static final String OCC_DEFAULT_CODE = "INV_STD";
@@ -44,7 +49,6 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
         FINANCE_SETTING_ID = entity.getId();
     }
 
-    @Override
     public FinanceSettings update(FinanceSettings financeSettings) throws BusinessException {
         checkParameters(financeSettings);
         return super.update(financeSettings);
@@ -57,6 +61,19 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
         if (financeSettings.getMaxAmountPerCustomer() != null
                 && financeSettings.getMaxAmountPerCustomer().longValue() < 1)
             throw new InvalidParameterException("max amount per customer should be greater or equals 1");
+    }
+
+    /**
+     * Return a functional error when we want to deactivate a PriceList and we have in the same time a list of Active Price List
+     * @param financeSettingsEntity {@link FinanceSettings}
+     * @param financeSettings {@link org.meveo.apiv2.securityDeposit.FinanceSettings}
+     */
+    public void checkPriceList(FinanceSettings financeSettingsEntity, org.meveo.apiv2.securityDeposit.FinanceSettings financeSettings) {
+        if(financeSettingsEntity.isEnablePriceList() && !financeSettings.getEnablePriceList()) {
+            List<PriceList> priceLists = priceListService.getActivePriceList();
+            if (priceLists != null && priceLists.size() > 0)
+                throw new InvalidParameterException("You can deactivate this feature only once no price lists are in ACTIVE status.");
+        }
     }
 
     /**

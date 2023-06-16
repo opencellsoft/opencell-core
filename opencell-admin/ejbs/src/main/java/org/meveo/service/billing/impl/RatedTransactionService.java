@@ -43,7 +43,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -144,6 +146,8 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
+import org.meveo.service.cpq.BillingRuleService;
+import org.meveo.service.cpq.ContractService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
@@ -235,16 +239,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     @Named
     private NativePersistenceService nativePersistenceService;
-    
+
     @Inject
     private DiscountPlanService discountPlanService;
 
     @Inject
     private DiscountPlanItemService discountPlanItemService;
-    
+
+    @Inject
+    private ContractService contractService;
+
     @Inject
     private FinanceSettingsService financeSettingsService;
-    
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
      *
@@ -358,7 +365,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         boolean cftEndPeriodEnabled = customFieldTemplateService.areCFTEndPeriodEventsEnabled(new RatedTransaction());
 
         boolean billingRedirectionEnabled = financeSettingsService.isBillingRedirectionRulesEnabled();
-        
+
         String providerCode = currentUser.getProviderCode();
         final String schemaPrefix = providerCode != null ? EntityManagerProvider.convertToSchemaName(providerCode) + "." : "";
 
@@ -668,6 +675,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setStartDate(aggregatedWo.getStartDate());
         ratedTransaction.setEndDate(aggregatedWo.getEndDate());
         ratedTransaction.setCreated(new Date());
+        if(aggregatedWo.getRulesContract() != null && aggregatedWo.getRulesContract().getId() != null) {
+            ratedTransaction.setRulesContract(contractService.refreshOrRetrieve(aggregatedWo.getRulesContract()));
+        }
         // ratedTransaction.setEdr(aggregatedWo.getEdr());
         WalletInstance wallet = walletService.refreshOrRetrieve(aggregatedWo.getWallet());
         ratedTransaction.setWallet(wallet);
@@ -687,7 +697,37 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setDiscountedAmount(aggregatedWo.getDiscountedAmount());
         ratedTransaction.setDiscountValue(aggregatedWo.getDiscountValue());
 
+        if(ratedTransaction.getRulesContract() == null) {
+            BillingAccount billingAccount = billingAccountService.getBAFetchingCaAndCustomer(ba.getId());
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            Customer customer = customerAccount.getCustomer();
+            //Get the list of customers (current and parents)
+            List<Customer> customers = new ArrayList<>();
+            getCustomer(customer, customers);
+            List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
+            //Get contract by list of customer ids, billing account and customer account
+            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, null, aggregatedWo.getOperationDate());
+            Contract contractWithRules = contractService.lookupSuitableContract(customers, contracts, true);
+
+            ratedTransaction.setRulesContract(contractWithRules);
+        }
+
+        applyInvoicingRules(ratedTransaction);
+
         return ratedTransaction;
+    }
+
+
+    /**
+     * Get the customer and all parent customers
+     * @param pCustomer Customer
+     * @param pCustomerList List of customers (current customer and all parents)
+     */
+    private void getCustomer(Customer pCustomer, List<Customer> pCustomerList) {
+        pCustomerList.add(pCustomer);
+        if(pCustomer.getParentCustomer() != null) {
+            getCustomer(pCustomer.getParentCustomer(), pCustomerList);
+        }
     }
 
     private void setPricePlan(RatedTransaction ratedTransaction) {
@@ -1866,8 +1906,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate
      * @param invoiceDate
      * @param filter
-     * @param pageSize 
-     * @param pageIndex 
+     * @param pageSize
+     * @param pageIndex
      * @return
      */
     public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
@@ -2137,7 +2177,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         return false;
     }
-    
+
     private Boolean checkCriteriaEL(RatedTransaction rt, String expression) throws BusinessException {
         if (StringUtils.isBlank(expression)) {
             return null;
@@ -2266,7 +2306,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setParameter("ids", rtIds)
                 .getResultList();
     }
-	
+
 	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> findByFilter(Map<String, Object> filters) {
         PaginationConfiguration configuration = getPaginationConfigurationFromFilter(filters);

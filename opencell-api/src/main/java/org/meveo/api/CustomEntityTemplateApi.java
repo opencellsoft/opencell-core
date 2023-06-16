@@ -19,6 +19,7 @@
 package org.meveo.api;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -395,7 +396,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         Map<String, EntityCustomAction> cetActions = entityActionScriptService.findByAppliesTo(appliesTo);
 
-        return EntityCustomizationDto.toDTO(clazz, cetFields.values(), cetActions.values());
+        EntityCustomizationDto dto = EntityCustomizationDto.toDTO(clazz, cetActions.values());
+        setReferenceTables(dto, cetFields.values());
+        return dto;
     }
 
     public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode) throws MeveoApiException, ClassNotFoundException {
@@ -472,7 +475,8 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         // custom fields that applies to an entity type, eg. OfferTemplate
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo);
         Map<String, EntityCustomAction> caFields = entityCustomActionService.findByAppliesTo(appliesTo);
-        result = EntityCustomizationDto.toDTO(entityClass, cetFields.values(), caFields.values());
+        result = EntityCustomizationDto.toDTO(entityClass, caFields.values());
+        setReferenceTables(result, cetFields.values());
 
         // evaluate the CFT against the entity
         List<CustomFieldTemplateDto> evaluatedCFTDto = new ArrayList<>();
@@ -499,8 +503,6 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
      * Convert CustomEntityTemplate instance to CustomEntityTemplateDto object including the fields and actions
      * 
      * @param cet CustomEntityTemplate object to convert
-     * @param cetFields Fields (CustomFieldTemplate) that are part of CustomEntityTemplate
-     * @param cetActions Actions (EntityActionScript) available on CustomEntityTemplate
      * @return A CustomEntityTemplateDto object with fields set
      */
     private CustomEntityTemplateDto convertCustomEntityTemplateToDTO(CustomEntityTemplate cet) {
@@ -509,8 +511,8 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         Map<String, EntityCustomAction> cetActions = entityActionScriptService.findByAppliesTo(cet.getAppliesTo());
 
-        CustomEntityTemplateDto dto = new CustomEntityTemplateDto(cet, cetFields.values(), cetActions.values());
-
+        CustomEntityTemplateDto dto = new CustomEntityTemplateDto(cet, cetActions.values());
+        setReferenceTables(dto, cetFields.values());
         return dto;
     }
 
@@ -585,5 +587,39 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
 
         customEntityTemplateService.remove(cet);
+    }
+
+    /**
+     * Sets the reference tables
+     * @param dto the entity customization Dto
+     * @param cetFields Custom field template collection
+     */
+    private void setReferenceTables(EntityCustomizationDto dto, Collection<CustomFieldTemplate> cetFields){
+        if (cetFields != null) {
+            List<CustomFieldTemplateDto> fields = new ArrayList<>();
+            for (CustomFieldTemplate cft : cetFields) {
+                CustomFieldTemplateDto customFieldTemplateDto = new CustomFieldTemplateDto(cft);
+                customFieldTemplateDto.setReferenceTable(customEntityTemplateService.getReferenceTable(cft));
+                fields.add(customFieldTemplateDto);
+            }
+            dto.setFields(fields);
+        }
+    }
+
+    /**
+     * Sets the reference tables
+     * @param dto the custom entity template Dto
+     * @param cetFields Custom field template collection
+     */
+    private void setReferenceTables(CustomEntityTemplateDto dto, Collection<CustomFieldTemplate> cetFields){
+        if (cetFields != null) {
+            List<CustomFieldTemplateDto> fields = new ArrayList<>();
+            for (CustomFieldTemplate cft : cetFields) {
+                CustomFieldTemplateDto customFieldTemplateDto = new CustomFieldTemplateDto(cft);
+                customFieldTemplateDto.setReferenceTable(customEntityTemplateService.getReferenceTable(cft));
+                fields.add(customFieldTemplateDto);
+            }
+            dto.setFields(fields);
+        }
     }
 }

@@ -440,9 +440,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 e = (E) results.get(0);
             }
             return e;
-            
         } else {
-            Map<String, Object> hints = new HashMap<>();
+	        
+	        Map<String, Object> hints = new HashMap<>();
             hints.put("javax.persistence.cache.retrieveMode", CacheRetrieveMode.BYPASS);
             return getEntityManager().find(entityClass, id, hints);
         }

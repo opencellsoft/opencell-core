@@ -152,8 +152,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
                     .collect(Collectors.toSet());
             pricePlanMatrix.setChargeTemplates(charges);
         } else if (StringUtils.isNotBlank(postData.getEventCode())) {
-            ChargeTemplate chargeTemplate = Optional.ofNullable(chargeTemplateServiceAll.findByCode(postData.getCode()))
-                    .orElseThrow(() -> new EntityDoesNotExistsException(ChargeTemplate.class, postData.getCode()));
+            ChargeTemplate chargeTemplate = Optional.ofNullable(chargeTemplateServiceAll.findByCode(postData.getEventCode()))
+                    .orElseThrow(() -> new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode()));
             pricePlanMatrix.setChargeTemplates(Set.of(chargeTemplate));
         }
 
@@ -306,8 +306,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
                     .collect(Collectors.toSet());
             pricePlanMatrix.setChargeTemplates(charges);
         } else if (StringUtils.isNotBlank(postData.getEventCode())) {
-            ChargeTemplate chargeTemplate = Optional.ofNullable(chargeTemplateServiceAll.findByCode(postData.getCode()))
-                    .orElseThrow(() -> new EntityDoesNotExistsException(ChargeTemplate.class, postData.getCode()));
+            ChargeTemplate chargeTemplate = Optional.ofNullable(chargeTemplateServiceAll.findByCode(postData.getEventCode()))
+                    .orElseThrow(() -> new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode()));
             pricePlanMatrix.setChargeTemplates(Set.of(chargeTemplate));
         }
 

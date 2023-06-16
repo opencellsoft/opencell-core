@@ -609,7 +609,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
             
             //Get contract by list of customer ids, billing account and customer account
-            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, bareWalletOperation);
+            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, bareWalletOperation, null);
              
             // Unit price was not overridden
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise()) || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
@@ -1431,6 +1431,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         discountWalletOperation.setUserAccount(bareWalletOperation.getUserAccount());
         discountWalletOperation.setContract(bareWalletOperation.getContract());
         discountWalletOperation.setContractLine(bareWalletOperation.getContractLine());
+	    discountWalletOperation.setRulesContract(bareWalletOperation.getRulesContract());
         if (pricePlanMatrixLine != null) {
             discountWalletOperation.setPricePlanMatrixVersion(pricePlanMatrixLine.getPricePlanMatrixVersion());
             discountWalletOperation.setPriceplan(pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix());

@@ -369,7 +369,7 @@ public class PricePlanSelectionServiceTest {
         pdtVersionAttr2.setAttribute(attributes.get("engagement_duration"));
         pdtVersionAttr2.setSequence(1);
 
-        productVersion.setAttributes(List.of(pdtVersionAttr1, pdtVersionAttr2));
+        productVersion.setAttributes(Set.of(pdtVersionAttr1, pdtVersionAttr2));
 
         PricePlanMatrixColumn billingCycleColumn = new PricePlanMatrixColumn();
         billingCycleColumn.setProduct(product);

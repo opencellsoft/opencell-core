@@ -85,6 +85,7 @@ import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.ProductVersionAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.cpq.rule.ReplacementRulesExecutor;
@@ -828,7 +829,7 @@ public class ProductApi extends BaseApi {
 	private void processGroupedAttribute(ProductVersionDto postData, ProductVersion productVersion) {
 		Set<String> groupedAttributesCodes = postData.getGroupedAttributeCodes();
 		if(groupedAttributesCodes != null && !groupedAttributesCodes.isEmpty()) {
-			List<GroupedAttributes> groupedAttributes = new ArrayList<GroupedAttributes>();
+			Set<GroupedAttributes> groupedAttributes = new HashSet<>();
 			for (String groupedCode : groupedAttributesCodes) {
 				GroupedAttributes attributes = loadEntityByCode(groupedAttributeService, groupedCode, GroupedAttributes.class);
 				groupedAttributes.add(attributes);
@@ -868,7 +869,8 @@ public class ProductApi extends BaseApi {
             productVersion.getAttributes().addAll(attributes);
 		}
 	}
-	
+	@Inject
+	private ProductVersionAttributeService productVersionAttributeService;
 	private void validateTemplateAttribute(ProductVersionAttribute productAttribute) {
     	// A hidden mandatory field must have a default value 
     	if (productAttribute.isMandatory() && !productAttribute.isDisplay() 

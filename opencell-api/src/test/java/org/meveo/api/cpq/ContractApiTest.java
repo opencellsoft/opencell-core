@@ -1,11 +1,36 @@
 package org.meveo.api.cpq;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.cpq.TradingContractItemDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -16,28 +41,26 @@ import org.meveo.model.cpq.contract.BillingRule;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
+import org.meveo.model.cpq.contract.TradingContractItem;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
+import org.meveo.service.cpq.TradingContractItemService;
+import org.meveo.util.ApplicationProvider;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ContractApiTest {
@@ -53,6 +76,19 @@ public class ContractApiTest {
 
     @Mock
     private ContractService contractService;
+    
+	@Mock
+    private TradingContractItemService tradingContractItemService;
+	
+	@Mock
+	private TradingCurrencyService tradingCurrencyService;
+	
+	@Mock
+	private ContractItemService contractItemService;
+	
+	@Mock
+    @ApplicationProvider
+    protected Provider appProvider;
 
     @Mock
     private MeveoUser currentUser = new MeveoUser() {
@@ -254,4 +290,198 @@ public class ContractApiTest {
         });
 
     }
+    
+	@Test
+	public void shouldCreateTCI() {
+
+		CurrencyDto currencyDto = new CurrencyDto();
+		currencyDto.setCode("USD");
+
+		TradingContractItemDto data = new TradingContractItemDto();
+		data.setContractItemId(1L);
+		data.setTradingCurrency(currencyDto);
+		data.setRate(BigDecimal.valueOf(10));
+		data.setTradingValue(BigDecimal.valueOf(100));
+		
+		TradingCurrency eTradingCurrency = new TradingCurrency();
+		Currency eCurrency = new Currency();
+		eCurrency.setCurrencyCode("USD");
+		eTradingCurrency.setCurrency(eCurrency);
+		
+		Mockito.when(tradingCurrencyService.findByTradingCurrencyCodeOrId(anyString(), nullable(Long.class))).thenReturn(eTradingCurrency);
+		
+		ContractItem contractItem = new ContractItem();
+		Contract contract = new Contract();
+		contract.setStatus("DRAFT");
+		contractItem.setContract(contract);
+		Mockito.when(contractItemService.findById(anyLong())).thenReturn(contractItem);
+		Mockito.when(tradingContractItemService.findByContractItemAndCurrency(any(ContractItem.class), any(TradingCurrency.class))).thenReturn(null);
+		
+		Currency eFunctionalCurrency = new Currency();
+		eFunctionalCurrency.setCurrencyCode("EUR");
+		Mockito.when(appProvider.getCurrency()).thenReturn(eFunctionalCurrency);
+		
+		TradingContractItem entity = contractApi.createTradingContractItem(data);
+		Assert.assertNotNull(entity);
+	}
+
+	@Test(expected = MissingParameterException.class)
+	public void failCreateTCIMissingCI() {
+
+		CurrencyDto currencyDto = new CurrencyDto();
+		currencyDto.setCode("USD");
+
+		TradingContractItemDto data = new TradingContractItemDto();
+		data.setTradingCurrency(currencyDto);
+		data.setRate(BigDecimal.valueOf(10));
+		data.setTradingValue(BigDecimal.valueOf(100));
+		
+		contractApi.createTradingContractItem(data);
+		Assert.fail();
+	}
+
+	@Test(expected = MissingParameterException.class)
+	public void failCreateTCIMissingTradingCurrency() {
+
+		TradingContractItemDto data = new TradingContractItemDto();
+		data.setContractItemId(1L);
+		data.setRate(BigDecimal.valueOf(10));
+		data.setTradingValue(BigDecimal.valueOf(100));
+		
+		contractApi.createTradingContractItem(data);
+		Assert.fail();
+	}
+
+	@Test(expected = EntityDoesNotExistsException.class)
+	public void failCreateTCITradingCurrencyNotFound() {
+
+		CurrencyDto currencyDto = new CurrencyDto();
+		currencyDto.setCode("UDS");
+
+		TradingContractItemDto data = new TradingContractItemDto();
+		data.setContractItemId(1L);
+		data.setTradingCurrency(currencyDto);
+		data.setRate(BigDecimal.valueOf(10));
+		data.setTradingValue(BigDecimal.valueOf(100));
+		
+		TradingCurrency eTradingCurrency = new TradingCurrency();
+		Currency eCurrency = new Currency();
+		eCurrency.setCurrencyCode("USD");
+		eTradingCurrency.setCurrency(eCurrency);
+		
+		Mockito.when(tradingCurrencyService.findByTradingCurrencyCodeOrId(anyString(), nullable(Long.class))).thenReturn(null);
+		
+		contractApi.createTradingContractItem(data);
+		Assert.fail();
+	}
+
+	@Test(expected = InvalidParameterException.class)
+	public void failCreateTCISameCurrencyFunctional() {
+
+		CurrencyDto currencyDto = new CurrencyDto();
+		currencyDto.setCode("USD");
+
+		TradingContractItemDto data = new TradingContractItemDto();
+		data.setContractItemId(1L);
+		data.setTradingCurrency(currencyDto);
+		data.setRate(BigDecimal.valueOf(10));
+		data.setTradingValue(BigDecimal.valueOf(100));
+		
+		TradingCurrency eTradingCurrency = new TradingCurrency();
+		Currency eCurrency = new Currency();
+		eCurrency.setCurrencyCode("USD");
+		eTradingCurrency.setCurrency(eCurrency);
+		
+		Mockito.when(tradingCurrencyService.findByTradingCurrencyCodeOrId(anyString(), nullable(Long.class))).thenReturn(eTradingCurrency);
+		
+		Currency eFunctionalCurrency = new Currency();
+		eFunctionalCurrency.setCurrencyCode("USD");
+		Mockito.when(appProvider.getCurrency()).thenReturn(eFunctionalCurrency);
+		
+		contractApi.createTradingContractItem(data);
+		Assert.fail();
+	}
+
+	@Test
+	public void shouldUpdateTCI() {
+
+		CurrencyDto currencyDto = new CurrencyDto();
+		currencyDto.setCode("USD");
+
+		TradingContractItemDto data = new TradingContractItemDto();
+		data.setContractItemId(1L);
+		data.setTradingCurrency(currencyDto);
+		data.setRate(BigDecimal.valueOf(10));
+		data.setTradingValue(BigDecimal.valueOf(100));
+		
+		TradingCurrency eTradingCurrency = new TradingCurrency();
+		Currency eCurrency = new Currency();
+		eCurrency.setCurrencyCode("USD");
+		eTradingCurrency.setCurrency(eCurrency);
+		Mockito.when(tradingCurrencyService.findByTradingCurrencyCodeOrId(anyString(), nullable(Long.class))).thenReturn(eTradingCurrency);
+		
+		TradingContractItem tCI = new TradingContractItem();
+		ContractItem contractItem = new ContractItem();
+		Contract contract = new Contract();
+		contract.setStatus("DRAFT");
+		contractItem.setContract(contract);
+		tCI.setContractItem(contractItem);
+		tCI.setTradingValue(BigDecimal.valueOf(200));
+		Mockito.when(contractItemService.findById(anyLong())).thenReturn(contractItem);
+		Mockito.when(tradingContractItemService.findById(anyLong())).thenReturn(tCI);
+
+		Currency eFunctionalCurrency = new Currency();
+		eFunctionalCurrency.setCurrencyCode("EUR");
+		Mockito.when(appProvider.getCurrency()).thenReturn(eFunctionalCurrency);
+		
+		TradingContractItem entity = contractApi.updateTradingContractItem(1L, data);
+		Assert.assertNotNull(entity);
+	}
+
+
+	@Test(expected = MissingParameterException.class)
+	public void failUpdateTCIMissingIdTCI() {
+
+		CurrencyDto currencyDto = new CurrencyDto();
+		currencyDto.setCode("USD");
+
+		TradingContractItemDto data = new TradingContractItemDto();
+		data.setContractItemId(1L);
+		data.setTradingCurrency(currencyDto);
+		data.setRate(BigDecimal.valueOf(10));
+		data.setTradingValue(BigDecimal.valueOf(100));
+		
+		contractApi.updateTradingContractItem(null, data);
+		Assert.fail();
+	}
+
+	@Test
+	public void shouldDeleteTCI() {
+
+		TradingContractItem tCI = new TradingContractItem();
+		ContractItem contractItem = new ContractItem();
+		Contract contract = new Contract();
+		contract.setStatus("DRAFT");
+		contractItem.setContract(contract);
+		tCI.setContractItem(contractItem);
+		Mockito.when(tradingContractItemService.findById(anyLong())).thenReturn(tCI);
+
+		contractApi.deleteTradingContractItem(1L);
+		Assert.assertTrue("All good", true );
+	}
+
+	@Test(expected = InvalidParameterException.class)
+	public void failDeleteTCIInvalidStatus() {
+
+		TradingContractItem tCI = new TradingContractItem();
+		ContractItem contractItem = new ContractItem();
+		Contract contract = new Contract();
+		contract.setStatus("ACTIVE");
+		contractItem.setContract(contract);
+		tCI.setContractItem(contractItem);
+		Mockito.when(tradingContractItemService.findById(anyLong())).thenReturn(tCI);
+		
+		contractApi.deleteTradingContractItem(1L);
+		Assert.fail();
+	}
 }

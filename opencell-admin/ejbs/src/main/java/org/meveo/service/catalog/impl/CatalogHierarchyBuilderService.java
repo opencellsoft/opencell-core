@@ -220,7 +220,7 @@ public class CatalogHierarchyBuilderService {
     public void duplicateProductVersion(ProductVersion entity, List<ProductVersionAttribute> attributes, List<Tag> tags, List<GroupedAttributes> groupedAttributes, String prefix) throws BusinessException {
     
         if(attributes != null) {
-            entity.setAttributes(new ArrayList<ProductVersionAttribute>());
+            entity.setAttributes(new HashSet<>());
         	for (ProductVersionAttribute  productAttribute : attributes) {
         		for(Media media : productAttribute.getAttribute().getMedias()) {
         			Media newMedia = new Media(media);
@@ -242,7 +242,7 @@ public class CatalogHierarchyBuilderService {
         }
         
         if(groupedAttributes != null) {
-        	entity.setGroupedAttributes(new ArrayList<GroupedAttributes>());
+        	entity.setGroupedAttributes(new HashSet<>());
         	for (GroupedAttributes groupedAttribute : groupedAttributes) {
         		groupedAttribute = (GroupedAttributes) Hibernate.unproxy(groupedAttribute);
         		GroupedAttributes duplicateGroupedAttribute = new GroupedAttributes(groupedAttribute);
