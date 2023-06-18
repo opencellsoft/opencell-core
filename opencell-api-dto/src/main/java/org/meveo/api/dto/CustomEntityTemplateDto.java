@@ -91,10 +91,9 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
      * Convert CustomEntityTemplate instance to CustomEntityTemplateDto object including the fields and actions
      * 
      * @param cet CustomEntityTemplate object to convert
-     * @param cetFields Fields (CustomFieldTemplate) that are part of CustomEntityTemplate
      * @param cetActions Actions (EntityActionScript) available on CustomEntityTemplate
      */
-    public CustomEntityTemplateDto(CustomEntityTemplate cet, Collection<CustomFieldTemplate> cetFields, Collection<EntityCustomAction> cetActions) {
+    public CustomEntityTemplateDto(CustomEntityTemplate cet, Collection<EntityCustomAction> cetActions) {
         super(cet);
 
         setName(cet.getName());
@@ -112,14 +111,6 @@ public class CustomEntityTemplateDto extends EnableBusinessDto {
         if (!cet.isVersioned()) {
             setVersioned(false);
         }
-        if (cetFields != null) {
-            List<CustomFieldTemplateDto> fields = new ArrayList<CustomFieldTemplateDto>();
-            for (CustomFieldTemplate cft : cetFields) {
-                fields.add(new CustomFieldTemplateDto(cft));
-            }
-            setFields(fields);
-        }
-
         if (cetActions != null) {
             List<EntityCustomActionDto> actions = new ArrayList<EntityCustomActionDto>();
             for (EntityCustomAction action : cetActions) {

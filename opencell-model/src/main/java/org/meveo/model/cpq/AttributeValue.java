@@ -185,7 +185,7 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 				case TOTAL :
 				case COUNT :
 				case NUMERIC :
-				case INTEGER: return this.getDoubleValue() != null;
+				case INTEGER: return this.getDoubleValue();
 				case LIST_MULTIPLE_TEXT:
 				case LIST_TEXT:
 				case EXPRESSION_LANGUAGE :
@@ -213,6 +213,9 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 		}
 		return null;
 	}
-	
-	
+
+    @Override
+    public String toString() {
+        return attribute.getCode()+"="+getValue();
+    }	
 }

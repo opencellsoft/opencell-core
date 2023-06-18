@@ -423,6 +423,9 @@ public class InvoiceDto extends AuditableEntityDto {
     @Schema(description = "The date of exchange rate applied to amounts of the invoice.")
     private Date lastAppliedRateDate;
 
+    @Schema
+    protected boolean autoMatching;
+
     public List<String> getPaymentIncidents() {
         return paymentIncidents;
     }
@@ -1285,5 +1288,12 @@ public class InvoiceDto extends AuditableEntityDto {
     public void setLastAppliedRateDate(Date lastAppliedRateDate) {
         this.lastAppliedRateDate = lastAppliedRateDate;
     }
-    
+
+    public boolean isAutoMatching() {
+        return autoMatching;
+    }
+
+    public void setAutoMatching(boolean autoMatching) {
+        this.autoMatching = autoMatching;
+    }
 }

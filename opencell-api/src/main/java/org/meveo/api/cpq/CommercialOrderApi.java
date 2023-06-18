@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1346,13 +1347,13 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
         		}
         	
             orderAttributeDtos.stream()
-            		.map(orderAttributeDTO -> populateOrderAttribute(orderAttributeDTO, orderProduct, orderProduct!=null?orderProduct.getProductVersion().getAttributes():null,orderOffer))
+            		.map(orderAttributeDTO -> populateOrderAttribute(orderAttributeDTO, orderProduct, orderProduct!=null? orderProduct.getProductVersion().getAttributes():null,orderOffer))
                     .collect(Collectors.toList())
                     .forEach(orderAttribute -> orderAttributeService.create(orderAttribute));
         }
     }
 	
-	private OrderAttribute 	populateOrderAttribute(OrderAttributeDto orderAttributeDTO, OrderProduct orderProduct, List<ProductVersionAttribute> productVersionAttributes, OrderOffer orderOffer) {
+	private OrderAttribute 	populateOrderAttribute(OrderAttributeDto orderAttributeDTO, OrderProduct orderProduct, Set<ProductVersionAttribute> productVersionAttributes, OrderOffer orderOffer) {
         if (Strings.isEmpty( orderAttributeDTO.getOrderAttributeCode())) {
             missingParameters.add("orderAttributeCode");
             handleMissingParameters();

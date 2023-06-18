@@ -61,7 +61,7 @@ public class MassAdjustmentJobBean extends BaseJobBean {
         int totalImpactedBA = impactedInvoices.stream().map(Invoice::getBillingAccount).distinct().mapToInt(i -> 1).sum();
         
         for (Invoice invoice : impactedInvoices) {
-        	Invoice adjustment = invoiceService.createAdjustment(invoice, invoiceLinesToAdjustIds);
+        	Invoice adjustment = invoiceService.createAdjustment(invoice, invoiceLinesToAdjustIds, null);
         	invoiceService.validateInvoice(adjustment);
         	adjustment.setInvoiceLines(invoiceLineService.listInvoiceLinesByInvoice(adjustment.getId()));
         	totalLinesProcessed += adjustment.getInvoiceLines().size();

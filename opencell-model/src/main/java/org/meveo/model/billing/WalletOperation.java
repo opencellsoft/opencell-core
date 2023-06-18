@@ -595,6 +595,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
     
+    /**
+     * What Wallet operation the current Wallet operation, representing a discount amount, is related to
+     */
     @Column(name = "discounted_wallet_operation_id")
     private Long discountedWalletOperation;
     

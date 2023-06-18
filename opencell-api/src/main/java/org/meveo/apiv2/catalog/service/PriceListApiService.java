@@ -11,12 +11,11 @@ import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 
 import org.hibernate.collection.spi.PersistentCollection;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.exception.*;
 import org.meveo.apiv2.catalog.resource.pricelist.PriceListMapper;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
@@ -29,7 +28,6 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CreditCategory;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
@@ -99,10 +97,9 @@ public class PriceListApiService extends BaseApi {
     /**
      * Create a price list
      * @param priceList {@link PriceList}
-     * @param paymentMethods A list of {@link PaymentMethod}
      * @return {@link PriceList}
      */
-    public PriceList create(PriceList priceList) {
+    public PriceList create(PriceList priceList, CustomFieldsDto customFields) {
         if (priceListService.findByCode(priceList.getCode()) != null) {
             throw new EntityAlreadyExistsException(PriceList.class, priceList.getCode());
         }
@@ -110,18 +107,26 @@ public class PriceListApiService extends BaseApi {
         setDefaultValues(priceList);
         validateMandatoryFields(priceList);
         validateApplicationRules(priceList);
-        priceListService.create(priceList);
+
+        try {
+            populateCustomFields(customFields, priceList, true);
+            priceListService.create(priceList);
+        } catch(BusinessException e) {
+            throw new MeveoApiException(e);
+        }
+
         return priceList;
     }
-    
+
     /**
      * Update a price list
-     * @param priceList {@link PriceList}
-     * @param id Price List id to update
-     * @param paymentMethods A list of {@link PaymentMethod}
+     *
+     * @param priceList     {@link PriceList}
+     * @param priceListCode Price List Code
+     * @param customFields
      * @return {@link PriceList}
      */
-    public Optional<PriceList> update(PriceList priceList, String priceListCode) {
+    public Optional<PriceList> update(PriceList priceList, String priceListCode, CustomFieldsDto customFields) {
     	PriceList priceListToUpdate = Optional.ofNullable(priceListService.findByCode(priceListCode)).orElseThrow(() -> new EntityDoesNotExistsException(PriceList.class, priceListCode));    	
     	if(!PriceListStatusEnum.DRAFT.equals(priceListToUpdate.getStatus())) {
              throw new BusinessApiException("Updating a PriceList other than DRAFT is not allowed");
@@ -131,13 +136,20 @@ public class PriceListApiService extends BaseApi {
     	validateApplicationRules(priceList);
     	updatePriceListFields(priceList, priceListToUpdate);
     	updatePriceListFieldLists(priceList, priceListToUpdate);
-        priceListService.update(priceListToUpdate);
-        return Optional.ofNullable(priceList);
+
+        try {
+            populateCustomFields(customFields, priceListToUpdate, true);
+            priceListService.update(priceListToUpdate);
+        } catch(BusinessException e) {
+            throw new MeveoApiException(e);
+        }
+
+        return Optional.ofNullable(priceListToUpdate);
     }
 
     /**
      * Delete a Price List
-     * @param id Price List Id
+     * @param priceListCode Price List Id
      * @return {@link PriceList}
      */
     public Optional<PriceList> delete(String priceListCode) {
@@ -166,7 +178,7 @@ public class PriceListApiService extends BaseApi {
 
                 priceListToUpdate.getLines()
                                  .stream()
-                                 .filter(pll -> pll.getRate() != null || (pll.getPricePlan()!= null && !pll.getPricePlan().getVersions().isEmpty()  && pll.getPricePlan()
+                                 .filter(pll -> pll.getRate() != null || pll.getAmount() != null || (pll.getPricePlan()!= null && !pll.getPricePlan().getVersions().isEmpty()  && pll.getPricePlan()
                                                                                                           .getVersions()
                                                                                                           .stream()
                                                                                                           .anyMatch(ppv -> ppv.getStatus().equals(VersionStatusEnum.PUBLISHED))))
@@ -266,7 +278,6 @@ public class PriceListApiService extends BaseApi {
     /**
      * Validate Application rules
      * @param priceList {@link PriceList}
-     * @param paymentMethods A list of {@link PaymentMethod}
      */
     private void validateApplicationRules(PriceList priceList) {
     	if (priceList.getBrands() != null && !(priceList.getBrands() instanceof PersistentCollection)) {
@@ -665,7 +676,6 @@ public class PriceListApiService extends BaseApi {
 
     @TransactionAttribute
     public PriceList duplicate(String priceListCode) {
-
         if(StringUtils.isBlank(priceListCode)) {
             throw new MissingParameterException("priceListCode");
         }

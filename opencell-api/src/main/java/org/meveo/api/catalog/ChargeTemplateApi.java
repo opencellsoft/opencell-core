@@ -20,7 +20,9 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,10 +38,12 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UnitOfMeasure;
@@ -49,6 +53,7 @@ import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UnitOfMeasureService;
 import org.meveo.service.cpq.AttributeService;
@@ -82,6 +87,9 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
 
     @Inject
     private AttributeService attributeService;
+
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
     /**
      * Convert/update DTO object to an entity object
@@ -183,6 +191,21 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
                 ScriptInstance ratingScript = scriptInstanceService.findByCode(postData.getRatingScriptCode());
                 chargeTemplate.setRatingScript(ratingScript);
             }
+        }
+
+        if (!ListUtils.isEmtyCollection(postData.getPricePlanCodes())) {
+            Set<PricePlanMatrix> pricePlans = postData.getPricePlanCodes()
+                                                        .stream()
+                                                        .map(c -> Optional.ofNullable(pricePlanMatrixService.findByCode(c))
+                                                                            .orElseThrow(() -> new EntityDoesNotExistsException(PricePlanMatrix.class, c)))
+                                                        .collect(Collectors.toSet());
+
+            pricePlans.forEach(pp -> {
+                if(pp.getChargeTemplates() == null) {
+                    pp.setChargeTemplates(new HashSet<>());
+                }
+                pp.getChargeTemplates().add(chargeTemplate);
+            });
         }
 
         if (isNew && postData.isDisabled() != null) {

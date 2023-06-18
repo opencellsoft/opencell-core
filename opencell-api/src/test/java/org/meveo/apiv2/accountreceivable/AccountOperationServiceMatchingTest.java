@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.AcountReceivable.AccountOperationAndSequence;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -43,8 +44,11 @@ public class AccountOperationServiceMatchingTest {
     @Test
     public void matchOperationsNominal() throws Exception {
         AccountOperation ao = buildAo("ABC", 1L);
+        TradingCurrency tradingCurrency = new TradingCurrency();
+        tradingCurrency.setId(1L);
+        ao.setTransactionalCurrency(tradingCurrency);
         Mockito.when(customerAccountService.findById(any())).thenReturn(ao.getCustomerAccount());
-        Mockito.when(accountOperationService.findByIds(any())).thenReturn(List.of(ao));
+        Mockito.when(accountOperationService.findById(1L)).thenReturn(ao);
         Mockito.doNothing().when(paymentPlanService).toComplete(any());
 
         List<AccountOperationAndSequence> request = buildRequest(List.of(1L), List.of(0));
@@ -52,20 +56,12 @@ public class AccountOperationServiceMatchingTest {
 
     }
 
-    @Test(expected = EntityDoesNotExistsException.class)
-    public void matchOperationsExceptionEntityNotFound() {
-        Mockito.when(accountOperationService.findByIds(any())).thenReturn(new ArrayList<>());
-
-        List<AccountOperationAndSequence> request = buildRequest(List.of(1L), List.of(0));
-        accountOperationApiService.matchOperations(request);
-
-    }
-
     @Test
     public void matchOperationsExceptionDifferentCustomer() {
         AccountOperation ao1 = buildAo("ABC", 1L);
         AccountOperation ao2 = buildAo("ABC", 2L);
-        Mockito.when(accountOperationService.findByIds(any())).thenReturn(Arrays.asList(ao1, ao2));
+        Mockito.when(accountOperationService.findById(1L)).thenReturn(ao1);
+        Mockito.when(accountOperationService.findById(2L)).thenReturn(ao2);
 
         try {
             List<AccountOperationAndSequence> request = buildRequest(Arrays.asList(1L, 2L), Arrays.asList(0, 1));
@@ -81,7 +77,8 @@ public class AccountOperationServiceMatchingTest {
     public void matchOperationsExceptionInvalidAoCode() {
         AccountOperation ao1 = buildAo("CRD_SD", 1L);
         AccountOperation ao2 = buildAo("REF_SD", 1L);
-        Mockito.when(accountOperationService.findByIds(any())).thenReturn(Arrays.asList(ao1, ao2));
+        Mockito.when(accountOperationService.findById(1L)).thenReturn(ao1);
+        Mockito.when(accountOperationService.findById(2L)).thenReturn(ao2);
 
         try {
             List<AccountOperationAndSequence> request = buildRequest(Arrays.asList(1L, 2L), Arrays.asList(0, 1));
@@ -98,7 +95,8 @@ public class AccountOperationServiceMatchingTest {
     public void matchOperationsExceptionNoCustomerFound() {
         AccountOperation ao1 = buildAo("ABC", 1L);
         AccountOperation ao2 = buildAo("EFG", 1L);
-        Mockito.when(accountOperationService.findByIds(any())).thenReturn(Arrays.asList(ao1, ao2));
+        Mockito.when(accountOperationService.findById(1L)).thenReturn(ao1);
+        Mockito.when(accountOperationService.findById(2L)).thenReturn(ao2);
 
         try {
             List<AccountOperationAndSequence> request = buildRequest(Arrays.asList(1L, 2L), Arrays.asList(0, 1));

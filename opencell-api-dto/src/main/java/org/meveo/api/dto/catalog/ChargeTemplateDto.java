@@ -20,7 +20,9 @@ package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.Size;
@@ -159,6 +161,8 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 
     @Schema(description = "Internal Note")
     private String internalNote;
+
+    private Set<String> pricePlanCodes = new HashSet<>();
 
     /**
      * Instantiates a new charge template dto.
@@ -609,4 +613,11 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 		this.internalNote = internalNote;
 	}
 
+    public Set<String> getPricePlanCodes() {
+        return pricePlanCodes;
+    }
+
+    public void setPricePlanCodes(Set<String> pricePlanCodes) {
+        this.pricePlanCodes = pricePlanCodes;
+    }
 }

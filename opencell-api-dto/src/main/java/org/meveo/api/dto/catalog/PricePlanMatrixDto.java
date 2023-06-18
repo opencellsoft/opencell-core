@@ -20,7 +20,9 @@ package org.meveo.api.dto.catalog;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.Size;
@@ -50,9 +52,11 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     private static final long serialVersionUID = -9089693491690592072L;
 
     /** The event code. */
-    @XmlElement(required = true)
     @Schema(description = "The event code")
     private String eventCode;
+
+    @Schema(description = "The Charge templates Codes")
+    private Set<String> chargeTemplateCodes = new HashSet<>();
 
     /** The seller. */
     @Schema(description = "The seller code")
@@ -931,5 +935,13 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
      */
     public void setParameter3El(String parameter3El) {
         this.parameter3El = parameter3El;
+    }
+
+    public Set<String> getChargeTemplateCodes() {
+        return chargeTemplateCodes;
+    }
+
+    public void setChargeTemplateCodes(Set<String> chargeTemplateCodes) {
+        this.chargeTemplateCodes = chargeTemplateCodes;
     }
 }

@@ -25,6 +25,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
 
@@ -191,6 +192,8 @@ public class AggregatedWalletOperation {
 	private DiscountPlanItem discountPlanItem;
 	private BigDecimal discountedAmount;
 	private BigDecimal discountValue;
+
+	private Contract rulesContract;
 
 	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax, InvoiceSubCategory invoiceSubCategory, Object id,
 									 BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax,
@@ -650,5 +653,13 @@ public class AggregatedWalletOperation {
 
 	public void setDiscountValue(BigDecimal discountValue) {
 		this.discountValue = discountValue;
+	}
+
+	public Contract getRulesContract() {
+		return rulesContract;
+	}
+
+	public void setRulesContract(Contract rulesContract) {
+		this.rulesContract = rulesContract;
 	}
 }

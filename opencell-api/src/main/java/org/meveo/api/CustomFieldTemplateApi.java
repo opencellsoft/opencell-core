@@ -35,6 +35,7 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
@@ -63,7 +64,10 @@ public class CustomFieldTemplateApi extends BaseApi {
 
     @Inject
     private CustomizedEntityService customizedEntityService;
-    
+
+    @Inject
+    CustomEntityTemplateService customEntityTemplateService;
+
     public void create(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
         create(postData, appliesTo, true);
     }
@@ -338,7 +342,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (cft == null) {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code + "/" + appliesTo);
         }
-        return new CustomFieldTemplateDto(cft);
+        CustomFieldTemplateDto customFieldTemplateDto = new CustomFieldTemplateDto(cft);
+        customFieldTemplateDto.setReferenceTable(customEntityTemplateService.getReferenceTable(cft));
+        return customFieldTemplateDto;
     }
 
     /**

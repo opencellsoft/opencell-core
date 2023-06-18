@@ -275,6 +275,9 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @ManyToMany(mappedBy = "chargeTemplates", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Attribute> attributes = new HashSet<>();
 
+    @ManyToMany(mappedBy = "chargeTemplates", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private Set<PricePlanMatrix> pricePlans = new HashSet<>();
+
     // Calculated values
     @Transient
     private boolean roundingValuesComputed;
@@ -654,5 +657,11 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 		this.internalNote = internalNote;
 	}
 
-    
+    public Set<PricePlanMatrix> getPricePlans() {
+        return pricePlans;
+    }
+
+    public void setPricePlans(Set<PricePlanMatrix> pricePlans) {
+        this.pricePlans = pricePlans;
+    }
 }

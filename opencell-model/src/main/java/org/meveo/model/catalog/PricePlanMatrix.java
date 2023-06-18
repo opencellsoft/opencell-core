@@ -21,8 +21,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Cacheable;
@@ -31,6 +33,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -41,7 +45,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -56,7 +59,6 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.cpq.contract.ContractItem;
-import org.meveo.model.payments.DunningLOT;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -76,7 +78,25 @@ import org.meveo.model.scripts.ScriptInstance;
         @Parameter(name = "sequence_name", value = "cat_price_plan_matrix_seq"), })
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCode", query = "SELECT ppm from PricePlanMatrix ppm where ppm.disabled is false and ppm.eventCode=:chargeCode order by ppm.priority ASC, id", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+                @QueryHint(name = "org.hibernate.cacheable", value = "true"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
+        @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCodeForRatingMatchDB", query = "SELECT ppm from PricePlanMatrix ppm where ppm.disabled is false and ppm.eventCode=:chargeCode and "
+                + "(seller.id is null or seller.id=:sellerId) and (offerTemplate.id is null or offerTemplate.id=:offerId) and (tradingCountry.id is null or tradingCountry.id=:tradingCountryId) and (tradingCurrency.id is null or tradingCurrency.id=:tradingCurrencyId) and "
+                + "(criteria1Value is null or criteria1Value=:param1) and (criteria2Value is null or criteria2Value=:param2) and (criteria3Value is null or criteria3Value=:param3) and (startSubscriptionDate is null or startSubscriptionDate<=:subscriptionDate) and "
+                + "(endSubscriptionDate is null or endSubscriptionDate>:subscriptionDate) and (minSubscriptionAgeInMonth is null or minSubscriptionAgeInMonth<=:subscriptionAge) and (maxSubscriptionAgeInMonth is null or maxSubscriptionAgeInMonth>:subscriptionAge) and "
+                + "(startRatingDate is null or startRatingDate<=:operationDate) and (endRatingDate is null or endRatingDate>:operationDate) and (validityFrom is null or validityFrom<:startDate) and (validityDate is null or (validityDate>=:startDate or validityDate>=:endDate)) and "
+                + "(maxQuantity is null or maxQuantity>:quantity) and (minQuantity is null or minQuantity<=:quantity)"
+                + "order by ppm.priority ASC, id", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCodeForRating", query = "SELECT new org.meveo.model.catalog.PricePlanMatrixForRating(id,  code, offerTemplate.id,  startSubscriptionDate,  endSubscriptionDate,  startRatingDate,  endRatingDate,  minQuantity, "
+                + "maxQuantity, minSubscriptionAgeInMonth, maxSubscriptionAgeInMonth,  criteria1Value,  criteria2Value,  criteria3Value,  criteriaEL,  amountWithoutTax, "
+                + "amountWithTax,  amountWithoutTaxEL,  amountWithTaxEL, tradingCurrency.id, tradingCountry.id,  priority, seller.id, validityCalendar.id, sequence, scriptInstance.id, "
+                + "totalAmountEL,  minimumAmountEL,  invoiceSubCategoryEL,  validityFrom,  validityDate) from PricePlanMatrix ppm where ppm.disabled is false and ppm.eventCode=:chargeCode and "
+                + "(seller.id is null or seller.id=:sellerId) and (offerTemplate.id is null or offerTemplate.id=:offerId) and (tradingCountry.id is null or tradingCountry.id=:tradingCountryId) and (tradingCurrency.id is null or tradingCurrency.id=:tradingCurrencyId) and "
+                + "(criteria1Value is null or criteria1Value=:param1) and (criteria2Value is null or criteria2Value=:param2) and (criteria3Value is null or criteria3Value=:param3) and (startSubscriptionDate is null or startSubscriptionDate<=:subscriptionDate) and "
+                + "(endSubscriptionDate is null or endSubscriptionDate>:subscriptionDate) and (minSubscriptionAgeInMonth is null or minSubscriptionAgeInMonth<=:subscriptionAge) and (maxSubscriptionAgeInMonth is null or maxSubscriptionAgeInMonth>:subscriptionAge) and "
+                + "(startRatingDate is null or startRatingDate<=:operationDate) and (endRatingDate is null or endRatingDate>:operationDate) and (validityFrom is null or validityFrom<:startDate) and (validityDate is null or (validityDate>=:startDate or validityDate>=:endDate)) and "
+                + "(maxQuantity is null or maxQuantity>:quantity) and (minQuantity is null or minQuantity<=:quantity)"
+                + "order by ppm.priority ASC, id", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+
 public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparable<PricePlanMatrix>, ISearchable {
     private static final long serialVersionUID = 1L;
 
@@ -131,9 +151,8 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	/**
      * Charge code
      */
-    @Column(name = "event_code", length = 255, nullable = false)
+    @Column(name = "event_code", length = 255, nullable = true)
     @Size(min = 1, max = 255)
-    @NotNull
     private String eventCode;
 
     /**
@@ -143,7 +162,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
-    @OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PricePlanMatrixVersion> versions = new ArrayList<>();
 
     /**
@@ -372,12 +391,16 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @JoinColumn(name = "charge_template_id")
     private ChargeTemplate chargeTemplate;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "cat_price_plan_charge", joinColumns = @JoinColumn(name = "price_plan_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
+    private Set<ChargeTemplate> chargeTemplates = new HashSet<>();
+
     @OneToMany(mappedBy = "pricePlan", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ContractItem> contractItems;
     /**
 	 * Discount plan items
 	 */
-	@OneToMany(mappedBy = "pricePlanMatrix", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<DiscountPlanItem> discountPlanItems = new ArrayList<>();  
 	
     public String getEventCode() {
@@ -639,6 +662,8 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
+        } else if (id != null && other.getId() != null && !id.equals(other.getId())) {
+            return false;
         }
 
         if (criteria1Value == null) {
@@ -890,6 +915,14 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 
     public void setChargeTemplate(ChargeTemplate chargeTemplate) {
         this.chargeTemplate = chargeTemplate;
+    }
+
+    public Set<ChargeTemplate> getChargeTemplates() {
+        return chargeTemplates;
+    }
+
+    public void setChargeTemplates(Set<ChargeTemplate> chargeTemplates) {
+        this.chargeTemplates = chargeTemplates;
     }
 
     public List<ContractItem> getContractItems() {
