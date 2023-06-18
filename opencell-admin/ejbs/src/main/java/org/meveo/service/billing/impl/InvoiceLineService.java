@@ -275,7 +275,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      */
     public void validateAdjAmount(Invoice newInvoice) {
         // Check global Invoice Amount
-        LinkedInvoice linkedInvoice = findByLinkedInvoiceADJ(newInvoice.getId());
+        LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(newInvoice.getId());
         if (linkedInvoice != null) {
             validateAdjAmount(newInvoice.getInvoiceLines(), linkedInvoice.getInvoice());
         }
@@ -1400,18 +1400,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     public BigDecimal getAdjustementAmounts(Long invoiceId) {
         return (BigDecimal) getEntityManager().createNamedQuery("InvoiceLine.getAdjustmentAmount").setParameter("ID_INVOICE", invoiceId).getSingleResult();
-    }
-
-    public LinkedInvoice findByLinkedInvoiceADJ(Long invoiceId) {
-        List<LinkedInvoice> results = getEntityManager().createNamedQuery("LinkedInvoice.findByLinkedInvoiceADJ")
-                .setParameter("ID_INVOICE", invoiceId)
-                .getResultList();
-
-        if (CollectionUtils.isNotEmpty(results)) {
-            return results.get(0);
-        }
-
-        return null;
     }
 
     public List<BillingAccount> findBillingAccountsBy(List<Long> invoiceLinesIds) {

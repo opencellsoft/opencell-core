@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -61,6 +62,7 @@ import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -77,6 +79,7 @@ import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
@@ -87,6 +90,8 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstance;
@@ -106,7 +111,9 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 import org.meveo.util.ApplicationProvider;
@@ -175,6 +182,12 @@ public class InvoiceApi extends BaseApi {
     
     @Inject
     private SecurityDepositService securityDepositService;
+
+    @Inject
+    private AccountOperationService accountOperationService;
+
+    @Inject
+    private MatchingCodeService matchingCodeService;
     
     @Inject
     @ApplicationProvider
@@ -619,6 +632,36 @@ public class InvoiceApi extends BaseApi {
             updatePaymentStatus(invoice, today, PENDING);
         }else if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
             updatePaymentStatus(invoice, today, UNPAID);
+        }
+
+        // at the time of the validation of the ADJ via the API validate if the autoMatching is true so we automatically match its AO with that of the original invoice
+        // (knowing that the API validate has the param generateAO=true from the portal)
+        if (invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode())) {
+            // Check if the invoice is not PAID
+            if (invoice.getPaymentStatus() == InvoicePaymentStatusEnum.PAID) {
+                throw new BusinessApiException("The Adjustment invoice is already paid, we can not process auto-matching for the linked AccountOperation");
+            }
+
+            LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(invoice.getId());
+
+            if (linkedInvoice==null) {
+                throw new BusinessApiException("Adjustement invoice [" + invoice.getId() + "] does not have a link with a source Invoice");
+            }
+
+            AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(linkedInvoice.getInvoice()).get(0);
+            AccountOperation aoAdjInvoice = accountOperationService.listByInvoice(invoice).get(0);
+
+            if (aoAdjInvoice.getMatchingStatus() != MatchingStatusEnum.L) {
+                try {
+                    matchingCodeService.matchOperations(aoAdjInvoice.getCustomerAccount().getId(), aoAdjInvoice.getCustomerAccount().getCode(),
+                            List.of(aoAdjInvoice.getId(), aoOriginalInvoice.getId()), aoOriginalInvoice.getId(),
+                            MatchingTypeEnum.A, aoOriginalInvoice.getUnMatchingAmount());
+                } catch (Exception e) {
+                    log.error("Error on payment callback processing:", e);
+                    throw new BusinessException(e.getMessage(), e);
+                }
+            }
+
         }
         
         if (invoiceService.isInvoiceXmlExist(invoice)) {

@@ -30,7 +30,7 @@ import org.meveo.model.IEntity;
     @NamedQuery(name = "LinkedInvoice.deleteByInvoiceIdAndType", query = "delete from LinkedInvoice l where l.id.id = :invoiceId and l.type = (:type)"),
     @NamedQuery(name = "LinkedInvoice.find", query = "select l from LinkedInvoice l where l.id.id = :invoiceId and l.linkedInvoiceValue.id = :linkedInvoiceId"),
     @NamedQuery(name = "LinkedInvoice.removeLinkedAdvances", query = "DELETE FROM LinkedInvoice li where li.id.id in (:invoiceIds) and li.type='ADVANCEMENT_PAYMENT'"),
-    @NamedQuery(name = "LinkedInvoice.findByLinkedInvoiceADJ", query = "SELECT li FROM LinkedInvoice li WHERE li.linkedInvoiceValue.id = :ID_INVOICE AND li.type='ADJUSTMENT'")
+    @NamedQuery(name = "LinkedInvoice.findBySourceInvoiceByAdjId", query = "SELECT li FROM LinkedInvoice li WHERE li.linkedInvoiceValue.id = :ID_INVOICE_ADJ AND li.type='ADJUSTMENT'")
     
 })
 public class LinkedInvoice implements IEntity, Serializable {
@@ -41,12 +41,12 @@ public class LinkedInvoice implements IEntity, Serializable {
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id", nullable = false, referencedColumnName = "id")
-    private Invoice id;
+    private Invoice id; // Source invoice, from which the adjustment is created
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "linked_invoice_id", nullable = false, referencedColumnName = "id")
-    private Invoice linkedInvoiceValue;
+    private Invoice linkedInvoiceValue; // ADJ Invoice
     
     
     @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)

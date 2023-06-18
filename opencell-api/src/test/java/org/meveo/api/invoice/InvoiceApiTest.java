@@ -2,6 +2,7 @@ package org.meveo.api.invoice;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.junit.Assert;
@@ -11,7 +12,9 @@ import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,6 +29,9 @@ public class InvoiceApiTest {
 
     @Mock
     private InvoiceService invoiceService;
+
+    @Mock
+    private InvoiceTypeService invoiceTypeService;
 
     @Mock
     private ServiceSingleton serviceSingleton;
@@ -46,12 +52,15 @@ public class InvoiceApiTest {
         invoice.setAmountTax(BigDecimal.TEN);
         invoice.setAmountWithTax(new BigDecimal(20));
         invoice.setAmountWithoutTax(BigDecimal.TEN);
+        invoice.setInvoiceType(new InvoiceType());
 
         Mockito.when(serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, true)).thenReturn(invoice);
 
         Mockito.when(invoiceService.refreshOrRetrieve(Mockito.any(Invoice.class))).thenReturn(invoice);
 
         Mockito.when(invoiceService.findById(invoiceId)).thenReturn(invoice);
+
+        Mockito.when(invoiceTypeService.getListAdjustementCode()).thenReturn(new ArrayList<>());
                 
         try {
             String invNumber = invoiceApi.validateInvoice(invoiceId, false, true, true);
