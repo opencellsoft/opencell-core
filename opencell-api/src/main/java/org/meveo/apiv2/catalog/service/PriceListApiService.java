@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -93,6 +95,8 @@ public class PriceListApiService extends BaseApi {
 
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+
+    private static final String REGEX_CODE = "^[a-zA-Z0-9_ -]+$";
 
     /**
      * Create a price list
@@ -237,6 +241,10 @@ public class PriceListApiService extends BaseApi {
     	} else if(priceList.getCode().length() > 50) {
     		throw new BusinessApiException("The code must be 50 characters or less");
     	}
+
+        if (!priceList.getCode().matches(REGEX_CODE)) {
+            throw new BusinessApiException("PriceList code should not contains special characters");
+        }
     	
     	if(priceList.getDescription() != null && !priceList.getDescription().isEmpty() && priceList.getDescription().length() > 255) {
     		throw new BusinessApiException("The description must be 255 characters or less");

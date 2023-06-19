@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Stateless
 public class PriceListLineApiService extends BaseApi {
@@ -67,9 +69,15 @@ public class PriceListLineApiService extends BaseApi {
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
 
+    private static final String REGEX_CODE = "^[a-zA-Z0-9_ -]+$";
+
     public Long create(PriceListLineDto postDto) {
 
         checkMandatoryFields(postDto);
+
+        if (!postDto.getCode().matches(REGEX_CODE)) {
+            throw new BusinessApiException("PriceList code should not contains special characters");
+        }
 
         PriceListLine entityToSave = new PriceListLine();
 
@@ -294,6 +302,10 @@ public class PriceListLineApiService extends BaseApi {
     public Long update(Long priceListLineId, PriceListLineDto postDto) {
 
         checkMandatoryFields(postDto);
+
+        if (!postDto.getCode().matches(REGEX_CODE)) {
+            throw new BusinessApiException("PriceList code should not contains special characters");
+        }
 
         PriceListLine priceListLineToUpdate = priceListLineService.findById(priceListLineId);
         if(priceListLineToUpdate == null) {
