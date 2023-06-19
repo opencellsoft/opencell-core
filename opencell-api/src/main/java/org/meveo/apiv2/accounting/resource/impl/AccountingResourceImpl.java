@@ -84,11 +84,11 @@ public class AccountingResourceImpl implements AccountingResource {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         if (valueValideNodeBoolean) {
             return Response.ok(result).build();
-        }        
-        
+        }
+	    
         return serverError()
-                .entity("{\"actionStatus\":{\"status\":\"FAIL\",\"message\":\"Invalid\"}")
-                .build();                
+                .entity(new ActionStatus(ActionStatusEnum.FAIL, "invalid vat"))
+                .build();
     }   
 
     private AuxiliaryAccount buildResponse(CustomerAccount customerAccount, Map<String, String> accountingResult) {
