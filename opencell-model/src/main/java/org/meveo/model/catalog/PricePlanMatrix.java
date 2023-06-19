@@ -77,6 +77,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_price_plan_matrix_seq"), })
 @NamedQueries({
+        @NamedQuery(name = "PricePlanMatrix.getPricePlansByChargeCode", query = "SELECT ppm from PricePlanMatrix ppm join ppm.chargeTemplates as ct where ct.code=:chargeCode order by ppm.priority ASC"),
         @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCode", query = "SELECT ppm from PricePlanMatrix ppm join ppm.chargeTemplates as ct where ppm.disabled is false and ct.code=:chargeCode order by ppm.priority ASC, ppm.id", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
         @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCodeForRatingMatchDB", query = "SELECT ppm from PricePlanMatrix ppm join ppm.chargeTemplates as ct where ppm.disabled is false and ct.code=:chargeCode and "

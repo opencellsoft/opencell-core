@@ -96,7 +96,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     }
 
     public void validatePricePlan(PricePlanMatrix pp) {
-        List<PricePlanMatrix> pricePlanMatrices = new ArrayList<>(); // TODO #ARE listByChargeCode(pp.getEventCode());
+        List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(pp.getEventCode());
         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices){
             if(!pricePlanMatrix.getId().equals(pp.getId()) &&
                     areValidityPeriodsOverlap(pp.getValidityFrom(), pp.getValidityDate(), pricePlanMatrix.getValidityFrom(), pricePlanMatrix.getValidityDate())){
@@ -549,15 +549,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
      */
     @SuppressWarnings("unchecked")
     public List<PricePlanMatrix> listByChargeCode(String chargeCode) {
-        QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null);
-        qb.addCriterion("eventCode", "=", chargeCode, true);
-        qb.addOrderCriterionAsIs("priority", true);
-
-        try {
-            return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
+        return getEntityManager().createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCode", PricePlanMatrix.class)
+                .setParameter("chargeCode", chargeCode)
+                .getResultList();
     }
 
     /**
