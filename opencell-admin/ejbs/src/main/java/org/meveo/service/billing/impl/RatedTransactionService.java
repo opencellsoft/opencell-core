@@ -24,7 +24,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections4.ListUtils.partition;
 import static org.meveo.commons.utils.ParamBean.getInstance;
 import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
-import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -44,7 +43,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -76,40 +74,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.ApplyMinimumModeEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.DateAggregationOption;
-import org.meveo.model.billing.ExtraMinAmount;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceLine;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.MinAmountData;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.MinAmountsResult;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionAction;
-import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.RatedTransactionTypeEnum;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationAggregationSettings;
-import org.meveo.model.billing.WalletOperationNative;
-import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -1833,7 +1798,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String unitAmount = appProvider.isEntreprise() ? "unitAmountWithoutTax" : "unitAmountWithTax";
             String unitAmountField = aggregationConfiguration.isAggregationPerUnitAmount() ? "SUM(a.unitAmountWithoutTax)" : unitAmount;
 
-            boolean incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines();
+            // the first run of billing run (status is 'NEW' at that moment) should be in a normal run to create new invoice line
+            // and to avoid doing unnecessary joins.
+            // The next runs of BR (status has already changed to 'OPEN' at that moment) will apply the appending mode on existing invoice lines
+            boolean incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines() && billingRun.getStatus() == BillingRunStatusEnum.OPEN;
             List<String> fieldToFetch = buildFieldList(usageDateAggregation, unitAmountField,
             		aggregationConfiguration.isIgnoreSubscriptions(), aggregationConfiguration.isIgnoreOrders(),
                     true, aggregationConfiguration.isUseAccountingArticleLabel(),
