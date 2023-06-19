@@ -112,7 +112,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
                     RecurringChargeTemplate recurring = (RecurringChargeTemplate) chargeTemplate;
                     if (getObjectId() == null) {
                         obj.setCode(getPricePlanCode(recurring));
-                        // TODO #ARE obj.setEventCode(recurring.getCode());
                         obj.setDescription(recurring.getDescription());
                         obj.setSequence(getNextSequence(recurring));
                     }
@@ -121,7 +120,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
                     OneShotChargeTemplate oneShot = (OneShotChargeTemplate) chargeTemplate;
                     if (getObjectId() == null) {
                         obj.setCode(getPricePlanCode(oneShot));
-                        // TODO #ARE obj.setEventCode(oneShot.getCode());
                         obj.setDescription(oneShot.getDescription());
                         obj.setSequence(getNextSequence(oneShot));
                     }
@@ -131,7 +129,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
                     UsageChargeTemplate usageCharge = (UsageChargeTemplate) chargeTemplate;
                     if (getObjectId() == null) {
                         obj.setCode(getPricePlanCode(usageCharge));
-                        // TODO #ARE obj.setEventCode(usageCharge.getCode());
                         obj.setDescription(usageCharge.getDescription());
                         obj.setSequence(getNextSequence(usageCharge));
                     }
@@ -140,7 +137,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
                     ProductChargeTemplate productCharge = (ProductChargeTemplate) chargeTemplate;
                     if (getObjectId() == null) {
                         obj.setCode(getPricePlanCode(productCharge));
-                        // TODO #ARE obj.setEventCode(productCharge.getCode());
                         obj.setDescription(productCharge.getDescription());
                         obj.setSequence(getNextSequence(productCharge));
                     }
@@ -164,7 +160,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
         if (event.getObject() instanceof ChargeTemplate) {
             ChargeTemplate chargeTemplate = (ChargeTemplate) event.getObject();
             if (chargeTemplate != null) {
-                // TODO #ARE entity.setEventCode(chargeTemplate.getCode());
                 if(entity.isTransient()) {
                     entity.setCode(getPricePlanCode(chargeTemplate));
                     entity.setDescription(chargeTemplate.getDescription());

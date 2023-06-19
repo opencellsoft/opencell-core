@@ -905,7 +905,6 @@ public class CatalogHierarchyBuilderService {
 	        newPriceplanmaMatrix.setOfferTemplate(null);
 	        newPriceplanmaMatrix.setVersions(new ArrayList<>());
 
-            // TODO #ARE INTRD-16363 : link charges to duplicated PricePlan
             newPriceplanmaMatrix.getChargeTemplates().addAll(pricePlanMatrix.getChargeTemplates());
 	        
 	        if(versions != null) {

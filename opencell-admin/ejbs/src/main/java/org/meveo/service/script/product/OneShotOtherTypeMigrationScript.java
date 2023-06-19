@@ -107,7 +107,6 @@ public class OneShotOtherTypeMigrationScript extends Script {
         newPricePlanMatrix.setTradingCurrency(pricePlanMatrix.getTradingCurrency());
         newPricePlanMatrix.setSeller(pricePlanMatrix.getSeller());
         newPricePlanMatrix.setValidityFrom(pricePlanMatrix.getValidityFrom());
-        // TODO #ARE newPricePlanMatrix.setEventCode(newChargeTemplate.getCode());
         newPricePlanMatrix.setAmountWithTaxEL(pricePlanMatrix.getAmountWithTaxEL());
         newPricePlanMatrix.setCode(pricePlanMatrix.getCode() + "_" + codePrefix);
         newPricePlanMatrix.setAmountWithTax(pricePlanMatrix.getAmountWithTax());

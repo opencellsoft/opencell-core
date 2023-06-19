@@ -108,7 +108,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 
 	public PricePlanMatrix(PricePlanMatrix copy) {
 		super();
-		// TODO #ARE this.eventCode = copy.eventCode;
 		this.offerTemplate = copy.offerTemplate;
 		this.startSubscriptionDate = copy.startSubscriptionDate;
 		this.endSubscriptionDate = copy.endSubscriptionDate;

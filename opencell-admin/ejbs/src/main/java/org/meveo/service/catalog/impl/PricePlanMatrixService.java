@@ -593,10 +593,6 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
                 pricePlanMatrix.setDescription(entity.getDescription());
                 result = true;
             }
-            /* TODO #ARE if (!Objects.equals(entity.getEventCode(), pricePlanMatrix.getEventCode())) {
-                pricePlanMatrix.setEventCode(entity.getEventCode());
-                result = true;
-            }*/
             if (!(Objects.equals(entity.getOfferTemplate(), pricePlanMatrix.getOfferTemplate()))) {
                 pricePlanMatrix.setOfferTemplate(entity.getOfferTemplate());
                 result = true;
