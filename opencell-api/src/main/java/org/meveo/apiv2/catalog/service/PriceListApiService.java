@@ -94,7 +94,7 @@ public class PriceListApiService extends BaseApi {
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
-    private static final String REGEX_CODE = "^[a-zA-Z0-9_ -]+$";
+    private static final String REGEX_CODE = "^[a-zA-Z0-9_-]+$";
 
     /**
      * Create a price list

@@ -66,7 +66,7 @@ public class PriceListLineApiService extends BaseApi {
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
 
-    private static final String REGEX_CODE = "^[a-zA-Z0-9_ -]+$";
+    private static final String REGEX_CODE = "^[a-zA-Z0-9_-]+$";
 
     public Long create(PriceListLineDto postDto) {
 
