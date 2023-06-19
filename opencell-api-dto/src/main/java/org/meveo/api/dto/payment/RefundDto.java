@@ -87,6 +87,9 @@ public class RefundDto extends BaseEntityDto {
     /** The is to matching. */
     private boolean isToMatching;
 
+    /** The is to matching. */
+    private boolean isManualRefund;
+
     /** The custom fields. */
     private CustomFieldsDto customFields;
 
@@ -377,6 +380,14 @@ public class RefundDto extends BaseEntityDto {
 	public void setListAoIdsForMatching(List<Long> listAoIdsForMatching) {
 		this.listAoIdsForMatching = listAoIdsForMatching;
 	}
+
+    public boolean isManualRefund() {
+        return isManualRefund;
+    }
+
+    public void setManualRefund(boolean manualRefund) {
+        isManualRefund = manualRefund;
+    }
 
     @Override
     public String toString() {

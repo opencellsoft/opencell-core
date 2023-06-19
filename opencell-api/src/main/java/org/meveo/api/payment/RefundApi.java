@@ -46,6 +46,7 @@ import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -68,6 +69,7 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.payments.impl.RefundService;
+import org.meveo.util.ApplicationProvider;
 
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
@@ -115,6 +117,10 @@ public class RefundApi extends BaseApi {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     /**
      * @param refundDto refund object which encapsulates the input data sent by client
@@ -190,7 +196,19 @@ public class RefundApi extends BaseApi {
 
         if (refundDto.isToMatching()) {
             matchRefunds(refundDto, customerAccount, refund);
-        } else {
+        }
+
+        if(refundDto.isManualRefund()) {
+            // Check method allowed
+            if (CollectionUtils.isEmpty(appProvider.getAllowedManualRefundMethods())) {
+                throw new BusinessApiException("No Payment methods allowed for manual refund, please update the Payment Settings");
+            }
+
+            if(!appProvider.getAllowedManualRefundMethods().contains(refundDto.getPaymentMethod())) {
+                throw new BusinessApiException("The Payment method '" + refundDto.getPaymentMethod() + "' is not allowed for manual refund");
+            }
+
+            // Check  dto content
             if (CollectionUtils.isEmpty(refundDto.getListAoIdsForMatching())) {
                 throw new BusinessApiException("No AccountOperation specified for refund");
             }
@@ -203,74 +221,77 @@ public class RefundApi extends BaseApi {
             Invoice initialInvoice = null;
             AccountOperation aoPay = accountOperationService.findById(refundDto.getListAoIdsForMatching().get(0));
 
-            if (!(aoPay instanceof Payment)) {
-                throw new BusinessApiException("The selected AccountOperation is not a Payment");
-            }
+            if(!(aoPay instanceof RecordedInvoice)) {
+                if (!(aoPay instanceof Payment)) {
+                    throw new BusinessApiException("The selected AccountOperation is not a Payment");
+                }
 
-            Payment payment = (Payment) aoPay;
+                Payment payment = (Payment) aoPay;
 
-            if (payment.getAmount().compareTo(refund.getAmount()) < 0) {
-                throw new BusinessApiException("Refund amount is greater than the Payment amount");
-            }
+                if (payment.getAmount().compareTo(refund.getAmount()) < 0) {
+                    throw new BusinessApiException("Refund amount is greater than the Payment amount");
+                }
 
-            if (CollectionUtils.isEmpty(payment.getMatchingAmounts())) {
-                throw new BusinessApiException("No matched Invoice for Payment");
-            }
+                if (CollectionUtils.isEmpty(payment.getMatchingAmounts())) {
+                    throw new BusinessApiException("No matched Invoice for Payment");
+                }
 
-            // Check that the refund amount are not exceed with the initial payment
-            refundService.checkExceededCreatedRefundOnPayment(payment);
+                // Check that the refund amount are not exceed with the initial payment
+                refundService.checkExceededCreatedRefundOnPayment(payment);
 
-            for (MatchingAmount payMatchingAmount : payment.getMatchingAmounts()) {
-                for (MatchingAmount matchingAmount : payMatchingAmount.getMatchingCode().getMatchingAmounts()) {
-                    if (matchingAmount.getAccountOperation() instanceof RecordedInvoice) {
-                        initialInvoice = ((RecordedInvoice) matchingAmount.getAccountOperation()).getInvoice();
-                        break;
+                for (MatchingAmount payMatchingAmount : payment.getMatchingAmounts()) {
+                    for (MatchingAmount matchingAmount : payMatchingAmount.getMatchingCode().getMatchingAmounts()) {
+                        if (matchingAmount.getAccountOperation() instanceof RecordedInvoice) {
+                            initialInvoice = ((RecordedInvoice) matchingAmount.getAccountOperation()).getInvoice();
+                            break;
+                        }
                     }
                 }
+
+                if (initialInvoice == null) {
+                    throw new BusinessApiException("No linked invoice for Payment");
+                }
+
+                // Create new Invoice Credit Note
+                Invoice invoiceCreditNote = createInvoiceCreditNote(payment, initialInvoice);
+
+                // Create new AO_ADJ_REF (CREDIT), with umatchingAmount = refund Amount (from payload)
+                AccountOperationDto aoAdjRefDto = new AccountOperationDto();
+                aoAdjRefDto.setAmount(refund.getAmount());
+                aoAdjRefDto.setAmountWithoutTax(refund.getAmountWithoutTax());
+                aoAdjRefDto.setTaxAmount(refund.getTaxAmount());
+                aoAdjRefDto.setCode("ADJ_REF");
+                aoAdjRefDto.setCustomerAccount(refund.getCustomerAccount().getCode());
+                aoAdjRefDto.setTransactionCategory(OperationCategoryEnum.CREDIT);
+                aoAdjRefDto.setType("I");
+                aoAdjRefDto.setTransactionalCurrency(payment.getTransactionalCurrency() != null ? payment.getTransactionalCurrency().getCurrencyCode() : null);
+
+                Long aoAdjRefId = accountOperationApi.create(aoAdjRefDto);
+
+                try {
+                    // Match AO_Invoice with AO_ADJ_REF
+                    /*MatchingReturnObject matchingResult = */
+                    matchingCodeService.matchOperations(refund.getCustomerAccount().getId(),
+                            refund.getCustomerAccount().getCode(),
+                            List.of(aoAdjRefId, refund.getId()),
+                            refund.getId(),
+                            refund.getAmount());
+                } catch (Exception e) {
+                    throw new BusinessApiException(e.getMessage());
+                }
+
+                // Add link between Invoice Credit Note and Initial Invoice
+                initialInvoice.setAdjustedInvoice(invoiceCreditNote);
+
+                // Add link between AO_ADJ_REF (new) and Payment (existing)
+                refund.setRefundedPayment(payment);
+
+                refundService.update(refund);
+
+                invoiceService.update(initialInvoice);
+            } else {
+                log.info("AccountOperation is RecordedInvoice type, no need to create Invoice and do manual adjustment");
             }
-
-            if (initialInvoice == null) {
-                throw new BusinessApiException("No linked invoice for Payment");
-            }
-
-            // Create new Invoice Credit Note
-            Invoice invoiceCreditNote = createInvoiceCreditNote(payment, initialInvoice);
-
-            // Create new AO_ADJ_REF (CREDIT), with umatchingAmount = refund Amount (from payload)
-            AccountOperationDto aoAdjRefDto = new AccountOperationDto();
-            aoAdjRefDto.setAmount(refund.getAmount());
-            aoAdjRefDto.setAmountWithoutTax(refund.getAmountWithoutTax());
-            aoAdjRefDto.setTaxAmount(refund.getTaxAmount());
-            aoAdjRefDto.setCode("ADJ_REF");
-            aoAdjRefDto.setCustomerAccount(refund.getCustomerAccount().getCode());
-            aoAdjRefDto.setTransactionCategory(OperationCategoryEnum.CREDIT);
-            aoAdjRefDto.setType("I");
-            aoAdjRefDto.setTransactionalCurrency(payment.getTransactionalCurrency() != null ? payment.getTransactionalCurrency().getCurrencyCode() : null);
-
-            Long aoAdjRefId = accountOperationApi.create(aoAdjRefDto);
-
-            try {
-                // Match AO_Invoice with AO_ADJ_REF
-                /*MatchingReturnObject matchingResult = */
-                matchingCodeService.matchOperations(refund.getCustomerAccount().getId(),
-                        refund.getCustomerAccount().getCode(),
-                        List.of(aoAdjRefId, refund.getId()),
-                        refund.getId(),
-                        refund.getAmount());
-            } catch (Exception e) {
-                throw new BusinessApiException(e.getMessage());
-            }
-
-            // Add link between Invoice Credit Note and Initial Invoice
-            initialInvoice.setAdjustedInvoice(invoiceCreditNote);
-
-            // Add link between AO_ADJ_REF (new) and Payment (existing)
-            refund.setRefundedPayment(payment);
-
-            refundService.update(refund);
-
-            invoiceService.update(initialInvoice);
-
         }
         log.debug("refund created for amount:" + refund.getAmount());
 

@@ -207,6 +207,16 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     private List<PaymentMethodEnum> paymentMethods = new ArrayList<PaymentMethodEnum>();
 
     /**
+     * Manual Refund methods allowed
+     */
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @ElementCollection(targetClass = PaymentMethodEnum.class)
+    @CollectionTable(name = "crm_provider_manual_refund_methods", joinColumns = @JoinColumn(name = "provider_id"))
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private List<PaymentMethodEnum> allowedManualRefundMethods = new ArrayList<>();
+
+    /**
      * The Rating amount rounding
      */
     @Column(name = "rating_rounding", nullable = false)
@@ -947,4 +957,12 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
 	public void setOrderLineTypes(List<OrderLineTypeEnum> orderLineTypes) {
 		this.orderLineTypes = orderLineTypes;
 	}
+
+    public List<PaymentMethodEnum> getAllowedManualRefundMethods() {
+        return allowedManualRefundMethods;
+    }
+
+    public void setAllowedManualRefundMethods(List<PaymentMethodEnum> allowedManualRefundMethods) {
+        this.allowedManualRefundMethods = allowedManualRefundMethods;
+    }
 }

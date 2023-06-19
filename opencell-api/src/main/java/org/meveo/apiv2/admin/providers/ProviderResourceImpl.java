@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -211,6 +212,14 @@ public class ProviderResourceImpl implements ProviderResource {
 
         if (provider.getPaymentMethods() != null) {
             providerByCode.setPaymentMethods(provider.getPaymentMethods().stream().filter(StringUtils::isNotBlank).map(PaymentMethodEnum::valueOf).collect(Collectors.toList()));
+        }
+
+        if (CollectionUtils.isNotEmpty(provider.getAllowedManualRefundMethods())) {
+            providerByCode.setAllowedManualRefundMethods(provider.getAllowedManualRefundMethods()
+                    .stream()
+                    .filter(StringUtils::isNotBlank)
+                    .map(PaymentMethodEnum::valueOf)
+                    .collect(Collectors.toList()));
         }
         
         if (provider.getPortalMessage() != null) {

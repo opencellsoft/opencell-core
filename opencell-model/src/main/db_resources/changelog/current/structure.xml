@@ -16941,5 +16941,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 referencedTableName="ar_account_operation"
                 referencedColumnNames="id" />
     </changeSet>
+	
+	<changeSet author="aelmalki" id="#INTRD-16445_20230619">
+        <createTable tableName="crm_provider_manual_refund_methods">
+            <column name="provider_id" type="bigint" />
+            <column name="payment_method" type="varchar(255)" />
+        </createTable>
+		<addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_manual_refund_methods" tableName="crm_provider_manual_refund_methods" />
+    </changeSet>
 
 </databaseChangeLog>

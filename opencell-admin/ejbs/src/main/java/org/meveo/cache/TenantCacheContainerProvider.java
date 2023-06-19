@@ -148,6 +148,7 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
             provider.getGdprConfiguration().getAccountingLife();
         }
         provider.getPaymentMethods().size();
+        provider.getAllowedManualRefundMethods().size();
 
         provider = PersistenceUtils.initializeAndUnproxy(provider);
 
@@ -165,6 +166,7 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
         providerCopy.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         providerCopy.setPaymentMethods(provider.getPaymentMethods());
         providerCopy.setOrderLineTypes(provider.getOrderLineTypes());
+        providerCopy.setAllowedManualRefundMethods(provider.getAllowedManualRefundMethods());
 
         providerCopy.setCfValues(provider.getCFValuesCopy());
 

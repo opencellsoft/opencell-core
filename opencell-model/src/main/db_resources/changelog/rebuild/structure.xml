@@ -20126,6 +20126,18 @@
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
 	</changeSet>
+	
+	<changeSet author="aelmalki" id="#rebuild-INTRD-16445_20230619">
+        <createTable tableName="crm_provider_manual_refund_methods">
+            <column name="provider_id" type="bigint" />
+            <column name="payment_method" type="varchar(255)" />
+        </createTable>
+    </changeSet>
+	
+	<changeSet author="aelmalki" id="#rebuild-INTRD-16445_20230619-uk">
+        <addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_manual_refund_methods" tableName="crm_provider_manual_refund_methods" />
+    </changeSet>
+
 
    	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA."/>
    	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA."/>
