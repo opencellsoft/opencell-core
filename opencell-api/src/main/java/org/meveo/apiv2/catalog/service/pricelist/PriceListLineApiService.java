@@ -73,7 +73,7 @@ public class PriceListLineApiService extends BaseApi {
         checkMandatoryFields(postDto);
 
         if (!postDto.getCode().matches(REGEX_CODE)) {
-            throw new BusinessApiException("PriceList code should not contains special characters");
+            throw new BusinessApiException("PriceList code should not contain special characters");
         }
 
         PriceListLine entityToSave = new PriceListLine();
@@ -301,7 +301,7 @@ public class PriceListLineApiService extends BaseApi {
         checkMandatoryFields(postDto);
 
         if (!postDto.getCode().matches(REGEX_CODE)) {
-            throw new BusinessApiException("PriceList code should not contains special characters");
+            throw new BusinessApiException("PriceList code should not contain special characters");
         }
 
         PriceListLine priceListLineToUpdate = priceListLineService.findById(priceListLineId);
