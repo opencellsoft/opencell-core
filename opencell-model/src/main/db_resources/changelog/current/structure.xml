@@ -16933,6 +16933,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
     <changeSet id="#INTRD-16363_20230608_migrate_ppm" author="a.rouaguebe">
         <sql>insert into ${db.schema.adapted}cat_price_plan_charge(price_plan_id, charge_id)
              select cppm.id, cct.id  from ${db.schema.adapted}cat_price_plan_matrix cppm join ${db.schema.adapted}cat_charge_template cct on cct.code = cppm.event_code</sql>
+        <dropColumn tableName="cat_price_plan_matrix" columnName="event_code" />
     </changeSet>
 
 </databaseChangeLog>
