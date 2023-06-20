@@ -90,11 +90,11 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
         Long count = reportQueryApiService.countAllowedQueriesForUserWithFilters(query);
         ImmutableReportQuery[] reportQueriesList = reportQueryEntities
                 .stream()
-                .map(reportQuery -> {
-                    if(fields != null && !fields.isEmpty()) {
+                .map(q -> {
+                    ReportQuery reportQuery = reportQueryService.findById(q.getId(), Arrays.asList("fields"));
+                    if (fields != null && !fields.isEmpty()) {
                         return mapper.toResource(reportQuery, fields);
                     } else {
-                    	reportQuery = reportQueryService.findById(reportQuery.getId(),Arrays.asList("fields"));
                         return mapper.toResource(reportQuery);
                     }
                 })
