@@ -202,9 +202,4 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.tradingPricePlanMatrixLines = tradingPricePlanMatrixLines;
     }
     
-	public List<PricePlanMatrixValue> getSortedPricePlanMatrixValues() {
-		return pricePlanMatrixValues.stream()
-				.sorted(Comparator.comparing(ppmv -> ppmv.getPricePlanMatrixColumn().getPosition()))
-				.collect(Collectors.toList());
-    }
 }
