@@ -10077,7 +10077,7 @@ public class OrderAdvancement extends ModuleScript {
             </createProcedure>
     </changeSet>
     
-     <changeSet id="#INTRD-16968_20230619" author="Mbarek-Ay">
+     <changeSet id="#INTRD-16982_20230619" author="Mbarek-Ay">
         <addColumn tableName="cat_counter_template">
             <column name="managed_byapp" type="${type.boolean}" defaultValueNumeric="1"><constraints nullable="false" /></column>
         </addColumn>
