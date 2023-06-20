@@ -636,7 +636,7 @@ public class InvoiceApi extends BaseApi {
 
         // at the time of the validation of the ADJ via the API validate if the autoMatching is true so we automatically match its AO with that of the original invoice
         // (knowing that the API validate has the param generateAO=true from the portal)
-        if (invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode())) {
+        if (invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode()) && invoice.isAutoMatching()) {
             // Check if the invoice is not PAID
             if (invoice.getPaymentStatus() == InvoicePaymentStatusEnum.PAID) {
                 throw new BusinessApiException("The Adjustment invoice is already paid, we can not process auto-matching for the linked AccountOperation");
@@ -645,7 +645,7 @@ public class InvoiceApi extends BaseApi {
             LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(invoice.getId());
 
             if (linkedInvoice==null) {
-                throw new BusinessApiException("Adjustement invoice [" + invoice.getId() + "] does not have a link with a source Invoice");
+                throw new BusinessApiException("Adjustment invoice [" + invoice.getId() + "] does not have a link with a source Invoice");
             }
 
             AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(linkedInvoice.getInvoice()).get(0);
