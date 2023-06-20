@@ -599,5 +599,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		}
 		return false;
 	}
+
+    public void removePriceListLink(Long priceListId) {
+        getEntityManager().createNamedQuery("BillingAccount.unlinkPriceList").setParameter("priceListId", priceListId).executeUpdate();
+    }
 	
 }

@@ -1,6 +1,7 @@
 package org.meveo.apiv2.catalog.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Optional;
@@ -215,6 +216,9 @@ public class PriceListApiService extends BaseApi {
         priceListToUpdate.setStatus(newStatus);
         priceListService.update(priceListToUpdate);
 
+        if(Arrays.asList(PriceListStatusEnum.CLOSED, PriceListStatusEnum.ARCHIVED).contains(priceListToUpdate.getStatus())) {
+            billingAccountService.removePriceListLink(priceListToUpdate.getId());
+        }
     }
     
     /**
