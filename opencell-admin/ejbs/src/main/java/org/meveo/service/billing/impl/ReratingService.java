@@ -506,39 +506,40 @@ public class ReratingService extends RatingService implements Serializable {
         boolean isBilled = false;
         Long rtBilled = null;
         Map<Long, ILAdjustments> ilAdjustments = new HashMap<>();
+        if (!rtIdsToCheck.isEmpty()) {
+            List<Object[]> rtIlInfos = em.createNamedQuery("RatedTransaction.rtSummaryForRerating").setParameter("rtIds", rtIdsToCheck).getResultList();
+            for (Object[] rtIlInfo : rtIlInfos) {
+                Long rtId = ((BigInteger) rtIlInfo[0]).longValue();
+                // RatedTransactionStatusEnum rtStatus = RatedTransactionStatusEnum.valueOf((String) rtIlInfo[1]);
+                rtIdsToUpdate.add(rtId);
+                if (rtIlInfo[6] != null) {
+                    Long ilId = ((BigInteger) rtIlInfo[6]).longValue();
+                    InvoiceLineStatusEnum ilStatus = InvoiceLineStatusEnum.valueOf((String) rtIlInfo[7]);
+                    // RT was already invoiced - WO can not be rerated
+                    if (ilStatus == InvoiceLineStatusEnum.BILLED) {
+                        isBilled = true;
+                        rtBilled = rtId;
+                        break;
 
-        List<Object[]> rtIlInfos = em.createNamedQuery("RatedTransaction.rtSummaryForRerating").setParameter("rtIds", rtIdsToCheck).getResultList();
-        for (Object[] rtIlInfo : rtIlInfos) {
-            Long rtId = ((BigInteger) rtIlInfo[0]).longValue();
-            // RatedTransactionStatusEnum rtStatus = RatedTransactionStatusEnum.valueOf((String) rtIlInfo[1]);
-            rtIdsToUpdate.add(rtId);
-            if (rtIlInfo[6] != null) {
-                Long ilId = ((BigInteger) rtIlInfo[6]).longValue();
-                InvoiceLineStatusEnum ilStatus = InvoiceLineStatusEnum.valueOf((String) rtIlInfo[7]);
-                // RT was already invoiced - WO can not be rerated
-                if (ilStatus == InvoiceLineStatusEnum.BILLED) {
-                    isBilled = true;
-                    rtBilled = rtId;
-                    break;
+                        // IL was not billed yet, so IL amounts have to be deducted
+                    } else if (ilStatus == InvoiceLineStatusEnum.OPEN) {
 
-                    // IL was not billed yet, so IL amounts have to be deducted
-                } else if (ilStatus == InvoiceLineStatusEnum.OPEN) {
+                        Long brId = ((BigInteger) rtIlInfo[8]).longValue();
 
-                    Long brId = ((BigInteger) rtIlInfo[8]).longValue();
+                        BillingRun billingRun = em.find(BillingRun.class, brId);
+                        boolean averateUnitAmounts = billingRun.getBillingCycle() != null && !billingRun.getBillingCycle().isDisableAggregation() && billingRun.getBillingCycle().isAggregateUnitAmounts();
 
-                    BillingRun billingRun = em.find(BillingRun.class, brId);
-                    boolean averateUnitAmounts = billingRun.getBillingCycle() != null && !billingRun.getBillingCycle().isDisableAggregation() && billingRun.getBillingCycle().isAggregateUnitAmounts();
+                        // Updating IL by sql misses unit amount rounding
+                        // MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                        // unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
 
-                    // Updating IL by sql misses unit amount rounding
-                    // MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-                    // unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
+                        ILAdjustments amounts = new ILAdjustments((BigDecimal) rtIlInfo[2], (BigDecimal) rtIlInfo[3], (BigDecimal) rtIlInfo[4], (BigDecimal) rtIlInfo[5], averateUnitAmounts);
 
-                    ILAdjustments amounts = new ILAdjustments((BigDecimal) rtIlInfo[2], (BigDecimal) rtIlInfo[3], (BigDecimal) rtIlInfo[4], (BigDecimal) rtIlInfo[5], averateUnitAmounts);
-
-                    if (ilAdjustments.containsKey(ilId)) {
-                        ilAdjustments.get(ilId).addAmounts(amounts);
-                    } else {
-                        ilAdjustments.put(ilId, amounts);
+                        if (ilAdjustments.containsKey(ilId)) {
+                            ilAdjustments.get(ilId).addAmounts(amounts);
+                        } else {
+                            ilAdjustments.put(ilId, amounts);
+                        }
                     }
                 }
             }
@@ -555,14 +556,20 @@ public class ReratingService extends RatingService implements Serializable {
         String rejectReason = "Origin wallet operation #" + operationToRerate.getId() + " has been rerated";
 
         // Mark all triggered EDRs as CANCELED
-        em.createNamedQuery("EDR.cancelEDRs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", edrIdsToUpdate);
+        if (!edrIdsToUpdate.isEmpty()) {
+            em.createNamedQuery("EDR.cancelEDRs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", edrIdsToUpdate);
+        }
 
         // Mark all triggered and discount WOs as CANCELED
-        em.createNamedQuery("WalletOperation.cancelWOs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", woIdsToUpdate);
+        if (!woIdsToUpdate.isEmpty()) {
+            em.createNamedQuery("WalletOperation.cancelWOs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", woIdsToUpdate);
+        }
 
         // Mark all main, triggered and discount RTs as CANCELED
-        em.createNamedQuery("RatedTransaction.cancelRTs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", rtIdsToUpdate);
-
+        if (!rtIdsToUpdate.isEmpty()) {
+            em.createNamedQuery("RatedTransaction.cancelRTs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", rtIdsToUpdate);
+        }
+        
         // Update Invoice lines - adjust amounts and quantity
         for (Entry<Long, ILAdjustments> ilInfo : ilAdjustments.entrySet()) {
             Long ilId = ilInfo.getKey();
