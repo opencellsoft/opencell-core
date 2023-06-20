@@ -681,7 +681,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                         codeCurrency = cppmv.getTradingCurrency().getCurrency().getCurrencyCode();
                     }
                     String keyLine = "unitPrice-" + codeCurrency;
-                    String valueLine = cppmv.getPricePlanMatrixLine() + "|" + codeCurrency + "|" + cppmv.getRate() + "|" + cppmv.isUseForBillingAccounts();
+                    String valueLine = cppmv.getTradingValue() + "|" + codeCurrency + "|" + cppmv.getRate() + "|" + cppmv.isUseForBillingAccounts();
                     CSVLineRecord.put(keyLine, valueLine);
                     int sizePosition = CSVLineRecordPosition.size();
                     CSVLineRecordPosition.put(keyLine, sizePosition);
