@@ -15837,7 +15837,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </changeSet>
     
      <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi">
-		  <sql>CREATE INDEX idx__billing_rated_transaction__billing_Account_id ON ${db.schema.adapted}billing_rated_transaction USING btree (billing_Account__id)  WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__billing_account_id ON ${db.schema.adapted}billing_rated_transaction USING btree (billing_account__id)  WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_rated_transaction__offer_id ON ${db.schema.adapted}billing_rated_transaction USING btree (offer_id) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_rated_transaction__tax_id ON ${db.schema.adapted}billing_rated_transaction USING btree (tax_id) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_rated_transaction__infoOrder_productVersion_id ON ${db.schema.adapted}billing_rated_transaction USING btree (product_version_id) WHERE (status= 'OPEN') </sql>
@@ -15848,7 +15848,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		  <sql>CREATE INDEX idx__billing_rated_transaction__order_number ON ${db.schema.adapted}billing_rated_transaction USING btree (order_number) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_rated_transaction__description ON ${db.schema.adapted}billing_rated_transaction USING btree (description) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_rated_transaction__tax_percent ON ${db.schema.adapted}billing_rated_transaction USING btree (tax_percent)  WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__CHARGE_INSTANCE ON ${db.schema.adapted}billing_rated_transaction USING btree (CHARGE_INSTANCE_ID) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE (status= 'OPEN') </sql>
 		
 		  <sql>CREATE INDEX idx__billing_invoice_line__billing_account_id ON ${db.schema.adapted}billing_invoice_line USING btree (billing_account_id) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_invoice_line__billing_run ON ${db.schema.adapted}billing_invoice_line USING btree (billing_run_id) WHERE (status= 'OPEN') </sql>
