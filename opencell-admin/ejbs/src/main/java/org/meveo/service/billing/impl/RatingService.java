@@ -984,7 +984,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         walletOperation.setAccountingArticle(accountingArticle);
         // Determine and set tax if it was not set before.
         // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
-        if (walletOperation.getTax() == null) {
+        if (walletOperation.getTax() == null || (accountingArticle != null && accountingArticle.getTaxClass() != null &&
+                !accountingArticle.getTaxClass().equals(walletOperation.getTaxClass()))) {
             TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
             if(taxInfo==null) {
                 throw new BusinessException("No tax found for the chargeInstance "+ walletOperation.getChargeInstance().getCode());
