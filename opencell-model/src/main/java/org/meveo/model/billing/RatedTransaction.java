@@ -197,7 +197,10 @@ import org.meveo.model.tax.TaxClass;
                 "SET rt.status =: statusToUpdate WHERE rt.id IN (:ids)"),
         @NamedQuery(name = "RatedTransaction.getDiscountedRTIds", query = "SELECT rt FROM RatedTransaction rt " +
                 "WHERE rt.invoiceLine.status != 'BILLED' AND rt.discountedRatedTransaction =: id"),
-        @NamedQuery(name = "RatedTransaction.cancelAggregatedRTByInvoiceLine", query = "UPDATE RatedTransaction rt SET rt.invoiceLine = null, rt.status = org.meveo.model.billing.RatedTransactionStatusEnum.OPEN, rt.updated = :now WHERE rt.status = org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND rt.invoiceLine.id IN ( SELECT rt.invoiceLine.id from RatedTransaction rt where rt.id in (SELECT wo.id FROM WalletOperation wo WHERE wo.id IN :woIds))")
+        @NamedQuery(name = "RatedTransaction.cancelAggregatedRTByInvoiceLine", query = "UPDATE RatedTransaction rt SET rt.invoiceLine = null, rt.status = org.meveo.model.billing.RatedTransactionStatusEnum.OPEN, rt.updated = :now WHERE rt.status = org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND rt.invoiceLine.id IN ( SELECT rt.invoiceLine.id from RatedTransaction rt where rt.id in (SELECT wo.id FROM WalletOperation wo WHERE wo.id IN :woIds))"),
+        @NamedQuery(name = "RatedTransaction.getMissingAccountingArticleInputs", query =
+    	"select new org.meveo.model.billing.AccountingArticleAssignementItem(ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id, (string_agg(cast(ci.id as text),','))) "
+    		+ " FROM RatedTransaction rt left join rt.chargeInstance ci WHERE rt.status = 'OPEN' and rt.accountingArticle is null group by ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id")
         })
 
 @NamedNativeQueries({

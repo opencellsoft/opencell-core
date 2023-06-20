@@ -36,6 +36,7 @@ import java.math.MathContext;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +49,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -2318,11 +2318,45 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	    return chargeInstances.size();
 	}
     
-	private void updateAccountingArticlesByChargeInstance(ChargeInstance charge,
-			AccountingArticle accountingArticle) {
-        String strQuery = "UPDATE RatedTransaction rt SET rt.accountingArticle=:accountingArticle WHERE rt.status='OPEN' and rt.chargeInstance=:chargeInstance and rt.accountingArticle is null ";
+	public void updateAccountingArticlesByChargeInstance(ChargeInstance charge, AccountingArticle accountingArticle) {
+		updateAccountingArticlesByChargeInstanceIds(Arrays.asList(charge.getId()),accountingArticle);
+	}
+	
+	public void updateAccountingArticlesByChargeInstanceIds(List<Long> ids, AccountingArticle accountingArticle) {
+		updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(ids, null, null, accountingArticle);
+	}
+    
+	public void updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(List<Long> chargeInstances, Long serviceInstanceId, Long offerTemplateId, AccountingArticle accountingArticle) {
+		
+		String strQuery = "UPDATE RatedTransaction rt SET rt.accountingArticle=:accountingArticle WHERE rt.status='OPEN' and rt.accountingArticle is null ";
+		if (chargeInstances != null) {
+			strQuery = strQuery + " and rt.chargeInstance.id in(:chargeInstanceIds) ";
+		} else {
+			strQuery = strQuery + " and rt.chargeInstance.id is null ";
+			if (serviceInstanceId != null) {
+				strQuery = strQuery + " and rt.serviceInstance.id =:serviceInstanceId ";
+			} else {
+				strQuery = strQuery + " and rt.serviceInstance.id is null ";
+			}
+			if (offerTemplateId != null) {
+				strQuery = strQuery + " and rt.offerTemplate.id =:offerTemplateId ";
+			} else {
+				strQuery = strQuery + " and rt.offerTemplate.id is null ";
+			}
+		}
+		log.info("------->"+chargeInstances+"---"+ serviceInstanceId+"---"+offerTemplateId+":"+strQuery);
         Query query = getEntityManager().createQuery(strQuery);
-        query.setParameter("chargeInstance", charge);
+        if (chargeInstances != null) {
+        	query.setParameter("chargeInstanceIds", chargeInstances);
+		} else {
+			if (serviceInstanceId != null) {
+				query.setParameter("serviceInstanceId", serviceInstanceId);
+			} 
+			if (offerTemplateId != null) {
+				query.setParameter("offerTemplateId", offerTemplateId);
+			}
+		}
+        
         query.setParameter("accountingArticle", accountingArticle);
         query.executeUpdate();
 	}
