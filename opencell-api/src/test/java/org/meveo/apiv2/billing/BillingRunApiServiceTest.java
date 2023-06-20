@@ -73,7 +73,7 @@ public class BillingRunApiServiceTest {
 
         when(billingRunService.findById(1L)).thenReturn(billingRun);
         expectedException.expect(BadRequestException.class);
-        expectedException.expectMessage("Billing run status must be either {NEW, INVOICE_LINES_CREATED, DRAFT_INVOICES, REJECTED}");
+        expectedException.expectMessage("Billing run status must be either {NEW, OPEN, INVOICE_LINES_CREATED, DRAFT_INVOICES, REJECTED}");
 
         billingRunApiService.advancedStatus(1L, false).get();
     }
