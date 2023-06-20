@@ -121,69 +121,6 @@ public class InvoiceApiTest {
         }
     }
 
-    @Test
-    public void validateWithAutoMatchingErrPaidInvoice() throws UnbalanceAmountException, NoAllOperationUnmatchedException {
-        // Adj data : Invoice, Type, AO
-        InvoiceType typeAdj = buildInvoiceType("ADJ");
-        Invoice adjInv = buildInvoice(1L, typeAdj);
-        adjInv.setAutoMatching(true);
-        adjInv.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
-        AccountOperation adjAo = buildAccountOperation(1L);
-
-        // Original invoice  data : Invoice, Type, AO
-        InvoiceType typeCom = buildInvoiceType("COM");
-        Invoice originalInv = buildInvoice(-1L, typeCom);
-        AccountOperation originalAo = buildAccountOperation(2L);
-
-        LinkedInvoice linkedInvoice = new LinkedInvoice();
-        linkedInvoice.setInvoice(originalInv);
-        linkedInvoice.setLinkedInvoiceValue(adjInv);
-
-        Mockito.when(serviceSingleton.validateAndAssignInvoiceNumber(adjInv.getId(), true)).thenReturn(adjInv);
-        Mockito.when(invoiceService.refreshOrRetrieve(Mockito.any(Invoice.class))).thenReturn(adjInv);
-        Mockito.when(invoiceService.findById(adjInv.getId())).thenReturn(adjInv);
-        Mockito.when(invoiceTypeService.getListAdjustementCode()).thenReturn(List.of("ADJ"));
-
-        try {
-            invoiceApi.validateInvoice(adjInv.getId(), false, true, true);
-            Assert.fail("PAID Invoice exception must be thrown");
-        } catch (Exception e) {
-            Assert.assertEquals("The Adjustment invoice is already paid, we can not process auto-matching for the linked AccountOperation", e.getMessage());
-        }
-    }
-
-    @Test
-    public void validateWithAutoMatchingErrNoLinkedInvoice() throws UnbalanceAmountException, NoAllOperationUnmatchedException {
-        // Adj data : Invoice, Type, AO
-        InvoiceType typeAdj = buildInvoiceType("ADJ");
-        Invoice adjInv = buildInvoice(1L, typeAdj);
-        adjInv.setAutoMatching(true);
-        AccountOperation adjAo = buildAccountOperation(1L);
-
-        // Original invoice  data : Invoice, Type, AO
-        InvoiceType typeCom = buildInvoiceType("COM");
-        Invoice originalInv = buildInvoice(-1L, typeCom);
-        AccountOperation originalAo = buildAccountOperation(2L);
-
-        LinkedInvoice linkedInvoice = new LinkedInvoice();
-        linkedInvoice.setInvoice(originalInv);
-        linkedInvoice.setLinkedInvoiceValue(adjInv);
-
-        Mockito.when(serviceSingleton.validateAndAssignInvoiceNumber(adjInv.getId(), true)).thenReturn(adjInv);
-        Mockito.when(invoiceService.refreshOrRetrieve(Mockito.any(Invoice.class))).thenReturn(adjInv);
-        Mockito.when(invoiceService.findById(adjInv.getId())).thenReturn(adjInv);
-        Mockito.when(invoiceTypeService.getListAdjustementCode()).thenReturn(List.of("ADJ"));
-
-        Mockito.when(invoiceService.findBySourceInvoiceByAdjId(adjInv.getId())).thenReturn(null);
-
-        try {
-            invoiceApi.validateInvoice(adjInv.getId(), false, true, true);
-            Assert.fail("No linked invoice found exception must be thrown");
-        } catch (Exception e) {
-            Assert.assertEquals("Adjustment invoice [" + adjInv.getId() + "] does not have a link with a source Invoice", e.getMessage());
-        }
-    }
-
     private AccountOperation buildAccountOperation(long id) {
         AccountOperation adjAo = new AccountOperation();
         adjAo.setId(id);

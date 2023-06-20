@@ -638,28 +638,27 @@ public class InvoiceApi extends BaseApi {
         // (knowing that the API validate has the param generateAO=true from the portal)
         if (invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode()) && invoice.isAutoMatching()) {
             // Check if the invoice is not PAID
-            if (invoice.getPaymentStatus() == InvoicePaymentStatusEnum.PAID) {
-                throw new BusinessApiException("The Adjustment invoice is already paid, we can not process auto-matching for the linked AccountOperation");
-            }
+            if (invoice.getPaymentStatus() != InvoicePaymentStatusEnum.PAID) {
 
-            LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(invoice.getId());
+                LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(invoice.getId());
 
-            if (linkedInvoice==null) {
-                throw new BusinessApiException("Adjustment invoice [" + invoice.getId() + "] does not have a link with a source Invoice");
-            }
+                if (linkedInvoice!=null) {
 
-            AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(linkedInvoice.getInvoice()).get(0);
-            AccountOperation aoAdjInvoice = accountOperationService.listByInvoice(invoice).get(0);
+                    AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(linkedInvoice.getInvoice()).get(0);
+                    AccountOperation aoAdjInvoice = accountOperationService.listByInvoice(invoice).get(0);
 
-            if (aoAdjInvoice.getMatchingStatus() != MatchingStatusEnum.L) {
-                try {
-                    matchingCodeService.matchOperations(aoAdjInvoice.getCustomerAccount().getId(), aoAdjInvoice.getCustomerAccount().getCode(),
-                            List.of(aoAdjInvoice.getId(), aoOriginalInvoice.getId()), aoOriginalInvoice.getId(),
-                            MatchingTypeEnum.A, aoOriginalInvoice.getUnMatchingAmount());
-                } catch (Exception e) {
-                    log.error("Error on payment callback processing:", e);
-                    throw new BusinessException(e.getMessage(), e);
+                    if (aoAdjInvoice.getMatchingStatus() != MatchingStatusEnum.L) {
+                        try {
+                            matchingCodeService.matchOperations(aoAdjInvoice.getCustomerAccount().getId(), aoAdjInvoice.getCustomerAccount().getCode(),
+                                    List.of(aoAdjInvoice.getId(), aoOriginalInvoice.getId()), aoOriginalInvoice.getId(),
+                                    MatchingTypeEnum.A, aoOriginalInvoice.getUnMatchingAmount());
+                        } catch (Exception e) {
+                            log.error("Error on payment callback processing:", e);
+                            throw new BusinessException(e.getMessage(), e);
+                        }
+                    }
                 }
+
             }
 
         }
