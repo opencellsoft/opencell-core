@@ -17,11 +17,11 @@
  */
 package org.meveo.service.base;
 
-import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 
 import org.meveo.model.IEntity;
 
-@Stateful
+@Stateless
 public class BaseEntityService extends PersistenceService<IEntity> {
 
     public void setEntityClass(Class<IEntity> clazz) {
