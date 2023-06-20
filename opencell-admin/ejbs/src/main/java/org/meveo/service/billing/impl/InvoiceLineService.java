@@ -747,7 +747,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             if (resource.getUnitPriceCurrency().equals(tradingCurrency)) {
 				BigDecimal appliedRate = invoiceLine.getInvoice() != null ? invoiceLine.getInvoice().getAppliedRate() : ONE;
 				invoiceLine.setUnitPrice(resource.getUnitPrice().divide(appliedRate, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-				invoiceLine.setTransactionalUnitPrice(resource.getUnitPrice());
 				invoiceLine.setConversionFromBillingCurrency(true);
 			}
         }
