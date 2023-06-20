@@ -41,6 +41,9 @@ public class YouSignProcessus extends SignatureRequestProcess {
 	public YouSignProcessus(SigantureRequest sigantureRequest){
 		super(sigantureRequest);
 	}
+	public YouSignProcessus(){
+		super(null);
+	}
 	@Override
 	public String getSignatureApiKey() {
 		return PARAMBEAN.getProperty("gateway.yousign.apikey", null);
@@ -77,7 +80,16 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			throw new BusinessApiException(e.getMessage());
 		}
 	}
-	public String processGenerateRequestId() throws IOException, InterruptedException {
+	
+	public Map<String, Object> fetch(String signatureRequestId)  {
+		try {
+			HttpResponse<String> response = getHttpRequestWithoutBody("/signature_requests/" + signatureRequestId, HttpMethod.GET);
+			return gson.fromJson(response.body(), Map.class);
+		} catch (IOException | InterruptedException e) {
+			throw new BusinessApiException(e);
+		}
+	}
+	private String processGenerateRequestId() throws IOException, InterruptedException {
 		final IntiateSignatureRequest intiateSignatureRequest = new IntiateSignatureRequest(sigantureRequest.getName(), DeliveryMode.email.getValue(sigantureRequest.getDelivery_mode()));
 		var response = getHttpRequestPost( "/signature_requests", intiateSignatureRequest);
 		var sigantureRequestId = gson.fromJson(response.body(), Map.class);
@@ -88,7 +100,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 		return sigantureRequestId.get("id").toString();
 	}
 	
-	public Map<FilesSignature, String> uploadDocument(String requestId) throws IOException {
+	private Map<FilesSignature, String> uploadDocument(String requestId) throws IOException {
 		Map<FilesSignature, String> result = new HashMap<>();
 		for(FilesSignature fileSigners: Objects.requireNonNull(sigantureRequest.getFilesToSign())){
 			if(StringUtils.isEmpty(fileSigners.getFilePath())){
@@ -115,7 +127,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 		
 	}
 	
-	public Map<String, String> addSigner(String signatureRequestId, Map<FilesSignature, String> documentIds) throws IOException, InterruptedException {
+	private Map<String, String> addSigner(String signatureRequestId, Map<FilesSignature, String> documentIds) throws IOException, InterruptedException {
 		Map<String, String> result = new HashMap<>();
 		for(Signers signer: Objects.requireNonNull(sigantureRequest.getSigners())){
 			for(FilesSignature docInfo : documentIds.keySet()){

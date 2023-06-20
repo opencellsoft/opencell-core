@@ -53,11 +53,17 @@ public abstract class SignatureRequestProcess {
 	
 	public abstract String getModeOperator();
 	
+	public abstract Map<String, Object> process();
+	
 	protected final SigantureRequest sigantureRequest;
 	
 	protected final Gson gson = new Gson();
 	
 	protected HttpClient httpClient = HttpClient.newHttpClient();
+	
+	protected  enum  HttpMethod {
+		POST, GET
+	}
 	
 	
 	public SignatureRequestProcess(SigantureRequest sigantureRequest) {
@@ -76,6 +82,16 @@ public abstract class SignatureRequestProcess {
 				.header("Authorization", "Bearer " + getSignatureApiKey())
 				.header("Content-Type", MediaType.APPLICATION_JSON)
 				.method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(entity)));
+		return httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+	}
+	
+	protected HttpResponse<String> getHttpRequestWithoutBody(String path, HttpMethod httpMethod) throws IOException, InterruptedException {
+		if(!path.startsWith("/")){
+			path = "/" + path;
+		}
+		HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(getSignatureUrl() + path))
+				.header("Authorization", "Bearer " + getSignatureApiKey())
+				.method( httpMethod.name(), HttpRequest.BodyPublishers.noBody());
 		return httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 	}
 	
