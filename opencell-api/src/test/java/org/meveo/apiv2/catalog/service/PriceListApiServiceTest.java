@@ -524,6 +524,8 @@ public class PriceListApiServiceTest {
 
         when(priceListService.findByCode(existingPLi.getCode())).thenReturn(existingPLi);
 
+        when(priceListService.findDuplicateCode(existingPLi, "-COPY")).thenReturn(existingPLi.getCode()+"-COPY");
+
         // when
 
         priceListApiService.duplicate(existingPLi.getCode());

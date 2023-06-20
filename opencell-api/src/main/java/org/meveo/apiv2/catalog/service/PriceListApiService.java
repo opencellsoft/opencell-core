@@ -687,7 +687,7 @@ public class PriceListApiService extends BaseApi {
 
         PriceList duplicatedPriceList = new PriceList();
 
-        duplicatedPriceList.setCode(priceList.getCode() + "-COPY");
+        duplicatedPriceList.setCode(priceListService.findDuplicateCode(priceList, "-COPY"));
         duplicatedPriceList.setDescription(priceList.getDescription());
         duplicatedPriceList.setApplicationStartDate(priceList.getApplicationStartDate());
         duplicatedPriceList.setApplicationEndDate(priceList.getApplicationEndDate());
