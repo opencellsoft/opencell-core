@@ -192,7 +192,10 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.updateStatusDiscountedRT", query = "UPDATE RatedTransaction rt " +
                 "SET rt.status =: statusToUpdate WHERE rt.id IN (:ids)"),
         @NamedQuery(name = "RatedTransaction.getDiscountedRTIds", query = "SELECT rt FROM RatedTransaction rt " +
-                "WHERE rt.invoiceLine.status != 'BILLED' AND rt.discountedRatedTransaction =: id")
+                "WHERE rt.invoiceLine.status != 'BILLED' AND rt.discountedRatedTransaction =: id"),
+        @NamedQuery(name = "RatedTransaction.getMissingAccountingArticleInputs", query =
+    	"select new org.meveo.model.billing.AccountingArticleAssignementItem(ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id, (string_agg(cast(ci.id as text),','))) "
+    		+ " FROM RatedTransaction rt left join rt.chargeInstance ci WHERE rt.status = 'OPEN' and rt.accountingArticle is null group by ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id")
         })
 
 @NamedNativeQueries({
