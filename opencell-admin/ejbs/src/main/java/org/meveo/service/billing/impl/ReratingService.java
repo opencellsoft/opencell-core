@@ -415,9 +415,10 @@ public class ReratingService extends RatingService implements Serializable {
 
         } catch (Exception e) {
             methodCallingUtils.callMethodInNewTx(() -> {
-                operationToRerate.changeStatus(WalletOperationStatusEnum.F_TO_RERATE);
-                operationToRerate.setRejectReason(e.getMessage());
-                walletOperationService.update(operationToRerate);
+                WalletOperation operationToRerateFailed = getEntityManager().find(WalletOperation.class, operationToRerateId);
+                operationToRerateFailed.changeStatus(WalletOperationStatusEnum.F_TO_RERATE);
+                operationToRerateFailed.setRejectReason(e.getMessage());
+                walletOperationService.update(operationToRerateFailed);
             });
             throw e;
         }
