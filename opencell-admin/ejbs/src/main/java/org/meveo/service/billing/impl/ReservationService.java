@@ -282,7 +282,7 @@ public class ReservationService extends PersistenceService<Reservation> {
         if (reservation.getCounterPeriodValues().size() > 0) {
 
             for (Entry<Long, BigDecimal> periodInfo : reservation.getCounterPeriodValues().entrySet()) {
-                counterInstanceService.incrementCounterValue(periodInfo.getKey(), periodInfo.getValue(), reservation);
+                counterInstanceService.incrementCounterValue(periodInfo.getKey(), periodInfo.getValue());
             }
         }
 
