@@ -8,8 +8,6 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Persistence;
@@ -39,7 +37,7 @@ class GenericSimpleFilterProvider extends SimpleFilterProvider {
             {
                 if (include(writer)) {
                 	Object prop = ((BeanPropertyWriter)writer).get(pojo);
-                	if(!isNestedEntityCandidate(nestedEntities, writer.getName()) && prop instanceof PersistentBag && !Persistence.getPersistenceUtil().isLoaded(prop)) {
+                	if(!isNestedEntityCandidate(nestedEntities, writer.getName(), jgen) && prop instanceof PersistentBag && !Persistence.getPersistenceUtil().isLoaded(prop)) {
                 		return;
                 	}
                     writer.serializeAsField(pojo, jgen, provider);
@@ -55,8 +53,18 @@ class GenericSimpleFilterProvider extends SimpleFilterProvider {
         });
     }
     
-    boolean isNestedEntityCandidate(Set<String> nestedEntities, String current) {
-        return nestedEntities != null && nestedEntities.contains(current);
+    boolean isNestedEntityCandidate(Set<String> nestedEntities, String current, JsonGenerator jgen) {
+        String currentPath = jgen.getOutputContext()
+                .getParent()
+                .pathAsPointer(false)
+                .toString()
+                .concat("/")
+                .concat(current)
+                .replaceFirst("/", "")
+                .replaceAll("\\d+/", "")
+                .replaceAll("/", ".")
+                .replace("data.", "");
+        return nestedEntities != null && nestedEntities.contains(currentPath);
     }
     String getPathToRoot(JsonGenerator gen){
         return gen.getOutputContext().pathAsPointer(false).toString().replaceFirst("/", "").replaceAll("\\d+/", "").replaceAll("/", ".");
