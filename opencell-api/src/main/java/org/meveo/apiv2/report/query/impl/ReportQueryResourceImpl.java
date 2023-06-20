@@ -6,6 +6,7 @@ import static org.meveo.apiv2.report.ImmutableExecutionResult.builder;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -32,11 +33,15 @@ import org.meveo.apiv2.report.query.service.ReportQueryApiService;
 import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.QueryScheduler;
 import org.meveo.model.report.query.ReportQuery;
+import org.meveo.service.report.ReportQueryService;
 
 public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Inject
     private ReportQueryApiService reportQueryApiService;
+    
+    @Inject
+    private ReportQueryService reportQueryService;
 
     @Inject
     private QueryExecutionResultApiService queryExecutionResultApiService;
@@ -89,6 +94,7 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
                     if(fields != null && !fields.isEmpty()) {
                         return mapper.toResource(reportQuery, fields);
                     } else {
+                    	reportQuery = reportQueryService.findById(reportQuery.getId(),Arrays.asList("fields"));
                         return mapper.toResource(reportQuery);
                     }
                 })
