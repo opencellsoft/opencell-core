@@ -996,10 +996,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         } else {
             if (CounterTypeEnum.USAGE_AMOUNT.equals(counterPeriod.getCounterType())) {
                 value = appProvider.isEntreprise() ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax();
-                log.trace("Increment counter period value {} by amount {}", counterPeriod.getId() == null ? counterPeriod.getCode() : counterPeriod.getId(), value);
             } else if (CounterTypeEnum.USAGE.equals(counterPeriod.getCounterType())) {
                 value = walletOperation.getQuantity();
-                log.trace("Increment counter period value {} by quantity {}", counterPeriod.getId() == null ? counterPeriod.getCode() : counterPeriod.getId(), value);
             }
             counterPeriod.setValue(counterPeriod.getValue().add(value));
         }
@@ -1016,6 +1014,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
         CounterValueChangeInfo counterValueChangeInfo = new CounterValueChangeInfo(counterPeriod.getId(), counterPeriod.isAccumulator(), previousValue, value, counterPeriod.getValue());
 
+        log.trace("Accumulator counter period {} was changed by {} {}", isVirtual ? counterPeriod.getCode() : counterPeriod.getId(), CounterTypeEnum.USAGE_AMOUNT.equals(counterPeriod.getCounterType())?"amount":"quantity",   counterValueChangeInfo);
+        
         return counterValueChangeInfo;
     }
 
@@ -1046,7 +1046,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             }
         }
 
-        log.trace("Increment counter period {} by quantity {}/{}", counterPeriod.getId() == null ? counterPeriod.getCode() : counterPeriod.getId(), key, value);
+        log.trace("Increment accumulator counter period {} by quantity {}/{}", counterPeriod.getId() == null ? counterPeriod.getCode() : counterPeriod.getId(), key, value);
 
         return value;
     }

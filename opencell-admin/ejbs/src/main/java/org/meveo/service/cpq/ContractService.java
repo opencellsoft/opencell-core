@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -175,8 +176,12 @@ public class ContractService extends BusinessService<Contract>  {
 	}
 
 	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
+		return getContractByAccount(customersID, billingAccount, customerAccount, bareWalletOperation, null);
+	}
+
+	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation, Date operationDate) {
 		try {
-			Date operationDate = bareWalletOperation != null ? bareWalletOperation.getOperationDate() : null;
+			Date updateOD = bareWalletOperation != null ? bareWalletOperation.getOperationDate() : operationDate;
 			if(operationDate != null) {
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(operationDate);
@@ -184,14 +189,15 @@ public class ContractService extends BusinessService<Contract>  {
 				calendar.set(Calendar.MINUTE, 0);
 				calendar.set(Calendar.SECOND, 0);
 				calendar.set(Calendar.MILLISECOND, 0);
-				operationDate = calendar.getTime();
+				updateOD = calendar.getTime();
+
 			}
 			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
 					.setParameter("customerId", customersID).setParameter("billingAccountId", billingAccount.getId())
 					.setParameter("customerAccountId",customerAccount.getId())
-					.setParameter("operationDate", operationDate).getResultList();
-			
-			
+					.setParameter("operationDate", updateOD).getResultList();
+
+
 			return contracts.stream()
 					.filter(c -> {
 						try {
@@ -206,4 +212,22 @@ public class ContractService extends BusinessService<Contract>  {
 		}
 	}
 
+	public Contract lookupSuitableContract(List<Customer> customers, List<Contract> contracts, boolean withRules) {
+		Contract contract = null;
+		if(contracts != null && !contracts.isEmpty()) {
+			// Prioritize BA Contract then CA Contract then Customer Hierarchy Contract then Seller Contract
+			Optional<Contract> contractLookup = contracts.stream().filter(c -> c.getBillingAccount() != null && (!withRules || (c.getBillingRules()!=null && !c.getBillingRules().isEmpty()))).findFirst()
+					.or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null && (!withRules || (c.getBillingRules()!=null && !c.getBillingRules().isEmpty()))).findFirst());
+			if(contractLookup.isEmpty()) {
+				for (Customer iCustomer : customers) {
+					contractLookup = contracts.stream().filter(c -> c.getCustomer() != null && c.getCustomer().getId().equals(iCustomer.getId()) && (!withRules || (c.getBillingRules()!=null && !c.getBillingRules().isEmpty()))).findFirst();
+					if(contractLookup.isPresent()) {
+						break;
+					}
+				}
+			}
+			contract = contractLookup.orElseGet(() -> contracts.get(0));
+		}
+		return contract;
+	}
 }

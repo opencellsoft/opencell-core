@@ -129,7 +129,9 @@ public class AccountOperationApiServiceTest {
         aoInvoice.setTransactionalCurrency(eTradingCurrency1);
         List<Long> aoIds = List.of(2L, 3L, 4L);
         List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1, aoP2);
-        Mockito.when(accountOperationService.findByIds(anyList())).thenReturn(accountOperations);
+        Mockito.when(accountOperationService.findById(2L)).thenReturn(aoInvoice);
+        Mockito.when(accountOperationService.findById(3L)).thenReturn(aoP1);
+        Mockito.when(accountOperationService.findById(4L)).thenReturn(aoP2);
         
         Exception exception = assertThrows(BusinessApiException.class, () -> {
             accountOperationApiService.matchOperations(operationAndSequence);
