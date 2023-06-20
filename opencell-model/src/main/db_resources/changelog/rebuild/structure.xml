@@ -2753,6 +2753,7 @@
             <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
             	<constraints nullable="false" />
             </column>
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -2961,6 +2962,7 @@
             <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
