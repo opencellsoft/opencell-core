@@ -449,7 +449,7 @@ public class ReratingService extends RatingService implements Serializable {
         List<Long> rtIdsToUpdate = new ArrayList<>();
 
         List<Long> rtIdsToCheck = new ArrayList<Long>();
-        if (operationToRerate.getRatedTransaction().getId() != null) {
+        if (operationToRerate.getRatedTransaction() != null) {
             rtIdsToCheck.add(operationToRerate.getRatedTransaction().getId());
         }
 
