@@ -20,8 +20,10 @@ import org.meveo.apiv2.report.*;
 import org.meveo.apiv2.report.query.service.ReportQueryApiService;
 import org.meveo.model.Auditable;
 import org.meveo.model.report.query.ReportQuery;
+import org.meveo.service.report.ReportQueryService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -33,6 +35,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +50,9 @@ public class ReportQueryResourceImplTest {
 
     @Mock
     private ReportQueryApiService reportQueryApiService;
+    
+    @Mock
+    private ReportQueryService reportQueryService;
 
     @Mock
     private Request request;
@@ -155,6 +161,7 @@ public class ReportQueryResourceImplTest {
         when(request.evaluatePreconditions(new EntityTag(Integer.toString(customQueries.hashCode())))).thenReturn(null);
         when(reportQueryApiService.list(0L, 10L, null, null, null, null))
                 .thenReturn(customQueries);
+        when(reportQueryService.findById(eq(1L), eq(Arrays.asList("fields")))).thenReturn(reportQuery);
         Response response = reportQueryResource
                 .getReportQueries(0L, 10L, null, null, null, null, null, request);
         assertEquals(200, response.getStatus());
