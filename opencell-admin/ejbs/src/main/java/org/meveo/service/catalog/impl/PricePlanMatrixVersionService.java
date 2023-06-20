@@ -45,22 +45,20 @@ import javax.inject.Inject;
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.RatingException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.apiv2.catalog.ImportPricePlanVersionsItem;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.logging.AuditLog;
-import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ColumnTypeEnum;
@@ -72,7 +70,6 @@ import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.TradingPricePlanMatrixLine;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
-import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.cpq.enums.PriceVersionTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.shared.DateUtils;
@@ -565,16 +562,20 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         }
 
         if (pricePlanMatrixVersion.getValidity() == null || pricePlanMatrixVersion.getValidity().getTo() == null || pricePlanMatrixVersion.getValidity().getTo().after(new Date())) {
-            String eventCode = pricePlanMatrixVersion.getPricePlanMatrix().getEventCode();
+            List<Long> chargeIds = pricePlanMatrixVersion.getPricePlanMatrix()
+                                                            .getChargeTemplates()
+                                                            .stream()
+                                                            .map(ChargeTemplate::getId)
+                                                            .collect(toList());
 
-            List<Long> subscriptionsIds = this.getEntityManager().createNamedQuery("Subscription.getSubscriptionIdsUsingProduct", Long.class).setParameter("eventCode", eventCode)
+            List<Long> subscriptionsIds = this.getEntityManager().createNamedQuery("Subscription.getSubscriptionIdsUsingProduct", Long.class).setParameter("chargeIds", chargeIds)
                 .getResultList();
             result.put("subscriptions", subscriptionsIds);
 
-            List<Long> quotesIds = this.getEntityManager().createNamedQuery("CpqQuote.getQuoteIdsUsingCharge", Long.class).setParameter("eventCode", eventCode).getResultList();
+            List<Long> quotesIds = this.getEntityManager().createNamedQuery("CpqQuote.getQuoteIdsUsingCharge", Long.class).setParameter("chargeIds", chargeIds).getResultList();
             result.put("quotes", quotesIds);
 
-            List<Long> ordersIds = this.getEntityManager().createNamedQuery("CommercialOrder.getOrderIdsUsingCharge", Long.class).setParameter("eventCode", eventCode)
+            List<Long> ordersIds = this.getEntityManager().createNamedQuery("CommercialOrder.getOrderIdsUsingCharge", Long.class).setParameter("chargeIds", chargeIds)
                 .getResultList();
             result.put("orders", ordersIds);
         }
@@ -767,11 +768,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             final String fileNameSeparator = "_-_";
             StringBuilder fileName = new StringBuilder();
             fileName.append(ppmv.getId());
-            if (ppmv.getPricePlanMatrix() != null && ppmv.getPricePlanMatrix().getChargeTemplate() != null) {
-                ChargeTemplate chargeTemplate = ppmv.getPricePlanMatrix().getChargeTemplate();
-                fileName.append(fileNameSeparator + chargeTemplate.getId());
-                fileName.append(fileNameSeparator + chargeTemplate.getDescription()).append(fileNameSeparator + chargeTemplate.getCode());
+            if (ppmv.getPricePlanMatrix() != null && !ListUtils.isEmtyCollection(ppmv.getPricePlanMatrix().getChargeTemplates())) {
+                if(ppmv.getPricePlanMatrix().getChargeTemplates().size() == 1) {
+                    ChargeTemplate chargeTemplate = ppmv.getPricePlanMatrix().getChargeTemplates().iterator().next();
+                    fileName.append(fileNameSeparator + chargeTemplate.getId());
+                    fileName.append(fileNameSeparator + chargeTemplate.getDescription()).append(fileNameSeparator + chargeTemplate.getCode());
+                } else {
+                    fileName.append(fileNameSeparator + ppmv.getPricePlanMatrix().getCode());
+                }
             }
+
             fileName.append(fileNameSeparator + ppmv.getLabel());
             fileName.append(fileNameSeparator);
             if (ppmv.getValidity() != null) {

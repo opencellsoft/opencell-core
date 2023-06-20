@@ -596,7 +596,7 @@ public class ContractApi extends BaseApi{
 						contractItem.updateAudit(currentUser);
 
 						if(ci.getPricePlan() != null) {
-							contractItem.setPricePlan(duplicatePricePlan(contractItem.getCode(), ci.getPricePlan()));
+							contractItem.setPricePlan(duplicatePricePlan(ci.getPricePlan()));
 						}
 
 						return contractItem;
@@ -611,10 +611,9 @@ public class ContractApi extends BaseApi{
 		return entityToSave.getId();
 	}
 
-	private PricePlanMatrix duplicatePricePlan(String newContractItemCode, PricePlanMatrix pricePlanMatrix) {
+	private PricePlanMatrix duplicatePricePlan(PricePlanMatrix pricePlanMatrix) {
 		PricePlanMatrix duplicate = new PricePlanMatrix(pricePlanMatrix);
 		duplicate.setCode(pricePlanMatrixService.findDuplicateCode(pricePlanMatrix));
-		duplicate.setEventCode(newContractItemCode);
 		duplicate.setVersion(0);
 		duplicate.setVersions(new ArrayList<>());
 
