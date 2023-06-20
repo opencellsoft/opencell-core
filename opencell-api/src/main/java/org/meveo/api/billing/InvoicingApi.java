@@ -150,7 +150,15 @@ public class InvoicingApi extends BaseApi {
         	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
         }
         billingRun.setGenerateAO(Optional.ofNullable(dto.getGenerateAO()).orElse(false));
-        
+
+        if (dto.getIncrementalInvoiceLines() != null) {
+            billingRun.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
+        }
+        else {
+            // if incrementalInvoiceLines is not provided in the API call, then use incrementalInvoiceLines of billingCycle as default value
+            billingRun.setIncrementalInvoiceLines(billingCycle.getIncrementalInvoiceLines());
+        }
+
         billingRunService.create(billingRun);
 
         // populate customFields
@@ -194,6 +202,14 @@ public class InvoicingApi extends BaseApi {
                 throw new EntityDoesNotExistsException(BillingCycle.class, dto.getBillingCycleCode());
             }
             billingRun.setBillingCycle(billingCycle);
+
+            if (dto.getIncrementalInvoiceLines() != null) {
+                billingRun.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
+            }
+            else {
+                // if incrementalInvoiceLines is not provided in the API call, then use incrementalInvoiceLines of billingCycle as default value
+                billingRun.setIncrementalInvoiceLines(billingCycle.getIncrementalInvoiceLines());
+            }
         }
 
         billingRun.setBillingCycle(billingCycle);

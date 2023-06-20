@@ -143,7 +143,7 @@ public class InvoiceLinesFactory {
                 && billingRun.getBillingCycle() != null
                 && !billingRun.getBillingCycle().isDisableAggregation()
                 && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
-            BigDecimal unitAmount = (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO);
+            BigDecimal unitAmount = (BigDecimal) data.getOrDefault("sum_without_tax", ZERO);
             BigDecimal quantity = (BigDecimal) data.getOrDefault("quantity", ZERO);
             MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
             BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity, mc);
@@ -182,6 +182,25 @@ public class InvoiceLinesFactory {
         }
         ofNullable(openOrderNumber).ifPresent(invoiceLine::setOpenOrderNumber);
         return invoiceLine;
+    }
+
+    /**
+     * @param invoiceLineId id of invoice line to be updated
+     * @param deltaAmounts difference of amount of tax, difference of amount with tax, difference of amount without tax
+     *                     to be updated
+     * @param deltaQuantity difference of quantity to be updated
+     * @param beginDate beginDate
+     * @param endDate endDate
+     */
+    public void update(Long invoiceLineId, BigDecimal[] deltaAmounts, BigDecimal deltaQuantity, Date beginDate,
+                       Date endDate, BigDecimal unitPrice) throws BusinessException {
+        invoiceLineService.getEntityManager()
+                .createNamedQuery("InvoiceLine.updateByIncrementalMode")
+                .setParameter("id", invoiceLineId).setParameter("deltaAmountWithoutTax", deltaAmounts[0])
+                .setParameter("deltaAmountWithTax", deltaAmounts[1]).setParameter("deltaAmountTax", deltaAmounts[2])
+                .setParameter("deltaQuantity", deltaQuantity).setParameter("beginDate", beginDate)
+                .setParameter("endDate", endDate).setParameter("now", new Date())
+                .setParameter("unitPrice", unitPrice).executeUpdate();
     }
 
     /**

@@ -236,7 +236,14 @@ public class BillingCycle extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_orders")
     private boolean ignoreOrders = true;
-    
+
+    /**
+     * To decide to use incremental invoice lines or not.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "incremental_invoice_lines")
+    private boolean incrementalInvoiceLines = Boolean.FALSE;
+
     public boolean isThresholdPerEntity() {
         return thresholdPerEntity;
     }
@@ -571,5 +578,13 @@ public class BillingCycle extends BusinessCFEntity {
 
     public void setIgnoreOrders(boolean ignoreOrders) {
         this.ignoreOrders = ignoreOrders;
+    }
+
+    public Boolean getIncrementalInvoiceLines() {
+        return incrementalInvoiceLines;
+    }
+
+    public void setIncrementalInvoiceLines(boolean incrementalInvoiceLines) {
+        this.incrementalInvoiceLines = incrementalInvoiceLines;
     }
 }

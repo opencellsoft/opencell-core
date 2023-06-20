@@ -2,6 +2,7 @@ package org.meveo.service.billing.impl;
 
 import static java.lang.Boolean.FALSE;
 import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -15,10 +16,10 @@ import static org.apache.commons.collections4.ListUtils.partition;
 import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -43,7 +44,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -63,7 +63,6 @@ import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.LinkedInvoice;
@@ -153,10 +152,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private SellerService sellerService;
-    
-    @Inject
-	private BillingRunService billingRunService;
-    
+
     @Inject
     private DiscountPlanItemService discountPlanItemService;
     
@@ -1108,35 +1104,81 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         BasicStatistics basicStatistics = new BasicStatistics();
         OpenOrderSetting openOrderSetting = openOrderSettingService.findLastOne();
         boolean useOpenOrder = ofNullable(openOrderSetting).map(OpenOrderSetting::getUseOpenOrders).orElse(false);
-        InvoiceLine invoiceLine = null;
-        List<Long> associatedRtIds = null;
-        for (Map<String, Object> groupedRT : groupedRTs) {
-            invoiceLine = linesFactory.create(groupedRT, iLIdsRtIdsCorrespondence,
-                    configuration, result, appProvider, billingRun, openOrderNumber);
-            basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
-            basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
-            basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
-            create(invoiceLine);
-            commit();
-            associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
-            basicStatistics.setCount(associatedRtIds.size());
-            ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId(), billingRun!=null?billingRun.getId():null);
-            if(groupedRT.get("rated_transaction_ids") != null) {
-            	var ratedTransIds = Arrays.asList( ((String) groupedRT.get("rated_transaction_ids")).split(","));
-            	for(String id: ratedTransIds) {
-            		iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
-            	}
-            }
+        InvoiceLine invoiceLine;
+        List<Long> associatedRtIds;
 
-            if(useOpenOrder) {
-            	OpenOrder openOrder = openOrderService.findOpenOrderCompatibleForIL(invoiceLine, configuration);
-        		if (openOrder != null) {
-        			invoiceLine.setOpenOrderNumber(openOrder.getOpenOrderNumber());
-        			openOrder.setBalance(openOrder.getBalance().subtract(invoiceLine.getAmountWithoutTax()));
-        		}
-            }
-            invoiceLines.add(invoiceLine);
+        Long billingRunId = null;
+        boolean incrementalInvoiceLines = false;
+        if (billingRun != null) {
+            billingRunId = billingRun.getId();
+            incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines();
         }
+        for (Map<String, Object> groupedRT : groupedRTs) {
+            if (incrementalInvoiceLines && groupedRT.get("invoice_line_id") != null) {
+                Long invoiceLineId = (Long) groupedRT.get("invoice_line_id");
+                BigDecimal amountWithoutTax = ofNullable(((BigDecimal) groupedRT.get("amount_without_tax"))).orElse(ZERO)
+                        .add((BigDecimal) groupedRT.get("sum_without_tax"));
+                BigDecimal amountWithTax = ofNullable(((BigDecimal) groupedRT.get("amount_with_tax"))).orElse(ZERO)
+                        .add((BigDecimal) groupedRT.get("sum_with_tax"));
+                BigDecimal taxPercent = ofNullable((BigDecimal) groupedRT.get("tax_rate"))
+                        .orElse((BigDecimal) groupedRT.get("tax_percent"));
+                BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, appProvider.isEntreprise(), appProvider.getRounding(),
+                        appProvider.getRoundingMode().getRoundingMode());
+                BigDecimal deltaAmountWithoutTax = (BigDecimal) groupedRT.get("sum_without_tax");
+                BigDecimal deltaAmountWithTax = (BigDecimal) groupedRT.get("sum_with_tax");
+                BigDecimal deltaAmountTax = deltaAmountWithTax.subtract(deltaAmountWithoutTax);
+                BigDecimal[] deltaAmounts = new BigDecimal[] {deltaAmountWithoutTax, deltaAmountWithTax, deltaAmountTax};
+
+                BigDecimal deltaQuantity = (BigDecimal) groupedRT.get("quantity");
+                BigDecimal quantity = ((BigDecimal) groupedRT.get("accumulated_quantity")).add((BigDecimal) groupedRT.get("quantity"));
+                Date beginDate = (Date) groupedRT.get("begin_date");
+                Date endDate = (Date) groupedRT.get("end_date");
+
+                BigDecimal unitPrice = (BigDecimal) groupedRT.get("unit_price");
+                if (billingRun.getBillingCycle() != null && !billingRun.getBillingCycle().isDisableAggregation()
+                        && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
+                    MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                    unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
+                }
+
+                linesFactory.update(invoiceLineId, deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);
+                basicStatistics.addToAmountWithoutTax(amounts[0]);
+                basicStatistics.addToAmountWithTax(amounts[1]);
+                basicStatistics.addToAmountTax(amounts[2]);
+                commit();
+                associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+                basicStatistics.setCount(associatedRtIds.size());
+                ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLineId, billingRunId);
+            }
+            else {
+                invoiceLine = linesFactory.create(groupedRT, iLIdsRtIdsCorrespondence,
+                        configuration, result, appProvider, billingRun, openOrderNumber);
+                basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
+                basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
+                basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
+                create(invoiceLine);
+                commit();
+                associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+                basicStatistics.setCount(associatedRtIds.size());
+                ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId(), billingRunId);
+                if(groupedRT.get("rated_transaction_ids") != null) {
+                    var ratedTransIds = ((String) groupedRT.get("rated_transaction_ids")).split(",");
+                    for(String id: ratedTransIds) {
+                        iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
+                    }
+                }
+
+                if(useOpenOrder) {
+                    OpenOrder openOrder = openOrderService.findOpenOrderCompatibleForIL(invoiceLine, configuration);
+                    if (openOrder != null) {
+                        invoiceLine.setOpenOrderNumber(openOrder.getOpenOrderNumber());
+                        openOrder.setBalance(openOrder.getBalance().subtract(invoiceLine.getAmountWithoutTax()));
+                    }
+                }
+                invoiceLines.add(invoiceLine);
+            }
+        }
+        basicStatistics.setCount(groupedRTs.size());
         return basicStatistics;
     }
 
@@ -1146,12 +1188,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @param billingRun
 	 * @param be billableEntity
 	 * @param basicStatistics
-	 * @return
 	 */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
-	    BasicStatistics ilBasicStatistics = createInvoiceLines(ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate()), aggregationConfiguration, result, billingRun);
+	    BasicStatistics ilBasicStatistics = createInvoiceLines(
+	            ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate()),
+                aggregationConfiguration, result, billingRun);
 	    basicStatistics.append(ilBasicStatistics);
 	}
 

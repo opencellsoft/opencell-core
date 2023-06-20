@@ -1,7 +1,6 @@
 package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -412,7 +411,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
         // Change related OPEN or REJECTED Rated transaction status to CANCELED
         RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
         if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED)) {
-            ratedTransaction.changeStatus(RatedTransactionStatusEnum.CANCELED);
+            ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
         }
 
         // Check triggered EDRS and check status/rerate each of them
