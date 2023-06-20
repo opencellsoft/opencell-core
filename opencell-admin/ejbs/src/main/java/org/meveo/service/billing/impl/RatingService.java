@@ -20,8 +20,14 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -103,7 +109,6 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
@@ -143,9 +148,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
-
-    @Inject
-    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
     @Inject
     private ContractService contractService;
@@ -1024,8 +1026,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
     }
 
-    
-
     /**
      * Get a rerated copy of a wallet operation. New wallet operation is not persisted nor status of wallet operation to rerate is changed
      *
@@ -1034,7 +1034,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws BusinessException business exception
      * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RatingResult rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
+    protected RatingResult rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         WalletOperation operation = walletOperationToRerate.getUnratedClone();
         operation.setOperationDate(operation.getEdr() != null ? operation.getEdr().getEventDate() : operation.getOperationDate());
