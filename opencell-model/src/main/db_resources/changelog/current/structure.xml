@@ -16872,6 +16872,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </createTable>
     </changeSet>
 
+    <changeSet id="INTRD-15501_20230413" author="ThangNguyen">
+        <addColumn tableName="billing_billing_run">
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="INTRD-16050_20230515" author="ThangNguyen">
+        <addColumn tableName="billing_cycle">
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
     <changeSet id="#INTRD-16362_20230607_ppm_eventcode" author="a.rouaguebe">
         <dropNotNullConstraint tableName="cat_price_plan_matrix" columnName="event_code"></dropNotNullConstraint>
     </changeSet>
