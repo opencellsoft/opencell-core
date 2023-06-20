@@ -534,13 +534,8 @@ public class ContractApi extends BaseApi{
 			throw new EntityDoesNotExistsException(Contract.class, contractCode);
 		}
 
-		String newContractCode = contractToDuplicate.getCode() + "-COPY";
-		if(contractService.findByCode(newContractCode) != null) {
-			throw new EntityAlreadyExistsException(Contract.class, newContractCode);
-		}
-
 		Contract entityToSave = new Contract();
-		entityToSave.setCode(newContractCode);
+		entityToSave.setCode(contractService.findDuplicateCode(contractToDuplicate, "-COPY"));
 		entityToSave.setBeginDate(contractToDuplicate.getBeginDate());
 		entityToSave.setEndDate(contractToDuplicate.getEndDate());
 		entityToSave.setSeller(contractToDuplicate.getSeller());
