@@ -18120,7 +18120,7 @@
 		
 		  <sql>CREATE INDEX idx__billing_invoice_line__billing_account_id ON ${db.schema.adapted}billing_invoice_line USING btree (billing_account_id) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_invoice_line__billing_run ON ${db.schema.adapted}billing_invoice_line USING btree (billing_run_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__status ON ${db.schema.adapted}billing_invoice_line USING btree (status) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_invoice_line__status ON ${db.schema.adapted}billing_invoice_line USING btree (status) </sql>
 		  <sql>CREATE INDEX idx__billing_invoice_line__accounting_article ON ${db.schema.adapted}billing_invoice_line USING btree (accounting_article_id) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_invoice_line__offer_template_id ON ${db.schema.adapted}billing_invoice_line USING btree ( offer_template_id) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_invoice_line__tax_id ON ${db.schema.adapted}billing_invoice_line USING btree (tax_id) WHERE (status= 'OPEN') </sql>
