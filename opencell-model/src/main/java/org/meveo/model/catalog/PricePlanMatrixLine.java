@@ -2,12 +2,9 @@ package org.meveo.model.catalog;
 
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -24,13 +21,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.cpq.AttributeValue;
 
 @Entity
 @Table(name = "cpq_price_plan_matrix_line")
@@ -202,9 +196,4 @@ public class PricePlanMatrixLine extends AuditableEntity {
         this.tradingPricePlanMatrixLines = tradingPricePlanMatrixLines;
     }
     
-	public List<PricePlanMatrixValue> getSortedPricePlanMatrixValues() {
-		return pricePlanMatrixValues.stream()
-				.sorted(Comparator.comparing(ppmv -> ppmv.getPricePlanMatrixColumn().getPosition()))
-				.collect(Collectors.toList());
-    }
 }
