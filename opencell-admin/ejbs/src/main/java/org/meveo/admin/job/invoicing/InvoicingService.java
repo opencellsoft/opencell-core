@@ -1,6 +1,8 @@
 package org.meveo.admin.job.invoicing;
+
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -64,11 +66,12 @@ import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.script.billing.TaxScriptService;
 import com.google.common.collect.Lists;
+
 /**
  * InvoicingService. this class contains services used in invoicing generation job
  *
- * 
  */
+
 @Stateless
 public class InvoicingService extends PersistenceService<Invoice> {
     private final static BigDecimal HUNDRED = new BigDecimal("100");
@@ -96,7 +99,6 @@ public class InvoicingService extends PersistenceService<Invoice> {
 	 * 
 	 * @param billingRun
 	 * @param billingCycle
-	 * @param partitions
 	 * @param jobInstanceId
 	 * @param lastCurrentUser
 	 * @param isFullAutomatic
@@ -131,21 +133,22 @@ public class InvoicingService extends PersistenceService<Invoice> {
     
 	private Future<String> processInvoicingItems(BillingRun billingRun, BillingCycle billingCycle, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, MeveoUser lastCurrentUser, boolean isFullAutomatic, JobExecutionResultImpl result) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        List<List<Invoice>> invoicesbyBA = generateInvoices(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic, billingCycle, result);
-        if(!CollectionUtils.isEmpty(invoicesbyBA)) {
-        	validateInvoices(invoicesbyBA);
-            writeInvoicingData(billingRun, isFullAutomatic, invoicesbyBA, billingCycle);
+        List<List<Invoice>> invoicesByBA = generateInvoices(billingRun, invoicingItemsList, jobInstanceId, isFullAutomatic, billingCycle, result);
+        if(!CollectionUtils.isEmpty(invoicesByBA)) {
+        	validateInvoices(invoicesByBA);
+            writeInvoicingData(billingRun, isFullAutomatic, invoicesByBA, billingCycle);
         }
-        return new AsyncResult<String>("OK");
+        return new AsyncResult<>("OK");
     }
-	private void validateInvoices(List<List<Invoice>> invoicesbyBA) {
-		invoicesbyBA.stream().forEach(invoices-> invoiceService.applyAutomaticInvoiceCheck(invoices, true, false));
+	private void validateInvoices(List<List<Invoice>> invoicesByBA) {
+        invoicesByBA.stream().forEach(invoices-> invoiceService.applyAutomaticInvoiceCheck(invoices, true, false));
 	}
-	private List<List<Invoice>> generateInvoices(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList, Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle, JobExecutionResultImpl result) {
-        List<List<Invoice>> invoicesByBA = new ArrayList<List<Invoice>>();
+	private List<List<Invoice>> generateInvoices(BillingRun billingRun, List<BillingAccountDetailsItem> invoicingItemsList,
+                                                 Long jobInstanceId, boolean isFullAutomatic, BillingCycle billingCycle, JobExecutionResultImpl result) {
+        List<List<Invoice>> invoicesByBA = new ArrayList<>();
         List<Invoice> invoices;
         for (BillingAccountDetailsItem billingAccountDetailsItem : invoicingItemsList) {
-        	invoices = new ArrayList<Invoice>();
+        	invoices = new ArrayList<>();
             BillingAccount billingAccount = getEntityManager().getReference(BillingAccount.class, billingAccountDetailsItem.getBillingAccountId());
             try {
                 createAggregatesAndInvoiceFromInvoicingItems(billingAccountDetailsItem, billingRun, invoices, billingCycle, billingAccount,isFullAutomatic);
@@ -154,7 +157,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
             } catch (Exception e) {
                 log.error("Failed to create invoices for entity {}", billingAccount.getId(), e);
                 result.addErrorReport("BA: "+billingAccount.getId()+" error: "+e.getMessage());
-                rejectedBillingAccountService.create(billingAccount, billingRun, e.getMessage().toString());
+                rejectedBillingAccountService.create(billingAccount, billingRun, e.getMessage());
             }
         }
         return invoicesByBA;
@@ -286,23 +289,24 @@ public class InvoicingService extends PersistenceService<Invoice> {
         aggregate.setDescription(descTranslated);
     }
     private void initTaxAggregations(BillingAccountDetailsItem BillingAccountDetailsItem, Invoice invoice, boolean calculateTaxOnSubCategoryLevel, BillingAccount billingAccount, String languageCode, List<InvoicingItem> invoicingItems) {
-        InvoicingItem firstItem = invoicingItems.get(0);
         Boolean isExonerated = billingAccountService.isExonerated(billingAccount, BillingAccountDetailsItem.getExoneratedFromTaxes(), BillingAccountDetailsItem.getExonerationTaxEl());
         if (isExonerated) {
             return;
         }
         if (calculateTaxOnSubCategoryLevel) {
             Map<Long, List<InvoicingItem>> itemsByTax = invoicingItems.stream().collect(Collectors.groupingBy(InvoicingItem::getTaxId));
-            //tax aggregations will be used to override amoounts 
+            //tax aggregations will be used to override amounts
             invoice.initAmounts();
-            for(List<InvoicingItem> items: itemsByTax.values()) {
-                final Tax tax = getTax(firstItem.getTaxId());
-                TaxInvoiceAgregate taxAggregate = new TaxInvoiceAgregate(billingAccount, tax, tax.getPercent(), invoice);
-                taxAggregate.updateAudit(currentUser);
-                addTranslatedDescription(languageCode, getTax(firstItem.getTaxId()), taxAggregate, "T");
-                setAggregationAmounts(items, taxAggregate, firstItem);
-                addInvoiceAggregateWithAmounts(invoice, taxAggregate);
-                
+            for(List<InvoicingItem> items : itemsByTax.values()) {
+                if(!items.isEmpty() && items.get(0).getTaxId() != null) {
+                    final Long taxId = items.get(0).getTaxId();
+                    final Tax tax = getTax(taxId);
+                    TaxInvoiceAgregate taxAggregate = new TaxInvoiceAgregate(billingAccount, tax, tax.getPercent(), invoice);
+                    taxAggregate.updateAudit(currentUser);
+                    addTranslatedDescription(languageCode, getTax(taxId), taxAggregate, "T");
+                    setAggregationAmounts(items, taxAggregate, items.get(0));
+                    addInvoiceAggregateWithAmounts(invoice, taxAggregate);
+                }
             }
         } else {
              // If tax calculation is not done at subcategory level, then call a global script to do calculation for the whole invoice
