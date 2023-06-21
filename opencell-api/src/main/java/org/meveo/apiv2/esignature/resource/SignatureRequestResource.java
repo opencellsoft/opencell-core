@@ -55,4 +55,8 @@ public interface SignatureRequestResource {
 	Response fetchSignatureRequest(@PathParam("operator") Operator operator, @PathParam("signatureRequestId") String signatureRequestId);
 	
 	
+	@GET
+	@Path("{operator}/signatureRequest/{signatureRequestId}/documents/download")
+	Response download(@PathParam("operator") Operator operator, @PathParam("signatureRequestId") String signatureRequestId);
+	
 }

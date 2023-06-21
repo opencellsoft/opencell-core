@@ -21,4 +21,9 @@ public class SignatureRequestResourceImpl implements SignatureRequestResource {
 	public Response fetchSignatureRequest(Operator operator, String signatureRequestId) {
 		return Response.ok(signatureRequestApiService.fetchSignatureRequest(operator, signatureRequestId)).build();
 	}
+	
+	@Override
+	public Response download(Operator operator, String signatureRequestId) {
+		return Response.ok(signatureRequestApiService.download(operator, signatureRequestId)).build();
+	}
 }

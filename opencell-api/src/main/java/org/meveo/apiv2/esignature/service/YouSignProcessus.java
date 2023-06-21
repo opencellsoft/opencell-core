@@ -1,5 +1,6 @@
 package org.meveo.apiv2.esignature.service;
 
+import com.stripe.exception.ApiConnectionException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -8,6 +9,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.meveo.api.YouSignApi;
 import org.meveo.api.admin.FilesApi;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -26,10 +28,20 @@ import org.meveo.model.esignature.SigantureAuthentificationMode;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileAttribute;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +50,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 	
 	
 	private final FilesApi filesApi = (FilesApi) EjbUtils.getServiceInterface(FilesApi.class.getSimpleName());
+	private final YouSignApi youSignApi = (YouSignApi) EjbUtils.getServiceInterface(YouSignApi.class.getSimpleName());
 	public YouSignProcessus(SigantureRequest sigantureRequest){
 		super(sigantureRequest);
 	}
@@ -46,12 +59,12 @@ public class YouSignProcessus extends SignatureRequestProcess {
 	}
 	@Override
 	public String getSignatureApiKey() {
-		return PARAMBEAN.getProperty("gateway.yousign.apikey", null);
+		return PARAMBEAN.getProperty(YouSignApi.YOUSIGN_API_TOKEN_PROPERTY_KEY, null);
 	}
 	
 	@Override
 	public String getSignatureUrl() {
-		return PARAMBEAN.getProperty("gateway.yousign.url", null);
+		return PARAMBEAN.getProperty(YouSignApi.YOUSIGN_API_URL_PROPERTY_KEY, null);
 	}
 	
 	@Override
@@ -82,6 +95,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 	}
 	
 	public Map<String, Object> fetch(String signatureRequestId)  {
+		checkApiAndUrl();
 		try {
 			HttpResponse<String> response = getHttpRequestWithoutBody("/signature_requests/" + signatureRequestId, HttpMethod.GET);
 			return gson.fromJson(response.body(), Map.class);
@@ -89,6 +103,29 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			throw new BusinessApiException(e);
 		}
 	}
+	
+	public InputStream download(String signatureRequestId){
+		checkApiAndUrl();
+		try {
+			HttpResponse<byte[]> dowbloadbleFile = download("/signature_requests/" + signatureRequestId + "/documents/download", HttpMethod.GET);
+			String fileName = null;
+			if(dowbloadbleFile.headers().map().get("content-disposition") != null) {
+				String contentdisposition = dowbloadbleFile.headers().map().get("content-disposition").get(0);
+				fileName = contentdisposition.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1");
+			}
+			if(fileName == null) {
+				throw new BusinessApiException("the file doesn't exist");
+			}
+			String yousignDir = PARAMBEAN.getChrootDir("") + File.separator + PARAMBEAN.getProperty(YouSignApi.YOUSIGN_API_DOWNLOAD_DIR_KEY, "/signeddocs");
+			filesApi.createDir(yousignDir);
+			Path filePath = Path.of(yousignDir + File.separator + fileName);
+			Path newFile = Files.write(filePath, dowbloadbleFile.body(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			return new FileInputStream(newFile.toFile());
+		} catch (IOException | InterruptedException e) {
+			throw new BusinessApiException(e.getMessage());
+		}
+	}
+	
 	private String processGenerateRequestId() throws IOException, InterruptedException {
 		final IntiateSignatureRequest intiateSignatureRequest = new IntiateSignatureRequest(sigantureRequest.getName(), DeliveryMode.email.getValue(sigantureRequest.getDelivery_mode()));
 		var response = getHttpRequestPost( "/signature_requests", intiateSignatureRequest);

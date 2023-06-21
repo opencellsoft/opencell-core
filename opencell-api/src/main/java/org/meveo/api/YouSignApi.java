@@ -77,16 +77,16 @@ public class YouSignApi extends BaseApi {
     private static final Logger LOG = LoggerFactory.getLogger(YouSignApi.class);
     
     /** The Constant YOUSIGN_API_TOKEN_PROPERTY_KEY. */
-    private static final String YOUSIGN_API_TOKEN_PROPERTY_KEY = "yousign.api.token";
+    public static final String YOUSIGN_API_TOKEN_PROPERTY_KEY = "yousign.api.token";
     
     /** The Constant YOUSIGN_API_URL_PROPERTY_KEY. */
-    private static final String YOUSIGN_API_URL_PROPERTY_KEY = "yousign.api.url";
+    public static final String YOUSIGN_API_URL_PROPERTY_KEY = "yousign.api.url";
     
     /** The Constant YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY. */
     private static final String YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY = "yousign.api.callback.url";
     
     /** The Constant YOUSIGN_API_DOWNLOAD_DIR_KEY. */
-    private static final String YOUSIGN_API_DOWNLOAD_DIR_KEY = "yousign.api.download.dir";
+    public static final String YOUSIGN_API_DOWNLOAD_DIR_KEY = "yousign.api.download.dir";
     
     /** The Constant YOUSIGN_API_CONNECT_TIME_OUT. */
     private static final String YOUSIGN_API_CONNECT_TIME_OUT = "yousign.api.connectTimeout";
@@ -211,7 +211,7 @@ public class YouSignApi extends BaseApi {
         return result;
     }
     
-    private String getDownloadedFilePath(String fileName, String extension) throws MeveoApiException {
+    public String getDownloadedFilePath(String fileName, String extension) throws MeveoApiException {
         String signeddocsDirEl = this.getYousignParam(YOUSIGN_API_DOWNLOAD_DIR_KEY, false, "/signeddocs");
         
         Map<Object, Object> elContext = new HashMap<>();
