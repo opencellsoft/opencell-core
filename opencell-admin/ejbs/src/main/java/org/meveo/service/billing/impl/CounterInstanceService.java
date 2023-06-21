@@ -773,9 +773,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public BigDecimal incrementCounterValue(Long periodId, BigDecimal incrementBy) {
         try {
-            return methodCallingUtils.callCallableInNewTx(() -> incrementCounterValue_noLock(periodId, incrementBy));
+            return incrementCounterValue_noLock(periodId, incrementBy);
 
         } catch (CounterInstantiationException e) {
             throw e;

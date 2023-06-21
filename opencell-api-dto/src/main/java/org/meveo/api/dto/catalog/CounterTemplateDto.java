@@ -111,9 +111,9 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
 
     
     /**
-     * The field can be disable/enable accumulator counter automatic
+     * The field can be disable/enable accumulator counter
      */
-    private boolean managedByApp = true;
+    private Boolean managedByApp;
 
 
     /**
@@ -368,11 +368,12 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
     }
 
 
-	public boolean isManagedByApp() {
+
+	public Boolean getManagedByApp() {
 		return managedByApp;
 	}
 
-	public void setManagedByApp(boolean managedByApp) {
+	public void setManagedByApp(Boolean managedByApp) {
 		this.managedByApp = managedByApp;
 	}
 
