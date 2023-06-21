@@ -391,10 +391,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	@OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<DiscountPlanItem> discountPlanItems = new ArrayList<>();
 
-    public String getEventCode() {
-        throw new UnsupportedOperationException();
-    }
-
     public OfferTemplate getOfferTemplate() {
         return offerTemplate;
     }

@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -45,6 +46,7 @@ import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
@@ -96,12 +98,16 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     }
 
     public void validatePricePlan(PricePlanMatrix pp) {
-        List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(pp.getEventCode());
-        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices){
-            if(!pricePlanMatrix.getId().equals(pp.getId()) &&
-                    areValidityPeriodsOverlap(pp.getValidityFrom(), pp.getValidityDate(), pricePlanMatrix.getValidityFrom(), pricePlanMatrix.getValidityDate())){
-                throw new BusinessException("price plan validity date overlaps with other charge price plans { "+pricePlanMatrix.getCode()+" } ");
-            }
+        if(ListUtils.isEmtyCollection(pp.getChargeTemplates())) {
+            pp.getChargeTemplates().forEach(ct -> {
+                List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(ct.getCode());
+                for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices){
+                    if(!pricePlanMatrix.getId().equals(pp.getId()) &&
+                            areValidityPeriodsOverlap(pp.getValidityFrom(), pp.getValidityDate(), pricePlanMatrix.getValidityFrom(), pricePlanMatrix.getValidityDate())){
+                        throw new BusinessException("price plan validity date overlaps with other charge price plans { "+pricePlanMatrix.getCode()+" } ");
+                    }
+                }
+            });
         }
     }
 
