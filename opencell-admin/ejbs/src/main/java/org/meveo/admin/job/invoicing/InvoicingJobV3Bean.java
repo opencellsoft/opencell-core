@@ -2,6 +2,7 @@ package org.meveo.admin.job.invoicing;
 import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.model.billing.BillingProcessTypesEnum.AUTOMATIC;
 import static org.meveo.model.billing.BillingProcessTypesEnum.FULL_AUTOMATIC;
@@ -77,7 +78,7 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 	public JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 		log.debug("Running InvoicingV3Job with parameter={}", jobInstance.getParametres());
 		try {
-			List<BillingRun> billingRuns = readValidBillingRunsToProcess(jobInstance, result);
+			List<BillingRun> billingRuns = readValidBillingRunsToProcess(jobInstance);
 			if (billingRuns.isEmpty()) {
 				List<String> errors = List.of("No valid billing run with status=INVOICE_LINES_CREATED found");
 				result.setErrors(errors);
@@ -96,14 +97,23 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 		}
 		return result;
 	}
-	private List<BillingRun> readValidBillingRunsToProcess(JobInstance jobInstance, JobExecutionResultImpl result) {
+
+	private List<BillingRun> readValidBillingRunsToProcess(JobInstance jobInstance) {
 		List<EntityReferenceWrapper> billingRunWrappers = (List<EntityReferenceWrapper>) this
 				.getParamOrCFValue(jobInstance, "InvoicingJobV3_billingRun");
+		List<EntityReferenceWrapper> billingRunWrappersV2 = (List<EntityReferenceWrapper>) this
+				.getParamOrCFValue(jobInstance, "InvoicingJobV2_billingRun");
+		if(billingRunWrappers != null) {
+			ofNullable(billingRunWrappersV2).ifPresent(billingRunWrappers::addAll);
+		} else {
+			billingRunWrappers = billingRunWrappersV2;
+		}
 		List<Long> billingRunIds = billingRunWrappers != null ? extractBRIds(billingRunWrappers) : emptyList();
 		Map<String, Object> filters = new HashedMap();
-		filters.put("status", INVOICE_LINES_CREATED);
 		if (!billingRunIds.isEmpty()) {
 			filters.put("inList id", billingRunIds);
+		} else {
+			filters.put("status", INVOICE_LINES_CREATED);
 		}
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
 		paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));

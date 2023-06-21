@@ -6,11 +6,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.TradingPricePlanMatrixLine;
@@ -398,17 +401,22 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         Query query = getEntityManager().createQuery(buildQuery(searchInfo), PricePlanMatrixLine.class);
         injectParamsIntoQuery(searchInfo, query);
         List<PricePlanMatrixLine> lines =  query.getResultList();
-        lines.sort((ppml1, ppml2) -> {
-        	List<PricePlanMatrixValue> ppmvs1 = ppml1.getSortedPricePlanMatrixValues();
-        	List<PricePlanMatrixValue> ppmvs2 = ppml2.getSortedPricePlanMatrixValues();
-        	for (int i = 0; i < ppmvs1.size(); i++) {
-        		int eval = compareValuePricePlanMatrixLine(ppmvs1.get(i), ppmvs2.get(i));
-        		if (eval != 0) {
-        			return eval;
-        		}
-        	}
-        	return 1;
-        });
+		if (lines != null && lines.size() > 0) {
+			List<PricePlanMatrixColumn> sortedColumns = lines.get(0).getPricePlanMatrixVersion().getColumns().stream().sorted(Comparator.comparing(PricePlanMatrixColumn::getPosition)).collect(Collectors.toList());
+			lines.sort((ppml1, ppml2) -> {
+				for (PricePlanMatrixColumn column : sortedColumns) {
+					Optional<PricePlanMatrixValue> ppmv1 = ppml1.getPricePlanMatrixValues().stream().filter(ppmv -> ppmv.getPricePlanMatrixColumn().getCode().equals(column.getCode())).findAny();
+					Optional<PricePlanMatrixValue> ppmv2 = ppml2.getPricePlanMatrixValues().stream().filter(ppmv -> ppmv.getPricePlanMatrixColumn().getCode().equals(column.getCode())).findAny();
+					if (ppmv1.isPresent() && ppmv2.isEmpty()) return -1;
+					if (ppmv1.isEmpty() && ppmv2.isPresent()) return 1;
+					if (ppmv1.isPresent() && ppmv2.isPresent()) {
+						int eval = compareValuePricePlanMatrixLine(ppmv1.get(), ppmv2.get());
+						if (eval != 0) return eval;
+					}
+				}
+				return 1;
+			});
+		}
         return lines;
     }
 
@@ -556,17 +564,17 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     	PricePlanMatrixColumn column = ppmv1.getPricePlanMatrixColumn();
 		switch (column.getType()) {
 		case String:
-			return (ppmv1.getStringValue() == null && ppmv2.getStringValue() == null) ? 0 : (ppmv1.getStringValue() == null) ? 1	: (ppmv2.getStringValue() == null) ? -1 : ppmv1.getStringValue().compareTo(ppmv2.getStringValue());
+			return (StringUtils.isBlank(ppmv1.getStringValue()) && StringUtils.isBlank(ppmv2.getStringValue())) ? 0 : (StringUtils.isBlank(ppmv1.getStringValue())) ? 1	: (StringUtils.isBlank(ppmv2.getStringValue())) ? -1 : ppmv1.getStringValue().compareTo(ppmv2.getStringValue());
 		case Long:
-			return (ppmv1.getLongValue() == null && ppmv2.getLongValue() == null) ? 0 : (ppmv1.getLongValue() == null) ? 1 : (ppmv2.getLongValue() == null) ? -1 : ppmv1.getLongValue().compareTo(ppmv2.getLongValue());
+			return (StringUtils.isBlank(ppmv1.getLongValue()) && StringUtils.isBlank(ppmv2.getLongValue())) ? 0 : (StringUtils.isBlank(ppmv1.getLongValue())) ? 1 : (StringUtils.isBlank(ppmv2.getLongValue())) ? -1 : ppmv1.getLongValue().compareTo(ppmv2.getLongValue());
 		case Double:
-			return (ppmv1.getDoubleValue() == null && ppmv2.getDoubleValue() == null) ? 0 : (ppmv1.getDoubleValue() == null) ? 1 : (ppmv2.getDoubleValue() == null) ? -1 : ppmv1.getDoubleValue().compareTo(ppmv2.getDoubleValue());
+			return (StringUtils.isBlank(ppmv1.getDoubleValue()) && StringUtils.isBlank(ppmv2.getDoubleValue())) ? 0 : (StringUtils.isBlank(ppmv1.getDoubleValue())) ? 1 : (StringUtils.isBlank(ppmv2.getDoubleValue())) ? -1 : ppmv1.getDoubleValue().compareTo(ppmv2.getDoubleValue());
 		case Boolean:
-			return (ppmv1.getBooleanValue() == null && ppmv2.getBooleanValue() == null) ? 0 : (ppmv1.getBooleanValue() == null) ? 1 : (ppmv2.getBooleanValue() == null) ? -1 : ppmv1.getBooleanValue().compareTo(ppmv2.getBooleanValue());
+			return (StringUtils.isBlank(ppmv1.getBooleanValue()) && StringUtils.isBlank(ppmv2.getBooleanValue())) ? 0 : (StringUtils.isBlank(ppmv1.getBooleanValue())) ? 1 : (StringUtils.isBlank(ppmv2.getBooleanValue())) ? -1 : ppmv1.getBooleanValue().compareTo(ppmv2.getBooleanValue());
 		case Range_Date:
-			return (ppmv1.getFromDateValue() == null && ppmv2.getFromDateValue() == null) ? 0 : (ppmv1.getFromDateValue() == null) ? -1 : (ppmv2.getFromDateValue() == null) ? 1 : ppmv1.getFromDateValue().compareTo(ppmv2.getFromDateValue());
+			return (StringUtils.isBlank(ppmv1.getFromDateValue()) && StringUtils.isBlank(ppmv2.getFromDateValue())) ? 0 : (StringUtils.isBlank(ppmv1.getFromDateValue())) ? -1 : (StringUtils.isBlank(ppmv2.getFromDateValue())) ? 1 : ppmv1.getFromDateValue().compareTo(ppmv2.getFromDateValue());
 		case Range_Numeric:
-			return (ppmv1.getFromDoubleValue() == null && ppmv2.getFromDoubleValue() == null) ? 0 : (ppmv1.getFromDoubleValue() == null) ? -1 : (ppmv2.getFromDoubleValue() == null) ? 1 : ppmv1.getFromDoubleValue().compareTo(ppmv2.getFromDoubleValue());
+			return (StringUtils.isBlank(ppmv1.getFromDoubleValue()) && StringUtils.isBlank(ppmv2.getFromDoubleValue())) ? 0 : (StringUtils.isBlank(ppmv1.getFromDoubleValue())) ? -1 : (StringUtils.isBlank(ppmv2.getFromDoubleValue())) ? 1 : ppmv1.getFromDoubleValue().compareTo(ppmv2.getFromDoubleValue());
 		default:
 			break;
 		}

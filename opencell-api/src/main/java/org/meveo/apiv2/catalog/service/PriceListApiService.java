@@ -34,6 +34,7 @@ import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.model.securityDeposit.FinanceSettings;
+import org.meveo.model.shared.RegexUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -237,6 +238,10 @@ public class PriceListApiService extends BaseApi {
     	} else if(priceList.getCode().length() > 50) {
     		throw new BusinessApiException("The code must be 50 characters or less");
     	}
+
+        if (!StringUtils.isBlank(priceList.getCode()) && !RegexUtils.checkCode(priceList.getCode())) {
+            throw new BusinessApiException("PriceList code should not contain special characters");
+        }
     	
     	if(priceList.getDescription() != null && !priceList.getDescription().isEmpty() && priceList.getDescription().length() > 255) {
     		throw new BusinessApiException("The description must be 255 characters or less");
@@ -687,7 +692,7 @@ public class PriceListApiService extends BaseApi {
 
         PriceList duplicatedPriceList = new PriceList();
 
-        duplicatedPriceList.setCode(priceList.getCode() + "-COPY");
+        duplicatedPriceList.setCode(priceListService.findDuplicateCode(priceList, "-COPY"));
         duplicatedPriceList.setDescription(priceList.getDescription());
         duplicatedPriceList.setApplicationStartDate(priceList.getApplicationStartDate());
         duplicatedPriceList.setApplicationEndDate(priceList.getApplicationEndDate());
@@ -722,7 +727,7 @@ public class PriceListApiService extends BaseApi {
                 duplicatedLine.setApplicationEl(line.getApplicationEl());
 
                 if(line.getPricePlan() != null) {
-                    duplicatedLine.setPricePlan(duplicatePricePlan(duplicatedLine.getCode(), line.getPricePlan()));
+                    duplicatedLine.setPricePlan(duplicatePricePlan(line.getPricePlan()));
                 }
                 priceListLineService.create(duplicatedLine);
                 duplicatedPriceList.getLines().add(duplicatedLine);
@@ -735,10 +740,9 @@ public class PriceListApiService extends BaseApi {
         return duplicatedPriceList;
     }
 
-    private PricePlanMatrix duplicatePricePlan(String newContractItemCode, PricePlanMatrix pricePlanMatrix) {
+    private PricePlanMatrix duplicatePricePlan(PricePlanMatrix pricePlanMatrix) {
         PricePlanMatrix duplicate = new PricePlanMatrix(pricePlanMatrix);
         duplicate.setCode(pricePlanMatrixService.findDuplicateCode(pricePlanMatrix));
-        duplicate.setEventCode(newContractItemCode);
         duplicate.setVersion(0);
         duplicate.setVersions(new ArrayList<>());
 

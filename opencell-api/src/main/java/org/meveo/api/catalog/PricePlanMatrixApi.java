@@ -155,7 +155,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             ChargeTemplate chargeTemplate = Optional.ofNullable(chargeTemplateServiceAll.findByCode(postData.getEventCode()))
                     .orElseThrow(() -> new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode()));
             pricePlanMatrix.setChargeTemplates(Set.of(chargeTemplate));
-            pricePlanMatrix.setEventCode(postData.getEventCode());
         }
 
         if (!StringUtils.isBlank(postData.getSeller())) {
@@ -310,7 +309,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             ChargeTemplate chargeTemplate = Optional.ofNullable(chargeTemplateServiceAll.findByCode(postData.getEventCode()))
                     .orElseThrow(() -> new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode()));
             pricePlanMatrix.setChargeTemplates(Set.of(chargeTemplate));
-            pricePlanMatrix.setEventCode(postData.getEventCode());
         }
 
         if (!StringUtils.isBlank(postData.getCountry())) {

@@ -162,7 +162,6 @@ public class ContractApiTest {
         // Price Plan
         PricePlanMatrix pricePlan = new PricePlanMatrix();
         pricePlan.setCode("PPM-CODE");
-        pricePlan.setEventCode(ciSource.getCode());
         PricePlanMatrixVersion ppmv = new PricePlanMatrixVersion();
         ppmv.setLabel("PV_01");
         ppmv.setVersion(1);
@@ -186,6 +185,7 @@ public class ContractApiTest {
 
         when(contractService.findByCode(contractCode)).thenReturn(source);
 
+        when(contractService.findDuplicateCode(source, "-COPY")).thenReturn(source.getCode() + "-COPY");
 
         // When duplicate a contract based on its contractCode
         contractApi.duplicateContract(contractCode);
@@ -256,7 +256,6 @@ public class ContractApiTest {
         assertThat(ciToCheck.getPricePlan()).isNotNull();
         PricePlanMatrix ppmToCheck = ciToCheck.getPricePlan();
         assertThat(ppmToCheck.getCode()).isEqualTo(pricePlan.getCode()+"-COPY");
-        assertThat(ppmToCheck.getEventCode()).isEqualTo(ciToCheck.getCode());
         assertThat(ppmToCheck.getVersions()).isNotEmpty();
         assertThat(ppmToCheck.getVersions().size()).isEqualTo(pricePlan.getVersions().size());
         assertThat(ppmToCheck.getVersions().get(0).getStatus()).isEqualTo(VersionStatusEnum.DRAFT);
@@ -276,23 +275,6 @@ public class ContractApiTest {
 
     }
 
-    @Test
-    public void shouldTriggerExceptionDuplicatedCode() {
-        // given contractCode
-        String contractCode = "myContractCode";
-
-        Contract source = new Contract();
-        source.setCode(contractCode);
-        when(contractService.findByCode(contractCode)).thenReturn(source);
-        when(contractService.findByCode(contractCode+"-COPY")).thenReturn(new Contract());
-
-        // when try to duplicate, an not found exception is trigger
-        assertThatExceptionOfType(EntityAlreadyExistsException.class).isThrownBy(() -> {
-            contractApi.duplicateContract(contractCode);
-        });
-
-    }
-    
 	@Test
 	public void shouldCreateTCI() {
 

@@ -900,11 +900,12 @@ public class CatalogHierarchyBuilderService {
 	        }
 	    	
 	        PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix(pricePlanMatrix);
-	        newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
 	        newPriceplanmaMatrix.setCode(ppCode);
 	        newPriceplanmaMatrix.setVersion(0);
 	        newPriceplanmaMatrix.setOfferTemplate(null);
 	        newPriceplanmaMatrix.setVersions(new ArrayList<>());
+
+            newPriceplanmaMatrix.getChargeTemplates().addAll(pricePlanMatrix.getChargeTemplates());
 	        
 	        if(versions != null) {
 	        	for (PricePlanMatrixVersion version : versions) {

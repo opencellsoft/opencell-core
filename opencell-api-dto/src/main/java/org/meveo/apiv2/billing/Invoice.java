@@ -319,4 +319,8 @@ public interface Invoice extends Resource {
 	@Nullable
 	@Schema(description = "custom field associated to invoice")
 	CustomFieldsDto getCustomFields();
+
+	@Schema
+	@Nullable
+	Boolean getAutoMatching();
 }

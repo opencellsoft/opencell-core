@@ -20126,14 +20126,14 @@
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_invoice_line" constraintName="fk_InvoiceLine_userAccount" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
 	</changeSet>
-	
+
 	<changeSet author="aelmalki" id="#rebuild-INTRD-16445_20230619">
         <createTable tableName="crm_provider_manual_refund_methods">
             <column name="provider_id" type="bigint" />
             <column name="payment_method" type="varchar(255)" />
         </createTable>
     </changeSet>
-	
+
 	<changeSet author="aelmalki" id="#rebuild-INTRD-16445_20230619-uk">
         <addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_manual_refund_methods" tableName="crm_provider_manual_refund_methods" />
     </changeSet>
@@ -20205,6 +20205,7 @@
     <changeSet id="#INTRD-15938_20230511-2" author="AndriusKarpavicius"/>
     <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres" />
     <changeSet id="INTRD-16780_20230614_oracle" author="a.rouaguebe" dbms="oracle" />
+    <changeSet id="#INTRD-16363_20230608_migrate_ppm" author="a.rouaguebe" />
 	<changeSet id="#INTRD-16445_20230526" author="aelmalki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

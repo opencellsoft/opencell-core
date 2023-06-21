@@ -20,7 +20,7 @@ package org.meveo.service.payments.impl;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Optional.ofNullable;
-import static org.meveo.model.shared.DateUtils.parseDateWithPattern;
+import static org.meveo.model.payments.OperationCategoryEnum.CREDIT;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -151,7 +151,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         BigDecimal functionalDebitAmount = amount;
         BigDecimal invoiceRate = null;
         BigDecimal paymentRate = null;
-        BigDecimal paymentAmount = null;
         MathContext mathContext =
                 new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         boolean fullMatch = false;
@@ -315,9 +314,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
                 accountOperation.getMatchingAmounts().add(matchingAmount);
                 matchingCode.getMatchingAmounts().add(matchingAmount);
-                if(accountOperation instanceof Payment) {
+                if(accountOperation instanceof Payment
+                        || CREDIT.equals(accountOperation.getTransactionCategory())) {
                     paymentRate = accountOperation.getAppliedRate();
-                    paymentAmount = accountOperation.getTransactionalAmount();
                 } else {
                     invoiceRate = accountOperation.getAppliedRate();
                 }
@@ -329,7 +328,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
                     }
                     if (transactionalCurrency != null && !transactionalCurrency.equals(functionalCurrency)) {
-                        createExchangeGainLoss(accountOperation, matchingAmount, transactionalCurrency, invoiceRate, paymentRate);
+                        createExchangeGainLoss(accountOperation, matchingAmount, invoiceRate, paymentRate);
                     }
                 }
             }
@@ -461,9 +460,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 accountOperation.getMatchingAmounts().add(matchingAmount);
                 matchingCode.getMatchingAmounts().add(matchingAmount);
 
-                if(accountOperation instanceof Payment) {
+                if(accountOperation instanceof Payment
+                        || CREDIT.equals(accountOperation.getTransactionCategory())) {
                     paymentRate = accountOperation.getAppliedRate();
-                    paymentAmount = accountOperation.getTransactionalAmount();
                 } else {
                     invoiceRate = accountOperation.getAppliedRate();
                 }
@@ -474,7 +473,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     functionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(currency.getCurrencyCode());
                 }
                 if (transactionalCurrency != null && !transactionalCurrency.equals(functionalCurrency)) {
-                    createExchangeGainLoss(accountOperation, matchingAmount, transactionalCurrency, invoiceRate, paymentRate);
+                    createExchangeGainLoss(accountOperation, matchingAmount, invoiceRate, paymentRate);
                 }
             }
         }
@@ -508,9 +507,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     }
 
-    private void createExchangeGainLoss(AccountOperation accountOperation, MatchingAmount matchingAmount,
-                                        TradingCurrency transactionalCurrency, BigDecimal invoiceRate, BigDecimal paymentRate) {
-        Date transactionDate = parseDateWithPattern(dateFormat.format(accountOperation.getTransactionDate()), DATE_FORMAT_PATTERN);
+    private void createExchangeGainLoss(AccountOperation accountOperation,
+                                        MatchingAmount matchingAmount, BigDecimal invoiceRate, BigDecimal paymentRate) {
         MathContext mathContext = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 
         if (invoiceRate != null && paymentRate != null

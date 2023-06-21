@@ -22,8 +22,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -44,6 +46,7 @@ import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
@@ -91,17 +94,20 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         pp.setAmountWithoutTaxEL(StringUtils.stripToNull(pp.getAmountWithoutTaxEL()));
         pp.setAmountWithTaxEL(StringUtils.stripToNull(pp.getAmountWithTaxEL()));
         validatePricePlan(pp);
-        pp.setChargeTemplate(chargeTemplateService.findByCode(pp.getEventCode()));
         create(pp);
     }
 
     public void validatePricePlan(PricePlanMatrix pp) {
-        List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(pp.getEventCode());
-        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices){
-            if(!pricePlanMatrix.getId().equals(pp.getId()) &&
-                    areValidityPeriodsOverlap(pp.getValidityFrom(), pp.getValidityDate(), pricePlanMatrix.getValidityFrom(), pricePlanMatrix.getValidityDate())){
-                throw new BusinessException("price plan validity date overlaps with other charge price plans { "+pricePlanMatrix.getCode()+" } ");
-            }
+        if(ListUtils.isEmtyCollection(pp.getChargeTemplates())) {
+            pp.getChargeTemplates().forEach(ct -> {
+                List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(ct.getCode());
+                for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices){
+                    if(!pricePlanMatrix.getId().equals(pp.getId()) &&
+                            areValidityPeriodsOverlap(pp.getValidityFrom(), pp.getValidityDate(), pricePlanMatrix.getValidityFrom(), pricePlanMatrix.getValidityDate())){
+                        throw new BusinessException("price plan validity date overlaps with other charge price plans { "+pricePlanMatrix.getCode()+" } ");
+                    }
+                }
+            });
         }
     }
 
@@ -123,7 +129,6 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         pp.setAmountWithoutTaxEL(StringUtils.stripToNull(pp.getAmountWithoutTaxEL()));
         pp.setAmountWithTaxEL(StringUtils.stripToNull(pp.getAmountWithTaxEL()));
         validatePricePlan(pp);
-        pp.setChargeTemplate(chargeTemplateService.findByCode(pp.getEventCode()));
         return super.update(pp);
     }
 
@@ -246,13 +251,17 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
             qb.addCriterion("code", "=", eventCode, false);
 
             @SuppressWarnings("unchecked")
-            List<Seller> charges = qb.getQuery(em).getResultList();
+            List<ChargeTemplate> charges = qb.getQuery(em).getResultList();
             if (charges.size() == 0) {
                 throw new BusinessException("cannot find charge in line=" + rowIndex + " with code=" + eventCode);
             } else if (charges.size() > 1) {
                 throw new BusinessException("more than one charge in line=" + rowIndex + " with code=" + eventCode);
             }
-            pricePlan.setEventCode(eventCode);
+            if(pricePlan.getChargeTemplates() == null) {
+                pricePlan.setChargeTemplates(new HashSet<>());
+            }
+            // INTRD-16363 - populate ppm.chargeTemplates based on eventCode
+            pricePlan.getChargeTemplates().addAll(charges);
         } else {
             throw new BusinessException("Empty chargeCode in line=" + rowIndex + ", code=" + eventCode);
         }
@@ -546,15 +555,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
      */
     @SuppressWarnings("unchecked")
     public List<PricePlanMatrix> listByChargeCode(String chargeCode) {
-        QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null);
-        qb.addCriterion("eventCode", "=", chargeCode, true);
-        qb.addOrderCriterionAsIs("priority", true);
-
-        try {
-            return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
+        return getEntityManager().createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCode", PricePlanMatrix.class)
+                .setParameter("chargeCode", chargeCode)
+                .getResultList();
     }
 
     /**
@@ -594,10 +597,6 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
             }
             if (!Objects.equals(entity.getDescription(), pricePlanMatrix.getDescription())) {
                 pricePlanMatrix.setDescription(entity.getDescription());
-                result = true;
-            }
-            if (!Objects.equals(entity.getEventCode(), pricePlanMatrix.getEventCode())) {
-                pricePlanMatrix.setEventCode(entity.getEventCode());
                 result = true;
             }
             if (!(Objects.equals(entity.getOfferTemplate(), pricePlanMatrix.getOfferTemplate()))) {
@@ -741,7 +740,6 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     	var duplicate = new PricePlanMatrix(pricePlanMatrix);
     	if(!Strings.isEmpty(pricePlanMatrixNewCode)) {
     		duplicate.setCode(pricePlanMatrixNewCode);
-    	    duplicate.setEventCode(pricePlanMatrixNewCode);
     	}
     	else
     		duplicate.setCode(findDuplicateCode(pricePlanMatrix));
@@ -754,18 +752,4 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     	return duplicate;
     }
 
-    /**
-     * Find entity by code - strict match.
-     *
-     * @param code Code to match
-     * @return A single entity matching code
-     */
-    @Override
-    public PricePlanMatrix findByCode(String code) {
-        PricePlanMatrix pp =  super.findByCode(code);
-        if(pp != null && chargeTemplateService != null) {
-            pp.setChargeTemplate(chargeTemplateService.findByCode(pp.getEventCode()));
-        }
-        return pp;
-    }
 }
