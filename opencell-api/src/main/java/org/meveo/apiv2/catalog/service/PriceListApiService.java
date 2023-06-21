@@ -34,6 +34,7 @@ import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.model.securityDeposit.FinanceSettings;
+import org.meveo.model.shared.Regex;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -93,8 +94,6 @@ public class PriceListApiService extends BaseApi {
 
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-
-    private static final String REGEX_CODE = "^[a-zA-Z0-9_-]+$";
 
     /**
      * Create a price list
@@ -240,7 +239,7 @@ public class PriceListApiService extends BaseApi {
     		throw new BusinessApiException("The code must be 50 characters or less");
     	}
 
-        if (!priceList.getCode().matches(REGEX_CODE)) {
+        if (!Regex.checkRegexCode(priceList.getCode())) {
             throw new BusinessApiException("PriceList code should not contain special characters");
         }
     	
