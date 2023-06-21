@@ -60,6 +60,10 @@ public class ProcessCdrListResult extends BaseResponse {
         this.mode = mode;
         this.statistics = new Statistics(total, 0, 0);
         this.chargedCDRs = new ChargeCDRResponseDto[total];
+        this.amountWithTax = BigDecimal.ZERO;
+        this.amountWithoutTax = BigDecimal.ZERO;
+        this.amountTax = BigDecimal.ZERO;
+        this.walletOperationCount = 0;
     }
 
     /**
@@ -118,6 +122,18 @@ public class ProcessCdrListResult extends BaseResponse {
      */
     public void setCounterPeriods(List<CounterPeriodDto> counterPeriods) {
         this.counterPeriods = counterPeriods;
+    }
+
+    /**
+     * Update total amounts and wallet operation count based on charged CDRs
+     */
+    public void updateAmountAndWOCountStatistics() {
+        for (ChargeCDRResponseDto cdrCharge : getChargedCDRs()) {
+            setAmountWithTax(getAmountWithTax().add(cdrCharge.getAmountWithTax() != null ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
+            setAmountWithoutTax(getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
+            setAmountTax(getAmountTax().add(cdrCharge.getAmountTax() != null ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
+            setWalletOperationCount(getWalletOperationCount() + (cdrCharge.getWalletOperationCount() != null ? cdrCharge.getWalletOperationCount() : 0));
+        }
     }
 
     public static class Statistics implements Serializable {

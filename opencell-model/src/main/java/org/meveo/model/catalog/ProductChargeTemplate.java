@@ -36,8 +36,8 @@ import javax.persistence.NamedQuery;
 @Entity
 @DiscriminatorValue("P")
 @NamedQueries({
-        @NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
-        @NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "), })
+            @NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where not exists elements(o.pricePlans) "),
+        @NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where not exists elements(o.pricePlans) "), })
 public class ProductChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = 1L;

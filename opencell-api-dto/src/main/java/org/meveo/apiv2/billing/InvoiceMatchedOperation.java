@@ -1,6 +1,7 @@
 package org.meveo.apiv2.billing;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 
 import java.math.BigDecimal;
@@ -24,4 +25,6 @@ public interface InvoiceMatchedOperation {
     BigDecimal getPercentageCovered();
     String getRejectedDescription();
     String getRejectedCode();
+    @Schema(description = "Transactional amount with tax")
+    BigDecimal getTransactionalAmount();
 }

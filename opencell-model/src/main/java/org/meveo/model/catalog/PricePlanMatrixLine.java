@@ -21,13 +21,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.cpq.AttributeValue;
 
 @Entity
 @Table(name = "cpq_price_plan_matrix_line")
@@ -198,4 +195,5 @@ public class PricePlanMatrixLine extends AuditableEntity {
     public void setTradingPricePlanMatrixLines(Set<TradingPricePlanMatrixLine> tradingPricePlanMatrixLines) {
         this.tradingPricePlanMatrixLines = tradingPricePlanMatrixLines;
     }
+    
 }

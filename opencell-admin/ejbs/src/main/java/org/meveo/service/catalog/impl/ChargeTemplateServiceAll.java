@@ -183,7 +183,6 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 	        		PricePlanMatrix pricePlanMatrixNew = (PricePlanMatrix) BeanUtils.cloneBean(pricePlanMatrix);
 
 	        		pricePlanMatrixNew.setId(null);
-	        		pricePlanMatrixNew.setEventCode(duplicateChargeTemplate.getCode());
 	        		pricePlanMatrixNew.setCode(pricePlanMatrixService.findDuplicateCode(pricePlanMatrix));
 
 	        		List<PricePlanMatrixVersion> versionsNew = new ArrayList<PricePlanMatrixVersion>();

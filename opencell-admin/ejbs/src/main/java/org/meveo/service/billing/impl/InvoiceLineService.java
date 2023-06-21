@@ -275,7 +275,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      */
     public void validateAdjAmount(Invoice newInvoice) {
         // Check global Invoice Amount
-        LinkedInvoice linkedInvoice = findByLinkedInvoiceADJ(newInvoice.getId());
+        LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(newInvoice.getId());
         if (linkedInvoice != null) {
             validateAdjAmount(newInvoice.getInvoiceLines(), linkedInvoice.getInvoice());
         }
@@ -751,7 +751,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             if (resource.getUnitPriceCurrency().equals(tradingCurrency)) {
 				BigDecimal appliedRate = invoiceLine.getInvoice() != null ? invoiceLine.getInvoice().getAppliedRate() : ONE;
 				invoiceLine.setUnitPrice(resource.getUnitPrice().divide(appliedRate, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-				invoiceLine.setTransactionalUnitPrice(resource.getUnitPrice());
 				invoiceLine.setConversionFromBillingCurrency(true);
 			}
         }
@@ -1019,7 +1018,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     public void cancelIlByInvoices(Collection<Long> invoicesIds) {
         getEntityManager().createNamedQuery("InvoiceLine.cancelByInvoiceIds")
-        .setParameter("now", new Date())
+                .setParameter("now", new Date())
+                .setParameter("invoicesIds", invoicesIds)
+                .executeUpdate();
+    }
+
+    public void cancelIlForRemoveByInvoices(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("InvoiceLine.cancelForRemoveByInvoiceIds")
+                .setParameter("now", new Date())
                 .setParameter("invoicesIds", invoicesIds)
                 .executeUpdate();
     }
@@ -1400,18 +1406,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     public BigDecimal getAdjustementAmounts(Long invoiceId) {
         return (BigDecimal) getEntityManager().createNamedQuery("InvoiceLine.getAdjustmentAmount").setParameter("ID_INVOICE", invoiceId).getSingleResult();
-    }
-
-    public LinkedInvoice findByLinkedInvoiceADJ(Long invoiceId) {
-        List<LinkedInvoice> results = getEntityManager().createNamedQuery("LinkedInvoice.findByLinkedInvoiceADJ")
-                .setParameter("ID_INVOICE", invoiceId)
-                .getResultList();
-
-        if (CollectionUtils.isNotEmpty(results)) {
-            return results.get(0);
-        }
-
-        return null;
     }
 
     public List<BillingAccount> findBillingAccountsBy(List<Long> invoiceLinesIds) {

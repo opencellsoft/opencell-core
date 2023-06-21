@@ -287,7 +287,6 @@ public class PricePlanSelectionServiceTest {
     private PricePlanMatrix createPlanPriceMatrix() {
         PricePlanMatrix pricePlanMatrix = new PricePlanMatrix();
         pricePlanMatrix.setCode("PPM_1");
-        pricePlanMatrix.setEventCode("CH_SUB");
         return pricePlanMatrix;
     }
 

@@ -47,7 +47,7 @@ public final class PersistenceServiceHelper {
 	        	}
 			}
         }
-		PersistenceService serviceInterface = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
+		PersistenceService serviceInterface = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName().replace("Impl", "") + "Service");
         if(serviceInterface == null){
             serviceInterface = (PersistenceService) EjbUtils.getServiceInterface("BaseEntityService");
             ((BaseEntityService) serviceInterface).setEntityClass(entityClass);

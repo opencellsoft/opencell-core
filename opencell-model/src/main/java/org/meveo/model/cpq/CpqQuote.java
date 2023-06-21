@@ -47,7 +47,7 @@ import org.meveo.model.quote.QuoteStatusEnum;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_seq")})
 @NamedQueries({
-    @NamedQuery(name = "CpqQuote.getQuoteIdsUsingCharge", query = "select qp.quote.id from QuoteProduct qp where qp.quote.status not in('CANCELLED','ACCEPTED','REJECTED') and qp.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode)")
+    @NamedQuery(name = "CpqQuote.getQuoteIdsUsingCharge", query = "select qp.quote.id from QuoteProduct qp where qp.quote.status not in('CANCELLED','ACCEPTED','REJECTED') and qp.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.id in (:chargeIds))")
     })
 
 public class CpqQuote extends BusinessEntity implements IBillableEntity  {

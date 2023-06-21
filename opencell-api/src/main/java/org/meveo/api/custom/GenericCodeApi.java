@@ -218,6 +218,7 @@ public class GenericCodeApi extends BaseApi {
      */
     public GenericCodeDto createOrUpdate(GenericCodeDto input) {
         CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(input.getEntityClass());
+        serviceSingleton.getGenericCode(customGenericEntityCode, input.getPrefixOverride(), false, input.getFormatEL());
         if(customGenericEntityCode == null) {
             return create(input);
         } else {
