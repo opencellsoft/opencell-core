@@ -19,11 +19,31 @@ package org.meveo.model.payments;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 @Entity
 @DiscriminatorValue(value = "RF")
+@NamedQueries({
+        @NamedQuery(name = "Refund.countLinkedPayment", query = "SELECT SUM(refund.amount)  from Refund AS refund WHERE refund.refundedPayment.id=:REFUNDED_PAYMENT_UD")
+})
 public class Refund extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "refunded_payment_id")
+    private Payment refundedPayment;
+
+    public Payment getRefundedPayment() {
+        return refundedPayment;
+    }
+
+    public void setRefundedPayment(Payment refundedPayment) {
+        this.refundedPayment = refundedPayment;
+    }
 
 }

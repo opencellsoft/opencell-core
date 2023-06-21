@@ -20,15 +20,18 @@ package org.meveo.api.payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.RefundDto;
@@ -37,22 +40,38 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.billing.ImmutableBasicInvoice;
+import org.meveo.apiv2.billing.ImmutableInvoiceLine;
+import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
+import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.payments.impl.RefundService;
+import org.meveo.util.ApplicationProvider;
+
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
 /**
  *  @author Edward P. Legaspi
@@ -80,6 +99,28 @@ public class RefundApi extends BaseApi {
 
     @Inject
     private OCCTemplateService oCCTemplateService;
+
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
+
+    @Inject
+    private InvoiceService invoiceService;
+
+    @Inject
+    private InvoiceApiService invoiceApiService;
+
+    @Inject
+    private AccountOperationApi accountOperationApi;
+
+    @Inject
+    private AccountOperationService accountOperationService;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     /**
      * @param refundDto refund object which encapsulates the input data sent by client
@@ -155,15 +196,145 @@ public class RefundApi extends BaseApi {
 
         if (refundDto.isToMatching()) {
             matchRefunds(refundDto, customerAccount, refund);
-        } else {
-            log.info("no matching created ");
+        }
+
+        if(refundDto.isManualRefund()) {
+            // Check method allowed
+            if (CollectionUtils.isEmpty(appProvider.getAllowedManualRefundMethods())) {
+                throw new BusinessApiException("No Payment methods allowed for manual refund, please update the Payment Settings");
+            }
+
+            if(!appProvider.getAllowedManualRefundMethods().contains(refundDto.getPaymentMethod())) {
+                throw new BusinessApiException("The Payment method '" + refundDto.getPaymentMethod() + "' is not allowed for manual refund");
+            }
+
+            // Check  dto content
+            if (CollectionUtils.isEmpty(refundDto.getListAoIdsForMatching())) {
+                throw new BusinessApiException("No AccountOperation specified for refund");
+            }
+
+            if (refundDto.getListAoIdsForMatching().size() > 1) {
+                throw new BusinessApiException("Only one AccountOperation shall be specified for refund");
+            }
+
+            // Get RecordedInvoice AO
+            Invoice initialInvoice = null;
+            AccountOperation aoPay = accountOperationService.findById(refundDto.getListAoIdsForMatching().get(0));
+
+            if(!(aoPay instanceof RecordedInvoice)) {
+                if (!(aoPay instanceof Payment)) {
+                    throw new BusinessApiException("The selected AccountOperation is not a Payment");
+                }
+
+                Payment payment = (Payment) aoPay;
+
+                if (payment.getAmount().compareTo(refund.getAmount()) < 0) {
+                    throw new BusinessApiException("Refund amount is greater than the Payment amount");
+                }
+
+                if (CollectionUtils.isEmpty(payment.getMatchingAmounts())) {
+                    throw new BusinessApiException("No matched Invoice for Payment");
+                }
+
+                // Check that the refund amount are not exceed with the initial payment
+                refundService.checkExceededCreatedRefundOnPayment(payment);
+
+                for (MatchingAmount payMatchingAmount : payment.getMatchingAmounts()) {
+                    for (MatchingAmount matchingAmount : payMatchingAmount.getMatchingCode().getMatchingAmounts()) {
+                        if (matchingAmount.getAccountOperation() instanceof RecordedInvoice) {
+                            initialInvoice = ((RecordedInvoice) matchingAmount.getAccountOperation()).getInvoice();
+                            break;
+                        }
+                    }
+                }
+
+                if (initialInvoice == null) {
+                    throw new BusinessApiException("No linked invoice for Payment");
+                }
+
+                // Create new Invoice Credit Note
+                Invoice invoiceCreditNote = createInvoiceCreditNote(payment, initialInvoice);
+
+                // Create new AO_ADJ_REF (CREDIT), with umatchingAmount = refund Amount (from payload)
+                AccountOperationDto aoAdjRefDto = new AccountOperationDto();
+                aoAdjRefDto.setAmount(refund.getAmount());
+                aoAdjRefDto.setAmountWithoutTax(refund.getAmountWithoutTax());
+                aoAdjRefDto.setTaxAmount(refund.getTaxAmount());
+                aoAdjRefDto.setCode("ADJ_REF");
+                aoAdjRefDto.setCustomerAccount(refund.getCustomerAccount().getCode());
+                aoAdjRefDto.setTransactionCategory(OperationCategoryEnum.CREDIT);
+                aoAdjRefDto.setType("I");
+                aoAdjRefDto.setTransactionalCurrency(payment.getTransactionalCurrency() != null ? payment.getTransactionalCurrency().getCurrencyCode() : null);
+
+                Long aoAdjRefId = accountOperationApi.create(aoAdjRefDto);
+
+                try {
+                    // Match AO_Invoice with AO_ADJ_REF
+                    /*MatchingReturnObject matchingResult = */
+                    matchingCodeService.matchOperations(refund.getCustomerAccount().getId(),
+                            refund.getCustomerAccount().getCode(),
+                            List.of(aoAdjRefId, refund.getId()),
+                            refund.getId(),
+                            refund.getAmount());
+                } catch (Exception e) {
+                    throw new BusinessApiException(e.getMessage());
+                }
+
+                // Add link between Invoice Credit Note and Initial Invoice
+                initialInvoice.setAdjustedInvoice(invoiceCreditNote);
+
+                // Add link between AO_ADJ_REF (new) and Payment (existing)
+                refund.setRefundedPayment(payment);
+
+                refundService.update(refund);
+
+                invoiceService.update(initialInvoice);
+            } else {
+                log.info("AccountOperation is RecordedInvoice type, no need to create Invoice and do manual adjustment");
+            }
         }
         log.debug("refund created for amount:" + refund.getAmount());
 
         return refund.getId();
     }
 
-	private void matchRefunds(RefundDto refundDto, CustomerAccount customerAccount, Refund refund)
+    private Invoice createInvoiceCreditNote(Payment payment, Invoice initialInvoice) {
+        // Create new Invoice Credit Note
+        org.meveo.apiv2.billing.BasicInvoice adjInvoice = ImmutableBasicInvoice.builder()
+                .invoiceTypeCode(invoiceTypeService.getDefaultAdjustement().getCode())
+                .billingAccountCode(initialInvoice.getBillingAccount().getCode())
+                .invoiceDate(new Date())
+                .amountWithTax(payment.getAmountWithoutTax())
+                .build();
+        Invoice adjustmentInvoice = invoiceService.createBasicInvoice(adjInvoice);
+
+        // Create Invoice Line
+        org.meveo.apiv2.billing.InvoiceLine invoiceLineResource = ImmutableInvoiceLine.builder()
+                .accountingArticleCode("ART-STD") // TODO a remplacer avec un article d'ajustement
+                .amountTax(BigDecimal.ZERO)
+                .amountWithoutTax(payment.getAmountWithoutTax())
+                .amountWithTax(payment.getAmountWithoutTax().add(payment.getTaxAmount() != null ? payment.getTaxAmount() : BigDecimal.ZERO))
+                .amountTax(payment.getTaxAmount())
+                .unitPrice(payment.getAmountWithoutTax())
+                .invoiceId(adjustmentInvoice.getId())
+                .label("Refund Adjustment")
+                .quantity(BigDecimal.ONE)
+                .build();
+
+        org.meveo.apiv2.billing.InvoiceLinesInput input = ImmutableInvoiceLinesInput.builder()
+                .addInvoiceLines(invoiceLineResource)
+                .build();
+
+        invoiceApiService.createLines(adjustmentInvoice, input);
+
+        // Validate ADJ Invoice
+        adjustmentInvoice.setStatus(VALIDATED);
+        serviceSingleton.assignInvoiceNumber(adjustmentInvoice, true);
+
+        return adjustmentInvoice;
+    }
+
+    private void matchRefunds(RefundDto refundDto, CustomerAccount customerAccount, Refund refund)
 			throws BusinessApiException, BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 		List<Long> listReferenceToMatch = new ArrayList<Long>();
 		if (refundDto.getListAoIdsForMatching()!=null && !refundDto.getListAoIdsForMatching().isEmpty() ) {
