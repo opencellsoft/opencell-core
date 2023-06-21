@@ -22,7 +22,7 @@ import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
-import org.meveo.model.shared.Regex;
+import org.meveo.model.shared.RegexUtils;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -71,7 +71,7 @@ public class PriceListLineApiService extends BaseApi {
 
         checkMandatoryFields(postDto);
 
-        if (!Regex.checkRegexCode(postDto.getCode())) {
+        if (!RegexUtils.checkCode(postDto.getCode())) {
             throw new BusinessApiException("PriceList code should not contain special characters");
         }
 
@@ -299,7 +299,7 @@ public class PriceListLineApiService extends BaseApi {
 
         checkMandatoryFields(postDto);
 
-        if (!Regex.checkRegexCode(postDto.getCode())) {
+        if (!RegexUtils.checkCode(postDto.getCode())) {
             throw new BusinessApiException("PriceList code should not contain special characters");
         }
 

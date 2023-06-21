@@ -1,6 +1,6 @@
 package org.meveo.model.shared;
 
-public class Regex {
+public class RegexUtils {
 
     private static final String REGEX_CODE = "^[a-zA-Z0-9_-]+$";
 
@@ -9,7 +9,7 @@ public class Regex {
      * @param pCode Entity Code
      * @return True or False
      */
-    public static boolean checkRegexCode(String pCode) {
+    public static boolean checkCode(String pCode) {
         return pCode.matches(REGEX_CODE);
     }
 }
