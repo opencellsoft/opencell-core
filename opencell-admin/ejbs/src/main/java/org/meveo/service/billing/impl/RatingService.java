@@ -63,6 +63,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.RatingResult;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.Amounts;
@@ -1461,10 +1462,16 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @return Optional<Amounts> return computed Amounts or empty if no price plan found
      */
     public Optional<Amounts> determineTradingUnitPrice(PricePlanMatrix pricePlan, WalletOperation walletOperation) {
+        final TradingCurrency tradingCurrency = walletOperation.getBillingAccount().getTradingCurrency();
+        final Currency functionalcurrency = appProvider.getCurrency();
+        if (functionalcurrency.getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
+        	return empty(); 
+        }
+        
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanSelectionService.getPublishedVersionValidForDate(pricePlan.getId(), walletOperation.getServiceInstance(), walletOperation.getOperationDate());
         BigDecimal priceWithoutTax = null;
         BigDecimal priceWithTax = null;
-        final TradingCurrency tradingCurrency = walletOperation.getBillingAccount().getTradingCurrency();
+        
         if (pricePlanMatrixVersion != null) {
             if (!pricePlanMatrixVersion.isMatrix()) {
                 TradingPricePlanVersion tradingPPVersion = getTradingPPVersionFrom(pricePlanMatrixVersion, tradingCurrency);
