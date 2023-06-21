@@ -71,7 +71,7 @@ public class PriceListLineApiService extends BaseApi {
 
         checkMandatoryFields(postDto);
 
-        if (!RegexUtils.checkCode(postDto.getCode())) {
+        if (!StringUtils.isBlank(postDto.getCode()) && !RegexUtils.checkCode(postDto.getCode())) {
             throw new BusinessApiException("PriceList code should not contain special characters");
         }
 
@@ -299,7 +299,7 @@ public class PriceListLineApiService extends BaseApi {
 
         checkMandatoryFields(postDto);
 
-        if (!RegexUtils.checkCode(postDto.getCode())) {
+        if (!StringUtils.isBlank(postDto.getCode()) && !RegexUtils.checkCode(postDto.getCode())) {
             throw new BusinessApiException("PriceList code should not contain special characters");
         }
 

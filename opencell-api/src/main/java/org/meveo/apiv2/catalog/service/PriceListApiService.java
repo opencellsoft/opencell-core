@@ -239,7 +239,7 @@ public class PriceListApiService extends BaseApi {
     		throw new BusinessApiException("The code must be 50 characters or less");
     	}
 
-        if (!RegexUtils.checkCode(priceList.getCode())) {
+        if (!StringUtils.isBlank(priceList.getCode()) && !RegexUtils.checkCode(priceList.getCode())) {
             throw new BusinessApiException("PriceList code should not contain special characters");
         }
     	
