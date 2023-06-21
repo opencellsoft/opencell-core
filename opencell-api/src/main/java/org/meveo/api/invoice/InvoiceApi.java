@@ -634,33 +634,8 @@ public class InvoiceApi extends BaseApi {
             updatePaymentStatus(invoice, today, UNPAID);
         }
 
-        // at the time of the validation of the ADJ via the API validate if the autoMatching is true so we automatically match its AO with that of the original invoice
-        // (knowing that the API validate has the param generateAO=true from the portal)
-        if (invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode()) && invoice.isAutoMatching()) {
-            // Check if the invoice is not PAID
-            if (invoice.getPaymentStatus() != InvoicePaymentStatusEnum.PAID) {
-
-                LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(invoice.getId());
-
-                if (linkedInvoice!=null) {
-
-                    AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(linkedInvoice.getInvoice()).get(0);
-                    AccountOperation aoAdjInvoice = accountOperationService.listByInvoice(invoice).get(0);
-
-                    if (aoAdjInvoice.getMatchingStatus() != MatchingStatusEnum.L) {
-                        try {
-                            matchingCodeService.matchOperations(aoAdjInvoice.getCustomerAccount().getId(), aoAdjInvoice.getCustomerAccount().getCode(),
-                                    List.of(aoAdjInvoice.getId(), aoOriginalInvoice.getId()), aoOriginalInvoice.getId(),
-                                    MatchingTypeEnum.A, aoOriginalInvoice.getUnMatchingAmount());
-                        } catch (Exception e) {
-                            log.error("Error on payment callback processing:", e);
-                            throw new BusinessException(e.getMessage(), e);
-                        }
-                    }
-                }
-
-            }
-
+        if (!brGenerateAO && !generateAO) {
+            invoiceService.autoMatchingAdjInvoice(invoice, null);
         }
         
         if (invoiceService.isInvoiceXmlExist(invoice)) {

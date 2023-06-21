@@ -445,6 +445,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), currentStatus);
             }
 
+            invoiceService.autoMatchingAdjInvoice(invoice, recordedInvoice);
+
             return recordedInvoice;
     	} else if(!VALIDATED.equals(invoice.getStatus())) {
     		log.warn(" Invoice status is not validated : id {}, status {}", invoice.getId(), invoice.getStatus());
