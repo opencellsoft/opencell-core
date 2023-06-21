@@ -193,6 +193,7 @@ import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.ValidationRuleTypeEnum;
 import org.meveo.model.billing.WalletInstance;
@@ -225,6 +226,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -408,6 +410,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private OpenOrderService openOrderService;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
     /**
      * folder for pdf .
@@ -6725,7 +6730,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public BigDecimal getCurrentRate(Invoice toUpdate, Date exchangeDate) {
         BigDecimal currentRate = null;
         if (toUpdate.getTradingCurrency() != null) {
-            ExchangeRate exchangeRate = toUpdate.getTradingCurrency().getExchangeRate(exchangeDate);
+            TradingCurrency tradingCurrency = tradingCurrencyService.refreshOrRetrieve(toUpdate.getTradingCurrency());
+            ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
             if (exchangeRate != null) {
                 currentRate = exchangeRate.getExchangeRate();
             }
@@ -6734,6 +6740,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
+        toUpdate = refreshOrRetrieve(toUpdate);
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
                 InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
                 && linkedInvoice.getLinkedInvoiceValue() != null &&
