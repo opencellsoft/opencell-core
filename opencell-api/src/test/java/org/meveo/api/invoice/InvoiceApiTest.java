@@ -1,27 +1,16 @@
 package org.meveo.api.invoice;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
-import org.meveo.admin.exception.NoAllOperationUnmatchedException;
-import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -31,6 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InvoiceApiTest {
@@ -57,7 +50,7 @@ public class InvoiceApiTest {
     private Date rateDate = new Date();
 
     @Test
-    public void shouldRefreshAndValidateInvoice() throws ImportInvoiceException, InvoiceExistException ,IOException{
+    public void shouldRefreshAndValidateInvoice() throws ImportInvoiceException, InvoiceExistException, IOException {
         Invoice invoice = new Invoice();
         invoice.setId(invoiceId);
         invoice.setInvoiceNumber("INV_NUMB1");
@@ -76,8 +69,6 @@ public class InvoiceApiTest {
 
         Mockito.when(invoiceService.findById(invoiceId)).thenReturn(invoice);
 
-        Mockito.when(invoiceTypeService.getListAdjustementCode()).thenReturn(new ArrayList<>());
-                
         try {
             String invNumber = invoiceApi.validateInvoice(invoiceId, false, true, true);
             Assert.assertEquals("INV_NUMB1", invNumber);
@@ -88,30 +79,17 @@ public class InvoiceApiTest {
 
 
     @Test
-    public void validateWithAutoMatchingNominal() throws UnbalanceAmountException, NoAllOperationUnmatchedException {
+    public void validateWithAutoMatchingNominal() {
         // Adj data : Invoice, Type, AO
         InvoiceType typeAdj = buildInvoiceType("ADJ");
         Invoice adjInv = buildInvoice(1L, typeAdj);
         adjInv.setAutoMatching(true);
-        AccountOperation adjAo = buildAccountOperation(1L);
-
-        // Original invoice  data : Invoice, Type, AO
-        InvoiceType typeCom = buildInvoiceType("COM");
-        Invoice originalInv = buildInvoice(-1L, typeCom);
-        AccountOperation originalAo = buildAccountOperation(2L);
-
-        LinkedInvoice linkedInvoice = new LinkedInvoice();
-        linkedInvoice.setInvoice(originalInv);
-        linkedInvoice.setLinkedInvoiceValue(adjInv);
 
         Mockito.when(serviceSingleton.validateAndAssignInvoiceNumber(adjInv.getId(), true)).thenReturn(adjInv);
         Mockito.when(invoiceService.refreshOrRetrieve(Mockito.any(Invoice.class))).thenReturn(adjInv);
         Mockito.when(invoiceService.findById(adjInv.getId())).thenReturn(adjInv);
-        Mockito.when(invoiceTypeService.getListAdjustementCode()).thenReturn(List.of("ADJ"));
 
-        Mockito.when(invoiceService.findBySourceInvoiceByAdjId(adjInv.getId())).thenReturn(linkedInvoice);
-        Mockito.when(accountOperationService.listByInvoice(linkedInvoice.getInvoice())).thenReturn(List.of(originalAo));
-        Mockito.when(accountOperationService.listByInvoice(linkedInvoice.getLinkedInvoiceValue())).thenReturn(List.of(adjAo));
+        Mockito.doNothing().when(invoiceService).autoMatchingAdjInvoice(adjInv, null);
 
         try {
             String invNumber = invoiceApi.validateInvoice(adjInv.getId(), false, true, true);
