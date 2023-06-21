@@ -570,7 +570,7 @@ public class UsageRatingService implements Serializable {
         for (Entry<ChargeInstance, List<WalletOperation>> groupedWos : groupedWOByChargeInstance.entrySet()) {
             ChargeInstance chargeInstance = groupedWos.getKey();
             if (chargeInstance.getCounterInstances() != null && !chargeInstance.getCounterInstances().isEmpty()) {
-                List<CounterValueChangeInfo> counterChangeInfo = counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, groupedWos.getValue(), isVirtual);
+                List<CounterValueChangeInfo> counterChangeInfo = counterInstanceService.incrementAccumulatorCounterValue(chargeInstance, groupedWos.getValue(), isVirtual,true);
                 for (CounterValueChangeInfo counterValueChangeInfo : counterChangeInfo) {
                     ratingResult.addCounterChange(counterValueChangeInfo.getCounterPeriodId(), counterValueChangeInfo.getDeltaValue());
                 }

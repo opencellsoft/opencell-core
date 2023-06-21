@@ -40,9 +40,11 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.CounterInstantiationException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.InvalidELException;
+import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -132,6 +134,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     private VirtualCounterInstances virtualCounterInstances;
     @Inject
     private CounterUpdateTracking counterUpdatesTracking;
+    
+    @Inject
+    private MethodCallingUtils methodCallingUtils;
     
    
     public CounterInstance counterInstanciation(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
@@ -619,29 +624,18 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterValueChangeInfo, the actual deduced value and new counter value. or NULL if value is not tracked (initial counter value is not set)
      * @throws BusinessException business exception
      */
-    @Lock(LockType.WRITE)
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) throws BusinessException {
-
-        CounterValueChangeInfo counterValueInfo = null;
+   public CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) {
 
         BigDecimal deducedQuantity = null;
         BigDecimal previousValue = counterPeriod.getValue();
-        // if is an accumulator counter, return the full quantity
-        if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
-            return new CounterValueChangeInfo(previousValue, deduceBy, counterPeriod.getValue());
-        }
+
         // No initial value, so no need to track present value (will always be able to deduce by any amount) and thus no need to update
         if (counterPeriod.getLevel() == null) {
-            if (!isVirtual) {
-                counterPeriodService.detach(counterPeriod);
-            }
-            return null;
+            return new CounterValueChangeInfo(counterPeriod.getId(), counterPeriod.getAccumulator(), null, deduceBy, null);
 
-            // Previous value is Zero and deduction is not negative (really its an addition)
+            // Previous value is Zero, there is not much further to reduce
         } else if (previousValue.compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
-            return new CounterValueChangeInfo(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+            return new CounterValueChangeInfo(counterPeriod.getId(), counterPeriod.getAccumulator(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
         } else {
             if (previousValue.compareTo(deduceBy) < 0) {
@@ -653,15 +647,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 counterPeriod.setValue(counterPeriod.getValue().subtract(deduceBy));
             }
 
-            counterValueInfo = new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriod.getValue());
+            CounterValueChangeInfo counterValueInfo = new CounterValueChangeInfo(counterPeriod.getId(), counterPeriod.getAccumulator(), previousValue, deducedQuantity, counterPeriod.getValue());
 
-            if (!isVirtual) {
-                log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterValueInfo);
-                counterPeriodService.update(counterPeriod);
-            }
+            log.trace("Counter period {} was changed {}", isVirtual ? counterPeriod.getCode() : counterPeriod.getId(), counterValueInfo);
+
+            return counterValueInfo;
         }
-
-        return counterValueInfo;
     }
 
     public List<CounterInstance> findByCounterTemplate(CounterTemplate counterTemplate) {
@@ -784,51 +775,44 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public BigDecimal incrementCounterValue(Long periodId, BigDecimal incrementBy, Reservation reservation) throws BusinessException {
+    public BigDecimal incrementCounterValue(Long periodId, BigDecimal incrementBy) {
+        try {
+            return incrementCounterValue_noLock(periodId, incrementBy);
+
+        } catch (CounterInstantiationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private BigDecimal incrementCounterValue_noLock(Long periodId, BigDecimal incrementBy) {
 
         CounterPeriod counterPeriod = counterPeriodService.findById(periodId);
         if (counterPeriod == null) {
             return null;
         }
-
-        if (counterPeriod.getCounterType().equals(CounterTypeEnum.USAGE)) {
-            CounterValueChangeInfo counterValueChangeInfo = deduceCounterValue(counterPeriod, incrementBy.negate(), false);
-            // Value is not tracked
-            if (counterValueChangeInfo == null) {
-                return null;
-            } else {
-                return counterValueChangeInfo.getNewValue();
-            }
-
-        } else if (counterPeriod.getCounterType().equals(CounterTypeEnum.USAGE_AMOUNT)) {
-            BigDecimal amount;
-            if (appProvider.isEntreprise()) {
-                amount = reservation.getAmountWithoutTax();
-            } else {
-                amount = reservation.getAmountWithTax();
-            }
-            counterPeriod.setValue(counterPeriod.getValue().subtract(amount));
-            counterPeriod = counterPeriodService.update(counterPeriod);
-            log.debug("Counter period {} was decremented by {} to {}", counterPeriod.getId(), amount, counterPeriod.getValue());
-            reservation.getCounterPeriodValues().put(counterPeriod.getId(), counterPeriod.getValue());
-            return counterPeriod.getValue();
+        CounterValueChangeInfo counterValueChangeInfo = deduceCounterValue(counterPeriod, incrementBy.negate(), false);
+        // Value is not tracked
+        if (counterValueChangeInfo.getPreviousValue() == null) {
+            return null;
         } else {
-            counterPeriod.setValue(counterPeriod.getValue().add(incrementBy));
-            counterPeriod = counterPeriodService.update(counterPeriod);
-            log.debug("Counter period {} was incremented by {} to {}", counterPeriod.getId(), incrementBy, counterPeriod.getValue());
-            return counterPeriod.getValue();
+            return counterValueChangeInfo.getNewValue();
         }
     }
-
+    
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public List<CounterValueChangeInfo> incrementAccumulatorCounterValue(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
+    public List<CounterValueChangeInfo> incrementAccumulatorCounterValue(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual,boolean verifyManagedByApp) {
 
         List<CounterValueChangeInfo> counterValueChangeInfos = new ArrayList<CounterValueChangeInfo>();
-
+        
         for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
-
+        	
+        	if(verifyManagedByApp && !counterInstance.getCounterTemplate().isManagedByApp()) {
+        		break;
+        	}
             CounterPeriod counterPeriod = null;
 
             for (WalletOperation wo : walletOperations) {
@@ -859,7 +843,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                         triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
                     }
                 }
-            }
+            
+        }
         }
 
         return counterValueChangeInfos;
