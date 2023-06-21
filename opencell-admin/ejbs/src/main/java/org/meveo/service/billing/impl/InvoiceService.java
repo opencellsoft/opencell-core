@@ -218,6 +218,8 @@ import org.meveo.model.order.Order;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -249,7 +251,9 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.order.OrderService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
@@ -417,6 +421,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private TradingCurrencyService tradingCurrencyService;
+
+    @Inject
+    private AccountOperationService accountOperationService;
+
+    @Inject
+    private MatchingCodeService matchingCodeService;
 
     /**
      * folder for pdf .
@@ -5042,7 +5052,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoiceDTO.isCheckAlreadySent()) {
             invoice.setEmailSentDate(invoiceDTO.getEmailSentDate());
         }
-        invoice.setAutoMatching(invoiceDTO.isAutoMatching());
+        invoice.setAutoMatching(buildAutoMatching(invoiceDTO.isAutoMatching(), invoiceType));
         invoice.setStatus(InvoiceStatusEnum.VALIDATED);
         invoice.setDontSend(invoiceDTO.isSentByEmail());
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
@@ -5496,14 +5506,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(seller == null) {
         	throw new BusinessApiException("Billing account " + billingAccountCode + " doesn't have a default seller. Please provide a seller for this invoice.");
         }
-        
 
         Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, invoiceType, comment, seller,
-                resource.getAutoMatching() != null ? resource.getAutoMatching() : false);
+                buildAutoMatching(resource.getAutoMatching(), invoiceType));
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
         return invoice;
+    }
+
+    private boolean buildAutoMatching(Boolean autoMatchingInput, InvoiceType invoiceType){
+        // auto-matching only for adj invoice
+        boolean isAutoMatching = false;
+        if (invoiceTypeService.getListAdjustementCode().contains(invoiceType.getCode())) {
+            return autoMatchingInput != null ? autoMatchingInput : false;
+        }
+
+        return isAutoMatching;
     }
 
 	public Invoice createBasicInvoiceFromSD(SecurityDeposit securityDepositInput) {
@@ -6842,6 +6861,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                toUpdate.setTransactionalInvoiceBalance(currentRate != null && invoiceResource.getAmountWithTax() != null ? currentRate.multiply(invoiceResource.getAmountWithTax()) : invoiceResource.getAmountWithTax());
            }
         }
+        toUpdate.setAutoMatching(buildAutoMatching(invoiceResource.getAutoMatching(), toUpdate.getInvoiceType()));
 
         return update(toUpdate);
     }
@@ -7495,6 +7515,41 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         return null;
+    }
+
+    /**
+     * At the time of the validation of the ADJ via the API validate if the autoMatching is true so we automatically match its AO with that of the original invoice
+     * (knowing that the API validate has the param generateAO=true from the portal)
+     *
+     * @param invoice invoice to check: should be ADJ type with autoMatching boolean as 'true'
+     */
+    public void autoMatchingAdjInvoice(Invoice invoice, AccountOperation aoAdjInvoice) {
+        if (invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode()) && invoice.isAutoMatching()) {
+            // Check if the invoice is not PAID
+            if (invoice.getPaymentStatus() != InvoicePaymentStatusEnum.PAID) {
+                LinkedInvoice linkedInvoice = findBySourceInvoiceByAdjId(invoice.getId());
+                if (linkedInvoice != null) {
+
+                    AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(linkedInvoice.getInvoice()).get(0);
+                    if (aoAdjInvoice == null) { // in case of the call is from validate API without generatedAO yet
+                        aoAdjInvoice = accountOperationService.listByInvoice(invoice).get(0);
+                    }
+
+                    if (aoAdjInvoice.getMatchingStatus() != MatchingStatusEnum.L) {
+                        try {
+                            matchingCodeService.matchOperations(aoAdjInvoice.getCustomerAccount().getId(), aoAdjInvoice.getCustomerAccount().getCode(),
+                                    List.of(aoAdjInvoice.getId(), aoOriginalInvoice.getId()), aoOriginalInvoice.getId(),
+                                    MatchingTypeEnum.A, aoOriginalInvoice.getUnMatchingAmount());
+                        } catch (Exception e) {
+                            log.error("Error on payment callback processing:", e);
+                            throw new BusinessException(e.getMessage(), e);
+                        }
+                    }
+                }
+
+            }
+
+        }
     }
 
 }
