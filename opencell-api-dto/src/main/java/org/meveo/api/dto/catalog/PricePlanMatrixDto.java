@@ -240,7 +240,6 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     public PricePlanMatrixDto(PricePlanMatrix pricePlan, CustomFieldsDto customFieldInstances, boolean returnPricePlanMatrixLine) {
         super(pricePlan);
 
-        eventCode = pricePlan.getEventCode();
         if (pricePlan.getSeller() != null) {
             seller = pricePlan.getSeller().getCode();
         }

@@ -127,7 +127,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getSellersByBA", query = "select distinct s.seller from Subscription s where s.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "Subscription.listByCustomer", query = "select s from Subscription s inner join s.userAccount ua inner join ua.billingAccount ba inner join ba.customerAccount ca inner join ca.customer c where c=:customer order by s.code asc"),
         @NamedQuery(name = "Subscription.getCountByParent", query = "select count(*) from Subscription s where s.userAccount=:parent"),
-        @NamedQuery(name = "Subscription.getSubscriptionIdsUsingProduct", query = "select si.subscription.id from ServiceInstance si where si.subscription.status not in ('CANCELED','RESILIATED','CLOSED') and si.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.code=:eventCode)")})
+        @NamedQuery(name = "Subscription.getSubscriptionIdsUsingProduct", query = "select si.subscription.id from ServiceInstance si where si.subscription.status not in ('CANCELED','RESILIATED','CLOSED') and si.productVersion.product in (select pc.product from ProductChargeTemplateMapping pc where pc.chargeTemplate.id in (:chargeIds))")})
 public class Subscription extends BusinessCFEntity implements IInvoicingMinimumApplicable,IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     private static final long serialVersionUID = 1L;

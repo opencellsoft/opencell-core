@@ -37,18 +37,18 @@ import org.hibernate.annotations.Type;
 @DiscriminatorValue("O")
 @NamedQueries({
         @NamedQuery(name = "oneShotChargeTemplate.getNbrSubscriptionChrgNotAssociated", query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateSubscription serv) "
-                + "OR o.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
+                + "OR not exists elements(o.pricePlans) )"
                 + " and  oneShotChargeTemplateType=:oneShotChargeTemplateType", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 
         @NamedQuery(name = "oneShotChargeTemplate.getSubscriptionChrgNotAssociated", query = "from  OneShotChargeTemplate o where (o.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateSubscription serv) "
-                + " OR o.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) and  oneShotChargeTemplateType=:oneShotChargeTemplateType"),
+                + " OR not exists elements(o.pricePlans) ) and  oneShotChargeTemplateType=:oneShotChargeTemplateType"),
 
         @NamedQuery(name = "oneShotChargeTemplate.getNbrTerminationChrgNotAssociated", query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateTermination serv) "
-                + " OR o.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
+                + " OR not exists elements(o.pricePlans) )"
                 + " and  oneShotChargeTemplateType=:oneShotChargeTemplateType ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 
         @NamedQuery(name = "oneShotChargeTemplate.getTerminationChrgNotAssociated", query = "from  OneShotChargeTemplate o where (o.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateTermination serv) "
-                + " OR o.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) and  oneShotChargeTemplateType=:oneShotChargeTemplateType") })
+                + " OR not exists elements(o.pricePlans) ) and  oneShotChargeTemplateType=:oneShotChargeTemplateType") })
 public class OneShotChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = 5969419152119380029L;

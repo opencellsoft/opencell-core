@@ -692,7 +692,7 @@ public class PriceListApiService extends BaseApi {
 
         PriceList duplicatedPriceList = new PriceList();
 
-        duplicatedPriceList.setCode(priceList.getCode() + "-COPY");
+        duplicatedPriceList.setCode(priceListService.findDuplicateCode(priceList, "-COPY"));
         duplicatedPriceList.setDescription(priceList.getDescription());
         duplicatedPriceList.setApplicationStartDate(priceList.getApplicationStartDate());
         duplicatedPriceList.setApplicationEndDate(priceList.getApplicationEndDate());
@@ -727,7 +727,7 @@ public class PriceListApiService extends BaseApi {
                 duplicatedLine.setApplicationEl(line.getApplicationEl());
 
                 if(line.getPricePlan() != null) {
-                    duplicatedLine.setPricePlan(duplicatePricePlan(duplicatedLine.getCode(), line.getPricePlan()));
+                    duplicatedLine.setPricePlan(duplicatePricePlan(line.getPricePlan()));
                 }
                 priceListLineService.create(duplicatedLine);
                 duplicatedPriceList.getLines().add(duplicatedLine);
@@ -740,10 +740,9 @@ public class PriceListApiService extends BaseApi {
         return duplicatedPriceList;
     }
 
-    private PricePlanMatrix duplicatePricePlan(String newContractItemCode, PricePlanMatrix pricePlanMatrix) {
+    private PricePlanMatrix duplicatePricePlan(PricePlanMatrix pricePlanMatrix) {
         PricePlanMatrix duplicate = new PricePlanMatrix(pricePlanMatrix);
         duplicate.setCode(pricePlanMatrixService.findDuplicateCode(pricePlanMatrix));
-        duplicate.setEventCode(newContractItemCode);
         duplicate.setVersion(0);
         duplicate.setVersions(new ArrayList<>());
 

@@ -6721,6 +6721,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 refreshInvoiceLineAndAggregateAmounts(toUpdate);
             }
         }
+        toUpdate.setAutoMatching(invoiceResource.getAutoMatching() != null ? invoiceResource.getAutoMatching() : false);
 
         //if the dueDate == null, it will be calculated at the level of the method invoiceService.calculateInvoice(updateInvoice)
         toUpdate.setDueDate(input.getDueDate());
@@ -7482,6 +7483,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return getEntityManager().createNamedQuery("Invoice.countByValidationRule", Long.class)
                     .setParameter("ruleId", ruleId)
                     .getSingleResult();
+    }
+
+    public LinkedInvoice findBySourceInvoiceByAdjId(Long invoiceAdjId) {
+        List<LinkedInvoice> results = getEntityManager().createNamedQuery("LinkedInvoice.findBySourceInvoiceByAdjId")
+                .setParameter("ID_INVOICE_ADJ", invoiceAdjId)
+                .getResultList();
+
+        if (CollectionUtils.isNotEmpty(results)) {
+            return results.get(0);
+        }
+
+        return null;
     }
 
 }

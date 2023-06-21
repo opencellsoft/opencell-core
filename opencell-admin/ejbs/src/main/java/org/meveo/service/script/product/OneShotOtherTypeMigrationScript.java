@@ -107,13 +107,12 @@ public class OneShotOtherTypeMigrationScript extends Script {
         newPricePlanMatrix.setTradingCurrency(pricePlanMatrix.getTradingCurrency());
         newPricePlanMatrix.setSeller(pricePlanMatrix.getSeller());
         newPricePlanMatrix.setValidityFrom(pricePlanMatrix.getValidityFrom());
-        newPricePlanMatrix.setEventCode(newChargeTemplate.getCode());
         newPricePlanMatrix.setAmountWithTaxEL(pricePlanMatrix.getAmountWithTaxEL());
         newPricePlanMatrix.setCode(pricePlanMatrix.getCode() + "_" + codePrefix);
         newPricePlanMatrix.setAmountWithTax(pricePlanMatrix.getAmountWithTax());
         newPricePlanMatrix.setAmountWithoutTax(pricePlanMatrix.getAmountWithoutTax());
         newPricePlanMatrix.setOfferTemplate(pricePlanMatrix.getOfferTemplate());
-        newPricePlanMatrix.setChargeTemplate(newChargeTemplate);
+        newPricePlanMatrix.setChargeTemplates(Set.of(newChargeTemplate));
         newPricePlanMatrix.setDiscountPlanItems(List.copyOf(pricePlanMatrix.getDiscountPlanItems()));
         newPricePlanMatrix.setContractItems(List.copyOf(pricePlanMatrix.getContractItems()));
         newPricePlanMatrix.setValidityCalendar(pricePlanMatrix.getValidityCalendar());
