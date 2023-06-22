@@ -78,6 +78,9 @@ public interface Provider {
     
     @Nullable
     Set<String> getPaymentMethods();
+
+    @Nullable
+    Set<String> getAllowedManualRefundMethods();
     
     @Nullable
     Set<String> getOrderLineTypes();

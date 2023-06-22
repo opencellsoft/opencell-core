@@ -9,7 +9,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.catalog.PriceListLineDto;
-import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
@@ -23,6 +22,7 @@ import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
+import org.meveo.model.shared.RegexUtils;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -70,6 +70,10 @@ public class PriceListLineApiService extends BaseApi {
     public Long create(PriceListLineDto postDto) {
 
         checkMandatoryFields(postDto);
+
+        if (!StringUtils.isBlank(postDto.getCode()) && !RegexUtils.checkCode(postDto.getCode())) {
+            throw new BusinessApiException("PriceList code should not contain special characters");
+        }
 
         PriceListLine entityToSave = new PriceListLine();
 
@@ -294,6 +298,10 @@ public class PriceListLineApiService extends BaseApi {
     public Long update(Long priceListLineId, PriceListLineDto postDto) {
 
         checkMandatoryFields(postDto);
+
+        if (!StringUtils.isBlank(postDto.getCode()) && !RegexUtils.checkCode(postDto.getCode())) {
+            throw new BusinessApiException("PriceList code should not contain special characters");
+        }
 
         PriceListLine priceListLineToUpdate = priceListLineService.findById(priceListLineId);
         if(priceListLineToUpdate == null) {

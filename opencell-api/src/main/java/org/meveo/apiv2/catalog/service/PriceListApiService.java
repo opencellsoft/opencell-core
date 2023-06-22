@@ -34,6 +34,7 @@ import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.model.securityDeposit.FinanceSettings;
+import org.meveo.model.shared.RegexUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -237,6 +238,10 @@ public class PriceListApiService extends BaseApi {
     	} else if(priceList.getCode().length() > 50) {
     		throw new BusinessApiException("The code must be 50 characters or less");
     	}
+
+        if (!StringUtils.isBlank(priceList.getCode()) && !RegexUtils.checkCode(priceList.getCode())) {
+            throw new BusinessApiException("PriceList code should not contain special characters");
+        }
     	
     	if(priceList.getDescription() != null && !priceList.getDescription().isEmpty() && priceList.getDescription().length() > 255) {
     		throw new BusinessApiException("The description must be 255 characters or less");

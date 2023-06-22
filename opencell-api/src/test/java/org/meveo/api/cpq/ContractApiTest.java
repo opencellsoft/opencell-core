@@ -185,6 +185,7 @@ public class ContractApiTest {
 
         when(contractService.findByCode(contractCode)).thenReturn(source);
 
+        when(contractService.findDuplicateCode(source, "-COPY")).thenReturn(source.getCode() + "-COPY");
 
         // When duplicate a contract based on its contractCode
         contractApi.duplicateContract(contractCode);
@@ -274,23 +275,6 @@ public class ContractApiTest {
 
     }
 
-    @Test
-    public void shouldTriggerExceptionDuplicatedCode() {
-        // given contractCode
-        String contractCode = "myContractCode";
-
-        Contract source = new Contract();
-        source.setCode(contractCode);
-        when(contractService.findByCode(contractCode)).thenReturn(source);
-        when(contractService.findByCode(contractCode+"-COPY")).thenReturn(new Contract());
-
-        // when try to duplicate, an not found exception is trigger
-        assertThatExceptionOfType(EntityAlreadyExistsException.class).isThrownBy(() -> {
-            contractApi.duplicateContract(contractCode);
-        });
-
-    }
-    
 	@Test
 	public void shouldCreateTCI() {
 

@@ -270,7 +270,7 @@ public class IteratorBasedJobProcessing implements Serializable {
 
         boolean useMultipleItemProcessing = (processMultipleItemFunction != null && batchSize != null && batchSize > 1) || processSingleItemFunction == null;
 
-        List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
+        List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue() > 0 ? nbThreads.intValue() : 0);
 
         for (int k = 0; k < nbThreads; k++) {
 
