@@ -118,7 +118,8 @@ import org.meveo.model.tax.TaxCategory;
 				+ " order by b.id"),
 		@NamedQuery(name = "BillingAccount.getCountByCreditCategory", query = "select count(*) from BillingAccount ba where ba.id=:id and ba.customerAccount.creditCategory.id in (:creditCategoryIds)"),
         @NamedQuery(name = "BillingAccount.getBaFetchCaAndCustomer",
-                query = "select ba from BillingAccount ba left join fetch ba.customerAccount as ca left join fetch ca.customer as c left join fetch c.parentCustomer where ba.id = :id ")})
+                query = "select ba from BillingAccount ba left join fetch ba.customerAccount as ca left join fetch ca.customer as c left join fetch c.parentCustomer where ba.id = :id "),
+        @NamedQuery(name = "BillingAccount.unlinkPriceList", query = "update BillingAccount set priceList = null where priceList.id = :priceListId")})
 public class BillingAccount extends AccountEntity implements IInvoicingMinimumApplicable, IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
