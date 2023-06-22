@@ -650,7 +650,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
     }
 
 	public AccountingArticle getAccountingArticle(Long serviceInstanceId, Long chargeTemplateId, Long offerTemplateId) {
-		return getAccountingArticle(serviceInstanceService.findFetchProductById(serviceInstanceId), chargeTemplateService.findById(chargeTemplateId), offerTemplateService.findById(offerTemplateId), null);
+		return getAccountingArticle(serviceInstanceService.findFetchProductById(serviceInstanceId), chargeTemplateId==null?null:chargeTemplateService.findById(chargeTemplateId), offerTemplateId==null?null:offerTemplateService.findById(offerTemplateId), null);
 	}
 
 }
