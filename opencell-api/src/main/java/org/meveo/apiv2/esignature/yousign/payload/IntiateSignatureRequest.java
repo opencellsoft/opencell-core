@@ -1,15 +1,18 @@
 package org.meveo.apiv2.esignature.yousign.payload;
 
+import com.google.gson.annotations.SerializedName;
+
 public class IntiateSignatureRequest {
 	
 	private String name;
-	private String delivery_mode;
+	@SerializedName("delivery_mode")
+	private String deliveryMode;
 	
 	public IntiateSignatureRequest() {
 	}
-	public IntiateSignatureRequest(String name, String delivery_mode) {
+	public IntiateSignatureRequest(String name, String deliveryMode) {
 		this.name = name;
-		this.delivery_mode = delivery_mode;
+		this.deliveryMode = deliveryMode;
 	}
 	
 	public String getName() {
@@ -20,11 +23,11 @@ public class IntiateSignatureRequest {
 		this.name = name;
 	}
 	
-	public String getDelivery_mode() {
-		return delivery_mode;
+	public String getDeliveryMode() {
+		return deliveryMode;
 	}
 	
-	public void setDelivery_mode(String delivery_mode) {
-		this.delivery_mode = delivery_mode;
+	public void setDeliveryMode(String deliveryMode) {
+		this.deliveryMode = deliveryMode;
 	}
 }

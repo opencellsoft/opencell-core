@@ -1,7 +1,9 @@
 package org.meveo.apiv2.esignature;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
+import org.immutables.value.internal.$processor$.meta.$GsonMirrors;
 import org.meveo.model.esignature.DeliveryMode;
 import org.meveo.model.esignature.Operator;
 
@@ -17,11 +19,14 @@ public interface SigantureRequest {
 	@Nullable
 	String getName();
 	@Nullable
-	DeliveryMode getDelivery_mode();
+	@JsonProperty("delivery_mode")
+	DeliveryMode getDeliveryMode();
 	@Nullable
-	String getCustom_experience_id();
+	@JsonProperty("custom_experience_id")
+	String getCustomExperienceId();
 	@Nullable
-	String getExternal_id();
+	@JsonProperty("external_id")
+	String getExternalId();
 	@Nullable
 	List<FilesSignature> getFilesToSign();
 	

@@ -4,6 +4,7 @@ import org.meveo.apiv2.esignature.SigantureRequest;
 import org.meveo.model.esignature.Operator;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ public class SignatureRequestApiService {
 			signatureRequestProcess = new YouSignProcessus();
 			return ((YouSignProcessus) signatureRequestProcess).fetch(signatureRequestId);
 		}
-		return null;
+		return Collections.emptyMap();
 	}
 	
 	public InputStream download(Operator operator, String signatureRequestId){

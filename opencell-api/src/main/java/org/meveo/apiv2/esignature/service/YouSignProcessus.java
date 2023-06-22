@@ -1,6 +1,5 @@
 package org.meveo.apiv2.esignature.service;
 
-import com.stripe.exception.ApiConnectionException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -28,20 +27,15 @@ import org.meveo.model.esignature.SigantureAuthentificationMode;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.FileAttribute;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -50,7 +44,6 @@ public class YouSignProcessus extends SignatureRequestProcess {
 	
 	
 	private final FilesApi filesApi = (FilesApi) EjbUtils.getServiceInterface(FilesApi.class.getSimpleName());
-	private final YouSignApi youSignApi = (YouSignApi) EjbUtils.getServiceInterface(YouSignApi.class.getSimpleName());
 	public YouSignProcessus(SigantureRequest sigantureRequest){
 		super(sigantureRequest);
 	}
@@ -107,11 +100,11 @@ public class YouSignProcessus extends SignatureRequestProcess {
 	public InputStream download(String signatureRequestId){
 		checkApiAndUrl();
 		try {
-			HttpResponse<byte[]> dowbloadbleFile = download("/signature_requests/" + signatureRequestId + "/documents/download", HttpMethod.GET);
+			HttpResponse<byte[]> downloadableFile = download("/signature_requests/" + signatureRequestId + "/documents/download", HttpMethod.GET);
 			String fileName = null;
-			if(dowbloadbleFile.headers().map().get("content-disposition") != null) {
-				String contentdisposition = dowbloadbleFile.headers().map().get("content-disposition").get(0);
-				fileName = contentdisposition.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1");
+			if(downloadableFile.headers().map().get("content-disposition") != null) {
+				String contentDisposition = downloadableFile.headers().map().get("content-disposition").get(0);
+				fileName = contentDisposition.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1");
 			}
 			if(fileName == null) {
 				throw new BusinessApiException("the file doesn't exist");
@@ -119,7 +112,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			String yousignDir = PARAMBEAN.getChrootDir("") + File.separator + PARAMBEAN.getProperty(YouSignApi.YOUSIGN_API_DOWNLOAD_DIR_KEY, "/signeddocs");
 			filesApi.createDir(yousignDir);
 			Path filePath = Path.of(yousignDir + File.separator + fileName);
-			Path newFile = Files.write(filePath, dowbloadbleFile.body(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			Path newFile = Files.write(filePath, downloadableFile.body(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 			return new FileInputStream(newFile.toFile());
 		} catch (IOException | InterruptedException e) {
 			throw new BusinessApiException(e.getMessage());
@@ -127,7 +120,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 	}
 	
 	private String processGenerateRequestId() throws IOException, InterruptedException {
-		final IntiateSignatureRequest intiateSignatureRequest = new IntiateSignatureRequest(sigantureRequest.getName(), DeliveryMode.email.getValue(sigantureRequest.getDelivery_mode()));
+		final IntiateSignatureRequest intiateSignatureRequest = new IntiateSignatureRequest(sigantureRequest.getName(), DeliveryMode.email.getValue(sigantureRequest.getDeliveryMode()));
 		var response = getHttpRequestPost( "/signature_requests", intiateSignatureRequest);
 		var sigantureRequestId = gson.fromJson(response.body(), Map.class);
 		if(sigantureRequestId.get("id") == null){
@@ -147,7 +140,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			HttpEntity entity = MultipartEntityBuilder.create()
 					.addPart("file", new FileBody(file))
 					.addTextBody("nature", NatureDocument.getValue(fileSigners.getNature()))
-					.addTextBody("parse_anchors", fileSigners.getParse_anchors() + "")
+					.addTextBody("parse_anchors", fileSigners.getParseAnchors() + "")
 					.build();
 			HttpPost request = new HttpPost(URI.create(getSignatureUrl() + "/signature_requests/" + requestId + "/documents"));
 			request.setHeader("Authorization", "Bearer " + getSignatureApiKey());
@@ -170,8 +163,8 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			for(FilesSignature docInfo : documentIds.keySet()){
 				InfoSigner info = signer.getInfo();
 				Signer signerToSend = new Signer(info.getFirst_name(), info.getLast_name(), info.getEmail(),
-						info.getPhone_number(), info.getLocale(), "electronic_signature", SigantureAuthentificationMode.getValue(signer.getSignature_authentication_mode()) );
-				if(!docInfo.getParse_anchors()) {
+						info.getPhone_number(), info.getLocale(), "electronic_signature", SigantureAuthentificationMode.getValue(signer.getSignatureAuthenticationMode()) );
+				if(!docInfo.getParseAnchors()) {
 					for(SignatureFields fields : Objects.requireNonNull(signer.getFields())){
 						signerToSend.addFields(documentIds.get(docInfo).toString(), fields.getPage(), fields.getWidth(), fields.getX(), fields.getY());
 					}

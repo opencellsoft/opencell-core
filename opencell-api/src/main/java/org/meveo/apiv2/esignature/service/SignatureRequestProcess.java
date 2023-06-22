@@ -25,6 +25,7 @@ import java.util.Map;
 
 public abstract class SignatureRequestProcess {
 	
+	public static final String AUTHORIZATION = "Authorization";
 	protected static Logger log = LoggerFactory.getLogger(SignatureRequestProcess.class);
 	protected final ParamBean PARAMBEAN = ParamBean.getInstance();
 	public abstract String  getSignatureApiKey();
@@ -44,8 +45,7 @@ public abstract class SignatureRequestProcess {
 		POST, GET
 	}
 	
-	
-	public SignatureRequestProcess(SigantureRequest sigantureRequest) {
+	protected SignatureRequestProcess(SigantureRequest sigantureRequest) {
 		this.sigantureRequest = sigantureRequest;
 	}
 	
@@ -56,7 +56,7 @@ public abstract class SignatureRequestProcess {
 			throw new BusinessApiException("The payload for path " + path + " is mandatory");
 		}
 		HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(getSignatureUrl() + path))
-				.header("Authorization", "Bearer " + getSignatureApiKey())
+				.header(AUTHORIZATION, getBarearToken())
 				.header("Content-Type", MediaType.APPLICATION_JSON)
 				.method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(entity)));
 		return httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
@@ -65,7 +65,7 @@ public abstract class SignatureRequestProcess {
 	protected HttpResponse<String> getHttpRequestWithoutBody(String path, HttpMethod httpMethod) throws IOException, InterruptedException {
 		path = checkSlash(path);
 		HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(getSignatureUrl() + path))
-				.header("Authorization", "Bearer " + getSignatureApiKey())
+				.header(AUTHORIZATION, getBarearToken())
 				.method( httpMethod.name(), HttpRequest.BodyPublishers.noBody());
 		return httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 	}
@@ -73,7 +73,7 @@ public abstract class SignatureRequestProcess {
 	protected HttpResponse<String> getHttpRequestPost(String path) throws IOException, InterruptedException {
 		path = checkSlash(path);
 		HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(getSignatureUrl() + path))
-				.header("Authorization", "Bearer " + getSignatureApiKey())
+				.header(AUTHORIZATION, getBarearToken())
 				.method("POST", HttpRequest.BodyPublishers.noBody());
 		
 		return httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
@@ -82,7 +82,7 @@ public abstract class SignatureRequestProcess {
 	protected HttpResponse<byte[]> download(String path, HttpMethod httpMethod) throws IOException, InterruptedException {
 		path = checkSlash(path);
 		HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(getSignatureUrl() + path))
-				.header("Authorization", "Bearer " + getSignatureApiKey())
+				.header(AUTHORIZATION, getBarearToken())
 				.header("accept", "application/pdf")
 				.method(httpMethod.name(), HttpRequest.BodyPublishers.noBody());
 		return  httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofByteArray());
@@ -129,5 +129,9 @@ public abstract class SignatureRequestProcess {
 			throw  new MissingParameterException(errors);
 		}
 		return errors;
+	}
+	
+	private String getBarearToken(){
+		return "Bearer " + getSignatureApiKey();
 	}
 }
