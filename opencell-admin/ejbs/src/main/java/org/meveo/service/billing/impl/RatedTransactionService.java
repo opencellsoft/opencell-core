@@ -1995,7 +1995,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             fieldToFetch.add("serviceInstance.id as service_instance_id");
         }
         if(!ignoreOrder) {
-            fieldToFetch.add("subscription.order.id as commercial_order_id");
+            fieldToFetch.add("infoOrder.order.id as commercial_order_id");
             fieldToFetch.add("orderNumber as order_number");
             fieldToFetch.add("infoOrder.order.id as order_id");
         }
@@ -2101,7 +2101,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         if (! aggregationConfiguration.isIgnoreOrders()) {
-            mapToInvoiceLineTable.put("subscription.order.id", "subscription.order.id");
             mapToInvoiceLineTable.put("infoOrder.order.id", "commercialOrder.id");
             mapToInvoiceLineTable.put("orderNumber", "orderNumber");
         }
