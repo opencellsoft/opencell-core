@@ -43,8 +43,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -2274,10 +2276,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				strQuery = strQuery + " and rt.offerTemplate.id is null ";
 			}
 		}
-		log.info("------->"+chargeInstances+"---"+ serviceInstanceId+"---"+offerTemplateId+":"+strQuery);
         Query query = getEntityManager().createQuery(strQuery);
+        query.setParameter("accountingArticle", accountingArticle);
         if (chargeInstances != null) {
-        	query.setParameter("chargeInstanceIds", chargeInstances);
+            final int maxValue = Objects.requireNonNull(getInstance()).getPropertyAsInteger("database.number.of.inlist.limit", PersistenceService.SHORT_MAX_VALUE)-1;
+            List<List<Long>> chargesSubList = partition(chargeInstances, maxValue);
+            for(List<Long> subList: chargesSubList) {
+            	query.setParameter("chargeInstanceIds", subList);
+            	query.executeUpdate();
+            }
 		} else {
 			if (serviceInstanceId != null) {
 				query.setParameter("serviceInstanceId", serviceInstanceId);
@@ -2285,10 +2292,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			if (offerTemplateId != null) {
 				query.setParameter("offerTemplateId", offerTemplateId);
 			}
+			query.executeUpdate();
 		}
-        
-        query.setParameter("accountingArticle", accountingArticle);
-        query.executeUpdate();
 	}
 
 	/**
