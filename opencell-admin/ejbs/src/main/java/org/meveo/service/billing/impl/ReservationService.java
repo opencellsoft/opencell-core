@@ -298,7 +298,7 @@ public class ReservationService extends PersistenceService<Reservation> {
         for (WalletReservation wo : ops) {
             if (wo.getStatus() == WalletOperationStatusEnum.RESERVED) {
                 if (wo.getChargeInstance() != null && wo.getChargeInstance().getAccumulatorCounterInstances() != null && !wo.getChargeInstance().getAccumulatorCounterInstances().isEmpty()) {
-                    counterInstanceService.incrementAccumulatorCounterValue(wo.getChargeInstance(), Collections.singletonList(wo), false);
+                    counterInstanceService.incrementAccumulatorCounterValue(wo.getChargeInstance(), Collections.singletonList(wo), false,true);
                 }
                 wo.changeStatus(WalletOperationStatusEnum.OPEN);
             }
