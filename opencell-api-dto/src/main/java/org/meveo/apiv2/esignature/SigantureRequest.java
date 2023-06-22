@@ -3,7 +3,6 @@ package org.meveo.apiv2.esignature;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
-import org.immutables.value.internal.$processor$.meta.$GsonMirrors;
 import org.meveo.model.esignature.DeliveryMode;
 import org.meveo.model.esignature.Operator;
 

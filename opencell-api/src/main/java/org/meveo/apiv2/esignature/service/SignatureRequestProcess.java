@@ -27,7 +27,7 @@ public abstract class SignatureRequestProcess {
 	
 	public static final String AUTHORIZATION = "Authorization";
 	protected static Logger log = LoggerFactory.getLogger(SignatureRequestProcess.class);
-	protected final ParamBean PARAMBEAN = ParamBean.getInstance();
+	protected final ParamBean paramBean = ParamBean.getInstance();
 	public abstract String  getSignatureApiKey();
 	public abstract String getSignatureUrl();
 	

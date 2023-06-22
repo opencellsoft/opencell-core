@@ -2,7 +2,6 @@ package org.meveo.apiv2.esignature;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.gson.annotations.SerializedName;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;

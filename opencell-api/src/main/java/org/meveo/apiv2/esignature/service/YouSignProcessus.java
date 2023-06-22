@@ -52,12 +52,12 @@ public class YouSignProcessus extends SignatureRequestProcess {
 	}
 	@Override
 	public String getSignatureApiKey() {
-		return PARAMBEAN.getProperty(YouSignApi.YOUSIGN_API_TOKEN_PROPERTY_KEY, null);
+		return paramBean.getProperty(YouSignApi.YOUSIGN_API_TOKEN_PROPERTY_KEY, null);
 	}
 	
 	@Override
 	public String getSignatureUrl() {
-		return PARAMBEAN.getProperty(YouSignApi.YOUSIGN_API_URL_PROPERTY_KEY, null);
+		return paramBean.getProperty(YouSignApi.YOUSIGN_API_URL_PROPERTY_KEY, null);
 	}
 	
 	@Override
@@ -109,7 +109,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			if(fileName == null) {
 				throw new BusinessApiException("the file doesn't exist");
 			}
-			String yousignDir = PARAMBEAN.getChrootDir("") + File.separator + PARAMBEAN.getProperty(YouSignApi.YOUSIGN_API_DOWNLOAD_DIR_KEY, "/signeddocs");
+			String yousignDir = paramBean.getChrootDir("") + File.separator + paramBean.getProperty(YouSignApi.YOUSIGN_API_DOWNLOAD_DIR_KEY, "/signeddocs");
 			filesApi.createDir(yousignDir);
 			Path filePath = Path.of(yousignDir + File.separator + fileName);
 			Path newFile = Files.write(filePath, downloadableFile.body(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);

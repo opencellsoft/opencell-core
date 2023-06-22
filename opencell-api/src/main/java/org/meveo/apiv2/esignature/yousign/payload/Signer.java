@@ -67,7 +67,8 @@ public class Signer {
 		this.fields.add(new Fields(docId, page, width, x, y));
 	}
 	public static class Fields {
-		private String document_id;
+		@SerializedName("document_id")
+		private String documentId;
 		private String type = "signature";
 		private int page;
 		private int width;
@@ -75,20 +76,20 @@ public class Signer {
 		private int y;
 		
 		public Fields(){}
-		public Fields(String document_id, int page, int width, int x, int y) {
-			this.document_id = document_id;
+		public Fields(String documentId, int page, int width, int x, int y) {
+			this.documentId = documentId;
 			this.page = page;
 			this.width = width;
 			this.x = x;
 			this.y = y;
 		}
 		
-		public String getDocument_id() {
-			return document_id;
+		public String getDocumentId() {
+			return documentId;
 		}
 		
-		public void setDocument_id(String document_id) {
-			this.document_id = document_id;
+		public void setDocumentId(String document_id) {
+			this.documentId = documentId;
 		}
 		
 		public String getType() {
