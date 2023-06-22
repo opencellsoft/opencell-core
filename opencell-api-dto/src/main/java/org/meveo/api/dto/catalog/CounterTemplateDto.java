@@ -108,6 +108,11 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
      * An EL expression that returns a number (BigDecimal) that contains the quantity we count
      */
     private String valueEl;
+    
+    /**
+     * The field can be disable/enable accumulator counter
+     */
+    private Boolean managedByApp;
 
 
     /**
@@ -136,6 +141,7 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
         filterEl = counterTemplate.getFilterEl();
         keyEl = counterTemplate.getKeyEl();
         valueEl = counterTemplate.getValueEl();
+        managedByApp=counterTemplate.isManagedByApp();
     }
 
     /**
@@ -359,8 +365,18 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
     public void setValueEl(String valueEl) {
         this.valueEl = valueEl;
     }
+    
+    
 
-    @Override
+    public Boolean getManagedByApp() {
+		return managedByApp;
+	}
+
+	public void setManagedByApp(Boolean managedByApp) {
+		this.managedByApp = managedByApp;
+	}
+
+	@Override
     public boolean equals(Object obj) {
 
         if (this == obj) {
@@ -386,7 +402,7 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
     @Override
     public String toString() {
         return String.format(
-            "CounterTemplateDto [code=%s, description=%s, calendar=%s, calendarCodeEl=%s, unity=%s, type=%s, ceiling=%s, disabled=%s, counterLevel=%s, ceilingExpressionEl=%s, notificationLevels=%s]",
-            getCode(), getDescription(), calendar, calendarCodeEl, unity, type, ceiling, isDisabled(), counterLevel, ceilingExpressionEl, notificationLevels);
+            "CounterTemplateDto [code=%s, description=%s, calendar=%s, calendarCodeEl=%s, unity=%s, type=%s, ceiling=%s, disabled=%s, counterLevel=%s, ceilingExpressionEl=%s, notificationLevels=%s,, managedByApp=%s]",
+            getCode(), getDescription(), calendar, calendarCodeEl, unity, type, ceiling, isDisabled(), counterLevel, ceilingExpressionEl, managedByApp);
     }
 }
