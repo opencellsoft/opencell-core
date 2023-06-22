@@ -4268,6 +4268,7 @@
 	        <column name="filter_el" type="varchar(2000)"/>
 	        <column name="key_el" type="varchar(2000)"/>
 	        <column name="value_el" type="varchar(2000)"/>
+	        <column name="managed_byapp" type="${type.boolean}" defaultValueNumeric="1"><constraints nullable="false" /></column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-210">
@@ -19609,6 +19610,7 @@
     <changeSet id="INTRD-16780_20230614_oracle" author="a.rouaguebe" dbms="oracle" />
 	<changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
 	<changeSet id="INTRD-16050_20230515" author="ThangNguyen" />
+	<changeSet id="#INTRD-16982_20230619" author="Mbarek-Ay"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

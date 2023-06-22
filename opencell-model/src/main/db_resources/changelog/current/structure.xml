@@ -16236,5 +16236,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                   FROM billing_wallet_operation o WHERE o.status = 'OPEN') o
         </createView>
     </changeSet>
+    
+     <changeSet id="#INTRD-16982_20230619" author="Mbarek-Ay">
+        <addColumn tableName="cat_counter_template">
+            <column name="managed_byapp" type="${type.boolean}" defaultValueNumeric="1"><constraints nullable="false" /></column>
+        </addColumn>
+     </changeSet>
 
 </databaseChangeLog>
