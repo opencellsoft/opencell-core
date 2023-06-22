@@ -106,7 +106,7 @@ public abstract class SignatureRequestProcess {
 		for(Signers signer: sigantureRequest.getSigners()) {
 			if(signer.getInfo() == null) {
 				errors.add("signers.info");
-			}else	if(StringUtils.isEmpty(signer.getInfo().getLast_name())){
+			}else	if(StringUtils.isEmpty(signer.getInfo().getLastName())){
 				errors.add("signers.info.last_name");
 			}
 		}

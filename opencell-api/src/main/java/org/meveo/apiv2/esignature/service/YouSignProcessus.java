@@ -77,7 +77,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			log.info("start singing to e-sign = " + getModeOperator() + " - step 2 : uploading files : finished ");
 			
 			log.info("start singing to e-sign = " + getModeOperator() + " - step 3 : adding signers : ");
-			Map<String, String> signers = addSigner(requestId, documentIds);
+			addSigner(requestId, documentIds);
 			log.info("start singing to e-sign = " + getModeOperator() + " - step 3 : adding signers : finished");
 			
 			log.info("start singing to e-sign = " + getModeOperator() + " - step 4 : activate signature request : ");
@@ -157,13 +157,13 @@ public class YouSignProcessus extends SignatureRequestProcess {
 		
 	}
 	
-	private Map<String, String> addSigner(String signatureRequestId, Map<FilesSignature, String> documentIds) throws IOException, InterruptedException {
+	private void addSigner(String signatureRequestId, Map<FilesSignature, String> documentIds) throws IOException, InterruptedException {
 		Map<String, String> result = new HashMap<>();
 		for(Signers signer: Objects.requireNonNull(sigantureRequest.getSigners())){
 			for(FilesSignature docInfo : documentIds.keySet()){
 				InfoSigner info = signer.getInfo();
-				Signer signerToSend = new Signer(info.getFirst_name(), info.getLast_name(), info.getEmail(),
-						info.getPhone_number(), info.getLocale(), "electronic_signature", SigantureAuthentificationMode.getValue(signer.getSignatureAuthenticationMode()) );
+				Signer signerToSend = new Signer(info.getFirstName(), info.getLastName(), info.getEmail(),
+						info.getPhoneNumber(), info.getLocale(), "electronic_signature", SigantureAuthentificationMode.getValue(signer.getSignatureAuthenticationMode()) );
 				if(!docInfo.getParseAnchors()) {
 					for(SignatureFields fields : Objects.requireNonNull(signer.getFields())){
 						signerToSend.addFields(documentIds.get(docInfo).toString(), fields.getPage(), fields.getWidth(), fields.getX(), fields.getY());
@@ -173,13 +173,12 @@ public class YouSignProcessus extends SignatureRequestProcess {
 				Map<String, Object> jsonBody = gson.fromJson(response.body(), Map.class);
 				if(jsonBody.get("id") == null) {
 					log.error(response.body());
-					throw new BusinessApiException("Problem occur when adding signer : " + info.getLast_name() + ". detail : " + jsonBody.get("detail"));
+					throw new BusinessApiException("Problem occur when adding signer : " + info.getLastName() + ". detail : " + jsonBody.get("detail"));
 				}
 				result.put(info.getEmail(), jsonBody.get("id").toString());
-				log.info("signer " + info.getLast_name() + " for document " + documentIds.get(docInfo).toString());
+				log.info("signer " + info.getLastName() + " for document " + documentIds.get(docInfo).toString());
 			}
 		}
-		return result;
 	}
 	
 	private Map<String, Object> activateSiganture(String sigantureRequestId) throws IOException, InterruptedException {

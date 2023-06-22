@@ -1,6 +1,8 @@
 package org.meveo.apiv2.esignature;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.gson.annotations.SerializedName;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
@@ -10,16 +12,18 @@ import javax.annotation.Nullable;
 public interface InfoSigner {
 	
 	@Nullable
-	String getFirst_name();
+	@JsonProperty("first_name")
+	String getFirstName();
 	@Nullable
-	
-	String getLast_name();
+	@JsonProperty("last_name")
+	String getLastName();
 	
 	@Nullable
 	String getEmail();
 	
 	@Nullable
-	String getPhone_number();
+	@JsonProperty("phone_number")
+	String getPhoneNumber();
 	
 	@Nullable
 	String getLocale();
