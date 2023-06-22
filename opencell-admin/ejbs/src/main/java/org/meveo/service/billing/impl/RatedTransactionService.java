@@ -1834,10 +1834,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         params.put("ids", ratedTransactionIds);
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption(),
                 "usage_date ", "rt");
+        final String unitPrice = 
+                " (case when sum(rt.quantity)=0 then sum(rt.amountWithTax) else (sum(rt.amountWithTax) / sum(rt.quantity)) end)  as unit_price,";
         String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, "
                 + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
                 + "              sum(rt.amount_without_tax) as sum_without_tax, sum(rt.amount_with_tax) as sum_with_tax,"
-                + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price,"
+                +                unitPrice
                 + "              rt.offer_id, rt.service_instance_id, "
                 +                usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
                 + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
