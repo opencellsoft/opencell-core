@@ -47,17 +47,20 @@ public class ArticleMappingBean extends IteratorBasedJobBean<AccountingArticleAs
     }
     
     private void assignAccountingArticles(List<AccountingArticleAssignementItem> items, JobExecutionResultImpl jobExecutionResult) {
-    	AccountingArticle article = null;
+    	AccountingArticle article=null;
     	for(AccountingArticleAssignementItem item : items) {
-			article = accountingArticleService.getAccountingArticle(item.getServiceInstanceId(),item.getChargeTemplateId(), item.getOfferTemplateId());
-			ratedTransactionService.updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(item.getChargeInstancesIDs(),item.getServiceInstanceId(), item.getOfferTemplateId(), article);
+			assigneArticle(item,article);
     	}
     }
 
     private void assignAccountingArticle(AccountingArticleAssignementItem item, JobExecutionResultImpl jobExecutionResult) {
-    	AccountingArticle article = accountingArticleService.getAccountingArticle(item.getServiceInstanceId(),item.getChargeTemplateId(), item.getOfferTemplateId());
-		ratedTransactionService.updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(item.getChargeInstancesIDs(),item.getServiceInstanceId(), item.getOfferTemplateId(), article);
+    	assigneArticle(item,null);
     }
+
+	private void assigneArticle(AccountingArticleAssignementItem item, AccountingArticle article) {
+		article = accountingArticleService.getAccountingArticle(item.getServiceInstanceId(),item.getChargeTemplateId(), item.getOfferTemplateId());
+		ratedTransactionService.updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(item.getChargeInstancesIDs(),item.getServiceInstanceId(), item.getOfferTemplateId(), article);
+	}
 
     @Override
     protected boolean isProcessItemInNewTx() {
