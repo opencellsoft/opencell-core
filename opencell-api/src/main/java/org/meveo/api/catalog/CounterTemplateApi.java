@@ -131,6 +131,9 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
                 counterTemplate.setValueEl(postData.getValueEl());
             }
         }
+        if(postData.getManagedByApp()!=null) {
+        	counterTemplate.setManagedByApp(postData.getManagedByApp());
+        }
 
         return counterTemplate;
     }
