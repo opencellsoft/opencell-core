@@ -6,8 +6,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.catalog.service.PriceListApiService;
 import org.meveo.apiv2.dunning.resource.DunningLevelResource;
 import org.meveo.apiv2.generic.common.LinkGenerator;
@@ -24,7 +25,7 @@ public class PriceListResourceImpl implements PriceListResource {
 	public Response create(org.meveo.apiv2.catalog.PriceList priceList) {
     	PriceList entity = mapper.toEntity(priceList);
     	PriceList savedPriceList = priceListApiService.create(entity, priceList.getCustomFields());
-		return ok(LinkGenerator.getUriBuilderFromResource(PriceListResource.class, savedPriceList.getId()).build())
+		return Response.created(LinkGenerator.getUriBuilderFromResource(PriceListResource.class, savedPriceList.getId()).build())
 				.entity(mapper.toResource(savedPriceList))
 				.build();
 	}
@@ -40,9 +41,10 @@ public class PriceListResourceImpl implements PriceListResource {
     
     @Override
 	public Response delete(String priceListCode) {
+		ActionStatus actionStatus = new ActionStatus();
+		actionStatus.setStatus(ActionStatusEnum.SUCCESS);
 		priceListApiService.delete(priceListCode);
-		ResponseBuilder response = ok();
-		return response.build();
+		return Response.ok(actionStatus).build();
 	}
 
     @Override
