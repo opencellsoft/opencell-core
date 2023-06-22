@@ -16955,5 +16955,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </createTable>
 		<addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_manual_refund_methods" tableName="crm_provider_manual_refund_methods" />
     </changeSet>
+    
+    <changeSet id="#INTRD-16982_20230619" author="Mbarek-Ay">
+        <addColumn tableName="cat_counter_template">
+            <column name="managed_byapp" type="${type.boolean}" defaultValueNumeric="1"><constraints nullable="false" /></column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
