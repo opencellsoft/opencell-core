@@ -729,6 +729,7 @@ public class PriceListApiService extends BaseApi {
                 if(line.getPricePlan() != null) {
                     duplicatedLine.setPricePlan(duplicatePricePlan(line.getPricePlan()));
                 }
+                duplicatedLine.setCfValues(line.getCFValuesCopy());
                 priceListLineService.create(duplicatedLine);
                 duplicatedPriceList.getLines().add(duplicatedLine);
             }
