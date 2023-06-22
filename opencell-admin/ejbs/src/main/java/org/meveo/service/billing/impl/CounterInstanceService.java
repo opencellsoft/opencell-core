@@ -900,11 +900,14 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return A list of Counter value change summary - the previous, deduced and new counter value
      * @throws CounterInstantiationException Failure to create a new counter period
      */
-    public List<CounterValueChangeInfo> incrementAccumulatorCounterValue(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) throws CounterInstantiationException {
+    public List<CounterValueChangeInfo> incrementAccumulatorCounterValue(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual,boolean verifyManagedByApp) throws CounterInstantiationException {
         List<CounterValueChangeInfo> counterValueChangeInfos = new ArrayList<CounterValueChangeInfo>();
 
         for (CounterInstance counterInstance : chargeInstance.getAccumulatorCounterInstances()) {
-
+        	
+        	if(verifyManagedByApp && !counterInstance.getCounterTemplate().isManagedByApp()) {
+        		break;
+        	}
             try {
                 counterValueChangeInfos.addAll(MethodCallingUtils.executeFunctionLocked(counterInstance.getId(), () -> {
                     List<CounterValueChangeInfo> values = methodCallingUtils.callCallableInNewTx(() -> incrementAccumulatorCounterValue_noLock(counterInstance, chargeInstance, walletOperations, isVirtual));
