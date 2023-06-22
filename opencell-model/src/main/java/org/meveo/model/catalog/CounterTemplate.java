@@ -156,6 +156,13 @@ public class CounterTemplate extends EnableBusinessEntity {
     @Column(name = "value_el", length = 2000)
     @Size(max = 2000)
     private String valueEl;
+    
+    /**
+     * The field can be disable/enable accumulator counter automatic application
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "managed_byapp")
+    private boolean managedByApp = true;
 
     public CounterTypeEnum getCounterType() {
         return counterType;
@@ -292,4 +299,14 @@ public class CounterTemplate extends EnableBusinessEntity {
     public void setValueEl(String valueEl) {
         this.valueEl = valueEl;
     }
+
+	public boolean isManagedByApp() {
+		return managedByApp;
+	}
+
+	public void setManagedByApp(boolean managedByApp) {
+		this.managedByApp = managedByApp;
+	}
+    
+    
 }
