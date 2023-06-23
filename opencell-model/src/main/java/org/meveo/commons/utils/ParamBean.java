@@ -223,8 +223,8 @@ public class ParamBean {
         ParamBean currentInstance = getInstance();
         if (currentInstance == null) {
             return null;
-        }
 
+        }
         if (!isMultitenancyEnabled() || "".equals(provider) || provider == null) {
             return currentInstance.getProperty("providers.rootDir", "./opencelldata") + File.separator + instance.getProperty("provider.rootDir", "default");
         }
