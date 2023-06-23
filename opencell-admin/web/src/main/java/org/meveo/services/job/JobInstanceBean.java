@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
+import javax.faces.component.UIComponent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -57,6 +60,7 @@ import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
+import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -110,6 +114,29 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
         return entity;
     }
+	
+	@PostConstruct
+	public void initExecutionHistoryRoot(){
+		if (executionHistoryRoot == null) {
+			executionHistoryRoot = new DefaultTreeNode(new JobExecutionResultImpl());
+			
+			Map<String, Object> filters = new HashMap<>();
+			filters.put("jobInstance", entity);
+			filters.put("parentJobExecutionResult", PersistenceService.SEARCH_IS_NULL);
+			
+			PaginationConfiguration paginationFilter = new PaginationConfiguration(filters, "id", SortOrder.DESCENDING);
+			List<JobExecutionResultImpl> jobExecutions = jobExecutionResultService.list(paginationFilter);
+			for (JobExecutionResultImpl jobExecutionResultParent : jobExecutions) {
+				
+				TreeNode executionHistoryNode = new DefaultTreeNode(jobExecutionResultParent, executionHistoryRoot);
+				if (!jobExecutionResultParent.getWorkerJobExecutionResults().isEmpty()) {
+					for (JobExecutionResultImpl jobExecutionResultChild : jobExecutionResultParent.getCumulativeJobExecutionResults()) {
+						new DefaultTreeNode("child", jobExecutionResultChild, executionHistoryNode);
+					}
+				}
+			}
+		}
+	}
 
     @Override
     protected IPersistenceService<JobInstance> getPersistenceService() {
@@ -368,35 +395,23 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
         return executionErrorDM;
     }
+	
+	
 
     public TreeNode getExecutionHistoryRoot() {
-
-        if (executionHistoryRoot == null) {
-
-            executionHistoryRoot = new DefaultTreeNode(new JobExecutionResultImpl());
-
-            Map<String, Object> filters = new HashMap<>();
-            filters.put("jobInstance", entity);
-            filters.put("parentJobExecutionResult", PersistenceService.SEARCH_IS_NULL);
-
-            PaginationConfiguration paginationFilter = new PaginationConfiguration(filters, "id", SortOrder.DESCENDING);
-            List<JobExecutionResultImpl> jobExecutions = jobExecutionResultService.list(paginationFilter);
-
-            for (JobExecutionResultImpl jobExecutionResultParent : jobExecutions) {
-
-                TreeNode executionHistoryNode = new DefaultTreeNode(jobExecutionResultParent, executionHistoryRoot);
-                if (!jobExecutionResultParent.getWorkerJobExecutionResults().isEmpty()) {
-                    for (JobExecutionResultImpl jobExecutionResultChild : jobExecutionResultParent.getCumulativeJobExecutionResults()) {
-                        new DefaultTreeNode("child", jobExecutionResultChild, executionHistoryNode);
-                    }
-                }
-            }
-        }
-
         return executionHistoryRoot;
     }
-
-    /**
+	private TreeTable treeTable;
+	
+	public TreeTable getTreeTable() {
+		return treeTable;
+	}
+	
+	public void setTreeTable(TreeTable treeTable) {
+		this.treeTable = treeTable;
+	}
+	
+	/**
      * Get a corresponding job implementation to a job template
      * 
      * @return Job implementation
