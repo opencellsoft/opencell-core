@@ -16918,6 +16918,8 @@
         <sql>CREATE INDEX billing_dpi_si_index ON ${db.schema.adapted}billing_discount_plan_instance(service_instance_id)</sql>
         <sql>CREATE INDEX billing_redirection_rule_contract_index ON ${db.schema.adapted}billing_redirection_rule(contract_id)</sql>
         <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
+        <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
+        <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -19413,6 +19415,7 @@
     <changeSet id="INTRD-16780_20230614_oracle" author="a.rouaguebe" dbms="oracle" />
     <changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
 	<changeSet id="INTRD-16050_20230515" author="ThangNguyen" />
+    <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

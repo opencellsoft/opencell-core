@@ -15852,5 +15852,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
                   FROM billing_wallet_operation o WHERE o.status = 'OPEN') o
         </createView>
     </changeSet>
+    
+    <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius">
+        <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
+        <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
+    </changeSet>
 
 </databaseChangeLog>
