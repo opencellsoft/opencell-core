@@ -1247,12 +1247,8 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 		return calendar.getTime();
 	}
 	
-	public int getSubscriptionMonthsAge() {
-	    return calculateAge(ChronoUnit.MONTHS,null);
-	}
-	
 	public int getSubscriptionDaysAge() {
-		return calculateAge(ChronoUnit.DAYS,null);
+		return getSubscriptionDaysAge(null);
 	}
 	
 	public int getSubscriptionDaysAge(Date operationDate) {
