@@ -89,7 +89,7 @@ public class Signer {
 		}
 		
 		public void setDocumentId(String document_id) {
-			this.documentId = documentId;
+			this.documentId = document_id;
 		}
 		
 		public String getType() {
