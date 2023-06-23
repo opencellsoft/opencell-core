@@ -554,7 +554,7 @@ public class ValueExpressionWrapper {
             return (T) result;
 
         } catch (Exception e) {
-            throw new InvalidELException("Error while evaluating expression " + expression + " : " + e.getMessage());
+            throw new InvalidELException("Error while evaluating expression:" + expression + ", contextMap:" + contextMap + " : " + e.getMessage());
         }
     }
 
