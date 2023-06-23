@@ -518,7 +518,7 @@ public class ValueExpressionWrapper {
      * @throws InvalidELException Failed to evaluate EL expression
      */
     @SuppressWarnings("unchecked")
-    public static <T> T evaluateExpression(String expression, Map<Object, Object> contextMap, Class<T> resultClass) throws BusinessException {
+    public static <T> T evaluateExpression(String expression, Map<Object, Object> contextMap, Class<T> resultClass) throws InvalidELException {
 
         Object result = null;
         if (StringUtils.isBlank(expression)) {
@@ -554,8 +554,7 @@ public class ValueExpressionWrapper {
             return (T) result;
 
         } catch (Exception e) {
-            log.warn("EL {} throw error with variables {}", expression, contextMap, e);
-            throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage());
+            throw new InvalidELException("Error while evaluating expression " + expression + " : " + e.getMessage());
         }
     }
 
