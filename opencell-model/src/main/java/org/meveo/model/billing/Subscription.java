@@ -1297,16 +1297,6 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
 	    YearMonth m2 = YearMonth.from(operationDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 	    return Math.toIntExact(m1.until(m2, unit))+1; //+1 is added to include the last month
 	}
-
-	public int getSubscriptionDaysAge(Date operationDate) {
-		if(getSubscriptionDate()==null) {
-			return 0;
-		}
-		if(operationDate==null) {
-			operationDate=new Date();
-		}
-		return (int) DateUtils.daysBetween(getSubscriptionDate(),operationDate);
-	}
 	
 	/**
 	 * @return the contract
