@@ -5,6 +5,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListStatusEnum;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.PriceListService;
 
 import javax.ejb.Stateless;
@@ -18,6 +19,9 @@ public class PriceListStatusJobBean extends IteratorBasedJobBean<Long> {
 
     @Inject
     private PriceListService priceListService;
+
+    @Inject
+    private BillingAccountService billingAccountService;
 
     @Override
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -35,5 +39,7 @@ public class PriceListStatusJobBean extends IteratorBasedJobBean<Long> {
         PriceList priceListToUpdate = priceListService.findById(priceListId);
         priceListToUpdate.setStatus(PriceListStatusEnum.CLOSED);
         priceListService.update(priceListToUpdate);
+
+        billingAccountService.removePriceListLink(priceListToUpdate.getId());
     }
 }

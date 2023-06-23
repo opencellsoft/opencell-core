@@ -25,6 +25,7 @@ import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.pricelist.PriceListTypeEnum;
 import org.meveo.model.shared.Title;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.PriceListLineService;
 import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -59,6 +60,9 @@ public class PriceListApiServiceTest {
 
     @Mock
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+
+    @Mock
+    private BillingAccountService billingAccountService;
 
     @Test
     public void updateStatus_givenMissingCodeShouldTriggerCode() {
