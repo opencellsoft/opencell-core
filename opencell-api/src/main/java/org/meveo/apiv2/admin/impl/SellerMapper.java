@@ -234,6 +234,8 @@ public class SellerMapper extends ResourceMapper<org.meveo.apiv2.admin.Seller, S
 			}
 			parentSeller.setCode(resource.getParentSeller());
 			seller.setSeller(parentSeller);
+		}else{
+			seller.setSeller(null);
 		}
 		if(CollectionUtils.isNotEmpty(resource.getInvoiceTypeSellerSequence())){
 			resource.getInvoiceTypeSellerSequence().forEach(invTypSelSeq -> {
