@@ -20207,6 +20207,8 @@
     <changeSet id="#INTRD-16363_20230608_migrate_ppm" author="a.rouaguebe" />
 	<changeSet id="#INTRD-16445_20230526" author="aelmalki" />
 	<changeSet id="#INTRD-16982_20230619" author="Mbarek-Ay"/>
+	<changeSet id="#INTRD-16445_20230619" author="aelmalki" />
+	
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
