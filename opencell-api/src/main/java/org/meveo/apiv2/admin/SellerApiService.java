@@ -112,12 +112,10 @@ public class SellerApiService extends BaseApi {
 		seller.setLegalType(postSeller.getLegalType());
 		seller.setRegistrationNo(postSeller.getRegistrationNo());
 		seller.setLegalEntityType(postSeller.getLegalEntityType());
+		seller.setSeller(postSeller.getSeller());
 		if(CollectionUtils.isNotEmpty(postSeller.getMedias())){
 			seller.getMedias().clear();
 			seller.getMedias().addAll(postSeller.getMedias());
-		}
-		if(postSeller.getSeller() != null) {
-			seller.setSeller(postSeller.getSeller());
 		}
 		var invoiceTypeIds = postSeller.getInvoiceTypeSequence().stream()
 				.filter(invoiceTypeSellerSequence -> invoiceTypeSellerSequence.getInvoiceType() != null)
