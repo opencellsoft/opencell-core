@@ -2078,6 +2078,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             put("infoOrder.productVersion.id", "productVersion.id");
             put("accountingArticle.id", "accountingArticle.id");
             put("discountedRatedTransaction", "discountedInvoiceLine");
+            put("useSpecificPriceConversion", "useSpecificPriceConversion");
         }};
 
         String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption());
