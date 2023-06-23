@@ -16807,12 +16807,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
                 referencedColumnNames="id" />
     </changeSet>
 
-    <changeSet id="INTRD-15501_20230413" author="ThangNguyen">
-    <addColumn tableName="billing_billing_run">
-        <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
-    </addColumn>
-</changeSet>
-
     <changeSet id="#INTRD-16366_20230529" author="zelmeliani">
         <addColumn tableName="billing_wallet_operation">
             <column name="price_list_line_id" type="bigint" />
