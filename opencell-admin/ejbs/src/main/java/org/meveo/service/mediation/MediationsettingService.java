@@ -17,6 +17,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.RatingResult;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -264,9 +265,10 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     		wo.setCode(woToRerate.getCode());
     		wo.setTradingCurrency(woToRerate.getBillingAccount().getTradingCurrency());
     		walletOperationService.update(wo);
-    		if (wo.getRatedTransaction() != null) {
-    			wo.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
-    			ratedTransactionService.update(wo.getRatedTransaction());
+
+    		RatedTransaction ratedTransaction = wo.getRatedTransaction();
+    		if (ratedTransaction != null) {
+    			ratedTransactionService.update(ratedTransaction, RatedTransactionStatusEnum.CANCELED);
     		}
     	}
     }
@@ -286,8 +288,9 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                     if (CollectionUtils.isNotEmpty(walletOperations)) {
                         WalletOperation trigWallet = walletOperations.get(0);
                         trigWallet.setStatus(WalletOperationStatusEnum.CANCELED);
-                        if (trigWallet.getRatedTransaction() != null) {
-                            trigWallet.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
+                        RatedTransaction ratedTransaction = trigWallet.getRatedTransaction();
+                        if (ratedTransaction != null) {
+                            ratedTransactionService.update(ratedTransaction, RatedTransactionStatusEnum.CANCELED);
                         }
                         walletOperationService.cancelDiscountedWalletOperation(walletOperations.stream().map(WalletOperation::getId).collect(Collectors.toList()));
                     }
