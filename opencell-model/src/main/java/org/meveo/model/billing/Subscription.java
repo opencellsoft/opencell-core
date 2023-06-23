@@ -1254,6 +1254,17 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 	public int getSubscriptionDaysAge() {
 		return calculateAge(ChronoUnit.DAYS,null);
 	}
+	
+	public int getSubscriptionDaysAge(Date operationDate) {
+		if(getSubscriptionDate()==null) {
+			return 0;
+		}
+		if(operationDate==null) {
+			operationDate=new Date();
+		}
+		return (int) DateUtils.daysBetween(getSubscriptionDate(),operationDate);
+	}
+	
 	public int getSubscriptionMonthsAge(Date operationDate) {
 	    return calculateAge(ChronoUnit.MONTHS,operationDate);
 	}
