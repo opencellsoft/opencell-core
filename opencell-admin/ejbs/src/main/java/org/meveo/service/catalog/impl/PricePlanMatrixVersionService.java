@@ -256,18 +256,18 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 create(newPv);
                 for(int i=2; i < split.length; i++) {
                     String[] unitPriceLineSplit = split[i].split(COLUMN_SEPARATOR);
-                    TradingPricePlanVersion cppv = new TradingPricePlanVersion();
-                    cppv.setTradingPrice(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
+                    TradingPricePlanVersion tppv = new TradingPricePlanVersion();
+                    tppv.setTradingPrice(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
                     String tradingCurrencyCode = unitPriceLineSplit[1].toUpperCase();
                     TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(tradingCurrencyCode); 
                     if(tradingCurrency == null) {
-                        throw new MeveoApiException("Trading currency doesn't exist for  ( code : " +  tradingCurrencyCode);
+                        throw new MeveoApiException("Trading currency doesn't exist for code : " +  tradingCurrencyCode);
                     }
-                    cppv.setTradingCurrency(tradingCurrency);
-                    cppv.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
-                    cppv.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
-                    cppv.setPricePlanMatrixVersion(newPv);
-                    tradingPricePlanVersionService.create(cppv);
+                    tppv.setTradingCurrency(tradingCurrency);
+                    tppv.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
+                    tppv.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
+                    tppv.setPricePlanMatrixVersion(newPv);
+                    tradingPricePlanVersionService.create(tppv);
                 }
             } else if (StringUtils.isNotBlank(header)) {
                 // File name pattern: [Price plan version identifier]_-_[Charge name]_-_[Charge code]_-_[Label of the price version]_-_[Status of price version]_-_[start

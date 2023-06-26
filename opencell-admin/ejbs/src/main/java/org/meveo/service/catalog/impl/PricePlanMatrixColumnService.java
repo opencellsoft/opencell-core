@@ -303,15 +303,19 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 					}
 					if (columns.get(columnIndex).getKey().substring(0, 9).equalsIgnoreCase("unitPrice")) {
 	                    String[] unitPriceLineSplit = nextLine[columnIndex].split(COLUMN_SEPARATOR);
-	                    TradingPricePlanMatrixLineDto tppv = new TradingPricePlanMatrixLineDto();
-	                    tppv.setTradingValue(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
+	                    TradingPricePlanMatrixLineDto tppml = new TradingPricePlanMatrixLineDto();
+	                    tppml.setTradingValue(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[0])));
 	                    String tradingCurrencyCode = unitPriceLineSplit[1].toUpperCase();
+	                    String keyLine = "unitPrice-" + tradingCurrencyCode;
+	                    if (!columns.get(columnIndex).getKey().contains(keyLine)) {
+	                    	throw new BusinessException("Trading currency at line level doesn't match with header for code : " +  tradingCurrencyCode);
+	                    }
 	                    TradingCurrencyDto tradingCurrencyDto = new TradingCurrencyDto();
 	                    tradingCurrencyDto.setCode(tradingCurrencyCode);
-	                    tppv.setTradingCurrency(tradingCurrencyDto);
-	                    tppv.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
-	                    tppv.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
-	                    tppmlList.add(tppv);
+	                    tppml.setTradingCurrency(tradingCurrencyDto);
+	                    tppml.setRate(new BigDecimal(convertToDecimalFormat(unitPriceLineSplit[2])));
+	                    tppml.setUseForBillingAccounts("true".equals(unitPriceLineSplit[3].toLowerCase()) ? true : false);
+	                    tppmlList.add(tppml);
                     }
 					if (columns.get(columnIndex).getKey().equalsIgnoreCase("PriceWithoutTax")) {
 						String val = convertToDecimalFormat(nextLine[columnIndex]);
