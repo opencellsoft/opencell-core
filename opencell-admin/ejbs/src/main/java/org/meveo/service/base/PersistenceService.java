@@ -1147,7 +1147,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         adaptOrdering(config, filters);
         
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, alias, config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator(), distinct);
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, alias, config.isDoFetch(), config.getFetchFields(), config.getJoinType(), config.getFilterOperator(), distinct, !config.isQueryReportQuery());
         if (filters != null && !filters.isEmpty()) {
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);

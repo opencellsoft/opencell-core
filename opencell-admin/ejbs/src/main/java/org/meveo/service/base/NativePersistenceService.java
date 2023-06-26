@@ -1603,6 +1603,7 @@ public class NativePersistenceService extends BaseService {
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
         GenericPagingAndFiltering genericPagingAndFilter = buildGenericPagingAndFiltering(reportQuery);
         PaginationConfiguration searchConfig = genericRequestMapper.mapTo(genericPagingAndFilter);
+        searchConfig.setQueryReportQuery(true);
         QueryBuilder qb;
     	List<String> genericFields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
 		if(isAggregationQueries(genericPagingAndFilter.getGenericFields())){
