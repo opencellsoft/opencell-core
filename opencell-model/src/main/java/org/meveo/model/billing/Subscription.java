@@ -21,7 +21,7 @@ import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
-import java.time.ZoneId;port java.time.ZoneOffset;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1273,37 +1273,22 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
 		return calendar.getTime();
 	}
 	
-	public int getSubscriptionDaysAge() {
-		return getSubscriptionDaysAge(null);
-	}
-	
-	public int getSubscriptionDaysAge(Date operationDate) {
-		if(getSubscriptionDate()==null) {
-			return 0;
-		}
-		if(operationDate==null) {
-			operationDate=new Date();
-		}
-		return (int) DateUtils.daysBetween(getSubscriptionDate(),operationDate);
-	}
-	
 	public int getSubscriptionMonthsAge() {
-	    return calculateAge(ChronoUnit.MONTHS,null);
+	    return calculateAge(ChronoUnit.MONTHS);
 	}
 	
-	public int getSubscriptionMonthsAge(Date operationDate) {
-	    return calculateAge(ChronoUnit.MONTHS,operationDate);
+	public int getSubscriptionDaysAge() {
+		return calculateAge(ChronoUnit.DAYS);
 	}
-	public int calculateAge(final ChronoUnit unit,Date operationDate) {
+
+	public int calculateAge(final ChronoUnit unit) {
 		if(getSubscriptionDate()==null) {
 			return 0;
 		}
-		if(operationDate==null) {
-			operationDate=new Date();
-		}
-	    YearMonth m1 = YearMonth.from(getSubscriptionDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-	    YearMonth m2 = YearMonth.from(operationDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-	    return Math.toIntExact(m1.until(m2, unit))+1; //+1 is added to include the last month
+		Date now = new Date();
+		YearMonth m1 = YearMonth.from(getSubscriptionDate().toInstant().atZone(ZoneOffset.UTC));
+	    YearMonth m2 = YearMonth.from(now.toInstant().atZone(ZoneOffset.UTC));
+		return Math.toIntExact(m1.until(m2, unit));
 	}
 
 	/**
