@@ -1059,6 +1059,7 @@ public class DateUtils {
      */
     public static Date getFirstDayFromYearAndWeek(int year, int week) {
         Calendar cld = Calendar.getInstance();
+        cld.clear();
         cld.set(Calendar.YEAR, year);
         cld.set(Calendar.WEEK_OF_YEAR, week);
         return cld.getTime();

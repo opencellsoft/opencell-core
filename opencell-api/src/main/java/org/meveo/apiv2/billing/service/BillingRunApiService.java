@@ -10,6 +10,7 @@ import static org.meveo.model.billing.BillingRunStatusEnum.CREATING_INVOICE_LINE
 import static org.meveo.model.billing.BillingRunStatusEnum.DRAFT_INVOICES;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.REJECTED;
@@ -177,6 +178,51 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 }
             }
         }
+        return of(billingRun);
+    }
+
+    public Optional<BillingRun> closeInvoiceLines(Long billingRunId, boolean executeInvoicingJob) {
+        BillingRun billingRun = billingRunService.findById(billingRunId);
+
+        if (billingRun == null) {
+            return empty();
+        }
+
+        if (billingRun.getStatus() != OPEN) {
+            throw new BadRequestException("Billing run status must be OPEN to be updated");
+        }
+
+        BillingRunStatusEnum initialStatus = billingRun.getStatus();
+        billingRun.setStatus(INVOICE_LINES_CREATED);
+
+        if (initialStatus != billingRun.getStatus()) {
+            billingRun = billingRunService.update(billingRun);
+        }
+
+        if (executeInvoicingJob) {
+            Map<String, Object> invoicingJobParams = new HashMap<>();
+            invoicingJobParams.put(INVOICING_JOB_PARAMETERS,
+                    Collections.singletonList(new EntityReferenceWrapper(BillingRun.class.getName(),
+                            null, billingRun.getReferenceCode())));
+            JobInstance invoiceLineJob = jobInstanceService.findByCode(INVOICE_LINES_JOB_CODE);
+            JobInstance invoicingJob = jobInstanceService.findByCode(INVOICING_JOB_CODE);
+            invoiceLineJob.setFollowingJob(invoicingJob);
+
+            if (invoicingJob.getCfValues() != null) {
+                if (invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS) != null
+                    && !((List) invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS)).isEmpty()) {
+                    ((List) invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS)).clear();
+                }
+                invoicingJob.getCfValues().setValue(INVOICING_JOB_PARAMETERS,
+                        Collections.singletonList(new EntityReferenceWrapper(BillingRun.class.getName(),
+                                null, billingRun.getReferenceCode())));
+            }
+
+            jobInstanceService.update(invoiceLineJob);
+            jobInstanceService.update(invoicingJob);
+            executeJob(invoicingJob, invoicingJobParams);
+        }
+
         return of(billingRun);
     }
 

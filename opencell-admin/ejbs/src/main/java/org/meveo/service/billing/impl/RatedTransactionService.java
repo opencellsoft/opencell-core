@@ -17,6 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -31,6 +32,7 @@ import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,11 +67,13 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.AggregationConfiguration;
+import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.generics.GenericRequestMapper;
 import org.meveo.api.generics.PersistenceServiceHelper;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
@@ -85,11 +90,14 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
@@ -1832,55 +1840,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getSelectQueryAsMap(query, params);
     }
 
-    public List<Map<String, Object>> getGroupedRTsWithAggregation(List<Long> ratedTransactionIds,
-                                                                  AggregationConfiguration aggregationConfiguration) {
-        final int maxValue = EntityManagerProvider.isDBOracle() ? 500 :
-                getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
-        if (ratedTransactionIds.size() > maxValue) {
-            List<List<Long>> rtSubLists = partition(ratedTransactionIds, maxValue);
-            return rtSubLists
-                    .stream()
-                    .map(rtIds -> executeAggregationQuery(aggregationConfiguration, rtIds))
-                    .collect(ArrayList::new, List::addAll, List::addAll);
-        } else {
-            return executeAggregationQuery(aggregationConfiguration, ratedTransactionIds);
-        }
-    }
-
-    private List<Map<String, Object>> executeAggregationQuery(AggregationConfiguration aggregationConfiguration,
-                                                              List<Long> ratedTransactionIds) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("ids", ratedTransactionIds);
-        String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption(),
-                "usage_date ", "rt");
-        String query = "SELECT  string_agg(concat(rt.id, ''), ',') as rated_transaction_ids, rt.billing_account__id, "
-                + "              rt.accounting_code_id, rt.description as label, SUM(rt.quantity) AS quantity, "
-                + "              sum(rt.amount_without_tax) as sum_without_tax, sum(rt.amount_with_tax) as sum_with_tax,"
-                + "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price,"
-                + "              rt.offer_id, rt.service_instance_id, "
-                +                usageDateAggregation + " as usage_date, min(rt.start_date) as start_date, "
-                + "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "              rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
-                + "              rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax, rt.unit_amount_with_tax "
-                + "    FROM billing_rated_transaction rt WHERE rt.status='OPEN' and id in (:ids) "
-                + "    GROUP BY rt.billing_account__id, rt.accounting_code_id, rt.description, "
-                + "             rt.offer_id, rt.service_instance_id, " + usageDateAggregation + ",  "
-                + "             rt.order_number, rt.tax_percent, rt.tax_id, "
-                + "             rt.order_id, rt.product_version_id, rt.order_lot_id, rt.charge_instance_id, rt.accounting_article_id, "
-                + "             rt.discounted_Ratedtransaction_id, rt.subscription_id, rt.unit_amount_without_tax, rt.unit_amount_with_tax "
-                + "    order by rt.unit_amount_without_tax desc";
-        return executeNativeSelectQuery(query, params);
-    }
-
-
-    public void linkRTWithInvoiceLine(Map<Long, List<Long>> iLIdsRtIdsCorrespondence) {
-        for (Map.Entry<Long, List<Long>> entry : iLIdsRtIdsCorrespondence.entrySet()) {
-            final List<Long> ratedTransactionsIDs = entry.getValue();
-            final Long invoiceLineID = entry.getKey();
-            linkRTsToIL(ratedTransactionsIDs, invoiceLineID, null);
-        }
-    }
-
     public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID, Long billingRunId) {
     	final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
         if (ratedTransactionsIDs.size() > maxValue) {
@@ -1904,14 +1863,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param aggregationConfiguration
      * @param be
      * @param lastTransactionDate
-     * @param invoiceDate
-     * @param filter
-     * @param pageSize
-     * @param pageIndex
      * @return
      */
     public List<Map<String, Object>> getGroupedRTsWithAggregation(AggregationConfiguration aggregationConfiguration,
-            BillingRun billingRun, IBillableEntity be, Date lastTransactionDate, Date invoiceDate) {
+            BillingRun billingRun, IBillableEntity be, Date lastTransactionDate) {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
         Map<String, Object> filter = null;
@@ -1929,12 +1884,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption());
             String unitAmount = appProvider.isEntreprise() ? "unitAmountWithoutTax" : "unitAmountWithTax";
             String unitAmountField = aggregationConfiguration.isAggregationPerUnitAmount() ? "SUM(a.unitAmountWithoutTax)" : unitAmount;
+
+            // the first run of billing run (status is 'NEW' at that moment) should be in a normal run to create new invoice line
+            // and to avoid doing unnecessary joins.
+            // The next runs of BR (status has already changed to 'OPEN' at that moment) will apply the appending mode on existing invoice lines
+            boolean incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines() && billingRun.getStatus() == BillingRunStatusEnum.OPEN;
             List<String> fieldToFetch = buildFieldList(usageDateAggregation, unitAmountField,
             		aggregationConfiguration.isIgnoreSubscriptions(), aggregationConfiguration.isIgnoreOrders(),
-                    true, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType());
+                    true, aggregationConfiguration.isUseAccountingArticleLabel(),
+                    aggregationConfiguration.getType(), incrementalInvoiceLines);
 
-            String query = buildFetchQuery(new PaginationConfiguration(filter, fieldToFetch, null),
-                    usageDateAggregation, getEntityCondition(be), aggregationConfiguration, true, lastTransactionDate);
+            Map<String, String> mapToInvoiceLineTable = buildMapToInvoiceLineTable(aggregationConfiguration);
+            String query = buildFetchQuery(new PaginationConfiguration(filter, fieldToFetch, mapToInvoiceLineTable.keySet()),
+                    getEntityCondition(be), lastTransactionDate, incrementalInvoiceLines, mapToInvoiceLineTable,
+                    billingRun.getId());
+
+            if (incrementalInvoiceLines) {
+                query = query.replace("a.ivl.", "ivl.");
+                query = query + ", ivl.id";
+            }
+
             return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
         } else {
             return getGroupedRTsWithoutAggregation(billingRun, be, lastTransactionDate, filter, aggregationConfiguration);
@@ -1966,13 +1935,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private List<String> buildFieldList(String usageDateAggregation,
                                         String unitAmountField, boolean ignoreSubscription,
                                         boolean ignoreOrder, boolean withAggregation,
-                                        boolean useAccountingArticleLabel, BillingEntityTypeEnum type) {
+                                        boolean useAccountingArticleLabel, BillingEntityTypeEnum type,
+                                        boolean incrementalInvoiceLines) {
         List<String> fieldToFetch;
         if(withAggregation) {
             fieldToFetch = new ArrayList<>(asList("string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id",
-                    "accountingCode.id as accounting_code_id", "SUM(a.quantity) as quantity",
-                    unitAmountField + " as unit_amount_without_tax", "SUM(a.amountWithoutTax) as sum_without_tax", "SUM(a.amountWithTax) as sum_with_tax",
-                    "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
+                    "SUM(a.quantity) as quantity", unitAmountField + " as unit_amount_without_tax", "SUM(a.amountWithoutTax) as sum_without_tax",
+                    "SUM(a.amountWithTax) as sum_with_tax", "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
                     "min(a.startDate) as start_date", "max(a.endDate) as end_date",
                     "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id",
@@ -1985,8 +1954,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "SUM(a.transactionalAmountWithTax) as sum_converted_amount_with_tax"));
         } else {
             fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
-                    "billingAccount.id as billing_account__id", "accountingCode.id as accounting_code_id",
-                    "description as label", "quantity AS quantity", "amountWithoutTax as sum_without_tax",
+                    "billingAccount.id as billing_account__id", "description as label", "quantity AS quantity", "amountWithoutTax as sum_without_tax",
                     "amountWithTax as sum_with_tax", "offerTemplate.id as offer_id", "serviceInstance.id as service_instance_id",
                     "startDate as start_date", "endDate as end_date", "orderNumber as order_number", "taxPercent as tax_percent",
                     "tax.id as tax_id", "infoOrder.order.id as order_id", "infoOrder.productVersion.id as product_version_id",
@@ -2000,13 +1968,24 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "transactionalAmountTax as sum_converted_amount_tax",
                     "transactionalAmountWithTax as sum_converted_amount_with_tax"));
         }
-        if(BILLINGACCOUNT != type || (BILLINGACCOUNT == type && !ignoreSubscription)) {
+
+        if (incrementalInvoiceLines) {
+            fieldToFetch.add("ivl.id as invoice_line_id");
+            fieldToFetch.add("ivl.amountWithoutTax as amount_without_tax");
+            fieldToFetch.add("ivl.amountWithTax as amount_with_tax");
+            fieldToFetch.add("ivl.taxRate as tax_rate");
+            fieldToFetch.add("ivl.quantity as accumulated_quantity");
+            fieldToFetch.add("ivl.validity.from as begin_date");
+            fieldToFetch.add("ivl.validity.to as end_date");
+            fieldToFetch.add("ivl.unitPrice as unit_price");
+        }
+
+        if (BILLINGACCOUNT != type || !ignoreSubscription) {
             fieldToFetch.add("subscription.id as subscription_id");
             fieldToFetch.add("serviceInstance.id as service_instance_id");
-            fieldToFetch.add("chargeInstance.id as charge_instance_id");
         }
         if(!ignoreOrder) {
-            fieldToFetch.add("subscription.order.id as commercial_order_id");
+            fieldToFetch.add("infoOrder.order.id as commercial_order_id");
             fieldToFetch.add("orderNumber as order_number");
             fieldToFetch.add("infoOrder.order.id as order_id");
         }
@@ -2030,36 +2009,107 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return entityCondition;
     }
 
-    private String buildFetchQuery(PaginationConfiguration searchConfig,
-                                   String usageDateAggregation, String entityCondition,
-                                   AggregationConfiguration aggregationConfiguration, boolean withGrouping, Date lastTransactionDate) {
-        QueryBuilder queryBuilder =
-                nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig, null);
-        queryBuilder.addSql(entityCondition +  (lastTransactionDate!=null? " AND a.usageDate < :lastTransactionDate AND ":" AND ")+ QUERY_FILTER);
-        if(withGrouping) {
-            boolean ignoreSubscription = BILLINGACCOUNT == aggregationConfiguration.getType() && aggregationConfiguration.isIgnoreSubscriptions();
-            return queryBuilder.getQueryAsString() +
-                    buildGroupByClause(usageDateAggregation, aggregationConfiguration, ignoreSubscription);
-        } else {
-            return queryBuilder.getQueryAsString();
-        }
+    private boolean checkAggFunctions(String field) {
+        return field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
+                || field.startsWith("MAX(") || field.startsWith("MIN(") || field.startsWith("COALESCE(SUM(")
+                || field.startsWith("STRING_AGG_LONG") || field.startsWith("TO_CHAR(") || field.startsWith("CAST(");
     }
 
-    private String buildGroupByClause(String usageDateAggregation, AggregationConfiguration aggregationConfiguration, boolean ignoreSubscription) {
-        String ignoreSubscriptionClause = ignoreSubscription
-                ? "" : ", a.subscription.id, a.serviceInstance, a.chargeInstance.id ";
-        String ignoreOrders = aggregationConfiguration.isIgnoreOrders()
-                ? "" : ", a.subscription.order.id, a.infoOrder.order.id, a.orderNumber";
-        String unitAmount = appProvider.isEntreprise() ? "a.unitAmountWithoutTax" : "a.unitAmountWithTax";
-        String aggregateWithUnitAmount = aggregationConfiguration.isAggregationPerUnitAmount() ? "" : ", " + unitAmount;
-        String useAccountingLabel = aggregationConfiguration.isUseAccountingArticleLabel() ? "" : ", a.description";
-        if(aggregationConfiguration.getDateAggregationOption() == NO_DATE_AGGREGATION) {
-            usageDateAggregation = "a." + usageDateAggregation;
+    private String buildFetchQuery(PaginationConfiguration searchConfig, String entityCondition, Date lastTransactionDate,
+                                   boolean incrementalInvoiceLines, Map<String, String> mapToInvoiceLineTable,
+                                   Long billingRunId) {
+        String extraCondition = entityCondition + (lastTransactionDate!=null? " AND a.usageDate < :lastTransactionDate AND ":" AND ") + QUERY_FILTER;
+
+        StringBuilder leftJoinClauseBd = new StringBuilder();
+        if (incrementalInvoiceLines) {
+            String aliasInvoiceLineTable = "ivl";
+            leftJoinClauseBd.append("LEFT JOIN InvoiceLine ").append(aliasInvoiceLineTable).append(" ON ");
+            Iterator<String> itr = searchConfig.getGroupBy().iterator();
+            String groupByInRT;
+            String leftJoinInIL = "";
+            String testNullCondition = "";
+            while (itr.hasNext()) {
+                groupByInRT = itr.next();
+                leftJoinInIL = mapToInvoiceLineTable.get(groupByInRT);
+
+                if (checkAggFunctions(groupByInRT.toUpperCase().trim())) {
+                    testNullCondition = groupByInRT + " IS NULL AND " + leftJoinInIL + " IS NULL OR ";
+
+                    leftJoinClauseBd.append("(").append(testNullCondition)
+                            .append(groupByInRT).append("=").append(leftJoinInIL).append(")");
+                }
+                else {
+                    testNullCondition = "a." + groupByInRT + " IS NULL AND " + aliasInvoiceLineTable + "."
+                            + leftJoinInIL + " IS NULL OR ";
+
+                    if (groupByInRT.equals("description")) {
+                        leftJoinClauseBd.append("(").append(testNullCondition)
+                                .append("a.description=ivl.label OR a.accountingArticle.description=ivl.label)");
+                    }
+                    else if (groupByInRT.equals("taxPercent")) {
+                        leftJoinClauseBd.append("(").append(testNullCondition)
+                                .append("a.taxPercent=ivl.taxRate OR a.tax.percent=ivl.taxRate)");
+                    }
+                    else {
+                        leftJoinClauseBd.append("(").append(testNullCondition)
+                                .append("a.").append(groupByInRT).append("=").append(aliasInvoiceLineTable).append(".")
+                                .append(leftJoinInIL).append(")");
+                    }
+                }
+
+                if (itr.hasNext())
+                    leftJoinClauseBd.append(" AND ");
+            }
+
+            leftJoinClauseBd.append("AND ivl.billingRun.id = ").append(billingRunId).append(" ");
         }
-        return " group by a.billingAccount.id, a.accountingCode.id" + useAccountingLabel + aggregateWithUnitAmount + ","
-                + " a.offerTemplate, " + usageDateAggregation + ignoreSubscriptionClause
-                + ignoreOrders + ", a.taxPercent, a.tax.id, a.infoOrder.productVersion.id "
-                + ", a.accountingArticle.id, a.discountedRatedTransaction, a.useSpecificPriceConversion";
+
+        QueryBuilder queryBuilder = nativePersistenceService.getAggregateQuery(entityClass.getCanonicalName(), searchConfig,
+                null, extraCondition, leftJoinClauseBd.toString());
+        return queryBuilder.getQueryAsString();
+    }
+
+    private Map<String, String> buildMapToInvoiceLineTable(AggregationConfiguration aggregationConfiguration) {
+        Map<String, String> mapToInvoiceLineTable = new HashMap<>(){{
+            put("billingAccount.id", "billingAccount.id");
+            put("offerTemplate", "offerTemplate");
+            put("taxPercent", "taxRate");
+            put("tax.id", "tax.id");
+            put("infoOrder.productVersion.id", "productVersion.id");
+            put("accountingArticle.id", "accountingArticle.id");
+            put("discountedRatedTransaction", "discountedInvoiceLine");
+            put("useSpecificPriceConversion", "useSpecificPriceConversion");
+        }};
+
+        String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption());
+        mapToInvoiceLineTable.put(usageDateAggregation, usageDateAggregation.replace("a.", "ivl.")
+                .replace("usageDate", "valueDate"));
+
+        boolean ignoreSubscription = BILLINGACCOUNT == aggregationConfiguration.getType() && aggregationConfiguration.isIgnoreSubscriptions();
+        if (! ignoreSubscription) {
+            mapToInvoiceLineTable.put("subscription.id", "subscription.id");
+            mapToInvoiceLineTable.put("serviceInstance", "serviceInstance");
+        }
+
+        if (! aggregationConfiguration.isIgnoreOrders()) {
+            mapToInvoiceLineTable.put("infoOrder.order.id", "commercialOrder.id");
+            mapToInvoiceLineTable.put("orderNumber", "orderNumber");
+        }
+
+        if (! aggregationConfiguration.isAggregationPerUnitAmount()) {
+            if (appProvider.isEntreprise()) {
+                mapToInvoiceLineTable.put("unitAmountWithoutTax", "unitPrice");
+            }
+            else {
+                mapToInvoiceLineTable.put("unitAmountWithTax", "unitPrice");
+            }
+        }
+
+        if (! aggregationConfiguration.isUseAccountingArticleLabel()) {
+            mapToInvoiceLineTable.put("description", "label");
+        }
+
+        return mapToInvoiceLineTable;
     }
 
     private Map<String, Object> buildParams(BillingRun billingRun, Date lastTransactionDate) {
@@ -2078,9 +2128,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                                                      AggregationConfiguration aggregationConfiguration) {
         List<String> fieldToFetch = buildFieldList(null, null,
                 aggregationConfiguration.isIgnoreSubscriptions(), aggregationConfiguration.isIgnoreOrders(),
-                false, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType());
+                false, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType(),
+                billingRun.getIncrementalInvoiceLines());
         String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
-                null, getEntityCondition(be), null, false, lastTransactionDate);
+                getEntityCondition(be), lastTransactionDate, billingRun.getIncrementalInvoiceLines(), null,
+                billingRun.getId());
+
         return getSelectQueryAsMap(query, buildParams(billingRun, lastTransactionDate));
     }
 
@@ -2347,4 +2400,111 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .executeUpdate();
     }
 
+    /**
+     * Based on ratedTransaction and its new status to update, decide to update or not the corresponding invoice line using EDR Versioning
+     *
+     * @param newStatus RatedTransactionStatusEnum new status of ratedTransaction to be updated
+     * @param ratedTransaction RatedTransaction containing necessary information to update corresponding invoice line
+     *                         if allowed
+     */
+    public RatedTransaction update(RatedTransaction ratedTransaction, RatedTransactionStatusEnum newStatus) {
+
+        if (newStatus == RatedTransactionStatusEnum.CANCELED || newStatus == RatedTransactionStatusEnum.REJECTED
+                || newStatus == RatedTransactionStatusEnum.RERATED) {
+            RatedTransactionStatusEnum oldStatus = ratedTransaction.getStatus();
+            ratedTransaction.setStatus(newStatus);
+
+            if (oldStatus == RatedTransactionStatusEnum.BILLED || oldStatus == RatedTransactionStatusEnum.PROCESSED) {
+                InvoiceLine invoiceLine = ratedTransaction.getInvoiceLine();
+                if (invoiceLine != null) {
+                    // if the status of invoiceLine is not BILLED, we recompute the invoice line
+                    if (invoiceLine.getStatus() != InvoiceLineStatusEnum.BILLED) {
+                        // recompute the invoiceLine fields by extracting RT amounts and quantity of ratedTransaction
+                        recomputeInvoiceLine(invoiceLine, ratedTransaction);
+
+                        // get all discounted RTs linked to principal ratedTransaction
+                        List<RatedTransaction> discountedRTs = getEntityManager()
+                                .createNamedQuery("RatedTransaction.getDiscountedRTIds", RatedTransaction.class)
+                                .setParameter("id", ratedTransaction.getId())
+                                .getResultList();
+
+                        // update status of discounted RTs as its principal ratedTransaction
+                        if (! discountedRTs.isEmpty()) {
+                            getEntityManager().createNamedQuery("RatedTransaction.updateStatusDiscountedRT")
+                                    .setParameter("statusToUpdate", ratedTransaction.getStatus())
+                                    .setParameter("ids", discountedRTs.stream().map(RatedTransaction::getId).collect(Collectors.toList()))
+                                    .executeUpdate();
+                        }
+
+                        InvoiceLineStatusEnum statusToUpdate;
+                        switch (ratedTransaction.getStatus()) {
+                            case CANCELED:
+                                statusToUpdate = InvoiceLineStatusEnum.CANCELED;
+                                break;
+                            case REJECTED:
+                                statusToUpdate = InvoiceLineStatusEnum.REJECTED;
+                                break;
+                            case RERATED:
+                                statusToUpdate = InvoiceLineStatusEnum.RERATED;
+                                break;
+                            default:
+                                throw new IllegalStateException("Unexpected value of status of ratedTransaction : " + ratedTransaction.getStatus());
+                        }
+
+                        // update status of invoice lines generated by discounted RTs
+                        discountedRTs.forEach(
+                                discountedRT -> getEntityManager().createNamedQuery("InvoiceLine.updateStatusInvoiceLine")
+                                .setParameter("statusToUpdate", statusToUpdate)
+                                .setParameter("id", discountedRT.getInvoiceLine().getId())
+                                .executeUpdate()
+                        );
+                    }
+                    // if the status of invoiceLine is BILLED, we do nothing, the re-computation of invoice line is not allowed
+                    else {
+                        log.info("Invoice line id = {} created from ratedTransaction id = {} is already billed. " +
+                                        "The re-computation of invoice line is not allowed",
+                                invoiceLine.getId(), ratedTransaction.getId());
+                    }
+                }
+                else {
+                    log.debug("No invoice line created from ratedTransaction id = {} with status {}",
+                            ratedTransaction.getId(), oldStatus);
+                }
+            }
+        }
+
+        return update(ratedTransaction);
+    }
+
+    /**
+     * Recompute the fields of an existing invoice line during rerating process.
+     * The amounts must be extracted from the generated invoice line since ratedTransaction is in RERATED
+     *
+     * @param invoiceLine instance of InvoiceLine
+     * @param ratedTransaction instance of RatedTransaction
+     */
+    public void recomputeInvoiceLine(InvoiceLine invoiceLine, RatedTransaction ratedTransaction) {
+        InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
+        BigDecimal deltaAmountWithoutTax = ratedTransaction.getAmountWithoutTax().negate();
+        BigDecimal deltaAmountWithTax = ratedTransaction.getAmountWithTax().negate();
+        BigDecimal deltaAmountTax = ratedTransaction.getAmountTax().negate();
+        BigDecimal[] deltaAmounts = new BigDecimal[] {deltaAmountWithoutTax, deltaAmountWithTax, deltaAmountTax};
+
+        BigDecimal amountWithoutTax = (invoiceLine.getAmountWithoutTax()).subtract(ratedTransaction.getAmountWithoutTax());
+        BigDecimal deltaQuantity = ratedTransaction.getQuantity().negate();
+        BigDecimal quantity = invoiceLine.getQuantity().subtract(ratedTransaction.getQuantity());
+        Date beginDate = invoiceLine.getValidity().getFrom();
+        Date endDate = invoiceLine.getValidity().getTo();
+        BigDecimal unitPrice = invoiceLine.getUnitPrice();
+        BillingRun billingRun = invoiceLine.getBillingRun();
+        if (billingRun != null
+                && billingRun.getBillingCycle() != null
+                && !billingRun.getBillingCycle().isDisableAggregation()
+                && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
+            MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
+        }
+
+        linesFactory.update(invoiceLine.getId(), deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);
+    }
 }

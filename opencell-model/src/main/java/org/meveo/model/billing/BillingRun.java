@@ -434,7 +434,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
     private Boolean incrementalInvoiceLines = Boolean.FALSE;
-    
+
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
 	}
