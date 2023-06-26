@@ -156,6 +156,7 @@ public class SellerApiService extends BaseApi {
 				seller.getCustomerSequences().add(customerSequence);
 			}
 		}
+		seller.setCfValues(postSeller.getCfValues());
 		sellerService.update(seller);
 	}
 	
