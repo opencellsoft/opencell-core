@@ -20377,5 +20377,43 @@ public class CustomGatewayPaymentScript extends PaymentScript {
             </column>
             <where>code='org.meveo.service.script.demo.CustomGatewayPaymentScript'</where>
         </update>
-	</changeSet>        
+	</changeSet>
+	
+	<changeSet id="#INTRD-16859_20230626" author="aeljaouhari">
+		<update tableName="meveo_job_instance">
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportCustomerAccountJob')" />
+            <where>code='massImportCustomerJob'</where>
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportPaymentMethodJob')" />
+            <where>code='massImportCustomerAccountJob'</where>
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportBillingAccountJob')" />
+            <where>code='massImportPaymentMethodJob'</where>
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportUserAccountJob')" />
+            <where>code='massImportBillingAccountJob'</where>
+        </update>
+        
+        <update tableName="meveo_job_instance">
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportServiceInstanceJob')" />
+            <where>code='massImportSubscriptionJob'</where>
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportAttributeInstance')" />
+            <where>code='massImportServiceInstanceJob'</where>
+        </update>
+        <update tableName="meveo_job_instance">
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportAccessPoint')" />
+            <where>code='massImportAttributeInstance'</where>
+        </update>
+        
+        <update tableName="adm_notification">
+			<column name="disabled" value="1" />
+			<where>code='OC_MASS_IMPORT_NOTIFICATION'</where>
+		</update>
+	</changeSet>
+	        
 </databaseChangeLog>
