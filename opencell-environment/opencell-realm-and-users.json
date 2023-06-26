@@ -9713,6 +9713,9 @@
             ],
             "scopes": [
               {
+                "name": "GET"
+              },
+              {
                 "name": "POST"
               }
             ]
