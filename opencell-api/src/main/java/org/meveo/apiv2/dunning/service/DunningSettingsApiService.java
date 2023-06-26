@@ -50,6 +50,7 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 	private static final String CUSTOMER_BALANCE_IS_MANDATORY = "Customer balance is mandatory to create a dunning settings with mode INVOICE_LEVEL";
 	private static final String MANY_DEFAULT_CUSTOMER_BALANCE_FOUND = "Many Customer Balance are configured as default";
 	private static final String ACTIVE_OR_PAUSED_DUNNING_COLLECTION_PLAN_FOUND = "One or many Active/Paused Dunning Collection Plan was found";
+	private static final String AUTHORIZED_DUNNING_MODE = "Only dunning mode INVOICE_LEVEL is authorized for the first version of dunning";
 
 	@Override
 	public List<DunningSettings> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -69,10 +70,19 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 	@Override
 	public DunningSettings create(DunningSettings baseEntity) {
 		globalSettingsVerifier.checkActivateDunning();
-		if(dunningSettingsService.findByCode(baseEntity.getCode()) != null)
+
+		if(dunningSettingsService.findByCode(baseEntity.getCode()) != null) {
 			throw new EntityAlreadyExistsException(DunningSettings.class, baseEntity.getCode());
-		if(baseEntity.getDunningMode() == null)
+		}
+
+		//if the dunning mode is empty then select INVOICE_LEVEL by default
+		//If the dunning mode is set to CUSTOMER_LEVEL for the first setting then return a functional exception
+		if(baseEntity.getDunningMode() == null) {
 			baseEntity.setDunningMode(DunningModeEnum.INVOICE_LEVEL);
+		} else if(baseEntity.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL) && dunningSettingsService.count() == 0) {
+			throw new BadRequestException(AUTHORIZED_DUNNING_MODE);
+		}
+
 		if(baseEntity.getMaxDunningLevels() == null)
 			baseEntity.setMaxDunningLevels(15);
 		if(baseEntity.getAccountingArticle() != null && baseEntity.getAccountingArticle().getId() != null) {
@@ -119,13 +129,21 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 	public Optional<DunningSettings> update(Long id, DunningSettings dunningSettings) {
 		globalSettingsVerifier.checkActivateDunning();
 		var dunningSettingsUpdate = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_FOUND + id));
+
+		//If the dunning mode is set to CUSTOMER_LEVEL for the first setting then return a functional exception
+		if(dunningSettings.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL) && dunningSettingsService.count() == 1) {
+			throw new BadRequestException(AUTHORIZED_DUNNING_MODE);
+		}
+
 		if(dunningSettings.getAccountingArticle() != null) {
 			var accountingArticle = accountingArticleService.findById(dunningSettings.getAccountingArticle().getId());
 			if(accountingArticle == null)
 				throw new BadRequestException(NO_ACCOUNTING_ARTICLE_FOUND + dunningSettings.getAccountingArticle().getId());
 			dunningSettingsUpdate.setAccountingArticle(accountingArticle);
-		}else
+		} else {
 			dunningSettingsUpdate.setAccountingArticle(null);
+		}
+
 		dunningSettingsUpdate.setCode(dunningSettings.getCode());
 		dunningSettingsUpdate.setAllowDunningCharges(dunningSettings.isAllowDunningCharges());
 		dunningSettingsUpdate.setAllowInterestForDelay(dunningSettings.isAllowInterestForDelay());
