@@ -4,7 +4,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.catalog.PriceListLineDto;
 import org.meveo.apiv2.catalog.service.pricelist.PriceListLineApiService;
-import org.meveo.apiv2.dunning.resource.DunningPolicyResource;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 
 import javax.ejb.Stateless;
@@ -20,8 +19,9 @@ public class PriceListLineResourceImpl implements PriceListLineResource {
     public Response create(PriceListLineDto postDto) {
         ActionStatus actionStatus = new ActionStatus();
         actionStatus.setStatus(ActionStatusEnum.SUCCESS);
-        actionStatus.setEntityId(priceListLineApiService.create(postDto));
-        return Response.created(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, priceListLineApiService.create(postDto))
+        Long entityId = priceListLineApiService.create(postDto);
+        actionStatus.setEntityId(entityId);
+        return Response.created(LinkGenerator.getUriBuilderFromResource(PriceListLineResource.class, entityId)
                         .build())
                 .entity(actionStatus)
                 .build();
