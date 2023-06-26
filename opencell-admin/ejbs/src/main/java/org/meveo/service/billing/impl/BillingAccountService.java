@@ -17,32 +17,26 @@
  */
 package org.meveo.service.billing.impl;
 
-import static org.apache.commons.collections4.ListUtils.partition;
-import static org.meveo.commons.utils.ParamBean.getInstance;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
-import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -50,7 +44,6 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
@@ -61,7 +54,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
 /**
@@ -81,15 +73,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     @Inject
     private UserAccountService userAccountService;
 
-    /** The billing run service. */
-    @EJB
-    private BillingRunService billingRunService;
-
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
-
-    @Inject
-	private InvoiceLineService invoiceLineService;
 
     /**
      * Inits the billing account.
@@ -603,5 +588,16 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 .getSingleResult();
 
     }
+	
+	public boolean isExonerated(BillingAccount ba, Boolean customerCategoryExoneratedFromTaxes, String exonerationTaxEl) {
+		if (customerCategoryExoneratedFromTaxes.booleanValue()) {
+			return true;
+		}
+		if (!StringUtils.isBlank(exonerationTaxEl)) {
+			ba = refreshOrRetrieve(ba);
+			return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(exonerationTaxEl, "ba", ba);
+		}
+		return false;
+	}
 	
 }

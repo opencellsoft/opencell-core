@@ -90,7 +90,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
      * Number of Rated transactions that fall in this aggregate
      */
     @Column(name = "item_number")
-    protected Integer itemNumber;
+    protected Integer itemNumber=0;
 
     /**
      * Description

@@ -19,6 +19,8 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -67,6 +69,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     
     @Inject
     private BillingRunExtensionService billingRunExtensionService;
+    
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug(" Running for with parameter={}", jobInstance.getParametres());

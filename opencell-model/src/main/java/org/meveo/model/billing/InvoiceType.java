@@ -148,7 +148,7 @@ public class InvoiceType extends BusinessCFEntity {
     @JoinColumn(name = "invoice_validation_script_id")
     private ScriptInstance invoiceValidationScript;
 
-    @OneToMany(mappedBy = "invoiceType", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "invoiceType", fetch = FetchType.LAZY)
     private List<InvoiceValidationRule> invoiceValidationRules;
     
     @ManyToOne(fetch = FetchType.LAZY)

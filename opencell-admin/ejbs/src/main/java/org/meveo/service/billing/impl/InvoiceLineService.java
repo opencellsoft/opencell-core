@@ -8,12 +8,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.billing.InvoiceLineTaxModeEnum.RATE;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
-import static org.apache.commons.collections4.ListUtils.partition;
-import static org.meveo.commons.utils.ParamBean.getInstance;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -110,6 +110,7 @@ import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
 
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
@@ -605,6 +606,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         minAmountsResult.setExtraMinAmounts(extraMinAmounts);
         return minAmountsResult;
     }
+    
 
     public AccountingArticle getDefaultAccountingArticle() {
         AccountingArticle accountingArticle = accountingArticleService.findByCode(INVOICE_MINIMUM_COMPLEMENT_CODE);
@@ -627,11 +629,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 			final Subscription subscription = serviceInstance.getSubscription();
 			if(subscription!=null) {
 				invoiceLine.setSubscription(subscription);
+				invoiceLine.setUserAccount(subscription.getUserAccount());
 			}
         }
         if (entity instanceof Subscription) {
             final Subscription subscription = (Subscription) entity;
 			invoiceLine.setSubscription(subscription);
+            invoiceLine.setUserAccount(subscription.getUserAccount());
+        }
+        if (entity instanceof UserAccount) {
+            invoiceLine.setUserAccount((UserAccount) entity);
         }
         if (billableEntity instanceof Subscription) {
             invoiceLine.setSubscription((Subscription) billableEntity);
@@ -1256,7 +1263,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             remove(ids);
         }
     }
-
+	
     public List<Long> getDiscountLines(Long id) {
         return getEntityManager()
                     .createNamedQuery("InvoiceLine.listDiscountLines")
@@ -1281,7 +1288,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("invoiceLinesIds", invoiceLinesIds)
                 .getResultList();
     }
-
+	
     public void deleteByAssociatedInvoice(List<Long> invoices) {
         if(!invoices.isEmpty()) {
             List<Long> invoicesLines = findInvoiceLineByAssociatedInvoices(invoices);
