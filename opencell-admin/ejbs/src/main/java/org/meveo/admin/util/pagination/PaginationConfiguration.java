@@ -87,6 +87,8 @@ public class PaginationConfiguration implements Serializable {
 
     private boolean distinctQuery = Boolean.FALSE;
 
+    private boolean queryReportQuery = Boolean.FALSE;
+
     /**
      * 
      * @param sortField Field to sort by
@@ -359,5 +361,13 @@ public class PaginationConfiguration implements Serializable {
 
     public void setDistinctQuery(boolean distinctQuery) {
         this.distinctQuery = distinctQuery;
+    }
+
+    public boolean isQueryReportQuery() {
+        return queryReportQuery;
+    }
+
+    public void setQueryReportQuery(boolean queryReportQuery) {
+        this.queryReportQuery = queryReportQuery;
     }
 }
