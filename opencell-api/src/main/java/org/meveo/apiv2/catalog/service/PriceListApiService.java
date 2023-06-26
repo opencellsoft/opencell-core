@@ -719,6 +719,7 @@ public class PriceListApiService extends BaseApi {
             for (PriceListLine line : priceList.getLines()) {
                 PriceListLine duplicatedLine = new PriceListLine();
                 duplicatedLine.setCode(line.getCode() + "-COPY");
+                duplicatedLine.setDescription(line.getDescription());
                 duplicatedLine.setPriceList(duplicatedPriceList);
                 duplicatedLine.setOfferCategory(line.getOfferCategory());
                 duplicatedLine.setOfferTemplate(line.getOfferTemplate());
