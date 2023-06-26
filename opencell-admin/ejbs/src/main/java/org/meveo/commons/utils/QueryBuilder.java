@@ -125,6 +125,8 @@ public class QueryBuilder {
     
     private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
 
+    private boolean prependSelect = Boolean.TRUE;
+
 
 	public JoinType getJoinType() {
 		return joinType;
@@ -290,7 +292,26 @@ public class QueryBuilder {
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
 		this(clazz, alias, true, fetchFields, joinType, filterOperator);
 	}
-	
+
+    /**
+     * Contructor
+     *
+     * @param clazz Class for which query is created.
+     * @param alias Alias of a main table.
+     * @param fetchFields Additional (list/map type) fields to fetch
+     * @param joinType
+     * @param filterOperator Operator to build where statement
+     * @param distinct
+     * @param prependSelect : should add select block on the start or not
+     */
+    public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator, boolean distinct, boolean prependSelect) {
+        this.distinct = distinct;
+        this.joinType=joinType;
+        this.filterOperator=filterOperator;
+        this.prependSelect = prependSelect;
+        initQueryBuilder(getInitQuery(clazz, alias, doFetch,  fetchFields), alias);
+    }
+
 	/**
 	 * Contructor 
 	 * 
@@ -389,7 +410,12 @@ public class QueryBuilder {
     	this.clazz=clazz;
     	List<String> select = new ArrayList<>();
     	boolean useSelectColumns = false;
-        StringBuilder query = new StringBuilder("select " + (distinct ? "distinct " : "" ) + alias+ " from " + clazz.getName() + " " + alias);
+        StringBuilder query;
+        if(prependSelect) {
+            query = new StringBuilder("select " + (distinct ? "distinct " : "" ) + alias+ " from " + clazz.getName() + " " + alias);
+        } else {
+            query = new StringBuilder("from " + clazz.getName() + " " + alias);
+        }
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
 				if(!fetchField.contains(".") && !fetchField.contains(" ")) {
