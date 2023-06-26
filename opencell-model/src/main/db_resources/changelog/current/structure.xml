@@ -16967,10 +16967,24 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="managed_byapp" type="${type.boolean}" defaultValueNumeric="1"><constraints nullable="false" /></column>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius">
         <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-17026_delete_duplicated_data" author="a.rouaguebe_ext">
+        <renameTable oldTableName="cat_price_plan_charge" newTableName="cat_price_plan_charge_tmp" />
+        <createTable tableName="cat_price_plan_charge">
+            <column name="price_plan_id" type="bigint" />
+            <column name="charge_id" type="bigint" />
+        </createTable>
+        <addUniqueConstraint columnNames="price_plan_id, charge_id" constraintName="uk_ppm_charge" tableName="cat_price_plan_charge" />
+
+        <sql>insert into ${db.schema.adapted}cat_price_plan_charge(price_plan_id, charge_id)
+             select distinct price_plan_id, charge_id from ${db.schema.adapted}cat_price_plan_charge_tmp</sql>
+
+        <dropTable tableName="cat_price_plan_charge_tmp" />
     </changeSet>
 
 </databaseChangeLog>

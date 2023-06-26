@@ -20211,7 +20211,7 @@
 	<changeSet id="#INTRD-16445_20230526" author="aelmalki" />
 	<changeSet id="#INTRD-16982_20230619" author="Mbarek-Ay"/>
 	<changeSet id="#INTRD-16445_20230619" author="aelmalki" />
-	
+    <changeSet id="#INTRD-17026_delete_duplicated_data" author="a.rouaguebe_ext" />
 
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius"/>
     
