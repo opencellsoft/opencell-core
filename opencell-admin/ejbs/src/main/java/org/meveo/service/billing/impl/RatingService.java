@@ -20,6 +20,10 @@ package org.meveo.service.billing.impl;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+import static java.math.RoundingMode.HALF_UP;
+import static org.meveo.commons.utils.NumberUtils.computeDerivedAmounts;
+import static org.meveo.model.BaseEntity.NB_DECIMALS;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -120,7 +124,6 @@ import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PriceListLineService;
-import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
@@ -130,7 +133,6 @@ import org.meveo.service.script.catalog.TriggeredEdrScript;
 import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
-
 
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the
@@ -161,9 +163,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
-
-    @Inject
-    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
     @Inject
     private ContractService contractService;
@@ -698,7 +697,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             unitPriceWithTax = unitPrices.getAmountWithTax();
                             bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
                             bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
-                            Amounts transactionalUnitPrices = determineTradingUnitPrice(priceListLine.getPricePlan(), bareWalletOperation).orElse(unitPrices);
+                            Amounts transactionalUnitPrices = determineTransactionalUnitPrice(priceListLine.getPricePlan(), bareWalletOperation).orElse(unitPrices);
                             bareWalletOperation.setTransactionalUnitAmountWithoutTax(transactionalUnitPrices.getAmountWithoutTax());
                             bareWalletOperation.setTransactionalUnitAmountWithTax(transactionalUnitPrices.getAmountWithTax());
 
@@ -722,7 +721,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     unitPriceWithTax = unitPrices.getAmountWithTax();
                     bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
                     bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
-                    Amounts transationalUnitPrices = determineTradingUnitPrice(pricePlan, bareWalletOperation).orElse(unitPrices);
+                    Amounts transationalUnitPrices = determineTransactionalUnitPrice(pricePlan, bareWalletOperation).orElse(unitPrices);
                     bareWalletOperation.setTransactionalUnitAmountWithoutTax(transationalUnitPrices.getAmountWithoutTax());
                     bareWalletOperation.setTransactionalUnitAmountWithTax(transationalUnitPrices.getAmountWithTax());
                     if (pricePlan.getScriptInstance() != null) {
@@ -798,8 +797,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             
             // Override wallet operation parameters using PP EL parameters
             setWalletOperationPropertiesFromAPriceplan(bareWalletOperation, pricePlan);
-            
-            calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
+            computeAmounts(bareWalletOperation, unitPriceWithTax, unitPriceWithoutTax);
         }
 
         // Execute a final rating script set on offer template
@@ -1131,7 +1129,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if (walletOperation.getPriceplan() != null) {
             String ratingEl = walletOperation.getPriceplan().getTotalAmountEL();
             if (!StringUtils.isBlank(ratingEl)) {
-                amount = new BigDecimal(Double.toString(elUtils.evaluateDoubleExpression(ratingEl, walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
+                amount = new BigDecimal(Double.toString(elUtils.evaluateDoubleExpression(ratingEl,
+                        walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
             }
         }
 
@@ -1169,9 +1168,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         // we override the wo amount if minimum amount el is set on price plan
         if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getMinimumAmountEL())) {
-            BigDecimal minimumAmount = new BigDecimal(Double.toString(elUtils.evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
+            BigDecimal minimumAmount = new BigDecimal(Double.toString(elUtils.evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(),
+                    walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
 
-            if ((appProvider.isEntreprise() && walletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) || (!appProvider.isEntreprise() && walletOperation.getAmountWithTax().compareTo(minimumAmount) < 0)) {
+            if ((appProvider.isEntreprise() && walletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0)
+                    || (!appProvider.isEntreprise() && walletOperation.getAmountWithTax().compareTo(minimumAmount) < 0)) {
 
                 // Remember the raw calculated amount
                 walletOperation.setRawAmountWithoutTax(walletOperation.getAmountWithoutTax());
@@ -1225,8 +1226,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     }
                 }
             }
-
-            calculateAmounts(operation, unitAmountWithoutTax, unitAmountWithTax);
+            computeAmounts(operation, unitAmountWithTax, unitAmountWithoutTax);
 
         } else {
             operation.setUnitAmountWithoutTax(null);
@@ -1461,17 +1461,17 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @param walletOperation wallet operation
      * @return Optional<Amounts> return computed Amounts or empty if no price plan found
      */
-    public Optional<Amounts> determineTradingUnitPrice(PricePlanMatrix pricePlan, WalletOperation walletOperation) {
+    public Optional<Amounts> determineTransactionalUnitPrice(PricePlanMatrix pricePlan, WalletOperation walletOperation) {
         final TradingCurrency tradingCurrency = walletOperation.getBillingAccount().getTradingCurrency();
-        final Currency functionalcurrency = appProvider.getCurrency();
-        if (functionalcurrency.getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
-        	return empty(); 
+        final Currency functionalCurrency = appProvider.getCurrency();
+        if (functionalCurrency.getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
+            return empty();
         }
-        
-        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanSelectionService.getPublishedVersionValidForDate(pricePlan.getId(), walletOperation.getServiceInstance(), walletOperation.getOperationDate());
+        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanSelectionService.getPublishedVersionValidForDate(pricePlan.getId(),
+                walletOperation.getServiceInstance(), walletOperation.getOperationDate());
         BigDecimal priceWithoutTax = null;
         BigDecimal priceWithTax = null;
-        
+        final BigDecimal currentRate = tradingCurrency != null ? tradingCurrency.getCurrentRate() : BigDecimal.ONE;
         if (pricePlanMatrixVersion != null) {
             if (!pricePlanMatrixVersion.isMatrix()) {
                 TradingPricePlanVersion tradingPPVersion = getTradingPPVersionFrom(pricePlanMatrixVersion, tradingCurrency);
@@ -1481,9 +1481,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     } else {
                         priceWithTax = tradingPPVersion.getTradingPrice();
                     }
-                    if (walletOperation.getTransactionalUnitAmountWithoutTax() == null) {
-                        walletOperation.setTransactionalUnitAmountWithoutTax(priceWithoutTax);
-                    }
+                    walletOperation.setUseSpecificPriceConversion(true);
+                } else {
+                    priceWithoutTax = walletOperation.getUnitAmountWithoutTax().multiply(currentRate);
+                    priceWithTax = walletOperation.getAmountWithTax().multiply(currentRate);
+                    walletOperation.setUseSpecificPriceConversion(false);
                 }
             } else {
                 PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(pricePlanMatrixVersion, walletOperation);
@@ -1495,18 +1497,20 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     } else {
                         priceWithTax = tradingPricePlanMatrixLine.getTradingValue();
                     }
-                    if (walletOperation.getTransactionalUnitAmountWithoutTax() == null) {
-                        walletOperation.setTransactionalUnitAmountWithoutTax(priceWithoutTax);
-                    }
+                    walletOperation.setUseSpecificPriceConversion(true);
+                } else if(tradingPricePlanMatrixLine == null) {
+                    priceWithoutTax = walletOperation.getUnitAmountWithoutTax().multiply(currentRate);
+                    priceWithTax = walletOperation.getAmountWithTax().multiply(currentRate);
+                    walletOperation.setUseSpecificPriceConversion(false);
+                    walletOperation.setUseSpecificPriceConversion(false);
                 }
                 if (priceWithoutTax == null && priceWithTax == null) {
-                    throw new BusinessException("No price for price plan version " + pricePlanMatrixVersion.getId() + "and charge instance : " + walletOperation.getChargeInstance());
+                    throw new BusinessException("No price for price plan version " + pricePlanMatrixVersion.getId()
+                            + "and charge instance : " + walletOperation.getChargeInstance());
                 }
             }
-            walletOperation.setUseSpecificPriceConversion(true);
             return of(new Amounts(priceWithoutTax, priceWithTax));
         } else {
-            walletOperation.setUseSpecificPriceConversion(false);
             return empty();
         }
     }
@@ -1525,5 +1529,115 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 .filter(tradingPPlanMatrixLine -> tradingPPlanMatrixLine.getTradingCurrency().getId().equals(woTradingCurrency.getId()))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * Compute amounts and transactional amount for a given wallet operation
+     *
+     * @param walletOperation Wallet operation
+     * @param unitAmountWithTax unit amount with tax
+     * @param unitAmountWithoutTax unit amount without tax
+     */
+    public void computeAmounts(WalletOperation walletOperation,
+                               BigDecimal unitAmountWithTax, BigDecimal unitAmountWithoutTax) {
+        calculateAmounts(walletOperation, unitAmountWithoutTax, unitAmountWithTax);
+        if (walletOperation.isUseSpecificPriceConversion()) {
+            calculateTransactionalAmountsFromCatalog(walletOperation,
+                    walletOperation.getTransactionalUnitAmountWithoutTax(),
+                    walletOperation.getTransactionalUnitAmountWithTax());
+        } else {
+            BigDecimal rate = walletOperation.getTradingCurrency() != null
+                    ? walletOperation.getTradingCurrency().getCurrentRate() : BigDecimal.ONE;
+            calculateTransactionalAmounts(walletOperation, rate);
+        }
+    }
+
+    /**
+     * Calculate TransactionalAmounts based on rate
+     *
+     * @param walletOperation Wallet operation
+     * @param rate exchange rate
+     */
+    public void calculateTransactionalAmounts(WalletOperation walletOperation, BigDecimal rate) {
+        walletOperation.setTransactionalAmountTax(walletOperation.getAmountTax().multiply(rate));
+        walletOperation.setTransactionalAmountWithTax(walletOperation.getAmountWithTax().multiply(rate));
+        walletOperation.setTransactionalAmountWithoutTax(walletOperation.getAmountWithoutTax().multiply(rate));
+        walletOperation.setTransactionalUnitAmountWithTax(walletOperation.getUnitAmountWithTax().multiply(rate));
+        walletOperation.setTransactionalUnitAmountWithoutTax(walletOperation.getUnitAmountWithoutTax().multiply(rate));
+    }
+
+    /**
+     * Calculate and set transactional amounts and taxes from catalog
+     *
+     * Unit prices and taxes are not rounded
+     *
+     * @param walletOperation Wallet operation
+     * @param transactionalUnitPriceWithoutTax TransactionalUnit price without tax. Used in B2B
+     *                                         (provider.isEnterprise = true) as base to calculate taxes and price/amount with tax.
+     * @param transactionalUnitPriceWithTax Transactional unit price with tax. Used in B2C
+     *                                      (provider.isEnterprise = false) as base to calculate taxes and price/amount without tax.
+     * @throws BusinessException Business exception
+     */
+    public void calculateTransactionalAmountsFromCatalog(WalletOperation walletOperation, BigDecimal transactionalUnitPriceWithoutTax,
+                                              BigDecimal transactionalUnitPriceWithTax) throws BusinessException {
+        final Integer rounding = appProvider.getRounding();
+        final RoundingModeEnum roundingMode = appProvider.getRoundingMode();
+        BigDecimal transactionAmount = null;
+        BigDecimal transactionalUnitPrice =
+                appProvider.isEntreprise() ? transactionalUnitPriceWithoutTax : transactionalUnitPriceWithTax;
+        if (transactionalUnitPrice == null)
+            throw new BusinessException("No unit price found");
+
+        if (walletOperation.getPriceplan() != null) {
+            String ratingEl = walletOperation.getPriceplan().getTotalAmountEL();
+            if (!StringUtils.isBlank(ratingEl)) {
+                transactionAmount = new BigDecimal(Double.toString(elUtils.evaluateDoubleExpression(ratingEl,
+                        walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
+            }
+        }
+        if (transactionAmount == null) {
+            transactionAmount = walletOperation.getQuantity().multiply(transactionalUnitPrice);
+        }
+        walletOperation.setTransactionalAmountWithoutTax(transactionAmount);
+        walletOperation.setTransactionalAmountWithTax(transactionAmount);
+        AccountingArticle accountingArticle =
+                accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
+        walletOperation.setAccountingArticle(accountingArticle);
+        if (walletOperation.getTax() == null) {
+            TaxInfo taxInfo = ofNullable(taxMappingService.determineTax(walletOperation))
+                    .orElseThrow(() -> new BusinessException("No tax found for the chargeInstance "
+                            + walletOperation.getChargeInstance().getCode()));
+            walletOperation.setTaxClass(taxInfo.taxClass);
+            walletOperation.setTax(taxInfo.tax);
+            walletOperation.setTaxPercent(taxInfo.tax.getPercent());
+        }
+
+        BigDecimal[] transactionalUnitAmounts = computeDerivedAmounts(transactionalUnitPrice, transactionalUnitPrice,
+                walletOperation.getTaxPercent(), appProvider.isEntreprise(), NB_DECIMALS, HALF_UP);
+        BigDecimal[] transactionalAmounts = computeDerivedAmounts(transactionAmount, transactionAmount,
+                walletOperation.getTaxPercent(), appProvider.isEntreprise(), rounding, roundingMode.getRoundingMode());
+
+        walletOperation.setTransactionalUnitAmountWithoutTax(transactionalUnitAmounts[0]);
+        walletOperation.setTransactionalUnitAmountWithTax(transactionalUnitAmounts[1]);
+        walletOperation.setTransactionalUnitAmountTax(transactionalUnitAmounts[2]);
+        walletOperation.setTransactionalAmountWithoutTax(transactionalAmounts[0]);
+        walletOperation.setTransactionalAmountWithTax(transactionalAmounts[1]);
+        walletOperation.setTransactionalAmountTax(transactionalAmounts[2]);
+        if (walletOperation.getPriceplan() != null
+                && !StringUtils.isBlank(walletOperation.getPriceplan().getMinimumAmountEL())) {
+            BigDecimal minimumAmount = new BigDecimal(Double.toString(elUtils.evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(),
+                    walletOperation, walletOperation.getWallet().getUserAccount(), null, null)));
+
+            if ((appProvider.isEntreprise() && walletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0)
+                    || (!appProvider.isEntreprise() && walletOperation.getAmountWithTax().compareTo(minimumAmount) < 0)) {
+                walletOperation.setRawAmountWithoutTax(walletOperation.getAmountWithoutTax());
+                walletOperation.setRawAmountWithTax(walletOperation.getAmountWithTax());
+                transactionalAmounts = computeDerivedAmounts(minimumAmount, minimumAmount,
+                        walletOperation.getTaxPercent(), appProvider.isEntreprise(), rounding, roundingMode.getRoundingMode());
+                walletOperation.setTransactionalAmountWithoutTax(transactionalAmounts[0]);
+                walletOperation.setTransactionalAmountWithTax(transactionalAmounts[1]);
+                walletOperation.setTransactionalAmountTax(transactionalAmounts[2]);
+            }
+        }
     }
 }
