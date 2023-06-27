@@ -27,6 +27,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.sequence.Sequence;
 
@@ -67,7 +68,19 @@ public class CustomGenericEntityCode extends AuditableEntity {
     @JoinColumn(name = "sequence_id")
     private Sequence sequence;
 
-    /**
+	
+	@Transient
+	private BaseEntity entity;
+	
+	public BaseEntity getEntity() {
+		return entity;
+	}
+	
+	public void setEntity(BaseEntity entity) {
+		this.entity = entity;
+	}
+	
+	/**
      * @return the entityClass
      */
     public String getEntityClass() {

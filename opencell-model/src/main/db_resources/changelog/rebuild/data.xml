@@ -8767,7 +8767,7 @@
         </insert>      
 		<insert tableName="adm_custom_generic_entity_code">
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
-			<column name="entity_class" value="QuoteOffer" />
+			<column name="entity_class" value="org.meveo.model.cpq.offer.QuoteOffer" />
 			<column name="code_el" value="#{entity.quoteVersion.id}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
@@ -8787,7 +8787,7 @@
         </insert>
 		<insert tableName="adm_custom_generic_entity_code">
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
-			<column name="entity_class" value="OrderOffer" />
+			<column name="entity_class" value="org.meveo.model.cpq.commercial.OrderOffer" />
 			<column name="code_el" value="#{entity.order.code}_#{entity.offerTemplate.code}_#{sequenceNextValue}" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
@@ -10186,7 +10186,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 		<insert tableName="adm_custom_generic_entity_code">
 			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
-			<column name="entity_class" value="AccountingScheme" />
+			<column name="entity_class" value="org.meveo.model.payments.AccountingScheme" />
 			<column name="code_el" value="#{sequenceNextValue}" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="OPENCELL.ADMIN" />
@@ -11871,7 +11871,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	
 	<changeSet id="#INTRD-16482_20230526" author="aeljaouhari" />
 	<changeSet id="#INTRD-16247_20230605" author="zelmeliani" />
-    <changeSet id="#INTRD-16278_20230606" author="anasseh" />	
+    <changeSet id="#INTRD-16278_20230606" author="anasseh" />
+    <changeSet id="INTRD-17129_20230627" author="TarikFA." />
     	
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
