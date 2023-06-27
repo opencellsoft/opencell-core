@@ -140,32 +140,25 @@ public class ExchangeRateService extends PersistenceService<ExchangeRate> {
         return exchangeRate;
     }
     
-    private void updateTradingCurrencyForExchangeRate(TradingCurrency tradingCurrency, Set<ExchangeRate> exchangeRates){
+	private void updateTradingCurrencyForExchangeRate(TradingCurrency tradingCurrency, Set<ExchangeRate> exchangeRates) {
 
-        if(tradingCurrency != null
-                && (tradingCurrency.getCurrentRateFromDate() == null ||
-                tradingCurrency.getCurrentRateFromDate().after(new Date()))){
+		exchangeRates.stream()
+				.filter(exRate -> exRate.getFromDate().before(new Date()))
+				.max(Comparator.comparing(ExchangeRate::getFromDate)).ifPresent(currentRate -> {
+					TradingCurrency tradingCurrencyToUpdate = currentRate.getTradingCurrency();
+	                tradingCurrencyToUpdate.getExchangeRates().forEach(exchangeRate -> {
+	                	exchangeRate.setCurrentRate(false);
+	                });
+	                currentRate.setCurrentRate(true);
+					tradingCurrencyToUpdate.setCurrentRate(currentRate.getExchangeRate());
+					tradingCurrencyToUpdate.setCurrentRateFromDate(currentRate.getFromDate());
+					tradingCurrencyToUpdate.setCurrentRateUpdater(currentRate.getAuditable().getUpdater() != null ? 
+							currentRate.getAuditable().getUpdater()	: currentRate.getAuditable().getCreator());
 
-             exchangeRates.stream()
-                    .filter(exRate-> exRate.getFromDate().after(new Date()))
-                    .min(Comparator.comparing(ExchangeRate::getFromDate))
-                    .ifPresent(exchangeRate1->{
+					tradingCurrencyService.update(tradingCurrencyToUpdate);
+				});
 
-                TradingCurrency tradingCurrencyToUpdate = exchangeRate1.getTradingCurrency();
-                tradingCurrencyToUpdate.setCurrentRate(exchangeRate1.getExchangeRate());
-                tradingCurrencyToUpdate.setCurrentRateFromDate(exchangeRate1.getFromDate());
-                tradingCurrencyToUpdate.setCurrentRateUpdater( exchangeRate1.getAuditable().getUpdater() != null ?
-                        exchangeRate1.getAuditable().getUpdater() : exchangeRate1.getAuditable().getCreator()
-
-                );
-
-                tradingCurrencyService.update(tradingCurrencyToUpdate);
-            });
-
-        }
-
-
-    }
+	}
 
     @Override
     public ExchangeRate update(ExchangeRate exchangeRate) {
