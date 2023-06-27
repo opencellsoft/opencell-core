@@ -52,7 +52,6 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
@@ -376,7 +375,8 @@ public class RecurringRatingService extends RatingService implements Serializabl
                                     + ", proratedFrom=" + effectiveChargeFromDate + ", proratedTo=" + effectiveChargeToDate);
                         }
 
-                        inputQuantity = inputQuantity.multiply(prorata);
+                        inputQuantity = inputQuantity.multiply(prorata)
+                                .setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
                     }
 
                     if (chargeMode.isReimbursement()) {
