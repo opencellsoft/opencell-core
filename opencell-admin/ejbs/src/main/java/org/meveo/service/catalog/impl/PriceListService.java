@@ -69,35 +69,35 @@ public class PriceListService extends BusinessService<PriceList> {
 		jpqlQuery += "PriceList pl WHERE pl.status = :activeStatus AND :currentDate BETWEEN pl.applicationStartDate AND pl.applicationEndDate ";
 
     	if(pPriceListCriteria.getBrandId() != null) {
-			jpqlQuery += "AND EXISTS (select 1 from CustomerBrand cb where cb.id=:brandId and cb member of pl.brands) ";
+			jpqlQuery += "AND (pl.brands IS EMPTY OR EXISTS (select 1 from CustomerBrand cb where cb.id=:brandId and cb member of pl.brands)) ";
 		}
 
 		if(pPriceListCriteria.getCustomerCategoryId() != null) {
-			jpqlQuery += "AND EXISTS (select 1 from CustomerCategory cc where cc.id=:customerCategoryId and cc member of pl.customerCategories) ";
+			jpqlQuery += "AND (pl.customerCategories IS EMPTY OR EXISTS (select 1 from CustomerCategory cc where cc.id=:customerCategoryId and cc member of pl.customerCategories)) ";
 		}
 
 		if(pPriceListCriteria.getCreditCategoryId() != null) {
-			jpqlQuery += "AND EXISTS (select 1 from CreditCategory crc where crc.id=:creditCategoryId and crc member of pl.creditCategories) ";
+			jpqlQuery += "AND (pl.creditCategories IS EMPTY OR EXISTS (select 1 from CreditCategory crc where crc.id=:creditCategoryId and crc member of pl.creditCategories)) ";
 		}
 
 		if(pPriceListCriteria.getCountryId() != null) {
-			jpqlQuery += "AND EXISTS (select 1 from Country cou where cou.id=:countryId and cou member of pl.countries) ";
+			jpqlQuery += "AND (pl.countries IS EMPTY OR EXISTS (select 1 from Country cou where cou.id=:countryId and cou member of pl.countries)) ";
 		}
 
 		if(pPriceListCriteria.getCurrencyId() != null) {
-			jpqlQuery += "AND EXISTS (select 1 from Currency cur where cur.id=:currencyId and cur member of pl.currencies) ";
+			jpqlQuery += "AND (pl.currencies IS EMPTY OR EXISTS (select 1 from Currency cur where cur.id=:currencyId and cur member of pl.currencies)) ";
 		}
 
 		if(pPriceListCriteria.getTitleId() != null) {
-			jpqlQuery += "AND EXISTS (select 1 from Title ti where ti.id=:titleId and ti member of pl.legalEntities) ";
+			jpqlQuery += "AND (pl.legalEntities IS EMPTY OR EXISTS (select 1 from Title ti where ti.id=:titleId and ti member of pl.legalEntities)) ";
 		}
 
 		if(pPriceListCriteria.getSellerId() != null) {
-			jpqlQuery += "AND EXISTS (select 1 from Seller sel where sel.id=:sellerId and sel member of pl.sellers) ";
+			jpqlQuery += "AND (pl.sellers IS EMPTY OR EXISTS (select 1 from Seller sel where sel.id=:sellerId and sel member of pl.sellers)) ";
 		}
 
 		if(pPriceListCriteria.getPaymentMethodEnum() != null) {
-			jpqlQuery += "AND :paymentMethod member of pl.paymentMethods ";
+			jpqlQuery += "AND (pl.sellers IS EMPTY OR :paymentMethod member of pl.paymentMethods) ";
 		}
 
 		if(pPriceListCriteria.getAttachedPriceListId() != null) {

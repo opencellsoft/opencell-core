@@ -36,7 +36,7 @@ public class CatalogPriceListResourceImpl implements CatalogPriceListResource {
 	 * @param pOffset Offset
 	 * @param pLimit Limit
 	 * @param pRequest {@link Request}
-	 * @param pPriceListEntities A list of {@link PriceList}
+	 * @param pPriceListEntities A list of {@link org.meveo.apiv2.catalog.PriceList}
 	 * @param pPriceListCount PriceList Count
 	 * @return {@link Response}
 	 */
@@ -59,11 +59,11 @@ public class CatalogPriceListResourceImpl implements CatalogPriceListResource {
 						.offset(pOffset).limit(pLimit).total(pPriceListCount).build());
 		return Response.ok().cacheControl(lCacheControl).tag(lEntityTag).entity(lPriceLists).build();
 	}
-    
+
 	/**
-	 * Buils Price List with Link
-	 * @param pPriceList {@link PriceList}
-	 * @return {@link PriceList}
+	 * Build Price List with Link
+	 * @param pPriceList {@link org.meveo.apiv2.catalog.PriceList}
+	 * @return {@link org.meveo.apiv2.catalog.PriceList}
 	 */
     private org.meveo.apiv2.catalog.PriceList toResourcePriceListWithLink(org.meveo.apiv2.catalog.PriceList pPriceList) {
 		return ImmutablePriceList.copyOf(pPriceList)
