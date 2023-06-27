@@ -12,6 +12,7 @@ import org.meveo.apiv2.dunning.ImmutableDunningPolicy;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.dunning.DunningModeEnum;
 
 public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo.model.dunning.DunningPolicy> {
 
@@ -48,6 +49,7 @@ public class DunningPolicyMapper extends ResourceMapper<DunningPolicy, org.meveo
         entity.setPolicyPriority(resource.getPolicyPriority());
         entity.setIsDefaultPolicy(resource.isDefaultPolicy());
         entity.setIsActivePolicy(resource.isActivePolicy());
+        entity.setType(DunningModeEnum.INVOICE_LEVEL);
         if(resource.getMinBalanceTriggerCurrency() != null && resource.getMinBalanceTriggerCurrency().getCode() != null) {
             Currency currency = new Currency();
             currency.setCurrencyCode(resource.getMinBalanceTriggerCurrency().getCode());
