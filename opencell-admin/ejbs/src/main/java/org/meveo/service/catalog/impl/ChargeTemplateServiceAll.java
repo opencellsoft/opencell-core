@@ -149,6 +149,7 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 			duplicateChargeTemplate.setId(null);
 			duplicateChargeTemplate.setCode(findDuplicateCode(chargeTemplate));
 			duplicateChargeTemplate.setStatus(ChargeTemplateStatusEnum.DRAFT);
+			duplicateChargeTemplate.setPricePlans(new HashSet<>());
 
 			if(chargeTemplate.getAttributes() != null) {
 				Set<Attribute> attributes = new HashSet<Attribute>();
@@ -168,6 +169,7 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 				duplicateChargeTemplate.setEdrTemplates(edrTemplates);
 			}
 			
+			Set<PricePlanMatrix> duplicatedPricePlanMatrixes = new HashSet<>();
 			create(duplicateChargeTemplate);
 			
 	        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplate.getCode());
@@ -189,6 +191,7 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 	        		pricePlanMatrixNew.setVersions(versionsNew);
 	        		pricePlanMatrixNew.setContractItems(null);
 	        		pricePlanMatrixNew.setDiscountPlanItems(null);
+	        		pricePlanMatrixNew.setChargeTemplates(new HashSet<>());
 	        		
 	        		pricePlanMatrixService.create(pricePlanMatrixNew);
 
@@ -234,7 +237,10 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 							}
 		            	}
 	        		}
+	        		pricePlanMatrixNew.getChargeTemplates().add(duplicateChargeTemplate);
+	        		duplicatedPricePlanMatrixes.add(pricePlanMatrixNew);
 	        	}
+	        	duplicateChargeTemplate.setPricePlans(duplicatedPricePlanMatrixes);
 	        }
 		} catch (Exception e) {
             log.error("Error when trying to cloneBean chargeTemplate : ", e);
