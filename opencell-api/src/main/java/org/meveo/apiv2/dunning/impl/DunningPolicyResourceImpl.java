@@ -68,8 +68,8 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         if (dunningPolicy.getDunningPolicyLevels() == null || dunningPolicy.getDunningPolicyLevels().isEmpty()) {
             throw new BadRequestException("Policy levels are missing");
         }
-        org.meveo.model.dunning.DunningPolicy entity = mapper.toEntity(dunningPolicy);
-        org.meveo.model.dunning.DunningPolicy savedEntity = dunningPolicyApiService.create(entity);
+
+        org.meveo.model.dunning.DunningPolicy savedEntity = dunningPolicyApiService.create(mapper.toEntity(dunningPolicy));
         int totalDunningLevels = 0;
         int countReminderLevels = 0;
         int countEndOfDunningLevel = 0;
@@ -106,7 +106,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
             ActionStatus actionStatus = new ActionStatus();
             actionStatus.setStatus(ActionStatusEnum.SUCCESS);
             actionStatus.setMessage("Entity successfully created");
-            actionStatus.setEntityId(entity.getId());
+            actionStatus.setEntityId(savedEntity.getId());
             return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, dunningPolicy.getId())
                     .build())
                     .entity(actionStatus)

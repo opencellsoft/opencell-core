@@ -113,7 +113,7 @@ public class DunningTemplate extends EmailTemplate {
         return typeDunningMode;
     }
 
-    public void setType(DunningModeEnum typeDunningMode) {
+    public void setTypeDunningMode(DunningModeEnum typeDunningMode) {
         this.typeDunningMode = typeDunningMode;
     }
 

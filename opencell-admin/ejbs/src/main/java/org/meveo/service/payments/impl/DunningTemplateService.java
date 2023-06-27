@@ -32,7 +32,7 @@ public class DunningTemplateService extends BusinessService<DunningTemplate> {
         DunningSettings dunningSettings = dunningSettingsService.findLastOne();
 
         if(dunningSettings != null && dunningSettings.getDunningMode() != null) {
-            template.setType(dunningSettings.getDunningMode());
+            template.setTypeDunningMode(dunningSettings.getDunningMode());
         }
 
         super.create(template);
