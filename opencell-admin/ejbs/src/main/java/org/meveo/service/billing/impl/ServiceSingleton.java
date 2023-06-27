@@ -24,6 +24,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Invoice;
@@ -158,8 +159,9 @@ public class ServiceSingleton {
             'V', '6', 'W', '7', 'X', '8', 'Y', '9', 'Z');
 
     private static Map<Long, AtomicInteger> invoicingTempNumber = new HashMap<>();
-    
+	
 	private static final String GENERATED_CODE_KEY = "generatedCode";
+	private static final String SEQUENCE_NEXT_VALUE = "sequenceNextValue";
 
     private Random random = new SecureRandom();
 
@@ -656,8 +658,8 @@ public class ServiceSingleton {
     public String getGenericCode(CustomGenericEntityCode customGenericEntityCode) {
         return getGenericCode(customGenericEntityCode, null, true, null);
     }
-
-    /**
+    
+	/**
      * Generate custom generic code
      *
      * @param customGenericEntityCode
@@ -671,7 +673,7 @@ public class ServiceSingleton {
         Sequence sequence = customGenericEntityCode.getSequence();
         String generatedCode = null;
         Map<Object, Object> context = new HashMap<>();
-        context.put("entity", customGenericEntityCode.getEntityClass());
+        context.put("entity", customGenericEntityCode.getEntity());
 
         if (sequence.getSequenceType() == SEQUENCE) {
             Long lCurrentNumber = sequence.getCurrentNumber();
@@ -707,7 +709,8 @@ public class ServiceSingleton {
         }
 
         context.put(GENERATED_CODE_KEY, generatedCode);
-        String storedFormatEL = formatEL != null ? formatEL : customGenericEntityCode.getFormatEL();
+	    context.put(SEQUENCE_NEXT_VALUE, generatedCode);
+        String storedFormatEL = customGenericEntityCode.getCodeEL() != null ? customGenericEntityCode.getCodeEL() : formatEL != null ? formatEL : customGenericEntityCode.getFormatEL();
 
         return prefixOverride == null || prefixOverride.isBlank()
                 ? formatCode(ofNullable(storedFormatEL).orElse(""), context)
