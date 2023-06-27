@@ -926,10 +926,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private List<RatedTransaction> getRatedTransactions(IBillableEntity entityToInvoice, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, boolean isDraft) {
         List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, invoiceUpToDate, ratedTransactionFilter, rtPaginationSize);
-        // if draft add unrated wallet operation
+        // Seen with the PO and Architect, this boolean should only be taken into account to change the status of the invoice (draft or validated). more detail on https://opencellsoft.atlassian.net/browse/INTRD-178
+        // The recovery of OPEN walletOperation should only be done by API with a specific boolean: to be treated in possibly another issue
+        // For the moment, we avoid recovering the Open WO which distorts the calculation of the subscription to be linked for the future invoice (seee getSubscriptionFromRT)
+        /*// if draft add unrated wallet operation
         if (isDraft) {
             ratedTransactions.addAll(getDraftRatedTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, invoiceUpToDate));
-        }
+        }*/
         return ratedTransactions;
     }
 
