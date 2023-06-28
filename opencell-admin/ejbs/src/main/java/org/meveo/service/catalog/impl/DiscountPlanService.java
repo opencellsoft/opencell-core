@@ -239,7 +239,6 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			
     			discountWalletOperation.setAccountingArticle(discountAccountingArticle);
     			discountWalletOperation.setAccountingCode(discountAccountingArticle.getAccountingCode());
-    			discountWalletOperation.setUnitAmountTax(walletOperationDiscountAmount);
     			discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?amounts[0]:BigDecimal.ZERO);
     			discountWalletOperation.setAmountWithTax(amounts[1]);
     			discountWalletOperation.setAmountTax(amounts[2]);

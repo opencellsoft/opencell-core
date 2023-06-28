@@ -989,4 +989,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
     }
 
+    @Override
+    public void create(WalletOperation walletOperation) throws BusinessException {
+    	if(walletOperation.getDiscountedWO()!=null) {
+    		walletOperation.setDiscountedWalletOperation(walletOperation.getDiscountedWO().getId());
+    	}
+    	super.create(walletOperation);
+    }
 }

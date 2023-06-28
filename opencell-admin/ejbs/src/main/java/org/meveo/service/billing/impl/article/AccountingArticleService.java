@@ -180,8 +180,10 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
 		} else {
+			ParamBean paramBean = ParamBean.getInstance();
+			String defaultArticle = paramBean.getProperty("default.article", "ART-STD");
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
-			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD", Arrays.asList("taxClass"));
+			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode(defaultArticle, Arrays.asList("taxClass"));
 		}
 		if(result != null) {
 			Hibernate.initialize(result);

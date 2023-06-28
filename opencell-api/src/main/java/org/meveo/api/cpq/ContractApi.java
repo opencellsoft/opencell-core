@@ -23,6 +23,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.config.annotation.FilterProperty;
@@ -364,6 +365,13 @@ public class ContractApi extends BaseApi{
         	item.setContractRateType(contractItemDto.getContractRateType());
     	}
     	
+    	if(contractItemDto.getSeperateDiscountLine()!=null) {
+    		item.setSeparateDiscount(contractItemDto.getSeperateDiscountLine()); 
+    	}
+    	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && Boolean.TRUE.equals(contractItemDto.getSeperateDiscountLine())){
+    		throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
+    	}
+    	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
     		contractItemService.create(item);
@@ -407,6 +415,13 @@ public class ContractApi extends BaseApi{
     		item.setContractRateType(ContractRateTypeEnum.FIXED);
     	}else {
         	item.setContractRateType(contractItemDto.getContractRateType());
+    	}
+    	
+    	if(contractItemDto.getSeperateDiscountLine()!=null) {
+    		item.setSeparateDiscount(contractItemDto.getSeperateDiscountLine()); 
+    	}
+    	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && item.isSeparateDiscount()){
+    		throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
     	}
     	
     	try {
