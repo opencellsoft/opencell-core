@@ -436,14 +436,6 @@ public class ContractApi extends BaseApi{
 		if (pricePlanMatrixVersions == null || pricePlanMatrixVersions.isEmpty()){
 			return;
 		}
-		for(PricePlanMatrixVersion pricePlanMatrixVersion : pricePlanMatrixVersions) {
-			DatePeriod period = pricePlanMatrixVersion.getValidity();
-			if (period != null && period.getTo() != null && period.getTo().compareTo(contract.getEndDate())>0) {
-				log.error("Price plan's period should not be after contract's end date");
-				throw new MeveoApiException("Price plan's period should not be after contract's end date");
-			}
-		}
-
 	}
 
 	public void deleteContractLine(String contractItemCode) {
