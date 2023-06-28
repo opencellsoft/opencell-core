@@ -15193,5 +15193,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="application_el" type="varchar(2000)" />
 		</addColumn>
 	</changeSet>
-    
+	
+	<changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay">
+		<addColumn tableName="cpq_contract_item">
+			<column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
+		</addColumn>
+	</changeSet>
+	
+	
 </databaseChangeLog>
