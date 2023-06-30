@@ -8,6 +8,7 @@ import org.meveo.apiv2.securityDeposit.SecurityDepositInput;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
@@ -40,6 +41,7 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
                 .linkedInvoice(createResource(entity.getSecurityDepositInvoice()))
                 .refundReason(entity.getRefundReason())
                 .cancelReason(entity.getCancelReason())
+                .seller(createResource(entity.getSeller()))
                 .build();
     }
 
@@ -123,6 +125,12 @@ public class SecurityDepositMapper extends ResourceMapper<SecurityDepositInput, 
         }
         else {
             securityDeposit.setSecurityDepositInvoice(null);
+        }
+        if (resource.getSeller() != null) {
+            Seller seller = new Seller();
+            seller.setId(resource.getSeller().getId());
+            seller.setCode(resource.getSeller().getCode());
+            securityDeposit.setSeller(seller);
         }
         return securityDeposit;
     }
