@@ -16987,4 +16987,17 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropTable tableName="cat_price_plan_charge_tmp" />
     </changeSet>
 
+    <changeSet id="#INTRD-14368_20230630" author="AbdellatifBARI">
+        <addColumn tableName="security_deposit">
+            <column name="seller_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="security_deposit"
+                                 constraintName="fk_seller_security_deposit" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="crm_seller"/>
+    </changeSet>
+
 </databaseChangeLog>

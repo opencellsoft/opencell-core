@@ -34,6 +34,7 @@ import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
@@ -184,9 +185,8 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
                     throw new BusinessApiException("Modification of the security deposit is not allowed for Validated status.");
                 } 
             }
-        }        
-                
-        linkRealEntities(securityDepositInput);        
+        }
+        linkRealEntities(securityDepositInput);
         if(isInstantiate && securityDepositInput.getSecurityDepositInvoice() != null) {
         	securityDepositInput.setAmount(securityDepositInput.getSecurityDepositInvoice().getAmountWithoutTax());
         }
@@ -368,6 +368,11 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
                     securityDepositInput.setCustomerAccount(customerAccount);
                 }
             }
+        }
+
+        if (securityDepositInput.getSeller() != null) {
+            Seller seller = securityDepositTemplateService.tryToFindByCodeOrId(securityDepositInput.getSeller());
+            securityDepositInput.setSeller(seller);
         }
     }
 
