@@ -126,6 +126,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType, Invoice adjInvoice) {
         if(adjInvoice != null) {
+        	adjInvoice = invoiceService.findById(adjInvoice.getId(), Arrays.asList("orders"));
             if (securityDepositToUpdate.getCurrentBalance() != null && BigDecimal.ZERO.compareTo(securityDepositToUpdate.getCurrentBalance()) != 0) {
                 Refund refund = createRefund(securityDepositToUpdate, adjInvoice);
                 if (refund == null) {
