@@ -68,4 +68,7 @@ public interface SecurityDepositInput extends Resource {
     
     @NotNull
     Resource getBillingAccount();
+
+    @NotNull
+    Resource getSeller();
 }
