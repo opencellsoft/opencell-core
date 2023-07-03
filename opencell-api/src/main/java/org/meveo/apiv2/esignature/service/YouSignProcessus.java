@@ -8,6 +8,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.meveo.api.YouSignApi;
 import org.meveo.api.admin.FilesApi;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -27,9 +28,14 @@ import org.meveo.model.esignature.SigantureAuthentificationMode;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -41,14 +47,17 @@ public class YouSignProcessus extends SignatureRequestProcess {
 	public YouSignProcessus(SigantureRequest sigantureRequest){
 		super(sigantureRequest);
 	}
+	public YouSignProcessus(){
+		super(null);
+	}
 	@Override
 	public String getSignatureApiKey() {
-		return PARAMBEAN.getProperty("gateway.yousign.apikey", null);
+		return paramBean.getProperty(YouSignApi.YOUSIGN_API_TOKEN_PROPERTY_KEY, null);
 	}
 	
 	@Override
 	public String getSignatureUrl() {
-		return PARAMBEAN.getProperty("gateway.yousign.url", null);
+		return paramBean.getProperty(YouSignApi.YOUSIGN_API_URL_PROPERTY_KEY, null);
 	}
 	
 	@Override
@@ -68,7 +77,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			log.info("start singing to e-sign = " + getModeOperator() + " - step 2 : uploading files : finished ");
 			
 			log.info("start singing to e-sign = " + getModeOperator() + " - step 3 : adding signers : ");
-			Map<String, String> signers = addSigner(requestId, documentIds);
+			addSigner(requestId, documentIds);
 			log.info("start singing to e-sign = " + getModeOperator() + " - step 3 : adding signers : finished");
 			
 			log.info("start singing to e-sign = " + getModeOperator() + " - step 4 : activate signature request : ");
@@ -77,8 +86,41 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			throw new BusinessApiException(e.getMessage());
 		}
 	}
-	public String processGenerateRequestId() throws IOException, InterruptedException {
-		final IntiateSignatureRequest intiateSignatureRequest = new IntiateSignatureRequest(sigantureRequest.getName(), DeliveryMode.email.getValue(sigantureRequest.getDelivery_mode()));
+	
+	public Map<String, Object> fetch(String signatureRequestId)  {
+		checkApiAndUrl();
+		try {
+			HttpResponse<String> response = getHttpRequestWithoutBody("/signature_requests/" + signatureRequestId, HttpMethod.GET);
+			return gson.fromJson(response.body(), Map.class);
+		} catch (IOException | InterruptedException e) {
+			throw new BusinessApiException(e);
+		}
+	}
+	
+	public InputStream download(String signatureRequestId){
+		checkApiAndUrl();
+		try {
+			HttpResponse<byte[]> downloadableFile = download("/signature_requests/" + signatureRequestId + "/documents/download", HttpMethod.GET);
+			String fileName = null;
+			if(downloadableFile.headers().map().get("content-disposition") != null) {
+				String contentDisposition = downloadableFile.headers().map().get("content-disposition").get(0);
+				fileName = contentDisposition.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1");
+			}
+			if(fileName == null) {
+				throw new BusinessApiException("the file doesn't exist");
+			}
+			String yousignDir = paramBean.getChrootDir("") + File.separator + paramBean.getProperty(YouSignApi.YOUSIGN_API_DOWNLOAD_DIR_KEY, "/signeddocs");
+			filesApi.createDir(yousignDir);
+			Path filePath = Path.of(yousignDir + File.separator + fileName);
+			Path newFile = Files.write(filePath, downloadableFile.body(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			return new FileInputStream(newFile.toFile());
+		} catch (IOException | InterruptedException e) {
+			throw new BusinessApiException(e.getMessage());
+		}
+	}
+	
+	private String processGenerateRequestId() throws IOException, InterruptedException {
+		final IntiateSignatureRequest intiateSignatureRequest = new IntiateSignatureRequest(sigantureRequest.getName(), DeliveryMode.email.getValue(sigantureRequest.getDeliveryMode()));
 		var response = getHttpRequestPost( "/signature_requests", intiateSignatureRequest);
 		var sigantureRequestId = gson.fromJson(response.body(), Map.class);
 		if(sigantureRequestId.get("id") == null){
@@ -88,7 +130,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 		return sigantureRequestId.get("id").toString();
 	}
 	
-	public Map<FilesSignature, String> uploadDocument(String requestId) throws IOException {
+	private Map<FilesSignature, String> uploadDocument(String requestId) throws IOException {
 		Map<FilesSignature, String> result = new HashMap<>();
 		for(FilesSignature fileSigners: Objects.requireNonNull(sigantureRequest.getFilesToSign())){
 			if(StringUtils.isEmpty(fileSigners.getFilePath())){
@@ -98,7 +140,7 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			HttpEntity entity = MultipartEntityBuilder.create()
 					.addPart("file", new FileBody(file))
 					.addTextBody("nature", NatureDocument.getValue(fileSigners.getNature()))
-					.addTextBody("parse_anchors", fileSigners.getParse_anchors() + "")
+					.addTextBody("parse_anchors", fileSigners.getParseAnchors() + "")
 					.build();
 			HttpPost request = new HttpPost(URI.create(getSignatureUrl() + "/signature_requests/" + requestId + "/documents"));
 			request.setHeader("Authorization", "Bearer " + getSignatureApiKey());
@@ -115,14 +157,14 @@ public class YouSignProcessus extends SignatureRequestProcess {
 		
 	}
 	
-	public Map<String, String> addSigner(String signatureRequestId, Map<FilesSignature, String> documentIds) throws IOException, InterruptedException {
+	private void addSigner(String signatureRequestId, Map<FilesSignature, String> documentIds) throws IOException, InterruptedException {
 		Map<String, String> result = new HashMap<>();
 		for(Signers signer: Objects.requireNonNull(sigantureRequest.getSigners())){
 			for(FilesSignature docInfo : documentIds.keySet()){
 				InfoSigner info = signer.getInfo();
-				Signer signerToSend = new Signer(info.getFirst_name(), info.getLast_name(), info.getEmail(),
-						info.getPhone_number(), info.getLocale(), "electronic_signature", SigantureAuthentificationMode.getValue(signer.getSignature_authentication_mode()) );
-				if(!docInfo.getParse_anchors()) {
+				Signer signerToSend = new Signer(info.getFirstName(), info.getLastName(), info.getEmail(),
+						info.getPhoneNumber(), info.getLocale(), "electronic_signature", SigantureAuthentificationMode.getValue(signer.getSignatureAuthenticationMode()) );
+				if(!docInfo.getParseAnchors()) {
 					for(SignatureFields fields : Objects.requireNonNull(signer.getFields())){
 						signerToSend.addFields(documentIds.get(docInfo).toString(), fields.getPage(), fields.getWidth(), fields.getX(), fields.getY());
 					}
@@ -131,13 +173,12 @@ public class YouSignProcessus extends SignatureRequestProcess {
 				Map<String, Object> jsonBody = gson.fromJson(response.body(), Map.class);
 				if(jsonBody.get("id") == null) {
 					log.error(response.body());
-					throw new BusinessApiException("Problem occur when adding signer : " + info.getLast_name() + ". detail : " + jsonBody.get("detail"));
+					throw new BusinessApiException("Problem occur when adding signer : " + info.getLastName() + ". detail : " + jsonBody.get("detail"));
 				}
 				result.put(info.getEmail(), jsonBody.get("id").toString());
-				log.info("signer " + info.getLast_name() + " for document " + documentIds.get(docInfo).toString());
+				log.info("signer " + info.getLastName() + " for document " + documentIds.get(docInfo).toString());
 			}
 		}
-		return result;
 	}
 	
 	private Map<String, Object> activateSiganture(String sigantureRequestId) throws IOException, InterruptedException {
