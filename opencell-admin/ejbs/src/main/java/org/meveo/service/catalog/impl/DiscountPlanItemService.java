@@ -51,6 +51,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -277,7 +278,12 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         if (isDiscountApplicable) {
         	List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
         	Long lowPriority=null;
+        	boolean isInvoiceLineDiscount=discountPlan.getDiscountPlanType()== DiscountPlanTypeEnum.INVOICE_LINE;
         	for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+        		if(isInvoiceLineDiscount && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation) ) {
+        			applicableDiscountPlanItems.add(discountPlanItem);
+        			continue;
+        		}
         		isFixedDpItemIncluded=false;
         		if(chargeTemplate != null && DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
         			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
@@ -292,6 +298,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         		}
 
         		if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
+        			//if the discountplanItems have the same priority they are all applied  
         			if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority()))
         					&& isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
         				lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
@@ -304,7 +311,8 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
         			}
         		}   
-        	}
+        	
+        }
         }
         log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
         return applicableDiscountPlanItems;
