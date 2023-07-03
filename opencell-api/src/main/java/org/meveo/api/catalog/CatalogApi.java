@@ -130,6 +130,7 @@ public class CatalogApi extends BaseApi {
                     wo.setQuantity(BigDecimal.ONE);
                     wo.setTaxPercent(price.getTaxRate());
                     recurringRatingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    recurringRatingService.computeTransactionalAmounts(wo);
                     price.setDutyFreeAmount(price.getDutyFreeAmount().add(wo.getUnitAmountWithoutTax()));
                     price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(wo.getUnitAmountWithTax()));
                 }
@@ -176,6 +177,7 @@ public class CatalogApi extends BaseApi {
                     wo.setPriceplan(pricePlans.get(0));
                     wo.setTaxPercent(price.getTaxRate());
                     recurringRatingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    recurringRatingService.computeTransactionalAmounts(wo);
                     price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
                     price.setTaxIncludedAmount(wo.getUnitAmountWithTax());
                 }
@@ -229,6 +231,7 @@ public class CatalogApi extends BaseApi {
                     wo.setPriceplan(pricePlans.get(0));
                     wo.setTaxPercent(price.getTaxRate());
                     recurringRatingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    recurringRatingService.computeTransactionalAmounts(wo);
                     price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
                     price.setTaxIncludedAmount(wo.getUnitAmountWithTax());
                 }
