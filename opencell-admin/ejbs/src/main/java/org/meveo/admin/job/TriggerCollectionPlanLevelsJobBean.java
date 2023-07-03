@@ -39,6 +39,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -221,7 +222,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                                 + billingAccount.getCustomerAccount().getCode()));
                 CustomerAccount customerAccount = billingAccount.getCustomerAccount();
                 //PaymentService.doPayment consider amount to pay in cent so amount should be * 100
-                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().longValue() * 100;
+                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().multiply(BigDecimal.valueOf(100)).longValue();
                 Invoice invoice = collectionPlan.getRelatedInvoice();
                 if (invoice.getRecordedInvoice() == null) {
                     throw new BusinessException("No getRecordedInvoice for the invoice "
