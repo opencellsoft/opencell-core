@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
@@ -167,7 +168,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
         final InvoicingItem firstItem = billingAccountDetailsItem.getInvoicingItems().get(0);
         final Invoice invoice = initInvoice(billingAccountDetailsItem, firstItem, billingRun, billingAccount, billingCycle, isFullAutomatic);
         Set<SubCategoryInvoiceAgregate> invoiceSCAs = createInvoiceAgregates(billingAccountDetailsItem, billingAccount, invoice);
-        evalDueDate(invoice, billingCycle, null, billingAccountDetailsItem.getCaDueDateDelayEL());
+        evalDueDate(invoice, billingCycle, null, billingAccountDetailsItem.getCaDueDateDelayEL(), billingRun.isExceptionalBR());
         invoiceService.setInitialCollectionDate(invoice, billingCycle, billingRun);
         invoice.setSubCategoryInvoiceAgregate(invoiceSCAs);
         invoices.add(invoice);
@@ -559,14 +560,17 @@ public class InvoicingService extends PersistenceService<Invoice> {
         return result;
     }
     
-    private void evalDueDate(Invoice invoice, BillingCycle billingCycle, String orderDueDateDelayEL, String caDueDateDelayEL) {
+    private void evalDueDate(Invoice invoice, BillingCycle billingCycle, String orderDueDateDelayEL, String caDueDateDelayEL, boolean isExceptionalBR) {
         BillingAccount billingAccount = invoice.getBillingAccount();
         Order order = invoice.getOrder();
         // Determine invoice due date delay either from Order, Customer account or Billing cycle
         String dueDateDelayEL = (order != null && !StringUtils.isBlank(orderDueDateDelayEL)) ? orderDueDateDelayEL:
-            (!StringUtils.isBlank(caDueDateDelayEL)) ? caDueDateDelayEL : billingCycle.getDueDateDelayEL();
+            (!StringUtils.isBlank(caDueDateDelayEL)) ? caDueDateDelayEL : billingCycle != null ? billingCycle.getDueDateDelayEL() : null;
         Integer delay = invoiceService.evaluateDueDelayExpression(dueDateDelayEL, billingAccount, invoice, order);
         Date dueDate = invoice.getInvoiceDate();
+        if(isExceptionalBR && delay == null) {
+            delay = 0;
+        }
         if (delay != null) {
             dueDate = DateUtils.addDaysToDate(invoice.getInvoiceDate(), delay);
         } else {
