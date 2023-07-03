@@ -1,6 +1,7 @@
 package org.meveo.apiv2.admin.providers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -220,6 +221,8 @@ public class ProviderResourceImpl implements ProviderResource {
                     .filter(StringUtils::isNotBlank)
                     .map(PaymentMethodEnum::valueOf)
                     .collect(Collectors.toList()));
+        } else {
+            providerByCode.setAllowedManualRefundMethods(Collections.emptyList());
         }
         
         if (provider.getPortalMessage() != null) {
