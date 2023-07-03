@@ -567,7 +567,7 @@ public class ContractApi extends BaseApi{
 					.stream()
 					.map(ci -> {
 						ContractItem contractItem = new ContractItem();
-						contractItem.setCode(ci.getCode() + "-COPY");
+						contractItem.setCode(contractItemService.findDuplicateCode(ci, "-COPY"));
 						contractItem.setApplicationEl(ci.getApplicationEl());
 						contractItem.setRate(ci.getRate());
 						contractItem.setSeparateDiscount(ci.isSeparateDiscount());
