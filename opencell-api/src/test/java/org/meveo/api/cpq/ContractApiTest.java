@@ -186,6 +186,7 @@ public class ContractApiTest {
         when(contractService.findByCode(contractCode)).thenReturn(source);
 
         when(contractService.findDuplicateCode(source, "-COPY")).thenReturn(source.getCode() + "-COPY");
+		when(contractItemService.findDuplicateCode(ciSource, "-COPY")).thenReturn(ciSource.getCode() + "-COPY");
 
         // When duplicate a contract based on its contractCode
         contractApi.duplicateContract(contractCode);
