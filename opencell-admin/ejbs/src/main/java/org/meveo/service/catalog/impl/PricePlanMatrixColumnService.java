@@ -238,6 +238,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 			List<PricePlanMatrixValueDto> pricePlanMatrixValueDtoList = new LinkedList<>();
 			
 			line = scanner.nextLine();
+			if(line.isEmpty()) continue;
 			String[] nextLine = line.split(";");
 			
 			for(var columnIndex=0; columnIndex < columns.size() ; columnIndex++ ) {
