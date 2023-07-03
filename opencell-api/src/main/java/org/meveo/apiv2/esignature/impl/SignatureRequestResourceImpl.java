@@ -14,6 +14,7 @@ import org.meveo.model.esignature.Operator;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.util.Map;
 
 public class SignatureRequestResourceImpl extends BaseRs implements SignatureRequestResource {
 	
@@ -47,11 +48,7 @@ public class SignatureRequestResourceImpl extends BaseRs implements SignatureReq
 					signatureRequestWebHookPayload.getData().getSignatureRequestWebhook() != null &&
 					signatureRequestWebHookPayload.getData().getSignatureRequestWebhook().getDocuments() != null){
 				String signatureRequestId = signatureRequestWebHookPayload.getData().getSignatureRequestWebhook().getId();
-				for(String key: signatureRequestWebHookPayload.getData().getSignatureRequestWebhook().getDocuments().keySet()) {
-					Object value = signatureRequestWebHookPayload.getData().getSignatureRequestWebhook().getDocuments().get(key);
-					log.info("key : " + key  + " : value : " + value);
-					signatureRequestApiService.download(operator, signatureRequestId);
-				}
+				signatureRequestApiService.download(operator, signatureRequestId);
 			}
 		} catch (Exception e) {
 			processException(e, new ActionStatus(ActionStatusEnum.FAIL, e.getMessage()));

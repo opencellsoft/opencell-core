@@ -17,6 +17,10 @@ public interface SignerWebhook extends Serializable {
 	@Nullable
 	String getStatus();
 	
+	@Nullable
+	@JsonProperty("delivery_mode")
+	Object getDeliveryMode();
+	
 	@Value.Immutable
 	@JsonDeserialize(as = ImmutableAnswers.class)
 	interface Answers extends  Serializable{
