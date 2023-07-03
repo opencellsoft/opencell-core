@@ -105,6 +105,9 @@ public class YouSignProcessus extends SignatureRequestProcess {
 			if(downloadableFile.headers().map().get("content-disposition") != null) {
 				String contentDisposition = downloadableFile.headers().map().get("content-disposition").get(0);
 				fileName = contentDisposition.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1");
+				if(fileName.contains("filename*")){
+					fileName = contentDisposition.split(";")[1].split("filename=")[1];
+				}
 			}
 			if(fileName == null) {
 				throw new BusinessApiException("the file doesn't exist");
