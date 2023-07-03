@@ -23,7 +23,7 @@ public interface SignatureRequestWebhook extends Serializable {
 	String getName();
 	@Nullable
 	@JsonProperty("delivery_mode")
-	DeliveryMode getDeliveryMode();
+	String getDeliveryMode();
 	@Nullable
 	@JsonProperty("created_at")
 	Date getCreateAt();
@@ -47,16 +47,20 @@ public interface SignatureRequestWebhook extends Serializable {
 	List<SignerWebhook> getSigners();
 	
 	@Nullable
-	Map<String, Object> getApprovers();
+	List<Map<String, Object>> getApprovers();
 	
 	@Nullable
 	Object getSender();
 	
 	@Nullable
-	Map<String, Object> getDocuments();
+	List<Map<String, Object>> getDocuments();
 	
 	@Nullable
 	@JsonProperty("reminder_settings")
 	Object getReminderSettings();
+	
+	@Nullable
+	@JsonProperty("workspace_id")
+	String getWorkspaceId();
 	
 }
