@@ -4,7 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.apiv2.esignature.SigantureRequest;
+import org.meveo.apiv2.esignature.SignatureRequestWebHookPayload;
+import org.meveo.apiv2.esignature.SignatureRequestWebhook;
 import org.meveo.model.esignature.Operator;
 
 import javax.ws.rs.Consumes;
@@ -58,5 +61,9 @@ public interface SignatureRequestResource {
 	@GET
 	@Path("{operator}/signatureRequest/{signatureRequestId}/documents/download")
 	Response download(@PathParam("operator") Operator operator, @PathParam("signatureRequestId") String signatureRequestId);
+	
+	@POST
+	@Path("/{operator}/signatureRequest/done")
+	ActionStatus signatureRequestDone(@PathParam("operator") Operator operator, SignatureRequestWebHookPayload signatureRequestWebHookPayload);
 	
 }
