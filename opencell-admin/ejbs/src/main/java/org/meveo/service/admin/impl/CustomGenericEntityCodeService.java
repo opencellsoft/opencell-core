@@ -78,6 +78,7 @@ public class CustomGenericEntityCodeService extends PersistenceService<CustomGen
         String customGenericCode = null;
         CustomGenericEntityCode customGenericEntityCode = findByClass(entity.getClass().getName());
         if (customGenericEntityCode != null) {
+	        customGenericEntityCode.setEntity(entity);
             customGenericCode = serviceSingleton.getGenericCode(customGenericEntityCode);
         }
         if (customGenericCode == null) {
