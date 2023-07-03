@@ -7,6 +7,7 @@ import org.meveo.model.esignature.Operator;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.util.Map;
 
 public class SignatureRequestResourceImpl implements SignatureRequestResource {
 	
@@ -25,5 +26,26 @@ public class SignatureRequestResourceImpl implements SignatureRequestResource {
 	@Override
 	public Response download(Operator operator, String signatureRequestId) {
 		return Response.ok(signatureRequestApiService.download(operator, signatureRequestId)).build();
+	}
+	
+	@Override
+	public ActionStatus signatureRequestDone(Operator operator, SignatureRequestWebHookPayload signatureRequestWebHookPayload) {
+		log.info("callback from yousign : " + signatureRequestWebHookPayload);
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			String eventName = signatureRequestWebHookPayload.getEventName();
+			if(StringUtils.isEmpty(eventName) || !"signature_request.done".equalsIgnoreCase(eventName)) {
+				return new ActionStatus(ActionStatusEnum.FAIL, " Event not supported : " + eventName);
+			}
+			if(signatureRequestWebHookPayload.getData() != null &&
+					signatureRequestWebHookPayload.getData().getSignatureRequestWebhook() != null &&
+					signatureRequestWebHookPayload.getData().getSignatureRequestWebhook().getDocuments() != null){
+				String signatureRequestId = signatureRequestWebHookPayload.getData().getSignatureRequestWebhook().getId();
+				signatureRequestApiService.download(operator, signatureRequestId);
+			}
+		} catch (Exception e) {
+			processException(e, new ActionStatus(ActionStatusEnum.FAIL, e.getMessage()));
+		}
+		return result;
 	}
 }
