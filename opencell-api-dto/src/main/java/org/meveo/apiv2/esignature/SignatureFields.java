@@ -7,11 +7,11 @@ import org.immutables.value.Value;
 @JsonDeserialize(as = ImmutableSignatureFields.class)
 public interface SignatureFields {
 	
-	default int getPage() { return 1;}
+	int getPage() ;
 	
-	default int getWidth() { return 1;}
+	int getWidth() ;
 	
-	default int getX(){ return 1;}
+	int getX();
 	
-	default int getY(){ return 1;}
+	int getY();
 }

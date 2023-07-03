@@ -19,7 +19,7 @@ public interface SigantureRequest {
 	@Nullable
 	DeliveryMode getDelivery_mode();
 	@Nullable
-	String getCustom_exprience_id();
+	String getCustom_experience_id();
 	@Nullable
 	String getExternal_id();
 	@Nullable

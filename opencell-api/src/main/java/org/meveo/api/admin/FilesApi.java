@@ -393,7 +393,7 @@ public class FilesApi extends BaseApi {
      * @param filePath File Path
      * @return The existing File {@link File}
      */
-    private File checkAndGetExistingFile(String filePath) {
+    public File checkAndGetExistingFile(String filePath) {
 
         File javaXMlFormatFile = (filePath.contains(getProviderRootDir().replace("\\", "/"))) ?
                 new File(filePath) : new File(getProviderRootDir() + File.separator + normalizePath(filePath));
