@@ -26,6 +26,7 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 import static org.meveo.service.base.ValueExpressionWrapper.VAR_BILLING_ACCOUNT;
@@ -1350,7 +1351,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
-        if (StringUtils.isBlank(billingCycle.getCollectionDateDelayEl())) {
+        if (billingCycle != null && isBlank(billingCycle.getCollectionDateDelayEl())) {
             invoice.setInitialCollectionDate(invoice.getDueDate());
             return;
         }
@@ -1363,7 +1364,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Determine invoice due date delay either from Order, Customer account or Billing cycle
         Integer delay = 0;
-        delay = evaluateCollectionDelayExpression(billingCycle.getCollectionDateDelayEl(), billingAccount, invoice, order);
+        if(billingCycle != null) {
+            delay = evaluateCollectionDelayExpression(billingCycle.getCollectionDateDelayEl(), billingAccount, invoice, order);
+        }
         if (delay == null) {
             throw new BusinessException("collection date delay is null");
         }
@@ -3183,11 +3186,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if (isDepositInvoice) {
             invoiceType = invoiceTypeService.getDefaultDeposit();
         } else {
-            if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
+            if (billingCycle != null && !isBlank(billingCycle.getInvoiceTypeEl())) {
                 String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun, billingAccount);
                 invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
             }
-            if (invoiceType == null) {
+            if (billingCycle != null && invoiceType == null) {
                 invoiceType = billingCycle.getInvoiceType();
             }
             if (invoiceType == null) {
