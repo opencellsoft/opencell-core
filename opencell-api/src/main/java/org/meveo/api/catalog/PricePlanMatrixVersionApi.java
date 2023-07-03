@@ -125,16 +125,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                 }
             }
             pricePlanMatrixVersion = populatePricePlanMatrixVersion(new PricePlanMatrixVersion(), pricePlanMatrixVersionDto, VersionStatusEnum.DRAFT, Calendar.getInstance().getTime());
-            AtomicReference<PricePlanMatrixVersion> parameter = new AtomicReference<>(pricePlanMatrixVersion);
-            pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> ppmv.getId() != null)
-            .forEach(ppmv -> {
-                if(ppmv.getValidity() != null && ppmv.getStatus().equals(VersionStatusEnum.PUBLISHED) && ppmv.getValidity().isCorrespondsToPeriod(parameter.get().getValidity(), false)) {
-                    var formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
-                    String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
-                    throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
-                }
-            });
             pricePlanMatrixVersionService.create(pricePlanMatrixVersion);
         } else {
             throw new MeveoApiException("PricePlanMatrixVersion[code=" + pricePlanMatrixVersionDto.getLabel() + ",version=" + pricePlanMatrixVersionDto.getVersion() + "] already exists");
@@ -154,16 +144,18 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             if(from!=null && to!=null && !to.after(from)) {
                 throw new InvalidParameterException("Invalid validity period, the end date must be greather than the start date");
             }
-            
-            pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> pricePlanMatrixVersion.getId() != ppmv.getId())
-            .forEach(ppmv -> {
-                if(ppmv.getValidity() != null && ppmv.getStatus().equals(VersionStatusEnum.PUBLISHED) && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false)) {
-                    var formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
-                    String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
-                    throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
-                }
-            });
+
+            if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())) {
+                pricePlanMatrixVersion.getPricePlanMatrix().getVersions().stream().filter(ppmv -> !pricePlanMatrixVersion.getId().equals(ppmv.getId()))
+                .forEach(ppmv -> {
+                    if(ppmv.getValidity() != null && ppmv.getStatus().equals(VersionStatusEnum.PUBLISHED) && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersionDto.getValidity(), false)) {
+                        var formatter = new SimpleDateFormat("dd/MM/yyyy");
+                        String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
+                        String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
+                        throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
+                    }
+                });
+            }
         }
         if(VersionStatusEnum.PUBLISHED.equals(pricePlanMatrixVersion.getStatus())){
         	if(validity != null && validity.getTo() != null) {
