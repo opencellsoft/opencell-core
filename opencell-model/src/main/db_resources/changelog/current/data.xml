@@ -20415,5 +20415,20 @@ public class CustomGatewayPaymentScript extends PaymentScript {
 			<where>code='OC_MASS_IMPORT_NOTIFICATION'</where>
 		</update>
 	</changeSet>
+    
+    <changeSet id="INTRD-17129_20230627" author="TarikFA.">
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="entity_class" value="org.meveo.model.cpq.offer.QuoteOffer" />
+            <where>entity_class='QuoteOffer'</where>
+        </update>
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="entity_class" value="org.meveo.model.cpq.commercial.OrderOffer" />
+            <where>entity_class='OrderOffer'</where>
+        </update>
+        <update tableName="adm_custom_generic_entity_code">
+            <column name="entity_class" value="org.meveo.model.payments.AccountingScheme" />
+            <where>entity_class='AccountingScheme'</where>
+        </update>
+    </changeSet>
 	        
 </databaseChangeLog>
