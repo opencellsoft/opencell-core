@@ -12004,7 +12004,15 @@
 			<column name="sd_invoice_id" type="bigint"/>
 			<column name="billing_account_id" type="bigint"/>
             <column name="sd_adjustment_id" type="bigint" />
-		</createTable>
+            <column name="seller_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="security_deposit"
+                                 constraintName="fk_seller_security_deposit" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="crm_seller"/>
 
 		<createTable tableName="security_deposit_transaction">
 			<column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -20214,6 +20222,7 @@
     <changeSet id="#INTRD-17026_delete_duplicated_data" author="a.rouaguebe_ext" />
 
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-14368_20230630" author="AbdellatifBARI"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
