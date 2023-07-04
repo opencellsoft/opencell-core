@@ -774,6 +774,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	@Column(name = "auto_matching")
 	@Type(type = "numeric_boolean")
 	private boolean autoMatching;
+	
+    @Column(name = "external_purchase_order_number")
+    @Size(max = 100)
+    private String externalPurchaseOrderNumber;
     
     public Invoice() {
 	}
@@ -825,6 +829,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.invoiceAgregates = new ArrayList<>();
 		this.isReminderLevelTriggered = copy.isReminderLevelTriggered;
 		this.relatedDunningCollectionPlan = copy.relatedDunningCollectionPlan;
+		this.externalPurchaseOrderNumber = copy.externalPurchaseOrderNumber;
 	}
 
 
@@ -2055,4 +2060,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setAutoMatching(boolean autoMatching) {
 		this.autoMatching = autoMatching;
 	}
+
+	public String getExternalPurchaseOrderNumber() {
+		return externalPurchaseOrderNumber;
+	}
+
+	public void setExternalPurchaseOrderNumber(String externalPurchaseOrderNumber) {
+		this.externalPurchaseOrderNumber = externalPurchaseOrderNumber;
+	}
+	
 }

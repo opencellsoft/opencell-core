@@ -16999,5 +16999,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>update ${db.schema.adapted}security_deposit set seller_id=(select seller.id from crm_seller seller order by seller.id desc limit 1) where seller_id is null</sql>
         <addNotNullConstraint tableName="security_deposit" columnName="seller_id" columnDataType="bigint"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-15582_20230704" author="AdilElJaouhari">
+		<addColumn tableName="billing_invoice">
+			<column name="external_purchase_order_number" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

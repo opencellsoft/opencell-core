@@ -3154,6 +3154,7 @@
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
     		<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="auto_matching" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="external_purchase_order_number" type="varchar(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -20223,6 +20224,7 @@
 
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-14368_20230630" author="AbdellatifBARI"/>
+    <changeSet id="#INTRD-15582_20230704" author="AdilElJaouhari" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
