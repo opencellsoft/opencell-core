@@ -11961,7 +11961,15 @@
 			<column name="sd_invoice_id" type="bigint"/>
 			<column name="billing_account_id" type="bigint"/>
             <column name="sd_adjustment_id" type="bigint" />
+            <column name="seller_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
 		</createTable>
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="security_deposit"
+                                 constraintName="fk_seller_security_deposit" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="crm_seller"/>
 
 		<createTable tableName="security_deposit_transaction">
 			<column name="id" type="bigint" autoIncrement="${id.auto}">
