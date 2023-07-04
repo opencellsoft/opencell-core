@@ -131,7 +131,8 @@ public class ContractService extends BusinessService<Contract>  {
 			if (endDatePricePlanVersions.isEmpty() && !pricePlanVersions.isEmpty()){
 				pricePlanVersions.sort(comparing(PricePlanMatrixVersion::getValidity, nullsLast(naturalOrder())));
 				PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanVersions.get(0);
-				if (pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getFrom().compareTo(contract.getBeginDate()) < 0){
+				if (pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getFrom() != null
+						&& pricePlanMatrixVersion.getValidity().getFrom().compareTo(contract.getBeginDate()) < 0) {
 			//NOTE 2		
 					log.error("Start date of the price version id {} should not be prior to the Start date of the contract",pricePlanMatrixVersion.getId());
 					throw new BusinessApiException(
