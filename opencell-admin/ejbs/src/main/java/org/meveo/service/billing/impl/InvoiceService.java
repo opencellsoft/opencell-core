@@ -26,7 +26,6 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 import static org.meveo.service.base.ValueExpressionWrapper.VAR_BILLING_ACCOUNT;
@@ -129,6 +128,8 @@ import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.generics.GenericRequestMapper;
+import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.InvoiceLineRTs;
 import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
@@ -927,13 +928,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private List<RatedTransaction> getRatedTransactions(IBillableEntity entityToInvoice, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, boolean isDraft) {
         List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, invoiceUpToDate, ratedTransactionFilter, rtPaginationSize);
-        // Seen with the PO and Architect, this boolean should only be taken into account to change the status of the invoice (draft or validated). more detail on https://opencellsoft.atlassian.net/browse/INTRD-178
-        // The recovery of OPEN walletOperation should only be done by API with a specific boolean: to be treated in possibly another issue
-        // For the moment, we avoid recovering the Open WO which distorts the calculation of the subscription to be linked for the future invoice (seee getSubscriptionFromRT)
-        /*// if draft add unrated wallet operation
+        // if draft add unrated wallet operation
         if (isDraft) {
             ratedTransactions.addAll(getDraftRatedTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, invoiceUpToDate));
-        }*/
+        }
         return ratedTransactions;
     }
 
@@ -1351,7 +1349,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
-        if (billingCycle != null && isBlank(billingCycle.getCollectionDateDelayEl())) {
+        if (StringUtils.isBlank(billingCycle.getCollectionDateDelayEl())) {
             invoice.setInitialCollectionDate(invoice.getDueDate());
             return;
         }
@@ -1364,9 +1362,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Determine invoice due date delay either from Order, Customer account or Billing cycle
         Integer delay = 0;
-        if(billingCycle != null) {
-            delay = evaluateCollectionDelayExpression(billingCycle.getCollectionDateDelayEl(), billingAccount, invoice, order);
-        }
+        delay = evaluateCollectionDelayExpression(billingCycle.getCollectionDateDelayEl(), billingAccount, invoice, order);
         if (delay == null) {
             throw new BusinessException("collection date delay is null");
         }
@@ -1432,10 +1428,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param automaticInvoiceCheck
      */
     private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck, boolean save) {
+    	invoice = invoiceService.refreshOrRetrieve(invoice);
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
                 (invoice.getInvoiceType().getInvoiceValidationScript() != null
                         || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
-            invoice = invoiceService.refreshOrRetrieve(invoice);
+           
             InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
             if(invoice.getInvoiceType().getInvoiceValidationScript() != null) {
                 ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
@@ -3186,11 +3183,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if (isDepositInvoice) {
             invoiceType = invoiceTypeService.getDefaultDeposit();
         } else {
-            if (billingCycle != null && !isBlank(billingCycle.getInvoiceTypeEl())) {
+            if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
                 String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun, billingAccount);
                 invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
             }
-            if (billingCycle != null && invoiceType == null) {
+            if (invoiceType == null) {
                 invoiceType = billingCycle.getInvoiceType();
             }
             if (invoiceType == null) {
@@ -5512,7 +5509,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(seller == null) {
         	throw new BusinessApiException("Billing account " + billingAccountCode + " doesn't have a default seller. Please provide a seller for this invoice.");
         }
-        
 
         Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, invoiceType, comment, seller,
                 buildAutoMatching(resource.getAutoMatching(), invoiceType));
@@ -5528,6 +5524,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoiceTypeService.getListAdjustementCode().contains(invoiceType.getCode())) {
             return autoMatchingInput != null ? autoMatchingInput : false;
         }
+
         return isAutoMatching;
     }
 
@@ -6886,7 +6883,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
         if(lastAppliedRate == null) return;
-        toUpdate = refreshOrRetrieve(toUpdate);
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
                         InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
                                 && linkedInvoice.getLinkedInvoiceValue() != null &&
@@ -7536,10 +7532,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (invoice.getPaymentStatus() != InvoicePaymentStatusEnum.PAID) {
                 LinkedInvoice linkedInvoice = findBySourceInvoiceByAdjId(invoice.getId());
                 if (linkedInvoice != null) {
+
                     AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(linkedInvoice.getInvoice()).get(0);
                     if (aoAdjInvoice == null) { // in case of the call is from validate API without generatedAO yet
                         aoAdjInvoice = accountOperationService.listByInvoice(invoice).get(0);
                     }
+
                     if (aoAdjInvoice.getMatchingStatus() != MatchingStatusEnum.L) {
                         try {
                             matchingCodeService.matchOperations(aoAdjInvoice.getCustomerAccount().getId(), aoAdjInvoice.getCustomerAccount().getCode(),
@@ -7551,8 +7549,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
                 }
+
             }
+
         }
     }
+    
+	@SuppressWarnings("unchecked")
+	public List<Invoice> findByFilter(Map<String, Object> filters) {
+		PaginationConfiguration configuration = getPaginationConfigurationFromFilter(filters);
+		QueryBuilder query = getQuery(configuration);
+		return query.getQuery(getEntityManager()).getResultList();
+	}
+
+	private PaginationConfiguration getPaginationConfigurationFromFilter(Map<String, Object> filters) {
+		GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+		filters = genericRequestMapper.evaluateFilters(filters, entityClass);
+		return new PaginationConfiguration(filters);
+	}
 
 }

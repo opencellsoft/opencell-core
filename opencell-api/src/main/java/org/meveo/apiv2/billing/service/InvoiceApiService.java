@@ -9,11 +9,14 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -22,18 +25,24 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.billing.QuarantineBillingRunDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.apiv2.billing.*;
+import org.meveo.apiv2.billing.ProcessCdrListResult.Statistics;
 import org.meveo.apiv2.billing.impl.InvoiceMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.StringUtils;
@@ -66,6 +75,9 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 
 	@Inject
 	private InvoiceBaseApi invoiceBaseApi;
+	
+    @Inject
+    private InvoiceApi invoiceApi;
 
 	@Inject
 	protected ResourceBundle resourceMessages;
@@ -548,5 +560,72 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	 */
 	public void setInvoiceExchangeRate(Invoice invoice, BigDecimal exchangeRate) {
 		invoiceService.refreshConvertedAmounts(invoice, exchangeRate, new Date());
+	}
+
+	public Object validateInvoices(Map<String, Object> filters, ProcessingModeEnum mode, boolean failOnValidatedInvoice, boolean failOnCanceledInvoice, boolean ignoreValidationRules) {
+		ValidateInvoiceResult result = new ValidateInvoiceResult();
+		
+		if (ProcessingModeEnum.STOP_ON_FIRST_FAIL.equals(mode)) {
+			throw new InvalidParameterException("Mode STOP_ON_FIRST_FAIL is not valid for this API");
+		}
+		
+		if (MapUtils.isEmpty(filters)) {
+			throw new InvalidParameterException("filters is required");
+		}
+		
+		List<Invoice> invoices = invoiceService.findByFilter(filters);
+		if (invoices == null || invoices.isEmpty()) {
+			throw new NotFoundException("No invoice found for the provided filters");
+		}
+		
+		Statistics statics = result.getStatistics();
+		statics.setTotal(invoices.size());
+		invoices.forEach(invoice -> {
+			try {
+				if (InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
+					if (failOnValidatedInvoice) {
+						result.getInvoicesNotValidated().add(new InvoiceNotValidated(invoice.getId(), String.format("Invoice %s already validated", invoice.getInvoiceNumber())));
+						statics.addFail();
+					}
+				} else if (InvoiceStatusEnum.CANCELED.equals(invoice.getStatus())) {
+					if (failOnCanceledInvoice) {
+						result.getInvoicesNotValidated().add(new InvoiceNotValidated(invoice.getId(), String.format("Cannot validate already canceled invoice %s", invoice.getId())));
+						statics.addFail();
+					}
+				} else {
+					invoice = validateInvoice(ignoreValidationRules, invoice);
+					if (InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
+						result.getInvoicesValidated().add(invoice.getId());
+						statics.addSuccess();
+					} else {
+						result.getInvoicesNotValidated().add(new InvoiceNotValidated(invoice.getId(), invoice.getRejectReason()));
+						statics.addFail();
+					}
+				}
+			} catch (Exception e) {
+				result.getInvoicesNotValidated().add(new InvoiceNotValidated(invoice.getId(), e.getMessage()));
+				statics.addFail();
+				if (mode == ProcessingModeEnum.ROLLBACK_ON_ERROR) {
+					throw new BadRequestException(e.getMessage());
+				}
+			}
+
+		});
+
+		result.getActionStatus().setMessage(String.format("Invoices : %d validated, %d failed", result.getInvoicesValidated().size(), result.getInvoicesNotValidated().size()));
+		return result;
+	}
+
+	private Invoice validateInvoice(boolean ignoreValidationRules, Invoice invoice) throws Exception {
+		if (ignoreValidationRules) {
+			invoiceService.validateInvoice(invoice);
+		} else {
+			invoiceService.rebuildInvoice(invoice, true);
+			invoice = invoiceService.retrieveIfNotManaged(invoice);
+			if (InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())) { 
+				invoiceApi.validateInvoice(invoice.getId(), false, false, true);
+			}
+		}
+		return invoiceService.refreshOrRetrieve(invoice);
 	}
 }
