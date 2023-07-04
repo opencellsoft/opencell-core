@@ -21,6 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
@@ -109,6 +110,10 @@ public class SecurityDeposit extends BusinessCFEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sd_adjustment_id")
     private Invoice securityDepositAdjustment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
     
     public BillingAccount getBillingAccount() {
         return billingAccount;
@@ -253,4 +258,13 @@ public class SecurityDeposit extends BusinessCFEntity {
     public void setSecurityDepositAdjustment(Invoice securityDepositAdjustment) {
         this.securityDepositAdjustment = securityDepositAdjustment;
     }
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+
 }
