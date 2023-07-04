@@ -15200,5 +15200,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="#INTRD-14336_20230227" author="ZBariki">
+        <addColumn tableName="cpq_contract_item">
+            <column name="application_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="billing_wallet_operation">
+            <column name="contract_line_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="billing_wallet_operation" baseColumnNames="contract_line_id"
+                                 constraintName="fk_wo_contract_line_id" referencedTableName="cpq_contract_item"
+                                 referencedColumnNames="id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
+	
 	
 </databaseChangeLog>
