@@ -578,6 +578,8 @@ public class ContractApi extends BaseApi{
 						contractItem.setContract(entityToSave);
 						contractItem.updateAudit(currentUser);
 
+						contractItem.setCfValues(ci.getCFValuesCopy());
+
 						if(ci.getPricePlan() != null) {
 							contractItem.setPricePlan(duplicatePricePlan(contractItem.getCode(), ci.getPricePlan()));
 						}
