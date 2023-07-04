@@ -402,5 +402,15 @@ public interface InvoiceResource {
 	@ApiResponse(responseCode = "404", description = "The invoice entity doesn't exist"),
 	@ApiResponse(responseCode = "400", description = "Action is failed") })
 	Response setCustomRate(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
-			@Parameter(description = "invoice exchange rate", required = false) InvoiceExchangeRateInput input);	
+			@Parameter(description = "invoice exchange rate", required = false) InvoiceExchangeRateInput input);
+	
+
+	@PUT
+	@Path("/validation")
+	@Operation(summary = "validate a selection of invoices in a billing run", tags = {"Invoices" }, 
+				responses = {
+				@ApiResponse(responseCode = "200", description = "The selection of invoices is successfully validated"),
+				@ApiResponse(responseCode = "404", description = "The selection of invoices is empty"),
+				@ApiResponse(responseCode = "400", description = "Action is failed") })
+	Response validateInvoices(@Parameter(description = "dto contains list for invoices", required = true) ValidateInvoiceDto validateInvoiceDto);
 }

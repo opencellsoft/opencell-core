@@ -129,6 +129,8 @@ import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.generics.GenericRequestMapper;
+import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.InvoiceLineRTs;
 import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
@@ -1432,10 +1434,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param automaticInvoiceCheck
      */
     private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck, boolean save) {
+    	invoice = invoiceService.refreshOrRetrieve(invoice);
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
                 (invoice.getInvoiceType().getInvoiceValidationScript() != null
                         || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
-            invoice = invoiceService.refreshOrRetrieve(invoice);
             InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
             if(invoice.getInvoiceType().getInvoiceValidationScript() != null) {
                 ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
@@ -7554,5 +7556,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
     }
+    
+	@SuppressWarnings("unchecked")
+	public List<Invoice> findByFilter(Map<String, Object> filters) {
+		PaginationConfiguration configuration = getPaginationConfigurationFromFilter(filters);
+		QueryBuilder query = getQuery(configuration);
+		return query.getQuery(getEntityManager()).getResultList();
+	}
+
+	private PaginationConfiguration getPaginationConfigurationFromFilter(Map<String, Object> filters) {
+		GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+		filters = genericRequestMapper.evaluateFilters(filters, entityClass);
+		return new PaginationConfiguration(filters);
+	}
 
 }

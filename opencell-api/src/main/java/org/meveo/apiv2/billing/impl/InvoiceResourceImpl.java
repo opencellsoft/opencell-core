@@ -55,6 +55,7 @@ import org.meveo.apiv2.billing.InvoiceMatchedOperation;
 import org.meveo.apiv2.billing.InvoicePatchInput;
 import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.RejectReasonInput;
+import org.meveo.apiv2.billing.ValidateInvoiceDto;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.billing.service.InvoiceSubTotalsApiService;
@@ -545,5 +546,10 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
 		invoiceApiService.setInvoiceExchangeRate(invoice, input.getExchangeRate());
 		return Response.ok().build();
+	}
+
+	@Override
+	public Response validateInvoices(ValidateInvoiceDto validateInvoiceDto) {
+		return Response.ok().entity(invoiceApiService.validateInvoices(validateInvoiceDto.getFilters(), validateInvoiceDto.getMode(), validateInvoiceDto.getFailOnValidatedInvoice(), validateInvoiceDto.getFailOnCanceledInvoice(), validateInvoiceDto.getIgnoreValidationRules())).build();
 	}
 }
