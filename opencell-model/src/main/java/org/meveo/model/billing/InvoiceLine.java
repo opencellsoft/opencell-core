@@ -402,6 +402,11 @@ public class InvoiceLine extends AuditableCFEntity {
 	@Column(name = "open_order_number")
 	@Size(max = 255)
 	private String openOrderNumber;
+
+	/** The source invoiceLine, from which the adjustment is made */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "linked_invoice_line_id", nullable = false, referencedColumnName = "id")
+	private InvoiceLine linkedInvoiceLine;
     
 	public InvoiceLine() {
 	}
@@ -916,8 +921,16 @@ public class InvoiceLine extends AuditableCFEntity {
 
 	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
 		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
-	}   
-    
+	}
+
+	public InvoiceLine getLinkedInvoiceLine() {
+		return linkedInvoiceLine;
+	}
+
+	public void setLinkedInvoiceLine(InvoiceLine linkedInvoiceLine) {
+		this.linkedInvoiceLine = linkedInvoiceLine;
+	}
+
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
