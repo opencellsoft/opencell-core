@@ -982,18 +982,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         walletOperation.setAmountWithTax(amount);
         AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
         walletOperation.setAccountingArticle(accountingArticle);
-        // Determine and set tax if it was not set before.
-        // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
-        if (walletOperation.getTax() == null || (accountingArticle != null && accountingArticle.getTaxClass() != null &&
-                !accountingArticle.getTaxClass().equals(walletOperation.getTaxClass()))) {
-            TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
-            if(taxInfo==null) {
-                throw new BusinessException("No tax found for the chargeInstance "+ walletOperation.getChargeInstance().getCode());
-            }
-            walletOperation.setTaxClass(taxInfo.taxClass);
-            walletOperation.setTax(taxInfo.tax);
-            walletOperation.setTaxPercent(taxInfo.tax.getPercent());
+
+        TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
+        if(taxInfo==null) {
+            throw new BusinessException("No tax found for the chargeInstance "+ walletOperation.getChargeInstance().getCode());
         }
+        walletOperation.setTaxClass(taxInfo.taxClass);
+        walletOperation.setTax(taxInfo.tax);
+        walletOperation.setTaxPercent(taxInfo.tax.getPercent());
 
         // Unit prices and unit taxes are with higher precision
         BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitPrice, unitPrice, walletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
