@@ -797,7 +797,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             
             // Override wallet operation parameters using PP EL parameters
             setWalletOperationPropertiesFromAPriceplan(bareWalletOperation, pricePlan);
-            computeAmounts(bareWalletOperation, unitPriceWithTax, unitPriceWithoutTax);
+            calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
+            computeTransactionalAmounts(bareWalletOperation);
         }
 
         // Execute a final rating script set on offer template
@@ -1222,7 +1223,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     }
                 }
             }
-            computeAmounts(operation, unitAmountWithTax, unitAmountWithoutTax);
+            calculateAmounts(operation, unitAmountWithoutTax, unitAmountWithTax);
+            computeTransactionalAmounts(operation);
 
         } else {
             operation.setUnitAmountWithoutTax(null);
@@ -1531,12 +1533,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * Compute amounts and transactional amount for a given wallet operation
      *
      * @param walletOperation Wallet operation
-     * @param unitAmountWithTax unit amount with tax
-     * @param unitAmountWithoutTax unit amount without tax
      */
-    public void computeAmounts(WalletOperation walletOperation,
-                               BigDecimal unitAmountWithTax, BigDecimal unitAmountWithoutTax) {
-        calculateAmounts(walletOperation, unitAmountWithoutTax, unitAmountWithTax);
+    public void computeTransactionalAmounts(WalletOperation walletOperation) {
         if (walletOperation.isUseSpecificPriceConversion()) {
             calculateTransactionalAmountsFromCatalog(walletOperation,
                     walletOperation.getTransactionalUnitAmountWithoutTax(),
