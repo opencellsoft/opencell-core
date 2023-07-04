@@ -204,7 +204,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             isExonerated = billingAccountService.isExonerated(securityDepositInput.getBillingAccount());
         }
         TaxInfo recalculatedTaxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), 
-            securityDepositInput.getBillingAccount().getCustomerAccount().getCustomer().getSeller(), 
+            securityDepositInput.getSeller(),
             securityDepositInput.getBillingAccount(), null, new Date(), null, isExonerated, false, invoiceLine.getTax());
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(securityDepositInput.getAmount(), securityDepositInput.getAmount(), 
             recalculatedTaxInfo.tax.getPercent(), appProvider.isEntreprise(), appProvider.getInvoiceRounding(),

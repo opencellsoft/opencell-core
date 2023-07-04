@@ -5484,7 +5484,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(advType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, "SECURITY_DEPOSIT");
         }
-        Seller defaultSeller = securityDepositInput.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        Seller defaultSeller = securityDepositInput.getSeller();
 		Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "", defaultSeller);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
