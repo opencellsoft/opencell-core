@@ -1,8 +1,12 @@
 package org.meveo.service.cpq;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+import static java.util.stream.Collectors.toList;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -11,9 +15,9 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
@@ -23,12 +27,10 @@ import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import static java.lang.String.format;
 /**
  * @author Tarik FAKHOURI.
  * @version 10.0
@@ -43,7 +45,7 @@ public class ContractItemService extends BusinessService<ContractItem> {
 
 //	private static final String PRODUCT_ATTRIBUTE_IS_REQUIRED = "attribute (%d) is missing for creation a new contract item attribute";	
 	private static final String CONTRACT_STATUS_NOT_DRAFT = "can not add the new contract of item, cause the current contract it not DRAFT";	
-	private final static String CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE = "item contract (%s) can not be update nor delete because its status is %s";
+	private static final String CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE = "item contract (%s) can not be update nor delete because its status is %s";
 	
 	@Inject
 	private ContractService contractService;
@@ -55,10 +57,6 @@ public class ContractItemService extends BusinessService<ContractItem> {
 	private ChargeTemplateServiceAll chargeTemplateServiceAll;
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
-	@Inject
-	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-	@Inject
-	private PricePlanMatrixService pricePlanMatrixService;
 	
 	private final static BigDecimal HUNDRED = new BigDecimal("100");
 	
@@ -78,7 +76,7 @@ public class ContractItemService extends BusinessService<ContractItem> {
 			LOGGER.info("Updating item contract ({}) successfuly", contractItem.getCode());
 			return;
 		}
-		throw new BusinessApiException(String.format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItem.getCode(), contract.getStatus().toString()));
+		throw new BusinessApiException(format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItem.getCode(), contract.getStatus().toString()));
 	}
 
 	/**
@@ -92,7 +90,7 @@ public class ContractItemService extends BusinessService<ContractItem> {
 			throw new EntityDoesNotExistsException(ContractItem.class, contractItemCode);
 		}
 		if(item.getContract() != null && !ContractStatusEnum.DRAFT.toString().equals(item.getContract().getStatus())) {
-			throw new BusinessException(String.format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItemCode, item.getContract().getStatus().toString()));
+			throw new BusinessException(format(CONTRACT_ITEM_STATUS_NOT_DRAFT_CAN_NOT_REMOVED_OR_UPDATE, contractItemCode, item.getContract().getStatus().toString()));
 		}
 		LOGGER.info("contract item ({}) successfully deleted", contractItemCode);
 		remove(item);
@@ -123,36 +121,52 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		
 		final ServiceTemplate serviceTemplate = serviceTemplateService.findById(idServiceTemplate);
 		item.setServiceTemplate(serviceTemplate);
-		/*item.setRate(rate);
-		item.setAmountWithoutTax(amountWithoutTax);*/
 		
 		this.create(item);	
 		
 	}
+	
+	 @SuppressWarnings("unchecked")
+	    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate,WalletOperation walletOperation) {
 
-    @SuppressWarnings("unchecked")
-    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
-        ContractItem contractItem = null;
+	        Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
+					.setParameter("contractId", contract.getId())
+					.setParameter("offerId", offer.getId())
+					.setParameter("productCode", productCode)
+					.setParameter("chargeTemplateId", chargeTemplate.getId());
+	        List<ContractItem> applicableContractItems = query.getResultList();
 
-        Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts").setParameter("contractId", contract.getId()).setParameter("offerId", offer.getId())
-            .setParameter("productCode", productCode).setParameter("chargeTemplateId", chargeTemplate.getId());
-        List<ContractItem> applicableContractItems = query.getResultList();
+	        if (!applicableContractItems.isEmpty()) {
+				Map<Object, Object> contextVariables = new HashMap<>();
+				contextVariables.put("op", walletOperation);
+				contextVariables.put("contract", contract);
+				applicableContractItems =
+						applicableContractItems
+								.stream()
+								.filter(contractLine -> isBlank(contractLine.getApplicationEl())
+										|| evaluateApplicationEl(contractLine, contextVariables))
+								.collect(toList());
+	        }
+	        return !applicableContractItems.isEmpty() ? applicableContractItems.get(0) : null;
+	    
+	    }
 
-        if (!applicableContractItems.isEmpty()) {
-            if (applicableContractItems.size() > 1) {
-                log.error("Contract " + contract.getCode() + "has more than one item ");
-
-            } else {
-                contractItem = applicableContractItems.get(0);
-            }
-        }
-        return contractItem;
-    }
+	private boolean evaluateApplicationEl(ContractItem contractLine, Map<Object, Object> context) {
+		try {
+			context.put("contractLine", contractLine);
+			return evaluateExpression(contractLine.getApplicationEl(), context, Boolean.class);
+		} catch (Exception exception) {
+			throw new BusinessException(format("Error occurred while evaluation contract line EL, contract line code : %s",
+					contractLine.getCode()));
+		}
+	}
+    
+    
     
     @SuppressWarnings("unchecked")
-    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate) {
+    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate,WalletOperation walletOperation) {
         for (Contract contract : contracts) {
-            ContractItem contractItem = getApplicableContractItem(contract, offer, productCode, chargeTemplate);
+            ContractItem contractItem = getApplicableContractItem(contract, offer, productCode, chargeTemplate,walletOperation);
             if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
                 return contract;
             };
