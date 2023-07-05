@@ -8,6 +8,7 @@ import org.meveo.model.billing.InvoiceValidationRule;
 import org.meveo.service.base.BusinessService;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.Query;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -18,10 +19,13 @@ import java.util.stream.Collectors;
 
 @Stateless
 public class InvoiceValidationRulesService extends BusinessService<InvoiceValidationRule> {
+	
+	@Inject
+	InvoiceTypeService invoiceTypeService;
 
     public void updateInvoiceTypePriority(InvoiceValidationRule invoiceValidationRule) {
 
-        InvoiceType invoiceType = invoiceValidationRule.getInvoiceType();
+    	InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoiceValidationRule.getInvoiceType());
         List<InvoiceValidationRule> invoiceValidationRules = invoiceType.getInvoiceValidationRules()
 				.stream().filter(rule -> Objects.isNull(rule.getParentRule())).collect(Collectors.toList());
 
@@ -33,7 +37,7 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
     }
 
 	public void reorderInvoiceValidationRules(InvoiceValidationRule invoiceValidationRule, boolean remove) {
-		InvoiceType invoiceType = invoiceValidationRule.getInvoiceType();
+		InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoiceValidationRule.getInvoiceType());
 		List<InvoiceValidationRule> invoiceValidationRules = invoiceType.getInvoiceValidationRules()
 				.stream().filter(rule -> Objects.isNull(rule.getParentRule())).collect(Collectors.toList());
 
