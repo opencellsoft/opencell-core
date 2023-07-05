@@ -1587,6 +1587,9 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
             quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
             quotePrice.setCurrencyCode(accountingArticlePrice.getCurrencyCode());
+            quotePrice.setContractItem(accountingArticlePrice.getContractItem());
+            quotePrice.setPricePlanMatrixVersion(accountingArticlePrice.getPricePlanMatrixVersion());
+            quotePrice.setPricePlanMatrixLine(accountingArticlePrice.getPricePlanMatrixLine());
             if(!PriceLevelEnum.OFFER.equals(level)) {
                 quotePriceService.create(quotePrice);
                 quotePriceService.getEntityManager().flush();
@@ -1606,9 +1609,12 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
             if(quotePrice.getAmountWithoutTaxWithoutDiscount().compareTo(BigDecimal.ZERO)==0 && a.getDiscountedQuotePrice()==null) {
            	 quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTax());
-           }  
+           }
+            quotePrice.setContractItem(a.getContractItem());
+            quotePrice.setPricePlanMatrixVersion(a.getPricePlanMatrixVersion());
+            quotePrice.setPricePlanMatrixLine(a.getPricePlanMatrixLine());
        	 if(b.getDiscountedQuotePrice()==null)
-            	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
+            quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
             quotePrice.setTaxRate(a.getTaxRate());
             quotePrice.setCurrencyCode(a.getCurrencyCode());
             quotePrice.setChargeTemplate(a.getChargeTemplate());
@@ -1716,13 +1722,12 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setTaxRate(wo.getTaxPercent());
             quotePrice.setPricePlanMatrixVersion(wo.getPricePlanMatrixVersion());
             quotePrice.setPricePlanMatrixLine(wo.getPricePlanMatrixLine());
-            //quotePrice.setContractItem(wo.getContractItem());
+            quotePrice.setContractItem(wo.getContractLine());
             quotePriceService.create(quotePrice);
             quoteArticleLine.getQuotePrices().add(quotePrice);
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
             accountingPrices.add(quotePrice);
         }
-        //Calculate totals by offer
 
         //Calculate totals by offer
         Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingPrices.stream()

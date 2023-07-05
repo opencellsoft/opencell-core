@@ -19064,11 +19064,8 @@
     <changeSet id="#INTRD-14522_20230301" author="TarikFA." />
     <changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe" />
     <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
-<<<<<<< .mine
     <changeSet id="#INTRD-17149_04072023" author="Mbarek-Ay"/>
-=======
     <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
->>>>>>> .theirs
     
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
