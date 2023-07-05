@@ -1711,9 +1711,11 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
             quotePrice.setCurrencyCode(accountingArticlePrice.getCurrencyCode());
 		    quotePrice.setQuoteArticleLine(accountingArticlePrice.getQuoteArticleLine());
+		    quotePrice.setOverchargedUnitAmountWithoutTax(accountingArticlePrice.getOverchargedUnitAmountWithoutTax());
+		    quotePrice.setApplyDiscountsOnOverridenPrice(accountingArticlePrice.getApplyDiscountsOnOverridenPrice());
             if(!PriceLevelEnum.OFFER.equals(level)) {
                 quotePriceService.create(quotePrice);
-                quotePriceService.getEntityManager().flush();
+                //quotePriceService.getEntityManager().flush();
             }
             log.debug("reducePrices1 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
             return Optional.of(quotePrice);
@@ -1732,11 +1734,19 @@ public class CpqQuoteApi extends BaseApi {
            	 quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTax());
            }
 		    quotePrice.setQuoteArticleLine(a.getQuoteArticleLine());
+			if(a.getOverchargedUnitAmountWithoutTax() != null && b.getOverchargedUnitAmountWithoutTax() != null) {
+				quotePrice.setOverchargedUnitAmountWithoutTax(a.getOverchargedUnitAmountWithoutTax().add(b.getOverchargedUnitAmountWithoutTax()));
+			}else if(a.getOverchargedUnitAmountWithoutTax() != null) {
+				quotePrice.setOverchargedUnitAmountWithoutTax(a.getOverchargedUnitAmountWithoutTax());
+			}else if(b.getOverchargedUnitAmountWithoutTax() != null){
+				quotePrice.setOverchargedUnitAmountWithoutTax(b.getOverchargedUnitAmountWithoutTax());
+			}
        	 if(b.getDiscountedQuotePrice()==null)
             	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
             quotePrice.setTaxRate(a.getTaxRate());
             quotePrice.setCurrencyCode(a.getCurrencyCode());
             quotePrice.setChargeTemplate(a.getChargeTemplate());
+		    quotePrice.setApplyDiscountsOnOverridenPrice(a.getApplyDiscountsOnOverridenPrice());
             if(a.getRecurrenceDuration()!=null) {
             	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
             }
