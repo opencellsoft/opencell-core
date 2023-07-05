@@ -1593,6 +1593,7 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setPricePlanMatrixVersion(accountingArticlePrice.getPricePlanMatrixVersion());
                 quotePrice.setPricePlanMatrixLine(accountingArticlePrice.getPricePlanMatrixLine());
               }
+		    quotePrice.setQuoteArticleLine(accountingArticlePrice.getQuoteArticleLine());
             if(!PriceLevelEnum.OFFER.equals(level)) {
                 quotePriceService.create(quotePrice);
                 quotePriceService.getEntityManager().flush();
@@ -1619,6 +1620,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setPricePlanMatrixVersion(a.getPricePlanMatrixVersion());
             quotePrice.setPricePlanMatrixLine(a.getPricePlanMatrixLine());
           }
+		    quotePrice.setQuoteArticleLine(a.getQuoteArticleLine());
        	 if(b.getDiscountedQuotePrice()==null)
             quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
             quotePrice.setTaxRate(a.getTaxRate());
