@@ -123,10 +123,12 @@ public class PricePlanMatrixLineApi extends BaseApi {
     }
 
     public void remove(PricePlanMatrixLinesDto pricePlanMatrixLinesDto) {
-        for (PricePlanMatrixLineDto pricePlanMatrixLineDto: pricePlanMatrixLinesDto.getPricePlanMatrixLines()) {            
+        for (PricePlanMatrixLineDto pricePlanMatrixLineDto : pricePlanMatrixLinesDto.getPricePlanMatrixLines()) {
             PricePlanMatrixLine ppmLine = pricePlanMatrixLineService.findById(pricePlanMatrixLineDto.getPpmLineId());
-            ppmLine.getPricePlanMatrixVersion().getLines().remove(ppmLine);
-            pricePlanMatrixVersionService.update(ppmLine.getPricePlanMatrixVersion());
+            if (ppmLine == null) {
+                throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, pricePlanMatrixLineDto.getPpmLineId());
+            }
+            pricePlanMatrixLineService.remove(ppmLine);
         }
     }
     
