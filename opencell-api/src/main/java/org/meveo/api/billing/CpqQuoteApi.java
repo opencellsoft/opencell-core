@@ -1737,6 +1737,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
             quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
             quotePrice.setCurrencyCode(accountingArticlePrice.getCurrencyCode());
+		    quotePrice.setQuoteArticleLine(accountingArticlePrice.getQuoteArticleLine());
             if(!PriceLevelEnum.OFFER.equals(level)) {
                 quotePriceService.create(quotePrice);
                 quotePriceService.getEntityManager().flush();
@@ -1756,7 +1757,8 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
             if(quotePrice.getAmountWithoutTaxWithoutDiscount().compareTo(BigDecimal.ZERO)==0 && a.getDiscountedQuotePrice()==null) {
            	 quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTax());
-           }  
+           }
+		    quotePrice.setQuoteArticleLine(a.getQuoteArticleLine());
        	 if(b.getDiscountedQuotePrice()==null)
             	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
             quotePrice.setTaxRate(a.getTaxRate());
