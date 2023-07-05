@@ -5502,7 +5502,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class, billingAccountCode);
         final String invoiceTypeCode = (invoiceTypeCodeInput != null && !invoiceTypeCodeInput.isEmpty() && !invoiceTypeCodeInput.isBlank()) ? resource.getInvoiceTypeCode() : "COM";
         InvoiceType invoiceType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
-        String comment = resource.getComment(); 
+        String comment = resource.getComment();
+        String purchaseOrder = resource.getPurchaseOrder();
         
         Seller seller;
         if(resource.getSeller() != null) {
@@ -5516,7 +5517,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, invoiceType, comment, seller,
-                buildAutoMatching(resource.getAutoMatching(), invoiceType));
+                buildAutoMatching(resource.getAutoMatching(), invoiceType), purchaseOrder);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
@@ -5539,7 +5540,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new EntityDoesNotExistsException(InvoiceType.class, "SECURITY_DEPOSIT");
         }
         Seller defaultSeller = securityDepositInput.getSeller();
-		Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "", defaultSeller, false);
+		Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "", defaultSeller, false, null);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
@@ -5556,7 +5557,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param comment Comment
      * @return {@link Invoice}
      */
-    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order, BillingAccount billingAccount, InvoiceType advType, String comment, Seller seller, boolean isAutoMatching) {
+    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order, BillingAccount billingAccount, InvoiceType advType, String comment, Seller seller, boolean isAutoMatching, String purchaseOrder) {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(advType);
         invoice.setBillingAccount(billingAccount);
@@ -5579,6 +5580,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setAmountWithoutTaxBeforeDiscount(BigDecimal.ZERO);
         invoice.setComment(comment);
         invoice.setAutoMatching(isAutoMatching);
+        invoice.setExternalPurchaseOrderNumber(purchaseOrder);
         return invoice;
     }
 
