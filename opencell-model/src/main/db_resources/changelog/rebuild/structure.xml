@@ -10077,6 +10077,9 @@
 			<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
 			<column name="discounted_amount" type="numeric(23,12)"/>
 			<column name="sequence" type="int4"/>
+			<column name="price_plan_matrix_version_id" type="bigint" />
+			<column name="price_plan_matrix_line_id" type="bigint" />
+			<column name="contract_item_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -17271,6 +17274,26 @@
                 baseColumnNames="price_list_line_id"
                 baseTableName="billing_wallet_operation" />
     </changeSet>
+    
+     <changeSet id="#INTRD-17149_04072023_fk" author="Mbarek-Ay">
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk" 
+								 referencedTableName="cpq_price_plan_version" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="cpq_quote_price" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="price_plan_matrix_line_id_fk" 
+								 referencedTableName="cpq_price_plan_matrix_line" 
+								 baseColumnNames="price_plan_matrix_line_id" 
+								 baseTableName="cpq_quote_price" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="contract_item_fk" 
+								 referencedTableName="cpq_contract_item" 
+								 baseColumnNames="contract_item_id" 
+								 baseTableName="cpq_quote_price" 
+								 referencedColumnNames="id"/>
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -20225,6 +20248,7 @@
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-14368_20230630" author="AbdellatifBARI"/>
     <changeSet id="#INTRD-15582_20230704" author="AdilElJaouhari" />
+     <changeSet id="#INTRD-17149_04072023" author="Mbarek-Ay"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
