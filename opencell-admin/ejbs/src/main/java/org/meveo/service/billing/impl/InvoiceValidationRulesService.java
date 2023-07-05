@@ -37,7 +37,7 @@ public class InvoiceValidationRulesService extends BusinessService<InvoiceValida
     }
 
 	public void reorderInvoiceValidationRules(InvoiceValidationRule invoiceValidationRule, boolean remove) {
-		InvoiceType invoiceType = invoiceValidationRule.getInvoiceType();
+		InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoiceValidationRule.getInvoiceType());
 		List<InvoiceValidationRule> invoiceValidationRules = invoiceType.getInvoiceValidationRules()
 				.stream().filter(rule -> Objects.isNull(rule.getParentRule())).collect(Collectors.toList());
 
