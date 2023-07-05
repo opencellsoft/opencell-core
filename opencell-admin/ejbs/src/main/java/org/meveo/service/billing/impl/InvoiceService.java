@@ -7251,7 +7251,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void applyAdvanceInvoice(Invoice invoice, List<Invoice> advInvoices) {
         BigDecimal invoiceBalance = invoice.getTransactionalInvoiceBalance();
-        if (invoiceBalance != null) {
+        if (invoiceBalance != null && CollectionUtils.isNotEmpty(invoice.getLinkedInvoices())) {
             CommercialOrder orderInvoice = invoice.getCommercialOrder();
             BigDecimal sum = invoice.getLinkedInvoices().stream()
                     .filter(i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType()))
