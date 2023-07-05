@@ -1714,6 +1714,9 @@ public class CpqQuoteApi extends BaseApi {
             } 
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():wo.getAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
+            quotePrice.setPricePlanMatrixVersion(wo.getPricePlanMatrixVersion());
+            quotePrice.setPricePlanMatrixLine(wo.getPricePlanMatrixLine());
+            //quotePrice.setContractItem(wo.getContractItem());
             quotePriceService.create(quotePrice);
             quoteArticleLine.getQuotePrices().add(quotePrice);
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);

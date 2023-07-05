@@ -88,6 +88,9 @@ public class PriceDTO extends BaseEntityDto {
     private BigDecimal discountedAmount;
     private Integer sequence;
     private Long id;
+    private String contractItemCode;
+    private Long pricePlanMatrixVersionId;
+    private Long pricePlanMatrixLineId;
     
     private CustomFieldsDto customFields;
     
@@ -127,6 +130,9 @@ public class PriceDTO extends BaseEntityDto {
 	   overchargedUnitAmountWithoutTax=quotePrice.getOverchargedUnitAmountWithoutTax();
 	   discountedAmount=quotePrice.getDiscountedAmount();
 	   sequence=quotePrice.getSequence();
+	   contractItemCode=quotePrice.getContractItem()!=null?quotePrice.getContractItem().getCode():null;
+	   pricePlanMatrixVersionId=quotePrice.getPricePlanMatrixVersion()!=null?quotePrice.getPricePlanMatrixVersion().getId():null;
+	   pricePlanMatrixLineId=quotePrice.getPricePlanMatrixLine()!=null?quotePrice.getPricePlanMatrixLine().getId():null;
 		
 	}
 
@@ -339,4 +345,30 @@ public class PriceDTO extends BaseEntityDto {
 	public void setCurrencySymbol(String currencySymbol) {
 		this.currencySymbol = currencySymbol;
 	}
+
+	public String getContractItemCode() {
+		return contractItemCode;
+	}
+
+	public void setContractItemCode(String contractItemCode) {
+		this.contractItemCode = contractItemCode;
+	}
+
+	public Long getPricePlanMatrixVersionId() {
+		return pricePlanMatrixVersionId;
+	}
+
+	public void setPricePlanMatrixVersionId(Long pricePlanMatrixVersionId) {
+		this.pricePlanMatrixVersionId = pricePlanMatrixVersionId;
+	}
+
+	public Long getPricePlanMatrixLineId() {
+		return pricePlanMatrixLineId;
+	}
+
+	public void setPricePlanMatrixLineId(Long pricePlanMatrixLineId) {
+		this.pricePlanMatrixLineId = pricePlanMatrixLineId;
+	}
+	
+	 
 }
