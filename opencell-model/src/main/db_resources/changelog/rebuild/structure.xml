@@ -9965,6 +9965,9 @@
 			<column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
 			<column name="discounted_amount" type="numeric(23,12)"/>
 			<column name="sequence" type="int4"/>
+			<column name="price_plan_matrix_version_id" type="bigint" />
+			<column name="price_plan_matrix_line_id" type="bigint" />
+			<column name="contract_item_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -16744,6 +16747,27 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
     
+    
+    <changeSet id="#INTRD-17149_04072023_fk" author="Mbarek-Ay">
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk" 
+								 referencedTableName="cpq_price_plan_version" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="cpq_quote_price" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="price_plan_matrix_line_id_fk" 
+								 referencedTableName="cpq_price_plan_matrix_line" 
+								 baseColumnNames="price_plan_matrix_line_id" 
+								 baseTableName="cpq_quote_price" 
+								 referencedColumnNames="id"/>
+		
+		<addForeignKeyConstraint constraintName="contract_item_fk" 
+								 referencedTableName="cpq_contract_item" 
+								 baseColumnNames="contract_item_id" 
+								 baseTableName="cpq_quote_price" 
+								 referencedColumnNames="id"/>
+    </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -19040,6 +19064,7 @@
     <changeSet id="#INTRD-14522_20230301" author="TarikFA." />
     <changeSet id="#INTRD-14332_20230226_contract_application_el" author="a.rouaguebe" />
     <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-17149_04072023" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
     
 
