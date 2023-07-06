@@ -19,4 +19,8 @@ public interface InvoicePatchInput extends Resource {
     @Schema(description = "The comment for the invoice")
     @Nullable
     String getComment();
+    
+	@Schema(description = "The external purchase order number")
+	@Nullable
+	String getPurchaseOrder();
 }
