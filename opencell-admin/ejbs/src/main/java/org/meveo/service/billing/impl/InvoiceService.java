@@ -7649,5 +7649,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		filters = genericRequestMapper.evaluateFilters(filters, entityClass);
 		return new PaginationConfiguration(filters);
 	}
-
+	/**
+	 * get list of invoices that have ubl reference is false
+	 *
+	 * @param billingRunId
+	 * @param statusList
+	 * @return
+	 */
+	public List<Long> listInvoicesWithoutXml(List<InvoiceStatusEnum> statusList) {
+		return getEntityManager().createNamedQuery("Invoice.xmlWithStatusForUBL", Long.class).setParameter("statusList", statusList).getResultList();
+	}
 }
