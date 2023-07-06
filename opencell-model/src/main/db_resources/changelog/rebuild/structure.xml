@@ -3154,6 +3154,7 @@
     		<column name="use_specific_price_conversion" type="${type.boolean}" defaultValueNumeric="0" />
     		<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="auto_matching" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="ubl_reference" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
