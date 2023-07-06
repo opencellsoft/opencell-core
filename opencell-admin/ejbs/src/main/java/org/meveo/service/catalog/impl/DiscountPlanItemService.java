@@ -28,9 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -55,6 +52,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -277,7 +275,12 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         if (isDiscountApplicable) {
         	List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
         	Long lowPriority=null;
-        	for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+        	 boolean isInvoiceLineDiscount=discountPlan.getDiscountPlanType()== DiscountPlanTypeEnum.INVOICE_LINE;
+             for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+             	if(isInvoiceLineDiscount && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation) ) {
+         			applicableDiscountPlanItems.add(discountPlanItem);
+         			continue;
+         		}
         		isFixedDpItemIncluded=false;
         		if(chargeTemplate != null && DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
         			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
