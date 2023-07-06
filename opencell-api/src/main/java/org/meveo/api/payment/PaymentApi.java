@@ -19,7 +19,6 @@
 package org.meveo.api.payment;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

@@ -5,7 +5,6 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.Date;
 import java.util.Map;
 

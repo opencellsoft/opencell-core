@@ -32,7 +32,6 @@ import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;

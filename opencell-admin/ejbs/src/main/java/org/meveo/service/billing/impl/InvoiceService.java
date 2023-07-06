@@ -44,7 +44,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -4234,12 +4233,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BigDecimal amountWithoutTax=compositeTaxAgregate.getAmountWithoutTax();
         BigDecimal composteTaxAmount=compositeTaxAgregate.getAmountTax();
         BigDecimal subTaxTotalAmount=BigDecimal.ZERO;
-        MathContext mc = new MathContext(appProvider.getInvoiceRounding(),RoundingMode.HALF_UP);
         for(int i=0; i<subTaxes.size(); i++) {
             Tax subTax = subTaxes.get(i);
             BigDecimal amountTax = BigDecimal.ZERO.equals(compositePercent)? BigDecimal.ZERO
                     : (i==subTaxes.size()-1)? composteTaxAmount.subtract(subTaxTotalAmount)
-                            : composteTaxAmount.multiply(subTax.getPercent()).divide(compositePercent, mc);
+                            : composteTaxAmount.multiply(subTax.getPercent()).divide(compositePercent,
+                                appProvider.getInvoiceRounding(),RoundingMode.HALF_UP);
             SubcategoryInvoiceAgregateAmount subcategoryInvoiceAgregateAmount= new SubcategoryInvoiceAgregateAmount(amountWithoutTax,amountWithoutTax.add(amountTax),amountTax);
             addTaxAggregate(invoice, billingAccount, isEnterprise, languageCode, taxAggregates, new AbstractMap.SimpleEntry<>(subTax, subcategoryInvoiceAgregateAmount), subTax);
         }
