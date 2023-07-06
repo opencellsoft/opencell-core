@@ -649,11 +649,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ContractItem contractItem = null;
                 if (contract != null && serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
-                    
+                    Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null ? bareWalletOperation.getSubscription().getContract() : null : null;
                     Contract contractMatched = contractItemService.getApplicableContract(contracts,
                             offerTemplate, serviceInstance.getCode(), chargeTemplate, bareWalletOperation);
                     if (contractMatched != null) {
                         contract = contractMatched;
+                    }else {
+                    	contract=contractFromSubscription;
                     }
                     contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getCode(), chargeTemplate,bareWalletOperation);
 
