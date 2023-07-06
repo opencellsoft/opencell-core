@@ -17005,5 +17005,28 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="external_purchase_order_number" type="varchar(100)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#INTRD-17149_04072023" author="Mbarek-Ay">
+		<addColumn tableName="cpq_quote_price">
+			<column name="price_plan_matrix_version_id" type="bigint" />
+			<column name="price_plan_matrix_line_id" type="bigint" />
+			<column name="contract_item_id" type="bigint" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk" 
+								 referencedTableName="cpq_price_plan_version" 
+								 baseColumnNames="price_plan_matrix_version_id" 
+								 baseTableName="cpq_quote_price" 
+								 referencedColumnNames="id"/>
+		<addForeignKeyConstraint constraintName="price_plan_matrix_line_id_fk" 
+								 referencedTableName="cpq_price_plan_matrix_line" 
+								 baseColumnNames="price_plan_matrix_line_id" 
+								 baseTableName="cpq_quote_price" 
+								 referencedColumnNames="id"/>
+		<addForeignKeyConstraint constraintName="contract_item_fk" 
+								 referencedTableName="cpq_contract_item" 
+								 baseColumnNames="contract_item_id" 
+								 baseTableName="cpq_quote_price" 
+								 referencedColumnNames="id"/>
+	</changeSet>
 
 </databaseChangeLog>

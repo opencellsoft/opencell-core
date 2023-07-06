@@ -1738,6 +1738,11 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
             quotePrice.setCurrencyCode(accountingArticlePrice.getCurrencyCode());
 		    quotePrice.setQuoteArticleLine(accountingArticlePrice.getQuoteArticleLine());
+		    if(PriceLevelEnum.PRODUCT.equals(level)) {
+		    	quotePrice.setContractItem(accountingArticlePrice.getContractItem());
+		    	quotePrice.setPricePlanMatrixVersion(accountingArticlePrice.getPricePlanMatrixVersion());
+		    	quotePrice.setPricePlanMatrixLine(accountingArticlePrice.getPricePlanMatrixLine());
+		    }
             if(!PriceLevelEnum.OFFER.equals(level)) {
                 quotePriceService.create(quotePrice);
                 quotePriceService.getEntityManager().flush();
@@ -1759,6 +1764,11 @@ public class CpqQuoteApi extends BaseApi {
            	 quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTax());
            }
 		    quotePrice.setQuoteArticleLine(a.getQuoteArticleLine());
+		 if(PriceLevelEnum.PRODUCT.equals(level)) {
+		    	quotePrice.setContractItem(a.getContractItem());
+		    	quotePrice.setPricePlanMatrixVersion(a.getPricePlanMatrixVersion());
+		    	quotePrice.setPricePlanMatrixLine(a.getPricePlanMatrixLine());
+		    }
        	 if(b.getDiscountedQuotePrice()==null)
             	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
             quotePrice.setTaxRate(a.getTaxRate());
@@ -1866,6 +1876,9 @@ public class CpqQuoteApi extends BaseApi {
             } 
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():wo.getAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
+            quotePrice.setPricePlanMatrixVersion(wo.getPricePlanMatrixVersion());
+            quotePrice.setPricePlanMatrixLine(wo.getPricePlanMatrixLine());
+            quotePrice.setContractItem(wo.getContractLine());
             quotePriceService.create(quotePrice);
             quoteArticleLine.getQuotePrices().add(quotePrice);
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
