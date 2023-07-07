@@ -5,7 +5,6 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.Date;
 import java.util.Map;
 
@@ -148,8 +147,8 @@ public class InvoiceLinesFactory {
                 && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
             BigDecimal unitAmount = (BigDecimal) data.getOrDefault("sum_without_tax", ZERO);
             BigDecimal quantity = (BigDecimal) data.getOrDefault("quantity", ZERO);
-            MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-            BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity, mc);
+            BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity,
+                    appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
             invoiceLine.setUnitPrice(unitPrice);
         } else {
             invoiceLine.setUnitPrice(isEnterprise ? (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO)

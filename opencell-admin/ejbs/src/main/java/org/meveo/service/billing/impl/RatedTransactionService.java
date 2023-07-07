@@ -32,7 +32,6 @@ import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -2504,8 +2503,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 && billingRun.getBillingCycle() != null
                 && !billingRun.getBillingCycle().isDisableAggregation()
                 && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
-            MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-            unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
+            unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity,
+                    appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         }
 
         linesFactory.update(invoiceLine.getId(), deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);
