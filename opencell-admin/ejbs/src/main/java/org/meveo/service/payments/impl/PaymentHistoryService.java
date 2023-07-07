@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
@@ -47,6 +48,7 @@ import org.meveo.service.base.PersistenceService;
  * @author anasseh
  * @lastModifiedVersion 5.0.2
  */
+@Stateless
 public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 	
     /** The account operation service. */
