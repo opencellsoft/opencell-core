@@ -44,4 +44,10 @@ public interface ValidateInvoiceDto {
 	default boolean getIgnoreValidationRules() {
 		return false;
 	}
+	
+	@Default
+	@Schema(description = "flag to generate AO")
+	default boolean getGenerateAO() {
+		return false;
+	}
 }
