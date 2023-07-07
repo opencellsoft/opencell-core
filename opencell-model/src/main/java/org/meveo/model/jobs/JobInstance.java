@@ -152,11 +152,11 @@ public class JobInstance extends EnableBusinessCFEntity {
     private boolean stopOnError = false;
 
     /**
-     * Job execution speed. Defines how often job execution history gets updated.
+     * How often (in seconds) the job progress should be stored to DB
      */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "job_speed", nullable = false)
-    private JobSpeedEnum jobSpeed = JobSpeedEnum.NORMAL;
+    @Column(name = "status_report_freq", nullable = false)
+    @NotNull
+    private int jobStatusReportFrequency = 60;
 
     /** Code of provider, that job belongs to. */
     @Transient
@@ -489,20 +489,6 @@ public class JobInstance extends EnableBusinessCFEntity {
     }
 
     /**
-     * @return Job execution speed. Defines how often job execution history gets updated.
-     */
-    public JobSpeedEnum getJobSpeed() {
-        return jobSpeed;
-    }
-
-    /**
-     * @param jobSpeed Job execution speed. Defines how often job execution history gets updated.
-     */
-    public void setJobSpeed(JobSpeedEnum jobSpeed) {
-        this.jobSpeed = jobSpeed;
-    }
-
-    /**
      * @return the queryScheduler
      */
     public QueryScheduler getQueryScheduler() {
@@ -514,5 +500,19 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     public void setQueryScheduler(QueryScheduler queryScheduler) {
         this.queryScheduler = queryScheduler;
+    }
+
+    /**
+     * @return How often (in seconds) the job progress should be stored to DB
+     */
+    public int getJobStatusReportFrequency() {
+        return jobStatusReportFrequency;
+    }
+
+    /**
+     * @param jobStatusReportFrequency How often (in seconds) the job progress should be stored to DB
+     */
+    public void setJobStatusReportFrequency(int jobStatusReportFrequency) {
+        this.jobStatusReportFrequency = jobStatusReportFrequency;
     }
 }

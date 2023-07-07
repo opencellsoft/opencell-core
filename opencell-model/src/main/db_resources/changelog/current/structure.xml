@@ -7316,6 +7316,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		<addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_manual_refund_methods" tableName="crm_provider_manual_refund_methods" />
     </changeSet>
 
+    <changeSet id="#INTRD-17222_20231005" author="AndriusKarpavicius">
+        <addColumn tableName="job_execution">
+            <column name="node" type="varchar(25)"/>
+        </addColumn>
+        <addColumn tableName="meveo_job_instance">
+            <column name="status_report_freq" type="int" defaultValueNumeric="60" />
+        </addColumn>
+        <dropColumn tableName="meveo_job_instance" columnName="job_speed" />
+    </changeSet>
+
     <changeSet id="#INTRD-16982_20230619" author="Mbarek-Ay">
         <addColumn tableName="cat_counter_template">
             <column name="managed_byapp" type="${type.boolean}" defaultValueNumeric="1"><constraints nullable="false" /></column>
@@ -8018,10 +8028,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		<addColumn tableName="cat_charge_template">
 			<column name="business_key_el" type="varchar(2000)" />
 			<column name="business_key_description" type="VARCHAR(255)" defaultValue="Business key"/>
-			<column name="business_key_translated_descriptions" type="${type.json}" defaultValue='{"FRA":"Cl� m�tier", "ENG":"Business key"}'>
+			<column name="business_key_translated_descriptions" type="${type.json}" defaultValue='{"FRA":"Cl? m?tier", "ENG":"Business key"}'>
                 <constraints nullable="false" />
             </column>
-			<column name="business_key_translated_long_descriptions" type="${type.json}" defaultValue='{"FRA":"La cl� m�tier est calcul� � la valorisation en utilisant une formule personnalis� enregistr�e sur la charge", "ENG":"Business key is computed at rating using a custom expression set on the charge"}'>
+			<column name="business_key_translated_long_descriptions" type="${type.json}" defaultValue='{"FRA":"La cl? m?tier est calcul? ? la valorisation en utilisant une formule personnalis? enregistr?e sur la charge", "ENG":"Business key is computed at rating using a custom expression set on the charge"}'>
                 <constraints nullable="false" />
             </column>
             <column name="business_key_format" type="VARCHAR(50)" defaultValue="TEXT">
