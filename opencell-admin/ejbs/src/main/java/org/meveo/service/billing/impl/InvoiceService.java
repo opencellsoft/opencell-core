@@ -6871,7 +6871,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                toUpdate.setTransactionalInvoiceBalance(currentRate != null && invoiceResource.getAmountWithTax() != null ? currentRate.multiply(invoiceResource.getAmountWithTax()) : invoiceResource.getAmountWithTax());
            }
         }
+        
         toUpdate.setAutoMatching(buildAutoMatching(invoiceResource.getAutoMatching(), toUpdate.getInvoiceType()));
+        
+        if (invoiceResource.getPurchaseOrder() != null) {
+            toUpdate.setExternalPurchaseOrderNumber(invoiceResource.getPurchaseOrder());
+        }
 
         return update(toUpdate);
     }
@@ -7280,18 +7285,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param customFieldValues Custom Field {@link CustomFieldValues}
      * @return Updated Invoice {@link Invoice}
      */
-    public Invoice updateValidatedInvoice(Invoice toUpdate, String comment, CustomFieldValues customFieldValues) {
+    public Invoice updateValidatedInvoice(Invoice toUpdate, String comment, CustomFieldValues customFieldValues, String purchaseOrder) {
         toUpdate = refreshOrRetrieve(toUpdate);
 
-        if (isNotBlank(comment)) {
-            toUpdate.setComment(comment);
-        }
-        
-        if(customFieldValues != null) {
-            toUpdate.setCfValues(customFieldValues);
-        }
+		if (isNotBlank(comment)) {
+			toUpdate.setComment(comment);
+		}
 
-        return update(toUpdate);
+		if (customFieldValues != null) {
+			toUpdate.setCfValues(customFieldValues);
+		}
+
+		if (purchaseOrder != null) {
+			toUpdate.setExternalPurchaseOrderNumber(purchaseOrder);
+		}
+
+		return update(toUpdate);
     }
 
     public String getFilePathByInvoiceIdType(Long invoiceId, String type) {
