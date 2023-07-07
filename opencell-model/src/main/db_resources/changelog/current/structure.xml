@@ -7326,6 +7326,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-17222_20231005" author="AndriusKarpavicius">
+        <addColumn tableName="job_execution">
+            <column name="node" type="varchar(25)"/>
+        </addColumn>
+        <addColumn tableName="meveo_job_instance">
+            <column name="status_report_freq" type="int" defaultValueNumeric="60" />
+        </addColumn>
+        <dropColumn tableName="meveo_job_instance" columnName="job_speed" />
+    </changeSet>
 
     <changeSet id="#INTRD-17026_delete_duplicated_data" author="a.rouaguebe_ext">
         <renameTable oldTableName="cat_price_plan_charge" newTableName="cat_price_plan_charge_tmp" />

@@ -23,6 +23,7 @@ package org.meveo.admin.async;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.FlatFileProcessingJob;
 import org.meveo.admin.job.UnitFlatFileProcessingJobBean;
 import org.meveo.admin.util.FlatFileValidator;
@@ -45,7 +47,6 @@ import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -178,18 +179,22 @@ public class FlatFileProcessing {
 
         RecordContext recordContext = null;
         Boolean scannedAllRecords = false;
+        
+        Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
 
-        JobSpeedEnum jobSpeed = jobExecutionResult.getJobInstance().getJobSpeed();
+        long nextStatusReport = new Date().getTime() + jobExecutionResult.getJobInstance().getJobStatusReportFrequency() * 1000;
+        
         mainLoop: while (true) {
 
-            if (i % jobSpeed.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+            if (BaseJobBean.isJobRequestedToStop(jobInstanceId)) {
                 break;
             }
 
             try {
                 // Record progress
-                if (i > 0 && i % jobSpeed.getUpdateNb() == 0) {
+                if (new Date().getTime() > nextStatusReport) {
                     jobExecutionResultService.persistResult(jobExecutionResult);
+                    nextStatusReport = new Date().getTime() + jobExecutionResult.getJobInstance().getJobStatusReportFrequency() * 1000;
                 }
             } catch (EJBTransactionRolledbackException e) {
                 // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
@@ -215,8 +220,10 @@ public class FlatFileProcessing {
                     if (recordContext != null && recordContext.getRecord() == null) {
                         throw recordContext.getRejectReason();
                     }
-                    if(recordContext!= null){recordContexts.add(recordContext);
-                    records.add(recordContext.getRecord());}
+                    if (recordContext != null) {
+                        recordContexts.add(recordContext);
+                        records.add(recordContext.getRecord());
+                    }
                 }
 
                 if (records.isEmpty()) {

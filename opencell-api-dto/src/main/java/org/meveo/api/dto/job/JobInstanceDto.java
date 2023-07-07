@@ -29,7 +29,6 @@ import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobClusterBehaviorEnum;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.JobSpeedEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -101,10 +100,10 @@ public class JobInstanceDto extends EnableBusinessDto {
     private Boolean verboseReport;
 
     /**
-     * Job execution speed. Defines how often job execution history gets updated.
+     * How often (in seconds) the job progress should be stored to DB
      */
-    @Schema(description = "Job execution speed. Defines how often job execution history gets updated")
-    private JobSpeedEnum jobSpeed;
+    @Schema(description = "How often (in seconds) the job progress should be stored to DB")
+    private Integer jobStatusReportFrequency;
 
     /**
      * Instantiate a new JobInstance DTO
@@ -140,7 +139,7 @@ public class JobInstanceDto extends EnableBusinessDto {
             setFollowingJob(jobInstance.getFollowingJob().getCode());
         }
         verboseReport = jobInstance.isVerboseReport();
-        jobSpeed = jobInstance.getJobSpeed();
+        jobStatusReportFrequency = jobInstance.getJobStatusReportFrequency();
     }
 
     /**
@@ -320,17 +319,17 @@ public class JobInstanceDto extends EnableBusinessDto {
     }
 
     /**
-     * @return Job execution speed. Defines how often job execution history gets updated.
+     * @return How often (in seconds) the job progress should be stored to DB
      */
-    public JobSpeedEnum getJobSpeed() {
-        return jobSpeed;
+    public Integer getJobStatusReportFrequency() {
+        return jobStatusReportFrequency;
     }
 
     /**
-     * @param jobSpeed Job execution speed. Defines how often job execution history gets updated.
+     * @param jobStatusReportFrequency How often (in seconds) the job progress should be stored to DB
      */
-    public void setJobSpeed(JobSpeedEnum jobSpeed) {
-        this.jobSpeed = jobSpeed;
+    public void setJobStatusReportFrequency(Integer jobStatusReportFrequency) {
+        this.jobStatusReportFrequency = jobStatusReportFrequency;
     }
 
     /**
