@@ -31,6 +31,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.IteratorBasedJobBean;
 import org.meveo.audit.AuditableFieldEvent;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.event.CFEndPeriodEvent;
@@ -38,6 +39,8 @@ import org.meveo.event.CounterPeriodEvent;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
@@ -46,10 +49,11 @@ import org.meveo.event.qualifier.EndOfTerm;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.event.qualifier.InstantiateWF;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
+import org.meveo.event.qualifier.InvoicePaymentStatusUpdated;
+import org.meveo.event.qualifier.LastJobDataMessageReceived;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.event.qualifier.PDFGenerated;
-import org.meveo.event.qualifier.InvoicePaymentStatusUpdated;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.event.qualifier.RejectedCDR;
@@ -74,6 +78,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.generic.wf.GenericWorkflow;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -118,6 +123,9 @@ public class DefaultObserver {
 
     @Inject
     private DefaultNotificationService defaultNotificationService;
+        
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
 
     /**
      * Check and fire all matched notifications
@@ -221,7 +229,7 @@ public class DefaultObserver {
     }
 
     public void loggedIn(@Observes @LoggedIn User e) throws BusinessException {
-        log.trace("Defaut observer: logged in class={} ", e.getClass().getName());
+        log.trace("Defaut observer: logged in user={} ", e.getUserName());
         checkEvent(NotificationEventTypeEnum.LOGGED_IN, e);
     }
 
@@ -233,10 +241,28 @@ public class DefaultObserver {
     }
 
     @MeveoAudit
-    public void LowBalance(@Observes @LowBalance WalletInstance e) throws BusinessException {
+    public void lowBalance(@Observes @LowBalance WalletInstance e) throws BusinessException {
         log.trace("Defaut observer: low balance on {} ", e.getCode());
         checkEvent(NotificationEventTypeEnum.LOW_BALANCE, e);
 
+    }
+
+    /**
+     * A last message, containing job processing data, was read from a QUEUE
+     * 
+     * @param jobInstanceId Job instance identifier
+     */
+    public void lastJobDataMessageReceived(@Observes @LastJobDataMessageReceived Long jobInstanceId) {
+        log.trace("Defaut observer: last job message received={} ", jobInstanceId);
+
+        JobInstance jobInstance = new JobInstance();
+        jobInstance.setId(jobInstanceId);
+
+        // This will release data processing threads
+        IteratorBasedJobBean.releaseJobDataProcessingThreads(jobInstanceId);
+
+        // Publish event to other nodes
+        clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.lastJobDataMessageReceived);
     }
 
     public void businesException(@Observes BusinessExceptionEvent bee) {

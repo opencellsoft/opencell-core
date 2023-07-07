@@ -39,6 +39,10 @@ public class QueueBasedIterator<T> implements Iterator<T> {
     public QueueBasedIterator(JMSConsumer jmsConsumer) {
         this.jmsConsumer = jmsConsumer;
     }
+    
+    public void setJmsConsumer(JMSConsumer jmsConsumer) {
+        this.jmsConsumer = jmsConsumer;
+    }
 
     /**
      * A synchronized implementation of Iterator.next(). Will return null if no more values are available

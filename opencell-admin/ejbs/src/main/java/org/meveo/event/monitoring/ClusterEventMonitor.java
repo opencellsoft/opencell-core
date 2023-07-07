@@ -24,6 +24,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
+import org.meveo.admin.job.IteratorBasedJobBean;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -132,6 +133,9 @@ public class ClusterEventMonitor implements MessageListener {
 
             } else if (eventDto.getAction() == CrudActionEnum.stop) {
                 jobExecutionService.stopJobByForce(jobInstanceService.findById(eventDto.getId()), false);
+
+            } else if (eventDto.getAction() == CrudActionEnum.lastJobDataMessageReceived) {
+                IteratorBasedJobBean.releaseJobDataProcessingThreads(eventDto.getId());
 
                 // Any modify/update
             } else {

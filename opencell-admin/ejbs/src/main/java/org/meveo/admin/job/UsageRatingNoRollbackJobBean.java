@@ -177,7 +177,7 @@ public class UsageRatingNoRollbackJobBean extends IteratorBasedJobBean<EDR> {
     }
 
     @Override
-    protected boolean isProcessMultipleItemFunctionUpdateProgress() {
+    protected boolean isProcessMultipleItemFunctionUpdateProgressItself() {
         return true;
     }
 }

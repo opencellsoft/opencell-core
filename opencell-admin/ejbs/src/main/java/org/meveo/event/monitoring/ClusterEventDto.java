@@ -50,7 +50,12 @@ public class ClusterEventDto implements Serializable {
         /**
          * Stop job execution
          */
-        stop;
+        stop,
+        
+        /**
+         * Last message was received in job processing data queue. Will indicate that data processing threads should continue.
+         */
+        lastJobDataMessageReceived;
     };
 
     /**
