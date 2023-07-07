@@ -1109,7 +1109,7 @@ public class CpqQuoteApi extends BaseApi {
             quoteOffer.setCode(quoteOfferDto.getCode());
             quoteOffer.setDescription(quoteOfferDto.getDescription());
             quoteOffer.setQuoteLineType(quoteOfferDto.getQuoteLineType());
-            quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDto.getCode()));
+            quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDto.getContractCode()));
             populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
             quoteOfferService.create(quoteOffer);
             quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
@@ -1225,7 +1225,7 @@ public class CpqQuoteApi extends BaseApi {
         	}
         	quoteOffer.setSubscription(subscription);
         }
-        quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDTO.getCode()));
+        quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDTO.getContractCode()));
         processQuoteProduct(quoteOfferDTO, quoteOffer);
         processQuoteAttribute(quoteOfferDTO, quoteOffer);
         populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
