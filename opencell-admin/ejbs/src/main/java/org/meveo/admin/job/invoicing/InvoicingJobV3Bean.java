@@ -48,7 +48,6 @@ import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
@@ -217,7 +216,7 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 		};
 		iteratorBasedJobProcessing.processItems(result,
 				new SynchronizedIterator<>(ListUtils.partition(bAIds, itemsPerSplit)), task, null, null, nbRuns,
-				waitingMillis, false, JobSpeedEnum.FAST, false);
+				waitingMillis, false, false);
 	}
 	/**
 	 * Assign invoice number and increment BA invoice dates.
@@ -269,7 +268,7 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 				invoiceService.updateStatus(invoiceId, InvoiceStatusEnum.VALIDATED);
 			};
 			iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task,
-					null, null, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
+					null, null, nbRuns, waitingMillis, false, true);
 			List<Long> baIds = invoiceService.getBillingAccountIds(billingRun.getId(),
 					invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
 					invoicesToNumberInfo.getInvoiceDate());
@@ -278,7 +277,7 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 				invoiceService.incrementBAInvoiceDate(billingRun, baId);
 			};
 			iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null,
-					null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+					null, nbRuns, waitingMillis, false,  false);
 			if (billingRun.getGenerateAO()) {
 				task = (invoiceId, jobResult) -> {
 					try {
@@ -290,7 +289,7 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 					}
 				};
 				iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds),
-						task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+						task, null, null, nbRuns, waitingMillis, false, false);
 			}
 		}
 	}

@@ -46,9 +46,7 @@ import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
@@ -70,9 +68,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 
     @Inject
     private IteratorBasedJobProcessing iteratorBasedJobProcessing;
-
-    @Inject
-    private BillingRunExtensionService billingRunExtensionService;
     
     private static BigDecimal amountTax = ZERO;
     private static BigDecimal amountWithTax = ZERO;
@@ -260,14 +255,14 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             // Assign invoice numbers
             BiConsumer<Long, JobExecutionResultImpl> task =
                     (invoiceId, jobResult) -> invoiceService.assignInvoiceNumberAndRecalculateDates(invoiceId, invoicesToNumberInfo);
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, true);
 
             List<Long> baIds = invoiceService.getBillingAccountIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(), invoicesToNumberInfo.getInvoiceDate());
 
             // Increment next invoice date of a billing account
             task = (baId, jobResult) -> invoiceService.incrementBAInvoiceDate(billingRun, baId);
 
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null, null, nbRuns, waitingMillis, false, false);
             
             if(billingRun.getGenerateAO()) {
             	task = (invoiceId, jobResult) -> {
@@ -277,7 +272,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     					throw new BusinessException(String.format("Error while trying to generate Account Operation for BR: %s, Invoice: %s", billingRun.getId(), invoiceId));
     				}
     			};
-    			iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+    			iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, false);
             }
         }
     }
