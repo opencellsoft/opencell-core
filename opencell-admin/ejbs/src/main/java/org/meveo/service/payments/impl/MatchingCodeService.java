@@ -23,7 +23,6 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.model.payments.OperationCategoryEnum.CREDIT;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
