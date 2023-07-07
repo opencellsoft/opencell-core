@@ -1902,15 +1902,18 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private void overrideAmounts(QuotePrice quotePrice, Long recurrenceDuration, WalletOperation walletOperation) {
-        MathContext mathContext = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         BigDecimal coeff = quotePrice.getQuantity().add(walletOperation.getServiceInstance().getQuantity().multiply(BigDecimal.valueOf(recurrenceDuration - 1)));
     	
-        quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().divide(quotePrice.getQuantity(), mathContext).multiply(coeff));
-        quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().divide(quotePrice.getQuantity(), mathContext).multiply(coeff));
+        quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().divide(quotePrice.getQuantity(),
+                appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(coeff));
+        quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().divide(quotePrice.getQuantity(),
+                appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(coeff));
         quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount() != null ?
-                quotePrice.getAmountWithoutTaxWithoutDiscount().divide(quotePrice.getQuantity(), mathContext).multiply(coeff) : null);
+                quotePrice.getAmountWithoutTaxWithoutDiscount().divide(quotePrice.getQuantity(),
+                        appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(coeff) : null);
         quotePrice.setTaxAmount(quotePrice.getTaxAmount() != null ?
-                quotePrice.getTaxAmount().divide(quotePrice.getQuantity(), mathContext).multiply(coeff) : null);
+                quotePrice.getTaxAmount().divide(quotePrice.getQuantity(),
+                        appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(coeff) : null);
     }
 
     private Integer getDurationTerminInMonth(Attribute durationOrQuantityAttribute, Integer defaultValue, QuoteOffer quoteOffer, QuoteProduct quoteProduct) {
