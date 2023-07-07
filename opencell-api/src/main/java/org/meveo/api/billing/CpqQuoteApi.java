@@ -1593,7 +1593,7 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setPricePlanMatrixVersion(accountingArticlePrice.getPricePlanMatrixVersion());
                 quotePrice.setPricePlanMatrixLine(accountingArticlePrice.getPricePlanMatrixLine());
               }
-		    quotePrice.setQuoteArticleLine(accountingArticlePrice.getQuoteArticleLine());
+		    // quotePrice.setQuoteArticleLine(accountingArticlePrice.getQuoteArticleLine());
 		    quotePrice.setOverchargedUnitAmountWithoutTax(accountingArticlePrice.getOverchargedUnitAmountWithoutTax());
 		    quotePrice.setApplyDiscountsOnOverridenPrice(accountingArticlePrice.getApplyDiscountsOnOverridenPrice());
             if(!PriceLevelEnum.OFFER.equals(level)) {
@@ -1621,7 +1621,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setPricePlanMatrixVersion(a.getPricePlanMatrixVersion());
             quotePrice.setPricePlanMatrixLine(a.getPricePlanMatrixLine());
           }
-		    quotePrice.setQuoteArticleLine(a.getQuoteArticleLine());
+		    // quotePrice.setQuoteArticleLine(a.getQuoteArticleLine());
 			if(a.getOverchargedUnitAmountWithoutTax() != null && b.getOverchargedUnitAmountWithoutTax() != null) {
 				quotePrice.setOverchargedUnitAmountWithoutTax(a.getOverchargedUnitAmountWithoutTax().add(b.getOverchargedUnitAmountWithoutTax()));
 			}else if(a.getOverchargedUnitAmountWithoutTax() != null) {
