@@ -1462,7 +1462,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     public Optional<Amounts> determineTransactionalUnitPrice(PricePlanMatrix pricePlan, WalletOperation walletOperation) {
         final TradingCurrency tradingCurrency = walletOperation.getBillingAccount().getTradingCurrency();
         final Currency functionalCurrency = appProvider.getCurrency();
-        if (functionalCurrency.getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
+        if (functionalCurrency != null && functionalCurrency.getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
             return empty();
         }
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanSelectionService.getPublishedVersionValidForDate(pricePlan.getId(),
@@ -1482,7 +1482,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     walletOperation.setUseSpecificPriceConversion(true);
                 } else {
                     priceWithoutTax = walletOperation.getUnitAmountWithoutTax().multiply(currentRate);
-                    priceWithTax = walletOperation.getAmountWithTax().multiply(currentRate);
+                    if(walletOperation.getAmountWithTax() != null)
+                    	priceWithTax = walletOperation.getAmountWithTax().multiply(currentRate);
                     walletOperation.setUseSpecificPriceConversion(false);
                 }
             } else {
