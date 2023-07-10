@@ -562,7 +562,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		invoiceService.refreshConvertedAmounts(invoice, exchangeRate, new Date());
 	}
 
-	public Object validateInvoices(Map<String, Object> filters, ProcessingModeEnum mode, boolean failOnValidatedInvoice, boolean failOnCanceledInvoice, boolean ignoreValidationRules) {
+	public Object validateInvoices(Map<String, Object> filters, ProcessingModeEnum mode, boolean failOnValidatedInvoice, boolean failOnCanceledInvoice, boolean ignoreValidationRules, boolean generateAO) {
 		ValidateInvoiceResult result = new ValidateInvoiceResult();
 		
 		if (ProcessingModeEnum.STOP_ON_FIRST_FAIL.equals(mode)) {
@@ -593,7 +593,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 						statics.addFail();
 					}
 				} else {
-					invoice = validateInvoice(ignoreValidationRules, invoice);
+					invoice = validateInvoice(ignoreValidationRules, invoice, generateAO);
 					if (InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
 						result.getInvoicesValidated().add(invoice.getId());
 						statics.addSuccess();
@@ -616,14 +616,17 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		return result;
 	}
 
-	private Invoice validateInvoice(boolean ignoreValidationRules, Invoice invoice) throws Exception {
+	private Invoice validateInvoice(boolean ignoreValidationRules, Invoice invoice, boolean generateAO) throws Exception {
 		if (ignoreValidationRules) {
 			invoiceService.validateInvoice(invoice);
+			if (generateAO) {
+				invoiceService.generateRecordedInvoiceAO(invoice.getId());
+			}
 		} else {
 			invoiceService.rebuildInvoice(invoice, true);
 			invoice = invoiceService.retrieveIfNotManaged(invoice);
 			if (InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())) { 
-				invoiceApi.validateInvoice(invoice.getId(), false, false, true);
+				invoiceApi.validateInvoice(invoice.getId(), generateAO, false, true);
 			}
 		}
 		return invoiceService.refreshOrRetrieve(invoice);
