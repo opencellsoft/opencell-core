@@ -16,7 +16,6 @@ import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -1145,8 +1144,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 BigDecimal unitPrice = (BigDecimal) groupedRT.get("unit_price");
                 if (billingRun.getBillingCycle() != null && !billingRun.getBillingCycle().isDisableAggregation()
                         && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
-                    MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-                    unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
+                    unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity,
+                            appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
                 }
 
                 linesFactory.update(invoiceLineId, deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);

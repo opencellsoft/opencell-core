@@ -45,7 +45,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -4274,12 +4273,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BigDecimal amountWithoutTax=compositeTaxAgregate.getAmountWithoutTax();
         BigDecimal composteTaxAmount=compositeTaxAgregate.getAmountTax();
         BigDecimal subTaxTotalAmount=BigDecimal.ZERO;
-        MathContext mc = new MathContext(appProvider.getInvoiceRounding(),RoundingMode.HALF_UP);
         for(int i=0; i<subTaxes.size(); i++) {
             Tax subTax = subTaxes.get(i);
             BigDecimal amountTax = BigDecimal.ZERO.equals(compositePercent)? BigDecimal.ZERO
                     : (i==subTaxes.size()-1)? composteTaxAmount.subtract(subTaxTotalAmount)
-                            : composteTaxAmount.multiply(subTax.getPercent()).divide(compositePercent, mc);
+                            : composteTaxAmount.multiply(subTax.getPercent()).divide(compositePercent,
+                    appProvider.getInvoiceRounding(),RoundingMode.HALF_UP);
             SubcategoryInvoiceAgregateAmount subcategoryInvoiceAgregateAmount= new SubcategoryInvoiceAgregateAmount(amountWithoutTax,amountWithoutTax.add(amountTax),amountTax);
             addTaxAggregate(invoice, billingAccount, isEnterprise, languageCode, taxAggregates, new AbstractMap.SimpleEntry<>(subTax, subcategoryInvoiceAgregateAmount), subTax);
         }
@@ -7438,7 +7437,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (adv.getTransactionalInvoiceBalance().compareTo(remainingAmount) >= 0) {
                     amount = remainingAmount;
                     transactionalCurrencyBalance = adv.getTransactionalInvoiceBalance().subtract(remainingAmount);
-                    functionalCurrencyBalance = getFunctionalCurrencyBalance(adv, transactionalCurrencyBalance);
+                    functionalCurrencyBalance = adv.getInvoiceBalance().subtract(remainingAmount);
+                    //functionalCurrencyBalance = getFunctionalCurrencyBalance(adv, transactionalCurrencyBalance);
 
                     adv.setInvoiceBalance(functionalCurrencyBalance);
                     adv.setTransactionalInvoiceBalance(transactionalCurrencyBalance);
@@ -7460,6 +7460,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     break;
                 }
             }
+            invoice.setInvoiceBalance(remainingAmount);
             invoice.setTransactionalInvoiceBalance(remainingAmount);
             invoice.getLinkedInvoices().removeIf(il -> ZERO.compareTo(il.getTransactionalAmount()) == 0 && InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(il.getType()));
         }
@@ -7480,6 +7481,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
 	private void cancelInvoiceAdvances(Invoice invoice, List<Invoice> advInvoices, boolean delete) {
 		invoice.setInvoiceBalance(null);
+        invoice.setTransactionalInvoiceBalance(null);
 		if (invoice.getLinkedInvoices() != null) {
 			Predicate<LinkedInvoice> advFilter = i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType());
 			if (delete) {
@@ -7490,6 +7492,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				for (Invoice advInvoice : advInvoices) {
 					invoice.getLinkedInvoices().stream().filter(advFilter).filter(linkedInvoice -> linkedInvoice.getLinkedInvoiceValue().getId() == advInvoice.getId()).findAny().ifPresent(li -> {
                         advInvoice.setTransactionalInvoiceBalance(advInvoice.getTransactionalInvoiceBalance().add(li.getTransactionalAmount()));
+                        advInvoice.setInvoiceBalance(advInvoice.getInvoiceBalance().add(li.getTransactionalAmount()));
                         li.setTransactionalAmount(ZERO);
 					});
 				}
