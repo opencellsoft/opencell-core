@@ -274,12 +274,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         if (isDiscountApplicable) {
             List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
             Long lowPriority=null;
-            boolean isInvoiceLineDiscount=discountPlan.getDiscountPlanType()== DiscountPlanTypeEnum.INVOICE_LINE;
             for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-            	if(isInvoiceLineDiscount && isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation) ) {
-        			applicableDiscountPlanItems.add(discountPlanItem);
-        			continue;
-        		}
                 isFixedDpItemIncluded=false;
                 if(chargeTemplate != null && DiscountPlanItemTypeEnum.FIXED.equals(discountPlanItemType) && chargeTemplate instanceof OneShotChargeTemplate) {
                     if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
