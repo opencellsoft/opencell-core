@@ -4056,8 +4056,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), invoice.getInvoiceDate())) {
-            List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), 
-                    null, null, null, null, invoice.getInvoiceDate());
+        	 List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), null,
+                     invoice != null ? invoice.getInvoiceDate() : null);
             
             subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
