@@ -7577,9 +7577,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
 	@SuppressWarnings("unchecked")
 	public List<Invoice> findByFilter(Map<String, Object> filters) {
-		PaginationConfiguration configuration = getPaginationConfigurationFromFilter(filters);
-		QueryBuilder query = getQuery(configuration);
-		return query.getQuery(getEntityManager()).getResultList();
+		try {
+			PaginationConfiguration configuration = getPaginationConfigurationFromFilter(filters);
+			QueryBuilder query = getQuery(configuration);
+			return query.getQuery(getEntityManager()).getResultList();
+		} catch (Exception e) {
+			return emptyList();
+		}
 	}
 
 	private PaginationConfiguration getPaginationConfigurationFromFilter(Map<String, Object> filters) {
