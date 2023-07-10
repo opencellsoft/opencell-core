@@ -20248,7 +20248,8 @@
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-14368_20230630" author="AbdellatifBARI"/>
     <changeSet id="#INTRD-15582_20230704" author="AdilElJaouhari" />
-     <changeSet id="#INTRD-17149_04072023" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-17149_04072023" author="Mbarek-Ay"/>
+    <changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
