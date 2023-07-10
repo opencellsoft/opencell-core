@@ -55,6 +55,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
@@ -160,6 +161,12 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
         RatingResult ratingResult = new RatingResult();
         CounterValueChangeInfo firstChargeCounterChange = null;
+
+
+        // Check if there is any attribute with value FALSE, indicating that service instance is not active
+        if (anyFalseAttributeMatch(chargeInstance)) {
+            return new RatingResult();
+        }
 
         // -- Determine charge period, prorating for the first termination period and prorating of first subscription period
 
