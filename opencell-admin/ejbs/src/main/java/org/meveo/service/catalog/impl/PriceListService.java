@@ -47,7 +47,6 @@ public class PriceListService extends BusinessService<PriceList> {
 	public Long count(PriceListCriteria pPriceListCriteria) {
     	TypedQuery<Long> query = getEntityManager().createQuery(getPriceListQuery(pPriceListCriteria, true), Long.class);
     	this.setQueryParams(pPriceListCriteria, query);
-		query.getParameters().forEach(p -> System.out.println(p.getName() + " => " + query.getParameterValue(p.getName())));
 		return query.getSingleResult();
     	
 	}
@@ -66,7 +65,9 @@ public class PriceListService extends BusinessService<PriceList> {
 			jpqlQuery += "SELECT pl FROM ";
 		}
 
-		jpqlQuery += "PriceList pl WHERE pl.status = :activeStatus AND :currentDate BETWEEN pl.applicationStartDate AND pl.applicationEndDate ";
+		jpqlQuery += "PriceList pl JOIN pl.paymentMethods pms ";
+
+		jpqlQuery += "WHERE pl.status = :activeStatus AND :currentDate BETWEEN pl.applicationStartDate AND pl.applicationEndDate ";
 
     	if(pPriceListCriteria.getBrandId() != null) {
 			jpqlQuery += "AND (pl.brands IS EMPTY OR EXISTS (select 1 from CustomerBrand cb where cb.id=:brandId and cb member of pl.brands)) ";
@@ -97,7 +98,9 @@ public class PriceListService extends BusinessService<PriceList> {
 		}
 
 		if(pPriceListCriteria.getPaymentMethodEnum() != null) {
-			jpqlQuery += "AND (pl.sellers IS EMPTY OR :paymentMethod member of pl.paymentMethods) ";
+			jpqlQuery += "AND (pms IS NULL OR :paymentMethod = pms) ";
+		} else {
+			jpqlQuery += "AND (pms IS NULL) ";
 		}
 
 		if(pPriceListCriteria.getAttachedPriceListId() != null) {

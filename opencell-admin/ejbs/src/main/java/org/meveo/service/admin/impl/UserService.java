@@ -112,12 +112,15 @@ public class UserService extends PersistenceService<User> {
     @Override
     public List<User> list(PaginationConfiguration config) {
         List<User> users = keycloakAdminClientService.listUsers(config);
-        return users.stream().map(kcUser -> findKeycloakUser(kcUser)).collect(Collectors.toList());
+        users.forEach(this::findKeycloakUser);
+        return super.list(config);
     }
 
     @Override
     public long count(PaginationConfiguration config) {
-        return keycloakAdminClientService.countUsers(config);
+        List<User> users = keycloakAdminClientService.listUsers(config);
+        users.forEach(this::findKeycloakUser);
+        return super.count(config);
     }
 
     /**

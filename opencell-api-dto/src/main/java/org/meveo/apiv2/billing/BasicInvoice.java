@@ -56,8 +56,12 @@ public interface BasicInvoice extends Resource {
 	@Nullable
 	Resource getSeller();
 
-	@Schema
+	@Schema(description = "The flag for auto matching")
 	@Nullable
 	Boolean getAutoMatching();
+	
+	@Schema(description = "The external purchase order number")
+	@Nullable
+	String getPurchaseOrder();
 
 }

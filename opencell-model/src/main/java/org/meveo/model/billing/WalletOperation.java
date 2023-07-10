@@ -1194,6 +1194,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setAmountTax(amountTax);
         result.setAmountWithoutTax(amountWithoutTax);
         result.setAmountWithTax(amountWithTax);
+        result.setTransactionalAmountTax(transactionalAmountTax);
+        result.setTransactionalAmountWithoutTax(transactionalAmountWithoutTax);
+        result.setTransactionalAmountWithTax(transactionalAmountWithTax);
         return result;
     }
 

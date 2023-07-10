@@ -20,14 +20,12 @@ package org.meveo.api.billing;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1109,7 +1107,7 @@ public class CpqQuoteApi extends BaseApi {
             quoteOffer.setCode(quoteOfferDto.getCode());
             quoteOffer.setDescription(quoteOfferDto.getDescription());
             quoteOffer.setQuoteLineType(quoteOfferDto.getQuoteLineType());
-            quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDto.getCode()));
+            quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDto.getContractCode()));
             populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
             quoteOfferService.create(quoteOffer);
             quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
@@ -1225,7 +1223,7 @@ public class CpqQuoteApi extends BaseApi {
         	}
         	quoteOffer.setSubscription(subscription);
         }
-        quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDTO.getCode()));
+        quoteOffer.setContract(contractHierarchyHelper.checkContractHierarchy(quoteOffer.getBillableAccount(), quoteOfferDTO.getContractCode()));
         processQuoteProduct(quoteOfferDTO, quoteOffer);
         processQuoteAttribute(quoteOfferDTO, quoteOffer);
         populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
@@ -1740,6 +1738,11 @@ public class CpqQuoteApi extends BaseApi {
 		    quotePrice.setQuoteArticleLine(accountingArticlePrice.getQuoteArticleLine());
 		    quotePrice.setOverchargedUnitAmountWithoutTax(accountingArticlePrice.getOverchargedUnitAmountWithoutTax());
 		    quotePrice.setApplyDiscountsOnOverridenPrice(accountingArticlePrice.getApplyDiscountsOnOverridenPrice());
+		    if(PriceLevelEnum.PRODUCT.equals(level)) {
+		    	quotePrice.setContractItem(accountingArticlePrice.getContractItem());
+		    	quotePrice.setPricePlanMatrixVersion(accountingArticlePrice.getPricePlanMatrixVersion());
+		    	quotePrice.setPricePlanMatrixLine(accountingArticlePrice.getPricePlanMatrixLine());
+		    }
             if(!PriceLevelEnum.OFFER.equals(level)) {
                 quotePriceService.create(quotePrice);
             }
@@ -1767,6 +1770,11 @@ public class CpqQuoteApi extends BaseApi {
 			}else if(b.getOverchargedUnitAmountWithoutTax() != null){
 				quotePrice.setOverchargedUnitAmountWithoutTax(b.getOverchargedUnitAmountWithoutTax());
 			}
+		 if(PriceLevelEnum.PRODUCT.equals(level)) {
+		    	quotePrice.setContractItem(a.getContractItem());
+		    	quotePrice.setPricePlanMatrixVersion(a.getPricePlanMatrixVersion());
+		    	quotePrice.setPricePlanMatrixLine(a.getPricePlanMatrixLine());
+		    }
        	 if(b.getDiscountedQuotePrice()==null)
             	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
             quotePrice.setTaxRate(a.getTaxRate());
@@ -1875,6 +1883,9 @@ public class CpqQuoteApi extends BaseApi {
             } 
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():wo.getAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
+            quotePrice.setPricePlanMatrixVersion(wo.getPricePlanMatrixVersion());
+            quotePrice.setPricePlanMatrixLine(wo.getPricePlanMatrixLine());
+            quotePrice.setContractItem(wo.getContractLine());
             quotePriceService.create(quotePrice);
             quoteArticleLine.getQuotePrices().add(quotePrice);
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
@@ -1902,15 +1913,18 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private void overrideAmounts(QuotePrice quotePrice, Long recurrenceDuration, WalletOperation walletOperation) {
-        MathContext mathContext = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         BigDecimal coeff = quotePrice.getQuantity().add(walletOperation.getServiceInstance().getQuantity().multiply(BigDecimal.valueOf(recurrenceDuration - 1)));
     	
-        quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().divide(quotePrice.getQuantity(), mathContext).multiply(coeff));
-        quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().divide(quotePrice.getQuantity(), mathContext).multiply(coeff));
+        quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().divide(quotePrice.getQuantity(),
+                appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(coeff));
+        quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().divide(quotePrice.getQuantity(),
+                appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(coeff));
         quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount() != null ?
-                quotePrice.getAmountWithoutTaxWithoutDiscount().divide(quotePrice.getQuantity(), mathContext).multiply(coeff) : null);
+                quotePrice.getAmountWithoutTaxWithoutDiscount().divide(quotePrice.getQuantity(),
+                        appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(coeff) : null);
         quotePrice.setTaxAmount(quotePrice.getTaxAmount() != null ?
-                quotePrice.getTaxAmount().divide(quotePrice.getQuantity(), mathContext).multiply(coeff) : null);
+                quotePrice.getTaxAmount().divide(quotePrice.getQuantity(),
+                        appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(coeff) : null);
     }
 
     private Integer getDurationTerminInMonth(Attribute durationOrQuantityAttribute, Integer defaultValue, QuoteOffer quoteOffer, QuoteProduct quoteProduct) {

@@ -230,12 +230,13 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 	        PricePlanMatrixVersion pricePlanMatrixVersion, Scanner scanner, List<Map.Entry<String, Optional<Attribute>>> columns) {
 		String line;
 		List<PricePlanMatrixLineDto> pricePlanMatrixLines = new ArrayList<>();
-		List<TradingPricePlanMatrixLineDto> tppmlList = new ArrayList<TradingPricePlanMatrixLineDto>();
+		
 		
 		while (scanner.hasNextLine()) {
 			
 			PricePlanMatrixLineDto pricePlanMatrixLineDto = new PricePlanMatrixLineDto();
 			List<PricePlanMatrixValueDto> pricePlanMatrixValueDtoList = new LinkedList<>();
+			List<TradingPricePlanMatrixLineDto> tppmlList = new ArrayList<TradingPricePlanMatrixLineDto>();
 			
 			line = scanner.nextLine();
 			if(line.isEmpty()) continue;

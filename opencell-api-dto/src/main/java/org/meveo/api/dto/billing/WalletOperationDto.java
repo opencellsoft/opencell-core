@@ -205,6 +205,24 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     private Integer sortIndex;
 
+    /** The transactional unit amount without tax. */
+    private BigDecimal transactionalUnitAmountWithoutTax;
+
+    /** The transactional unit amount with tax. */
+    private BigDecimal transactionalUnitAmountWithTax;
+
+    /** The transactional unit amount tax. */
+    private BigDecimal transactionalUnitAmountTax;
+
+    /** The transactional amount without tax. */
+    private BigDecimal transactionalAmountWithoutTax;
+
+    /** The transactional amount with tax. */
+    private BigDecimal transactionalAmountWithTax;
+
+    /** The transactional amount tax. */
+    private BigDecimal transactionalAmountTax;
+
     /**
      * Instantiates a new wallet operation dto.
      */
@@ -289,6 +307,12 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         if (walletOperation.getSortIndex() != null) {
             sortIndex = walletOperation.getSortIndex();
         }
+        transactionalUnitAmountWithoutTax = walletOperation.getTransactionalUnitAmountWithoutTax();
+        transactionalUnitAmountWithTax = walletOperation.getTransactionalAmountWithTax();
+        transactionalUnitAmountTax = walletOperation.getTransactionalUnitAmountTax();
+        transactionalAmountWithoutTax = walletOperation.getTransactionalAmountWithoutTax();
+        transactionalAmountWithTax = walletOperation.getTransactionalAmountWithTax();
+        transactionalAmountTax = walletOperation.getTransactionalAmountTax();
 
     }
 
@@ -1036,6 +1060,55 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode;
+    }
+
+
+    public BigDecimal getTransactionalUnitAmountWithoutTax() {
+        return transactionalUnitAmountWithoutTax;
+    }
+
+    public void setTransactionalUnitAmountWithoutTax(BigDecimal transactionalUnitAmountWithoutTax) {
+        this.transactionalUnitAmountWithoutTax = transactionalUnitAmountWithoutTax;
+    }
+
+    public BigDecimal getTransactionalUnitAmountWithTax() {
+        return transactionalUnitAmountWithTax;
+    }
+
+    public void setTransactionalUnitAmountWithTax(BigDecimal transactionalUnitAmountWithTax) {
+        this.transactionalUnitAmountWithTax = transactionalUnitAmountWithTax;
+    }
+
+    public BigDecimal getTransactionalUnitAmountTax() {
+        return transactionalUnitAmountTax;
+    }
+
+    public void setTransactionalUnitAmountTax(BigDecimal transactionalUnitAmountTax) {
+        this.transactionalUnitAmountTax = transactionalUnitAmountTax;
+    }
+
+    public BigDecimal getTransactionalAmountWithoutTax() {
+        return transactionalAmountWithoutTax;
+    }
+
+    public void setTransactionalAmountWithoutTax(BigDecimal transactionalAmountWithoutTax) {
+        this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
+    }
+
+    public BigDecimal getTransactionalAmountWithTax() {
+        return transactionalAmountWithTax;
+    }
+
+    public void setTransactionalAmountWithTax(BigDecimal transactionalAmountWithTax) {
+        this.transactionalAmountWithTax = transactionalAmountWithTax;
+    }
+
+    public BigDecimal getTransactionalAmountTax() {
+        return transactionalAmountTax;
+    }
+
+    public void setTransactionalAmountTax(BigDecimal transactionalAmountTax) {
+        this.transactionalAmountTax = transactionalAmountTax;
     }
 
     @Override
