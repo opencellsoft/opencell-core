@@ -65,7 +65,7 @@ public class PriceListService extends BusinessService<PriceList> {
 			jpqlQuery += "SELECT pl FROM ";
 		}
 
-		jpqlQuery += "PriceList pl JOIN pl.paymentMethods pms ";
+		jpqlQuery += "PriceList pl LEFT JOIN pl.paymentMethods pms ";
 
 		jpqlQuery += "WHERE pl.status = :activeStatus AND :currentDate BETWEEN pl.applicationStartDate AND pl.applicationEndDate ";
 
