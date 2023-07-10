@@ -138,7 +138,6 @@ public class DunningSettings extends BusinessEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_balance_id")
-    @NotNull
     private CustomerBalance customerBalance;
 
     public DunningModeEnum getDunningMode() {

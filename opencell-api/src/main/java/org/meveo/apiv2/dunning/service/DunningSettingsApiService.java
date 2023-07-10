@@ -47,7 +47,6 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 	private static final String NO_ACCOUNTING_ARTICLE_FOUND = "No Accounting article was found for the id : ";
 	private static final String NO_CUSTOMER_BALANCE_FOUND = "No Customer Balance was found for the id : ";
 	private static final String NO_DEFAULT_CUSTOMER_BALANCE_FOUND = "No default Customer Balance was found";
-	private static final String CUSTOMER_BALANCE_IS_MANDATORY = "Customer balance is mandatory to create a dunning settings with mode INVOICE_LEVEL";
 	private static final String MANY_DEFAULT_CUSTOMER_BALANCE_FOUND = "Many Customer Balance are configured as default";
 	private static final String ACTIVE_OR_PAUSED_DUNNING_COLLECTION_PLAN_FOUND = "One or many Active/Paused Dunning Collection Plan was found";
 	private static final String AUTHORIZED_DUNNING_MODE = "Only dunning mode INVOICE_LEVEL is authorized for the first version of dunning";
@@ -91,35 +90,9 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 				throw new BadRequestException(NO_ACCOUNTING_ARTICLE_FOUND + baseEntity.getAccountingArticle().getId());
 			baseEntity.setAccountingArticle(accountingArticle);
 		}
-		
-		if(baseEntity.getCustomerBalance() != null && baseEntity.getCustomerBalance().getId() != null) {
-			var customerBalance = customerBalanceService.findById(baseEntity.getCustomerBalance().getId());
-			if(customerBalance == null)
-				throw new BadRequestException(NO_CUSTOMER_BALANCE_FOUND + baseEntity.getCustomerBalance().getId());
-			baseEntity.setCustomerBalance(customerBalance);
-		}
-		
-		if(baseEntity.getCustomerBalance() == null && baseEntity.getDunningMode().equals(DunningModeEnum.INVOICE_LEVEL)) {
-			throw new BadRequestException(CUSTOMER_BALANCE_IS_MANDATORY);
-		}
-		
-		//Customer Balance not selected and DunningMode is CUSTOMER_LEVEL -> Set the default CustomerBalance
-		if(baseEntity.getCustomerBalance() == null && baseEntity.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL)) {
-			CustomerBalance customerBalance = null;
-			try {
-				customerBalance = customerBalanceService.getDefaultOne();
-			} catch (BusinessException e) {
-				log.debug("Many Customer Balance are configured as default");
-	            throw new BadRequestException(MANY_DEFAULT_CUSTOMER_BALANCE_FOUND);
-		    }
-			
-			if(customerBalance != null) {
-				baseEntity.setCustomerBalance(customerBalance);
-			} else {
-				log.debug("Many Customer Balance are configured as default");
-	            throw new BadRequestException(NO_DEFAULT_CUSTOMER_BALANCE_FOUND);
-			}
-		}
+
+		//Check customer balance if not filled then get the default one, in create case we pass the second param as null (no entity exist to update)
+		checkAndApplyDefaultCustomerBalance(baseEntity, null);
 		
 		dunningSettingsService.create(baseEntity);
 		return baseEntity;
@@ -160,35 +133,9 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 		if((activeDunningCollectionPlans != null && activeDunningCollectionPlans.size() > 0) || (pausedDunningCollectionPlans != null && pausedDunningCollectionPlans.size() > 0)) {
 			throw new ForbiddenException(ACTIVE_OR_PAUSED_DUNNING_COLLECTION_PLAN_FOUND);
 		}
-		
-		if(dunningSettings.getCustomerBalance() != null && dunningSettings.getCustomerBalance().getId() != null) {
-			var customerBalance = customerBalanceService.findById(dunningSettings.getCustomerBalance().getId());
-			if(customerBalance == null)
-				throw new BadRequestException(NO_CUSTOMER_BALANCE_FOUND + dunningSettings.getCustomerBalance().getId());
-			dunningSettingsUpdate.setCustomerBalance(customerBalance);
-		}
-		
-		if(dunningSettings.getCustomerBalance() == null && dunningSettings.getDunningMode().equals(DunningModeEnum.INVOICE_LEVEL)) {
-			throw new BadRequestException(CUSTOMER_BALANCE_IS_MANDATORY);
-		}
-		
-		//Customer Balance not selected and DunningMode is CUSTOMER_LEVEL -> Set the default CustomerBalance
-		if(dunningSettings.getCustomerBalance() == null && dunningSettings.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL)) {
-			CustomerBalance customerBalance = null;
-			try {
-				customerBalance = customerBalanceService.getDefaultOne();
-			} catch (BusinessException e) {
-				log.debug("Many Customer Balance are configured as default");
-	            throw new BadRequestException(MANY_DEFAULT_CUSTOMER_BALANCE_FOUND);
-		    }
-			
-			if(customerBalance != null) {
-				dunningSettingsUpdate.setCustomerBalance(customerBalance);
-			} else {
-				log.debug("Many Customer Balance are configured as default");
-	            throw new BadRequestException(NO_DEFAULT_CUSTOMER_BALANCE_FOUND);
-			}
-		}
+
+		//Check customer balance if not filled then get the default one, in update case pass the dunning settings to update
+		checkAndApplyDefaultCustomerBalance(dunningSettings, dunningSettingsUpdate);
 		
 		dunningSettingsService.update(dunningSettingsUpdate);
 		return Optional.of(dunningSettingsUpdate);
@@ -219,6 +166,47 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 		globalSettingsVerifier.checkActivateDunning();
 		var dunningSettings = findByCode(dunningCode).get();
 		return dunningSettingsService.duplicate(dunningSettings);
+	}
+
+	/**
+	 * Check customer balance if not apply the default one when dunning settings is CUSTOMER_LEVEL
+	 * @param dunningSettings {@link DunningSettings}
+	 * @param dunningSettingsUpdate {@link DunningSettings}
+	 */
+	private void checkAndApplyDefaultCustomerBalance(DunningSettings dunningSettings, DunningSettings dunningSettingsUpdate) {
+		if(dunningSettings.getCustomerBalance() != null && dunningSettings.getCustomerBalance().getId() != null) {
+			var customerBalance = customerBalanceService.findById(dunningSettings.getCustomerBalance().getId());
+
+			if(customerBalance == null) {
+				throw new BadRequestException(NO_CUSTOMER_BALANCE_FOUND + dunningSettings.getCustomerBalance().getId());
+			} else if(dunningSettingsUpdate != null){
+				dunningSettingsUpdate.setCustomerBalance(customerBalance);
+			} else {
+				dunningSettings.setCustomerBalance(customerBalance);
+			}
+		}
+
+		//Customer Balance not selected and DunningMode is CUSTOMER_LEVEL -> Set the default CustomerBalance
+		if(dunningSettings.getCustomerBalance() == null && dunningSettings.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL)) {
+			CustomerBalance customerBalance = null;
+			try {
+				customerBalance = customerBalanceService.getDefaultOne();
+			} catch (BusinessException e) {
+				log.debug("Many Customer Balance are configured as default");
+				throw new BadRequestException(MANY_DEFAULT_CUSTOMER_BALANCE_FOUND);
+			}
+
+			if(customerBalance != null) {
+				if(dunningSettingsUpdate != null){
+					dunningSettingsUpdate.setCustomerBalance(customerBalance);
+				} else {
+					dunningSettings.setCustomerBalance(customerBalance);
+				}
+			} else {
+				log.debug("Many Customer Balance are configured as default");
+				throw new BadRequestException(NO_DEFAULT_CUSTOMER_BALANCE_FOUND);
+			}
+		}
 	}
 
 }
