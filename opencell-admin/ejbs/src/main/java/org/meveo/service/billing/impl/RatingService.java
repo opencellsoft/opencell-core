@@ -1469,7 +1469,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 walletOperation.getServiceInstance(), walletOperation.getOperationDate());
         BigDecimal priceWithoutTax = null;
         BigDecimal priceWithTax = null;
-        final BigDecimal currentRate = tradingCurrency != null ? tradingCurrency.getCurrentRate() : BigDecimal.ONE;
+        final BigDecimal currentRate = tradingCurrency != null && tradingCurrency.getCurrentRate() != null ? tradingCurrency.getCurrentRate() : BigDecimal.ONE;
         if (pricePlanMatrixVersion != null) {
             if (!pricePlanMatrixVersion.isMatrix()) {
                 TradingPricePlanVersion tradingPPVersion = getTradingPPVersionFrom(pricePlanMatrixVersion, tradingCurrency);
@@ -1498,9 +1498,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     }
                     walletOperation.setUseSpecificPriceConversion(true);
                 } else if(tradingPricePlanMatrixLine == null) {
-                    priceWithoutTax = walletOperation.getUnitAmountWithoutTax().multiply(currentRate);
-                    priceWithTax = walletOperation.getAmountWithTax().multiply(currentRate);
-                    walletOperation.setUseSpecificPriceConversion(false);
+                    priceWithoutTax = walletOperation.getUnitAmountWithoutTax() != null ? walletOperation.getUnitAmountWithoutTax().multiply(currentRate) : null;
+                    priceWithTax = walletOperation.getAmountWithTax() != null ? walletOperation.getAmountWithTax().multiply(currentRate) : null;
                     walletOperation.setUseSpecificPriceConversion(false);
                 }
                 if (priceWithoutTax == null && priceWithTax == null) {
