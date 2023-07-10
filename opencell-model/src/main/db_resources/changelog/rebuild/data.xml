@@ -12049,7 +12049,234 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-16247_20230605" author="zelmeliani" />
     <changeSet id="#INTRD-16278_20230606" author="anasseh" />
     <changeSet id="INTRD-17129_20230627" author="TarikFA." />
-    	
+
+	<changeSet id="INTRD-12827_20230705" author="zelmeliani">
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-81" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2B+5" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-11" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-82" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2B+10" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-12" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-83" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2B+20" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-13" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-84" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2B+30" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-14" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-85" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2C+1" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-15" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-86" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2C+5" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-16" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-87" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2C+10" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-17" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-88" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2C+15" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-18" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-89" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2B+5 fr" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-19" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-90" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2B+10 fr" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-20" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-91" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2B+20 fr" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-21" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-92" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2B+30 fr" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-22" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-93" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2C+1 fr" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-23" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-94" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2C+5 fr" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-24" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-95" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2C+10 fr" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-25" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-96" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2C+15 fr" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SEND_NOTIFICATION" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="EMAIL" />
+			<column name="action_notification_template_id" valueNumeric="-26" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+	</changeSet>
+
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
