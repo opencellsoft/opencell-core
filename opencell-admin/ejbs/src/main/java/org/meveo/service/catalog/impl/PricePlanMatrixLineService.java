@@ -288,6 +288,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
                         
             lines.add(pricePlanMatrixLine);
         }
+        ppmVersion.getLines().forEach(line -> line.setPricePlanMatrixVersion(null));
         ppmVersion.getLines().clear();
         ppmVersion.getLines().addAll(lines);
     }
