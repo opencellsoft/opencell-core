@@ -39,6 +39,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections4.ListUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
@@ -168,6 +169,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private OpenOrderService openOrderService;
+    
+    @Inject
+    private InvoiceLineService anotherInvoiceLineService;
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
@@ -1112,6 +1116,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return createInvoiceLines(groupedRTs, configuration, result, null);
     }
     
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
     	return createInvoiceLines(groupedRTs, configuration, result, billingRun, new ArrayList<>(), null);
@@ -1218,13 +1224,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @param be billableEntity
 	 * @param basicStatistics
 	 */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
-	    BasicStatistics ilBasicStatistics = createInvoiceLines(
-	            ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate()),
-                aggregationConfiguration, result, billingRun);
-	    basicStatistics.append(ilBasicStatistics);
+	    List<Map<String, Object>> groupedRTsWithAggregation = ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate());
+	    
+	    List<List<Map<String, Object>>> sublist=ListUtils.partition(groupedRTsWithAggregation, 1);
+	    for(List<Map<String, Object>> one:sublist) {
+			BasicStatistics ilBasicStatistics = anotherInvoiceLineService.createInvoiceLines(one,aggregationConfiguration, result, billingRun);
+		    basicStatistics.append(ilBasicStatistics);
+	    }
 	}
 
     public void deleteByBillingRun(long billingRunId) {
