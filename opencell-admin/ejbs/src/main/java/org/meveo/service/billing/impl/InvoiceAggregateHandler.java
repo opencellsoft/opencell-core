@@ -180,6 +180,13 @@ public class InvoiceAggregateHandler {
             ratedTransaction.setAmountWithoutTax(amounts[0]);
             ratedTransaction.setAmountWithTax(amounts[1]);
             ratedTransaction.setAmountTax(amounts[2]);
+
+            BigDecimal[] transactionalAmounts = NumberUtils.computeDerivedAmounts(ratedTransaction.getTransactionalAmountWithoutTax(),
+                    ratedTransaction.getTransactionalAmountWithTax(),
+                    ratedTransaction.getTaxPercent(), isEnterprise, rounding, roundingMode.getRoundingMode());
+            ratedTransaction.setTransactionalAmountWithoutTax(transactionalAmounts[0]);
+            ratedTransaction.setTransactionalAmountWithTax(transactionalAmounts[1]);
+            ratedTransaction.setTransactionalAmountTax(transactionalAmounts[2]);
         }
 
         addRemoveOrUpdateSubCategoryInvoiceAggregate(ratedTransaction.getInvoiceSubCategory(), ratedTransaction.getUserAccount(), ratedTransaction.getInvoiceSubCategory().getDescription(), isToAdd,
