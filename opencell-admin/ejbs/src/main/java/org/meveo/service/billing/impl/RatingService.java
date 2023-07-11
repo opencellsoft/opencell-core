@@ -1284,7 +1284,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @param chargeInstance the charge instance.
      * @return true if there is any attribute with value FALSE
      */
-    public boolean anyFalseAttributeMatch(ChargeInstance chargeInstance) {
+    protected boolean anyFalseAttributeMatch(ChargeInstance chargeInstance) {
         if (chargeInstance.getServiceInstance() != null) {
             return chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
                     .filter(attributeInstance -> chargeInstance.getChargeTemplate().getAttributes().contains(attributeInstance.getAttribute()))
