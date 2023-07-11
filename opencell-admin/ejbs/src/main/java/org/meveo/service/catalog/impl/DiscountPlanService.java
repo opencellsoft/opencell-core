@@ -291,5 +291,18 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     	}
         
     }
+
+	/**
+	 * Get DP by Sequence
+	 * @param pSequence Sequence
+	 * @return List of DP
+	 */
+	public List<DiscountPlan> getDiscountPlanBySequence(Integer pSequence) {
+		List<DiscountPlan> discountPlans = getEntityManager().createNamedQuery("DiscountPlan.getBySequence", DiscountPlan.class)
+				.setParameter("sequence", pSequence)
+				.setParameter("statuses", Arrays.asList(DiscountPlanStatusEnum.DRAFT, DiscountPlanStatusEnum.ACTIVE, DiscountPlanStatusEnum.IN_USE))
+				.getResultList();
+		return discountPlans;
+	}
 	   
 }
