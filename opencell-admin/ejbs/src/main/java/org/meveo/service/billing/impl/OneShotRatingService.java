@@ -83,6 +83,11 @@ public class OneShotRatingService extends RatingService implements Serializable 
         log.debug("Will rate a one shot charge subscription {}, quantity {}, applicationDate {}, chargeInstance {}/{}/{}", subscription.getId(), quantityInChargeUnits, applicationDate, chargeInstance.getId(),
             chargeInstance.getCode(), chargeInstance.getDescription());
 
+        // Check if there is any attribute with value FALSE, indicating that service instance is not active
+        if (anyFalseAttributeMatch(chargeInstance)) {
+            return new RatingResult();
+        }
+
         RatingResult ratingResult = null;
         try {
             ratingResult = rateChargeAndInstantiateTriggeredEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null, chargeMode, null, null, false, isVirtual);
