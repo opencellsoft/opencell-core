@@ -24,7 +24,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections4.ListUtils.partition;
 import static org.meveo.commons.utils.ParamBean.getInstance;
 import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
-import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -44,7 +43,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -83,6 +81,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.billing.ExtraMinAmount;
@@ -1833,7 +1832,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String unitAmount = appProvider.isEntreprise() ? "unitAmountWithoutTax" : "unitAmountWithTax";
             String unitAmountField = aggregationConfiguration.isAggregationPerUnitAmount() ? "SUM(a.unitAmountWithoutTax)" : unitAmount;
 
-            boolean incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines();
+            // the first run of billing run (status is 'NEW' at that moment) should be in a normal run to create new invoice line
+            // and to avoid doing unnecessary joins.
+            // The next runs of BR (status has already changed to 'OPEN' at that moment) will apply the appending mode on existing invoice lines
+            boolean incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines() && billingRun.getStatus() == BillingRunStatusEnum.OPEN;
             List<String> fieldToFetch = buildFieldList(usageDateAggregation, unitAmountField,
             		aggregationConfiguration.isIgnoreSubscriptions(), aggregationConfiguration.isIgnoreOrders(),
                     true, aggregationConfiguration.isUseAccountingArticleLabel(),
@@ -1916,7 +1918,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             fieldToFetch.add("serviceInstance.id as service_instance_id");
         }
         if(!ignoreOrder) {
-            fieldToFetch.add("subscription.order.id as commercial_order_id");
+            fieldToFetch.add("infoOrder.order.id as commercial_order_id");
             fieldToFetch.add("orderNumber as order_number");
             fieldToFetch.add("infoOrder.order.id as order_id");
         }
@@ -2025,7 +2027,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         if (! aggregationConfiguration.isIgnoreOrders()) {
-            mapToInvoiceLineTable.put("subscription.order.id", "subscription.order.id");
             mapToInvoiceLineTable.put("infoOrder.order.id", "commercialOrder.id");
             mapToInvoiceLineTable.put("orderNumber", "orderNumber");
         }

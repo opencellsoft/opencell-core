@@ -193,6 +193,7 @@ import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.ValidationRuleTypeEnum;
 import org.meveo.model.billing.WalletInstance;
@@ -225,6 +226,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -408,6 +410,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private OpenOrderService openOrderService;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
     /**
      * folder for pdf .
@@ -1321,7 +1326,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
-        if (isBlank(billingCycle.getCollectionDateDelayEl())) {
+        if (billingCycle != null && isBlank(billingCycle.getCollectionDateDelayEl())) {
             invoice.setInitialCollectionDate(invoice.getDueDate());
             return;
         }
@@ -1334,7 +1339,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Determine invoice due date delay either from Order, Customer account or Billing cycle
         Integer delay = 0;
-        delay = evaluateCollectionDelayExpression(billingCycle.getCollectionDateDelayEl(), billingAccount, invoice, order);
+        if(billingCycle != null) {
+            delay = evaluateCollectionDelayExpression(billingCycle.getCollectionDateDelayEl(), billingAccount, invoice, order);
+        }
         if (delay == null) {
             throw new BusinessException("collection date delay is null");
         }
@@ -3122,11 +3129,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if (isDepositInvoice) {
             invoiceType = invoiceTypeService.getDefaultDeposit();
         } else {
-            if (!isBlank(billingCycle.getInvoiceTypeEl())) {
+            if (billingCycle != null && !isBlank(billingCycle.getInvoiceTypeEl())) {
                 String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun, billingAccount);
                 invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
             }
-            if (invoiceType == null) {
+            if (billingCycle != null && invoiceType == null) {
                 invoiceType = billingCycle.getInvoiceType();
             }
             if (invoiceType == null) {
@@ -6718,14 +6725,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
            }
             
         }
-
         return update(toUpdate);
     }
 
     public BigDecimal getCurrentRate(Invoice toUpdate, Date exchangeDate) {
         BigDecimal currentRate = null;
         if (toUpdate.getTradingCurrency() != null) {
-            ExchangeRate exchangeRate = toUpdate.getTradingCurrency().getExchangeRate(exchangeDate);
+            TradingCurrency tradingCurrency = tradingCurrencyService.refreshOrRetrieve(toUpdate.getTradingCurrency());
+            ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
             if (exchangeRate != null) {
                 currentRate = exchangeRate.getExchangeRate();
             }

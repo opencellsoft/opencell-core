@@ -221,19 +221,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if (pricePlanMatrixVersion == null) {
             return;
         }
-        List<ContractItem> contractItems = pricePlanMatrixVersion.getPricePlanMatrix().getContractItems();
-        if (contractItems != null && !contractItems.isEmpty()){
-            DatePeriod period = pricePlanMatrixVersionDto.getValidity();            
-            for(ContractItem contractItem : contractItems){
-                if (period != null){
-                    period = DateUtils.truncateTime(period);
-                    if (period.getTo() != null && period.getTo().after(contractItem.getContract().getEndDate())){
-                        log.error("Price plan's period should not be after contract's end date");
-                        throw new MeveoApiException("Price plan's period should not be after contract's end date");
-                    }
-                }                
-            }
-        }
     }
 
     private PricePlanMatrixVersion populatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrixVersionDto pricePlanMatrixVersionDto, VersionStatusEnum status, Date statusTime) {

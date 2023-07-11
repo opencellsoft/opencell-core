@@ -131,19 +131,17 @@ public class ContractService extends BusinessService<Contract>  {
 			if (endDatePricePlanVersions.isEmpty() && !pricePlanVersions.isEmpty()){
 				pricePlanVersions.sort(comparing(PricePlanMatrixVersion::getValidity, nullsLast(naturalOrder())));
 				PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanVersions.get(0);
-				if (pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getFrom().compareTo(contract.getBeginDate()) < 0){
+				if (pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getFrom() != null &&
+						pricePlanMatrixVersion.getValidity().getFrom().compareTo(contract.getBeginDate()) < 0) {
 			//NOTE 2		
 					log.error("Start date of the price version id {} should not be prior to the Start date of the contract",pricePlanMatrixVersion.getId());
-					throw new BusinessApiException(
-							"Start date of a price version should not be prior to the Start date of the contract.");
 
 				}
 			//NOTE 3
 				pricePlanMatrixVersion = pricePlanVersions.get(pricePlanVersions.size()-1);
-				if (pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getTo().compareTo(contract.getEndDate()) > 0){
+				if (pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getTo() != null &&
+						pricePlanMatrixVersion.getValidity().getTo().compareTo(contract.getEndDate()) > 0) {
 					log.error("End date of of the price version id {} should not be after the End date of a contract",pricePlanMatrixVersion.getId());
-					throw new BusinessApiException(
-							"Start date of a price version should not be prior to the Start date of the contract.");
 				}
 			}
 		}
