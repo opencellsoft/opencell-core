@@ -1288,11 +1288,19 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     }
 
     public void setIsEnterpriseAmount(boolean isEnterprise, BigDecimal amount) {
+        BigDecimal rate = tradingCurrency != null
+                && tradingCurrency.getCurrentRate() != null ? tradingCurrency.getCurrentRate() : BigDecimal.ONE;
         if (isEnterprise) {
             setAmountWithoutTax(amount);
+            if(tradingCurrency != null && tradingCurrency.getCurrentRate() != null) {
+                transactionalAmountWithoutTax = amount.multiply(rate);
+            }
 
         } else {
             setAmountWithTax(amount);
+            if(tradingCurrency != null && tradingCurrency.getCurrentRate() != null) {
+                transactionalAmountWithTax = amount.multiply(rate);
+            }
         }
     }
 
