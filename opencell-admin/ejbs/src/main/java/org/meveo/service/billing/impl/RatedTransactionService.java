@@ -403,10 +403,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             ratedTransaction.setQuantity(walletOperation.getQuantity());
             ratedTransaction.setAmountWithoutTax(walletOperation.getAmountWithoutTax());
             ratedTransaction.setAmountWithTax(walletOperation.getAmountWithTax());
+
+            ratedTransaction.setTransactionalUnitAmountWithoutTax(walletOperation.getTransactionalUnitAmountWithoutTax());
+            ratedTransaction.setTransactionalUnitAmountWithTax(walletOperation.getTransactionalUnitAmountWithTax());
+            ratedTransaction.setTransactionalUnitAmountTax(walletOperation.getTransactionalUnitAmountTax());
+            ratedTransaction.setTransactionalAmountWithoutTax(walletOperation.getTransactionalAmountWithoutTax());
+            ratedTransaction.setTransactionalAmountWithTax(walletOperation.getTransactionalAmountWithTax());
+
             ratedTransaction.setInputQuantity(walletOperation.getInputQuantity());
             ratedTransaction.setRawAmountWithTax(walletOperation.getRawAmountWithTax());
             ratedTransaction.setRawAmountWithoutTax(walletOperation.getRawAmountWithoutTax());
             ratedTransaction.setAmountTax(walletOperation.getAmountTax());
+            ratedTransaction.setTransactionalAmountTax(walletOperation.getTransactionalAmountTax());
             if (walletOperation.getWalletId() != null) {
                 ratedTransaction.setWallet(em.getReference(WalletInstance.class, walletOperation.getWalletId()));
             }
