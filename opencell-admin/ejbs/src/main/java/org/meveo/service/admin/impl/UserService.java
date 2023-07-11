@@ -162,4 +162,30 @@ public class UserService extends PersistenceService<User> {
         user.setUserLevel(kcUser.getUserLevel());
         return user;
     }
+    
+    /**
+     * Lookup a user by a id
+     * 
+     * @param id to lookup by
+     * @param extendedInfo Shall group membership and roles be retrieved
+     * @return User found
+     */
+    public User findById(Long id, boolean extendedInfo) {
+        if(id==null) {
+            return null;
+        }
+        User user=findById(id);
+         if (user == null) {
+             return null;
+         }
+        User kcUser = keycloakAdminClientService.findUser(user.getUserName(), extendedInfo);
+        if (kcUser == null) {
+            return null;
+        }
+        user.setEmail(kcUser.getEmail());
+        user.setName(kcUser.getName());
+        user.setRoles(kcUser.getRoles());
+        user.setUserLevel(kcUser.getUserLevel());
+        return user;
+    }
 }
