@@ -17028,5 +17028,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
 								 baseTableName="cpq_quote_price" 
 								 referencedColumnNames="id"/>
 	</changeSet>
+	
+	<changeSet id="INTRD-15775_20230710" author="AdilElJaouhari">
+        <addColumn tableName="billing_charge_instance">
+            <column name="anticipate_end_of_subscription" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="anticipate_end_of_subscription" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
