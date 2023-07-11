@@ -1850,10 +1850,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID, Long billingRunId) {
     	final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+    	
         if (ratedTransactionsIDs.size() > maxValue) {
+        	log.info(">"+invoiceLineID+"====>"+ratedTransactionsIDs.size());
             SubListCreator<Long> subLists = new SubListCreator<>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / maxValue)));
+            int i=0;
             while (subLists.isHasNext()) {
-                linkRTsWithILByIds(invoiceLineID, subLists.getNextWorkSet(), billingRunId);
+                List<Long> nextWorkSet = subLists.getNextWorkSet();
+                log.info(">>"+invoiceLineID+"----"+(++i)+"---->"+nextWorkSet.size());
+				linkRTsWithILByIds(invoiceLineID, nextWorkSet, billingRunId);
             }
         } else {
             linkRTsWithILByIds(invoiceLineID, ratedTransactionsIDs, billingRunId);
