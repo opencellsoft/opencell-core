@@ -114,6 +114,10 @@ public class RecurringChargeInstance extends ChargeInstance {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "charge_to_date_on_termination")
     private Date chargeToDateOnTermination;
+    
+    @Column(name = "anticipate_end_of_subscription")
+    @Type(type = "numeric_boolean")
+    private boolean anticipateEndOfSubscription;
 
     public RecurringChargeInstance() {
 
@@ -305,4 +309,19 @@ public class RecurringChargeInstance extends ChargeInstance {
     public void setChargeToDateOnTermination(Date chargeToDateOnTermination) {
         this.chargeToDateOnTermination = chargeToDateOnTermination;
     }
+
+	/**
+	 * @return the anticipateEndOfSubscription
+	 */
+	public boolean isAnticipateEndOfSubscription() {
+		return anticipateEndOfSubscription;
+	}
+
+	/**
+	 * @param anticipateEndOfSubscription the anticipateEndOfSubscription to set
+	 */
+	public void setAnticipateEndOfSubscription(boolean anticipateEndOfSubscription) {
+		this.anticipateEndOfSubscription = anticipateEndOfSubscription;
+	}
+    
 }

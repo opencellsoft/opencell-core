@@ -2809,6 +2809,7 @@
 			<column name="reactivation_date" type="datetime" />
 			<column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
 		    <column name="overcharged_unit_amount_without_tax" type="numeric(23,12)"/>
+		    <column name="anticipate_end_of_subscription" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-168">
@@ -4170,6 +4171,7 @@
             <column name="attribute_duration_id" type="bigint"/>
             <column name="attribute_calendar_id" type="bigint"/>
             <column name="internal_note" type="${type.longtext}" />
+            <column name="anticipate_end_of_subscription" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-208">
@@ -19066,6 +19068,7 @@
     <changeSet id="#INTRD-13453_20230207" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-17149_04072023" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
+    <changeSet id="INTRD-15775_20230710" author="AdilElJaouhari" />
     
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

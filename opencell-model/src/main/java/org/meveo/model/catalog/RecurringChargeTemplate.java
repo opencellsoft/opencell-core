@@ -159,6 +159,10 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attribute_calendar_id")
     private Attribute attributeCalendar;
+    
+    @Column(name = "anticipate_end_of_subscription")
+    @Type(type = "numeric_boolean")
+    private boolean anticipateEndOfSubscription;
 
     /**
      * Gets the calendar.
@@ -414,4 +418,19 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 	public void setAttributeCalendar(Attribute attributeCalendar) {
 		this.attributeCalendar = attributeCalendar;
 	}
+
+	/**
+	 * @return the anticipateEndOfSubscription
+	 */
+	public boolean isAnticipateEndOfSubscription() {
+		return anticipateEndOfSubscription;
+	}
+
+	/**
+	 * @param anticipateEndOfSubscription the anticipateEndOfSubscription to set
+	 */
+	public void setAnticipateEndOfSubscription(boolean anticipateEndOfSubscription) {
+		this.anticipateEndOfSubscription = anticipateEndOfSubscription;
+	}
+	
 }
