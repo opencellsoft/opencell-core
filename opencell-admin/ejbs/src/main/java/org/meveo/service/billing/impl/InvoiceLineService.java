@@ -1,7 +1,7 @@
 package org.meveo.service.billing.impl;
 
-import static java.math.BigDecimal.ZERO;
 import static java.lang.Boolean.FALSE;
+import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -38,6 +39,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections4.ListUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
@@ -61,7 +63,6 @@ import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.MinAmountData;
@@ -166,6 +167,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private OpenOrderService openOrderService;
+    
+    @Inject
+    private InvoiceLineService anotherInvoiceLineService;
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -1034,6 +1038,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return createInvoiceLines(groupedRTs, configuration, result, null);
     }
     
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
             AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
     	return createInvoiceLines(groupedRTs, configuration, result, billingRun, new ArrayList<>(), null);
@@ -1143,13 +1149,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @return 
 	 * @return
 	 */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
-	    BasicStatistics ilBasicStatistics = createInvoiceLines(
-	            ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate()),
-                aggregationConfiguration, result, billingRun);
-	    basicStatistics.append(ilBasicStatistics);
+	    List<Map<String, Object>> groupedRTsWithAggregation = ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate());
+	    
+	    List<List<Map<String, Object>>> sublist=ListUtils.partition(groupedRTsWithAggregation, 1);
+	    for(List<Map<String, Object>> one:sublist) {
+			BasicStatistics ilBasicStatistics = anotherInvoiceLineService.createInvoiceLines(one,aggregationConfiguration, result, billingRun);
+		    basicStatistics.append(ilBasicStatistics);
+	    }
 	}
 
     public void deleteByBillingRun(long billingRunId) {
