@@ -151,7 +151,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics);
 		iteratorBasedJobProcessing.processItems(result,
                 new SynchronizedIterator<>(billableEntitiesList), task, null, null, nbRuns,
-                waitingMillis, true, jobInstance.getJobSpeed(),true);
+                waitingMillis, false, jobInstance.getJobSpeed(),true);
 		billableEntitiesSize+=billingAccountsIDs.size();
         return billableEntitiesSize;
     }
@@ -165,8 +165,10 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     	 */
     	private void assignAccountingArticleIfMissingInRTs(JobExecutionResultImpl result, List<? extends IBillableEntity> billableEntities,
     			Long maxInvoiceLinesPerTransaction, Long waitingMillis, JobInstance jobInstance, Long nbRuns) {
+    		log.info(" ============ START ASSIGNING ACCOUNTING ARTICLES STEP ");
     		BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> updateRTAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction);
     		iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, true, jobInstance.getJobSpeed(), true);
+    		log.info(" ============ END ASSIGNING ACCOUNTING ARTICLES STEP ");
     	}
     
     	/**
