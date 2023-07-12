@@ -45,6 +45,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -73,6 +74,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -92,6 +94,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import jakarta.xml.bind.JAXBException;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -7659,4 +7662,40 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public List<Long> listInvoicesWithoutXml(List<InvoiceStatusEnum> statusList) {
 		return getEntityManager().createNamedQuery("Invoice.xmlWithStatusForUBL", Long.class).setParameter("statusList", statusList).getResultList();
 	}
+	
+	/**
+	 * Produce invoice's XML file and update invoice record in DB.
+	 *
+	 * @param invoice Invoice to produce XML for
+	 * @param draftWalletOperationsId Wallet operations (ids) to include in a draft invoice
+	 * @return Update invoice entity
+	 * @throws BusinessException business exception
+	 */
+	public Invoice produceInvoiceUBLFormat(Invoice invoice) throws BusinessException, JAXBException {
+		invoice.setXmlDate(new Date());
+		invoice.setUblReference(true);
+		InvoiceUblHelper invoiceUblHelper = InvoiceUblHelper.getInstance();
+		var invoiceUbl = invoiceUblHelper.createInvoiceUBL(invoice);
+		// check directory if exist
+		ParamBean paramBean = ParamBean.getInstance();
+		File ublDirectory = new File (paramBean.getChrootDir("") + File.separator + paramBean.getProperty("meveo.ubl.directory", "/ubl"));
+		if (!StorageFactory.existsDirectory(ublDirectory)) {
+			StorageFactory.createDirectory(ublDirectory);
+		}
+		File xmlInvoiceFileName = new File(ublDirectory.getAbsolutePath() + File.separator + "invoice_" + invoice.getInvoiceNumber() + "_" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".xml");
+		try {
+			Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()));
+		} catch (IOException e) {
+			throw new BusinessException(e);
+		}
+		try {
+			invoiceUblHelper.toXml(invoiceUbl, xmlInvoiceFileName);
+		} catch (javax.xml.bind.JAXBException e) {
+			throw new BusinessException(e);
+		}
+		invoice = updateNoCheck(invoice);
+		entityUpdatedEventProducer.fire(invoice);
+		return invoice;
+	}
+	
 }
