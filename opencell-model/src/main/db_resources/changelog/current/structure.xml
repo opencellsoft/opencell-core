@@ -17055,5 +17055,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="article_selection_mode" defaultValue="AFTER_PRICING" type="varchar(30)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="INTRD-14424_20230710" author="ThangNguyen">
+        <addColumn tableName="billing_invoice_line">
+            <column name="invoice_key" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 	
 </databaseChangeLog>
