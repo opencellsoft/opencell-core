@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -61,6 +62,7 @@ import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
+import org.meveo.model.billing.InvoiceLinesGroup;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.LinkedInvoice;
@@ -93,6 +95,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.settings.OpenOrderSetting;
 import org.meveo.service.admin.impl.SellerService;
@@ -104,8 +107,8 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
-import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OpenOrderService;
+import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
@@ -117,8 +120,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     private static final String INVOICING_PROCESS_TYPE = "InvoiceLine";
     private static final String INVOICE_MINIMUM_COMPLEMENT_CODE = "MIN-STD";
 
-    @Inject
-    private FilterService filterService;
+    private static final String UNDERSCORE_SEPARATOR = "_";
+
+    private static final String EMPTY_STRING = "";
 
     @Inject
     private TaxMappingService taxMappingService;
@@ -170,6 +174,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+
+    @Inject
+    private PaymentMethodService paymentMethodService;
     
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -1092,20 +1099,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
     }
     
-    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
-            AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
-        return createInvoiceLines(groupedRTs, configuration, result, null);
-    }
-    
-    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
-            AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
-    	return createInvoiceLines(groupedRTs, configuration, result, billingRun, new ArrayList<>(), null);
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs, AggregationConfiguration configuration,
+          JobExecutionResultImpl result, BillingRun billingRun, IBillableEntity billableEntity) throws BusinessException {
+    	return createInvoiceLines(groupedRTs, configuration, result, billingRun, new ArrayList<>(), null, billableEntity);
     }
     	
     public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
                 AggregationConfiguration configuration, JobExecutionResultImpl result,
                                               BillingRun billingRun, List<InvoiceLine> invoiceLines,
-                                              String openOrderNumber) throws BusinessException {
+                                              String openOrderNumber, IBillableEntity billableEntity) throws BusinessException {
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
         Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
         BasicStatistics basicStatistics = new BasicStatistics();
@@ -1163,8 +1165,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
                 basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
                 basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
-                create(invoiceLine);
-                commit();
                 associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
                 basicStatistics.setCount(associatedRtIds.size());
                 ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId(), billingRunId);
@@ -1182,26 +1182,109 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                         openOrder.setBalance(openOrder.getBalance().subtract(invoiceLine.getAmountWithoutTax()));
                     }
                 }
+                buildInvoiceKey(invoiceLine);
                 invoiceLines.add(invoiceLine);
             }
         }
         basicStatistics.setCount(groupedRTs.size());
+
+        List<InvoiceLinesGroup> customInvoiceLinesGroups = billingRun != null ?
+                executeBillingCycleScript(invoiceLines, billingRun, billableEntity) : null;
+
+        if (customInvoiceLinesGroups != null && !customInvoiceLinesGroups.isEmpty()) {
+            customInvoiceLinesGroups.forEach(group -> this.writeInvoiceLines(group.getInvoiceLines(), UNDERSCORE_SEPARATOR + group.getInvoiceKey()));
+        } else {
+            writeInvoiceLines(invoiceLines, EMPTY_STRING);
+        }
+
         return basicStatistics;
     }
 
-	/**
+    /**
+     * Build invoiceKey from an entity invoiceLine from different information such as billingAccount, seller, invoiceType, etc.
+     *
+     * @param invoiceLine InvoiceLine
+     * @return void
+     */
+    private void buildInvoiceKey(InvoiceLine invoiceLine) {
+        StringJoiner invoiceKey =  new StringJoiner(UNDERSCORE_SEPARATOR);
+        if (invoiceLine.getBillingAccount() != null) {
+            invoiceKey.add(String.valueOf(invoiceLine.getBillingAccount().getId()));
+        }
+        if (invoiceLine.getSellerId() != null) {
+            invoiceKey.add(String.valueOf(invoiceLine.getSellerId()));
+        }
+        if (invoiceLine.getPaymentMethodId() != null) {
+            invoiceKey.add(String.valueOf(invoiceLine.getPaymentMethodId()));
+        }
+        if (invoiceLine.getInvoiceTypeId() != null) {
+            invoiceKey.add(String.valueOf(invoiceLine.getInvoiceTypeId()));
+        }
+        if (invoiceLine.getOpenOrderNumber() != null) {
+            invoiceKey.add(invoiceLine.getOpenOrderNumber());
+        }
+        invoiceLine.setInvoiceKey(invoiceKey.toString());
+    }
+
+    /**
+     * method to execute billing cycle script.
+     *
+     * @param invoiceLines List<InvoiceLine> list of invoiceLines to be processed
+     * @param billingRun List<InvoiceLine> billing run in used
+     * @param billableEntity IBillableEntity entity to be billed
+     * @return List<InvoiceLinesGroup> return the list of InvoiceLinesGroup defined by a customized script
+     */
+    private List<InvoiceLinesGroup> executeBillingCycleScript(List<InvoiceLine> invoiceLines, BillingRun billingRun, IBillableEntity billableEntity) {
+        if (billingRun.getBillingCycle().getScriptInstance() != null && invoiceLines != null && !invoiceLines.isEmpty()) {
+            InvoiceLine firstInvoiceLine = invoiceLines.get(0);
+            InvoiceType invoiceType;
+
+            if (firstInvoiceLine.getInvoiceTypeId() != null) {
+                invoiceType = invoiceTypeService.findById(firstInvoiceLine.getInvoiceTypeId());
+            } else {
+                invoiceType = invoiceService.determineInvoiceType(false, false, false,
+                        billingRun.getBillingCycle(), billingRun, firstInvoiceLine.getBillingAccount());
+            }
+
+            PaymentMethod paymentMethod;
+            if (firstInvoiceLine.getPaymentMethodId() != null) {
+                paymentMethod = paymentMethodService.findById(firstInvoiceLine.getPaymentMethodId());
+            } else {
+                paymentMethod = firstInvoiceLine.getBillingAccount().getPaymentMethod();
+            }
+            if (paymentMethod == null) {
+                paymentMethod = firstInvoiceLine.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
+            }
+
+            return invoiceService.executeBCScriptWithInvoiceLines(billingRun, invoiceType, invoiceLines, billableEntity,
+                    billingRun.getBillingCycle().getScriptInstance().getCode(), paymentMethod);
+        }
+        return Collections.emptyList();
+    }
+
+
+    private void writeInvoiceLines(List<InvoiceLine> invoiceLines, String invoiceKey) {
+        log.info("======== CREATING {} INVOICE LINES ========", invoiceLines.size());
+        invoiceLines.forEach(invoiceLine -> {
+            invoiceLine.setInvoiceKey(invoiceLine.getInvoiceKey() + invoiceKey);
+            create(invoiceLine);
+        });
+    }
+
+    /**
 	 * @param result
 	 * @param aggregationConfiguration
 	 * @param billingRun
-	 * @param be billableEntity
+	 * @param billableEntity the billableEntity
 	 * @param basicStatistics
 	 */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
+	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration,
+                                   BillingRun billingRun, IBillableEntity billableEntity, BasicStatistics basicStatistics) {
 	    BasicStatistics ilBasicStatistics = createInvoiceLines(
-	            ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate()),
-                aggregationConfiguration, result, billingRun);
+	            ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, billableEntity, billingRun.getLastTransactionDate()),
+                aggregationConfiguration, result, billingRun, billableEntity);
 	    basicStatistics.append(ilBasicStatistics);
 	}
 
