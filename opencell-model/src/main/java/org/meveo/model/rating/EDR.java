@@ -91,7 +91,7 @@ import org.meveo.model.billing.WalletOperation;
         @NamedQuery(name = "EDR.findEDREventVersioning", query = "SELECT e from EDR e where e.status in ('OPEN', 'REJECTED', 'RATED', 'CANCELLED') and e.eventKey=:eventKey and e.eventVersion != null order by e.eventVersion DESC"),
         @NamedQuery(name = "EDR.getByWO", query = "SELECT edr FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)"),
 		@NamedQuery(name = "EDR.deleteByWO", query = "DELETE FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)"),
-		@NamedQuery(name = "EDR.cancelEDRs", query = "UPDATE EDR set status='CANCELED', rejectReason=:rejectReason, updated=:updatedDate where id in :ids")
+		@NamedQuery(name = "EDR.cancelEDRs", query = "UPDATE EDR set status='CANCELLED', rejectReason=:rejectReason, updated=:updatedDate where id in :ids")
     })
 public class EDR extends BaseEntity {
 

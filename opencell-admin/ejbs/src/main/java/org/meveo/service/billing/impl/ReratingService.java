@@ -28,7 +28,6 @@ import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -455,19 +454,22 @@ public class ReratingService extends RatingService implements Serializable {
         }
 
         // Traverse down the WO/discountWO/EDR tree to gather a list of WOs, EDRs and RTs that resulted from an operation being rerated. Supports unlimited levels of hierarchy.
-        List<Long> woIdsToCheck = List.of(operationToRerate.getId());
+        List<Long> woIdsToCheck = new ArrayList<>();
+        woIdsToCheck.add(operationToRerate.getId());
+
         while (!woIdsToCheck.isEmpty()) {
             // Find any discount WOs associated - Discount WOs with Canceled status are omitted
             List<Object[]> discountWOInfos = em.createNamedQuery("WalletOperation.discountWoSummaryForRerating").setParameter("woIds", woIdsToCheck).getResultList();
             for (Object[] discounWOInfo : discountWOInfos) {
                 // Supplement WoIdsToCheck list with discount WO id for further processing to determine any triggered EDRs/WOs/RTs
                 Long woId = ((BigInteger) discounWOInfo[0]).longValue();
-                WalletOperationStatusEnum woStatus = WalletOperationStatusEnum.valueOf((String) discounWOInfo[1]);
-                if (woStatus != WalletOperationStatusEnum.OPEN) { // WO with CANCELED status was already omitted in SQL
-                    woIdsToCheck.add(woId);
-                }
+//                WalletOperationStatusEnum woStatus = WalletOperationStatusEnum.valueOf((String) discounWOInfo[1]);
+                woIdsToCheck.add(woId);
+
                 // WOs will be marked as canceled
                 woIdsToUpdate.add(woId);
+
+                // If WO has RT
                 if (discounWOInfo[2] != null) {
                     Long rtId = ((BigInteger) discounWOInfo[2]).longValue();
                     rtIdsToCheck.add(rtId);
@@ -486,8 +488,8 @@ public class ReratingService extends RatingService implements Serializable {
                     if (edrWoInfo[2] != null) {
                         Long woId = ((BigInteger) edrWoInfo[2]).longValue();
                         WalletOperationStatusEnum woStatus = WalletOperationStatusEnum.valueOf((String) edrWoInfo[3]);
-                        // Check further for triggered EDRs/WOs/RTs for WOs in other than Canceled or Openn status
-                        if (woStatus != WalletOperationStatusEnum.CANCELED && woStatus != WalletOperationStatusEnum.OPEN) {
+                        // Check further for triggered EDRs/WOs/RTs for WOs in other than Canceled status
+                        if (woStatus != WalletOperationStatusEnum.CANCELED) {
                             woIdsToCheck.add(woId);
                         }
                         // Non-Canceled WOs will be marked as canceled
@@ -528,18 +530,18 @@ public class ReratingService extends RatingService implements Serializable {
                         Long brId = ((BigInteger) rtIlInfo[8]).longValue();
 
                         BillingRun billingRun = em.find(BillingRun.class, brId);
-                        boolean averateUnitAmounts = billingRun.getBillingCycle() != null && !billingRun.getBillingCycle().isDisableAggregation() && billingRun.getBillingCycle().isAggregateUnitAmounts();
+                        boolean averageUnitAmounts = billingRun.getBillingCycle() != null && !billingRun.getBillingCycle().isDisableAggregation() && billingRun.getBillingCycle().isAggregateUnitAmounts();
 
                         // Updating IL by sql misses unit amount rounding
                         // MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
                         // unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
 
-                        ILAdjustments amounts = new ILAdjustments((BigDecimal) rtIlInfo[2], (BigDecimal) rtIlInfo[3], (BigDecimal) rtIlInfo[4], (BigDecimal) rtIlInfo[5], averateUnitAmounts);
+                        ILAdjustments adjustment = new ILAdjustments((BigDecimal) rtIlInfo[2], (BigDecimal) rtIlInfo[3], (BigDecimal) rtIlInfo[4], (BigDecimal) rtIlInfo[5], averageUnitAmounts);
 
                         if (ilAdjustments.containsKey(ilId)) {
-                            ilAdjustments.get(ilId).addAmounts(amounts);
+                            ilAdjustments.get(ilId).addAdjustment(adjustment);
                         } else {
-                            ilAdjustments.put(ilId, amounts);
+                            ilAdjustments.put(ilId, adjustment);
                         }
                     }
                 }
@@ -558,26 +560,27 @@ public class ReratingService extends RatingService implements Serializable {
 
         // Mark all triggered EDRs as CANCELED
         if (!edrIdsToUpdate.isEmpty()) {
-            em.createNamedQuery("EDR.cancelEDRs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", edrIdsToUpdate);
+            em.createNamedQuery("EDR.cancelEDRs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", edrIdsToUpdate).executeUpdate();
         }
 
         // Mark all triggered and discount WOs as CANCELED
         if (!woIdsToUpdate.isEmpty()) {
-            em.createNamedQuery("WalletOperation.cancelWOs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", woIdsToUpdate);
+            em.createNamedQuery("WalletOperation.cancelWOs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", woIdsToUpdate).executeUpdate();
         }
 
         // Mark all main, triggered and discount RTs as CANCELED
         if (!rtIdsToUpdate.isEmpty()) {
-            em.createNamedQuery("RatedTransaction.cancelRTs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", rtIdsToUpdate);
+            em.createNamedQuery("RatedTransaction.cancelRTs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", rtIdsToUpdate).executeUpdate();
         }
-        
+
         // Update Invoice lines - adjust amounts and quantity
+        Date date = new Date();
         for (Entry<Long, ILAdjustments> ilInfo : ilAdjustments.entrySet()) {
             Long ilId = ilInfo.getKey();
             ILAdjustments ilAdjustment = ilInfo.getValue();
             em.createNamedQuery("InvoiceLine.updateByIncrementalModeWoutDates" + (ilAdjustment.isAverageUnitAmounts() ? "WithAverageUnitAmounts" : ""))
                 .setParameter("deltaAmountWithoutTax", ilAdjustment.getAmountWithoutTax()).setParameter("deltaAmountWithTax", ilAdjustment.getAmountWithTax()).setParameter("deltaAmountTax", ilAdjustment.getAmountTax())
-                .setParameter("deltaQuantity", ilAdjustment.getQuantity()).setParameter("id", ilId);
+                .setParameter("deltaQuantity", ilAdjustment.getQuantity()).setParameter("id", ilId).setParameter("now", date).executeUpdate();
         }
 
         // No reason to reject rerating
@@ -660,7 +663,7 @@ public class ReratingService extends RatingService implements Serializable {
          */
         public ILAdjustments(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, BigDecimal quantity, boolean averageUnitAmounts) {
             super(amountWithoutTax != null ? amountWithoutTax.negate() : null, amountWithTax != null ? amountWithTax.negate() : null, amountTax != null ? amountTax.negate() : null);
-            this.quantity = quantity;
+            this.quantity = quantity.negate();
             this.averageUnitAmounts = averageUnitAmounts;
         }
 
@@ -670,6 +673,19 @@ public class ReratingService extends RatingService implements Serializable {
 
         public boolean isAverageUnitAmounts() {
             return averageUnitAmounts;
+        }
+
+        /**
+         * Add adjustment
+         * 
+         * @param adjustmentToAdd Adjustment to add
+         */
+        public void addAdjustment(ILAdjustments adjustmentToAdd) {
+            if (adjustmentToAdd == null) {
+                return;
+            }
+            super.addAmounts(adjustmentToAdd);
+            this.quantity = this.quantity.add(adjustmentToAdd.getQuantity());
         }
     }
 }
