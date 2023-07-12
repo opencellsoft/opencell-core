@@ -402,6 +402,22 @@ public class InvoiceLine extends AuditableCFEntity {
 	@Column(name = "open_order_number")
 	@Size(max = 255)
 	private String openOrderNumber;
+
+	/**
+	 * Invoice Key
+	 */
+	@Column(name = "invoice_key")
+	@Size(max = 255)
+	private String invoiceKey;
+
+	@Transient
+	private Long sellerId;
+
+	@Transient
+	private Long invoiceTypeId;
+
+	@Transient
+	private Long paymentMethodId;
     
 	public InvoiceLine() {
 	}
@@ -916,7 +932,39 @@ public class InvoiceLine extends AuditableCFEntity {
 
 	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
 		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
-	}   
+	}
+
+	public String getInvoiceKey() {
+		return invoiceKey;
+	}
+
+	public void setInvoiceKey(String invoiceKey) {
+		this.invoiceKey = invoiceKey;
+	}
+
+	public Long getSellerId() {
+		return sellerId;
+	}
+
+	public void setSellerId(Long sellerId) {
+		this.sellerId = sellerId;
+	}
+
+	public Long getInvoiceTypeId() {
+		return invoiceTypeId;
+	}
+
+	public void setInvoiceTypeId(Long invoiceTypeId) {
+		this.invoiceTypeId = invoiceTypeId;
+	}
+
+	public Long getPaymentMethodId() {
+		return paymentMethodId;
+	}
+
+	public void setPaymentMethodId(Long paymentMethodId) {
+		this.paymentMethodId = paymentMethodId;
+	}
     
 	@PrePersist
 	@PreUpdate
