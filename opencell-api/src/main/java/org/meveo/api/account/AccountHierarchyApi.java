@@ -54,8 +54,11 @@ import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.payment.PaymentMethodApi;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.parameter.CRMAccountHierarchyDtoParser;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.commons.utils.ParamBean;
@@ -756,8 +759,8 @@ public class AccountHierarchyApi extends BaseApi {
      * @return a wrapper of customer.
      * @throws MeveoApiException meveo api exception.
      */
-    // @SecuredBusinessEntityMethod(resultFilter=ListFilter.class)
-    // @FilterResults(propertyToFilter = "customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
+    @SecuredBusinessEntityMethod(resultFilter= ListFilter.class)
+    @FilterResults(propertyToFilter = "customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) }, totalRecords = "totalNumberOfRecords")
     public CustomersDto find(AccountHierarchyDto postData, Boolean calculateBalances) throws MeveoApiException {
 
         CustomersDto result = new CustomersDto();
