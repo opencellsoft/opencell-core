@@ -1651,6 +1651,7 @@ public class CpqQuoteApi extends BaseApi {
         });
     	if(PriceLevelEnum.QUOTE.equals(level) && price.isPresent()) {
         	 quotePriceService.create(price.get());
+        	 quotePriceService.getEntityManager().flush();
         }
         return price;
     }
