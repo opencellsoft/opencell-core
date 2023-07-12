@@ -94,6 +94,9 @@ public class InvoiceLinesFactory {
         ofNullable(data.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, ((Number)id).longValue())));
         ofNullable(data.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, ((Number)id).longValue())));
         ofNullable(data.get("article_id")).ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.getEntityManager().getReference(AccountingArticle.class, (Number)id)));
+        ofNullable(data.get("seller_id")).ifPresent(id -> invoiceLine.setSellerId((Long) id));
+        ofNullable(data.get("invoice_type_id")).ifPresent(id -> invoiceLine.setInvoiceTypeId((Long) id));
+        ofNullable(data.get("method_payment_id")).ifPresent(id -> invoiceLine.setPaymentMethodId((Long) id));
         log.debug("discounted_Ratedtransaction_id={},{}",data.get("discounted_ratedtransaction_id"),iLIdsRtIdsCorrespondence.size());
         if(data.get("discounted_ratedtransaction_id")!=null) {
         	Long discountedILId = iLIdsRtIdsCorrespondence.get(((Number)data.get("discounted_ratedtransaction_id")).longValue());
