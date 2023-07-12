@@ -1479,7 +1479,6 @@ public class CpqQuoteApi extends BaseApi {
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
         clearExistingQuotations(quoteVersion);
-
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
         //calculate totalQuoteAttribute
         calculateTotalAttributes (quoteVersion);
@@ -1507,7 +1506,10 @@ public class CpqQuoteApi extends BaseApi {
                     .stream()
                     .map(key -> reducePrices(key, pricesPerType, quoteVersion, null, PriceLevelEnum.QUOTE))
                     .filter(Optional::isPresent)
-                    .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
+                    .map(price -> {
+                    	return new PriceDTO(price.get());
+                    	
+                    }).collect(Collectors.toList());
 
             pricesPerTaxDTO.add(new TaxPricesDto(taux, prices));
             quoteTotalAmount=prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -1592,12 +1594,13 @@ public class CpqQuoteApi extends BaseApi {
                 quotePrice.setContractItem(accountingArticlePrice.getContractItem());
                 quotePrice.setPricePlanMatrixVersion(accountingArticlePrice.getPricePlanMatrixVersion());
                 quotePrice.setPricePlanMatrixLine(accountingArticlePrice.getPricePlanMatrixLine());
+                quotePrice.setQuoteArticleLine(accountingArticlePrice.getQuoteArticleLine());
               }
-		    quotePrice.setQuoteArticleLine(accountingArticlePrice.getQuoteArticleLine());
 		    quotePrice.setOverchargedUnitAmountWithoutTax(accountingArticlePrice.getOverchargedUnitAmountWithoutTax());
 		    quotePrice.setApplyDiscountsOnOverridenPrice(accountingArticlePrice.getApplyDiscountsOnOverridenPrice());
-            if(!PriceLevelEnum.OFFER.equals(level)) {
-                quotePriceService.create(quotePrice);
+            if(PriceLevelEnum.QUOTE.equals(level)) {
+            	quotePriceService.create(quotePrice);
+            	quotePriceService.getEntityManager().flush();
             }
             log.debug("reducePrices1 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
             return Optional.of(quotePrice);
@@ -1620,8 +1623,9 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setContractItem(a.getContractItem());
             quotePrice.setPricePlanMatrixVersion(a.getPricePlanMatrixVersion());
             quotePrice.setPricePlanMatrixLine(a.getPricePlanMatrixLine());
+            quotePrice.setQuoteArticleLine(a.getQuoteArticleLine());
           }
-		    quotePrice.setQuoteArticleLine(a.getQuoteArticleLine());
+		    
 		    if(a.getOverchargedUnitAmountWithoutTax() != null && b.getOverchargedUnitAmountWithoutTax() != null) {
 				quotePrice.setOverchargedUnitAmountWithoutTax(a.getOverchargedUnitAmountWithoutTax().add(b.getOverchargedUnitAmountWithoutTax()));
 			}else if(a.getOverchargedUnitAmountWithoutTax() != null) {
