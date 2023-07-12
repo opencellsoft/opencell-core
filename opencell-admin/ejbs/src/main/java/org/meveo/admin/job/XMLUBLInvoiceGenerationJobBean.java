@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import jakarta.xml.bind.JAXBException;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
@@ -80,7 +81,12 @@ public class XMLUBLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
     private void generateXml(Long invoiceId, JobExecutionResultImpl jobExecutionResult) {
 
         Invoice invoice = invoiceService.findById(invoiceId);
-        invoiceService.produceInvoiceXml(invoice, null, true);
+	    try {
+		    invoiceService.produceInvoiceUBLFormat(invoice);
+	    } catch (JAXBException e) {
+		    jobExecutionResult.addErrorReport("Error on invoice : " + invoice.getInvoiceNumber() + " while generate UBL format : " + e.getMessage());
+			log.error("can not generate UBL format for invoice : " + invoice.getInvoiceNumber(), e);
+	    }
     }
 	
 	/**

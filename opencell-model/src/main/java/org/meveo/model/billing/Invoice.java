@@ -2061,6 +2061,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.autoMatching = autoMatching;
 	}
 	
+	public boolean isUblReference() {
+		return ublReference;
+	}
+	
 	public void setUblReference(boolean ublReference) {
 		this.ublReference = ublReference;
 	}
