@@ -5784,29 +5784,6 @@ Opencell team.
 		</update>
 	</changeSet>
 	
-	<changeSet id="#INTRD-3262_20211123" author="YoussefIZEM">
-		<update tableName="dunning_collection_plan_statuses">
-			<column name="status">ACTIVE</column>
-			<where>status = 'Actif'</where>
-		</update>
-		<update tableName="dunning_collection_plan_statuses">
-			<column name="status">SUCCESS</column>
-			<where>status = 'Succès'</where>
-		</update>
-		<update tableName="dunning_collection_plan_statuses">
-			<column name="status">FAILED</column>
-			<where>status = 'Echec'</where>
-		</update>
-		<update tableName="dunning_collection_plan_statuses">
-			<column name="status">PAUSED</column>
-			<where>status = 'Pause'</where>
-		</update>
-		<update tableName="dunning_collection_plan_statuses">
-			<column name="status">STOPPED</column>
-			<where>status = 'Stop'</where>
-		</update>
-	</changeSet>
-	
     <changeSet id="INTRD-2756_20211110" author="Mohammed_ELAZZOUZI">
 		<insert tableName="meveo_job_instance">
 			<column name="id"  valueSequenceNext="meveo_job_instance_seq" />
