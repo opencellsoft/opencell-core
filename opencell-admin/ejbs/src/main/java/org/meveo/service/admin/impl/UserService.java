@@ -170,6 +170,7 @@ public class UserService extends PersistenceService<User> {
      * @param extendedInfo Shall group membership and roles be retrieved
      * @return User found
      */
+    @Override
     public User findById(Long id, boolean extendedInfo) {
         if(id==null) {
             return null;
