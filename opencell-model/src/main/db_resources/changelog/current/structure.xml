@@ -17037,5 +17037,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="anticipate_end_of_subscription" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
-
+    
+   <changeSet id="#INTRD-17189_20230711" author="Mbarek-Ay">
+		<addColumn tableName="cat_discount_plan">
+			<column name="dont_apply_on_contract" type="${type.boolean}" defaultValueNumeric="0"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
