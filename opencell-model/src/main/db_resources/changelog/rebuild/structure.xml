@@ -4288,6 +4288,7 @@
             <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="applicable_on_discounted_price" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="sequence" type="int4"/>
+            <column name="dont_apply_on_contract" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -19069,7 +19070,7 @@
     <changeSet id="#INTRD-17149_04072023" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-14336_20230227" author="ZBariki" />
     <changeSet id="INTRD-15775_20230710" author="AdilElJaouhari" />
-    
+    <changeSet id="#INTRD-17189_20230711" author="Mbarek-Ay"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
