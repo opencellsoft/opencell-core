@@ -204,7 +204,11 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             }
             List<DiscountPlan> discountPlans = getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans());
             if (discountPlans != null && !discountPlans.isEmpty()) {
-                discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
+                if(discountPlan.getIncompatibleDiscountPlans() == null) {
+                    discountPlan.setIncompatibleDiscountPlans(new ArrayList<>());
+                }
+                discountPlan.getIncompatibleDiscountPlans().clear();
+                discountPlan.getIncompatibleDiscountPlans().addAll(discountPlans);
             }
             List<ApplicableEntity> applicableEntities = getApplicableEntities(postData.getApplicableEntities());
             if (applicableEntities != null && !applicableEntities.isEmpty()) {
