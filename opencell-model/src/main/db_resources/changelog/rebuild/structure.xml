@@ -436,6 +436,7 @@
         <createSequence sequenceName="dunning_payment_retries_seq" startValue="1" />
         <createSequence sequenceName="journal_seq" startValue="1" />
         <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
+        <createSequence sequenceName="account_operation_number_seq" startValue="1" />
     </changeSet>
     
      
@@ -2161,6 +2162,7 @@
             <column name="accounting_export_file" type="varchar(255)"/>
             <column name="accounting_date" type="datetime"></column>
             <column name="operation_action" type="varchar(255)"/>
+            <column name="operation_number" type="bigint" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">

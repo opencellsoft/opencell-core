@@ -10086,4 +10086,11 @@ public class OrderAdvancement extends ModuleScript {
 		</update>
     </changeSet>
     
+    <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA">
+    	<createSequence sequenceName="account_operation_number_seq" startValue="1" />
+        <addColumn tableName="ar_account_operation">
+            <column name="operation_number" type="bigint" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
