@@ -8,9 +8,13 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.meveo.apiv2.AcountReceivable.CustomerAccountInput;
+import org.meveo.apiv2.AcountReceivable.MatchingAccountOperation;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -60,6 +64,19 @@ public interface AccountReceivableResource {
 	@ApiResponse(responseCode = "404", description = "Account operations don't exist"),
 	@ApiResponse(responseCode = "409", description = "Status of account operations can not be updated") })
 	Response markExported(@Parameter(description = "id of the Invoice", required = true ) ChangeStatusDto changeStatusDto);
+	
+	@POST
+	@Path("/assignOperation/{id}")
+	@Operation(summary = "Assign an account operation to a customer", tags = {
+			"AccountOperation"}, description = "Assign an account operation to a customer", responses = {
+			@ApiResponse(responseCode = "200", description = "Account operation is successfully assigned"),
+			@ApiResponse(responseCode = "400", description = "Action is failed"),
+			@ApiResponse(responseCode = "404", description = "Entity does not exist"),
+			@ApiResponse(responseCode = "412", description = "Missing parameters")})
+	Response assignAccountOperation(@Parameter(description = "Account operation id", required = true) @PathParam("id")
+											Long accountOperationId,
+									@Parameter(description = "Customer account", required = true)
+											CustomerAccountInput customerAccount);
 
 	/**
 	 * @since 13.0
