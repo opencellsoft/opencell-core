@@ -44,16 +44,16 @@ import java.util.Map;
  * @author Andrius Karpavicius
  */
 @Stateless
-public class XMLUBLInvoiceGenerationJob extends Job {
+public class XMLEInvoiceGenerationJob extends Job {
 
     /** The xml invoice generation job bean. */
     @Inject
-    private XMLUBLInvoiceGenerationJobBean xmlublInvoiceGenerationJobBean;
+    private XMLEInvoiceGenerationJobBean XMLEInvoiceGenerationJobBean;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-	    xmlublInvoiceGenerationJobBean.execute(result, jobInstance);
+	    XMLEInvoiceGenerationJobBean.execute(result, jobInstance);
         return result;
     }
 
@@ -71,7 +71,7 @@ public class XMLUBLInvoiceGenerationJob extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
-        final String APPLIES_TO = "JobInstance_XMLUBLInvoiceGenerationJob";
+        final String APPLIES_TO = "JobInstance_XMLEInvoiceGenerationJob";
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode(CF_NB_RUNS);

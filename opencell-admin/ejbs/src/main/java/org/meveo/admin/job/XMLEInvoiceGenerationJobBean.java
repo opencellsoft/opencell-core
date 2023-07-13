@@ -43,7 +43,7 @@ import static java.util.stream.Collectors.toList;
  * @author Andrius Karpavicius
  */
 @Stateless
-public class XMLUBLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
+public class XMLEInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
     private static final long serialVersionUID = 7948947993905799076L;
 
