@@ -115,7 +115,7 @@ public class PriceListService extends BusinessService<PriceList> {
 	    	}
 		}
 
-		LOGGER.info("JPQL Query to execute: {}", jpqlQuery);
+		LOGGER.trace("JPQL Query to execute: {}", jpqlQuery);
 		return jpqlQuery;
 	}
 
