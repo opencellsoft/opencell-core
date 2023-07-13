@@ -65,6 +65,9 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxCurre
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxTypeCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxableAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Telephone;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.ExtensionVersionID;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.UBLExtension;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.UBLExtensions;
 import oasis.names.specification.ubl.schema.xsd.invoice_2.Invoice;
 import oasis.names.specification.ubl.schema.xsd.invoice_2.ObjectFactory;
 import org.apache.commons.collections4.CollectionUtils;
@@ -110,6 +113,7 @@ public class InvoiceUblHelper {
 	
 	public Invoice createInvoiceUBL(org.meveo.model.billing.Invoice invoice){
 		Invoice invoiceXml = new ObjectFactory().createInvoice();
+		setUblExtension(invoiceXml);
 		setGeneralInfo(invoice, invoiceXml);
 		setBillingReference(invoice, invoiceXml);
 		setOrderReference(invoice, invoiceXml);
@@ -136,6 +140,17 @@ public class InvoiceUblHelper {
 		Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		marshaller.marshal(invoiceXml, absoluteFileName);
+	}
+	
+	private void setUblExtension(Invoice target){
+		var objectCommentExtenstion = new oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.ObjectFactory();
+		UBLExtensions ublExtensions = objectCommentExtenstion.createUBLExtensions();
+		UBLExtension ublExtension = objectCommentExtenstion.createUBLExtension();
+		ExtensionVersionID extensionVersionID = objectCommentExtenstion.createExtensionVersionID();
+		extensionVersionID.setValue("2.1");
+		ublExtension.setExtensionVersionID(extensionVersionID);
+		ublExtensions.getUBLExtensions().add(ublExtension);
+		target.setUBLExtensions(ublExtensions);
 	}
 	
 	private static void setGeneralInfo(org.meveo.model.billing.Invoice source, Invoice target){
@@ -170,6 +185,7 @@ public class InvoiceUblHelper {
 		
 		DueDate dueDate = objectFactorycommonBasic.createDueDate();
 		dueDate.setValue(toXmlDate(source.getDueDate()));
+		target.setDueDate(dueDate);
 		
 		var monetaryTotalType = objectFactoryCommonAggrement.createMonetaryTotalType();
 		var taxInclusiveAmount = objectFactorycommonBasic.createTaxInclusiveAmount();
@@ -429,6 +445,8 @@ public class InvoiceUblHelper {
 			}
 			partyLegalEntity.setRegistrationAddress(addressType);
 			partyType.getPartyLegalEntities().add(partyLegalEntity);
+			supplierPartyType.setParty(partyType);
+			target.setAccountingSupplierParty(supplierPartyType);
 		}
 		if(StringUtils.isNotBlank(seller.getVatNo())){
 			// AccountingSupplierParty/Party/PartyTaxScheme/CompanyID
@@ -555,14 +573,14 @@ public class InvoiceUblHelper {
 		return issueDate;
 	}
 	private void setOrderReference(org.meveo.model.billing.Invoice source, Invoice target){
-		OrderReference orderReference = objectFactoryCommonAggrement.createOrderReference();
 		if(source.getCommercialOrder() != null && StringUtils.isNotBlank(source.getCommercialOrder().getOrderNumber())){
+			OrderReference orderReference = objectFactoryCommonAggrement.createOrderReference();
 			SalesOrderID salesOrderID = orderReference.getSalesOrderID();
 			salesOrderID.setValue(source.getCommercialOrder().getOrderNumber());
 			orderReference.setSalesOrderID(salesOrderID);
+			orderReference.setIssueDate(getIssueDate(source.getInvoiceDate()));
+			target.setOrderReference(orderReference);
 		}
-		orderReference.setIssueDate(getIssueDate(source.getInvoiceDate()));
-		target.setOrderReference(orderReference);
 	}
 	private void setBillingReference(org.meveo.model.billing.Invoice source, Invoice target){
 		source.getLinkedInvoices().forEach(linInv -> {
