@@ -53,6 +53,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.IssueDat
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.JobTitle;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.LineExtensionAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Note;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PayableAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Percent;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PostalZone;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PriceAmount;
@@ -65,6 +66,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxCurre
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxTypeCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxableAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Telephone;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.UBLVersionID;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.ExtensionVersionID;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.UBLExtension;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.UBLExtensions;
@@ -122,7 +124,7 @@ public class InvoiceUblHelper {
 			List<TaxInvoiceAgregate> taxInvoiceAgregates = invoice.getInvoiceAgregates().stream().filter(invAgg -> "T".equals(invAgg.getDescriminatorValue()))
 					.map(invAgg -> (TaxInvoiceAgregate) invAgg)
 					.collect(Collectors.toList());
-			setTaxTotal(taxInvoiceAgregates, invoice.getAmountTax(), invoiceXml);
+			setTaxTotal(taxInvoiceAgregates, invoice.getAmountTax(), invoiceXml, invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getCurrencyCode() : null);
 		}
 		setAccountingSupplierParty(invoice.getSeller(), invoiceXml);
 		setAccountingCustomerParty(invoice.getBillingAccount(), invoiceXml);
@@ -139,18 +141,14 @@ public class InvoiceUblHelper {
 		JAXBContext context = JAXBContext.newInstance(Invoice.class);
 		Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2");
 		marshaller.marshal(invoiceXml, absoluteFileName);
 	}
 	
 	private void setUblExtension(Invoice target){
-		var objectCommentExtenstion = new oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.ObjectFactory();
-		UBLExtensions ublExtensions = objectCommentExtenstion.createUBLExtensions();
-		UBLExtension ublExtension = objectCommentExtenstion.createUBLExtension();
-		ExtensionVersionID extensionVersionID = objectCommentExtenstion.createExtensionVersionID();
-		extensionVersionID.setValue("2.1");
-		ublExtension.setExtensionVersionID(extensionVersionID);
-		ublExtensions.getUBLExtensions().add(ublExtension);
-		target.setUBLExtensions(ublExtensions);
+		UBLVersionID ublVersionID = objectFactorycommonBasic.createUBLVersionID();
+		ublVersionID.setValue("2.1");
+		target.setUBLVersionID(ublVersionID);
 	}
 	
 	private static void setGeneralInfo(org.meveo.model.billing.Invoice source, Invoice target){
@@ -189,11 +187,18 @@ public class InvoiceUblHelper {
 		
 		var monetaryTotalType = objectFactoryCommonAggrement.createMonetaryTotalType();
 		var taxInclusiveAmount = objectFactorycommonBasic.createTaxInclusiveAmount();
+		final String currencyId = source.getTradingCurrency() != null ? source.getTradingCurrency().getCurrencyCode() : null;
+		taxInclusiveAmount.setCurrencyID(currencyId);
 		taxInclusiveAmount.setValue(source.getAmountWithTax());
 		monetaryTotalType.setTaxInclusiveAmount(taxInclusiveAmount);
 		var allowanceTotalAmount = objectFactorycommonBasic.createAllowanceTotalAmount();
+		allowanceTotalAmount.setCurrencyID(currencyId);
 		allowanceTotalAmount.setValue(source.getDiscountAmount());
 		monetaryTotalType.setAllowanceTotalAmount(allowanceTotalAmount);
+		PayableAmount payableAmount = objectFactorycommonBasic.createPayableAmount();
+		payableAmount.setValue(source.getAmountWithTax());
+		payableAmount.setCurrencyID(currencyId);
+		monetaryTotalType.setPayableAmount(payableAmount);
 		target.setLegalMonetaryTotal(monetaryTotalType);
 	}
 	
@@ -255,16 +260,23 @@ public class InvoiceUblHelper {
 			BaseQuantity baseQuantity = objectFactorycommonBasic.createBaseQuantity();
 			baseQuantity.setValue(new BigDecimal(1));
 			priceType.setBaseQuantity(baseQuantity);
+			
+			final String currencyCode = invoiceLine.getInvoice().getTradingCurrency().getCurrencyCode();
 			// InvoiceLine/ Price/ PriceAmount
 			PriceAmount priceAmount = objectFactorycommonBasic.createPriceAmount();
+			priceAmount.setCurrencyID(currencyCode);
 			priceAmount.setValue(invoiceLine.getUnitPrice());
 			priceType.setPriceAmount(priceAmount);
 			invoiceLineType.setPrice(priceType);
 			// InvoiceLine/ LineExtensionAmount
 			LineExtensionAmount lineExtensionAmount = objectFactorycommonBasic.createLineExtensionAmount();
+			lineExtensionAmount.setCurrencyID(currencyCode);
 			lineExtensionAmount.setValue(invoiceLine.getAmountWithTax());
 			invoiceLineType.setLineExtensionAmount(lineExtensionAmount);
 			// InvoiceLine/ Note
+			ID id = objectFactorycommonBasic.createID();
+			id.setValue(invoiceLine.getId().toString());
+			invoiceLineType.setID(id);
 			Note note = objectFactorycommonBasic.createNote();
 			note.setValue(invoiceLine.getLabel());
 			invoiceLineType.getNotes().add(note);
@@ -414,6 +426,7 @@ public class InvoiceUblHelper {
 		RegistrationName registrationName = objectFactorycommonBasic.createRegistrationName();
 		registrationName.setValue(seller.getRegistrationNo());
 		partyLegalEntity.setRegistrationName(registrationName);
+		partyType.getPartyLegalEntities().add(partyLegalEntity);
 		// AccountingSupplierParty/Party/PartyLegalEntity/RegistrationAddress/StreetName
 		if(seller.getAddress() != null) {
 			Address address = seller.getAddress();
@@ -445,8 +458,6 @@ public class InvoiceUblHelper {
 			}
 			partyLegalEntity.setRegistrationAddress(addressType);
 			partyType.getPartyLegalEntities().add(partyLegalEntity);
-			supplierPartyType.setParty(partyType);
-			target.setAccountingSupplierParty(supplierPartyType);
 		}
 		if(StringUtils.isNotBlank(seller.getVatNo())){
 			// AccountingSupplierParty/Party/PartyTaxScheme/CompanyID
@@ -487,6 +498,7 @@ public class InvoiceUblHelper {
 			partyType.getPersons().add(personType);
 		}
 		supplierPartyType.setParty(partyType);
+		target.setAccountingSupplierParty(supplierPartyType);
 		
 	}
 	
@@ -506,10 +518,11 @@ public class InvoiceUblHelper {
 		return contactType;
 	}
 	
-	private void setTaxTotal(List<TaxInvoiceAgregate> taxInvoiceAgregates, BigDecimal amountTax,  Invoice target) {
+	private void setTaxTotal(List<TaxInvoiceAgregate> taxInvoiceAgregates, BigDecimal amountTax,  Invoice target, String currency) {
 		if(CollectionUtils.isNotEmpty(taxInvoiceAgregates)) {
 			TaxTotalType taxTotalType = objectFactoryCommonAggrement.createTaxTotalType();
 			TaxAmount taxAmount = objectFactorycommonBasic.createTaxAmount();
+			taxAmount.setCurrencyID(currency);
 			taxAmount.setValue(amountTax);
 			taxTotalType.setTaxAmount(taxAmount);
 			taxInvoiceAgregates.forEach(taxInvoiceAgregate -> {
@@ -527,6 +540,8 @@ public class InvoiceUblHelper {
 				}
 				// TaxTotal/ TaxSubtotal / TaxableAmount
 				TaxableAmount taxableAmount = objectFactorycommonBasic.createTaxableAmount();
+				final String currencyCode = taxInvoiceAgregate.getTradingCurrency() != null ? taxInvoiceAgregate.getTradingCurrency().getCurrencyCode() : currency;
+				taxableAmount.setCurrencyID(currencyCode);
 				taxableAmount.setValue(taxInvoiceAgregate.getAmountWithoutTax());
 				taxSubtotal.setTaxableAmount(taxableAmount);
 				// TaxTotal/ TaxSubtotal / Percent
@@ -536,6 +551,7 @@ public class InvoiceUblHelper {
 				// TaxTotal/ TaxSubtotal / TaxAmount
 				TaxAmount taxAmountSubTotal = objectFactorycommonBasic.createTaxAmount();
 				taxAmountSubTotal.setValue(taxInvoiceAgregate.getAmountTax());
+				taxAmountSubTotal.setCurrencyID(currencyCode);
 				taxSubtotal.setTaxAmount(taxAmountSubTotal);
 				taxTotalType.getTaxSubtotals().add(taxSubtotal);
 			});
