@@ -1,9 +1,11 @@
 package org.meveo.apiv2.billing.impl;
 
+import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoiceStatusEnum.DRAFT;
 import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
 import static org.meveo.model.billing.InvoiceStatusEnum.REJECTED;
 import static org.meveo.model.billing.InvoiceStatusEnum.SUSPECT;
+
 
 
 import java.math.RoundingMode;
@@ -22,6 +24,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
@@ -33,22 +36,34 @@ import org.meveo.apiv2.billing.GenerateInvoiceResult;
 import org.meveo.apiv2.billing.ImmutableFile;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoices;
+import org.meveo.apiv2.billing.ImmutableInvoiceMatchedOperation;
 import org.meveo.apiv2.billing.InvoiceInput;
 import org.meveo.apiv2.billing.InvoiceLineInput;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.InvoiceLinesToReplicate;
+import org.meveo.apiv2.billing.InvoiceMatchedOperation;
 import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingCode;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.MatchingCodeService;
 
 public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Inject
 	private InvoiceApiService invoiceApiService;
+	
+	@Inject
+	private AccountOperationService accountOperationService;
+	@Inject
+	private MatchingCodeService matchingCodeService;
 
 	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
 	

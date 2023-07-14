@@ -107,7 +107,8 @@ import org.meveo.model.finance.AccountingEntry;
                 "                               pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
         @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
                 + ".customerAccount=:customerAccount"),
-        @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount")
+        @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount"),
+        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao where :invoice MEMBER OF ao.invoices"),
 })
 public class AccountOperation extends BusinessEntity implements ICustomFieldEntity, ISearchable, IWFEntity {
 
