@@ -46,6 +46,7 @@ import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
@@ -59,6 +60,7 @@ import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -117,6 +119,9 @@ public class RefundApi extends BaseApi {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
     @Inject
     @ApplicationProvider
@@ -194,7 +199,7 @@ public class RefundApi extends BaseApi {
 
         refundService.create(refund);
 
-        if (refundDto.isToMatching()) {
+        if (refundDto.isToMatching() && !refundDto.isManualRefund()) {
             matchRefunds(refundDto, customerAccount, refund);
         }
 
@@ -264,7 +269,8 @@ public class RefundApi extends BaseApi {
                 aoAdjRefDto.setCustomerAccount(refund.getCustomerAccount().getCode());
                 aoAdjRefDto.setTransactionCategory(OperationCategoryEnum.CREDIT);
                 aoAdjRefDto.setType("I");
-                aoAdjRefDto.setTransactionalCurrency(payment.getTransactionalCurrency() != null ? payment.getTransactionalCurrency().getCurrencyCode() : null);
+                TradingCurrency payTradingCurrency = tradingCurrencyService.refreshOrRetrieve(payment.getTransactionalCurrency());
+                aoAdjRefDto.setTransactionalCurrency(payTradingCurrency != null ? payTradingCurrency.getCurrencyCode() : null);
 
                 Long aoAdjRefId = accountOperationApi.create(aoAdjRefDto);
 
@@ -282,13 +288,12 @@ public class RefundApi extends BaseApi {
 
                 // Add link between Invoice Credit Note and Initial Invoice
                 initialInvoice.setAdjustedInvoice(invoiceCreditNote);
+                invoiceService.update(initialInvoice);
 
                 // Add link between AO_ADJ_REF (new) and Payment (existing)
                 refund.setRefundedPayment(payment);
-
                 refundService.update(refund);
 
-                invoiceService.update(initialInvoice);
             } else {
                 log.info("AccountOperation is RecordedInvoice type, no need to create Invoice and do manual adjustment");
             }
