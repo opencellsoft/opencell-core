@@ -114,7 +114,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         discountPlan.setAutomaticApplication(postData.getAutomaticApplication() != null ? postData.getAutomaticApplication() : false);
         discountPlan.setApplicableOnOverriddenPrice(postData.isApplicableOnOverriddenPrice());
         discountPlan.setApplicableOnDiscountedPrice(postData.isApplicableOnDiscountedPrice());
-        discountPlan.setDontApplyOnContract(postData.getDontApplyOnContract());
+        if(postData.getApplicableOnContractPrice()!=null) {
+        	discountPlan.setApplicableOnContractPrice(postData.getApplicableOnContractPrice());
+        }
         checkDiscountPlanAutomaticApplication(discountPlan);
         
         // populate customFields
@@ -219,7 +221,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             discountPlan.setAutomaticApplication(postData.getAutomaticApplication() != null ? postData.getAutomaticApplication() : false);
             discountPlan.setApplicableOnOverriddenPrice(postData.isApplicableOnOverriddenPrice());
             discountPlan.setApplicableOnDiscountedPrice(postData.isApplicableOnDiscountedPrice());
-            discountPlan.setDontApplyOnContract(postData.getDontApplyOnContract());
+            if(postData.getApplicableOnContractPrice()!=null) {
+            	discountPlan.setApplicableOnContractPrice(postData.getApplicableOnContractPrice());
+            }
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), discountPlan, false);
