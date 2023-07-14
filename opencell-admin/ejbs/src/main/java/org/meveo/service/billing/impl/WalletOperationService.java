@@ -1018,4 +1018,17 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             log.warn("can not cancel discounted wallet operation, cause the list is empty");
         }
     }
+
+    /**
+     * Get wallet operation trading currencies
+     *
+     * @param walletOperationsIds wallet operation ids list
+     * @return wallet operation and their trading currency
+     */
+    public List<Object[]> getWalletOperationsTradingCurrency(List<Long> walletOperationsIds) {
+        return getEntityManager()
+                .createNamedQuery("WalletOperation.findWalletOperationTradingCurrency")
+                .setParameter("walletOperationIds", walletOperationsIds)
+                .getResultList();
+    }
 }
