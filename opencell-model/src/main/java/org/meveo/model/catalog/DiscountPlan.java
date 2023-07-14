@@ -270,11 +270,11 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	
 	
 	/**
-	 *If true then discount plan will be ignored if event price comes from a contract.
+	 *If false then discount plan will be ignored if event price comes from a contract.
 	 */
 	@Type(type = "numeric_boolean")
-	@Column(name = "dont_apply_on_contract")
-	private boolean dontApplyOnContract;
+	@Column(name = "applicable_on_contract_price")
+	private boolean applicableOnContractPrice=true;
 	
 
 	public DiscountPlan() {
@@ -299,7 +299,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.setDiscountPlanItems(new ArrayList<>(dp.getDiscountPlanItems()));
 		this.sequence=dp.getSequence();
 		this.applicableOnDiscountedPrice=dp.getApplicableOnDiscountedPrice();
-		this.dontApplyOnContract=dp.isDontApplyOnContract();
+		this.applicableOnContractPrice=dp.isApplicableOnContractPrice();
 	}
 	
 	public boolean isValid() {
@@ -504,12 +504,12 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	}
 
 	
-	public boolean isDontApplyOnContract() {
-		return dontApplyOnContract;
+	public boolean isApplicableOnContractPrice() {
+		return applicableOnContractPrice;
 	}
 
-	public void setDontApplyOnContract(boolean dontApplyOnContract) {
-		this.dontApplyOnContract = dontApplyOnContract;
+	public void setApplicableOnContractPrice(boolean applicableOnContractPrice) {
+		this.applicableOnContractPrice = applicableOnContractPrice;
 	}
 
 	/**

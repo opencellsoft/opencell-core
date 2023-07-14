@@ -4288,7 +4288,7 @@
             <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="applicable_on_discounted_price" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="sequence" type="int4"/>
-            <column name="dont_apply_on_contract" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="applicable_on_contract_price" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">

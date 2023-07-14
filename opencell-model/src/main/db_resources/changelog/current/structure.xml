@@ -15251,7 +15251,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
     
      <changeSet id="#INTRD-17189_20230711" author="Mbarek-Ay">
 		<addColumn tableName="cat_discount_plan">
-			<column name="dont_apply_on_contract" type="${type.boolean}" defaultValueNumeric="0"/>
+			<column name="applicable_on_contract_price" type="${type.boolean}" defaultValueNumeric="1"/>
 		</addColumn>
 	</changeSet>
 	
