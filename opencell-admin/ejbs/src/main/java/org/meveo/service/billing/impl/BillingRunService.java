@@ -744,7 +744,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
     
-	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
+    public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
+    	return getBillingAccountsIdsForOpenRTs(billingRun,false);
+    }
+	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun, boolean massData) {
 		Map<String, Object> filters = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
 		if(filters==null && billingRun.getBillingCycle() != null) {
 			filters=new TreeMap<>();
@@ -752,6 +755,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		} 
 		if(filters==null){
 			throw new BusinessException("No filter found for billingRun "+billingRun.getId());
+		}
+		if(massData) {
+			filters.put("billingAccount.massData", "true");
 		}
 		filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
 		QueryBuilder queryBuilder = ratedTransactionService.getQueryFromFilters(filters, Arrays.asList("billingAccount.id"), true);

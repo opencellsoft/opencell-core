@@ -2698,8 +2698,12 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="icd_id" type="bigint" />
+<<<<<<< HEAD
             <column name="exemption_reason" type="varchar(2000)" />
             <column name="price_list_id" type="bigint" />
+=======
+            <column name="mass_data" type="${type.boolean}" defaultValueNumeric="0"/>
+>>>>>>> 6a84c41c9d (RE #INTRD-17353)
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -20232,7 +20236,8 @@
     <changeSet id="INTRD-17134_20230704" author="TarikFA." />
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
-
+	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
