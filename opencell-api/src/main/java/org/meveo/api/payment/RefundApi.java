@@ -335,7 +335,6 @@ public class RefundApi extends BaseApi {
         // Validate ADJ Invoice
         adjustmentInvoice.setStatus(VALIDATED);
         serviceSingleton.assignInvoiceNumber(adjustmentInvoice, true);
-//        invoiceService.refreshOrRetrieve(payment.getInvoices());
 
         return adjustmentInvoice;
     }
