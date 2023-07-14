@@ -199,7 +199,7 @@ public class RefundApi extends BaseApi {
 
         refundService.create(refund);
 
-        if (refundDto.isToMatching()) {
+        if (refundDto.isToMatching() && !refundDto.isManualRefund()) {
             matchRefunds(refundDto, customerAccount, refund);
         }
 
