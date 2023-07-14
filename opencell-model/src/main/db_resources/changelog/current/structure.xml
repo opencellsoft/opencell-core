@@ -15877,6 +15877,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		  <sql>CREATE INDEX idx__billing_invoice_line__label ON ${db.schema.adapted}billing_invoice_line USING btree(label) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_invoice_line__taxRate ON ${db.schema.adapted}billing_invoice_line USING btree(tax_rate) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_subscription__order_id ON ${db.schema.adapted}billing_invoice_line USING btree (commercial_order_id) WHERE (status= 'OPEN') </sql>
+	</changeSet>
+	
+    <changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI">
+        <addColumn tableName="billing_billing_account">
+            <column name="mass_data" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
     </changeSet>
 
     <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres">

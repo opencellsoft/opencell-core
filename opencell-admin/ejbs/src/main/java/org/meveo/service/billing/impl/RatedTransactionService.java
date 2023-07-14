@@ -1893,14 +1893,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                         boolean incrementalInvoiceLines) {
         List<String> fieldToFetch;
         if(withAggregation) {
-            fieldToFetch = new ArrayList<>(asList("string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id",
+            fieldToFetch = new ArrayList<>(asList("count(a.id) as count","string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id",
                     "SUM(a.quantity) as quantity", unitAmountField + " as unit_amount_without_tax", "SUM(a.amountWithoutTax) as sum_without_tax",
                     "SUM(a.amountWithTax) as sum_with_tax", "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
                     "min(a.startDate) as start_date", "max(a.endDate) as end_date",
                     "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id",
                     "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id", "discountPlanType as discount_plan_type", "discountValue as discount_value"));
         } else {
-            fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
+            fieldToFetch = new ArrayList<>(asList("count(a.id) as count","CAST(a.id as string) as rated_transaction_ids",
                     "billingAccount.id as billing_account__id", "description as label", "quantity AS quantity", "amountWithoutTax as sum_without_tax",
                     "amountWithTax as sum_with_tax", "offerTemplate.id as offer_id", "serviceInstance.id as service_instance_id",
                     "startDate as start_date", "endDate as end_date", "orderNumber as order_number", "taxPercent as tax_percent",
