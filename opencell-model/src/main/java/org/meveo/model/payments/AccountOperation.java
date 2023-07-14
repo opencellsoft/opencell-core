@@ -340,7 +340,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Associated invoices
      */
-    @OneToMany(mappedBy = "recordedInvoice", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
+    @OneToMany(mappedBy = "recordedInvoice", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Invoice> invoices;
 
     /**
