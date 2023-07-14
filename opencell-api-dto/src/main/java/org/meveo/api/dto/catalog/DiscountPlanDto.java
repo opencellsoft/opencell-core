@@ -195,6 +195,11 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 */
 	@Schema(description = "determines whether the discount plan is applicable on the gross or discounted amount")
 	private boolean applicableOnDiscountedPrice;
+	
+	
+	@Schema(description = "If false then discount plan will be ignored if event price comes from a contract")
+	private Boolean applicableOnContractPrice;
+	
 
 	/**
 	 * Instantiates a new DiscountPlanDto
@@ -240,6 +245,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		this.applicableOnOverriddenPrice = discountPlan.getApplicableOnOverriddenPrice();
 		this.applicableOnDiscountedPrice = discountPlan.getApplicableOnDiscountedPrice();
 		this.sequence=discountPlan.getSequence();
+		this.applicableOnContractPrice =discountPlan.isApplicableOnContractPrice();
 	}
 
     @Override
@@ -428,6 +434,15 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
 	}
 
+	public Boolean getApplicableOnContractPrice() {
+		return applicableOnContractPrice;
+	}
+
+	public void setApplicableOnContractPrice(Boolean applicableOnContractPrice) {
+		this.applicableOnContractPrice = applicableOnContractPrice;
+	}
+
+	
 	 
 	
 	
