@@ -269,6 +269,14 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
     @JoinColumn(name = "allowance_code_id")
     private UntdidAllowanceCode allowanceCode;
 	
+
+	/**
+	 *If false then discount plan will be ignored if event price comes from a contract.
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_contract_price")
+	private boolean applicableOnContractPrice=true;
+	
 	public DiscountPlan() {
 		this.applicableOnDiscountedPrice = true;
 		this.applicableOnOverriddenPrice = true;
@@ -292,6 +300,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.sequence=dp.getSequence();
 		this.applicableOnDiscountedPrice=dp.getApplicableOnDiscountedPrice();
 		this.allowanceCode=dp.getAllowanceCode();
+		this.applicableOnContractPrice=dp.isApplicableOnContractPrice();
 	}
 	
 	public boolean isValid() {
@@ -534,4 +543,14 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	public void setAllowanceCode(UntdidAllowanceCode allowanceCode) {
 		this.allowanceCode = allowanceCode;
 	}
+
+	public boolean isApplicableOnContractPrice() {
+		return applicableOnContractPrice;
+	}
+
+	public void setApplicableOnContractPrice(boolean applicableOnContractPrice) {
+		this.applicableOnContractPrice = applicableOnContractPrice;
+	}
+
+	
 }

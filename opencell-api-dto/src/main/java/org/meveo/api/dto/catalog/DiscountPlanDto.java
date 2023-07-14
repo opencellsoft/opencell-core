@@ -208,7 +208,8 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	@Schema(description = "determines whether the discount plan will automatically be applied to an offer or a product upon instantiation")
 	private String allowanceCode;
 
-
+	@Schema(description = "If false then discount plan will be ignored if event price comes from a contract")
+	private Boolean applicableOnContractPrice;
 
 	/**
 	 * Instantiates a new DiscountPlanDto
@@ -255,6 +256,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		this.applicableOnDiscountedPrice = discountPlan.getApplicableOnDiscountedPrice();
 		this.sequence=discountPlan.getSequence();
 		this.automaticApplication = discountPlan.isAutomaticApplication();
+		this.applicableOnContractPrice=discountPlan.isApplicableOnContractPrice();
 	}
 
     @Override
@@ -458,4 +460,15 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	public void setAllowanceCode(String allowanceCode) {
 		this.allowanceCode = allowanceCode;
 	}
+
+	public Boolean getApplicableOnContractPrice() {
+		return applicableOnContractPrice;
+	}
+
+	public void setApplicableOnContractPrice(Boolean applicableOnContractPrice) {
+		this.applicableOnContractPrice = applicableOnContractPrice;
+	}
+
+	
+	
 }
