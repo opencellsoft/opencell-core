@@ -35,6 +35,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
@@ -124,14 +125,17 @@ public class UserAccountApi extends AccountEntityApi {
         return userAccount;
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = UserAccount.class))
     public UserAccount update(UserAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
         return update(postData, true);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = UserAccount.class))
     public UserAccount update(UserAccountDto postData, boolean checkCustomFields) throws MeveoApiException {
         return update(postData, true, null);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = UserAccount.class))
     public UserAccount update(UserAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -299,6 +303,7 @@ public class UserAccountApi extends AccountEntityApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "code", entityClass = UserAccount.class))
     public UserAccount createOrUpdate(UserAccountDto postData) throws MeveoApiException, BusinessException {
 
         UserAccount userAccount = userAccountService.findByCode(postData.getCode());
