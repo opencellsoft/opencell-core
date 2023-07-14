@@ -118,4 +118,8 @@ public interface GenerateInvoiceInput extends Resource {
     @Schema(description = "OpenOrder code")
     String getOpenOrderCode();
     
+	@Schema(description = "The external purchase order number")
+	@Nullable
+	String getPurchaseOrder();
+    
 }

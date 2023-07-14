@@ -442,6 +442,14 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		if (invoices == null || invoices.isEmpty()) {
 			throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
 		}
+		
+		for (Invoice inv : invoices) {
+			if (invoice.getPurchaseOrder() != null) {
+				inv.setExternalPurchaseOrderNumber(invoice.getPurchaseOrder());
+				invoiceService.update(inv);
+			}
+		}
+		
 		List<GenerateInvoiceResult> generateInvoiceResults = new ArrayList<>();
 		InvoiceMapper invoiceMapper = new InvoiceMapper();
 		for (Invoice inv : invoices) {

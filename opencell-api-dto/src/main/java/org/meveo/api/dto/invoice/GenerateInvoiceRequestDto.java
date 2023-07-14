@@ -119,6 +119,11 @@ public class GenerateInvoiceRequestDto {
      * if true then validation script is NOT executed
      */
     private Boolean skipValidation = false;
+    
+    /**
+     * The external purchase order number
+     */
+    private String purchaseOrder;
 
     /**
      * Instantiates a new generate invoice request dto.
@@ -422,5 +427,19 @@ public class GenerateInvoiceRequestDto {
     public void setApplyBillingRules(boolean applyBillingRules) {
         this.applyBillingRules = applyBillingRules;
     }
+
+	/**
+	 * @return the purchaseOrder
+	 */
+	public String getPurchaseOrder() {
+		return purchaseOrder;
+	}
+
+	/**
+	 * @param purchaseOrder the purchaseOrder to set
+	 */
+	public void setPurchaseOrder(String purchaseOrder) {
+		this.purchaseOrder = purchaseOrder;
+	}
 	
 }
