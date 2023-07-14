@@ -15835,6 +15835,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI">
+        <addColumn tableName="billing_billing_account">
+            <column name="mass_data" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres">
         <dropView viewName="billing_wallet_operation_period" />
