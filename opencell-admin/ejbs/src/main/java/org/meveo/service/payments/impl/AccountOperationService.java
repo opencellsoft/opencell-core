@@ -47,6 +47,7 @@ import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodForceEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationRejectionReason;
 import org.meveo.model.payments.AccountOperationStatus;
@@ -701,4 +702,18 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         update(accountOperation);
         log.info("cancelLitigation accountOperation.Reference:" + accountOperation.getReference() + " ok , status:"+ accountOperation.getMatchingStatus());
     }    
+    
+    public List<AccountOperation> listByInvoice(Invoice invoice) {
+        if(invoice == null){
+            return null;
+        }
+        try {
+            Query query = getEntityManager().createNamedQuery("AccountOperation.listByInvoice", AccountOperation.class);
+            query.setParameter("invoice", invoice);
+            return query.getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list AccountOperation by invoice", e);
+            return null;
+        }
+    }
 }

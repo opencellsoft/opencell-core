@@ -1,8 +1,13 @@
 package org.meveo.apiv2.accountreceivable;
 
+import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
+
+
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,7 +17,15 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.payment.AccountOperationApi;
+import org.meveo.apiv2.AcountReceivable.CustomerAccountInput;
+import org.meveo.apiv2.AcountReceivable.MatchingAccountOperation;
+import org.meveo.apiv2.AcountReceivable.UnMatchingAccountOperation;
+import org.meveo.apiv2.AcountReceivable.*;
+import org.meveo.apiv2.accountreceivable.AccountOperationApiService;
+import org.meveo.apiv2.accountreceivable.ChangeStatusDto;
 import org.meveo.apiv2.generic.exception.ConflictException;
+import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodStatusEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
@@ -23,17 +36,26 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
 import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
+import org.meveo.api.exception.BusinessApiException;
 
 public class AccountReceivableResourceImpl implements AccountReceivableResource {
+
     @Inject
     private AccountOperationService accountOperationService;
+
     @Inject
     private AccountingPeriodService accountingPeriodService;
+
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
-    
+
 	@Inject
 	private AccountOperationApiService accountOperationServiceApi;
+
+    @Inject
+    private AccountOperationApi accountOperationApi;
+
 
     @Override
     public Response post(Map<String, Set<Long>> accountOperations) {
@@ -117,7 +139,7 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
         }
         return Response.ok().build();
     }
-    
+
 	@Override
 	public Response markExported(ChangeStatusDto changeStatusDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -134,4 +156,50 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
 			return Response.status(Response.Status.CONFLICT).entity(result).build();
 		}
 	}
+
+    @Override
+    public Response assignAccountOperation(Long accountOperationId, CustomerAccountInput customerAccount) {
+        if(customerAccount.getCustomerAccount() == null || (customerAccount.getCustomerAccount().getId() == null
+                && customerAccount.getCustomerAccount().getCode() == null)) {
+            return Response.status(PRECONDITION_FAILED)
+                    .entity("{\"actionStatus\":{\"status\":\"FAILED\",\"message\":\"Missing customer account parameters\"}}")
+                    .build();
+        }
+        return Response.ok()
+                .entity(accountOperationServiceApi.assignAccountOperation(accountOperationId, customerAccount.getCustomerAccount()).get())
+                .build();
+    }
+
+    @Override
+    public Response matchOperations(MatchingAccountOperation matchingAO) {
+        if (matchingAO == null ||
+                matchingAO.getAccountOperations() == null || matchingAO.getAccountOperations().isEmpty()) {
+        	return Response.status(Response.Status.BAD_REQUEST).entity("No accountOperations with sequence passed for matching").build();
+        }
+        MatchingReturnObject result = accountOperationServiceApi.matchOperations(matchingAO.getAccountOperations());
+        return Response.status(Response.Status.OK).entity(result).build();
+    }
+    
+    @Override
+    public Response unMatchOperations(UnMatchingAccountOperation unMatchingAO) {
+        if (unMatchingAO == null ||
+                unMatchingAO.getAccountOperations() == null || unMatchingAO.getAccountOperations().isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("No accountOperations passed for unmatching").build();
+        }
+        
+        // Check Business rules
+        List<UnMatchingOperationRequestDto> unmatchDtos = accountOperationServiceApi.validateAndGetAOForUnmatching(unMatchingAO.getAccountOperations());
+        // for each AO, call AccountOperationApi.unMatchingOperations (dto)
+        Optional.ofNullable(unmatchDtos).orElse(Collections.emptyList())
+                .forEach(unmatchDto -> {
+                    // The dto can be created from AO.Id and AO.customerAccount.code
+                    try {
+                        accountOperationApi.unMatchingOperations(unmatchDto);
+                    } catch (Exception e) {
+                        throw new BusinessApiException(e);
+                    }
+                });
+        return Response.status(Response.Status.OK).build();
+       
+    }
 }

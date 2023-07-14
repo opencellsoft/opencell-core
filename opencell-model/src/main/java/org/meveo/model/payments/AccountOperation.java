@@ -32,7 +32,8 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -85,6 +86,8 @@ import org.meveo.model.finance.AccountingEntry;
 @DiscriminatorColumn(name = "transaction_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
+@GenericGenerator(name = "OPERATION_NUMBER_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_account_operation_seq") })
 @CustomFieldEntity(cftCodePrefix = "AccountOperation")
 @NamedQueries({
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
@@ -103,7 +106,8 @@ import org.meveo.model.finance.AccountingEntry;
                 "                               pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
         @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
                 + ".customerAccount=:customerAccount"),
-        @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount")
+        @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount"),
+        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao where :invoice MEMBER OF ao.invoices"),
 })
 public class AccountOperation extends BusinessEntity implements ICustomFieldEntity, ISearchable, IWFEntity {
 
@@ -421,6 +425,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     @Column(name = "accounting_export_file")
     private String accountingExportFile;
+    
+    /**
+     * Operation number
+     */
+
+    @Column(name = "operation_number")
+    private Long operationNumber;
 
     public Date getDueDate() {
         return dueDate;
@@ -966,5 +977,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
      */
     public void setAccountingDate(Date accountingDate) {
         this.accountingDate = accountingDate;
+    }
+    
+    public Long getOperationNumber() {
+        return operationNumber;
+    }
+    public void setOperationNumber(Long operationNumber) {
+        this.operationNumber = operationNumber;
     }
 }

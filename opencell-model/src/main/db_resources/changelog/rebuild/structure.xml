@@ -436,6 +436,7 @@
         <createSequence sequenceName="dunning_payment_retries_seq" startValue="1" />
         <createSequence sequenceName="journal_seq" startValue="1" />
         <createSequence sequenceName="ar_dunning_action_seq" startValue="1" />
+        <createSequence sequenceName="account_operation_number_seq" startValue="1" />
     </changeSet>
     
      
@@ -2161,6 +2162,7 @@
             <column name="accounting_export_file" type="varchar(255)"/>
             <column name="accounting_date" type="datetime"></column>
             <column name="operation_action" type="varchar(255)"/>
+            <column name="operation_number" type="bigint" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -14949,6 +14951,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="accounting_period_year" type="varchar(20)" />
+            <column name="start_date" type="datetime"><constraints nullable="false" unique="true"/></column>
             <column name="end_date" type="datetime"><constraints nullable="false" unique="true"/></column>
             <column name="use_sub_accounting_cycles" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="status" type="varchar(255)"/>
@@ -16211,6 +16214,9 @@
     <changeSet author="AndriusKarpavicius" id="#INTRD-10253_20221027" dbms="oracle" />
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
     <changeSet id="#INTRD-16982_20230619" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA"/>
+    <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA" />
+    <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 
