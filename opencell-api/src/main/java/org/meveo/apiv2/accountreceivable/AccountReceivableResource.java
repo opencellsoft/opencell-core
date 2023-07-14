@@ -120,16 +120,4 @@ public interface AccountReceivableResource {
 	Response unMatchOperations(UnMatchingAccountOperation unMatchingAO);
 
 
-	@POST
-	@Path("/assignOperation/{id}")
-	@Operation(summary = "Assign an account operation to a customer", tags = {
-			"AccountOperation"}, description = "Assign an account operation to a customer", responses = {
-			@ApiResponse(responseCode = "200", description = "Account operation is successfully assigned"),
-			@ApiResponse(responseCode = "400", description = "Action is failed"),
-			@ApiResponse(responseCode = "404", description = "Entity does not exist"),
-			@ApiResponse(responseCode = "412", description = "Missing parameters")})
-	Response assignAccountOperation(@Parameter(description = "Account operation id", required = true) @PathParam("id")
-											Long accountOperationId,
-									@Parameter(description = "Customer account", required = true)
-											CustomerAccountInput customerAccount);
 }
