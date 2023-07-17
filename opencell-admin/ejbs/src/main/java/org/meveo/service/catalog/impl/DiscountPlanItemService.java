@@ -246,6 +246,10 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
             throws BusinessException {
     	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
     	
+    	if(walletOperation!=null && walletOperation.getContractLine()!=null && BooleanUtils.isFalse(discountPlan.isApplicableOnContractPrice())) {
+            return  applicableDiscountPlanItems;
+     	}
+    	
     	if(discountPlan.getSequence()==null){
     		discountPlanService.setDiscountPlanSequence(discountPlan);
     		discountPlanService.update(discountPlan);
