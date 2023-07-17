@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.ContractDto;
@@ -97,6 +98,8 @@ public class ContractApi extends BaseApi{
 	private BillingRuleService billingRuleService;
 	@Inject
 	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+    @Inject
+    private ResourceBundle resourceMessages;
 	
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
@@ -373,6 +376,12 @@ public class ContractApi extends BaseApi{
     		throw new InvalidParameterException("Generate separate discount line is valid only for the types 'Global discount' and 'Custom discount grid'");
     	}
     	item.setApplicationEl(contractItemDto.getApplicationEl());
+		if (contractItemDto.getApplicableOnOverriddenPrice() != null) {
+			if (contractItemDto.getApplicableOnOverriddenPrice() && ContractRateTypeEnum.FIXED.equals(item.getContractRateType())) {
+				throw new BusinessException(resourceMessages.getString("contract.applicable.on.overridden.price.error"));
+			}
+    		item.setApplicableOnOverriddenPrice(contractItemDto.getApplicableOnOverriddenPrice());
+    	}
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
     		contractItemService.create(item);
@@ -425,6 +434,12 @@ public class ContractApi extends BaseApi{
     		throw new InvalidParameterException("Generate separate discount line is valid only for the types 'Global discount' and 'Custom discount grid'");
     	}
     	ofNullable(contractItemDto.getApplicationEl()).ifPresent(applicationEl -> item.setApplicationEl(applicationEl));
+		if (contractItemDto.getApplicableOnOverriddenPrice() != null) {
+			if (contractItemDto.getApplicableOnOverriddenPrice() && ContractRateTypeEnum.FIXED.equals(item.getContractRateType())) {
+				throw new BusinessException(resourceMessages.getString("contract.applicable.on.overridden.price.error"));
+			}
+    		item.setApplicableOnOverriddenPrice(contractItemDto.getApplicableOnOverriddenPrice());
+    	}
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);
     		contractItemService.updateContractItem(item);
