@@ -52,8 +52,12 @@ public class FinanceSettings extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "discount_advanced_mode")
     private boolean discountAdvancedMode = false;
-
-    public FinanceSettings() {
+	
+	@Column(name = "article_selection_mode")
+	@Enumerated(EnumType.STRING)
+	private ArticleSelectionModeEnum articleSelectionMode = ArticleSelectionModeEnum.AFTER_PRICING;
+	
+	public FinanceSettings() {
         super();
     }
 
@@ -127,5 +131,13 @@ public class FinanceSettings extends BusinessEntity {
 	}
 	public void setDiscountAdvancedMode(boolean discountAdvancedMode) {
 		this.discountAdvancedMode = discountAdvancedMode;
+	}
+	
+	public ArticleSelectionModeEnum getArticleSelectionMode() {
+		return articleSelectionMode;
+	}
+	
+	public void setArticleSelectionMode(ArticleSelectionModeEnum articleSelectionMode) {
+		this.articleSelectionMode = articleSelectionMode;
 	}
 }
