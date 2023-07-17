@@ -13,6 +13,7 @@ import org.meveo.apiv2.models.Resource;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.meveo.apiv2.settings.OpenOrderSettingInput;
+import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
@@ -65,4 +66,7 @@ public interface FinanceSettings extends Resource {
     default Boolean getDiscountAdvancedMode() {
         return FALSE;
     }
+	@Nullable
+	@Schema(description = "determinate if the article will be compute before or after pricing")
+	ArticleSelectionModeEnum getArticleSelectionMode();
 }
