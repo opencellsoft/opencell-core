@@ -9654,6 +9654,7 @@
             <column name="rate_type" type="varchar(255)"/>
             <column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
             <column name="application_el" type="varchar(2000)" />
+            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
 
@@ -20255,6 +20256,7 @@
     <changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
     <changeSet id="INTRD-15775_20230710" author="AdilElJaouhari" />
     <changeSet id="#INTRD-17189_20230711" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-17304_20230714" author="AdilElJaouhari" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
