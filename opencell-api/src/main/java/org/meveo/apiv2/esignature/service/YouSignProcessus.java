@@ -167,10 +167,8 @@ public class YouSignProcessus extends SignatureRequestProcess {
 				InfoSigner info = signer.getInfo();
 				Signer signerToSend = new Signer(info.getFirstName(), info.getLastName(), info.getEmail(),
 						info.getPhoneNumber(), info.getLocale(), "electronic_signature", SigantureAuthentificationMode.getValue(signer.getSignatureAuthenticationMode()) );
-				if(!docInfo.getParseAnchors()) {
-					for(SignatureFields fields : Objects.requireNonNull(signer.getFields())){
-						signerToSend.addFields(documentIds.get(docInfo).toString(), fields.getPage(), fields.getWidth(), fields.getX(), fields.getY());
-					}
+				for(SignatureFields fields : Objects.requireNonNull(signer.getFields())){
+					signerToSend.addFields(documentIds.get(docInfo).toString(), fields.getPage(), fields.getWidth(), fields.getX(), fields.getY());
 				}
 				var response = getHttpRequestPost( "/signature_requests" + "/" +signatureRequestId + "/signers", signerToSend);
 				Map<String, Object> jsonBody = gson.fromJson(response.body(), Map.class);
