@@ -750,6 +750,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun, boolean massData) {
 		Map<String, Object> configuredFilter = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
 		if(configuredFilter==null && billingRun.getBillingCycle() != null) {
+			configuredFilter = new TreeMap<String, Object>();
 			configuredFilter.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
 		}
 		if(configuredFilter==null){
