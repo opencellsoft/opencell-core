@@ -2653,7 +2653,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (useV11Process) {
             MinAmountForAccounts minAmountForAccounts = invoiceLinesService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
             // Create invoice lines from grouped and filtered RT
-            List<RatedTransaction> ratedTransactions = getRatedTransactions(entity, filter, firstTransactionDate, lastTransactionDate, new Date(), isDraft);
+            List<RatedTransaction> ratedTransactions = getRatedTransactions(entity, filter, firstTransactionDate, lastTransactionDate, lastTransactionDate, isDraft);
             List<Long> ratedTransactionIds = ratedTransactions.stream().filter(Objects::nonNull)
                     .map(RatedTransaction::getId)
                     .collect(toList());
