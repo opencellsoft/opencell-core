@@ -127,6 +127,12 @@ public class ContractItem extends EnableBusinessCFEntity {
 	@Size(max = 2000)
 	private String applicationEl;
 
+	/**
+	 * Flag applicable On Overridden Price
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_overridden_price")
+	private boolean applicableOnOverriddenPrice = false;
 
 	/**
 	 * @return the contract
@@ -285,7 +291,14 @@ public class ContractItem extends EnableBusinessCFEntity {
 	public void setApplicationEl(String applicationEl) {
 		this.applicationEl = applicationEl;
 	}
+	
+	public boolean isApplicableOnOverriddenPrice() {
+		return applicableOnOverriddenPrice;
+	}
 
+	public void setApplicableOnOverriddenPrice(boolean applicableOnOverriddenPrice) {
+		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+	}
 
 	@Override
 	public int hashCode() {
