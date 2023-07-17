@@ -50,6 +50,9 @@ public class ContractItemDto extends BusinessEntityDto {
 
 	@Schema(description = "Expression language to condition contract line application")
 	private String applicationEl;
+	
+	@Schema(description = "If true then contract discount will apply to price overridden in quote.")
+	private Boolean applicableOnOverriddenPrice;
     
     public ContractItemDto() {}
     
@@ -73,6 +76,7 @@ public class ContractItemDto extends BusinessEntityDto {
     	this.contractRateType=c.getContractRateType();
     	this.seperateDiscountLine=c.isSeparateDiscount();
 		this.applicationEl = c.getApplicationEl();
+		this.applicableOnOverriddenPrice = c.isApplicableOnOverriddenPrice();
     }
     
 	/**
@@ -209,4 +213,13 @@ public class ContractItemDto extends BusinessEntityDto {
 	public void setApplicationEl(String applicationEl) {
 		this.applicationEl = applicationEl;
 	}
+
+	public Boolean getApplicableOnOverriddenPrice() {
+		return applicableOnOverriddenPrice;
+	}
+
+	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
+		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+	}
+	
 }

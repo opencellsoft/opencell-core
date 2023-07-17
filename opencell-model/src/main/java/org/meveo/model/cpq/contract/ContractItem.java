@@ -120,6 +120,13 @@ public class ContractItem extends EnableBusinessCFEntity {
     private Set<TradingContractItem> tradingContractItems = new HashSet<>();
 	
 	/**
+	 * Flag applicable On Overridden Price
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_overridden_price")
+	private boolean applicableOnOverriddenPrice = false;
+	
+	/**
 	 * @return the contract
 	 */
 	public Contract getContract() {
@@ -262,7 +269,15 @@ public class ContractItem extends EnableBusinessCFEntity {
 	public void setTradingContractItems(Set<TradingContractItem> tradingContractItems) {
 		this.tradingContractItems = tradingContractItems;
 	}
-	
+
+	public boolean isApplicableOnOverriddenPrice() {
+		return applicableOnOverriddenPrice;
+	}
+
+	public void setApplicableOnOverriddenPrice(boolean applicableOnOverriddenPrice) {
+		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
