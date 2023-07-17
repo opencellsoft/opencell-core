@@ -421,7 +421,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
         if(true==invoice.isApplyBillingRules()) {
             Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
-            List<RatedTransaction> rts = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
+            List<RatedTransaction> rts = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, lastTransactionDate, ratedTransactionFilter, null);
 			if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
 				billingAccountsAfter = ratedTransactionService.applyInvoicingRules(rts);
 			}
