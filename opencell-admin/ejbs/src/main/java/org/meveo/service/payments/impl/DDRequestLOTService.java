@@ -40,6 +40,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -198,7 +199,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 					CustomerAccount ca = entry.getKey();
 					String caFullName = ca.getName() != null ? ca.getName().getFullName() : "";
 					for (AccountOperation ao : entry.getValue()) {
-						String errorMsg = getMissingField(ao, ddRequestLOT, appProvider, ca);
+						String errorMsg = getMissingField(ao, ddrequestLotOp.getSeller(), appProvider, ca);
 						if (errorMsg != null) {
 							allErrorsByItem += errorMsg + " ; ";
 						} else {
@@ -384,7 +385,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @return the missing field
 	 * @throws BusinessException the business exception
 	 */
-	public String getMissingField(AccountOperation accountOperation, DDRequestLOT ddRequestLOT, Provider appProvider,
+	public String getMissingField(AccountOperation accountOperation, Seller seller, Provider appProvider,
 			CustomerAccount ca) throws BusinessException {
 		String prefix = "AO.id:" + accountOperation.getId() + " : ";
 		if (ca == null) {
@@ -413,12 +414,12 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			return prefix + "provider.description";
 		}
 		BankCoordinates bankCoordinates = null;
-		if (ddRequestLOT.getSeller() != null) {
+		if (seller != null) {
 
-			PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(ddRequestLOT.getSeller(),
+			PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(seller,
 					PaymentMethodEnum.DIRECTDEBIT);
 			if (paymentGateway == null) {
-				throw new BusinessException("Cant find payment gateway for seller : " + ddRequestLOT.getSeller());
+				throw new BusinessException("Cant find payment gateway for seller : " + seller.getCode());
 			}
 			bankCoordinates = paymentGateway.getBankCoordinates();
 		} else {

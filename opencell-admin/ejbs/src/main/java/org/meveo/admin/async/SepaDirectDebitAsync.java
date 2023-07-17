@@ -127,17 +127,13 @@ public class SepaDirectDebitAsync {
 		BigDecimal totalAmount = BigDecimal.ZERO;
 			for (AccountOperation ao : listAoToPay) {
 				ao = accountOperationService.refreshOrRetrieve(ao);
-				CustomerAccount ca = ao.getCustomerAccount();
-				String errorMsg = ddRequestLOTService.getMissingField(ao, ddRequestLOT, appProvider, ca);
+				CustomerAccount ca = ao.getCustomerAccount();				
 				String caFullName =  ca.getName() != null ? ca.getName().getFullName() : "";
-				ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
-				if (errorMsg != null) {
-					nbItemsKo++;
-					allErrors += errorMsg + " ; ";
-				} else {
+				ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, null, Arrays.asList(ao)));
+				
 					nbItemsOk++;
 					totalAmount = totalAmount.add(ao.getUnMatchingAmount());
-				}
+				
 			}
 			
 			result.put("nbItemsOk",nbItemsOk);
