@@ -15261,5 +15261,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
-	
+	<changeSet id="#INTRD-17304_20230714" author="AdilElJaouhari">
+		<addColumn tableName="cpq_contract_item">
+			<column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
