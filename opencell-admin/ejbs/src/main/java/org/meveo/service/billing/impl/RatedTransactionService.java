@@ -2129,7 +2129,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if(lastTransactionDate!=null){
         	params.put("lastTransactionDate", lastTransactionDate);
         }
-        params.put("invoiceUpToDate", billingRun.getInvoiceDate());
+        params.put("invoiceUpToDate", lastTransactionDate);
         return params;
     }
 
