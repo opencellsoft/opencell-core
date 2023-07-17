@@ -849,7 +849,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for(BillingRun billingRun : billingRuns) {
             List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun, v11Process );
             for (IBillableEntity be :  billableEntities){
-                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
+                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getLastTransactionDate(),
                         billingRun.isExceptionalBR() ? createFilter(billingRun, false) : null, rtPaginationSize));
             }
         }
