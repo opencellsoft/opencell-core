@@ -22,7 +22,8 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                 .maxAmountPerCustomer(entity.getMaxAmountPerCustomer())
                 .autoRefund(entity.isAutoRefund())
                 .activateDunning(entity.isActivateDunning())
-                .discountAdvancedMode(entity.isDiscountAdvancedMode());
+                .discountAdvancedMode(entity.isDiscountAdvancedMode())
+		        .articleSelectionMode(entity.getArticleSelectionMode());
         if(entity.getAuxiliaryAccounting() != null) {
             builder.useAuxiliaryAccounting(entity.getAuxiliaryAccounting().isUseAuxiliaryAccounting())
                     .auxiliaryAccountCodeEl(entity.getAuxiliaryAccounting().getAuxiliaryAccountCodeEl())
@@ -61,6 +62,9 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          financeSettings.setAuxiliaryAccounting(auxiliaryAccounting);
          financeSettings.setActivateDunning(resource.getActivateDunning());
          financeSettings.setDiscountAdvancedMode(resource.getDiscountAdvancedMode());
+		 if(resource.getArticleSelectionMode() != null) {
+			 financeSettings.setArticleSelectionMode(resource.getArticleSelectionMode());
+		 }
          return financeSettings;
     }
 }

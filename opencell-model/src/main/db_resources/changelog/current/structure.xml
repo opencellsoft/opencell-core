@@ -15248,12 +15248,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="anticipate_end_of_subscription" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
-    
+
      <changeSet id="#INTRD-17189_20230711" author="Mbarek-Ay">
 		<addColumn tableName="cat_discount_plan">
 			<column name="applicable_on_contract_price" type="${type.boolean}" defaultValueNumeric="1"/>
 		</addColumn>
 	</changeSet>
-	
+
+    <changeSet id="INTRD-17307_20230712" author="TarikFA.">
+        <addColumn tableName="finance_settings">
+            <column name="article_selection_mode" defaultValue="AFTER_PRICING" type="varchar(30)"/>
+        </addColumn>
+    </changeSet>
+
 	
 </databaseChangeLog>
