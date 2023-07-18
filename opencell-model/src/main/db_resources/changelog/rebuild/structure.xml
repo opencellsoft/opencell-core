@@ -11949,6 +11949,7 @@
             <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="enable_price_list" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="article_selection_mode" defaultValue="AFTER_PRICING" type="varchar(30)"/>
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -20257,6 +20258,7 @@
     <changeSet id="INTRD-15775_20230710" author="AdilElJaouhari" />
     <changeSet id="#INTRD-17189_20230711" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-17304_20230714" author="AdilElJaouhari" />
+    <changeSet id="INTRD-17307_20230712" author="TarikFA." />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

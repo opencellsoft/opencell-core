@@ -116,6 +116,8 @@ import org.meveo.model.pricelist.PriceListTypeEnum;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -132,6 +134,7 @@ import org.meveo.service.mediation.MediationsettingService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScript;
 import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 
@@ -196,6 +199,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+	
+	@Inject
+	private FinanceSettingsService financeSettingsService;
     
     /**
      * @param level level enum
@@ -576,10 +582,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     public RatingResult rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverridden, Long buyerCountryId, TradingCurrency buyerCurrency,
             boolean isVirtual) throws InvalidELException, PriceELErrorException, NoTaxException, NoPricePlanException, RatingException {
-
+	    FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
         RatingResult ratingResult = new RatingResult();
         WalletOperation discountedWalletOperation=null;
     	ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
+	    if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.BEFORE_PRICING){
+		    AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
+		    bareWalletOperation.setAccountingArticle(accountingArticle);
+	    }
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
 
@@ -1191,8 +1201,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         walletOperation.setAmountWithoutTax(amount);
         walletOperation.setAmountWithTax(amount);
-        AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
-        walletOperation.setAccountingArticle(accountingArticle);
+	    FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
+	    if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING){
+		    AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
+		    walletOperation.setAccountingArticle(accountingArticle);
+	    }
         TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
         if (taxInfo == null) {
             throw new BusinessException("No tax found for the chargeInstance " + walletOperation.getChargeInstance().getCode());

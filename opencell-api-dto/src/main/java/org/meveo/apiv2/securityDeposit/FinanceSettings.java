@@ -1,18 +1,17 @@
 package org.meveo.apiv2.securityDeposit;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-
-import java.math.BigDecimal;
-
-import javax.annotation.Nullable;
-
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.meveo.apiv2.settings.OpenOrderSettingInput;
+import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
+
+import javax.annotation.Nullable;
+import java.math.BigDecimal;
+
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
@@ -77,4 +76,9 @@ public interface FinanceSettings extends Resource {
     default Boolean getEnablePriceList() {
         return FALSE;
     }
+	
+	@Nullable
+	@Schema(description = "determinate if the article will be compute before or after pricing")
+	ArticleSelectionModeEnum getArticleSelectionMode();
+	
 }
