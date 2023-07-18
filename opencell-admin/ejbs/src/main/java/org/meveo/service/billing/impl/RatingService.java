@@ -1725,8 +1725,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     		PricePlanMatrixLine pricePlanMatrixLine) {
     	
     	ParamBean paramBean = ParamBean.getInstance();
-		String defaultArticle = paramBean.getProperty("default.article", "ART-STD");
-    	AccountingArticle accountingArticle=null;
+		String defaultDiscountArticle = paramBean.getProperty("default.discount.article", "DISC-STD");
         BigDecimal walletOperationDiscountAmount=amount.negate();
     	WalletOperation discountWalletOperation = new WalletOperation();
     	BigDecimal discountedAmount=unitPriceWithoutTax.subtract(amount);
@@ -1775,12 +1774,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         discountWalletOperation.setParameter1(bareWalletOperation.getParameter1());
     	discountWalletOperation.setParameter2(bareWalletOperation.getParameter2());
     	discountWalletOperation.setParameter3(bareWalletOperation.getParameter3());
-    	
-    	accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, discountWalletOperation);
-    	if(defaultArticle.equalsIgnoreCase(accountingArticle.getCode())) {
-    		accountingArticle=bareWalletOperation.getAccountingArticle();
+    	AccountingArticle discountArticle=accountingArticleService.findByCode(defaultDiscountArticle);
+    	if(discountArticle!=null) {
+    	discountWalletOperation.setAccountingArticle(discountArticle);
     	}
-    	discountWalletOperation.setAccountingArticle(accountingArticle);
     	
     	log.info("rateDiscountWalletOperation walletOperation code={},discountValue={},UnitAmountWithoutTax={},UnitAmountWithTax={},UnitAmountTax={}",discountWalletOperation.getCode(),discountedAmount,amounts[0],amounts[1],amounts[2]);
     	return discountWalletOperation;
