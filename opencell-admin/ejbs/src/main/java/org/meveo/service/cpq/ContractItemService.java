@@ -136,6 +136,14 @@ public class ContractItemService extends BusinessService<ContractItem> {
 					.setParameter("chargeTemplateId", chargeTemplate.getId());
 	        List<ContractItem> applicableContractItems = query.getResultList();
 
+	        if (!applicableContractItems.isEmpty() && walletOperation != null && walletOperation.isOverrodePrice()) {
+	        	applicableContractItems =
+						applicableContractItems
+								.stream()
+								.filter(ContractItem::isApplicableOnOverriddenPrice)
+								.collect(toList());
+	        }
+	        
 	        if (!applicableContractItems.isEmpty()) {
 				Map<Object, Object> contextVariables = new HashMap<>();
 				contextVariables.put("op", walletOperation);
@@ -147,8 +155,8 @@ public class ContractItemService extends BusinessService<ContractItem> {
 										|| evaluateApplicationEl(contractLine, contextVariables))
 								.collect(toList());
 	        }
+
 	        return !applicableContractItems.isEmpty() ? applicableContractItems.get(0) : null;
-	    
 	    }
 
 	private boolean evaluateApplicationEl(ContractItem contractLine, Map<Object, Object> context) {
