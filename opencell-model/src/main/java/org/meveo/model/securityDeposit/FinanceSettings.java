@@ -57,6 +57,10 @@ public class FinanceSettings extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "enable_price_list")
     private boolean enablePriceList = false;
+	
+	@Column(name = "article_selection_mode")
+	@Enumerated(EnumType.STRING)
+	private ArticleSelectionModeEnum articleSelectionMode = ArticleSelectionModeEnum.AFTER_PRICING;
 
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
@@ -151,5 +155,13 @@ public class FinanceSettings extends BusinessEntity {
 
 	public void setEnablePriceList(boolean enablePriceList) {
 		this.enablePriceList = enablePriceList;
+	}
+	
+	public ArticleSelectionModeEnum getArticleSelectionMode() {
+		return articleSelectionMode;
+	}
+	
+	public void setArticleSelectionMode(ArticleSelectionModeEnum articleSelectionMode) {
+		this.articleSelectionMode = articleSelectionMode;
 	}
 }
