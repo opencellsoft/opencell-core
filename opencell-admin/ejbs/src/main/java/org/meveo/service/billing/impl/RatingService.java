@@ -109,6 +109,8 @@ import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -128,6 +130,7 @@ import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScript;
 import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 
@@ -198,6 +201,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+	
+	@Inject
+	private FinanceSettingsService financeSettingsService;
     
     /**
      * @param level level enum
@@ -582,12 +588,14 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     public RatingResult rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverridden, Long buyerCountryId, TradingCurrency buyerCurrency,
             boolean isVirtual) throws InvalidELException, PriceELErrorException, NoTaxException, NoPricePlanException, RatingException {
-
+	    FinanceSettings financeSettings = financeSettingsService.findLastOne();
     	 RatingResult ratedEDRResult = new RatingResult();
          WalletOperation discountedWalletOperation=null;
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
-    	AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
-    	bareWalletOperation.setAccountingArticle(accountingArticle);
+	    AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
+		if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.BEFORE_PRICING){
+			bareWalletOperation.setAccountingArticle(accountingArticle);
+		}
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
 
@@ -714,6 +722,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     PricePlanMatrixLine pricePlanMatrixLine =null;
                     bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
                     bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+					if(financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING){
+						bareWalletOperation.setAccountingArticle(accountingArticle);
+					}
                     if (pricePlan.getScriptInstance() != null) {
                     	log.debug("start to execute script instance for ratePrice {}", pricePlan);
                     	executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
