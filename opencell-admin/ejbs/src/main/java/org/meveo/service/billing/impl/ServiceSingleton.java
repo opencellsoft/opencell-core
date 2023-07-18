@@ -605,6 +605,7 @@ public class ServiceSingleton {
         }
 
         if (prefix != null && !StringUtils.isBlank(prefix)) {
+        	invoice.setInvoiceType(invoiceType);
             prefix = InvoiceService.evaluatePrefixElExpression(prefix, invoice);
 
         } else {
