@@ -139,6 +139,9 @@ public class ContractItemService extends BusinessService<ContractItem> {
         if (chargeTemplate != null && chargeTemplate.getId() != null) {
             builder.append(" and c.chargeTemplate.id=:chargeTemplate");
         }
+        if (walletOperation != null && walletOperation.isOverrodePrice()) {
+            builder.append(" and c.applicableOnOverriddenPrice=true");
+        }
 
         Query query = getEntityManager().createQuery(builder.toString());
         
