@@ -152,7 +152,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 			AggregationConfiguration aggregationConfiguration, BillingRun billingRun, Long nbRuns, Long waitingMillis,
 			Long maxInvoiceLinesPerTransaction, BasicStatistics basicStatistics, int billableEntitiesSize, List<Long> billingAccountsIDs) {
 		List billableEntitiesList = billingAccountService.findByIds(billingAccountsIDs);
-		assignAccountingArticleIfMissingInRTs(result, billableEntitiesList, maxInvoiceLinesPerTransaction, waitingMillis, jobInstance, nbRuns);
+		//assignAccountingArticleIfMissingInRTs(result, billableEntitiesList, maxInvoiceLinesPerTransaction, waitingMillis, jobInstance, nbRuns);
 		
 		Map<String, Object> perfConfig = initPerfConfig(jobInstance);
 		
