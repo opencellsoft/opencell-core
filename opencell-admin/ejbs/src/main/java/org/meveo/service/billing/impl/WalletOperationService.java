@@ -805,6 +805,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         if (!walletOperationIds.isEmpty()) {
             // Cancel related RTS
             int nrRtsCanceled = getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("woIds", walletOperationIds).setParameter("now", new Date()).executeUpdate();
+            getEntityManager().createNamedQuery("InvoiceLine.cancelInvoiceLineByWoIds")
+                    .setParameter("woIds", walletOperationIds)
+                    .setParameter("now", new Date())
+                    .executeUpdate();
+            getEntityManager().createNamedQuery("RatedTransaction.cancelAggregatedRTByInvoiceLine")
+                    .setParameter("woIds", walletOperationIds)
+                    .setParameter("now", new Date())
+                    .executeUpdate();
 
             // Change WO status to Canceled
             nrOfWosUpdated = getEntityManager().createNamedQuery("WalletOperation.setStatusToCanceledById").setParameter("now", new Date()).setParameter("woIds", walletOperationIds).executeUpdate();
