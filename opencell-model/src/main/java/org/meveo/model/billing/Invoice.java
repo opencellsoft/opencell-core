@@ -776,8 +776,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	@Type(type = "numeric_boolean")
 	private boolean autoMatching;
 	
-	@Column
-	@Type(type = "ubl_reference")
+	@Column(name = "ubl_reference")
+	@Type(type = "numeric_boolean")
 	private boolean ublReference;
     
     public Invoice() {
