@@ -756,6 +756,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		if(configuredFilter==null){
 			throw new BusinessException("No filter found for billingRun "+billingRun.getId());
 		}
+		Map<String, Object> filters = new TreeMap<String, Object>(configuredFilter);
 		if(massData) {
 			filters.put("billingAccount.massData", "true");
 		}

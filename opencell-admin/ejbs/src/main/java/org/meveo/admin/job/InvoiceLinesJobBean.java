@@ -152,7 +152,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 			AggregationConfiguration aggregationConfiguration, BillingRun billingRun, Long nbRuns, Long waitingMillis,
 			Long maxInvoiceLinesPerTransaction, BasicStatistics basicStatistics, int billableEntitiesSize, List<Long> billingAccountsIDs) {
 		List billableEntitiesList = billingAccountService.findByIds(billingAccountsIDs);
-		assignAccountingArticleIfMissingInRTs(result, billableEntitiesList, maxInvoiceLinesPerTransaction, waitingMillis, jobInstance, nbRuns);
 		
 		Map<String, Object> perfConfig = initPerfConfig(jobInstance);
 		
@@ -185,38 +184,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 			billingAccountService.changeMassUpdateProcessing(be.getId(),false);
 		}
     }
-
-
-    /**
-    	 * @param waitingMillis
-         * @param jobInstance 
-    	 * @param nbRuns
-    	 */
-    	private void assignAccountingArticleIfMissingInRTs(JobExecutionResultImpl result, List<? extends IBillableEntity> billableEntities,
-    			Long maxInvoiceLinesPerTransaction, Long waitingMillis, JobInstance jobInstance, Long nbRuns) {
-    		log.info(" ============ START ASSIGNING ACCOUNTING ARTICLES STEP ");
-    		BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> updateRTAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction);
-    		iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, true, jobInstance.getJobSpeed(), true);
-    		log.info(" ============ END ASSIGNING ACCOUNTING ARTICLES STEP ");
-    	}
-    
-    	/**
-    	 * @param result
-    	 * @param billableEntity
-    	 * @param maxInvoiceLinesPerTransaction
-    	 * @return
-    	 */
-    	private void updateRTAccountingArticle(JobExecutionResultImpl result, IBillableEntity billableEntity, Long maxInvoiceLinesPerTransaction) {
-    		if(maxInvoiceLinesPerTransaction==null || maxInvoiceLinesPerTransaction < 1) {
-    			ratedTransactionService.calculateAccountingArticle(result, billableEntity, null, null);
-    		} else {
-    			int index=0;
-    			int count = maxInvoiceLinesPerTransaction.intValue();
-    			while(count >= maxInvoiceLinesPerTransaction){
-    				count = ratedTransactionService.calculateAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction.intValue(), index++);
-   			}
-    		}
-    	}
 
     private long validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {
         List<BillingRun> excludedBRs = billingRuns.stream()
