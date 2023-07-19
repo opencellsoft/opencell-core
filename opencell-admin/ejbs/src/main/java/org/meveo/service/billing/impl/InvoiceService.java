@@ -223,6 +223,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -6750,7 +6751,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 refreshInvoiceLineAndAggregateAmounts(toUpdate);
             }
         }
-        toUpdate.setAutoMatching(invoiceResource.getAutoMatching() != null ? invoiceResource.getAutoMatching() : false);
 
         //if the dueDate == null, it will be calculated at the level of the method invoiceService.calculateInvoice(updateInvoice)
         toUpdate.setDueDate(input.getDueDate());
@@ -7117,9 +7117,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds, InvoiceType type) {
         Invoice adjustmentInvoice = duplicateByType(invoice, invoiceLinesIds, true);
+        addLinkedInvoice(invoice, adjustmentInvoice);
         populateAdjustmentInvoice(adjustmentInvoice, type);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
-        addLinkedInvoice(invoice, adjustmentInvoice);
 
         return adjustmentInvoice;
     }
@@ -7543,8 +7543,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             // Check if the invoice is not PAID
             if (invoice.getPaymentStatus() != InvoicePaymentStatusEnum.PAID) {
                 LinkedInvoice linkedInvoice = findBySourceInvoiceByAdjId(invoice.getId());
+
                 if (linkedInvoice != null) {
-                    AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(linkedInvoice.getInvoice()).get(0);
+                    Invoice originalInvoice = linkedInvoice.getInvoice();
+
+                    AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(originalInvoice).get(0);
                     if (aoAdjInvoice == null) { // in case of the call is from validate API without generatedAO yet
                         aoAdjInvoice = accountOperationService.listByInvoice(invoice).get(0);
                     }
@@ -7556,6 +7559,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         } catch (Exception e) {
                             log.error("Error on payment callback processing:", e);
                             throw new BusinessException(e.getMessage(), e);
+                        }
+
+                        // Check if the all invoice AO are matched with ADJ AO : if yes, the payment status of Invoice shall be set as ABONDONNED
+                        if (originalInvoice.getRecordedInvoice() != null &&
+                                MatchingStatusEnum.L == originalInvoice.getRecordedInvoice().getMatchingStatus()) {
+                            Set<String> matchedAoCodes = originalInvoice.getRecordedInvoice().getMatchingAmounts().stream()
+                                    .map(MatchingAmount::getAccountOperation)
+                                    .map(AccountOperation::getCode)
+                                    .collect(Collectors.toSet());
+
+                            // remove ADJ code + default INV_STD code
+                            matchedAoCodes.removeAll(Set.of("ADJ_REF", "ADJ_INV", "INV_CRN", "INV_STD"));
+
+                            // if we have other AO except ADJ or default INV one, that mean that Invoice is matched with another kind of AO, and shall not be ABANDONED
+                            // the rule : the ABANDONED is used when Invoice is "TOTALY" Adjusted
+                            if (matchedAoCodes.size() == 0) {
+                                originalInvoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
+                                update(originalInvoice);
+                            }
                         }
                     }
                 }
