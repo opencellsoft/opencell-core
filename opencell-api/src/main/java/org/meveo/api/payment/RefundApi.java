@@ -176,6 +176,7 @@ public class RefundApi extends BaseApi {
         refund.setAmount(refundDto.getAmount());
         refund.setUnMatchingAmount(refundDto.getAmount());
         refund.setMatchingAmount(BigDecimal.ZERO);
+        refund.setTransactionalMatchingAmount(BigDecimal.ZERO);
         refund.setAccountingCode(occTemplate.getAccountingCode());
         refund.setCode(occTemplate.getCode());
         refund.setDescription(StringUtils.isBlank(refundDto.getDescription()) ? occTemplate.getDescription() : refundDto.getDescription());
@@ -186,6 +187,11 @@ public class RefundApi extends BaseApi {
         refund.setDueDate(refundDto.getDueDate());
         refund.setTransactionDate(refundDto.getTransactionDate());
         refund.setMatchingStatus(MatchingStatusEnum.O);
+
+        if (customerAccount.getTradingCurrency() != null && customerAccount.getTradingCurrency().getCurrentRate() != null) {
+            refund.setTransactionalAmount(refund.getAmount().multiply(customerAccount.getTradingCurrency().getCurrentRate()));
+            refund.setTransactionalUnMatchingAmount(refund.getAmount().multiply(customerAccount.getTradingCurrency().getCurrentRate()));
+        }
 
         // populate customFields
         try {
@@ -263,8 +269,8 @@ public class RefundApi extends BaseApi {
 
                 // Create new AO_ADJ_REF (CREDIT), with umatchingAmount = refund Amount (from payload)
                 AccountOperationDto aoAdjRefDto = new AccountOperationDto();
-                aoAdjRefDto.setAmount(refund.getAmount());
-                aoAdjRefDto.setAmountWithoutTax(refund.getAmountWithoutTax());
+                aoAdjRefDto.setAmount(refund.getTransactionalAmount());
+                aoAdjRefDto.setAmountWithoutTax(refund.getTransactionalAmountWithoutTax());
                 aoAdjRefDto.setTaxAmount(refund.getTaxAmount());
                 aoAdjRefDto.setCode("ADJ_REF");
                 aoAdjRefDto.setCustomerAccount(refund.getCustomerAccount().getCode());
@@ -277,9 +283,8 @@ public class RefundApi extends BaseApi {
 
                 try {
                     // Match AO_Invoice with AO_ADJ_REF
-                    matchingCodeService.matchOperations(refund.getCustomerAccount().getId(), refund.getCustomerAccount().getCode(),
-                            List.of(aoAdjRefId, refund.getId()), refund.getId(),
-                            MatchingTypeEnum.A, refund.getAmount());
+                    matchingCodeService.matchOperations(null, customerAccount.getCode(),
+                            List.of(aoAdjRefId, refund.getId()), null, MatchingTypeEnum.A);
                 } catch (Exception e) {
                     throw new BusinessApiException(e.getMessage());
                 }
