@@ -153,13 +153,14 @@ public class RefundService extends PersistenceService<Refund> {
 
 
     @SuppressWarnings("unchecked")
-    public void checkExceededCreatedRefundOnPayment(Payment payment) {
+    public void checkExceededCreatedRefundOnPayment(Payment payment, BigDecimal newAddedAmount) {
         Query query = getEntityManager().createNamedQuery("Refund.countLinkedPayment");
-        query.setParameter("REFUNDED_PAYMENT_UD", payment.getId());
+        query.setParameter("REFUNDED_PAYMENT_ID", payment.getId());
 
         BigDecimal countCreatedtRefundOnPayment = (BigDecimal) query.getSingleResult();
 
-        if (countCreatedtRefundOnPayment != null && countCreatedtRefundOnPayment.compareTo(payment.getAmount()) >= 0) {
+        if (countCreatedtRefundOnPayment != null
+                && countCreatedtRefundOnPayment.add(newAddedAmount).compareTo(payment.getAmount()) >= 0) {
            throw new BusinessException("The amount of the refund is greater than the amount due or remaining of the payment to be refunded");
         }
 

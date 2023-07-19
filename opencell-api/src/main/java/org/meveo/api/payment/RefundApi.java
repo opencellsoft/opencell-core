@@ -46,6 +46,7 @@ import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -175,6 +176,7 @@ public class RefundApi extends BaseApi {
         refund.setAmount(refundDto.getAmount());
         refund.setUnMatchingAmount(refundDto.getAmount());
         refund.setMatchingAmount(BigDecimal.ZERO);
+        refund.setTransactionalMatchingAmount(BigDecimal.ZERO);
         refund.setAccountingCode(occTemplate.getAccountingCode());
         refund.setCode(occTemplate.getCode());
         refund.setDescription(StringUtils.isBlank(refundDto.getDescription()) ? occTemplate.getDescription() : refundDto.getDescription());
@@ -185,6 +187,11 @@ public class RefundApi extends BaseApi {
         refund.setDueDate(refundDto.getDueDate());
         refund.setTransactionDate(refundDto.getTransactionDate());
         refund.setMatchingStatus(MatchingStatusEnum.O);
+
+        if (customerAccount.getTradingCurrency() != null && customerAccount.getTradingCurrency().getCurrentRate() != null) {
+            refund.setTransactionalAmount(refund.getAmount().multiply(customerAccount.getTradingCurrency().getCurrentRate()));
+            refund.setTransactionalUnMatchingAmount(refund.getAmount().multiply(customerAccount.getTradingCurrency().getCurrentRate()));
+        }
 
         // populate customFields
         try {
@@ -242,7 +249,7 @@ public class RefundApi extends BaseApi {
                 }
 
                 // Check that the refund amount are not exceed with the initial payment
-                refundService.checkExceededCreatedRefundOnPayment(payment);
+                refundService.checkExceededCreatedRefundOnPayment(payment, refund.getAmount());
 
                 for (MatchingAmount payMatchingAmount : payment.getMatchingAmounts()) {
                     for (MatchingAmount matchingAmount : payMatchingAmount.getMatchingCode().getMatchingAmounts()) {
@@ -258,12 +265,12 @@ public class RefundApi extends BaseApi {
                 }
 
                 // Create new Invoice Credit Note
-                Invoice invoiceCreditNote = createInvoiceCreditNote(payment, initialInvoice);
+                Invoice invoiceCreditNote = createInvoiceCreditNote(refund, initialInvoice);
 
                 // Create new AO_ADJ_REF (CREDIT), with umatchingAmount = refund Amount (from payload)
                 AccountOperationDto aoAdjRefDto = new AccountOperationDto();
-                aoAdjRefDto.setAmount(refund.getAmount());
-                aoAdjRefDto.setAmountWithoutTax(refund.getAmountWithoutTax());
+                aoAdjRefDto.setAmount(refund.getTransactionalAmount());
+                aoAdjRefDto.setAmountWithoutTax(refund.getTransactionalAmountWithoutTax());
                 aoAdjRefDto.setTaxAmount(refund.getTaxAmount());
                 aoAdjRefDto.setCode("ADJ_REF");
                 aoAdjRefDto.setCustomerAccount(refund.getCustomerAccount().getCode());
@@ -276,12 +283,8 @@ public class RefundApi extends BaseApi {
 
                 try {
                     // Match AO_Invoice with AO_ADJ_REF
-                    /*MatchingReturnObject matchingResult = */
-                    matchingCodeService.matchOperations(refund.getCustomerAccount().getId(),
-                            refund.getCustomerAccount().getCode(),
-                            List.of(aoAdjRefId, refund.getId()),
-                            refund.getId(),
-                            refund.getAmount());
+                    matchingCodeService.matchOperations(null, customerAccount.getCode(),
+                            List.of(aoAdjRefId, refund.getId()), null, MatchingTypeEnum.A);
                 } catch (Exception e) {
                     throw new BusinessApiException(e.getMessage());
                 }
@@ -289,6 +292,11 @@ public class RefundApi extends BaseApi {
                 // Add link between Invoice Credit Note and Initial Invoice
                 initialInvoice.setAdjustedInvoice(invoiceCreditNote);
                 invoiceService.update(initialInvoice);
+
+                // Link AO with Invoice
+                RecordedInvoice aoInvoiceCreditNote = (RecordedInvoice) accountOperationService.findById(aoAdjRefId);
+                aoInvoiceCreditNote.setInvoice(invoiceCreditNote);
+                accountOperationService.update(aoInvoiceCreditNote);
 
                 // Add link between AO_ADJ_REF (new) and Payment (existing)
                 refund.setRefundedPayment(payment);
@@ -303,26 +311,25 @@ public class RefundApi extends BaseApi {
         return refund.getId();
     }
 
-    private Invoice createInvoiceCreditNote(Payment payment, Invoice initialInvoice) {
+    private Invoice createInvoiceCreditNote(Refund refund, Invoice initialInvoice) {
+        InvoiceType invType = invoiceTypeService.findByCode("ADJ_REF");
         // Create new Invoice Credit Note
         org.meveo.apiv2.billing.BasicInvoice adjInvoice = ImmutableBasicInvoice.builder()
-                .invoiceTypeCode(invoiceTypeService.getDefaultAdjustement().getCode())
+                .invoiceTypeCode(invType.getCode()) // Default InvoiceCreated for a Refund must be ADJ_REF
                 .billingAccountCode(initialInvoice.getBillingAccount().getCode())
                 .invoiceDate(new Date())
-                .amountWithTax(payment.getAmountWithoutTax())
+                .amountWithTax(refund.getAmountWithoutTax())
                 .build();
         Invoice adjustmentInvoice = invoiceService.createBasicInvoice(adjInvoice);
 
         // Create Invoice Line
         org.meveo.apiv2.billing.InvoiceLine invoiceLineResource = ImmutableInvoiceLine.builder()
-                .accountingArticleCode("ART-STD") // TODO a remplacer avec un article d'ajustement
+                .accountingArticleCode("ART-STD")
                 .amountTax(BigDecimal.ZERO)
-                .amountWithoutTax(payment.getAmountWithoutTax())
-                .amountWithTax(payment.getAmountWithoutTax().add(payment.getTaxAmount() != null ? payment.getTaxAmount() : BigDecimal.ZERO))
-                .amountTax(payment.getTaxAmount())
-                .unitPrice(payment.getAmountWithoutTax())
+                .amountWithoutTax(refund.getAmount())
+                .unitPrice(refund.getAmount())
                 .invoiceId(adjustmentInvoice.getId())
-                .label("Refund Adjustment")
+                .label(invType.getDescription())
                 .quantity(BigDecimal.ONE)
                 .build();
 
