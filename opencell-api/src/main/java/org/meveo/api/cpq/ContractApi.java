@@ -11,6 +11,7 @@ import static java.util.Optional.ofNullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -36,6 +37,7 @@ import org.meveo.apiv2.cpq.mapper.BillingRuleMapper;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -52,6 +54,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -100,6 +103,9 @@ public class ContractApi extends BaseApi{
 	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
     @Inject
     private ResourceBundle resourceMessages;
+	
+	@Inject
+	private AccountingArticleService accountingArticleService;
 	
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
@@ -382,6 +388,7 @@ public class ContractApi extends BaseApi{
 			}
     		item.setApplicableOnOverriddenPrice(contractItemDto.getApplicableOnOverriddenPrice());
     	}
+	    item.getTargetAccountingArticles().addAll(getAccountingArticles(contractItemDto.getTargetAccountingArticleCodes()));
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
     		contractItemService.create(item);
@@ -390,7 +397,19 @@ public class ContractApi extends BaseApi{
     		throw new MeveoApiException(e);
     	}
     }
-    
+    private Set<AccountingArticle> getAccountingArticles(Set<String> codes){
+	    final Set<AccountingArticle> accountingArticles = new HashSet<>();
+	    if(CollectionUtils.isNotEmpty(codes)){
+		    codes.forEach(code -> {
+			    AccountingArticle accountingArticle = accountingArticleService.findByCode(code);
+			    if(accountingArticle == null){
+				    throw new EntityDoesNotExistsException(AccountingArticle.class, code);
+			    }
+			    accountingArticles.add(accountingArticle);
+		    });
+	    }
+		return accountingArticles;
+    }
     public void updateContractLine(ContractItemDto contractItemDto) {
 
 		checkParams(contractItemDto);
@@ -440,6 +459,8 @@ public class ContractApi extends BaseApi{
 			}
     		item.setApplicableOnOverriddenPrice(contractItemDto.getApplicableOnOverriddenPrice());
     	}
+		item.getTargetAccountingArticles().clear();
+	    item.getTargetAccountingArticles().addAll(getAccountingArticles(contractItemDto.getTargetAccountingArticleCodes()));
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);
     		contractItemService.updateContractItem(item);

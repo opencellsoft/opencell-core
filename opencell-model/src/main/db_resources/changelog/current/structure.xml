@@ -15266,5 +15266,25 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0"/>
 		</addColumn>
 	</changeSet>
+    
+    <changeSet id="INTRD-17487_20230719" author="TarikFA.">
+        <createTable tableName="contract_item_articles">
+            <column name="contract_item_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="accounting_article_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="contract_item_articles" baseColumnNames="contract_item_id"
+                                 constraintName="contract_item_articles_item_id_fk" referencedTableName="cpq_contract_item"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="contract_item_articles" baseColumnNames="accounting_article_id"
+                                 constraintName="contract_item_articles_accounting_article_id_fk" referencedTableName="billing_accounting_article"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
 
 </databaseChangeLog>
