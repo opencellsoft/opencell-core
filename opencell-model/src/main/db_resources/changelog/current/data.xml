@@ -21208,5 +21208,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>entity_class='AccountingScheme'</where>
         </update>
     </changeSet>
+	
+	<!-- Nested file -->
+	<include file="15x/data/INTRD-11103-ADJ-EPIC.xml" relativeToChangelogFile="true"/>
 	        
 </databaseChangeLog>
