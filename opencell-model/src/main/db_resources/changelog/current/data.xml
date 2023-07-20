@@ -21209,7 +21209,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </update>
     </changeSet>
 	
-	<!-- Nested file -->
-	<include file="15x/data/INTRD-11103-ADJ-EPIC.xml" relativeToChangelogFile="true"/>
+	<changeSet id="INTRD-16743_20230720" author="aelmalki">
+        <update tableName="ar_account_operation">
+            <column name="code" value="ADJ_REF" />
+            <where>code='INV_CRN'</where>
+        </update>
+    </changeSet>
 	        
 </databaseChangeLog>
