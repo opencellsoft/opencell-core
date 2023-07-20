@@ -21208,5 +21208,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>entity_class='AccountingScheme'</where>
         </update>
     </changeSet>
+	
+	<changeSet id="INTRD-16743_20230720" author="aelmalki">
+        <update tableName="ar_account_operation">
+            <column name="code" value="ADJ_REF" />
+            <where>code='INV_CRN'</where>
+        </update>
+    </changeSet>
 	        
 </databaseChangeLog>
