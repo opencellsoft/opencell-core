@@ -170,6 +170,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+
+    @Inject
+    private UserAccountService userAccountService;
     
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -709,6 +712,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
+
+        if(StringUtils.isNotBlank(resource.getUserAccountCode())) {
+            UserAccount userAccount = userAccountService.findByCode(resource.getUserAccountCode());
+            if(userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, resource.getUserAccountCode());
+            }
+            invoiceLine.setUserAccount(userAccount);
+        } else if (resource.getUserAccountCode() != null) {
+            invoiceLine.setUserAccount(null);
+        }
 
         if (StringUtils.isNotBlank(resource.getTaxCode())) {
             Tax tax = taxService.findByCode(resource.getTaxCode());
