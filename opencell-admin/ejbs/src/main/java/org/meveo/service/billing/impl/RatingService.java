@@ -347,6 +347,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         Integer sortIndex = getSortIndex(walletOperation);
         walletOperation.setSortIndex(sortIndex);
         walletOperation.setEdr(edr);
+        walletOperation.setTradingCurrency(walletOperation.getBillingAccount() != null ? walletOperation.getBillingAccount().getTradingCurrency() : null);
 
         RatingResult ratedEDRResult = rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), chargeInstance.getCountry().getId(), chargeInstance.getCurrency(), isVirtual);
         
