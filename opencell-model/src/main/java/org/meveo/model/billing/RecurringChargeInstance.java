@@ -128,6 +128,7 @@ public class RecurringChargeInstance extends ChargeInstance {
         super(amountWithoutTax, amountWithTax, recurringChargeTemplate, serviceInstance, status);
 
         this.recurringChargeTemplate = recurringChargeTemplate;
+        this.anticipateEndOfSubscription = recurringChargeTemplate.isAnticipateEndOfSubscription();
         this.quantity = serviceInstance.getQuantity() == null ? BigDecimal.ONE : serviceInstance.getQuantity();
 
     }
@@ -144,6 +145,7 @@ public class RecurringChargeInstance extends ChargeInstance {
 
         this.code = recurringChargeTemplate.getCode();
         this.description = recurringChargeTemplate.getDescription();
+        this.anticipateEndOfSubscription = recurringChargeTemplate.isAnticipateEndOfSubscription();
 
         this.subscriptionDate = subscriptionDate;
         this.chargeDate = subscriptionDate;
