@@ -21229,5 +21229,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>code = 'XML_Job'</where>
         </update>
     </changeSet>
+	
+	<!-- Nested file -->
+	<include file="15x/data/INTRD-11103-ADJ-EPIC.xml" relativeToChangelogFile="true"/>
 	        
 </databaseChangeLog>
