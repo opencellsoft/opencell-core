@@ -7068,7 +7068,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Long> invoiceLinesIds = invoiceLineRTs.stream().map(InvoiceLineRTs::getInvoiceLineId).collect(toList());
 
         Invoice adjustmentInvoice = duplicateAndUpdateInvoiceLines(invoice, invoiceLineRTs, invoiceLinesIds);
-        populateAdjustmentInvoice(adjustmentInvoice, type);
+        populateAdjustmentInvoice(adjustmentInvoice, type, invoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
         addLinkedInvoice(invoice, adjustmentInvoice);
 
@@ -7118,7 +7118,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds, InvoiceType type) {
         Invoice adjustmentInvoice = duplicateByType(invoice, invoiceLinesIds, true);
         addLinkedInvoice(invoice, adjustmentInvoice);
-        populateAdjustmentInvoice(adjustmentInvoice, type);
+        populateAdjustmentInvoice(adjustmentInvoice, type, invoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
 
         return adjustmentInvoice;
@@ -7156,11 +7156,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
-    private void populateAdjustmentInvoice(Invoice duplicatedInvoice, InvoiceType type) {
+    private void populateAdjustmentInvoice(Invoice duplicatedInvoice, InvoiceType type, Invoice srcInvoice) {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(type != null ? type : invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
         duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
+        // Update PaymentMethod from Invoice
+        if ("ADJ_REF".equals(type.getCode())) {
+            duplicatedInvoice.setPaymentMethod(srcInvoice.getPaymentMethod());
+        }
         getEntityManager().flush();
     }
 
