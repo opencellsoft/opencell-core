@@ -166,14 +166,16 @@ public class InvoiceUblHelper {
 		IssueDate issueDate = getIssueDate(source.getInvoiceDate());
 		target.setIssueDate(issueDate);
 		
-		PeriodType periodType = objectFactoryCommonAggrement.createPeriodType();
-		StartDate startDate = objectFactorycommonBasic.createStartDate();
-		EndDate endDate = objectFactorycommonBasic.createEndDate();
-		
-		startDate.setValue(toXmlDate(source.getStartDate()));
-		endDate.setValue(toXmlDate(source.getEndDate()));
-		periodType.setStartDate(startDate);
-		target.getInvoicePeriods().add(periodType);
+		if(source.getStartDate() != null){
+			PeriodType periodType = objectFactoryCommonAggrement.createPeriodType();
+			StartDate startDate = objectFactorycommonBasic.createStartDate();
+			EndDate endDate = objectFactorycommonBasic.createEndDate();
+			
+			startDate.setValue(toXmlDate(source.getStartDate()));
+			endDate.setValue(toXmlDate(source.getEndDate()));
+			periodType.setStartDate(startDate);
+			target.getInvoicePeriods().add(periodType);
+		}
 		
 		Note note = objectFactorycommonBasic.createNote();
 		note.setValue(source.getDescription());
@@ -323,11 +325,12 @@ public class InvoiceUblHelper {
 		// AccountingCustomerParty/Party/PartyTaxScheme/CompanyID
 		if(StringUtils.isNotBlank(billingAccount.getVatNo()) || ( billingAccount.getSeller() != null && billingAccount.getVatNo() != null)){
 			// AccountingSupplierParty/Party/PartyTaxScheme/CompanyID
-			PartyTaxScheme taxScheme = objectFactoryCommonAggrement.createPartyTaxScheme();
+			PartyTaxScheme partyTaxScheme = objectFactoryCommonAggrement.createPartyTaxScheme();
 			CompanyID companyID = objectFactorycommonBasic.createCompanyID();
 			companyID.setValue(billingAccount.getVatNo());
-			taxScheme.setCompanyID(companyID);
-			partyType.getPartyTaxSchemes().add(taxScheme);
+			partyTaxScheme.setCompanyID(companyID);
+			partyTaxScheme.setTaxScheme(getTaxSheme());
+			partyType.getPartyTaxSchemes().add(partyTaxScheme);
 			//TODO : AccountingCustomerParty/Party/PartyTaxScheme/TaxScheme/ID ask @Emmanuel for this field INTRD-12578
 		}
 		// AccountingCustomerParty/Party/PartyLegalEntity
@@ -362,7 +365,18 @@ public class InvoiceUblHelper {
 		customerPartyType.setParty(partyType);
 		target.setAccountingCustomerParty(customerPartyType);
 	}
-	
+	private TaxScheme getTaxSheme(){
+		TaxScheme taxScheme = objectFactoryCommonAggrement.createTaxScheme();
+		TaxTypeCode taxTypeCode = objectFactorycommonBasic.createTaxTypeCode();
+		taxTypeCode.setValue("TVA_SUR_ENCAISSEMENT");
+		ID id = objectFactorycommonBasic.createID();
+		id.setSchemeID("UN/ECE 5153");
+		id.setSchemeAgencyID("6");
+		id.setValue("VAT");
+		taxScheme.setTaxTypeCode(taxTypeCode);
+		taxScheme.setID(id);
+		return taxScheme;
+	}
 	private PersonType getPersonType(Name name){
 		PersonType personType = objectFactoryCommonAggrement.createPersonType();
 		if(StringUtils.isNotBlank(name.getFirstName())){
@@ -465,6 +479,7 @@ public class InvoiceUblHelper {
 			CompanyID companyID = objectFactorycommonBasic.createCompanyID();
 			companyID.setValue(seller.getVatNo());
 			taxScheme.setCompanyID(companyID);
+			taxScheme.setTaxScheme(getTaxSheme());
 			partyType.getPartyTaxSchemes().add(taxScheme);
 		}
 		
