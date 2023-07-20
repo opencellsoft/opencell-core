@@ -1,9 +1,16 @@
 package org.meveo.model.cpq.contract;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Product;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,23 +18,18 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.cpq.Product;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Tarik FAKHOURI
@@ -125,6 +127,10 @@ public class ContractItem extends EnableBusinessCFEntity {
 	@Type(type = "numeric_boolean")
 	@Column(name = "applicable_on_overridden_price")
 	private boolean applicableOnOverriddenPrice = false;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "contract_item_articles", joinColumns = @JoinColumn(name = "contract_item_id"), inverseJoinColumns = @JoinColumn(name = "accounting_article_id"))
+	private Set<AccountingArticle> targetAccountingArticles = new HashSet<>();
 	
 	/**
 	 * @return the contract
@@ -277,7 +283,15 @@ public class ContractItem extends EnableBusinessCFEntity {
 	public void setApplicableOnOverriddenPrice(boolean applicableOnOverriddenPrice) {
 		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
 	}
-
+	
+	public Set<AccountingArticle> getTargetAccountingArticles() {
+		return targetAccountingArticles;
+	}
+	
+	public void setTargetAccountingArticles(Set<AccountingArticle> targetAccountingArticles) {
+		this.targetAccountingArticles = targetAccountingArticles;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

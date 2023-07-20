@@ -12464,6 +12464,18 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="INTRD-17487_20230719_build" author="TarikFA.">
+        <createTable tableName="contract_item_articles">
+            <column name="contract_item_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="accounting_article_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+
     <changeSet id="#INTRD-16031_20230508_rebuild" author="zelmeliani">
         <createTable tableName="cat_price_list">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -17279,7 +17291,7 @@
                 baseColumnNames="price_list_line_id"
                 baseTableName="billing_wallet_operation" />
     </changeSet>
-    
+
      <changeSet id="#INTRD-17149_04072023_fk" author="Mbarek-Ay">
 		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk" 
 								 referencedTableName="cpq_price_plan_version" 
@@ -17298,6 +17310,19 @@
 								 baseColumnNames="contract_item_id" 
 								 baseTableName="cpq_quote_price" 
 								 referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="INTRD-17487_20230719_fk" author="TarikFA.">
+
+        <addForeignKeyConstraint baseTableName="contract_item_articles" baseColumnNames="contract_item_id"
+                                 constraintName="contract_item_articles_item_id_fk" referencedTableName="cpq_contract_item"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="contract_item_articles" baseColumnNames="accounting_article_id"
+                                 constraintName="contract_item_articles_accounting_article_id_fk" referencedTableName="billing_accounting_article"
+                                 referencedColumnNames="id"/>
+
     </changeSet>
     <!-- end fk -->
 
@@ -18290,7 +18315,7 @@
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-12677_20221229_rebuild" author="AdilElJaouhari">
 		<createTable tableName="crm_provider_order_line_type">
 			<column name="provider_id" type="bigint" />
@@ -18308,8 +18333,8 @@
 			constraintName="crm_provider_order_line_type_uk"
 			tableName="crm_provider_order_line_type" />
 	</changeSet>
-	
-	<changeSet id="#INTRD-10544_20221207-rebuild" author="HatimOUDAD">   
+
+	<changeSet id="#INTRD-10544_20221207-rebuild" author="HatimOUDAD">
         <createSequence sequenceName="iso_icd_seq" startValue="1" />
         <createTable tableName="iso_icd">
             <!-- Generic fields -->
@@ -18327,14 +18352,14 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="iso_icd_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="scheme_name" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
 
         </createTable>
-        
-        
+
+
         <createSequence sequenceName="untdid_1001_invoice_code_type_seq" startValue="1" />
         <createTable tableName="untdid_1001_invoice_code_type">
             <!-- Generic fields -->
@@ -18352,7 +18377,7 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="iso_1001_code_type_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="en16931_interpretation" type="varchar(20)">
                 <constraints nullable="false" />
             </column>
@@ -18361,7 +18386,7 @@
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_2475_vat_payment_option_seq" startValue="1" />
         <createTable tableName="untdid_2475_vat_payment_option">
             <!-- Generic fields -->
@@ -18376,7 +18401,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="code_2005" type="varchar(10)">
                 <constraints nullable="false" />
             </column>
@@ -18391,7 +18416,7 @@
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_4451_invoice_subject_code_seq" startValue="1" />
         <createTable tableName="untdid_4451_invoice_subject_code">
             <!-- Generic fields -->
@@ -18409,13 +18434,13 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="iso_4451_subject_code_unique"/>
             </column>
 
-            <!-- Simple fields --> 
+            <!-- Simple fields -->
             <column name="code_name" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_5305_taxation_category_seq" startValue="1" />
         <createTable tableName="untdid_5305_taxation_category">
             <!-- Generic fields -->
@@ -18433,7 +18458,7 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="iso_5305_taxation_category_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="semantic_model" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
@@ -18464,7 +18489,7 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="untdid_vatex_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="remark" type="varchar(500)">
                 <constraints nullable="true" />
             </column>
@@ -18473,7 +18498,7 @@
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_4461_payment_means_seq" startValue="1" />
         <createTable tableName="untdid_4461_payment_means">
             <!-- Generic fields -->
@@ -18491,7 +18516,7 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="untdid_4461_payment_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="usage_in_en16931" type="varchar(500)">
                 <constraints nullable="true" />
             </column>
@@ -18500,7 +18525,7 @@
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
          <createTable tableName="untdid_5189_allowance_code">
             <!-- Generic fields -->
@@ -18518,13 +18543,13 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="untdid_5189_allowance_code_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="description" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
 
         </createTable>
-        
+
         <addForeignKeyConstraint baseTableName="billing_tax"
                                  baseColumnNames="taxation_category_id"
                                  constraintName="fk_billing_tax_5305_taxation_category"
@@ -18539,7 +18564,7 @@
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-                                 
+
         <addForeignKeyConstraint baseTableName="billing_invoice_type"
                                  baseColumnNames="invoice_code_type_id"
                                  constraintName="fk_billing_invoice_1001_invoice"
@@ -18554,8 +18579,8 @@
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-        
-        
+
+
     </changeSet>
 
 
@@ -18581,7 +18606,7 @@
             <column name="use_for_billing_accounts" type="${type.boolean}"/>
         </createTable>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-12405_20221226-rebuild" author="HichamHANINE">
 		<addForeignKeyConstraint baseTableName="billing_billing_account"
 								 baseColumnNames="icd_id"
@@ -18610,7 +18635,7 @@
 								 referencedTableName="iso_icd"
 								 referencedColumnNames="id"
 								 deferrable="false" initiallyDeferred="false"
-								 onDelete="NO ACTION" onUpdate="NO ACTION" />							 
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 		<addForeignKeyConstraint baseTableName="billing_invoice_type"
 								 baseColumnNames="invoice_subject_code"
 								 constraintName="fk_invoice_type_untdid_4451_invoice_subject"
@@ -20259,7 +20284,7 @@
     <changeSet id="#INTRD-17189_20230711" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-17304_20230714" author="AdilElJaouhari" />
     <changeSet id="INTRD-17307_20230712" author="TarikFA." />
-    
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
