@@ -281,14 +281,6 @@ public class RefundApi extends BaseApi {
 
                 Long aoAdjRefId = accountOperationApi.create(aoAdjRefDto);
 
-                try {
-                    // Match AO_Invoice with AO_ADJ_REF
-                    matchingCodeService.matchOperations(null, customerAccount.getCode(),
-                            List.of(aoAdjRefId, refund.getId()), null, MatchingTypeEnum.A);
-                } catch (Exception e) {
-                    throw new BusinessApiException(e.getMessage());
-                }
-
                 // Add link between Invoice Credit Note and Initial Invoice
                 initialInvoice.setAdjustedInvoice(invoiceCreditNote);
                 invoiceService.update(initialInvoice);
@@ -301,6 +293,14 @@ public class RefundApi extends BaseApi {
                 // Add link between AO_ADJ_REF (new) and Payment (existing)
                 refund.setRefundedPayment(payment);
                 refundService.update(refund);
+
+                try {
+                    // Match AO_Invoice with AO_ADJ_REF
+                    matchingCodeService.matchOperations(null, customerAccount.getCode(),
+                            List.of(aoAdjRefId, refund.getId()), null, MatchingTypeEnum.A);
+                } catch (Exception e) {
+                    throw new BusinessApiException(e.getMessage());
+                }
 
             } else {
                 log.info("AccountOperation is RecordedInvoice type, no need to create Invoice and do manual adjustment");
