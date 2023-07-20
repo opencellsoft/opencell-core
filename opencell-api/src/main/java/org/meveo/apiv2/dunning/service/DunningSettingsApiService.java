@@ -78,8 +78,6 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 		//If the dunning mode is set to CUSTOMER_LEVEL for the first setting then return a functional exception
 		if(baseEntity.getDunningMode() == null) {
 			baseEntity.setDunningMode(DunningModeEnum.INVOICE_LEVEL);
-		} else if(baseEntity.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL) && dunningSettingsService.count() == 0) {
-			throw new BadRequestException(AUTHORIZED_DUNNING_MODE);
 		}
 
 		if(baseEntity.getMaxDunningLevels() == null)
