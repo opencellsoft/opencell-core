@@ -21,11 +21,6 @@ public class PaymentAccountingSchemeScript extends Script {
 
         AccountOperation ao = (AccountOperation) context.get(Script.CONTEXT_ENTITY);
 
-        if (!(ao instanceof Payment)) {
-            log.error("AccountOperation {} is not Payment type, abort processing", ao.getId());
-            throw new BusinessException("AccountOperation " + ao.getId() + " is not Payment type");
-        }
-
         Payment paymentAo = (Payment) ao;
 
         log.info("Process Payment {}", paymentAo.getId());
