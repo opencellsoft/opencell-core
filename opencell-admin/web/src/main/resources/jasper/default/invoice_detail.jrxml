@@ -286,7 +286,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					</reportElement>
 					<box leftPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
+						<font fontName="Arial" size="9" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{unitAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{unitAmountWithoutTax})))]]></textFieldExpression>
 				</textField>
@@ -296,7 +296,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					</reportElement>
 					<box leftPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
+						<font fontName="Arial" size="9" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(Double.valueOf($V{quantity})*new Double($F{amountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(Double.valueOf($V{quantity})*new Double($F{amountWithoutTax})))]]></textFieldExpression>
 				</textField>
@@ -306,7 +306,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					</reportElement>
 					<box leftPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
+						<font fontName="Arial" size="9" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{taxIndex_line}.replaceAll(',', '\n')]]></textFieldExpression>
 				</textField>
@@ -350,7 +350,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Details]]></text>
 			</staticText>
@@ -368,7 +368,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[#]]></text>
 			</staticText>
@@ -386,7 +386,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Quantity]]></text>
 			</staticText>
@@ -404,7 +404,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Unit price"]]></textFieldExpression>
 			</textField>
@@ -422,7 +422,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Total w.o tax"]]></textFieldExpression>
 			</textField>
@@ -440,7 +440,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["VAT"]]></textFieldExpression>
 			</textField>
