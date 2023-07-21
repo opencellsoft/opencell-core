@@ -5565,6 +5565,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setBillingAccount(billingAccount);
         invoice.setOrder(order);
         invoice.setPaymentStatus(InvoicePaymentStatusEnum.NONE);
+        invoice.setPaymentMethod(buildForInitInvoice(billingAccount));
         invoice.setStartDate(invoiceDate);
         invoice.setAmountWithTax(amountWithTax);
         invoice.setRawAmount(amountWithTax);
@@ -5583,6 +5584,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setComment(comment);
         invoice.setAutoMatching(isAutoMatching);
         return invoice;
+    }
+
+    private PaymentMethod buildForInitInvoice(BillingAccount billingAccount) {
+        if (billingAccount.getPaymentMethod() != null) {
+            return billingAccount.getPaymentMethod();
+        } else if (CollectionUtils.isNotEmpty(billingAccount.getCustomerAccount().getPaymentMethods())) {
+            return billingAccount.getCustomerAccount().getPaymentMethods().get(0);
+        }
+        return null;
     }
 
     private InvoiceLine initInvoiceLineForBasicInvoice(BasicInvoice resource, final BigDecimal amountWithTax, Order order, BillingAccount billingAccount, AccountingArticle accountingArticle, Invoice invoice) {
@@ -7161,10 +7171,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         duplicatedInvoice.setInvoiceType(type != null ? type : invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
         duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
-        // Update PaymentMethod from Invoice
-        if ("ADJ_REF".equals(type.getCode())) {
-            duplicatedInvoice.setPaymentMethod(srcInvoice.getPaymentMethod());
-        }
+        // Update ADJ Invoice PaymentMethod from original Invoice
+        duplicatedInvoice.setPaymentMethod(srcInvoice.getPaymentMethod());
         getEntityManager().flush();
     }
 
