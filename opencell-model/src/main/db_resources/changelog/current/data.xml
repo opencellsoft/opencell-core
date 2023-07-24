@@ -21236,5 +21236,26 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>code='INV_CRN'</where>
         </update>
     </changeSet>
+	
+	<changeSet id="INTRD-17572_20230721-ADJ" author="aelmalki" failOnError="false">
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'ADJ')" />
+			<column name="applies_to_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'COM')" />
+        </insert>
+    </changeSet>
+	
+	<changeSet id="INTRD-17572_20230721-ADJ-REF" author="aelmalki" failOnError="false">
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'ADJ_REF')" />
+			<column name="applies_to_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'COM')" />
+        </insert>
+    </changeSet>
+	
+	<changeSet id="INTRD-17572_20230721-ADJ-INV" author="aelmalki" failOnError="false">
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'ADJ_INV')" />
+			<column name="applies_to_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'COM')" />
+        </insert>
+    </changeSet>
 	        
 </databaseChangeLog>
