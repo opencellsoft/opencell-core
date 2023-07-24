@@ -12039,6 +12039,13 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="uuid" value="PriceListStatusJob_Job" />
 		</insert>
 	</changeSet>
+		
+	<changeSet id="INTRD-17572_20230721-ADJ" author="aelmalki" failOnError="false">
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'ADJ')" />
+			<column name="applies_to_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'COM')" />
+        </insert>
+    </changeSet>
 	
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
