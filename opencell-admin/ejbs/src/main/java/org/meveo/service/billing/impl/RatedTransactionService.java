@@ -721,8 +721,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             List<Customer> customers = new ArrayList<>();
             getCustomer(customer, customers);
             List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
+            
+          //Get the list of seller (current and parents)
+            List<Seller> sellers = new ArrayList<>();
+			getSeller(seller, sellers);
+			List<Long> sellerIds = sellers.stream().map(Seller::getId).collect(Collectors.toList());
+			
             //Get contract by list of customer ids, billing account and customer account
-            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, null, aggregatedWo.getOperationDate());
+            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount,sellerIds, null, aggregatedWo.getOperationDate());
             Contract contractWithRules = contractService.lookupSuitableContract(customers, contracts, true);
 
             ratedTransaction.setRulesContract(contractWithRules);
@@ -744,6 +750,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if(pCustomer.getParentCustomer() != null) {
             getCustomer(pCustomer.getParentCustomer(), pCustomerList);
         }
+    }
+    
+    /**
+     * Get the seller and all parent sellers
+     * @param parentSeller Seller
+     * @param parentSellers List of sellers (current seller and all parents)
+     */
+    private void getSeller(Seller parentSeller, List<Seller> parentSellers) {
+    	if(parentSeller != null) {
+    		parentSellers.add(parentSeller);
+    		if(parentSeller.getSeller() != null) {
+    			getSeller(parentSeller.getSeller(), parentSellers);
+    		}
+    	}
     }
 
     private void setPricePlan(RatedTransaction ratedTransaction) {
