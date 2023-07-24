@@ -4738,4 +4738,92 @@ public class DeleteCustomersScript extends Script {
              <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:0"/>
          </insert>
      </changeSet>
+
+    <changeSet id="INTRD-5997_20220330" author="HichamELHALOUI">
+        <insert tableName="billing_accounting_code">
+            <column name="id" valueNumeric="-37" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="code" value="511011000" />
+            <column name="description" value="CB à encaisser" />
+            <column name="chart_of_account_type" value="ASSETS" />
+            <column name="chart_of_account_view_type" value="REGULAR" />
+        </insert>
+        <insert tableName="billing_accounting_code">
+            <column name="id" valueNumeric="-38" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="code" value="511002000" />
+            <column name="description" value="Paypal à encaisser" />
+            <column name="chart_of_account_type" value="ASSETS" />
+            <column name="chart_of_account_view_type" value="REGULAR" />
+        </insert>
+        <insert tableName="billing_accounting_code">
+            <column name="id" valueNumeric="-39" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="code" value="511003000" />
+            <column name="description" value="Stripe à encaisser" />
+            <column name="chart_of_account_type" value="ASSETS" />
+            <column name="chart_of_account_view_type" value="REGULAR" />
+        </insert>
+        <insert tableName="billing_accounting_code">
+            <column name="id" valueNumeric="-40" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="code" value="511000610" />
+            <column name="description" value="TIP à encaisser" />
+            <column name="chart_of_account_type" value="ASSETS" />
+            <column name="chart_of_account_view_type" value="REGULAR" />
+        </insert>
+        <insert tableName="billing_accounting_code">
+            <column name="id" valueNumeric="-41" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="code" value="531100000" />
+            <column name="description" value="Caisse en monnaie nationale" />
+            <column name="chart_of_account_type" value="ASSETS" />
+            <column name="chart_of_account_view_type" value="REGULAR" />
+        </insert>
+        <insert tableName="billing_accounting_code">
+            <column name="id" valueNumeric="-42" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="opencell.admin" />
+            <column name="code" value="511200000" />
+            <column name="description" value="Chèques à encaisser" />
+            <column name="chart_of_account_type" value="ASSETS" />
+            <column name="chart_of_account_view_type" value="REGULAR" />
+        </insert>
+
+        <insert tableName="ar_occ_template">
+            <column name="id" valueNumeric="-60" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="accounting_code_id" valueNumeric="-41" />
+            <column name="contra_accounting_code_id" valueNumeric="-6" />
+            <column name="code" value="PAY_CASH" />
+            <column name="description" value="Payment - cash" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
+            <column name="creator" value="opencell.admin" />
+        </insert>
+        <insert tableName="ar_occ_template">
+            <column name="id" valueNumeric="-61" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="accounting_code_id" valueNumeric="-20" />
+            <column name="contra_accounting_code_id" valueNumeric="-6" />
+            <column name="code" value="PAY_WIRE" />
+            <column name="description" value="WIRETRANSFER (virement)" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" value="-2" />
+            <column name="creator" value="opencell.admin" />
+        </insert>
+    </changeSet>
 </databaseChangeLog>

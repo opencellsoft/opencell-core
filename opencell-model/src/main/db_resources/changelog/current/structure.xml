@@ -10125,4 +10125,14 @@ public class OrderAdvancement extends ModuleScript {
 		</sql>
 	</changeSet>
 
+    <changeSet id="#INTRD-4702-20220321" author="ZBariki">
+        <addColumn tableName="ar_occ_template">
+            <column name="contra_accounting_code_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
+
 </databaseChangeLog>
