@@ -133,7 +133,8 @@ public class ContractItemService extends BusinessService<ContractItem> {
 					.setParameter("contractId", contract.getId())
 					.setParameter("offerId", offer.getId())
 					.setParameter("productCode", productCode)
-					.setParameter("chargeTemplateId", chargeTemplate.getId());
+					.setParameter("chargeTemplateId", chargeTemplate.getId())
+			        .setParameter("accountingArticleId", walletOperation != null && walletOperation.getAccountingArticle() != null ? walletOperation.getAccountingArticle().getId() : 0L);
 	        List<ContractItem> applicableContractItems = query.getResultList();
 
 	        if (!applicableContractItems.isEmpty() && walletOperation != null && walletOperation.isOverrodePrice()) {
