@@ -1277,7 +1277,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     private Map<String, Object> extractCustomFieldsFilters(Map<String, Object> filters) {
         Map<String, Object> cftFilters = new TreeMap<String, Object>();
-        for (Object filterValue : filters.values()) {
+        for (Entry<String, Object> entry : filters.entrySet()) {
+            Object filterValue = entry.getValue();
             if (filterValue instanceof CustomFieldValues) {
                 CustomFieldValues customFieldValues = (CustomFieldValues) filterValue;
                 customFieldValues = checkCFValuesShouldBeEncrypted(customFieldValues);
@@ -1309,8 +1310,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             type = type.substring(4).toLowerCase(); // A fix so inList search by a list of values would be compared against a regular field instead of a list type field e.g. listString - See BaseApi.castFilterValue logic 
                         }
 
+                        String fieldNamePrefix = entry.getKey().replace("cfValues", "");
                         for (String fieldName : fieldInfo.getAllFields()) {
-                            transformedFilter = extractCustomFieldSyntax(type, value.getClass(), transformedFilter, fieldName, "");
+                            transformedFilter = extractCustomFieldSyntax(type, value.getClass(), transformedFilter, fieldName, fieldNamePrefix);
                         }
 
                         if (value instanceof EntityReferenceWrapper) {
