@@ -1605,6 +1605,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         walletOperation.setTransactionalAmountWithoutTax(walletOperation.getAmountWithoutTax().multiply(rate));
         walletOperation.setTransactionalUnitAmountWithTax(walletOperation.getUnitAmountWithTax().multiply(rate));
         walletOperation.setTransactionalUnitAmountWithoutTax(walletOperation.getUnitAmountWithoutTax().multiply(rate));
+        walletOperation.setTransactionalUnitAmountTax(walletOperation.getUnitAmountTax().multiply(rate));
     }
 
     /**
