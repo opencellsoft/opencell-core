@@ -2431,6 +2431,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="journal_id" type="bigint" />
+			<column name="contra_accounting_code_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-160">
@@ -10752,6 +10753,12 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-468">
         <addUniqueConstraint columnNames="code" constraintName="uk_p2nr7j9ik6ri37gmd8o1hojhb" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ar_occ_template" />
     </changeSet>
+	<changeSet id="#INTRD-4702-20220321-fk" author="ZBariki">
+        <addForeignKeyConstraint baseColumnNames="contra_accounting_code_id" baseTableName="ar_occ_template"
+                                 constraintName="fk_contra_accounting_code_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-469">
         <addUniqueConstraint columnNames="code" constraintName="uk_pehkecunepva2oq9dx9faajhg" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_chart" />
     </changeSet>
@@ -16217,7 +16224,8 @@
     <changeSet id="#INTRD-6614_20220418" author="AmineBENAICHA"/>
     <changeSet id="INTRD-2596_20211022" author="AmineBENAICHA" />
     <changeSet id="#INTRD-6777_20220427" author="AmineBENAICHA"/>
-    
+    <changeSet id="#INTRD-4702-20220321" author="ZBariki" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
 
     <!-- DONT REMOVE THIS CHANGESET -->
