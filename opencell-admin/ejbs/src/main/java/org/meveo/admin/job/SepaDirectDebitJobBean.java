@@ -128,8 +128,8 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 
 		try {
-			Long nbRuns = new Long(1);
-			Long waitingMillis = new Long(0);
+			Long nbRuns = 1L;
+			Long waitingMillis = 0L;
 
 			try {
 				nbRuns = (Long) this.getParamOrCFValue(jobInstance, "SepaJob_nbRuns");
@@ -139,8 +139,8 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 				}
 
 			} catch (Exception e) {
-				nbRuns = new Long(1);
-				waitingMillis = new Long(0);
+				nbRuns = 1L;
+				waitingMillis = 0L;
 				log.warn("Cant get nbRuns and waitingMillis customFields for " + jobInstance.getCode(), e.getMessage());
 			}
 			DDRequestBuilder ddRequestBuilder = null;
@@ -200,7 +200,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, ddRequestBuilder, result);
 							log.info("end createDDRquestLot");
 							if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
-								dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result); 
+								dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result,nbRuns,waitingMillis); 
 								dDRequestLOTService.generateDDRquestLotFile(dDRequestLOTService.findById(ddRequestLOT.getId()),
 										ddRequestBuilderInterface, appProvider);
 								log.info("end generateDDRquestLotFile");
