@@ -255,7 +255,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 throw new BusinessException("One or more adjustments are already linked to the invoice");
             }
         } else {
-            adjAmountWithTax = BigDecimal.ZERO;
+            // in case where no link found for the invoice in linkedInvoice with type ADJUSTEMENT, we can create ADJ with no problem
+            return;
         }
 
         BigDecimal possibleAdjAmount = srcInvoice.getAmountWithTax().subtract(adjAmountWithTax);
