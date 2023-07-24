@@ -499,7 +499,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     private Date appliedRateDate = new Date();
     
     @Transient
-    private BigDecimal amountForUnmatching;
+    private BigDecimal amountForUnmatching = BigDecimal.ZERO;
     
     /**
      * Comments Text free if litigation or special conditions
