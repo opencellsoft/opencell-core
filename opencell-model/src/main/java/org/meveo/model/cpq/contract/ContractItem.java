@@ -21,6 +21,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -41,6 +43,11 @@ import java.util.Set;
 @Table(name = "cpq_contract_item", uniqueConstraints = { @UniqueConstraint(columnNames = {"code"})})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_contract_item_seq")})
+@NamedQueries({
+	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c join c.targetAccountingArticles article where  c.contract.id=:contractId "
+			+ " and (c.offerTemplate is null or c.offerTemplate.id=:offerId) "
+			+ " and (c.product is null or c.product.id=:productId) and ( c.chargeTemplate.id=:chargeTemplateId or (c.chargeTemplate is null and article.id =:accountingArticleId))  " )})
+	
 public class ContractItem extends EnableBusinessCFEntity {
 
 	private static final long serialVersionUID = -5080807655628692787L;
