@@ -514,7 +514,7 @@ public class ContractApi extends BaseApi{
     	if(Strings.isEmpty(contractItemDto.getCode())) {
 			missingParameters.add("code");
     	}
-		if(Strings.isEmpty(contractItemDto.getChargeTemplateCode())) {
+		if(CollectionUtils.isEmpty(contractItemDto.getTargetAccountingArticleCodes()) && Strings.isEmpty(contractItemDto.getChargeTemplateCode())) {
 			missingParameters.add("chargeTemplateCode");
 		}
 		checkPricePlanPeriod(contractItemDto);

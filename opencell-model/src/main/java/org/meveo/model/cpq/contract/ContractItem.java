@@ -44,9 +44,9 @@ import org.meveo.model.cpq.Product;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_contract_item_seq")})
 @NamedQueries({
-	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c where  c.contract.id=:contractId "
+	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c join c.targetAccountingArticles article where  c.contract.id=:contractId "
 			+ " and (c.offerTemplate is null or c.offerTemplate.id=:offerId) "
-			+ " and (c.product is null or c.product.code=:productCode) and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId)  " )})
+			+ " and (c.product is null or c.product.code=:productCode) and ( c.chargeTemplate.id=:chargeTemplateId or (c.chargeTemplate is null and article.id =:accountingArticleId))  " )})
 	
 public class ContractItem extends EnableBusinessCFEntity {
 
