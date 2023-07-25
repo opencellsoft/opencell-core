@@ -45,10 +45,12 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
         if(AttributeTypeEnum.BOOLEAN==attribute.getAttributeType() && booleanValue==null && stringValue!=null ) {
         	booleanValue=Boolean.valueOf(stringValue);
         }
+        if(quoteAttribute.getAssignedAttributeValue()!=null && !quoteAttribute.getAssignedAttributeValue().isEmpty()) {
         assignedAttributeValue = quoteAttribute.getAssignedAttributeValue()
                                         .stream()
                                         .map(AttributeInstance::new)
                                         .collect(Collectors.toList());
+        }
     }
     
     public AttributeInstance(MeveoUser currentUser) {
