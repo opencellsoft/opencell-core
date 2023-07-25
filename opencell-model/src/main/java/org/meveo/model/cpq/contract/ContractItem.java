@@ -44,9 +44,10 @@ import java.util.Set;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_contract_item_seq")})
 @NamedQueries({
-	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c join c.targetAccountingArticles article where  c.contract.id=:contractId "
+	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c left join c.targetAccountingArticles article where  c.contract.id=:contractId "
 			+ " and (c.offerTemplate is null or c.offerTemplate.id=:offerId) "
-			+ " and (c.product is null or c.product.id=:productId) and ( c.chargeTemplate.id=:chargeTemplateId or (c.chargeTemplate is null and article.id =:accountingArticleId))  " )})
+			+ " and (c.product is null or c.product.id=:productId) "
+			+ " and ((c.chargeTemplate is null and article.id =:accountingArticleId) or c.chargeTemplate.id=:chargeTemplateId) " )})
 	
 public class ContractItem extends EnableBusinessCFEntity {
 
