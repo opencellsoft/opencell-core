@@ -121,8 +121,8 @@ public class UserDto extends AuditableEntityDto {
     public UserDto(User user) {
         super(user);
         username = user.getUserName();
-        firstName = user.getName().getFirstName();
-        lastName = user.getName().getLastName();
+        firstName = user.getName() != null ? user.getName().getFirstName() : null;
+        lastName = user.getName() != null ? user.getName().getLastName() : null;
         email = user.getEmail();
         userLevel = user.getUserLevel();
         roles = new ArrayList<String>(user.getRoles());
