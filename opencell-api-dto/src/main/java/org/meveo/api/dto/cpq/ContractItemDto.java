@@ -1,6 +1,8 @@
 package org.meveo.api.dto.cpq;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -53,6 +55,9 @@ public class ContractItemDto extends BusinessEntityDto {
 	
 	@Schema(description = "If true then contract discount will apply to price overridden in quote.")
 	private Boolean applicableOnOverriddenPrice;
+	
+	@Schema(description = "defind list of target article that can be applied")
+	private Set<String> targetAccountingArticleCodes = new HashSet<>();
     
     public ContractItemDto() {}
     
@@ -222,4 +227,12 @@ public class ContractItemDto extends BusinessEntityDto {
 		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
 	}
 	
+	
+	public Set<String> getTargetAccountingArticleCodes() {
+		return targetAccountingArticleCodes;
+	}
+	
+	public void setTargetAccountingArticleCodes(Set<String> targetAccountingArticleCodes) {
+		this.targetAccountingArticleCodes = targetAccountingArticleCodes;
+	}
 }
