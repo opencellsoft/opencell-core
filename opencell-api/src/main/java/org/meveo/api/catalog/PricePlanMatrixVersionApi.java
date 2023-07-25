@@ -157,9 +157,23 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                         .forEach(ppmv -> {
                             if(ppmv.getValidity() != null && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersionDto.getValidity(), false)) {
                                 var formatter = new SimpleDateFormat("dd/MM/yyyy");
+                                String sourceFrom = pricePlanMatrixVersion.getValidity().getFrom() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getFrom()) : "";
+                                String sourceTo = pricePlanMatrixVersion.getValidity().getTo() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getTo()) : "";
                                 String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
                                 String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
-                                throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
+                                // throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
+                                ChargeTemplate chargeTemplate = ppmv.getPricePlanMatrix()
+                                                                                      .getChargeTemplates()
+                                                                                      .iterator()
+                                                                                      .next();
+                                throw new MeveoApiException(String.format("Validity overlapping is forbidden for PUBLISHED price versions linked to the same charge. " +
+                                        "Price version [id=%s,label=%s,validity.from=%s,validity.to=%s] " +
+                                        "would overlap with price version [id=%s,label=%s,validity.from=%s,validity.to=%s] " +
+                                        "in charge [id=%s,code=%s,description=%s]",
+                                        pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getLabel(), sourceFrom, sourceTo,
+                                        ppmv.getId(), ppmv.getLabel(), eFrom, eTo,
+                                        chargeTemplate.getId(), chargeTemplate.getCode(), chargeTemplate.getDescription()));
+
                             }
                 });
             }
@@ -310,9 +324,22 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                     .forEach(ppmv -> {
                         if(ppmv.getValidity() != null&& ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false)) {
                             var formatter = new SimpleDateFormat("dd/MM/yyyy");
-                            String from = ppmv.getValidity() != null && ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
-                            String to = ppmv.getValidity() != null && ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
-                            throw new MeveoApiException("The current period is overlapping date with [" + from + " - "+ to +"]");
+                            String sourceFrom = pricePlanMatrixVersion.getValidity().getFrom() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getFrom()) : "";
+                            String sourceTo = pricePlanMatrixVersion.getValidity().getTo() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getTo()) : "";
+                            String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
+                            String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
+                            // throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
+                            ChargeTemplate chargeTemplate = pricePlanMatrixVersion.getPricePlanMatrix()
+                                                                                  .getChargeTemplates()
+                                                                                  .iterator()
+                                                                                  .next();
+                            throw new MeveoApiException(String.format("Validity overlapping is forbidden for PUBLISHED price versions linked to the same charge. " +
+                                            "Price version [id=%s,label=%s,validity.from=%s,validity.to=%s] " +
+                                            "would overlap with price version [id=%s,label=%s,validity.from=%s,validity.to=%s] " +
+                                            "in charge [id=%s,code=%s,description=%s]",
+                                    pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getLabel(), sourceFrom, sourceTo,
+                                    ppmv.getId(), ppmv.getLabel(), eFrom, eTo,
+                                    chargeTemplate.getId(), chargeTemplate.getCode(), chargeTemplate.getDescription()));
                         }
             });
             pricePlanMatrixVersionService.updateProductVersionStatus(pricePlanMatrixVersion, status);
