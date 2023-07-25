@@ -90,7 +90,6 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 		super();
 		accountingArticleCode=quoteArticleline.getAccountingArticle().getCode();
 		accountingArticleLabel=quoteArticleline.getAccountingArticle().getDescription();
-		accountingArticlePrices=new ArrayList<PriceDTO>();
 		Map<BigDecimal, List<QuotePrice>> pricesPerTaux = quoteArticleline.getQuotePrices().stream()
                 .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
 	        for (BigDecimal taux: pricesPerTaux.keySet()) {
