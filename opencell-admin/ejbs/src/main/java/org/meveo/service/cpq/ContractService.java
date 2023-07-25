@@ -19,6 +19,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -168,11 +169,11 @@ public class ContractService extends BusinessService<Contract>  {
 		
 	}
 
-	public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
-		return this.getContractByAccount(Arrays.asList(customer.getId()), billingAccount, customerAccount, bareWalletOperation, null);
+	public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount,Seller seller, WalletOperation bareWalletOperation) {
+		return this.getContractByAccount(Arrays.asList(customer.getId()), billingAccount, customerAccount,Arrays.asList(seller.getId()), bareWalletOperation, null);
 	}
 
-	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation, Date operationDate) {
+	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount,List<Long> sellersId, WalletOperation bareWalletOperation, Date operationDate) {
 		try {
 			Date updateOD = bareWalletOperation != null ? bareWalletOperation.getOperationDate() : operationDate;
 			if(operationDate != null) {
@@ -186,9 +187,10 @@ public class ContractService extends BusinessService<Contract>  {
 
 			}
 			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
-					.setParameter("customerId", customersID).setParameter("billingAccountId", billingAccount.getId())
+					.setParameter("customerIds", customersID).setParameter("billingAccountId", billingAccount.getId())
 					.setParameter("customerAccountId",customerAccount.getId())
-					.setParameter("operationDate", updateOD).getResultList();
+					.setParameter("operationDate", updateOD)
+					.setParameter("sellerIds",sellersId).getResultList();
 
 
 			return contracts.stream()
