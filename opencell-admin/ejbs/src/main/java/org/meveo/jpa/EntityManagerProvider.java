@@ -144,7 +144,7 @@ public class EntityManagerProvider {
 
         // log.error("Produce EM for provider Without TX {}", providerCode);
 
-        if (providerCode == null || !isMultiTenancyEnabled) {
+        if (providerCode == null || "NA".equals(providerCode) || !isMultiTenancyEnabled) {
 
             // MDC is used only in multitenany case
             if (isMultiTenancyEnabled) {
