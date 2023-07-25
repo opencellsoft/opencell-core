@@ -89,24 +89,24 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 		super();
 		accountingArticleCode=quoteArticleline.getAccountingArticle().getCode();
 		accountingArticleLabel=quoteArticleline.getAccountingArticle().getDescription();
-		accountingArticlePrices=new ArrayList<PriceDTO>();
-		Map<BigDecimal, List<QuotePrice>> pricesPerTaux = quoteArticleline.getQuotePrices().stream()
-                .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
-		 BigDecimal quoteTotalAmount = BigDecimal.ZERO;
-	        for (BigDecimal taux: pricesPerTaux.keySet()) {
+		Map<BigDecimal, List<QuotePrice>> pricesPerTauxMap = quoteArticleline.getQuotePrices().stream()
+	    			.collect(Collectors.groupingBy(QuotePrice::getTaxRate));
+	    	for (BigDecimal taux: pricesPerTauxMap.keySet()) {
+	    		Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTauxMap.get(taux).stream()
+	    				.collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
-	            Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
-	                    .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
-
-	            List<PriceDTO> prices = pricesPerType
-	                    .keySet()
-	                    .stream()
-	                    .map(key -> reducePrices(key, pricesPerType, quoteArticleline.getQuoteVersion(), quoteArticleline.getQuoteProduct()!=null?quoteArticleline.getQuoteProduct().getQuoteOffer():null, PriceLevelEnum.PRODUCT))
-	                    .filter(Optional::isPresent)
-	                    .map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
-
-	            quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
-	        }
+	    		accountingArticlePrices = pricesPerType
+	    				.keySet()
+	    				.stream()
+	    				.map(key -> reducePrices(key, pricesPerType, quoteArticleline.getQuoteVersion(), quoteArticleline.getQuoteProduct()!=null?quoteArticleline.getQuoteProduct().getQuoteOffer():null, PriceLevelEnum.PRODUCT))
+	    				.filter(Optional::isPresent)
+	    				.map(price -> new PriceDTO(price.get())).collect(Collectors.toList());
+	    	}
+	        
+	        
+	        
+	        
+	        
 	}
 	
 	 private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion,QuoteOffer quoteOffer, PriceLevelEnum level) {
