@@ -90,23 +90,19 @@ public class AccountingArticlePricesDTO extends BaseEntityDto {
 		super();
 		accountingArticleCode=quoteArticleline.getAccountingArticle().getCode();
 		accountingArticleLabel=quoteArticleline.getAccountingArticle().getDescription();
-		accountingArticlePrices=new ArrayList<PriceDTO>();
 		Map<BigDecimal, List<QuotePrice>> pricesPerTaux = quoteArticleline.getQuotePrices().stream()
                 .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
-		 BigDecimal quoteTotalAmount = BigDecimal.ZERO;
 	        for (BigDecimal taux: pricesPerTaux.keySet()) {
 
 	            Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTaux.get(taux).stream()
 	                    .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
-	            List<PriceDTO> prices = pricesPerType
+	            accountingArticlePrices = pricesPerType
 	                    .keySet()
 	                    .stream()
 	                    .map(key -> reducePrices(key, pricesPerType, quoteArticleline.getQuoteVersion(), quoteArticleline.getQuoteProduct()!=null?quoteArticleline.getQuoteProduct().getQuoteOffer():null, PriceLevelEnum.PRODUCT))
 	                    .filter(Optional::isPresent)
 	                    .map(price -> new PriceDTO(price.get(), mapTaxIndexes)).collect(Collectors.toList());
-
-	            quoteTotalAmount.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
 	        }
 	}
 	

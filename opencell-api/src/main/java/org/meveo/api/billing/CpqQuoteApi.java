@@ -1667,52 +1667,9 @@ public class CpqQuoteApi extends BaseApi {
 
         //Get the updated quote version and construct the DTO
         QuoteVersion updatedQuoteVersion=quoteVersionService.findById(quoteVersion.getId());
-        GetQuoteVersionDtoResponse getQuoteVersionDtoResponse = buildResponse(updatedQuoteVersion);
+        GetQuoteVersionDtoResponse getQuoteVersionDtoResponse = new GetQuoteVersionDtoResponse(updatedQuoteVersion,true,true,true,true);
         getQuoteVersionDtoResponse.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(updatedQuoteVersion));
         getQuoteVersionDtoResponse.setPrices(calculateTotalsPerQuote(updatedQuoteVersion, PriceLevelEnum.QUOTE));
-        return getQuoteVersionDtoResponse;
-    }
-
-    private GetQuoteVersionDtoResponse buildResponse(QuoteVersion updatedQuoteVersion) {
-        GetQuoteVersionDtoResponse getQuoteVersionDtoResponse = new GetQuoteVersionDtoResponse(updatedQuoteVersion);
-        getQuoteVersionDtoResponse.setQuoteItems(new ArrayList<>());
-        for (QuoteOffer quoteOffer : updatedQuoteVersion.getQuoteOffers()) {
-        	 QuoteOfferDTO quoteOfferDTO = new QuoteOfferDTO(quoteOffer);
-            for(QuoteProduct quoteProduct: quoteOffer.getQuoteProduct()) {
-                QuoteProductDTO quoteProductDTO = new QuoteProductDTO();
-                quoteProductDTO.init(quoteProduct);
-                quoteProductDTO.setAccountingArticlePrices(new ArrayList<>());
-                for(QuoteArticleLine quoteArticleLine:quoteProduct.getQuoteArticleLines()) {
-                    AccountingArticlePricesDTO accountingArticlePricesDTO = new AccountingArticlePricesDTO();
-                    accountingArticlePricesDTO.setAccountingArticleCode(quoteArticleLine.getAccountingArticle().getCode());
-                    accountingArticlePricesDTO.setAccountingArticleLabel(quoteArticleLine.getAccountingArticle().getDescription());
-                    accountingArticlePricesDTO.setAccountingArticlePrices(new ArrayList<>());
-                    Map<BigDecimal, List<QuotePrice>> pricesPerTauxMap = quoteArticleLine.getQuotePrices().stream()
-                            .collect(Collectors.groupingBy(QuotePrice::getTaxRate));
-                    BigDecimal quoteTotalAmountBigDecimal = BigDecimal.ZERO;
-                    for (BigDecimal taux: pricesPerTauxMap.keySet()) {
-
-                        Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = pricesPerTauxMap.get(taux).stream()
-                                .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
-
-                        List<PriceDTO> prices = pricesPerType
-                                .keySet()
-                                .stream()
-                                .map(key -> reducePrices(key, pricesPerType, quoteArticleLine.getQuoteVersion(), quoteArticleLine.getQuoteProduct()!=null?quoteArticleLine.getQuoteProduct().getQuoteOffer():null, PriceLevelEnum.PRODUCT))
-                                .filter(Optional::isPresent)
-                                .map(price -> new PriceDTO(price.get(), new HashMap<>())).collect(Collectors.toList());
-
-                        quoteTotalAmountBigDecimal.add(prices.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add));
-                        accountingArticlePricesDTO.setAccountingArticlePrices(prices);}
-                        quoteProductDTO.getAccountingArticlePrices().add(accountingArticlePricesDTO);
-                }
-                quoteOfferDTO.getProducts().add(quoteProductDTO);
-            }
-            for(QuoteAttribute offerAttribute:quoteOffer.getQuoteAttributes()) {
-                quoteOfferDTO.getOfferAttributes().add(new QuoteAttributeDTO(offerAttribute));
-            }
-            getQuoteVersionDtoResponse.getQuoteItems().add(quoteOfferDTO);
-        }
         return getQuoteVersionDtoResponse;
     }
 
