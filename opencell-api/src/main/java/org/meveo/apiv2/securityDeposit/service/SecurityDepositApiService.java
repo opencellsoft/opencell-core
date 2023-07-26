@@ -24,6 +24,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.payment.PaymentApi;
+import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.billing.ImmutableBasicInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoiceLine;
 import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
@@ -420,6 +421,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
                 .billingAccountCode(securityDepositToUpdate.getBillingAccount().getCode())
                 .invoiceDate(new Date())
                 .amountWithTax(securityDepositToUpdate.getCurrentBalance())
+                .seller(ImmutableResource.builder().id(securityDepositToUpdate.getSeller().getId()).code(securityDepositToUpdate.getSeller().getCode()).build())
                 .build();
         Invoice adjustmentInvoice = invoiceService.createBasicInvoice(adjInvoice);
         invoiceService.getEntityManager().flush();
