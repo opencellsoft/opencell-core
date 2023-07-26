@@ -16268,4 +16268,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addNotNullConstraint tableName="security_deposit" columnName="seller_id" columnDataType="bigint"/>
     </changeSet>
 
+    <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI">
+        <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
+    </changeSet>
+
 </databaseChangeLog>
