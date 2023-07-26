@@ -34,7 +34,6 @@ import static org.meveo.service.base.ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT
 import static org.meveo.service.base.ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE;
 import static org.meveo.service.base.ValueExpressionWrapper.VAR_INVOICE;
 import static org.meveo.service.base.ValueExpressionWrapper.VAR_INVOICE_SHORT;
-import static org.meveo.service.base.ValueExpressionWrapper.*;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.io.File;
@@ -5563,7 +5562,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setBillingAccount(billingAccount);
         invoice.setOrder(order);
         invoice.setPaymentStatus(InvoicePaymentStatusEnum.NONE);
-        invoice.setPaymentMethod(buildForInitInvoice(billingAccount));
+        invoice.setPaymentMethod(buildPaymentMethodForInitInvoice(billingAccount));
         invoice.setStartDate(invoiceDate);
         invoice.setAmountWithTax(amountWithTax);
         invoice.setRawAmount(amountWithTax);
@@ -5585,9 +5584,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoice;
     }
 
-    private PaymentMethod buildForInitInvoice(BillingAccount billingAccount) {
+    private PaymentMethod buildPaymentMethodForInitInvoice(BillingAccount billingAccount) {
         if (billingAccount.getPaymentMethod() != null) {
             return billingAccount.getPaymentMethod();
+        } else if (billingAccount.getCustomerAccount().getPreferredPaymentMethod() != null) {
+            return billingAccount.getCustomerAccount().getPreferredPaymentMethod();
         } else if (CollectionUtils.isNotEmpty(billingAccount.getCustomerAccount().getPaymentMethods())) {
             return billingAccount.getCustomerAccount().getPaymentMethods().get(0);
         }
