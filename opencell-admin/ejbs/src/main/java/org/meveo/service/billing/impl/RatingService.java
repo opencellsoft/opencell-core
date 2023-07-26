@@ -648,19 +648,18 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             
             //Get contract by list of customer ids, billing account, customer account and list of seller ids ordered by "contractDate and creationDate Desc"  
             List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, sellerIds,bareWalletOperation);
-
+            List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(bareWalletOperation.getCode());
+            if (chargePricePlans == null || chargePricePlans.isEmpty()) {
+                throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
+            }
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise())
                     || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
             	
             	List<Contract> suitableContracts = lookupSuitableContract(customers, sellers,contracts);
             	if(!suitableContracts.isEmpty()) {
 
-            		for(Contract contract:suitableContracts) {
-            		
-                List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(bareWalletOperation.getCode());
-                if (chargePricePlans == null || chargePricePlans.isEmpty()) {
-                    throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
-                }
+                for(Contract contract:suitableContracts) {
+            			
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
                 ContractItem contractItem = null;
@@ -784,6 +783,27 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             		bareWalletOperation.setRulesContract(!lookupSuitableContract(customers, contracts,sellers, true).isEmpty()? lookupSuitableContract(customers, contracts,sellers, true).get(0):null);
             	}
             	bareWalletOperation.setOverrodePrice(true);
+            }
+            
+            if (unitPriceWithoutTax == null) {
+                pricePlan = matchPricePlan(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
+                if (pricePlan == null) {
+                    throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
+                }
+                Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
+                unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
+                unitPriceWithTax = unitPrices.getAmountWithTax(); 
+                bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
+                bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+				if(financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING){
+					bareWalletOperation.setAccountingArticle(accountingArticle);
+				}
+                if (pricePlan.getScriptInstance() != null) {
+                	log.debug("start to execute script instance for ratePrice {}", pricePlan);
+                	executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
+                	unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
+                	unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
+                }
             }
 
             // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
