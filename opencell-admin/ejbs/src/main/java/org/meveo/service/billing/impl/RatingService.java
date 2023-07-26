@@ -196,7 +196,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private MediationsettingService mediationsettingService;
-    
+
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
 	
@@ -587,8 +587,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         RatingResult ratingResult = new RatingResult();
         WalletOperation discountedWalletOperation=null;
     	ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
+        AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
 	    if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.BEFORE_PRICING){
-		    AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
 		    bareWalletOperation.setAccountingArticle(accountingArticle);
 	    }
         // Let charge template's rating script handle all the rating
@@ -607,7 +607,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         } else {
             BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
-            
+
             RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
 
             PricePlanMatrix pricePlan = null;
@@ -626,7 +626,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
             //Get contract by list of customer ids, billing account and customer account
             List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount,sellerIds, bareWalletOperation, null);
-             
+
             // Unit price was not overridden
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise()) || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
 
@@ -634,7 +634,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             	if(!suitableContracts.isEmpty()) {
 
             		for(Contract contract:suitableContracts) {
-                
+
                 // Check if unit price was not overridden by a contract
                 // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
                 Contract contractWithRules = lookupSuitableContract(customers, contracts,sellers, true).get(0);
@@ -655,7 +655,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getProductVersion() != null ? serviceInstance.getProductVersion().getProduct().getId() : null,
                             chargeTemplate, bareWalletOperation);
                     }
-                    
+
                     // If contract rate type is Fixed - unit rate comes either from 1. hardcoded in contact item or 2. from a price plan specified in a contract
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
 
@@ -671,7 +671,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                         unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
                                         unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
                                     }
-                                    
+
                                     bareWalletOperation.setContract(contract);
                                     bareWalletOperation.setContractLine(contractItem);
                                     bareWalletOperation.setPriceplan(pricePlan);
@@ -691,13 +691,17 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         }
                     }
 
+                    if(unitPriceWithoutTax != null && ArticleSelectionModeEnum.AFTER_PRICING.equals(financeSettings.getArticleSelectionMode())){
+                        bareWalletOperation.setAccountingArticle(accountingArticle);
+                    }
+
                     // Check if price is not overriden by a pricelist in subscription
                 }
 
                 if (unitPriceWithoutTax == null) {
                 	//Get the PriceList from subscription
                 	PriceList priceList =  bareWalletOperation.getChargeInstance().getServiceInstance().getSubscription().getPriceList();
-                	
+
                 	//Check the PriceList is not null and status is ACTIVE and compare wallet operation date with applicationStartDate and applicationEndDate of the PriceList
                 	if(priceList != null && priceList.getStatus() != null && PriceListStatusEnum.ACTIVE.equals(priceList.getStatus()) &&
                 				priceList.getApplicationStartDate() != null && bareWalletOperation.getOperationDate().after(priceList.getApplicationStartDate()) &&
@@ -733,13 +737,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             		}
                 }
 
-                // No associated contract found and price not speciffied in subscription price list or contract rate is not fixed - a price discount is applied by contract to a default price 
+                // No associated contract found and price not speciffied in subscription price list or contract rate is not fixed - a price discount is applied by contract to a default price
                 if (unitPriceWithoutTax == null) {
-                    
+
                     // Find a default price plan
                     pricePlan = pricePlanSelectionService.determineDefaultPricePlan(bareWalletOperation, buyerCountryId, buyerCurrency);
                     bareWalletOperation.setPriceplan(pricePlan);
-                    
+
                     log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
 
                     Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
@@ -768,7 +772,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         bareWalletOperation.setContract(contract);
                         bareWalletOperation.setContractLine(contractItem);
                         applyContract = true;
-                        
+
                         // Discount rate is hardcoded in a contract
                         if (contractItem.getRate() != null && contractItem.getRate() > 0) {
                             discountRate = BigDecimal.valueOf(contractItem.getRate());
@@ -776,7 +780,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !separateDiscount) {
                                 unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
                             }
-                            
+
                             // Discount rate is specified in a price plan associated to a contact
                         } else if (contractItem.getPricePlan() != null) {
                             pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlan(), bareWalletOperation);
@@ -867,7 +871,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     log.trace("charge is shared {} times, so unit price is {}", sharedQuantity, unitPriceWithoutTax);
                 }
             }
-            
+
             // Override wallet operation parameters using PP EL parameters
             setWalletOperationPropertiesFromAPriceplan(bareWalletOperation, pricePlan);
             calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
@@ -938,7 +942,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private List<Contract> lookupSuitableContract(List<Customer> customers,List<Seller> sellers, List<Contract> contracts) {
 		return this.lookupSuitableContract(customers, contracts,sellers, false);
 	}
-    
+
 
     private List<Contract> lookupSuitableContract(List<Customer> customers, List<Contract> contracts,List<Seller> sellers, boolean withRules) {
 
@@ -979,7 +983,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     	return lookupSuitableContracts;
     }
-    
+
     /**
      * Get the customer and all parent customers
      * @param pCustomer Customer
@@ -1292,7 +1296,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
     }
 
-    
+
 
     /**
      * Get a rerated copy of a wallet operation. New wallet operation is not persisted nor status of wallet operation to rerate is changed
@@ -1412,7 +1416,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                 applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, operationDate));
                 fixedDiscountPlanItems.addAll(
-                        discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, 
+                        discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan,
                                 walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));
 
                 if( CollectionUtils.isNotEmpty(applicableDiscountPlanItems) || CollectionUtils.isNotEmpty(fixedDiscountPlanItems)) {
@@ -1427,8 +1431,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
             if(!applicableDiscountPlanItems.isEmpty()) {
                 Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-                ratingResult.getWalletOperations().addAll(discountPlanService.calculateDiscountplanItems(applicableDiscountPlanItems, seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(), 
-                        walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(), 
+                ratingResult.getWalletOperations().addAll(discountPlanService.calculateDiscountplanItems(applicableDiscountPlanItems, seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(),
+                        walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(),
                         walletOperation.getServiceInstance(), walletOperation.getSubscription(), walletOperation.getDescription(), isVirtual, chargeInstance, walletOperation, DiscountPlanTypeEnum.PRODUCT,DiscountPlanTypeEnum.OFFER,DiscountPlanTypeEnum.QUOTE));
             }
             if(!fixedDiscountPlanItems.isEmpty()) {
@@ -1499,7 +1503,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     }
     
     private WalletOperation rateDiscountedWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal amount,BigDecimal discountValue, PricePlanMatrixLine pricePlanMatrixLine) {
-        
+
         ParamBean paramBean = ParamBean.getInstance();
         String defaultDiscountArticle = paramBean.getProperty("default.discount.article", "DISC-STD");
         BigDecimal walletOperationDiscountAmount=amount.negate();
@@ -1550,7 +1554,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	discountWalletOperation.setParameter2(bareWalletOperation.getParameter2());
     	discountWalletOperation.setParameter3(bareWalletOperation.getParameter3());
         discountWalletOperation.setTradingCurrency(bareWalletOperation.getBillingAccount().getTradingCurrency());
-        
+
         AccountingArticle discountArticle=accountingArticleService.findByCode(defaultDiscountArticle);
         if(discountArticle!=null) {
         	discountWalletOperation.setAccountingArticle(discountArticle);
