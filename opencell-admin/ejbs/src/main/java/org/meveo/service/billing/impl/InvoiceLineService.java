@@ -28,6 +28,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -1062,6 +1063,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         boolean useOpenOrder = ofNullable(openOrderSetting).map(OpenOrderSetting::getUseOpenOrders).orElse(false);
         InvoiceLine invoiceLine = null;
         List<Long> associatedRtIds = null;
+        int i = 1;
+        EntityManager em = getEntityManager();
         for (Map<String, Object> groupedRT : groupedRTs) {
             invoiceLine = linesFactory.create(groupedRT, iLIdsRtIdsCorrespondence,
                     configuration, result, appProvider, billingRun, openOrderNumber);
@@ -1088,6 +1091,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         		}
             }
             invoiceLines.add(invoiceLine);
+            if (i % 100 == 0) {
+                em.flush();
+                em.clear();
+            }
+            i++;
         }
         return basicStatistics;
     }
