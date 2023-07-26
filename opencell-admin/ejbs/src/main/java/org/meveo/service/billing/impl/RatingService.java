@@ -712,6 +712,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         }
                     }
 
+                    if(unitPriceWithoutTax != null && ArticleSelectionModeEnum.AFTER_PRICING.equals(financeSettings.getArticleSelectionMode())){
+                        bareWalletOperation.setAccountingArticle(accountingArticle);
+                    }
+
                 }
 
                 if (unitPriceWithoutTax == null) {
