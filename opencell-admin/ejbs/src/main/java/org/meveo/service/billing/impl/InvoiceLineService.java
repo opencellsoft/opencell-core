@@ -34,6 +34,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -1134,6 +1135,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             billingRunId = billingRun.getId();
             incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines();
         }
+        int i = 1;
+        EntityManager em = getEntityManager();
         for (Map<String, Object> groupedRT : groupedRTs) {
             if (incrementalInvoiceLines && groupedRT.get("invoice_line_id") != null) {
                 Long invoiceLineId = (Long) groupedRT.get("invoice_line_id");
@@ -1198,6 +1201,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 }
                 invoiceLines.add(invoiceLine);
             }
+            if (i % 100 == 0) {
+                em.flush();
+                em.clear();
+            }
+            i++;
         }
         basicStatistics.setCount(groupedRTs.size());
         return basicStatistics;
