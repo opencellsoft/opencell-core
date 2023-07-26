@@ -27,6 +27,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -922,6 +923,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         BasicStatistics basicStatistics = new BasicStatistics();
         InvoiceLine invoiceLine = null;
         List<Long> associatedRtIds = null;
+        int i = 1;
+        EntityManager em = getEntityManager();
         for (Map<String, Object> data : groupedRTs) {
             invoiceLine = linesFactory.create(data, iLIdsRtIdsCorrespondence, configuration, result, appProvider, billingRun);
             basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
@@ -938,7 +941,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             		iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
             	}
             }
-            
+            if (i % 100 == 0) {
+                em.flush();
+                em.clear();
+            }
+            i++;
         }
         return basicStatistics;
     }
