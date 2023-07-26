@@ -15889,4 +15889,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
     </changeSet>
 
+    <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI">
+        <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
+    </changeSet>
 </databaseChangeLog>
