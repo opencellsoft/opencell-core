@@ -17003,6 +17003,7 @@
     	<sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
     	<sql>CREATE INDEX cpq_attribute_instance_service_instance_idx ON cpq_attribute_instance(service_instance_id)</sql>
     	<sql>CREATE INDEX billing_wallet_operation_charge_instance_idx ON billing_wallet_operation(charge_instance_id)</sql>
+        <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -19601,6 +19602,7 @@
     <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres" />
     <changeSet id="INTRD-16780_20230614_oracle" author="a.rouaguebe" dbms="oracle" />
     <changeSet id="#INTRD-14368_20230630" author="AbdellatifBARI"/>
+    <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
