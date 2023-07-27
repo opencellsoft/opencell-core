@@ -659,7 +659,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             	if(!suitableContracts.isEmpty()) {
 
                 for(Contract contract:suitableContracts) {
-            			
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
                 ContractItem contractItem = null;
