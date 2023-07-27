@@ -127,12 +127,12 @@ public class ContractItemService extends BusinessService<ContractItem> {
 	}
 	
 	 @SuppressWarnings("unchecked")
-	    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate,WalletOperation walletOperation) {
+	    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate,WalletOperation walletOperation) {
 
 	        Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
 					.setParameter("contractId", contract.getId())
 					.setParameter("offerId", offer.getId())
-					.setParameter("productCode", productCode)
+					.setParameter("productId", productId)
 					.setParameter("chargeTemplateId", chargeTemplate.getId())
 			        .setParameter("accountingArticleId", walletOperation != null && walletOperation.getAccountingArticle() != null ? walletOperation.getAccountingArticle().getId() : 0L);
 	        List<ContractItem> applicableContractItems = query.getResultList();
@@ -173,9 +173,9 @@ public class ContractItemService extends BusinessService<ContractItem> {
     
     
     @SuppressWarnings("unchecked")
-    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, String productCode, ChargeTemplate chargeTemplate,WalletOperation walletOperation) {
+    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate,WalletOperation walletOperation) {
         for (Contract contract : contracts) {
-            ContractItem contractItem = getApplicableContractItem(contract, offer, productCode, chargeTemplate,walletOperation);
+            ContractItem contractItem = getApplicableContractItem(contract, offer, productId, chargeTemplate,walletOperation);
             if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
                 return contract;
             };

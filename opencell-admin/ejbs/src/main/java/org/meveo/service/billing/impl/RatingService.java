@@ -98,6 +98,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
@@ -664,16 +665,17 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ContractItem contractItem = null;
                 if (serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
+	                Long productId = serviceInstance.getProductVersion() != null ? serviceInstance.getProductVersion().getProduct().getId() : null;
                     Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null ? bareWalletOperation.getSubscription().getContract() : null : null;
                     if(contractFromSubscription == null) {
-                        Contract contractMatched = contractItemService.getApplicableContract(contracts, offerTemplate, serviceInstance.getCode(), chargeTemplate,bareWalletOperation);
+                        Contract contractMatched = contractItemService.getApplicableContract(contracts, offerTemplate, productId, chargeTemplate,bareWalletOperation);
                         if (contractMatched != null) {
                             contract = contractMatched;
                         }
                     }else {
                         contract = contractFromSubscription;
                     }
-                    contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getCode(), chargeTemplate,bareWalletOperation);
+                    contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, productId, chargeTemplate,bareWalletOperation);
 
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
 
