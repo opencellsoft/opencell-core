@@ -412,7 +412,7 @@ public class PaymentService extends PersistenceService<Payment> {
             }
             
             if(PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.NOT_PROCESSED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()){
-            	throw new BusinessException(doPaymentResponseDto.getErrorCode());
+            	throw new BusinessException(StringUtils.isBlank(doPaymentResponseDto.getErrorMessage())?doPaymentResponseDto.getErrorCode():doPaymentResponseDto.getErrorMessage());
             }
              
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
@@ -735,10 +735,16 @@ public class PaymentService extends PersistenceService<Payment> {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
         Payment payment = new Payment();
+        payment.setJournal(occTemplate.getJournal());
         payment.setPaymentMethod(paymentMethodType);
         payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
         payment.setUnMatchingAmount(payment.getAmount());
+        payment.setTransactionalUnMatchingAmount(payment.getAmount());
         payment.setMatchingAmount(BigDecimal.ZERO);
+		payment.setTransactionalMatchingAmount(BigDecimal.ZERO);
+		payment.setTransactionalAmount(payment.getAmount());
+		payment.setTransactionalAmountWithoutTax(payment.getAmount());
+		payment.setAmountWithoutTax(payment.getAmount());
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());
         payment.setDescription(occTemplate.getDescription());
