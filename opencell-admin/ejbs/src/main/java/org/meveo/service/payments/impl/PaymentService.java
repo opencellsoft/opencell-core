@@ -1027,7 +1027,7 @@ public class PaymentService extends PersistenceService<Payment> {
         }
 
         if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency)) {
-            ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, functionalCurrency, transactionDateToUse);
+            ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, transactionDateToUse);
             if (!Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
                 functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(),
                         appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
