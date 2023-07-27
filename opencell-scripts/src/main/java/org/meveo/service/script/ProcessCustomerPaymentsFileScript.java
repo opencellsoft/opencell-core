@@ -234,6 +234,8 @@ public class ProcessCustomerPaymentsFileScript extends Script {
         payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         payment.setReference(customerPaymentRecordDto.getReference());
         payment.setTransactionDate(customerPaymentRecordDto.getDate());
+        payment.setCollectionDate(new Date());
+        payment.setAccountingDate(new Date());
         // using the date the file is processed as the Payment Date (to be displayed on the invoice)
         payment.setDueDate(new Date());
         payment.setMatchingStatus(MatchingStatusEnum.O);
