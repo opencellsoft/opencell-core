@@ -24,6 +24,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.payment.PaymentApi;
+import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.billing.ImmutableBasicInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoiceLine;
 import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
@@ -50,6 +51,7 @@ import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceLineService;
@@ -117,6 +119,9 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Inject
     private AccountOperationService accountOperationService;
+
+    @Inject
+    private SellerService sellerService;
     
     @Override
     public List<SecurityDeposit> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -406,6 +411,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         securityDepositService.update(securityDepositToUpdate);
 		
 		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType, adjustmentInvoice);
+        securityDepositToUpdate.setSeller(sellerService.refreshOrRetrieve(securityDepositToUpdate.getSeller()));
 	}
 
     @Transactional
@@ -420,6 +426,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
                 .billingAccountCode(securityDepositToUpdate.getBillingAccount().getCode())
                 .invoiceDate(new Date())
                 .amountWithTax(securityDepositToUpdate.getCurrentBalance())
+                .seller(ImmutableResource.builder().id(securityDepositToUpdate.getSeller().getId()).code(securityDepositToUpdate.getSeller().getCode()).build())
                 .build();
         Invoice adjustmentInvoice = invoiceService.createBasicInvoice(adjInvoice);
         invoiceService.getEntityManager().flush();

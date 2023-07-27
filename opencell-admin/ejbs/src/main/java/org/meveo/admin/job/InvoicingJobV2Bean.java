@@ -237,7 +237,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
-        if (nbRuns == -1) {
+        if (nbRuns <= 0) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);

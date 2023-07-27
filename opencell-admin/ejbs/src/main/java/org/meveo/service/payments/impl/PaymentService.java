@@ -745,6 +745,7 @@ public class PaymentService extends PersistenceService<Payment> {
         Payment payment = new Payment();
         calculateAmountsByTransactionCurrency(payment, customerAccount, (new BigDecimal(ctsAmount).divide(new BigDecimal(100))),
                 null, new Date());
+        payment.setJournal(occTemplate.getJournal());
         payment.setPaymentMethod(paymentMethodType);
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());

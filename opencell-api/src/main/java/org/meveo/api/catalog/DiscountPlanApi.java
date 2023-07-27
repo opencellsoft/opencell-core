@@ -231,7 +231,10 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
 
         //Update Sequence, DurationUnit and defaultDuration
-        updateSequence(postData, discountPlan);
+	    if(postData.getSequence() != discountPlan.getSequence()){
+		    updateSequence(postData, discountPlan);
+		    discountPlan.setSequence(postData.getSequence());
+	    }
         updateDuration(postData, discountPlan);
 
         if(postData.getEndDate() != null)
@@ -261,7 +264,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
                 (DiscountPlanStatusEnum.DRAFT.equals(pDiscountPlan.getStatus()) || DiscountPlanStatusEnum.ACTIVE.equals(pDiscountPlan.getStatus()) ||
                         DiscountPlanStatusEnum.IN_USE.equals(pDiscountPlan.getStatus()))) {
             if(discountPlanService.getDiscountPlanBySequence(pPostData.getSequence()).size() > 0) {
-                throw new BusinessException("The sequence is already used");
+                throw new BusinessException("Sequence number is already used. Sequence number must be unique among all discount plans.");
             } else {
                 pDiscountPlan.setSequence(pPostData.getSequence());
             }
