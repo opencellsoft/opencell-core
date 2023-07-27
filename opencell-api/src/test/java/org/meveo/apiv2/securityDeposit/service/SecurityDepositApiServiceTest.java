@@ -35,6 +35,7 @@ import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.securityDeposit.ImmutableSecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
@@ -47,6 +48,7 @@ import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.model.securityDeposit.ValidityPeriodUnit;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -90,6 +92,9 @@ public class SecurityDepositApiServiceTest {
 
     @Mock
     private AuditLogService auditLogServiceMock;
+
+    @Mock
+    private SellerService sellerService;
 
     private Long sdId = 10000L;
     private BigDecimal amount = new BigDecimal(90);
@@ -244,12 +249,14 @@ public class SecurityDepositApiServiceTest {
         billingAccount.setCode("OAU4494");
         sd.setBillingAccount(billingAccount);
         sd.setCurrentBalance(BigDecimal.ONE);
+        sd.setSeller(new Seller());
 
         Invoice adjustmentInvoiceMock = new Invoice();
         
     	when(securityDepositServiceMock.refreshOrRetrieve(sd)).thenReturn(sd);
     	when(invoiceServiceMock.createBasicInvoice(any(BasicInvoice.class))).thenReturn(adjustmentInvoiceMock);
     	when(invoiceServiceMock.getEntityManager()).thenReturn(entityManagerMock);
+        when(sellerService.refreshOrRetrieve(sd.getSeller())).thenReturn(sd.getSeller());
     
     	securityDepositApiService.refund(sd, "motif", SecurityDepositOperationEnum.REFUND_SECURITY_DEPOSIT, SecurityDepositStatusEnum.REFUNDED, "REFUND");
     	
