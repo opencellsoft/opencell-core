@@ -35,6 +35,7 @@ import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.securityDeposit.ImmutableSecurityDepositCreditInput;
 import org.meveo.apiv2.securityDeposit.SecurityDepositCreditInput;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
@@ -106,7 +107,11 @@ public class SecurityDepositApiServiceTest {
         SecurityDepositTemplate template = new SecurityDepositTemplate();
         template.setId(1L);
         sd.setCurrency(currency);
-        sd.setTemplate(template);        
+        sd.setTemplate(template); 
+        Seller seller = new Seller();
+        seller.setId(1l);
+        seller.setCode("seller");
+        sd.setSeller(seller);        
         return sd;
     }
 
