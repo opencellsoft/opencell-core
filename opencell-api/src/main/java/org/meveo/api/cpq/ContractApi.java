@@ -526,7 +526,7 @@ public class ContractApi extends BaseApi{
 			missingParameters.add("code");
     	}
 		if(CollectionUtils.isEmpty(contractItemDto.getTargetAccountingArticleCodes()) || Strings.isEmpty(contractItemDto.getChargeTemplateCode())) {
-			FinanceSettings financeSettings = financeSettingsService.findLastOne();
+			FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
 			if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING && CollectionUtils.isNotEmpty(contractItemDto.getTargetAccountingArticleCodes())){
 				throw new BusinessApiException("targetAccountignArticles can be set only if articleSelectionMode=BEFORE_PRICING");
 			}else if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.BEFORE_PRICING &&
