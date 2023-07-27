@@ -221,13 +221,12 @@ public class ProcessCustomerPaymentsFileScript extends Script {
          */
 
         Payment payment = new Payment();
+        paymentService.calculateAmountsByTransactionCurrency(payment, billingAccount.getCustomerAccount(),
+                amount,null, new Date());
+
         payment.setCustomerAccount(billingAccount.getCustomerAccount());
         payment.setPaymentMethod(PaymentMethodEnum.CARD);
         // payment.setOrderNumber(?);
-        payment.setAmountWithoutTax(amount);
-        payment.setAmount(amount);
-        payment.setMatchingAmount(BigDecimal.ZERO);
-        payment.setUnMatchingAmount(amount);
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());
         payment.setDescription(occTemplate.getDescription());
@@ -235,6 +234,8 @@ public class ProcessCustomerPaymentsFileScript extends Script {
         payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         payment.setReference(customerPaymentRecordDto.getReference());
         payment.setTransactionDate(customerPaymentRecordDto.getDate());
+        payment.setCollectionDate(new Date());
+        payment.setAccountingDate(new Date());
         // using the date the file is processed as the Payment Date (to be displayed on the invoice)
         payment.setDueDate(new Date());
         payment.setMatchingStatus(MatchingStatusEnum.O);
