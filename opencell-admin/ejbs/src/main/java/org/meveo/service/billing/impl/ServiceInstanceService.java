@@ -60,6 +60,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
@@ -157,6 +158,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private DiscountPlanService discountPlanService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
@@ -628,7 +632,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @return Updated service instance
      * @throws BusinessException
      */
-    private ServiceInstance terminateServiceWithPastDate(Subscription subscription, ServiceInstance serviceInstance, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
+    private ServiceInstance terminateServiceWithPastDate(Subscription subscription, ServiceInstance serviceInstance,
+                                                         Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
             throws BusinessException {
 
         // Execute termination script
@@ -646,7 +651,16 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
-
+            if(recurringChargeInstance.isAnticipateEndOfSubscription()) {
+                List<WalletOperation> walletOperations = walletOperationService.getEntityManager()
+                        .createNamedQuery("WalletOperation.findWalletOperationByChargeInstance")
+                        .setParameter("chargeInstanceId", recurringChargeInstance.getId())
+                        .getResultList();
+                if(walletOperations != null && !walletOperations.isEmpty()) {
+                    recurringChargeInstanceService.resetRecurringCharge(recurringChargeInstance.getId(),
+                            walletOperations.get(0).getStartDate(), true);
+                }
+            }
 			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
 				Date lastChargedDate = recurringChargeInstance.getChargedToDate() != null ? recurringChargeInstance.getChargedToDate() : recurringChargeInstance.getChargeDate();
 				recurringChargeInstance.setChargeToDateOnTermination(lastChargedDate);
