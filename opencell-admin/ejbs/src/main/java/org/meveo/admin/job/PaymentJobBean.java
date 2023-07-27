@@ -34,9 +34,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.NoAllOperationUnmatchedException;
-import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.job.PaymentJobBean.PaymentItem;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.model.IEntity;
@@ -108,7 +105,7 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
     /**
      * Payment level - Account operation or Customer account - Job execution parameter
      */
-    private String paymentPerAOorCA = "CA";
+    private String paymentPerAOorCA = "AO";
 
     /**
      * Payment gateway - Job execution parameter
@@ -166,7 +163,7 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
         operationCategory = OperationCategoryEnum.CREDIT;
         paymentMethodType = PaymentMethodEnum.CARD;
         paymentOrRefundEnum = PaymentOrRefundEnum.PAYMENT;
-        paymentPerAOorCA = "OA";
+        paymentPerAOorCA = "AO";
         paymentGateway = null;
         fromDueDate = null;
         toDueDate = null;
