@@ -579,6 +579,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			SecurityDeposit securityDeposit = osd.get();
 			SecurityDepositTemplate securityDepositTemplate = osd.map(SecurityDeposit::getTemplate).get();
 			// Check that max Amount is not reached
+            // For existing sd without currentBalance : avoir NPE
+            if (securityDeposit.getCurrentBalance() == null) {
+                securityDeposit.setCurrentBalance(ZERO);
+            }
 			if(securityDepositTemplate.getMaxAmount() != null && securityDepositTemplate.getMaxAmount().compareTo(securityDeposit.getCurrentBalance().add(amountToMatch)) < 0) {
 				throw new BusinessException("The current balance + amount to credit must be less than or equal to the maximum amount of the Template");
 			}
