@@ -99,9 +99,6 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         if (paymentGatewayDto.getPaymentMethodType() == null) {
             missingParameters.add("paymentMethodType");
         }
-		if (StringUtils.isBlank(paymentGatewayDto.getSellerCode())) {
-			missingParameters.add("sellerCode");
-		}
 
 		if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.CUSTOM) {
 			if (StringUtils.isBlank(paymentGatewayDto.getScriptInstanceCode())) {
