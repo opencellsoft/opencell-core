@@ -663,7 +663,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
                 ContractItem contractItem = null;
-                boolean applyContract=false;
                 if (serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
                     Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null ? bareWalletOperation.getSubscription().getContract() : null : null;
@@ -678,7 +677,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getCode(), chargeTemplate,bareWalletOperation);
 
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
-                    	applyContract=true;
                         if (contractItem.getPricePlan() != null) {
                             pricePlan = contractItem.getPricePlan();
                             PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
@@ -719,7 +717,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
 
                 if (unitPriceWithoutTax == null && contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
-                	    applyContract=true;
                 		pricePlan = matchPricePlan(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
                 		if (pricePlan == null) {
                 			throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
@@ -768,7 +765,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         	discountedWalletOperation=rateDiscountedWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,discountRate,billingAccount,pricePlanMatrixLine);
                         }
                     }
-                if (unitPriceWithoutTax != null && applyContract) {
+                if (unitPriceWithoutTax != null) {
                 	break;
                 }
             		} 
