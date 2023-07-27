@@ -423,7 +423,7 @@ public class PaymentService extends PersistenceService<Payment> {
             }
             
             if(PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.NOT_PROCESSED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()){
-            	throw new BusinessException(doPaymentResponseDto.getErrorCode());
+            	throw new BusinessException(StringUtils.isBlank(doPaymentResponseDto.getErrorMessage())?doPaymentResponseDto.getErrorCode():doPaymentResponseDto.getErrorMessage());
             }
              
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
@@ -746,6 +746,7 @@ public class PaymentService extends PersistenceService<Payment> {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
         Payment payment = new Payment();
+        payment.setJournal(occTemplate.getJournal());
         calculateAmountsByTransactionCurrency(payment, customerAccount, (new BigDecimal(ctsAmount).divide(new BigDecimal(100))),
                 null, new Date());
         payment.setPaymentMethod(paymentMethodType);
