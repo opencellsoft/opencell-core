@@ -420,7 +420,7 @@ public class PaymentService extends PersistenceService<Payment> {
             }
             
             if(PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.NOT_PROCESSED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()){
-            	throw new BusinessException(doPaymentResponseDto.getErrorCode());
+                throw new BusinessException(StringUtils.isBlank(doPaymentResponseDto.getErrorMessage())?doPaymentResponseDto.getErrorCode():doPaymentResponseDto.getErrorMessage());
             }
              
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
