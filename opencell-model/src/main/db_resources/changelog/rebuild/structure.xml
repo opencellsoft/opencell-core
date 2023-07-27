@@ -19455,7 +19455,6 @@
 	<changeSet id="INTRD-16050_20230515" author="ThangNguyen" />
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
-	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
