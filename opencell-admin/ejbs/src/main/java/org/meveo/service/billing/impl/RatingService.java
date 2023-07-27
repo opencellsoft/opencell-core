@@ -637,7 +637,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                 // Check if unit price was not overridden by a contract
                 // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
-                Contract contractWithRules = lookupSuitableContract(customers, contracts,sellers, true).get(0);
+                Contract contractWithRules = lookupSuitableContract(customers, contracts,sellers, true) != null
+                        && !lookupSuitableContract(customers, contracts,sellers, true).isEmpty()
+                        ? lookupSuitableContract(customers, contracts,sellers, true).get(0) : null;
                 bareWalletOperation.setRulesContract(contractWithRules);
 
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
