@@ -184,6 +184,8 @@ public class PaymentApi extends BaseApi {
         payment.setPaymentInfo6(paymentDto.getPaymentInfo6());
         payment.setBankCollectionDate(paymentDto.getBankCollectionDate());
 		payment.setCollectionDate(paymentDto.getCollectionDate() == null ? paymentDto.getBankCollectionDate() : paymentDto.getCollectionDate());
+		payment.setAccountingDate(new Date());
+		accountOperationService.handleAccountingPeriods(payment);
 
         // populate customFields
         try {
