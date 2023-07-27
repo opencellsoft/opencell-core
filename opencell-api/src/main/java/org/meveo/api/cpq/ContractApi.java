@@ -52,6 +52,8 @@ import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -66,6 +68,7 @@ import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 /**
  * @author Tarik F.
@@ -106,6 +109,8 @@ public class ContractApi extends BaseApi{
 	
 	@Inject
 	private AccountingArticleService accountingArticleService;
+	@Inject
+	private FinanceSettingsService financeSettingsService;
 	
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
@@ -514,8 +519,14 @@ public class ContractApi extends BaseApi{
     	if(Strings.isEmpty(contractItemDto.getCode())) {
 			missingParameters.add("code");
     	}
-		if(CollectionUtils.isEmpty(contractItemDto.getTargetAccountingArticleCodes()) && Strings.isEmpty(contractItemDto.getChargeTemplateCode())) {
-			missingParameters.add("chargeTemplateCode");
+		if(CollectionUtils.isEmpty(contractItemDto.getTargetAccountingArticleCodes()) || Strings.isEmpty(contractItemDto.getChargeTemplateCode())) {
+			FinanceSettings financeSettings = financeSettingsService.findLastOne();
+			if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING && CollectionUtils.isNotEmpty(contractItemDto.getTargetAccountingArticleCodes())){
+				throw new BusinessApiException("targetAccountignArticles can be set only if articleSelectionMode=BEFORE_PRICING");
+			}else if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.BEFORE_PRICING &&
+						(CollectionUtils.isNotEmpty(contractItemDto.getTargetAccountingArticleCodes()) || Strings.isEmpty(contractItemDto.getChargeTemplateCode())) ){
+				throw new BusinessApiException("chargeTemplate and targetAccountingArticles cannot both be null/empty");
+			}
 		}
 		checkPricePlanPeriod(contractItemDto);
     	handleMissingParameters();

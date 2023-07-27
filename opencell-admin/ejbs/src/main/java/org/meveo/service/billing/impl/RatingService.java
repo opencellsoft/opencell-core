@@ -678,7 +678,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, productId, chargeTemplate,bareWalletOperation);
 
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
-
                         if (contractItem.getPricePlan() != null) {
                             pricePlan = contractItem.getPricePlan();
                             PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlan.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
@@ -718,34 +717,30 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                 }
 
-                if (unitPriceWithoutTax == null) {
-                    pricePlan = matchPricePlan(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
-                    if (pricePlan == null) {
-                        throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
-                    }
-
-                    log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
-
-
-                    Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
-                    unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
-                    unitPriceWithTax = unitPrices.getAmountWithTax();
-                    BigDecimal amount=null;
-                    BigDecimal discountRate=null;
-                    PricePlanMatrixLine pricePlanMatrixLine =null;
-                    bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
-                    bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
-					if(financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING){
-						bareWalletOperation.setAccountingArticle(accountingArticle);
-					}
-                    if (pricePlan.getScriptInstance() != null) {
-                    	log.debug("start to execute script instance for ratePrice {}", pricePlan);
-                    	executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
-                    	unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
-                    	unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
-                    }
-                    // A price discount is applied to a default price by a contract
-                    if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
+                if (unitPriceWithoutTax == null && contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
+                		pricePlan = matchPricePlan(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
+                		if (pricePlan == null) {
+                			throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
+                		}
+                		log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
+                		Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
+                		unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
+                		unitPriceWithTax = unitPrices.getAmountWithTax();
+                		BigDecimal amount=null;
+                		BigDecimal discountRate=null;
+                		PricePlanMatrixLine pricePlanMatrixLine =null;
+                		bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
+                		bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+                		if(financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING){
+                			bareWalletOperation.setAccountingArticle(accountingArticle);
+                		}
+                		if (pricePlan.getScriptInstance() != null) {
+                			log.debug("start to execute script instance for ratePrice {}", pricePlan);
+                			executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
+                			unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
+                			unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
+                		}
+                    	
                     	boolean seperateDiscount=contractItem.isSeparateDiscount();
                     	bareWalletOperation.setContract(contract);
                     	bareWalletOperation.setContractLine(contractItem);
@@ -771,9 +766,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         	discountedWalletOperation=rateDiscountedWalletOperation(bareWalletOperation,unitPriceWithoutTax,amount,discountRate,billingAccount,pricePlanMatrixLine);
                         }
                     }
-
-
-                }
                 if (unitPriceWithoutTax != null) {
                 	break;
                 }
