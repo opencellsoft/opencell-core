@@ -108,7 +108,7 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
     /**
      * Payment level - Account operation or Customer account - Job execution parameter
      */
-    private String paymentPerAOorCA = "CA";
+    private String paymentPerAOorCA = "AO";
 
     /**
      * Payment gateway - Job execution parameter
