@@ -758,8 +758,11 @@ public class PaymentService extends PersistenceService<Payment> {
         payment.setCustomerAccount(customerAccount);
         payment.setReference(doPaymentResponseDto.getPaymentID());
         payment.setMatchingStatus(MatchingStatusEnum.O);
+        payment.setCollectionDate(new Date());
+        payment.setAccountingDate(new Date());
         payment.setBankReference(doPaymentResponseDto.getBankRefenrence());
         setSumAndOrdersNumber(payment, aoIdsToPay);
+        accountOperationService.handleAccountingPeriods(payment);
         create(payment);
         return payment.getId();
 
