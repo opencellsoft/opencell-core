@@ -22,6 +22,7 @@ import org.meveo.model.securityDeposit.*;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -87,6 +88,9 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
     @Inject
     private OCCTemplateService occTemplateService;
 
+    @Inject
+    private InvoiceService invoiceService;
+
     protected List<String> missingParameters = new ArrayList<>();
 
 
@@ -120,6 +124,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     public void refund(SecurityDeposit securityDepositToUpdate, String reason, SecurityDepositOperationEnum securityDepositOperationEnum, SecurityDepositStatusEnum securityDepositStatusEnum, String operationType, Invoice adjInvoice) {
         if(adjInvoice != null) {
+            adjInvoice = invoiceService.findById(adjInvoice.getId(), List.of("orders"));
             if (securityDepositToUpdate.getCurrentBalance() != null && BigDecimal.ZERO.compareTo(securityDepositToUpdate.getCurrentBalance()) != 0) {
                 Refund refund = createRefund(securityDepositToUpdate, adjInvoice);
                 if (refund == null) {

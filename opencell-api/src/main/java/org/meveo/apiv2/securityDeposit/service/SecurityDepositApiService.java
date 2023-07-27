@@ -49,6 +49,7 @@ import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
 import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceLineService;
@@ -116,6 +117,9 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
 
     @Inject
     private AccountOperationService accountOperationService;
+
+    @Inject
+    private SellerService sellerService;
     
     @Override
     public List<SecurityDeposit> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -405,6 +409,7 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         securityDepositService.update(securityDepositToUpdate);
 		
 		securityDepositService.refund(securityDepositToUpdate, reason, securityDepositOperationEnum, securityDepositStatusEnum, operationType, adjustmentInvoice);
+        securityDepositToUpdate.setSeller(sellerService.refreshOrRetrieve(securityDepositToUpdate.getSeller()));
 	}
 
 	private Invoice createAdjustmentInvoice(SecurityDeposit securityDepositToUpdate) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, ImportInvoiceException, InvoiceExistException, IOException {
@@ -489,7 +494,10 @@ public class SecurityDepositApiService implements ApiService<SecurityDeposit> {
         }
         auditLogService.trackOperation(OperationCategoryEnum.CREDIT.name(), new Date(), securityDepositToUpdate, securityDepositToUpdate.getCode());
 
-        return securityDepositService.refreshOrRetrieve(securityDepositToUpdate);
+        SecurityDeposit creditSD = securityDepositService.refreshOrRetrieve(securityDepositToUpdate);
+        creditSD.setSeller(sellerService.refreshOrRetrieve(securityDepositToUpdate.getSeller()));
+
+        return creditSD;
     }
 
     private PaymentDto createPaymentDto(SecurityDepositCreditInput securityDepositInput) {
