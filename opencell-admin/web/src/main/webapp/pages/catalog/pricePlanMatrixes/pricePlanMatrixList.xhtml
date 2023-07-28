@@ -40,24 +40,7 @@
                 <f:param name="chargeId" value="#{chargeTemplateBean.entity.id}"/>
             </h:link>
         </p:column>
-        <p:column exportable="true" toggleable="false" width="15%">
-            <f:facet name="header">
-                <h:outputText value="#{messages['pricePlanMatrix.eventCode']}"/>
-            </f:facet>
-            <p:cellEditor>
-                <f:facet name="output">
-                    <h:outputText value="#{entity.eventCode}"/>
-                </f:facet>
-                <f:facet name="input">
-                    <h:selectOneMenu value="#{entity.eventCode}" style="width:75%"
-                                     required="true">
-                        <f:selectItems value="#{chargeTemplateBean.listAll()}" var="item"
-                                       itemLabel="#{item.code}" itemValue="#{item.code}"/>
-                        <hftl:objectConverter/>
-                    </h:selectOneMenu>
-                </f:facet>
-            </p:cellEditor>
-        </p:column>
+       
         <p:column exportable="true" toggleable="true" width="22%" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[4]}" >
             <f:facet name="header">
                 <h:outputText value="#{messages['BusinessEntity.description']}"/>
