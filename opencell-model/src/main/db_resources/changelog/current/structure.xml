@@ -15849,7 +15849,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		  <sql>CREATE INDEX idx__billing_rated_transaction__description ON ${db.schema.adapted}billing_rated_transaction USING btree (description) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_rated_transaction__tax_percent ON ${db.schema.adapted}billing_rated_transaction USING btree (tax_percent)  WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE (status= 'OPEN') </sql>
-		
+
 		  <sql>CREATE INDEX idx__billing_invoice_line__billing_account_id ON ${db.schema.adapted}billing_invoice_line USING btree (billing_account_id) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_invoice_line__billing_run ON ${db.schema.adapted}billing_invoice_line USING btree (billing_run_id) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_invoice_line__status ON ${db.schema.adapted}billing_invoice_line USING btree (status) </sql>
@@ -15892,4 +15892,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI">
         <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
     </changeSet>
+
+    <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe">
+        <sql>create index idx__billing_billing_account__lower_code on ${db.schema.adapted}billing_billing_account (lower(code))</sql>
+        <sql>create index idx__billing_rating_transaction__id_desc on ${db.schema.adapted}billing_rated_transaction (id desc)</sql>
+        <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
+    </changeSet>
+
 </databaseChangeLog>
