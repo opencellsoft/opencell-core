@@ -16790,14 +16790,6 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
-    <changeSet id="#INTRD-14264_20230222_fk" author="TarikFA.">
-        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
-                                 constraintName="fk_origin_ratedtransaction_id"
-                                 referencedTableName="billing_rated_transaction"
-                                 referencedColumnNames="id,status"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
-    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
