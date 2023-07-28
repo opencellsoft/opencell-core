@@ -530,7 +530,7 @@ public class ContractApi extends BaseApi{
 			if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING && CollectionUtils.isNotEmpty(contractItemDto.getTargetAccountingArticleCodes())){
 				throw new BusinessApiException("targetAccountignArticles can be set only if articleSelectionMode=BEFORE_PRICING");
 			}else if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.BEFORE_PRICING &&
-						(CollectionUtils.isNotEmpty(contractItemDto.getTargetAccountingArticleCodes()) || Strings.isEmpty(contractItemDto.getChargeTemplateCode())) ){
+						(CollectionUtils.isEmpty(contractItemDto.getTargetAccountingArticleCodes()) && Strings.isEmpty(contractItemDto.getChargeTemplateCode())) ){
 				throw new BusinessApiException("chargeTemplate and targetAccountingArticles cannot both be null/empty");
 			}
 		}
