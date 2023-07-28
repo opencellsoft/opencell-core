@@ -393,7 +393,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
             filters.put("jobInstance", entity);
             filters.put("parentJobExecutionResult", PersistenceService.SEARCH_IS_NULL);
 
-            PaginationConfiguration paginationFilter = new PaginationConfiguration(filters, "id", SortOrder.DESCENDING);
+            PaginationConfiguration paginationFilter = new PaginationConfiguration(filters, "id", SortOrder.DESCENDING, 500);
             List<JobExecutionResultImpl> jobExecutions = jobExecutionResultService.list(paginationFilter);
 
             for (JobExecutionResultImpl jobExecutionResultParent : jobExecutions) {
