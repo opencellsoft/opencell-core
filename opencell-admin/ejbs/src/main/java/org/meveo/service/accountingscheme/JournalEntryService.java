@@ -158,7 +158,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     }
 
     @Transactional
-    public List<JournalEntry> createFromPayment(Payment ao, OCCTemplate occT) {
+    public List<JournalEntry> createFromPayment(AccountOperation ao, OCCTemplate occT) {
         // INTRD-5613
         List<JournalEntry> saved = new ArrayList<>();
 
