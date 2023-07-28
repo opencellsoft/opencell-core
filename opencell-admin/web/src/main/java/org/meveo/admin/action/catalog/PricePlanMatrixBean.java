@@ -195,7 +195,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
     }
 
     public LazyDataModel<PricePlanMatrix> getPricePlanMatrixList(ChargeTemplate chargeTemplate) {
-        filters.put("eventCode", chargeTemplate.getCode());
+    	filters.put("SQL", "EXISTS (SELECT 1 FROM a.chargeTemplates ct WHERE ct.code ='"+chargeTemplate.getCode()+"')");
         return getLazyDataModel();
     }
 
