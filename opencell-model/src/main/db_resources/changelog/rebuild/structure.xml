@@ -17293,22 +17293,22 @@
     </changeSet>
 
      <changeSet id="#INTRD-17149_04072023_fk" author="Mbarek-Ay">
-		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk" 
-								 referencedTableName="cpq_price_plan_version" 
-								 baseColumnNames="price_plan_matrix_version_id" 
-								 baseTableName="cpq_quote_price" 
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk"
+								 referencedTableName="cpq_price_plan_version"
+								 baseColumnNames="price_plan_matrix_version_id"
+								 baseTableName="cpq_quote_price"
 								 referencedColumnNames="id"/>
-		
-		<addForeignKeyConstraint constraintName="price_plan_matrix_line_id_fk" 
-								 referencedTableName="cpq_price_plan_matrix_line" 
-								 baseColumnNames="price_plan_matrix_line_id" 
-								 baseTableName="cpq_quote_price" 
+
+		<addForeignKeyConstraint constraintName="price_plan_matrix_line_id_fk"
+								 referencedTableName="cpq_price_plan_matrix_line"
+								 baseColumnNames="price_plan_matrix_line_id"
+								 baseTableName="cpq_quote_price"
 								 referencedColumnNames="id"/>
-		
-		<addForeignKeyConstraint constraintName="contract_item_fk" 
-								 referencedTableName="cpq_contract_item" 
-								 baseColumnNames="contract_item_id" 
-								 baseTableName="cpq_quote_price" 
+
+		<addForeignKeyConstraint constraintName="contract_item_fk"
+								 referencedTableName="cpq_contract_item"
+								 baseColumnNames="contract_item_id"
+								 baseTableName="cpq_quote_price"
 								 referencedColumnNames="id"/>
 
     </changeSet>
@@ -17650,6 +17650,11 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="#INTRD-17592-rt-indexes-rebuild" author="a.rouaguebe">
+        <sql>create index idx__billing_billing_account__lower_code on ${db.schema.adapted}billing_billing_account (lower(code))</sql>
+        <sql>create index idx__billing_rating_transaction__id_desc on ${db.schema.adapted}billing_rated_transaction (id desc)</sql>
+        <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
+    </changeSet>
 
     <!-- end index -->
 
@@ -20287,6 +20292,7 @@
     <changeSet id="INTRD-17307_20230712" author="TarikFA." />
     <changeSet id="INTRD-17487_20230719" author="TarikFA." />
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
+    <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
