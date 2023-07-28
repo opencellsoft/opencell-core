@@ -15,6 +15,7 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.JournalService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentService;
@@ -61,6 +62,9 @@ public class PaymentApiTest {
     @Mock
     private Provider applicationProvider;
 
+    @Mock
+    private AccountOperationService accountOperationService;
+
 
     @Test
     public void createPayment_throwNoExceptionWhenCustomerIsNull() throws UnbalanceAmountException, NoAllOperationUnmatchedException {
@@ -75,6 +79,7 @@ public class PaymentApiTest {
         doReturn(new OCCTemplate()).when(oCCTemplateService).findByCode(any());
         doReturn(new Journal()).when(journalService).findByCode(any());
         doNothing().when(paymentService).create(any());
+        doNothing().when(accountOperationService).handleAccountingPeriods(any());
         Long id = paymentApi.createPayment(paymentDto);
         Assert.assertNull(id);
 
