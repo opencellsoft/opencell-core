@@ -85,24 +85,24 @@ public class InvoiceLinesFactory {
                                         Provider appProvider, BillingRun billingRun,
                                         AggregationConfiguration configuration, String openOrderNumber) {
         InvoiceLine invoiceLine = new InvoiceLine();
+        
         String rtID = (String) data.get("rated_transaction_ids");
         ofNullable(data.get("billing_account__id")).ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.getEntityManager().getReference(BillingAccount.class, ((Number)id).longValue())));
         ofNullable(data.get("billing_run_id")).ifPresent(id -> invoiceLine.setBillingRun(billingRunService.getEntityManager().getReference(BillingRun.class, ((Number)id).longValue())));
         ofNullable(data.get("service_instance_id")).ifPresent(id -> invoiceLine.setServiceInstance(instanceService.getEntityManager().getReference(ServiceInstance.class, ((Number)id).longValue())));
-        ofNullable(data.get("user_account_id")).ifPresent(id -> invoiceLine.setUserAccount(userAccountService.getEntityManager().getReference(UserAccount.class, id)));
+        ofNullable(data.get("user_account_id")).ifPresent(id -> invoiceLine.setUserAccount(userAccountService.getEntityManager().getReference(UserAccount.class, ((Number)id).longValue())));
         ofNullable(data.get("offer_id")).ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.getEntityManager().getReference(OfferTemplate.class, ((Number)id).longValue())));
         ofNullable(data.get("order_id")).ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.getEntityManager().getReference(CommercialOrder.class, ((Number)id).longValue())));
         ofNullable(data.get("product_version_id")).ifPresent(id -> invoiceLine.setProductVersion(productVersionService.getEntityManager().getReference(ProductVersion.class, ((Number)id).longValue())));
         ofNullable(data.get("order_lot_id")).ifPresent(id -> invoiceLine.setOrderLot(orderLotService.getEntityManager().getReference(OrderLot.class, ((Number)id).longValue())));
         ofNullable(data.get("tax_id")).ifPresent(id -> invoiceLine.setTax(taxService.getEntityManager().getReference(Tax.class, ((Number)id).longValue())));
-        ofNullable(data.get("article_id")).ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.getEntityManager().getReference(AccountingArticle.class, (Number)id)));
-        ofNullable(data.get("discount_plan_type")).ifPresent(id -> invoiceLine.setDiscountPlanType((DiscountPlanItemTypeEnum) data.get("discount_plan_type")));
+        ofNullable(data.get("article_id")).ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.getEntityManager().getReference(AccountingArticle.class, ((Number)id).longValue())));
+        ofNullable(data.get("discount_plan_type"))
+            .ifPresent(dpt -> invoiceLine.setDiscountPlanType(dpt instanceof DiscountPlanItemTypeEnum ? (DiscountPlanItemTypeEnum) dpt : DiscountPlanItemTypeEnum.valueOf((String) dpt)));
         ofNullable(data.get("discount_value")).ifPresent(id -> invoiceLine.setDiscountValue((BigDecimal) data.get("discount_value")));
-        log.debug("discounted_Ratedtransaction_id={},{}",data.get("discounted_ratedtransaction_id"),iLIdsRtIdsCorrespondence.size());
         if(data.get("discounted_ratedtransaction_id")!=null) {
         	Long discountedILId = iLIdsRtIdsCorrespondence.get(((Number)data.get("discounted_ratedtransaction_id")).longValue());
-        		log.debug("discountedRatedTransaction discountedILId={}",discountedILId);
-        		if(discountedILId!=null) {
+         		if(discountedILId!=null) {
         			InvoiceLine discountedIL = invoiceLineService.findById(discountedILId);
             		invoiceLine.setDiscountedInvoiceLine(discountedIL);
             		String[] splitrtId = rtID.split(",");

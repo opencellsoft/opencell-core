@@ -162,6 +162,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
             } else {
                 entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(), 1));
             }
+            entity.setIncrementalInvoiceLines(billingCycle.getIncrementalInvoiceLines());
             log.debug("after setBillingCycle invoicedate={}, lastTransactionDate={}", entity.getInvoiceDate(), entity.getLastTransactionDate());
         }
     }

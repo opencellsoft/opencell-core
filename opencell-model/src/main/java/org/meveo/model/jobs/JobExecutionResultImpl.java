@@ -260,12 +260,23 @@ public class JobExecutionResultImpl extends BaseEntity {
      * @param error Message to log
      * @return A total number of processed items, successful or failed
      */
-    public synchronized long registerError(String error) {
+    public long registerError(String error) {
+        return registerError(error, 1);
+    }
+
+    /**
+     * Increment a count of items processed with error and log an error
+     * 
+     * @param error Message to log
+     * @param numberFailed Number failed
+     * @return A total number of processed items, successful or failed
+     */
+    public synchronized long registerError(String error, int numberFailed) {
         if (jobInstance.isVerboseReport() && !StringUtils.isBlank(error)) {
             addReport(error);
             errors.add(error);
         }
-        nbItemsProcessedWithError++;
+        nbItemsProcessedWithError = nbItemsProcessedWithError + numberFailed;
 
         return nbItemsCorrectlyProcessed + nbItemsProcessedWithError + nbItemsProcessedWithWarning;
     }

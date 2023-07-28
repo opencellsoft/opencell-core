@@ -412,7 +412,7 @@
         <createSequence sequenceName="cpq_order_offer_seq" />
         <createSequence sequenceName="order_article_line_seq" />
         <createSequence sequenceName="cpq_order_invoice_seq" />
-        <createSequence sequenceName="billing_invoice_line_seq" />
+        <createSequence sequenceName="billing_invoice_line_seq" incrementBy="5000" />
         <createSequence sequenceName="cpq_invoicing_plan_seq" />
         <createSequence sequenceName="cpq_invoicing_plan_item_seq" />
         <createSequence sequenceName="order_price_seq" startValue="1" />
@@ -11148,6 +11148,7 @@
             </column>
             <column name="aggregate_id_f" type="bigint" />
             <column name="invoice_id" type="bigint" />
+            <column name="invoice_line_id" type="bigint" />
             <column name="billing_run_id" type="bigint" />
             <column name="unit_amount_without_tax" type="numeric(23, 12)" />
             <column name="unit_amount_with_tax" type="numeric(23, 12)" />
@@ -16921,6 +16922,7 @@
         <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
         <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
+        <sql>CREATE INDEX idx__billing_invoice_line_il_job ON ${db.schema.adapted}billing_invoice_line USING btree (billing_run_id, billing_account_id, offer_template_id, accounting_article_id, tax_id) where status='OPEN'</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -18106,38 +18108,6 @@
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-
-     <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi">
-		  <sql>CREATE INDEX idx__billing_rated_transaction__billing_account_id ON ${db.schema.adapted}billing_rated_transaction USING btree (billing_account__id)  WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__offer_id ON ${db.schema.adapted}billing_rated_transaction USING btree (offer_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__tax_id ON ${db.schema.adapted}billing_rated_transaction USING btree (tax_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__infoOrder_productVersion_id ON ${db.schema.adapted}billing_rated_transaction USING btree (product_version_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__accountingArticle_id ON ${db.schema.adapted}billing_rated_transaction USING btree (accounting_article_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__discountedRatedTransaction ON ${db.schema.adapted}billing_rated_transaction USING btree (discounted_ratedtransaction_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__subscription_id ON ${db.schema.adapted}billing_rated_transaction USING btree (subscription_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__order_id ON ${db.schema.adapted}billing_rated_transaction USING btree (order_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__order_number ON ${db.schema.adapted}billing_rated_transaction USING btree (order_number) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__description ON ${db.schema.adapted}billing_rated_transaction USING btree (description) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__tax_percent ON ${db.schema.adapted}billing_rated_transaction USING btree (tax_percent)  WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE (status= 'OPEN') </sql>
-		
-		  <sql>CREATE INDEX idx__billing_invoice_line__billing_account_id ON ${db.schema.adapted}billing_invoice_line USING btree (billing_account_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__billing_run ON ${db.schema.adapted}billing_invoice_line USING btree (billing_run_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__status ON ${db.schema.adapted}billing_invoice_line USING btree (status) </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__accounting_article ON ${db.schema.adapted}billing_invoice_line USING btree (accounting_article_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__offer_template_id ON ${db.schema.adapted}billing_invoice_line USING btree ( offer_template_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__tax_id ON ${db.schema.adapted}billing_invoice_line USING btree (tax_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__product_version_id ON ${db.schema.adapted}billing_invoice_line USING btree (product_version_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__discounted_invoice_line ON ${db.schema.adapted}billing_invoice_line USING btree ( discounted_invoice_line) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__subscription_id ON ${db.schema.adapted}billing_invoice_line USING btree (subscription_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__service_instance_id ON ${db.schema.adapted}billing_invoice_line USING btree (service_instance_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__commercial_order_id ON ${db.schema.adapted}billing_invoice_line USING btree (commercial_order_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__order_number ON ${db.schema.adapted}billing_invoice_line USING btree (order_number) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__label ON ${db.schema.adapted}billing_invoice_line USING btree(label) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_invoice_line__taxRate ON ${db.schema.adapted}billing_invoice_line USING btree(tax_rate) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_subscription__order_id ON ${db.schema.adapted}billing_invoice_line USING btree (commercial_order_id) WHERE (status= 'OPEN') </sql>
-    </changeSet>
-
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -19450,6 +19420,9 @@
 	<changeSet id="INTRD-16050_20230515" author="ThangNguyen" />
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
+    <changeSet id="#INTRD-16636_20230610" author="AndriusKarpavicius" />
+    <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
+
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
