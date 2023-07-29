@@ -278,7 +278,7 @@
 					<reportElement positionType="Float" x="-1" y="-15" width="220" height="20" uuid="0b054d42-0923-4816-9737-6b946e4ff863"/>
 					<box leftPadding="10"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{catLabel}]]></textFieldExpression>
 				</textField>
@@ -296,7 +296,7 @@
 					</reportElement>
 					<box rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10"/>
+						<font fontName="SansSerif" size="10"/>
 						<paragraph rightIndent="5"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{catAmountWithoutTax}]]></textFieldExpression>
@@ -305,7 +305,7 @@
 					<reportElement x="6" y="25" width="350" height="19" forecolor="#878787" uuid="5d7f0c02-8094-464f-a79f-bea5b34c4549"/>
 					<box bottomPadding="2"/>
 					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font fontName="Arial" size="9" isBold="false"/>
+						<font fontName="SansSerif" size="9" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($F{currencyRate}!=null && !String.valueOf($F{currencyRate}).isEmpty() && !String.valueOf($F{currencyRate}).equals("null") && new Double($F{currencyRate}.replace(",", ".")) > 1d) ? "Rate applied against EUR : " + (($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{currencyRate}.replace(",", ".")))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{currencyRate}.replace(",", "."))))) + " " + $F{currencySymbol} : "")]]></textFieldExpression>
 				</textField>
@@ -318,7 +318,7 @@
 					</reportElement>
 					<box leftPadding="10"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<text><![CDATA[Discounts]]></text>
 				</staticText>
@@ -338,7 +338,7 @@
 					</reportElement>
 					<box rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10"/>
+						<font fontName="SansSerif" size="10"/>
 						<paragraph rightIndent="5"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{discountAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{discountAmountWithoutTax})))]]></textFieldExpression>
@@ -367,7 +367,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["My " + (($F{invoiceCodeTypeLabel}==null || $F{invoiceCodeTypeLabel}.isEmpty()) ? "Invoice" : $F{invoiceCodeTypeLabel})]]></textFieldExpression>
 			</textField>
@@ -375,7 +375,7 @@
 				<reportElement x="190" y="3" width="158" height="19" forecolor="#030303" uuid="25323b57-0dfa-42e9-aa61-db50b3f30b6f"/>
 				<box bottomPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font fontName="Arial" size="11" isBold="false"/>
+					<font fontName="SansSerif" size="11" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Price w/o tax ("+$F{currencySymbol}+")"]]></textFieldExpression>
 			</textField>
