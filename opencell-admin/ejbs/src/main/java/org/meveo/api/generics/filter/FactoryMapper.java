@@ -34,7 +34,22 @@ public interface FactoryMapper {
         if(simpleField.contains(property) || clazz != null && clazz.getSimpleName().equalsIgnoreCase(property)){
             return resolveFilterMapperType(property, value, clazz, cetCode, entityManagerResolver);
         }
+
         try {
+            if(property.endsWith(".cfValues")) {
+                Field field = ReflectionUtils.getFieldThrowException(clazz, property.replace(".cfValues", ""), true);
+                if(field != null){
+                    if(Collection.class.isAssignableFrom(field.getType())){
+                        Type type = field.getGenericType();
+                        if (type instanceof ParameterizedType) {
+                            Type[] pt = ((ParameterizedType) type).getActualTypeArguments();
+                            return resolveFilterMapperType("cfValues", value, (Class) pt[0], cetCode, entityManagerResolver);
+                        }
+                    }
+                    return resolveFilterMapperType("cfValues", value, field.getType(), cetCode, entityManagerResolver);
+                }
+            }
+
             Field field = ReflectionUtils.getFieldThrowException(clazz, property, true);
             if(field != null){
                 if(Collection.class.isAssignableFrom(field.getType())){
