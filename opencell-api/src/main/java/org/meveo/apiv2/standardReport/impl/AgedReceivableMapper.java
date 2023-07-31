@@ -210,9 +210,9 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			if(agedList[27] instanceof DunningLevelEnum) {
 				agedReceivableDto.setDunningLevel((DunningLevelEnum) agedList[27]);
 			}
-			
+
 			if(agedList[28] != null && agedList[28] instanceof Name) {
-				agedReceivableDto.setCustomerAccountName(getName((Name) agedList[28]));				
+				agedReceivableDto.setCustomerAccountName(getName((Name) agedList[28]));
 			}
 			agedReceivableDto.setCustomerAccountDescription((String) agedList[29]);
 			agedReceivableDto.setSellerDescription((String) agedList[30]);
@@ -283,7 +283,10 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 
 			agedReceivableDto.setDunningLevel((DunningLevelEnum) agedReceivable[startingSumIndex]);
 			agedReceivableDto.setCustomerAccountName(agedReceivable[++startingSumIndex] == null ? null : getName((Name) agedReceivable[startingSumIndex]));
-			agedReceivableDto.setCustomerAccountDescription((String) agedReceivable[++startingSumIndex]);
+			agedReceivableDto.setCustomerAccountDescription(agedReceivableDto.getCustomerAccountName() != null ? agedReceivableDto.getCustomerAccountName() : (String) agedReceivable[++startingSumIndex]);
+			if(agedReceivableDto.getCustomerAccountName() != null) {
+				++startingSumIndex;
+			}
 			agedReceivableDto.setSellerDescription((String) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setSellerCode((String) agedReceivable[++startingSumIndex]);
 			agedReceivableDto.setDueDate(agedReceivable[++startingSumIndex] == null ? null : ((Date) agedReceivable[startingSumIndex]));
