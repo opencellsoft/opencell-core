@@ -36,6 +36,7 @@ import java.math.MathContext;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,6 +46,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
@@ -1870,10 +1872,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     public void linkRTsToIL(final List<Long> ratedTransactionsIDs, final Long invoiceLineID, Long billingRunId) {
     	final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+    	
         if (ratedTransactionsIDs.size() > maxValue) {
+        	log.info(">"+invoiceLineID+"====>"+ratedTransactionsIDs.size());
             SubListCreator<Long> subLists = new SubListCreator<>(ratedTransactionsIDs, (1 + (ratedTransactionsIDs.size() / maxValue)));
+            int i=0;
             while (subLists.isHasNext()) {
-                linkRTsWithILByIds(invoiceLineID, subLists.getNextWorkSet(), billingRunId);
+                List<Long> nextWorkSet = subLists.getNextWorkSet();
+                log.info(">>"+invoiceLineID+"----"+(++i)+"---->"+nextWorkSet.size());
+				linkRTsWithILByIds(invoiceLineID, nextWorkSet, billingRunId);
             }
         } else {
             linkRTsWithILByIds(invoiceLineID, ratedTransactionsIDs, billingRunId);
@@ -1967,7 +1974,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                         boolean incrementalInvoiceLines) {
         List<String> fieldToFetch;
         if(withAggregation) {
-            fieldToFetch = new ArrayList<>(asList("string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id",
+            fieldToFetch = new ArrayList<>(asList("count(a.id) as count","string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id",
                     "SUM(a.quantity) as quantity", unitAmountField + " as unit_amount_without_tax", "SUM(a.amountWithoutTax) as sum_without_tax",
                     "SUM(a.amountWithTax) as sum_with_tax", "offerTemplate.id as offer_id", usageDateAggregation + " as usage_date",
                     "min(a.startDate) as start_date", "max(a.endDate) as end_date",
@@ -1981,7 +1988,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     "SUM(a.transactionalAmountTax) as sum_converted_amount_tax",
                     "SUM(a.transactionalAmountWithTax) as sum_converted_amount_with_tax"));
         } else {
-            fieldToFetch = new ArrayList<>(asList("CAST(a.id as string) as rated_transaction_ids",
+            fieldToFetch = new ArrayList<>(asList("count(a.id) as count","CAST(a.id as string) as rated_transaction_ids",
                     "billingAccount.id as billing_account__id", "description as label", "quantity AS quantity", "amountWithoutTax as sum_without_tax",
                     "amountWithTax as sum_with_tax", "offerTemplate.id as offer_id", "serviceInstance.id as service_instance_id",
                     "startDate as start_date", "endDate as end_date", "orderNumber as order_number", "taxPercent as tax_percent",
@@ -2333,13 +2340,50 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	    return chargeInstances.size();
 	}
     
-	private void updateAccountingArticlesByChargeInstance(ChargeInstance charge,
-			AccountingArticle accountingArticle) {
-        String strQuery = "UPDATE RatedTransaction rt SET rt.accountingArticle=:accountingArticle WHERE rt.status='OPEN' and rt.chargeInstance=:chargeInstance and rt.accountingArticle is null ";
+	public void updateAccountingArticlesByChargeInstance(ChargeInstance charge, AccountingArticle accountingArticle) {
+		updateAccountingArticlesByChargeInstanceIds(Arrays.asList(charge.getId()),accountingArticle);
+	}
+	
+	public void updateAccountingArticlesByChargeInstanceIds(List<Long> ids, AccountingArticle accountingArticle) {
+		updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(ids, null, null, accountingArticle);
+	}
+    
+	public void updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(List<Long> chargeInstances, Long serviceInstanceId, Long offerTemplateId, AccountingArticle accountingArticle) {
+		
+		String strQuery = "UPDATE RatedTransaction rt SET rt.accountingArticle=:accountingArticle WHERE rt.status='OPEN' and rt.accountingArticle is null ";
+		if (chargeInstances != null) {
+			strQuery = strQuery + " and rt.chargeInstance.id in(:chargeInstanceIds) ";
+		} else {
+			strQuery = strQuery + " and rt.chargeInstance.id is null ";
+			if (serviceInstanceId != null) {
+				strQuery = strQuery + " and rt.serviceInstance.id =:serviceInstanceId ";
+			} else {
+				strQuery = strQuery + " and rt.serviceInstance.id is null ";
+			}
+			if (offerTemplateId != null) {
+				strQuery = strQuery + " and rt.offerTemplate.id =:offerTemplateId ";
+			} else {
+				strQuery = strQuery + " and rt.offerTemplate.id is null ";
+			}
+		}
         Query query = getEntityManager().createQuery(strQuery);
-        query.setParameter("chargeInstance", charge);
         query.setParameter("accountingArticle", accountingArticle);
-        query.executeUpdate();
+        if (chargeInstances != null) {
+            final int maxValue = Objects.requireNonNull(getInstance()).getPropertyAsInteger("database.number.of.inlist.limit", PersistenceService.SHORT_MAX_VALUE)-1;
+            List<List<Long>> chargesSubList = partition(chargeInstances, maxValue);
+            for(List<Long> subList: chargesSubList) {
+            	query.setParameter("chargeInstanceIds", subList);
+            	query.executeUpdate();
+            }
+		} else {
+			if (serviceInstanceId != null) {
+				query.setParameter("serviceInstanceId", serviceInstanceId);
+			} 
+			if (offerTemplateId != null) {
+				query.setParameter("offerTemplateId", offerTemplateId);
+			}
+			query.executeUpdate();
+		}
 	}
 
 	/**

@@ -379,11 +379,12 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
         Payment securityDepositPaymentAccountOperation = new Payment();
 
-        securityDepositPaymentAccountOperation.setAmount(amount);
+        paymentService.calculateAmountsByTransactionCurrency(securityDepositPaymentAccountOperation, securityDeposit.getCustomerAccount(),
+                amount,null, new Date());
+
         securityDepositPaymentAccountOperation.setDepositDate(new Date());
         securityDepositPaymentAccountOperation.setPaymentMethod(PaymentMethodEnum.CHECK);
         securityDepositPaymentAccountOperation.setCustomerAccount(securityDeposit.getCustomerAccount());
-        securityDepositPaymentAccountOperation.setUnMatchingAmount(amount);
         securityDepositPaymentAccountOperation.setTransactionCategory(OperationCategoryEnum.CREDIT);
         securityDepositPaymentAccountOperation.setCode("PAY_SD");
         securityDepositPaymentAccountOperation.setCollectionDate(new Date());

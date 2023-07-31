@@ -15064,7 +15064,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <where>id=1</where>
         </update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-12609_20221227_converted_ppv" author="a.rouaguebe">
     	<createSequence sequenceName="cpq_converted_price_plan_version_seq" startValue="1" />
         <createTable tableName="cpq_converted_price_plan_version">
@@ -15566,7 +15566,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="converted_invoice_balance" type="numeric(23, 12)"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-12047-20230112" author="AbdelmounaimAkadid">
     	<createIndex indexName="idx__cpq_attribute_instance__subscription_id" tableName="cpq_attribute_instance">
 	      	<column name="subscription_id"/>
@@ -15761,7 +15761,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         DROP TABLE untdid_unit;
         </sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-14022_20230215" author="AdilElJaouhari">
         <addColumn tableName="crm_customer">
             <column name="parent_customer_id" type="bigint"/>
@@ -16013,11 +16013,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-                                 
+
     	<addColumn tableName="quote_offer">
     		<column name="contract_id" type="bigint" />
     	</addColumn>
-    	
+
         <addForeignKeyConstraint baseTableName="quote_offer" baseColumnNames="contract_id"
                                  constraintName="fk_contract_id"
                                  referencedTableName="cpq_contract"
@@ -16134,7 +16134,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-    
+
     <changeSet id="#INTR-14747_20230308" author="TarikFA.">
     	<update tableName="cat_discount_plan">
     		<column name="applicable_on_overridden_price" value="1"/>
@@ -16877,6 +16877,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI">
+        <addColumn tableName="billing_billing_account">
+            <column name="mass_data" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#INTRD-16362_20230607_ppm_eventcode" author="a.rouaguebe">
         <dropNotNullConstraint tableName="cat_price_plan_matrix" columnName="event_code"></dropNotNullConstraint>
@@ -17005,30 +17011,30 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="external_purchase_order_number" type="varchar(100)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-17149_04072023" author="Mbarek-Ay">
 		<addColumn tableName="cpq_quote_price">
 			<column name="price_plan_matrix_version_id" type="bigint" />
 			<column name="price_plan_matrix_line_id" type="bigint" />
 			<column name="contract_item_id" type="bigint" />
 		</addColumn>
-		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk" 
-								 referencedTableName="cpq_price_plan_version" 
-								 baseColumnNames="price_plan_matrix_version_id" 
-								 baseTableName="cpq_quote_price" 
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk"
+								 referencedTableName="cpq_price_plan_version"
+								 baseColumnNames="price_plan_matrix_version_id"
+								 baseTableName="cpq_quote_price"
 								 referencedColumnNames="id"/>
-		<addForeignKeyConstraint constraintName="price_plan_matrix_line_id_fk" 
-								 referencedTableName="cpq_price_plan_matrix_line" 
-								 baseColumnNames="price_plan_matrix_line_id" 
-								 baseTableName="cpq_quote_price" 
+		<addForeignKeyConstraint constraintName="price_plan_matrix_line_id_fk"
+								 referencedTableName="cpq_price_plan_matrix_line"
+								 baseColumnNames="price_plan_matrix_line_id"
+								 baseTableName="cpq_quote_price"
 								 referencedColumnNames="id"/>
-		<addForeignKeyConstraint constraintName="contract_item_fk" 
-								 referencedTableName="cpq_contract_item" 
-								 baseColumnNames="contract_item_id" 
-								 baseTableName="cpq_quote_price" 
+		<addForeignKeyConstraint constraintName="contract_item_fk"
+								 referencedTableName="cpq_contract_item"
+								 baseColumnNames="contract_item_id"
+								 baseTableName="cpq_quote_price"
 								 referencedColumnNames="id"/>
 	</changeSet>
-	
+
 	<changeSet id="INTRD-15775_20230710" author="AdilElJaouhari">
         <addColumn tableName="billing_charge_instance">
             <column name="anticipate_end_of_subscription" type="${type.boolean}" defaultValueNumeric="0" />
@@ -17075,9 +17081,33 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="article_selection_mode" defaultValue="AFTER_PRICING" type="varchar(30)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi">
+		  <sql>CREATE INDEX idx__billing_rated_transaction__accountingArticle_id ON ${db.schema.adapted}billing_rated_transaction USING btree (accounting_article_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__offer ON ${db.schema.adapted}billing_rated_transaction USING btree (offer_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__service_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (service_instance_id) WHERE (status= 'OPEN') </sql>
+	</changeSet>
 
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI">
         <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe">
+        <sql>create index idx__billing_billing_account__lower_code on ${db.schema.adapted}billing_billing_account (lower(code))</sql>
+        <sql>create index idx__billing_rating_transaction__id_desc on ${db.schema.adapted}billing_rated_transaction (id desc)</sql>
+        <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-17451_20230731" author="ZBariki">
+        <addColumn tableName="cpq_price_plan_matrix_line">
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </addColumn>
+        <sql>update ${db.schema.adapted}cpq_price_plan_matrix_line set uuid = 'ppml'||id</sql>
     </changeSet>
 
 </databaseChangeLog>

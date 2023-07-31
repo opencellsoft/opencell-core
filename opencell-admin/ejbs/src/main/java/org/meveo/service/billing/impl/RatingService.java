@@ -646,7 +646,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ContractItem contractItem = null;
                 if ( serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
-                    Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null ? bareWalletOperation.getSubscription().getContract() : null : null;
+                    Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null && "ACTIVE".equals(bareWalletOperation.getSubscription().getContract().getStatus()) ? bareWalletOperation.getSubscription().getContract() : null : null;
                     if(contractFromSubscription != null) {
                         contract = contractFromSubscription;
                     }
@@ -1670,8 +1670,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     walletOperation.getTransactionalUnitAmountWithoutTax(),
                     walletOperation.getTransactionalUnitAmountWithTax());
         } else {
-            BigDecimal rate = walletOperation.getTradingCurrency() != null
-                    ? walletOperation.getTradingCurrency().getCurrentRate() : BigDecimal.ONE;
+            BigDecimal rate = Optional.ofNullable(walletOperation.getTradingCurrency()).map(TradingCurrency::getCurrentRate).orElse(BigDecimal.ONE);
             calculateTransactionalAmounts(walletOperation, rate);
         }
     }
