@@ -183,7 +183,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.markAsProcessed", query = "UPDATE RatedTransaction rt set rt.status='BILLED' WHERE rt.id in (:listOfIds)"),
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByRtIdInBatch", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.billingAccount.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND r.id in (:ids) group by r.billingAccount.id"),
         @NamedQuery(name = "RatedTransaction.BillingAccountByRTIds", query = "SELECT distinct rt.billingAccount FROM RatedTransaction rt WHERE rt.id in (:ids)"),
-        @NamedQuery(name = "RatedTransaction.linkRTWithInvoiceLine", query = "UPDATE RatedTransaction rt set rt.status='BILLED', rt.invoiceLine.id = :il, rt.billingRun.id = :billingRunId WHERE rt.id in :ids"),
+        @NamedQuery(name = "RatedTransaction.linkRTWithInvoiceLine", query = "UPDATE RatedTransaction rt set rt.status='BILLED', rt.invoiceLine.id = :il, rt.billingRun.id = :billingRunId WHERE rt.status='OPEN' AND rt.id in :ids"),
         @NamedQuery(name = "RatedTransaction.linkRTWithInvoice", query = "UPDATE RatedTransaction rt set rt.invoice = :invoice, rt.billingRun = :billingRun, rt.status = 'BILLED', rt.updated = :now WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoiceLines", query = "UPDATE RatedTransaction rt set rt.invoiceLine = null, rt.status = 'OPEN' WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoices", query = "UPDATE RatedTransaction r SET r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceLine=null, r.invoiceAgregateF=null WHERE r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice.id IN (:ids)) "),
@@ -192,7 +192,10 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.updateStatusDiscountedRT", query = "UPDATE RatedTransaction rt " +
                 "SET rt.status =: statusToUpdate WHERE rt.id IN (:ids)"),
         @NamedQuery(name = "RatedTransaction.getDiscountedRTIds", query = "SELECT rt FROM RatedTransaction rt " +
-                "WHERE rt.invoiceLine.status != 'BILLED' AND rt.discountedRatedTransaction =: id")
+                "WHERE rt.invoiceLine.status != 'BILLED' AND rt.discountedRatedTransaction =: id"),
+        @NamedQuery(name = "RatedTransaction.getMissingAccountingArticleInputs", query =
+    	"select new org.meveo.model.billing.AccountingArticleAssignementItem(ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id, (string_agg(cast(ci.id as text),','))) "
+    		+ " FROM RatedTransaction rt left join rt.chargeInstance ci WHERE rt.status = 'OPEN' and rt.accountingArticle is null group by ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id")
         })
 
 @NamedNativeQueries({

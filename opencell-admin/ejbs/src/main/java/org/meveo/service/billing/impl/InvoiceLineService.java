@@ -1,7 +1,7 @@
 package org.meveo.service.billing.impl;
 
-import static java.math.BigDecimal.ZERO;
 import static java.lang.Boolean.FALSE;
+import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
@@ -20,6 +20,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
+import org.meveo.admin.job.InvoiceLinesJob;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -61,7 +63,6 @@ import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.MinAmountData;
@@ -116,6 +117,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     private static final String INVOICING_PROCESS_TYPE = "InvoiceLine";
     private static final String INVOICE_MINIMUM_COMPLEMENT_CODE = "MIN-STD";
 
+
     @Inject
     private FilterService filterService;
 
@@ -166,6 +168,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private OpenOrderService openOrderService;
+    
+    @Inject
+    private InvoiceLineService anotherInvoiceLineService;
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -1034,12 +1039,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return createInvoiceLines(groupedRTs, configuration, result, null);
     }
     
-    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
-            AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs, AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
     	return createInvoiceLines(groupedRTs, configuration, result, billingRun, new ArrayList<>(), null);
     }
 
-    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
+        public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
                 AggregationConfiguration configuration, JobExecutionResultImpl result,
                                               BillingRun billingRun, List<InvoiceLine> invoiceLines,
                                               String openOrderNumber) throws BusinessException {
@@ -1143,13 +1149,79 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @return 
 	 * @return
 	 */
-    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
-	    BasicStatistics ilBasicStatistics = createInvoiceLines(
-	            ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate()),
-                aggregationConfiguration, result, billingRun);
+	public void createInvoiceLineInNewTransaction(Map<String, Object> groupedRTsWithAggregation, JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
+    	List<Map<String, Object>> groupedRTs = new ArrayList<Map<String, Object>>();
+    	groupedRTs.add(groupedRTsWithAggregation);
+    	BasicStatistics ilBasicStatistics = createInvoiceLines(groupedRTs,aggregationConfiguration, result, billingRun);
 	    basicStatistics.append(ilBasicStatistics);
+		
+	}
+    
+
+    /**
+     * @param result
+     * @param aggregationConfiguration
+     * @param billingRun
+     * @param be
+     * @param basicStatistics
+     * @param perfConfig
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics, Map<String, Object> perfConfig) {
+	    List<Map<String, Object>> groupedRTsWithAggregation = ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate());
+	    
+	    if((boolean)perfConfig.get(InvoiceLinesJob.ONE_BILLING_ACCOUNT_PER_TRANSACTION)) {
+	    	BasicStatistics ilBasicStatistics = anotherInvoiceLineService.createInvoiceLines(groupedRTsWithAggregation,aggregationConfiguration, result, billingRun);
+		    basicStatistics.append(ilBasicStatistics);
+	    } else {
+	    	assignMapGroup(be, groupedRTsWithAggregation, perfConfig);
+			Map<Integer, List<Map<String, Object>>> groupedItems = groupedRTsWithAggregation.stream().filter(m->m.containsKey("grouppingKey")).collect(Collectors.groupingBy(aggregation -> (Integer)aggregation.get("grouppingKey")));
+		    for(List<Map<String, Object>> group:groupedItems.values()) {
+				BasicStatistics ilBasicStatistics = anotherInvoiceLineService.createInvoiceLines(group,aggregationConfiguration, result, billingRun);
+			    basicStatistics.append(ilBasicStatistics);
+		    }
+	    }
+	    
+	}
+
+	public void assignMapGroup(IBillableEntity be, List<Map<String, Object>> groupedRTsWithAggregation, Map<String, Object> perfConfig) {
+		groupedRTsWithAggregation.sort(Comparator.comparing(m -> ((Number)m.get("count") ).intValue()));
+	    Collections.reverse(groupedRTsWithAggregation);
+    	boolean massUpdate=false;
+		List<int[]> workingLists = new ArrayList<int[]>();
+		for(Map<String, Object> item : groupedRTsWithAggregation) {
+			massUpdate = !findPlace(item, workingLists, (long)perfConfig.get(InvoiceLinesJob.MAX_RATED_TRANSACTIONS_PER_TRANSACTION),  (long)perfConfig.get(InvoiceLinesJob.MAX_INVOICE_LINES_PER_TRANSACTION), perfConfig)? true : massUpdate;
+		}
+		if(massUpdate) {
+    		billingAccountService.changeMassUpdateProcessing(be.getId(),true);
+    	}
+	}
+    
+	private boolean findPlace(Map<String, Object> item, List<int[]> workingLists, long maxRTsPerList, long maxILsPerList, Map<String, Object> perfConfig) {
+		Integer numberOfRTs = ((Number) item.get("count")).intValue();
+		if (numberOfRTs > (long)perfConfig.get(InvoiceLinesJob.MAX_RATED_TRANSACTIONS_PER_INVOICE_LINE)) {
+			return false;
+		}
+		boolean placed = false;
+		for (int[] entry : workingLists) {
+			if (entry[2] == maxILsPerList) {
+				continue;
+			}
+			if (entry[1] + numberOfRTs < maxRTsPerList) {
+				entry[1] = entry[1] + numberOfRTs;
+				entry[2]++;
+				placed = true;
+				item.put("grouppingKey", entry[0]);
+				break;
+			}
+		}
+		if (!placed) {
+			int index = workingLists.size();
+			workingLists.add(new int[] { index, numberOfRTs, 1 });
+			item.put("grouppingKey", index);
+		}
+		return true;
 	}
 
     public void deleteByBillingRun(long billingRunId) {
