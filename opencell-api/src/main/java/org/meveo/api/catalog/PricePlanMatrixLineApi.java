@@ -10,24 +10,28 @@ import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.ColumnTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.TradingPricePlanMatrixLine;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
+import org.meveo.service.catalog.impl.PricePlanMatrixValueService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.service.crm.impl.ProviderService;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.Set;
 
 import static java.util.Collections.*;
 
@@ -42,6 +46,12 @@ public class PricePlanMatrixLineApi extends BaseApi {
 
     @Inject
     private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+
+    @Inject
+    private ProviderService providerService;
+
+    @Inject
+    private PricePlanMatrixValueService pricePlanMatrixValueService;
 
     public PricePlanMatrixLineDto addPricePlanMatrixLine(String pricePlanMatrixCode, int version, PricePlanMatrixLineDto dtoData) throws MeveoApiException, BusinessException {
 
@@ -73,12 +83,69 @@ public class PricePlanMatrixLineApi extends BaseApi {
 
     public GetPricePlanVersionResponseDto updateWithoutDeletePricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
         PricePlanMatrixVersion ppmVersion = pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
-        pricePlanMatrixLineService.updateWithoutDeletePricePlanMatrixLines(ppmVersion, dtoData);
+        updateWithoutDeletePricePlanMatrixLines(ppmVersion, dtoData);
         pricePlanMatrixVersionService.updatePricePlanMatrixVersion(ppmVersion);
 
         return new GetPricePlanVersionResponseDto(ppmVersion);
     }
-    
+
+    private void updateWithoutDeletePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion,
+                                                        PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
+        pricePlanMatrixLineService.checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
+        Provider provider = providerService.getProvider();
+        for (PricePlanMatrixLineDto pricePlanMatrixLineDto : dtoData.getPricePlanMatrixLines()) {
+            PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
+            if(pricePlanMatrixLineDto.getPpmLineId() != null){
+                pricePlanMatrixLine = pricePlanMatrixLineService.findById(pricePlanMatrixLineDto.getPpmLineId());
+                if (pricePlanMatrixLine == null) {
+                    throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, pricePlanMatrixLineDto.getPpmLineId());
+                }
+                pricePlanMatrixLineService.converterPricePlanMatrixLineFromDto(ppmVersion, pricePlanMatrixLineDto, pricePlanMatrixLine);
+                Set<PricePlanMatrixValue> pricePlanMatrixValues =
+                        pricePlanMatrixLineService.getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
+                pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
+                pricePlanMatrixLine.getPricePlanMatrixValues().clear();
+                pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
+                Set<TradingPricePlanMatrixLine> tradingPricePlanMatrixLines =
+                        pricePlanMatrixLineService.getTradingPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider);
+                pricePlanMatrixLine.getTradingPricePlanMatrixLines().clear();
+                pricePlanMatrixLine.getTradingPricePlanMatrixLines().addAll(tradingPricePlanMatrixLines);
+                pricePlanMatrixLine.setRatingAccuracy(pricePlanMatrixLine.getPricePlanMatrixValues().size());
+                if(pricePlanMatrixLineDto.getCustomFields() != null) {
+                    setCustomFields(pricePlanMatrixLineDto, pricePlanMatrixLine);
+                }
+                pricePlanMatrixLineService.update(pricePlanMatrixLine);
+            }
+            else {
+                pricePlanMatrixLineService.converterPricePlanMatrixLineFromDto(ppmVersion, pricePlanMatrixLineDto, pricePlanMatrixLine);
+                pricePlanMatrixLine.setPricePlanMatrixValues(pricePlanMatrixLineService.getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine));
+                pricePlanMatrixLine.setRatingAccuracy(pricePlanMatrixLine.getPricePlanMatrixValues().size());
+                pricePlanMatrixLine.setTradingPricePlanMatrixLines(pricePlanMatrixLineService.getTradingPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider));
+                setCustomFields(pricePlanMatrixLineDto, pricePlanMatrixLine);
+                pricePlanMatrixLineService.create(pricePlanMatrixLine);
+
+                pricePlanMatrixLineDto.setPpmLineId(pricePlanMatrixLine.getId());
+
+                ppmVersion.getLines().add(pricePlanMatrixLine);
+            }
+
+        }
+    }
+
+    private void setCustomFields(PricePlanMatrixLineDto pricePlanMatrixLineDto, PricePlanMatrixLine pricePlanMatrixLine) {
+        try {
+            populateCustomFields(pricePlanMatrixLineDto.getCustomFields(),
+                    pricePlanMatrixLine, true, true);
+
+        } catch (MissingParameterException | InvalidParameterException exception) {
+            log.error("Failed to associate custom field instance to an entity: {}", exception.getMessage());
+            throw exception;
+        } catch (Exception exception) {
+            log.error("Failed to associate custom field instance to an entity", exception);
+            throw exception;
+        }
+    }
+
     public PricePlanMatrixLineDto updatePricePlanMatrixLine(String pricePlanMatrixCode, int version, PricePlanMatrixLineDto pricePlanMatrixLineDto) {
 
         if(StringUtils.isBlank(pricePlanMatrixLineDto.getPpmLineId()))
