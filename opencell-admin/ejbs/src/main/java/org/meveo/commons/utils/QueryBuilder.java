@@ -1262,7 +1262,15 @@ public class QueryBuilder {
     @SuppressWarnings({ "rawtypes" })
     public QueryBuilder addValueIsEqualToField(String concatenatedFields, Object value, boolean isNot, boolean isFieldValueOptional) {
 
-        concatenatedFields = createExplicitInnerJoins(concatenatedFields);
+        // extract fieldname to handle joins
+        if(concatenatedFields.contains(FROM_JSON_FUNCTION)) {
+            int beginIndex = concatenatedFields.indexOf(FROM_JSON_FUNCTION) + FROM_JSON_FUNCTION.length() - 2;
+            var extractedField = concatenatedFields.substring(beginIndex, concatenatedFields.indexOf(",", beginIndex));
+            String explicitInnerJoins = createExplicitInnerJoins(extractedField);
+            concatenatedFields = concatenatedFields.replace(extractedField, explicitInnerJoins);
+        } else {
+            concatenatedFields = createExplicitInnerJoins(concatenatedFields);
+        }
 
         // Search by equals/not equals to a string value
         if (value instanceof String) {
