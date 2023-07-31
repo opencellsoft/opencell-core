@@ -358,7 +358,7 @@
 								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 							<textElement textAlignment="Left" verticalAlignment="Middle">
-								<font fontName="Arial" size="14" isBold="true"/>
+								<font fontName="SansSerif" size="14" isBold="true"/>
 							</textElement>
 							<text><![CDATA[Customer]]></text>
 						</staticText>
@@ -382,7 +382,7 @@
 								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 							<textElement textAlignment="Left" verticalAlignment="Middle">
-								<font fontName="Arial" size="14" isBold="true"/>
+								<font fontName="SansSerif" size="14" isBold="true"/>
 							</textElement>
 							<text><![CDATA[Your references]]></text>
 						</staticText>
@@ -391,7 +391,7 @@
 								<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							</reportElement>
 							<textElement verticalAlignment="Top" markup="styled">
-								<font fontName="Arial" size="10" isBold="false"/>
+								<font fontName="SansSerif" size="10" isBold="false"/>
 							</textElement>
 							<textFieldExpression><![CDATA[(($F{subCode}!=null && !String.valueOf($F{subCode}).isEmpty() && !String.valueOf($F{subCode}).equals("null")) ? "<style isBold='true'>Customer ref: </style>" + $F{subCode}+ "\n" : "")
 +
@@ -406,7 +406,7 @@
 						<textField>
 							<reportElement x="24" y="31" width="201" height="97" uuid="37417c6f-aeec-4768-8e5e-5aedbb77505a"/>
 							<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
-								<font fontName="Arial" size="10" isBold="false"/>
+								<font fontName="SansSerif" size="10" isBold="false"/>
 							</textElement>
 							<textFieldExpression><![CDATA[(($F{caQuality}!=null && !String.valueOf($F{caQuality}).isEmpty() && !String.valueOf($F{caQuality}).equals("null")) ? $F{caQuality} + " " : "")
 + (($F{caFirstName}!=null && !String.valueOf($F{caFirstName}).isEmpty() && !String.valueOf($F{caFirstName}).equals("null")) ? $F{caFirstName} + " " : "") 
@@ -436,14 +436,14 @@
 								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 							<textElement textAlignment="Left" verticalAlignment="Middle">
-								<font fontName="Arial" size="14" isBold="true"/>
+								<font fontName="SansSerif" size="14" isBold="true"/>
 							</textElement>
 							<text><![CDATA[Delivery address]]></text>
 						</staticText>
 						<textField>
 							<reportElement x="24" y="146" width="202" height="73" uuid="f5ff75b6-07d3-4380-a507-85c8544fcf35"/>
 							<textElement textAlignment="Left" verticalAlignment="Top">
-								<font fontName="Arial" size="10" isBold="false"/>
+								<font fontName="SansSerif" size="10" isBold="false"/>
 							</textElement>
 							<textFieldExpression><![CDATA[(($F{baQuality}!=null && !String.valueOf($F{baQuality}).isEmpty() && !String.valueOf($F{baQuality}).equals("null")) ? $F{baQuality} + " " : "")
 + (($F{baFirstName}!=null && !String.valueOf($F{baFirstName}).isEmpty() && !String.valueOf($F{baFirstName}).equals("null")) ? $F{baFirstName} + " " : "") 
@@ -471,7 +471,7 @@
 								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#A9ADB0"/>
 							</box>
 							<textElement textAlignment="Left" verticalAlignment="Middle">
-								<font fontName="Arial" size="14" isBold="true"/>
+								<font fontName="SansSerif" size="14" isBold="true"/>
 							</textElement>
 							<text><![CDATA[]]></text>
 						</staticText>
@@ -540,14 +540,14 @@
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement x="568" y="10" width="17" height="20" uuid="70ddbde0-a609-410d-8301-143597ebd6fe"/>
 				<textElement markup="html">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="SansSerif" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="473" y="10" width="95" height="20" uuid="ca22b2fe-1c86-449e-ba1c-cf54bb587dde"/>
 				<textElement textAlignment="Right">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="SansSerif" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+"/"]]></textFieldExpression>
 			</textField>
@@ -562,21 +562,21 @@
 			<textField>
 				<reportElement x="18" y="70" width="214" height="20" uuid="7d23a789-5d14-426e-b234-5c9cbc3b914c"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11" isBold="false"/>
+					<font fontName="SansSerif" size="11" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{invoiceStatus}=="VALIDATED" ? ($F{invoiceCodeTypeLabel} != null && !$F{invoiceCodeTypeLabel}.isEmpty() ? $F{invoiceCodeTypeLabel} : "Invoice") + ": "+ $F{invoiceNumber} : "Draft " + ($F{invoiceCodeTypeLabel} != null ? $F{invoiceCodeTypeLabel} : "Invoice")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="18" y="86" width="190" height="20" uuid="f9f73956-b4a2-41c9-9fea-f0e4e3956d22"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11" isBold="false"/>
+					<font fontName="SansSerif" size="11" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Date: " + ($F{country}=="US" ? java.time.LocalDate.parse($F{invoiceDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{invoiceDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="18" y="101" width="190" height="20" uuid="f03bb93f-44f7-4b09-a3f9-e78c4d7ecb22"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="11" isBold="false"/>
+					<font fontName="SansSerif" size="11" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Due Date: " + ($F{country}=="US" ? java.time.LocalDate.parse($F{dueDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{dueDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))]]></textFieldExpression>
 			</textField>
@@ -585,7 +585,7 @@
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="SansSerif" size="10" isBold="false"/>
 					<paragraph rightIndent="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[(($F{baQuality}!=null && !String.valueOf($F{baQuality}).isEmpty() && !String.valueOf($F{baQuality}).equals("null")) ? $F{baQuality} + " " : "")
@@ -620,7 +620,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-						<font fontName="Arial" size="9.6"/>
+						<font fontName="SansSerif" size="9.6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($F{sellerDescription}!=null && !String.valueOf($F{sellerDescription}).isEmpty() && !String.valueOf($F{sellerDescription}).equals("null")) ? "<style isBold='true'>" + $F{sellerDescription} + "</style> - " : "") +
 (($F{sellerLegalType}!=null && !String.valueOf($F{sellerLegalType}).isEmpty() && !String.valueOf($F{sellerLegalType}).equals("null")) ? $F{sellerLegalType} : "") + 
