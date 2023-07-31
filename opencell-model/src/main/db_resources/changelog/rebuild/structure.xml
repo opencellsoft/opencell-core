@@ -2698,12 +2698,9 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="icd_id" type="bigint" />
-<<<<<<< HEAD
             <column name="exemption_reason" type="varchar(2000)" />
             <column name="price_list_id" type="bigint" />
-=======
             <column name="mass_data" type="${type.boolean}" defaultValueNumeric="0"/>
->>>>>>> 6a84c41c9d (RE #INTRD-17353)
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
