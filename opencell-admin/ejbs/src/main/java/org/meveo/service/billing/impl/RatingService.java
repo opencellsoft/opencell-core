@@ -1587,7 +1587,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     walletOperation.getTransactionalUnitAmountWithoutTax(),
                     walletOperation.getTransactionalUnitAmountWithTax());
         } else {
-            BigDecimal rate = walletOperation.getTradingCurrency() != null
+            BigDecimal rate = walletOperation.getTradingCurrency() != null && walletOperation.getTradingCurrency().getCurrentRate() != null
                     ? walletOperation.getTradingCurrency().getCurrentRate() : BigDecimal.ONE;
             calculateTransactionalAmounts(walletOperation, rate);
         }
