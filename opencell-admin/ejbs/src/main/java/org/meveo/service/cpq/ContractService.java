@@ -1,9 +1,11 @@
 package org.meveo.service.cpq;
 
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Arrays;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -168,18 +170,29 @@ public class ContractService extends BusinessService<Contract>  {
 	}
 
 	public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount,Seller seller, WalletOperation bareWalletOperation) {
-		return this.getContractByAccount(Arrays.asList(customer.getId()), billingAccount, customerAccount, Arrays.asList(seller.getId()),bareWalletOperation);
+		return this.getContractByAccount(Arrays.asList(customer.getId()), billingAccount, customerAccount, Arrays.asList(seller.getId()),bareWalletOperation,null);
 	}
-
-	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount,List<Long> sellersId, WalletOperation bareWalletOperation) {
+	
+	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount,List<Long> sellersId, WalletOperation bareWalletOperation, Date operationDate) {
 		try {
+			Date updateOD = bareWalletOperation != null ? bareWalletOperation.getOperationDate() : operationDate;
+			if(operationDate != null) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(operationDate);
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				updateOD = calendar.getTime();
+
+			}
 			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
-					.setParameter("customerIds", customersID)
-					.setParameter("billingAccountId", billingAccount.getId())
+					.setParameter("customerIds", customersID).setParameter("billingAccountId", billingAccount.getId())
 					.setParameter("customerAccountId",customerAccount.getId())
+					.setParameter("operationDate", updateOD)
 					.setParameter("sellerIds",sellersId).getResultList();
-			
-			
+
+
 			return contracts.stream()
 					.filter(c -> {
 						try {

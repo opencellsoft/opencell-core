@@ -169,17 +169,4 @@ public class ContractItemService extends BusinessService<ContractItem> {
 					contractLine.getCode()));
 		}
 	}
-    
-    
-    
-    @SuppressWarnings("unchecked")
-    public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate,WalletOperation walletOperation) {
-        for (Contract contract : contracts) {
-            ContractItem contractItem = getApplicableContractItem(contract, offer, productId, chargeTemplate,walletOperation);
-            if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
-                return contract;
-            };
-        }
-        return null;
-    }
 }

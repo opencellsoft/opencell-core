@@ -648,7 +648,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 			List<Long> sellerIds = sellers.stream().map(Seller::getId).collect(Collectors.toList());
             
             //Get contract by list of customer ids, billing account, customer account and list of seller ids ordered by "contractDate and creationDate Desc"  
-            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, sellerIds,bareWalletOperation);
+            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, sellerIds,bareWalletOperation,null);
             List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(bareWalletOperation.getCode());
             if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                 throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
@@ -665,18 +665,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ContractItem contractItem = null;
                 if (serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
-	                Long productId = serviceInstance.getProductVersion() != null ? serviceInstance.getProductVersion().getProduct().getId() : null;
                     Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null && "ACTIVE".equals(bareWalletOperation.getSubscription().getContract().getStatus()) ? bareWalletOperation.getSubscription().getContract() : null : null;
-                    if(contractFromSubscription == null) {
-                        Contract contractMatched = contractItemService.getApplicableContract(contracts, offerTemplate, productId, chargeTemplate,bareWalletOperation);
-                        if (contractMatched != null) {
-                            contract = contractMatched;
-                        }
-                    }else {
+                    if(contractFromSubscription != null) {
                         contract = contractFromSubscription;
                     }
-                    contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, productId, chargeTemplate,bareWalletOperation);
-
+                        contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getProductVersion() != null ? serviceInstance.getProductVersion().getProduct().getId() : null,
+                            chargeTemplate, bareWalletOperation);
+                    
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
                         if (contractItem.getPricePlan() != null) {
                             pricePlan = contractItem.getPricePlan();
