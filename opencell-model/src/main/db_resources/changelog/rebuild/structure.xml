@@ -11002,6 +11002,11 @@
             <column name="accuracy" type="int" defaultValueNumeric="0">
                  <constraints nullable="false" />
             </column>
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" unique="true"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-492" author="NabilOUACHI">
@@ -20302,6 +20307,7 @@
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
 	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
+    <changeSet id="#INTRD-17451_20230731" author="ZBariki" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

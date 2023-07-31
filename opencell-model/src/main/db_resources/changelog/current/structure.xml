@@ -17099,4 +17099,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
     </changeSet>
 
+    <changeSet id="#INTRD-17451_20230731" author="ZBariki">
+        <addColumn tableName="cpq_price_plan_matrix_line">
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </addColumn>
+        <sql>update ${db.schema.adapted}cpq_price_plan_matrix_line set uuid = 'ppml'||id</sql>
+    </changeSet>
+
 </databaseChangeLog>
