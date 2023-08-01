@@ -191,6 +191,7 @@ public class RefundApi extends BaseApi {
         if (customerAccount.getTradingCurrency() != null && customerAccount.getTradingCurrency().getCurrentRate() != null) {
             refund.setTransactionalAmount(refund.getAmount().multiply(customerAccount.getTradingCurrency().getCurrentRate()));
             refund.setTransactionalUnMatchingAmount(refund.getAmount().multiply(customerAccount.getTradingCurrency().getCurrentRate()));
+            refund.setTransactionalCurrency(customerAccount.getTradingCurrency());
         }
 
         // populate customFields
@@ -288,7 +289,12 @@ public class RefundApi extends BaseApi {
                 // Link AO with Invoice
                 RecordedInvoice aoInvoiceCreditNote = (RecordedInvoice) accountOperationService.findById(aoAdjRefId);
                 aoInvoiceCreditNote.setInvoice(invoiceCreditNote);
+                aoInvoiceCreditNote.setReference(invoiceCreditNote.getInvoiceNumber());
                 accountOperationService.update(aoInvoiceCreditNote);
+
+                // Link invoice with AO
+                invoiceCreditNote.setRecordedInvoice(aoInvoiceCreditNote);
+                invoiceService.update(invoiceCreditNote);
 
                 // Add link between AO_ADJ_REF (new) and Payment (existing)
                 refund.setRefundedPayment(payment);
