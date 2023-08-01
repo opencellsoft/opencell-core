@@ -289,6 +289,7 @@ public class RefundApi extends BaseApi {
                 // Link AO with Invoice
                 RecordedInvoice aoInvoiceCreditNote = (RecordedInvoice) accountOperationService.findById(aoAdjRefId);
                 aoInvoiceCreditNote.setInvoice(invoiceCreditNote);
+                aoInvoiceCreditNote.setReference(invoiceCreditNote.getInvoiceNumber());
                 accountOperationService.update(aoInvoiceCreditNote);
 
                 // Link invoice with AO
