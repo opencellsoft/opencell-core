@@ -944,12 +944,6 @@ public class SubscriptionApi extends BaseApi {
 
                 try {
                     serviceInstance.clearTransientSubscriptionChargeInstance();
-                    if (serviceInstance.getStatus().equals(InstanceStatusEnum.PENDING)) {
-                        Date deliveryDate = Optional.ofNullable(serviceToActivateByServiceCode.get(serviceInstance.getCode()))
-                                            .map(ServiceToActivateDto::getSubscriptionDate)
-                                            .orElse(new Date());
-                        serviceInstance.setDeliveryDate(deliveryDate);
-                    }
                     serviceInstanceService.serviceActivation(serviceInstance);
                     
                 } catch (BusinessException e) {
