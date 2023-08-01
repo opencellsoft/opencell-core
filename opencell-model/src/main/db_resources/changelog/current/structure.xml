@@ -17104,10 +17104,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="cf_values_accum" type="${type.json}"></column>
             <column name="cf_values" type="${type.json}"></column>
             <column name="uuid" type="varchar(60)">
-                <constraints nullable="false" unique="true"/>
+                <constraints unique="true"/>
             </column>
         </addColumn>
         <sql>update ${db.schema.adapted}cpq_price_plan_matrix_line set uuid = 'ppml'||id</sql>
+        <addNotNullConstraint tableName="cpq_price_plan_matrix_line" columnName="uuid" columnDataType="varchar(60)"/>
     </changeSet>
 
 </databaseChangeLog>
