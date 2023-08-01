@@ -17111,4 +17111,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addNotNullConstraint tableName="cpq_price_plan_matrix_line" columnName="uuid" columnDataType="varchar(60)"/>
     </changeSet>
 
+    <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe">
+        <sql>create index idx__billing_wo__charge_instance_id on billing_wallet_operation(charge_instance_id)</sql>
+        <sql>create index idx__billing_wo__billing_account_id on billing_wallet_operation(billing_account_id)</sql>
+        <sql>create index idx__billing_wo__subscription_id on billing_wallet_operation(subscription_id)</sql>
+
+        <sql>create index idx__charge_instance__lower_code on billing_charge_instance(lower(code))</sql>
+        <sql>create index idx__charge_instance__lower_description on billing_charge_instance(lower(description))</sql>
+    </changeSet>
+
 </databaseChangeLog>
