@@ -645,11 +645,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         seller = (aggregatedWo.getSeller() == null && sub != null) ? sub.getSeller() : sellerService.refreshOrRetrieve(aggregatedWo.getSeller());
         if (StringUtils.isBlank(code)) {
             if (ci != null) {
-                code = ci.getCode();
+                code = ci != null ? ci.getCode() : null;
             } else if (si != null) {
-                code = si.getCode();
+                code = si != null ? si.getCode() : null;
             } else {
-                code = isc.getCode();
+                code = isc != null ? isc.getCode() : null;
             }
         }
 
