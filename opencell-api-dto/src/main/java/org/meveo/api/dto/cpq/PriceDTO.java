@@ -31,6 +31,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.tax.TaxCategory;
@@ -99,6 +100,7 @@ public class PriceDTO extends BaseEntityDto {
     private String pricePlanMatrixLabel;
     private Long pricePlanMatrixVersionId;
     private Long pricePlanMatrixLineId;
+    private ContractRateTypeEnum contractItemRateType;
     
     private CustomFieldsDto customFields;
     
@@ -144,6 +146,7 @@ public class PriceDTO extends BaseEntityDto {
 		   contractDescription=contractItem.getContract().getDescription();
 		   contractItemCode=contractItem.getCode();
 		   contractItemDescription=contractItem.getDescription();
+		   contractItemRateType=contractItem.getContractRateType();
 	   }
 	   if(quotePrice.getPricePlanMatrixVersion()!=null) {
 		   PricePlanMatrixVersion ppmv=quotePrice.getPricePlanMatrixVersion();
@@ -436,6 +439,16 @@ public class PriceDTO extends BaseEntityDto {
 	public void setPricePlanMatrixLabel(String pricePlanMatrixLabel) {
 		this.pricePlanMatrixLabel = pricePlanMatrixLabel;
 	}
+
+	public ContractRateTypeEnum getContractItemRateType() {
+		return contractItemRateType;
+	}
+
+	public void setContractItemRateType(ContractRateTypeEnum contractItemRateType) {
+		this.contractItemRateType = contractItemRateType;
+	}
+
+	
 	
 	
 	 
