@@ -136,14 +136,14 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
 
     private List<DiscountPlan> getIncompatibleDiscountPlans(List<DiscountPlanDto> incompatibleDiscountPlansDto) {
-        if (incompatibleDiscountPlansDto == null) {
+        if (incompatibleDiscountPlansDto == null || incompatibleDiscountPlansDto.isEmpty()) {
             return null;
         }
         List<DiscountPlan> incompatibleDiscountPlans = new ArrayList<>();
         for (DiscountPlanDto discountPlanDto : incompatibleDiscountPlansDto) {
             DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanDto.getCode());
             if (discountPlan == null) {
-                throw new BusinessException("The discout plan with code " + discountPlanDto.getCode() + " not found");
+                throw new BusinessException("Incompatible discout plan with code " + discountPlanDto.getCode() + " not found");
             }
             incompatibleDiscountPlans.add(discountPlan);
         }
@@ -212,6 +212,8 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
                 }
                 discountPlan.getIncompatibleDiscountPlans().clear();
                 discountPlan.getIncompatibleDiscountPlans().addAll(discountPlans);
+            } else {
+            	discountPlan.getIncompatibleDiscountPlans().clear();
             }
             List<ApplicableEntity> applicableEntities = getApplicableEntities(postData.getApplicableEntities());
             if (applicableEntities != null && !applicableEntities.isEmpty()) {
