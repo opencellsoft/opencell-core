@@ -64,7 +64,6 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
@@ -128,7 +127,6 @@ import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.billing.impl.article.ArticleMappingLineService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PriceListService;
@@ -267,9 +265,6 @@ public class CpqQuoteApi extends BaseApi {
 
     @Inject
     private PriceListService priceListService;
-    
-    @Inject 
-	private ArticleMappingLineService articleMappingLineService;
     
     private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     
@@ -1992,11 +1987,9 @@ public class CpqQuoteApi extends BaseApi {
               // Add subscription charges
                  for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                      try {
-                         List<ArticleMappingLine> articleMappingLines = articleMappingLineService.findByProductAndCharge(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), subscription.getOffer(), null, null, null);
-                         if (articleMappingLines == null || articleMappingLines.isEmpty()) {
-                         	throw new BusinessException(errorMsg + " and charge " + subscriptionCharge.getChargeTemplate());
-                         }
-                         AccountingArticle subscriptionChargeArticle = articleMappingLines.get(0).getAccountingArticle();
+                    	 AccountingArticle subscriptionChargeArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), subscriptionCharge.getChargeTemplate(), subscription.getOffer(), attributes,null)
+                                 .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + subscriptionCharge.getChargeTemplate()));
+                    	 
                          if (overrodeArticle.keySet().contains(subscriptionChargeArticle)) {
                              QuoteArticleLine quoteArticleLine = overrodeArticle.get(subscriptionChargeArticle).get(0);
                              subscriptionCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
@@ -2025,11 +2018,9 @@ public class CpqQuoteApi extends BaseApi {
                 // Add recurring charges
                 for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                     try {
-                        List<ArticleMappingLine> articleMappingLines = articleMappingLineService.findByProductAndCharge(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), subscription.getOffer(), null, null, null);
-                        if (articleMappingLines == null || articleMappingLines.isEmpty()) {
-                        	throw new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate());
-                        }
-                        AccountingArticle recurringArticle = articleMappingLines.get(0).getAccountingArticle();
+                    	AccountingArticle recurringArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), recurringCharge.getChargeTemplate(), subscription.getOffer(), attributes, null)
+                                .orElseThrow(() -> new BusinessException(errorMsg + " and charge " + recurringCharge.getChargeTemplate()));
+                    	
                         if (overrodeArticle.keySet().contains(recurringArticle)) {
                             QuoteArticleLine quoteArticleLine = overrodeArticle.get(recurringArticle).get(0);
                             recurringCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
