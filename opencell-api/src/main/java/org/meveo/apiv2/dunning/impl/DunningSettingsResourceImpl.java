@@ -20,7 +20,8 @@ public class DunningSettingsResourceImpl implements DunningSettingResource {
 	private DunningTemplateService dunningTemplateService;
 
 	private DunningSettingsMapper mapper = new DunningSettingsMapper();
-	
+
+	@Transactional
 	@Override
 	public Response create(org.meveo.apiv2.dunning.DunningSettings dunningSettings) {
 		var entity = mapper.toEntity(dunningSettings);
@@ -33,6 +34,7 @@ public class DunningSettingsResourceImpl implements DunningSettingResource {
 				.build();
 	}
 
+	@Transactional
 	@Override
 	public Response update(org.meveo.apiv2.dunning.DunningSettings dunningSettings, Long dunningId) {
 		var updated = dunningSettingsApiService.update(dunningId, mapper.toEntity(dunningSettings)).get();

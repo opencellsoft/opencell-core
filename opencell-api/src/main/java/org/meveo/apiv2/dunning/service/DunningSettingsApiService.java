@@ -67,7 +67,6 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 		return Optional.ofNullable(dunningSettingsService.findById(id));
 	}
 
-	@Transactional
 	@Override
 	public DunningSettings create(DunningSettings baseEntity) {
 		globalSettingsVerifier.checkActivateDunning();
@@ -98,7 +97,6 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 		return baseEntity;
 	}
 
-	@Transactional
 	@Override
 	public Optional<DunningSettings> update(Long id, DunningSettings dunningSettings) {
 		globalSettingsVerifier.checkActivateDunning();
