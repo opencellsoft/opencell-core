@@ -108,7 +108,6 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountByBA", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "ServiceInstance.findByServiceCodeAndSubscriptionId", query = "select s from ServiceInstance s where s.code = :code and s.subscription.id = :subscriptionId"),
         @NamedQuery(name = "ServiceInstance.findBySubscriptionIdLoadAttributes", query = "select distinct(s) from ServiceInstance s left join fetch s.attributeInstances sai where s.subscription.id = :subscriptionId"),
-        @NamedQuery(name = "ServiceInstance.findByIdAndFetchProduct", query = "select s from ServiceInstance s left join fetch s.productVersion pv left join fetch pv.product p left join fetch p.modelChildren left join fetch s.attributeInstances ai left join fetch ai.attribute where s.id = :id "),
         @NamedQuery(name = "ServiceInstance.getPendingToActivate", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscriptionDate is not null and s.subscriptionDate<:date and s.status in (:statuses)"),
 })
 public class ServiceInstance extends BusinessCFEntity implements IInvoicingMinimumApplicable,IWFEntity, ICounterEntity, IDiscountable  {
