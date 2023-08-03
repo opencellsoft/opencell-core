@@ -214,7 +214,13 @@ public class AgedReceivableMapper extends ResourceMapper<AgedReceivable, AgedRec
 			if(agedList[28] != null && agedList[28] instanceof Name) {
 				agedReceivableDto.setCustomerAccountName(getName((Name) agedList[28]));
 			}
-			agedReceivableDto.setCustomerAccountDescription((String) agedList[29]);
+
+			if(agedReceivableDto.getCustomerAccountName() != null) {
+				agedReceivableDto.setCustomerAccountDescription(agedReceivableDto.getCustomerAccountName());
+			} else {
+				agedReceivableDto.setCustomerAccountDescription((String) agedList[29]);
+			}
+
 			agedReceivableDto.setSellerDescription((String) agedList[30]);
 			agedReceivableDto.setSellerCode((String) agedList[31]);
 			agedReceivableDto.setDueDate(agedList[32] == null ? null : ((Date) agedList[32]));
