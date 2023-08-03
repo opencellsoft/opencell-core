@@ -115,7 +115,7 @@ public class MediationApiServiceTest {
         
         doNothing().when(cdrService).create(any());
         
-        CdrDtoResponse response = mediationApiService.createCdr(cdrs, ProcessCdrListModeEnum.PROCESS_ALL, true, true);
+        CdrDtoResponse response = mediationApiService.createCdr(cdrs, ProcessingModeEnum.PROCESS_ALL, true, true);
 
         assertEquals(0, response.getErrors().size());;
         
@@ -134,7 +134,7 @@ public class MediationApiServiceTest {
         
         doNothing().when(cdrService).create(any());
         
-        CdrDtoResponse response = mediationApiService.createCdr(cdrs, ProcessCdrListModeEnum.PROCESS_ALL, true, true);
+        CdrDtoResponse response = mediationApiService.createCdr(cdrs, ProcessingModeEnum.PROCESS_ALL, true, true);
 
         //assertEquals("missing paramters : [eventDate]", response.getErrors().get(0).getRejectReason());;
         
@@ -227,7 +227,7 @@ public class MediationApiServiceTest {
 
         when(cdrService.findById(anyLong())).thenReturn(cdrs.get(0), cdrs.get(1));
         
-        CdrDtoResponse response =  mediationApiService.deleteCdrs(Arrays.asList(1L, 2L), ProcessCdrListModeEnum.PROCESS_ALL, true, true);
+        CdrDtoResponse response =  mediationApiService.deleteCdrs(Arrays.asList(1L, 2L), ProcessingModeEnum.PROCESS_ALL, true, true);
         assertEquals(0, response.getErrors().size());
     }
     
@@ -241,7 +241,7 @@ public class MediationApiServiceTest {
 
         when(cdrService.findById(anyLong())).thenReturn(cdrs.get(0), cdrs.get(1));
         
-        CdrDtoResponse response =  mediationApiService.deleteCdrs(Arrays.asList(1L, 2L), ProcessCdrListModeEnum.PROCESS_ALL, true, true);
+        CdrDtoResponse response =  mediationApiService.deleteCdrs(Arrays.asList(1L, 2L), ProcessingModeEnum.PROCESS_ALL, true, true);
 
         var statusToBeDeleted = Arrays.asList(CDRStatusEnum.OPEN, CDRStatusEnum.TO_REPROCESS, CDRStatusEnum.ERROR, CDRStatusEnum.DISCARDED);
         assertEquals("Only CDR with status : " + statusToBeDeleted.toString() + " can be deleted", response.getErrors().get(0).getRejectReason());

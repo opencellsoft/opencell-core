@@ -15762,6 +15762,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropUniqueConstraint tableName="cpq_price_plan_version" constraintName="cpq_price_plan_version_UNIC"/>
         <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
+    
+    <changeSet id="#INTRD-14264_20230222" author="TarikFA.">
+    	<addColumn tableName="billing_rated_transaction">
+    		<column name="origin_ratedtransaction_id" type="bigint" />
+    	</addColumn>
+    </changeSet>
 
     <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
         <addColumn tableName="billing_rated_transaction">
@@ -15869,6 +15875,22 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
     </changeSet>
 
+    <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe">
+        <sql>create index idx__billing_rating_transaction__id_desc on ${db.schema.adapted}billing_rated_transaction (id desc)</sql>
+        <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
+    </changeSet>
+	
+	<changeSet id="#INTRD-14263_20200304" author="TarikFA.">
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe">
+        <sql>create index idx__billing_wo__billing_account_id on ${db.schema.adapted}billing_wallet_operation(billing_account_id)</sql>
+
+        <sql>create index idx__charge_instance__lower_description on ${db.schema.adapted}billing_charge_instance(lower(description))</sql>
+    </changeSet>
+
+
     <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius">
         <sql>CREATE INDEX idx__billing_invoice_line_il_job ON ${db.schema.adapted}billing_invoice_line USING btree (billing_run_id, billing_account_id, offer_template_id, accounting_article_id, tax_id) where status='OPEN'</sql>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob' ) </sql>
@@ -15902,6 +15924,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__label ON ${db.schema.adapted}billing_invoice_line</sql>
         <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__taxRate ON ${db.schema.adapted}billing_invoice_line</sql>
         <sql>DROP INDEX IF EXISTS idx__billing_subscription__order_id ON ${db.schema.adapted}billing_invoice_line</sql>
+
+        <sql>DROP INDEX IF EXISTS idx__billing_billing_account__lower_code on ${db.schema.adapted}billing_billing_account</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_wo__charge_instance_id on ${db.schema.adapted}billing_wallet_operation</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_wo__subscription_id on billing_wallet_operation</sql>
+        <sql>DROP INDEX IF EXISTS idx__charge_instance__lower_code on ${db.schema.adapted}billing_charge_instance</sql>
+
     </changeSet>
 
 </databaseChangeLog>
