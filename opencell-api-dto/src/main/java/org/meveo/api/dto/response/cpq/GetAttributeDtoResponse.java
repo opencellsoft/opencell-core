@@ -1,6 +1,16 @@
 package org.meveo.api.dto.response.cpq;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -9,18 +19,13 @@ import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.MediaDto;
+import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeBaseEntity;
+import org.meveo.model.cpq.ProductVersionAttribute;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 
@@ -32,7 +37,7 @@ import java.util.stream.Collectors;
 @XmlRootElement(name = "GetAttributeDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes","tagCodes","assignedAttributeCodes","mediaCodes"})
-public class GetAttributeDtoResponse extends AttributeDTO{
+public class GetAttributeDtoResponse extends ProductVersionAttributeDTO{
  
 	@XmlElementWrapper(name = "chargeTemplates")
     @XmlElement(name = "chargeTemplates")
@@ -83,7 +88,7 @@ public class GetAttributeDtoResponse extends AttributeDTO{
     }
     
     public GetAttributeDtoResponse(Attribute attribute, Set<ChargeTemplateDto> chargeTemplates, List<TagDto> tags,List<AttributeDTO> assignedAttributes,boolean loadMedias) {
- 		super(attribute);
+ 		super(attribute,null);
  		this.chargeTemplates = chargeTemplates;
  		this.tags=tags;
  		this.assignedAttributes=assignedAttributes;
@@ -101,6 +106,17 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 					.collect(Collectors.toList());
 		}
  	}
+    
+	public GetAttributeDtoResponse(AttributeBaseEntity attributeBaseEntity, Set<ChargeTemplateDto> chargeTemplates, List<TagDto> tags,
+			List<AttributeDTO> assignedAttributes, List<MediaDto> medias, List<GroupedAttributeDto> groupedAttributes) {
+		super(attributeBaseEntity,false);
+		this.chargeTemplates = chargeTemplates;
+		this.tags = tags;
+		this.assignedAttributes = assignedAttributes;
+		this.medias = medias;
+		this.groupedAttributes = groupedAttributes;
+	}
+	
     
 
     /**

@@ -35,6 +35,7 @@ import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
+import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
 
@@ -91,7 +92,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "offerAttributes")
     @XmlElement(name = "offerAttributes")
     @Schema(description = "list of attributes")
-    protected List<OfferTemplateAttributeDTO> offerAttributes=new ArrayList<OfferTemplateAttributeDTO>();
+    protected List<ProductVersionAttributeDTO> offerAttributes=new ArrayList<ProductVersionAttributeDTO>();
     
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
@@ -518,14 +519,14 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	/**
 	 * @return the offerAttributes
 	 */
-	public List<OfferTemplateAttributeDTO> getOfferAttributes() {
+	public List<ProductVersionAttributeDTO> getOfferAttributes() {
 		return offerAttributes;
 	}
 
 	/**
 	 * @param offerAttributes the offerAttributes to set
 	 */
-	public void setOfferAttributes(List<OfferTemplateAttributeDTO> offerAttributes) {
+	public void setOfferAttributes(List<ProductVersionAttributeDTO> offerAttributes) {
 		this.offerAttributes = offerAttributes;
 	}
 
