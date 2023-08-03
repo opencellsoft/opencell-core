@@ -43,12 +43,6 @@ public class WsRestApiInterceptor {
     @CurrentUser
     private MeveoUser currentUser;
 
-    @Inject
-    private AuditOrigin auditOrigin;
-
-    @Inject
-    private AuditUtils auditUtils;
-
     private static final Logger log = LoggerFactory.getLogger(WsRestApiInterceptor.class);
 
     @AroundInvoke
@@ -60,8 +54,7 @@ public class WsRestApiInterceptor {
             MDC.put("providerCode", currentUser.getProviderCode());
         }
 
-        auditOrigin.setAuditOrigin(ChangeOriginEnum.API);
-        auditOrigin.setAuditOriginName(auditUtils.getAuditOrigin(invocationContext));
+        AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.API, AuditUtils.getAuditOrigin(invocationContext));
 
         if (log.isDebugEnabled()) {
             log.debug("\r\n\r\n===========================================================");

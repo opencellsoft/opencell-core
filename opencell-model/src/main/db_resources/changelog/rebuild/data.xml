@@ -12054,6 +12054,98 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="uuid" value="PriceListStatusJob_Job" />
 		</insert>
 	</changeSet>
+    
+    <changeSet id="#INTRD-10574_20221013-job" author="AndriusKarpavicius">    
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2022-12-22 15:13:19.913" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="AuditDataLogAggregationJob" />
+            <column name="code" value="AuditDataLogAggregationJob" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="timerentity_id"
+                    valueComputed="(SELECT id from meveo_timer where code = 'Hourly')" />
+            <column name="uuid" value="AuditDataLogAggregationJob_Job" />
+        </insert>
+    </changeSet> 
+
+    <changeSet id="#INTRD-10574_20230213" author="AndriusKarpavicius">
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.Subscription"/>
+            <column name="entity_fields" value="status,userAccount,subscriptionRenewal,renewed"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.ServiceInstance"/>
+            <column name="entity_fields" value="status,serviceRenewal,renewed"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.Invoice"/>
+            <column name="entity_fields" value="status,xmlDate,pdfDate,emailSentDate,paymentStatus"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.order.Order"/>
+            <column name="entity_fields" value="status"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.AccountOperation"/>
+            <column name="entity_fields" value="collectionDate"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.CustomerAccount"/>
+            <column name="entity_fields" value="customer"/>
+        </insert>
+    
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.PaymentScheduleInstance"/>
+            <column name="entity_fields" value="amount"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.PaymentScheduleInstanceItem"/>
+            <column name="entity_fields" value="requestPaymentDate,amount"/>
+        </insert>
+        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst_item','request_pay_date,amount', null, null)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst','amount', null, null)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_customer_account','customer_id', null, null)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_account_operation','collection_date', null, null)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ord_order','status', null, null)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_invoice','status,xml_date,pdf_date,email_sent_date,payment_status', null, null)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_subscription','status,user_account_id,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_service_instance','status,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null)</sql>
+    </changeSet>
 	
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
@@ -12066,6 +12158,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="INTRD-17129_20230627" author="TarikFA." />
     <changeSet id="INTRD-17135_20230713" author="TarikFA." />
 	<changeSet id="INTRD-16743_20230720" author="aelmalki" />
+    <changeSet id="#INTRD-10574_20230214" author="AndriusKarpavicius"/>
     	
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

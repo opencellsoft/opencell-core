@@ -78,6 +78,7 @@ public class RatedTransactionsJob extends Job {
         return result;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.INVOICING;

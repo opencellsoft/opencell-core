@@ -44,8 +44,6 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.RatingResult;
-import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
@@ -82,7 +80,6 @@ import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.DiscountPlanService;
@@ -154,9 +151,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     @Inject
     private OrderHistoryService orderHistoryService;
 
-    @Inject
-    private AuditableFieldService auditableFieldService;
-    
     @Inject
     private CounterInstanceService counterInstanceService;
 
@@ -965,8 +959,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public void create(ServiceInstance entity) throws BusinessException {
         entity.updateSubscribedTillAndRenewalNotifyDates();
         super.create(entity);
-        // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
-        auditableFieldService.createFieldHistory(entity, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(entity.getStatus()));
     }
 
     @Override

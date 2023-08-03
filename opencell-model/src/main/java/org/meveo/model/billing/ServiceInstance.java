@@ -290,7 +290,8 @@ public class ServiceInstance extends BusinessCFEntity implements IInvoicingMinim
     @Column(name = "subscribed_till_date")
     private Date subscribedTillDate;
 
-    /** Was subscription renewed. */
+    /** Was service renewed. */
+    @AuditTarget(type = AuditChangeTypeEnum.RENEWAL, history = true, notif = true)
     @Type(type = "numeric_boolean")
     @Column(name = "renewed")
     private boolean renewed;

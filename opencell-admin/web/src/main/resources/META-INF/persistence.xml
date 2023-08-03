@@ -21,6 +21,7 @@
             <property name="hibernate.cache.default_cache_concurrency_strategy" value="read-write" />
             <property name="hibernate.generate_statistics" value="false" />
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
+            <property name="hibernate.proc.param_null_passing" value="true" />
             
             <!-- PG driver 42.5.0 needs this to work with partitioned tables -->
             <property name="hibernate.hbm2dll.extra_physical_table_types" value="PARTITIONED TABLE" />
@@ -34,7 +35,6 @@
             <!-- Revert that @ManyToOne wont result in related entity select after the update call -->
             <property name="hibernate.jpa.compliance.proxy" value="false" />
 
-            <property name="hibernate.session_factory.interceptor" value="org.meveo.interceptor.FieldAuditInterceptor" />
             <property name="hibernate.ejb.event.create" value="org.meveo.jpa.event.CreateEventListener" />
 
             <!--skip duplicate ID_GENERATOR ERROR IN WF17 -->
@@ -68,6 +68,7 @@
             <property name="hibernate.cache.region.factory_class" value="org.jboss.as.jpa.hibernate5.infinispan.SharedInfinispanRegionFactory" />
             <property name="hibernate.generate_statistics" value="false" />
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
+            <property name="hibernate.proc.param_null_passing" value="true" />
             
             <!-- PG driver 42.5.0 needs this to work with partitioned tables -->
             <property name="hibernate.hbm2dll.extra_physical_table_types" value="PARTITIONED TABLE" />
@@ -81,7 +82,6 @@
             <!-- Revert that @ManyToOne wont result in related entity select after the update call -->
             <property name="hibernate.jpa.compliance.proxy" value="false" />
 
-            <property name="hibernate.session_factory.interceptor" value="org.meveo.interceptor.FieldAuditInterceptor" />
             <property name="hibernate.ejb.event.create" value="org.meveo.jpa.event.CreateEventListener" />
 
             <!--skip duplicate ID_GENERATOR ERROR IN WF17 -->

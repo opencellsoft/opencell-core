@@ -1797,6 +1797,12 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		<to-view-id>/pages/admin/auditLogs/auditConfiguration.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
+    
+    <navigation-case>
+        <from-outcome>auditDataConfiguration</from-outcome>
+        <to-view-id>/pages/admin/auditLogs/auditDataConfiguration.xhtml</to-view-id>
+        <redirect />
+    </navigation-case>
 	
 	<navigation-case>
 		<from-outcome>auditLog</from-outcome>

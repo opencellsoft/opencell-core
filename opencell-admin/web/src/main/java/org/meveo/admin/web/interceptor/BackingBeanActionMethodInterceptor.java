@@ -63,9 +63,6 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
     protected Messages messages;
 
     @Inject
-    private AuditOrigin auditOrigin;
-
-    @Inject
     private ResourceBundle resourceMessages;
 
     /**
@@ -80,12 +77,11 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
-        
+
         Object result = null;
         try {
 
-            auditOrigin.setAuditOrigin(ChangeOriginEnum.GUI);
-            auditOrigin.setAuditOriginName(FacesContext.getCurrentInstance().getViewRoot().getViewId());
+            AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.GUI, FacesContext.getCurrentInstance().getViewRoot().getViewId());
 
             // Call a backing bean method
             result = invocationContext.proceed();
@@ -95,7 +91,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             log.error("Transaction must have been rollbacked already (probably by exception thown in service and caught in backing bean): {}", e.getMessage());
             return result;
         } catch (Exception e) {
-            
+
             // See if can get to the root of the exception cause
             String message = e.getMessage();
             String messageKey = null;
@@ -139,13 +135,13 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                         message = resourceMessages.getString("error.database.constraint.violationWName", matcherCheck.group(1));
                     }
                     break;
-                    
+
                 } else if (cause instanceof EncryptionException) {
                     message = cause.getMessage();
                     log.error("Error while de/encrypting: " + cause.getMessage(), cause);
                     break;
                 }
-                
+
                 cause = cause.getCause();
             }
 
