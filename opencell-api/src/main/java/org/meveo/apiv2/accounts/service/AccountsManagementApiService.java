@@ -54,7 +54,6 @@ import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
@@ -74,7 +73,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.CounterInstanceService;
@@ -127,9 +125,6 @@ public class AccountsManagementApiService {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-
-    @Inject
-    private AuditableFieldService auditableFieldService;
 
     @Inject
     private CounterTemplateService counterTemplateService;
@@ -285,9 +280,8 @@ public class AccountsManagementApiService {
         var recurringServiceInstance = recurringChargeInstanceService.findRecurringChargeInstanceBySubscriptionId(subscription.getId());
         changeToNewUserAccount(recurringServiceInstance, newOwner);
 
-        // The change must be logged (audit log + make Subscription.userAccount into auditable field)
+        // The change must be logged (audit log)
         createAuditLog(Subscription.class.getName());
-        auditableFieldService.createFieldHistory(subscription, "userAccount", AuditChangeTypeEnum.OTHER, oldUserAccount, newOwner.getCode());
         return count;
     }
     
@@ -344,7 +338,6 @@ public class AccountsManagementApiService {
             .flatMap(List::stream).peek(walletOperation -> walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE))
             .forEach(walletOperation -> walletOperationService.update(walletOperation));
 
-        auditableFieldService.createFieldHistory(customerAccount, "customer", AuditChangeTypeEnum.OTHER, newCustomerParent.getCode(), oldCustomerParent.getCode());
         createAuditLog(CustomerAccount.class.getName());
         log.info("the parent customer for the customer account {}, changed from {} to {}", customerAccount.getCode(), oldCustomerParent.getCode(), newCustomerParent.getCode());
     }
@@ -356,8 +349,8 @@ public class AccountsManagementApiService {
 
         List<ServiceInstance> serviceInstances = getServiceInstances(dto);
 
-        // si level SI, on boucle et on traite pour chaque serviceInstance retrouvé
-        // si level subscritpion : on traite le premier en respectant un critere de date à voir
+        // si level SI, on boucle et on traite pour chaque serviceInstance retrouve
+        // si level subscritpion : on traite le premier en respectant un critere de date a voir
         if (serviceInstances.size() > 1 && CounterTemplateLevel.SU == counterTemplate.getCounterLevel()) {
             serviceInstances.sort(Comparator.comparing(ServiceInstance::getStatusDate));
             processCreateCounterInstanceAndPeriod(dto, serviceInstances.get(0), counterTemplate, createdCounterInstances);
@@ -382,8 +375,8 @@ public class AccountsManagementApiService {
 
         List<ServiceInstance> serviceInstances = getServiceInstances(dto);
 
-        // si level SI, on boucle et on traite pour chaque serviceInstance retrouvé
-        // si level subscritpion : on traite le premier en respectant un critere de date à voir
+        // si level SI, on boucle et on traite pour chaque serviceInstance retrouve
+        // si level subscritpion : on traite le premier en respectant un critere de date a voir
         if (serviceInstances.size() > 1 && CounterTemplateLevel.SU == counterTemplate.getCounterLevel()) {
             serviceInstances.sort(Comparator.comparing(ServiceInstance::getStatusDate));
             processUpdateCounterInstanceAndPeriod(counterInstance, dto, serviceInstances.get(0), counterTemplate);

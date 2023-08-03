@@ -30,7 +30,6 @@ import java.util.Enumeration;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -72,9 +71,6 @@ public class InboundServlet extends HttpServlet {
     @InboundRequestReceived
     protected Event<InboundRequest> eventProducer;
 
-    @Inject
-    private AuditOrigin auditOrigin;
-
     private void doService(HttpServletRequest req, HttpServletResponse res) {
         
         try {
@@ -82,8 +78,7 @@ public class InboundServlet extends HttpServlet {
             String path = req.getPathInfo();
             log.debug("received request for method {} , path={}", req.getMethod(), path);
 
-            auditOrigin.setAuditOrigin(ChangeOriginEnum.INBOUND_REQUEST);
-            auditOrigin.setAuditOriginName(path);
+            AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.INBOUND_REQUEST, path);
 
             InboundRequest inReq = new InboundRequest();
             inReq.setCode(req.getRemoteAddr() + "_" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());
