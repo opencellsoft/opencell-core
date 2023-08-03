@@ -850,9 +850,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     		        									})
                                                         .collect(Collectors.toSet());
                                             getProductVersionResponse.setGroupedAttributes(groupedAttributeDtos);
-                                        
-                                        productDTO.setCurrentProductVersion(getProductVersionResponse);
                                     }
+        							productDTO.setCurrentProductVersion(getProductVersionResponse);
                                 }
                             }
                         }
