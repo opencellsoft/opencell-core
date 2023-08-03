@@ -2703,6 +2703,7 @@
             <column name="icd_id" type="bigint" />
             <column name="exemption_reason" type="varchar(2000)" />
             <column name="price_list_id" type="bigint" />
+            <column name="mass_data" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -17681,6 +17682,15 @@
         <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
     </changeSet>
 
+    <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe">
+        <sql>create index idx__billing_wo__charge_instance_id on billing_wallet_operation(charge_instance_id)</sql>
+        <sql>create index idx__billing_wo__billing_account_id on billing_wallet_operation(billing_account_id)</sql>
+        <sql>create index idx__billing_wo__subscription_id on billing_wallet_operation(subscription_id)</sql>
+
+        <sql>create index idx__charge_instance__lower_code on billing_charge_instance(lower(code))</sql>
+        <sql>create index idx__charge_instance__lower_description on billing_charge_instance(lower(description))</sql>
+    </changeSet>
+
     <!-- end index -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-func-999" dbms="postgresql">
@@ -20384,6 +20394,13 @@
 	<changeSet author="aelmalki" id="#rebuild-INTRD-16445_20230619-uk">
         <addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_manual_refund_methods" tableName="crm_provider_manual_refund_methods" />
     </changeSet>
+    
+    <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi">
+		  <sql>CREATE INDEX idx__billing_rated_transaction__accountingArticle_id ON ${db.schema.adapted}billing_rated_transaction USING btree (accounting_article_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__offer ON ${db.schema.adapted}billing_rated_transaction USING btree (offer_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__service_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (service_instance_id) WHERE (status= 'OPEN') </sql>
+	</changeSet>
 
 
    	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA."/>
@@ -20463,6 +20480,8 @@
     <changeSet id="INTRD-17134_20230704" author="TarikFA." />
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
+	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
+    
     <changeSet id="#INTRD-10574_20221013" author="AndriusKarpavicius" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

@@ -187,10 +187,12 @@ public class RefundApi extends BaseApi {
         refund.setDueDate(refundDto.getDueDate());
         refund.setTransactionDate(refundDto.getTransactionDate());
         refund.setMatchingStatus(MatchingStatusEnum.O);
+        refund.setCollectionDate(new Date());
 
         if (customerAccount.getTradingCurrency() != null && customerAccount.getTradingCurrency().getCurrentRate() != null) {
             refund.setTransactionalAmount(refund.getAmount().multiply(customerAccount.getTradingCurrency().getCurrentRate()));
             refund.setTransactionalUnMatchingAmount(refund.getAmount().multiply(customerAccount.getTradingCurrency().getCurrentRate()));
+            refund.setTransactionalCurrency(customerAccount.getTradingCurrency());
         }
 
         // populate customFields
@@ -267,12 +269,16 @@ public class RefundApi extends BaseApi {
                 // Create new Invoice Credit Note
                 Invoice invoiceCreditNote = createInvoiceCreditNote(refund, initialInvoice);
 
+                OCCTemplate adjRefOCC = oCCTemplateService.findByCode("ADJ_REF");
+
                 // Create new AO_ADJ_REF (CREDIT), with umatchingAmount = refund Amount (from payload)
                 AccountOperationDto aoAdjRefDto = new AccountOperationDto();
                 aoAdjRefDto.setAmount(refund.getTransactionalAmount());
                 aoAdjRefDto.setAmountWithoutTax(refund.getTransactionalAmountWithoutTax());
                 aoAdjRefDto.setTaxAmount(refund.getTaxAmount());
-                aoAdjRefDto.setCode("ADJ_REF");
+                aoAdjRefDto.setCode(adjRefOCC.getCode());
+                aoAdjRefDto.setDescription(adjRefOCC.getDescription());
+                aoAdjRefDto.setCollectionDate(new Date());
                 aoAdjRefDto.setCustomerAccount(refund.getCustomerAccount().getCode());
                 aoAdjRefDto.setTransactionCategory(OperationCategoryEnum.CREDIT);
                 aoAdjRefDto.setType("I");
@@ -288,7 +294,12 @@ public class RefundApi extends BaseApi {
                 // Link AO with Invoice
                 RecordedInvoice aoInvoiceCreditNote = (RecordedInvoice) accountOperationService.findById(aoAdjRefId);
                 aoInvoiceCreditNote.setInvoice(invoiceCreditNote);
+                aoInvoiceCreditNote.setReference(invoiceCreditNote.getInvoiceNumber());
                 accountOperationService.update(aoInvoiceCreditNote);
+
+                // Link invoice with AO
+                invoiceCreditNote.setRecordedInvoice(aoInvoiceCreditNote);
+                invoiceService.update(invoiceCreditNote);
 
                 // Add link between AO_ADJ_REF (new) and Payment (existing)
                 refund.setRefundedPayment(payment);

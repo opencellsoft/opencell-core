@@ -192,6 +192,16 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                 }
                 index++;
             }
+            if(nbLevelDone == collectionPlan.getDunningLevelInstances().size()) {
+                if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.UNPAID)) {
+                    collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
+                    updateCollectionPlan = true;
+                }
+                if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.PAID)) {
+                    collectionPlan.setStatus(collectionPlanStatusService.findByStatus(SUCCESS));
+                    updateCollectionPlan = true;
+                }
+            }
         }
         if (updateCollectionPlan) {
             collectionPlanService.update(collectionPlan);
