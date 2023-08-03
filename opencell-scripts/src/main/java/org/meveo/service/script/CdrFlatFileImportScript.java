@@ -31,7 +31,7 @@ public class CdrFlatFileImportScript extends Script {
     private final transient CDRService cdrService = (CDRService) getServiceInterface(CDRService.class.getSimpleName());
 
     public static boolean elementExisted(Map<String, String> context, String[] header, String[] body, String element) {
-        return ArrayUtils.indexOf(header, context.get(element)) >= 0 && ArrayUtils.indexOf(header, context.get(element)) < body.length;
+        return ArrayUtils.indexOf(header, context.get(element), 0) >= 0 && ArrayUtils.indexOf(header, context.get(element), 0) < body.length;
     }
 
     @Override
@@ -58,12 +58,18 @@ public class CdrFlatFileImportScript extends Script {
                 if (!file.exists()) {
                     file.createNewFile();
                 }
-                FileWriter rejectFile = new FileWriter(fileInput.getAbsolutePath().replace("input", "reject") + ".rejected");
+                FileWriter rejectFile = new FileWriter(file);
                 FileReader fread = new FileReader(fileInput.getAbsolutePath());
                 BufferedReader br = new BufferedReader(fread);
                 String line = "";
                 String splitBy = ";";
-                String[] header = br.readLine().split(splitBy);
+	            String[] header = null;
+	            String headerTmp = br.readLine();
+	            if(headerTmp.contains(",")){
+		            splitBy = ",";
+				}
+	            header = headerTmp.split(splitBy);
+				boolean noRejectExist = false;
                 while ((line = br.readLine()) != null) {
                     try {
                         cdr = new CDR();
@@ -220,6 +226,9 @@ public class CdrFlatFileImportScript extends Script {
                 String toPath = getProviderRootDir() + File.separator + "imports/cdr/flatFile/archive" + File.separator + fileInput.getName();
                 Files.createDirectories(Paths.get(toPath));
                 Files.move(Paths.get(fileInput.getPath()), Paths.get(toPath), StandardCopyOption.REPLACE_EXISTING);
+				if(file.length() == 0) {
+					Files.delete(file.toPath());
+				}
             }
         } catch (Exception e) {
             e.printStackTrace();
