@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
@@ -40,8 +41,10 @@ public class CdrJsonImportScript extends Script {
         File dir = new File(rootPathFile);
 
         File[] fileList = dir.listFiles();
+	    FileWriter rejectFile = null;
+	    FileReader fread = null;
         try {
-            for (File fileInput : fileList) {
+	        for (File fileInput : fileList) {
                 File file = new File(fileInput.getAbsolutePath().replace("input", "reject") + ".rejected");
                 if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
@@ -49,8 +52,8 @@ public class CdrJsonImportScript extends Script {
                 if (!file.exists()) {
                     file.createNewFile();
                 }
-                FileWriter rejectFile = new FileWriter(fileInput.getAbsolutePath().replace("input", "reject") + ".rejected");
-                FileReader fread = new FileReader(fileInput.getAbsolutePath());
+                rejectFile = new FileWriter(fileInput.getAbsolutePath().replace("input", "reject") + ".rejected");
+                fread = new FileReader(fileInput.getAbsolutePath());
                 Object obj = parser.parse(fread);
                 JSONArray subjects = (JSONArray) obj;
                 Iterator iterator = subjects.iterator();
@@ -120,11 +123,11 @@ public class CdrJsonImportScript extends Script {
                             rejectFile.write(jsonObject + " => Incorrect format date for cdr " + context.get("dateParam5") + " \n");
                         reject = true;
                     }
-                    BigDecimal decimalParam1 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam1"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam1"))));
-                    BigDecimal decimalParam2 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam2"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam2"))));
-                    BigDecimal decimalParam3 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam3"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam3"))));
-                    BigDecimal decimalParam4 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam4"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam4"))));
-                    BigDecimal decimalParam5 = StringUtils.isEmpty((String) jsonObject.get(context.get("decimalParam5"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam5"))));
+                    BigDecimal decimalParam1 = checkContent(jsonObject.get(context.get("decimalParam1"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam1"))));
+                    BigDecimal decimalParam2 = checkContent(jsonObject.get(context.get("decimalParam2"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam2"))));
+                    BigDecimal decimalParam3 = checkContent(jsonObject.get(context.get("decimalParam3"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam3"))));
+                    BigDecimal decimalParam4 = checkContent(jsonObject.get(context.get("decimalParam4"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam4"))));
+                    BigDecimal decimalParam5 = checkContent(jsonObject.get(context.get("decimalParam5"))) ? null : new BigDecimal(String.valueOf(jsonObject.get(context.get("decimalParam5"))));
 
                     String extraParam = String.valueOf(jsonObject);
                     cdr.setEventDate(dateEvent);
@@ -156,12 +159,25 @@ public class CdrJsonImportScript extends Script {
                         validateCdr(jsonObject, cdr, context, rejectFile);
                     }
                 }
-                rejectFile.close();
-                fread.close();
                 fileInput.delete();
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+			if(rejectFile != null) {
+				try {
+					rejectFile.close();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			if(fread != null ) {
+				try {
+					fread.close();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
         }
 
     }
@@ -177,6 +193,16 @@ public class CdrJsonImportScript extends Script {
             file.write(line + " => " + context.get("parameter1") + " is required\n");
 
     }
+	
+	private boolean checkContent(Object element) {
+		if(element == null ) return true;
+		if(element instanceof  String) {
+			if(StringUtils.isEmpty(element.toString()) || "null".equals(element.toString())){
+				return true;
+			}
+		}
+		return false;
+	}
 
     public String getProviderRootDir() {
         return paramBeanFactory.getDefaultChrootDir();
