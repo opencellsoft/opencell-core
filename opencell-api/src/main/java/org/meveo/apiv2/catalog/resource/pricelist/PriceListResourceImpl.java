@@ -5,16 +5,19 @@ import static javax.ws.rs.core.Response.ok;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.catalog.service.PriceListApiService;
 import org.meveo.apiv2.dunning.resource.DunningLevelResource;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListStatusEnum;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class PriceListResourceImpl implements PriceListResource {
 
     @Inject

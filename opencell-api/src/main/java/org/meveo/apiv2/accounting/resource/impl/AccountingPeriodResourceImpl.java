@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.accounting.ImmutableAccountingPeriod;
 import org.meveo.apiv2.accounting.resource.AccountingPeriodResource;
 import org.meveo.apiv2.accounting.service.AccountingPeriodApiService;
@@ -18,6 +20,7 @@ import org.meveo.model.accounting.AccountingPeriod;
 import org.meveo.model.accounting.AccountingPeriodActionLevelEnum;
 import org.meveo.model.accounting.SubAccountingPeriod;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class AccountingPeriodResourceImpl implements AccountingPeriodResource {
 
 	@Inject

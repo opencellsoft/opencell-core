@@ -60,6 +60,8 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -170,6 +172,7 @@ public class CustomerAccount extends AccountEntity implements IInvoicingMinimumA
 	/**
 	 * Parent customer
 	 */
+    @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = false)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id", nullable = false)
 	private Customer customer;

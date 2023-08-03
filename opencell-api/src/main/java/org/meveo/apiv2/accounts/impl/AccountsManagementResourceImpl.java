@@ -5,10 +5,12 @@ import static javax.ws.rs.core.Response.ok;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.accounts.ApplyOneShotChargeListInput;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.CounterInstanceDto;
@@ -21,6 +23,7 @@ import org.meveo.apiv2.ordering.common.LinkGenerator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class AccountsManagementResourceImpl implements AccountsManagementResource {
 
     @Inject

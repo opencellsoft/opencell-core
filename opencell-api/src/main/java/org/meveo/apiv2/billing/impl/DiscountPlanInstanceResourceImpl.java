@@ -1,6 +1,7 @@
 package org.meveo.apiv2.billing.impl;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.resource.DiscountPlanInstanceResource;
 import org.meveo.apiv2.billing.service.DiscountPlanInstanceApiService;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResource;
@@ -15,6 +16,7 @@ import org.meveo.model.catalog.DiscountPlan;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
@@ -25,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Stateless
+@Interceptors({ WsRestApiInterceptor.class })
 public class DiscountPlanInstanceResourceImpl implements DiscountPlanInstanceResource {
 
 	@Inject

@@ -1,6 +1,7 @@
 package org.meveo.api.rest.cpq.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.CommercialOrderApi;
@@ -12,9 +13,11 @@ import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetOrderOfferDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CommercialOrderRs;
 import org.meveo.api.rest.impl.BaseRs;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 
 	@Inject private CommercialOrderApi commercialOrderApi;

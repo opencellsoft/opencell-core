@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -391,6 +390,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 em.flush();
                 em.clear();
             }
+
             RatedTransaction ratedTransaction = new RatedTransaction();
 
             ratedTransaction.setCreated(new Date());

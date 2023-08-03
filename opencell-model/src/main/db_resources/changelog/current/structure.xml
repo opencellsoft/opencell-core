@@ -8032,10 +8032,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		<addColumn tableName="cat_charge_template">
 			<column name="business_key_el" type="varchar(2000)" />
 			<column name="business_key_description" type="VARCHAR(255)" defaultValue="Business key"/>
-			<column name="business_key_translated_descriptions" type="${type.json}" defaultValue='{"FRA":"ClÃ© mÃ©tier", "ENG":"Business key"}'>
+			<column name="business_key_translated_descriptions" type="${type.json}" defaultValue='{"FRA":"Clé métier", "ENG":"Business key"}'>
                 <constraints nullable="false" />
             </column>
-			<column name="business_key_translated_long_descriptions" type="${type.json}" defaultValue='{"FRA":"La clÃ© mÃ©tier est calculÃ© Ã  la valorisation en utilisant une formule personnalisÃ© enregistrÃ©e sur la charge", "ENG":"Business key is computed at rating using a custom expression set on the charge"}'>
+			<column name="business_key_translated_long_descriptions" type="${type.json}" defaultValue='{"FRA":"La clé métier est calculé à la valorisation en utilisant une formule personnalisé enregistrée sur la charge", "ENG":"Business key is computed at rating using a custom expression set on the charge"}'>
                 <constraints nullable="false" />
             </column>
             <column name="business_key_format" type="VARCHAR(50)" defaultValue="TEXT">
@@ -8045,5 +8045,247 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="business_key_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
 		</addColumn>
 	</changeSet>
+
+    <changeSet id="#INTRD-10574_20221013" author="AndriusKarpavicius">
+        <createSequence sequenceName="audit_data_config_seq" startValue="1" />
+        <createSequence sequenceName="audit_data_log_rec_seq" startValue="1" incrementBy="1000"/>
+        <createSequence sequenceName="audit_data_log_seq" startValue="1" />
+                
+        <modifyDataType tableName="audit_field_changes_history" columnName="current_state" newDataType="varchar(700)"/>
+        <modifyDataType tableName="audit_field_changes_history" columnName="previous_state" newDataType="varchar(700)"/>
+        
+        <createTable tableName="audit_data_config">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_data_config_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="entity_class" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>    
+            <column name="entity_fields" type="varchar(2000)" />
+            <column name="actions" type="varchar(2000)" />
+        </createTable>
+        
+        <createTable tableName="audit_data_log_rec">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_data_log_rec_pkey" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="tx_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="ref_table" type="varchar(60)">
+                <constraints nullable="false" />
+            </column>        
+            <column name="ref_id" type="bigint" />
+            <column name="action" type="varchar(6)">
+                <constraints nullable="false" />
+            </column>        
+            <column name="origin" type="varchar(15)">
+                <constraints nullable="false" />
+            </column> 
+            <column name="origin_name" type="varchar(250)"/>
+            <column name="user_name" type="varchar(100)" />
+            <column name="data_old" type="${type.json}" />
+            <column name="data_new" type="${type.json}" />                  
+        </createTable>        
+        <createTable tableName="audit_data_log">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_data_log_pkey" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="entity_class" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>    
+            <column name="entity_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>   
+            <column name="tx_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="action" type="varchar(6)">
+                <constraints nullable="false" />
+            </column>        
+            <column name="origin" type="varchar(15)">
+                <constraints nullable="false" />
+            </column> 
+            <column name="origin_name" type="varchar(250)"/>
+            <column name="user_name" type="varchar(100)" />
+            <column name="data_old" type="${type.json}" />
+            <column name="data_new" type="${type.json}" />                  
+        </createTable>        
+    </changeSet>
+    <changeSet id="#INTRD-10574_20221014" author="AndriusKarpavicius">
+        <alterSequence sequenceName="audit_data_log_seq" incrementBy="100"/>        
+        <createProcedure>
+            CREATE OR REPLACE FUNCTION jsonb_minus ( arg1 jsonb, arg2 jsonb, preserveField varchar, retainOnlyFields varchar ) RETURNS jsonb
+                AS $$
+                                
+                SELECT 
+                    COALESCE(json_object_agg(key, value), '{}')::jsonb
+                FROM 
+                    jsonb_each(arg1)
+                WHERE 
+                    ((arg1 -> key &lt;&gt; arg2 -> key OR arg2 -> key IS NULL) 
+                    and key NOT IN ('version','created', 'updated', 'creator', 'updater') AND (retainOnlyFields ='' or position(','||key||',' IN ','||retainOnlyFields ||',') >0)) OR (preserveField &lt;&gt; '' and key = preserveField) 
+                
+                $$ LANGUAGE SQL;  
+        </createProcedure>
+        <createProcedure>
+            CREATE OR REPLACE FUNCTION jsonb_removeNull ( arg1 jsonb, preserveField varchar, retainOnlyFields varchar ) RETURNS jsonb
+                AS $$
+                                
+                SELECT 
+                    COALESCE(json_object_agg(key, value), '{}')::jsonb
+                FROM 
+                    jsonb_each(arg1)
+                WHERE 
+                    value &lt;&gt; 'null' and value &lt;&gt; '{}' and key NOT IN ('version','created', 'updated', 'creator', 'updater') AND ((retainOnlyFields ='' or position(','||key||',' IN ','||retainOnlyFields ||',') >0)  OR (preserveField &lt;&gt; '' and key = preserveField))
+              
+                $$ LANGUAGE SQL;   
+        </createProcedure>
+        <createProcedure>
+            CREATE OR REPLACE FUNCTION audit_data_log_trigger_func()
+                RETURNS trigger AS $body$
+            
+                DECLARE
+                    audit_info varchar(400);
+                    audit_info_array text[];
+                    db_user varchar(100);
+                    origin varchar(15);  
+                    origin_name varchar(250);
+                    data_old jsonb;
+                    data_new jsonb;
+                    data_tmp jsonb;
+                    ref_id bigint;
+                    ref_table varchar(60);
+                    save boolean; 
+                BEGIN
+            
+                    save := true;
+                    
+                    audit_info := current_setting('var.opencell_audit_info', true);
+                    if (audit_info IS NOT NULL) then
+                        if (audit_info &lt;&gt; '') then
+                            audit_info_array := string_to_array(audit_info, '~~');
+                            db_user := audit_info_array[1];
+                            origin := audit_info_array[2];
+                            origin_name := audit_info_array[3];
+                        else
+                            origin :='GUI';
+                        end if;
+                     else 
+                        select current_user into db_user;
+                        origin :='DB';
+                    end if;
+                    
+                    if (TG_OP = 'INSERT') then
+                        data_new := to_jsonb(NEW);
+                        if (data_new ? 'id') then
+                            ref_id :=NEW.id;
+                        end if;                        
+                        data_new := jsonb_removeNull(data_new, TG_ARGV[0], TG_ARGV[1]);
+                        
+                        save := TG_ARGV[2]::bool or data_new &lt;&gt; '{}';
+                        
+                    elseif (TG_OP = 'UPDATE') then
+                        data_old := to_jsonb(OLD);
+                        data_new := to_jsonb(NEW);
+                        if (data_new ? 'id') then
+                            ref_id :=NEW.id;
+                        end if;
+                        data_tmp := jsonb_minus(data_new, data_old, TG_ARGV[0], TG_ARGV[1]);
+                        data_old := jsonb_minus(data_old, data_new, TG_ARGV[0], TG_ARGV[1]);
+                        data_new := data_tmp;
+                        
+                        save := TG_ARGV[2]::bool or data_new &lt;&gt; '{}';
+            
+                    else 
+                        data_old := to_jsonb(OLD);
+                        if (data_old ? 'id') then
+                            ref_id :=OLD.id;
+                        end if;                        
+                        data_old := jsonb_removeNull(data_old, TG_ARGV[0], TG_ARGV[1]);
+                        
+                        save := TG_ARGV[2]::bool or data_old &lt;&gt; '{}';
+
+                    end if;
+            
+                    if (save) then
+                        INSERT INTO audit_data_log_rec (
+                            id, created, tx_id, ref_table, ref_id, action, origin, origin_name, user_name, data_old, data_new )
+                        VALUES(
+                            nextval('audit_data_log_rec_seq'), statement_timestamp(), txid_current(), TG_TABLE_NAME, ref_id, TG_OP, origin, origin_name, db_user, data_old, data_new );
+                    end if;
+                    
+                    if (TG_OP = 'DELETE') then
+                        RETURN OLD;
+                    else 
+                        RETURN NEW;
+                    end if;
+                END;
+                $body$
+                LANGUAGE plpgsql;
+        </createProcedure>
+        <createProcedure>
+          CREATE OR REPLACE procedure proc_recreate_audit_data_trigger(table_name varchar, fields varchar, actions varchar, preserveField varchar, saveEvenDiffIsEmpty boolean)
+                language plpgsql
+                as $$
+
+                DECLARE
+                    trigger_name varchar(100);
+                    trigger_actions varchar(1000);
+                BEGIN
+            
+            trigger_name :=table_name || '_audit_trigger';
+        
+            
+            IF (actions IS NULL OR LOWER(actions) LIKE '%insert%') THEN
+                trigger_actions := 'INSERT';
+            END IF;
+
+            IF (actions IS NULL OR LOWER(actions) LIKE '%update%') THEN
+                trigger_actions := CASE WHEN trigger_actions IS NULL THEN '' ELSE trigger_actions || ' OR' END || ' UPDATE';
+                if (fields IS NOT NULL) THEN
+                    trigger_actions := trigger_actions || ' of ' || fields;
+                END IF;
+            END IF;
+
+
+            IF (actions IS NULL OR LOWER(actions) LIKE '%delete%') THEN
+                trigger_actions := CASE WHEN trigger_actions IS NULL THEN '' ELSE trigger_actions || ' OR' END || ' DELETE';
+            END IF;
+
+            EXECUTE format ('DROP TRIGGER IF EXISTS %s ON %s', trigger_name, table_name );
+            EXECUTE format ('CREATE TRIGGER %I AFTER %s ON %s FOR EACH ROW EXECUTE FUNCTION audit_data_log_trigger_func(''%s'',''%s'',%I)', trigger_name, trigger_actions, table_name, preserveField, fields, saveEvenDiffIsEmpty::bool );
+
+            END$$;
+        </createProcedure>
+        <createProcedure>
+          CREATE OR REPLACE procedure proc_delete_audit_data_trigger(table_name varchar)
+                language plpgsql
+                as $$
+
+                DECLARE
+                    trigger_name varchar(100);
+                BEGIN
+            
+            trigger_name :=table_name || '_audit_trigger';
+        
+            EXECUTE format ('DROP TRIGGER IF EXISTS %s ON %s', trigger_name, table_name );
+
+            END$$;
+        </createProcedure>
+    </changeSet>
 
 </databaseChangeLog>

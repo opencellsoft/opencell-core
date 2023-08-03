@@ -1,6 +1,7 @@
 package org.meveo.apiv2.fileType.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -8,12 +9,14 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.DeleteReferencedEntityException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.crm.ContactCategoryResource;
 import org.meveo.apiv2.fileType.FileTypeDto;
 import org.meveo.apiv2.fileType.resource.FileTypeResource;
 import org.meveo.apiv2.fileType.service.FileTypeApiService;
 import org.meveo.model.admin.FileType;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class FileTypeResourceImpl implements FileTypeResource{
 	
 	@Inject

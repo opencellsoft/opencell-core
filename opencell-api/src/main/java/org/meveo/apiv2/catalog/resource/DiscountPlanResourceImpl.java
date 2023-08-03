@@ -16,9 +16,11 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.Customer;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.logging.WsRestApiInterceptor;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
@@ -32,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Stateless
+@Interceptors({ WsRestApiInterceptor.class })
 public class DiscountPlanResourceImpl implements DiscountPlanResource {
 
     @Inject

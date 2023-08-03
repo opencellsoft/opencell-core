@@ -18,9 +18,7 @@
 
 package org.meveo.service.notification;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -29,9 +27,7 @@ import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.audit.AuditableFieldEvent;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.event.CounterPeriodEvent;
@@ -46,10 +42,10 @@ import org.meveo.event.qualifier.EndOfTerm;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.event.qualifier.InstantiateWF;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
+import org.meveo.event.qualifier.InvoicePaymentStatusUpdated;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.event.qualifier.PDFGenerated;
-import org.meveo.event.qualifier.InvoicePaymentStatusUpdated;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.event.qualifier.RejectedCDR;
@@ -61,13 +57,12 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.event.qualifier.VersionCreated;
 import org.meveo.event.qualifier.VersionRemoved;
 import org.meveo.event.qualifier.XMLGenerated;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.AuditableField;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomTableEvent;
 import org.meveo.model.admin.User;
 import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
@@ -369,54 +364,22 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.STATUS_UPDATED, commercialOrder);
     }
 
-    private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {
-        if (entity != null) {
-            checkEvent(notificationType, field);
-        }
-    }
+    /**
+     * Handle auditable field value change event
+     * 
+     * @param auditableField Auditable field value change information
+     */
+    public void auditableFieldChanged(@Observes AuditableField auditableField) {
+        if (auditableField != null) {
 
-    private void fieldUpdated(AuditableEntity entity, AuditableFieldHistory fieldHistory) throws BusinessException {
-        AuditableFieldEvent field = new AuditableFieldEvent();
-        try {
-            BeanUtils.copyProperties(field, fieldHistory);
-            field.setEntity(entity);
             // In the case of a status field, we fire an status event.
-            if (fieldHistory.getAuditType() == AuditChangeTypeEnum.STATUS) {
-                fieldUpdated(entity, field, NotificationEventTypeEnum.STATUS_UPDATED);
-            }
-            // In the case of a renewal field, we fire an renewal event.
-            if (fieldHistory.getAuditType() == AuditChangeTypeEnum.RENEWAL) {
-                fieldUpdated(entity, field, NotificationEventTypeEnum.RENEWAL_UPDATED);
-            }
-            fieldHistory.setNotified(true);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            fieldHistory.setNotified(false);
-            log.error("Failed to fire field updated notification");
-            throw new BusinessException(e.getMessage());
-        } catch (BusinessException e) {
-            fieldHistory.setNotified(false);
-            log.error("Failed to fire field updated notification");
-            throw e;
-        }
-    }
+            if (auditableField.getChangeType() == AuditChangeTypeEnum.STATUS) {
+                checkEvent(NotificationEventTypeEnum.STATUS_UPDATED, auditableField);
 
-    public void fieldsUpdated(@Observes Set<BaseEntity> event) throws BusinessException {
-        if (event != null && !event.isEmpty()) {
-            for (BaseEntity baseEntity : event) {
-                AuditableEntity entity = (AuditableEntity) baseEntity;
-                Set<AuditableFieldHistory> auditableFields = entity.getAuditableFields();
-                if (!entity.isNotified() && auditableFields != null && !auditableFields.isEmpty()) {
-                    for (AuditableFieldHistory fieldHistory : auditableFields) {
-                        // Check if the field is notifiable and is not yet notified
-                        if (fieldHistory.isNotfiable() && !fieldHistory.isNotified()) {
-                            fieldUpdated(entity, fieldHistory);
-                        }
-                    }
-                    entity.setNotified(true);
-                }
-
+                // In the case of a renewal field, we fire an renewal event.
+            } else if (auditableField.getChangeType() == AuditChangeTypeEnum.RENEWAL) {
+                checkEvent(NotificationEventTypeEnum.RENEWAL_UPDATED, auditableField);
             }
         }
     }
-
 }

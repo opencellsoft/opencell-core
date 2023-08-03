@@ -1,0 +1,72 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:o="http://omnifaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.auditLog']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.auditDataConfiguration']}" disabled="true" />
+			</p:breadCrumb>
+		</h:form>
+
+		<h:form id="form">
+			<h:panelGroup layout="block" styleClass="form-panel">
+				<p:messages id="messages" />
+
+				<h:panelGroup styleClass="form-panel-fields">
+
+					<p:panel id="classSelection">
+						<hftl:decorateFormField label="#{messages['auditLog.classes']}" fieldId="classes" newLine="true">
+							<p:selectOneMenu id="classes" filter="true" filterMatchMode="startsWith" value="#{auditDataConfigurationBean.selectedClass}" converter="omnifaces.SelectItemsConverter">
+								<p:ajax listener="#{auditDataConfigurationBean.onClassChange()}" update="fields messages" />
+								<f:selectItem itemLabel="#{messages['commons.select']}" itemValue="" noSelectionOption="true" />
+								<f:selectItems value="#{auditDataConfigurationBean.entityClasses}" var="e" itemLabel="#{e.simpleName}" />
+							</p:selectOneMenu>
+						</hftl:decorateFormField>
+
+						<hftl:decorateFormField label="#{messages['auditLog.fields']}" fieldId="fields">
+							<p:pickList id="fields" value="#{auditDataConfigurationBean.fields}" var="f" itemLabel="#{f}" itemValue="#{f}" />
+						</hftl:decorateFormField>
+
+						<hftl:decorateFormField label="#{messages['auditLog.dataActions']}" fieldId="dataActions">
+							<p:selectManyMenu id="dataActions" value="#{auditDataConfigurationBean.actions}">
+								<f:selectItem itemLabel="" />
+								<f:selectItems value="#{auditDataConfigurationBean.getActionsPicklist()}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
+								<f:converter converterId="enumConverter" />
+								<f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.audit.AuditCrudActionEnum" />
+							</p:selectManyMenu>
+						</hftl:decorateFormField>
+
+						<h:panelGroup layout="block" styleClass="formFieldGroup">
+							<p:commandButton id="addClass" value="#{messages['auditlog.addAuditDataLog']}" update=":form:classSelection :form:auditDataConfigurationsPanel :form:messages"
+								actionListener="#{auditDataConfigurationBean.addAuditDataConfiguration}" />
+						</h:panelGroup>
+					</p:panel>
+
+					<p:panel id="auditDataConfigurationsPanel" width="100">
+						<p:dataTable id="auditDataConfigurations" var="c" value="#{auditDataConfigurationBean.auditDataConfigurations}">
+							<p:column headerText="#{messages['auditLog.className']}">
+								<h:outputText value="#{c.entityClass}" />
+							</p:column>
+							<p:column headerText="#{messages['auditLog.fields']}">
+								<h:outputText value="#{c.fields}" />
+							</p:column>
+							<p:column headerText="#{messages['auditLog.dataActions']}">
+								<h:outputText value="#{c.actions}" />
+							</p:column>
+
+							<p:column headerText="#{messages['commons.actions']}" style="width: 100px; text-align: center">
+								<p:commandButton update=":form:auditDataConfigurationsPanel :form:messages" icon="fa fa-remove" title="#{messages['action.remove']}"
+									action="#{auditDataConfigurationBean.removeAuditDataConfiguration}">
+									<f:setPropertyActionListener value="#{c}" target="#{auditDataConfigurationBean.selectedAuditDataConfiguration}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+				</h:panelGroup>
+			</h:panelGroup>
+		</h:form>
+	</ui:define>
+</ui:composition>

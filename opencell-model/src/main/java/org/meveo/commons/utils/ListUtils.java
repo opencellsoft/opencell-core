@@ -20,10 +20,13 @@ package org.meveo.commons.utils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 /**
  * Utilities class for working with Lists.
@@ -87,5 +90,86 @@ public final class ListUtils {
      */
     public static <T> Collection<T> safe(Collection<T> collection) {
         return collection == null ? Collections.EMPTY_LIST : collection;
+    }
+
+    /**
+     * Recursively inspect a map to match key. Go deeper if map value is of a map type.
+     * 
+     * @param mapToInspect Map to inspect
+     * @param keyToMatch A key to match
+     * @param fullMatch Shall a full or partial (starts with) key match should be performed. True for a full match.
+     * @return A matched value
+     */
+    public static Object matchMapKeyRecursively(Map<String, ?> mapToInspect, String keyToMatch, boolean fullMatch) {
+
+        if (fullMatch && mapToInspect.containsKey(keyToMatch)) {
+            return mapToInspect.get(keyToMatch);
+
+        } else {
+            for (Entry<String, ?> entry : mapToInspect.entrySet()) {
+                if (!fullMatch && entry.getKey().startsWith(keyToMatch)) {
+                    return entry.getValue();
+                } else if (entry.getValue() instanceof Map) {
+                    @SuppressWarnings("unchecked")
+                    Object matched = matchMapKeyRecursively((Map<String, ?>) entry.getValue(), keyToMatch, fullMatch);
+                    if (matched != null) {
+                        return matched;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Recursively inspect a map to match key. Go deeper if map value is of a map type.
+     * 
+     * @param mapToInspect Map to inspect
+     * @param keyToMatch A key to match
+     * @param fullMatch Shall a full or partial (starts with) key match should be performed. True for a full match.
+     * @return A removed value or null if nothing was removed
+     */
+    public static Object removeMapKeyRecursively(Map<String, Object> mapToInspect, String keyToMatch, boolean fullMatch) {
+
+        if (fullMatch && mapToInspect.containsKey(keyToMatch)) {
+            return mapToInspect.remove(keyToMatch);
+
+        } else {
+            for (Entry<String, Object> entry : mapToInspect.entrySet()) {
+                if (!fullMatch && entry.getKey().startsWith(keyToMatch)) {
+                    return mapToInspect.remove(entry.getKey());
+                } else if (entry.getValue() instanceof Map) {
+                    @SuppressWarnings("unchecked")
+                    Object matched = removeMapKeyRecursively((Map<String, Object>) entry.getValue(), keyToMatch, fullMatch);
+                    if (matched != null) {
+                        return matched;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Recursively inspect a map to remove keys with no values
+     * 
+     * @param mapToInspect Map to inspect
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static void removeEmptyMapValuesRecursively(Map<String, Object> mapToInspect) {
+
+        Set<String> keys = new HashSet<String>(mapToInspect.keySet());
+
+        for (String key : keys) {
+            Object value = mapToInspect.get(key);
+            if (value instanceof Map) {
+                if (!((Map<String, Object>) value).isEmpty()) {
+                    removeEmptyMapValuesRecursively((Map<String, Object>) value);
+                }
+                if (((Map) value).isEmpty()) {
+                    mapToInspect.remove(key);
+                }
+            }
+        }
     }
 }

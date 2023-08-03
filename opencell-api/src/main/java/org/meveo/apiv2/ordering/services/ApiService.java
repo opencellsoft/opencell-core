@@ -18,19 +18,43 @@
 
 package org.meveo.apiv2.ordering.services;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import org.meveo.model.BaseEntity;
+import org.meveo.model.IEntity;
 
-public interface ApiService<T extends BaseEntity> {
-    List<T> list(Long offset, Long limit, String sort, String orderBy, String filter);
-    Long getCount(String filter);
+public interface ApiService<T extends IEntity> {
+    default List<T> list(Long offset, Long limit, String sort, String orderBy, String filter) {
+        return Collections.emptyList();
+    }
+
+    default List<T> list(Long offset, Long limit, String sort, String orderBy, Map<String, Object> filter) {
+        return Collections.emptyList();
+    }
+
+    default Long getCount(String filter) {
+        return null;
+    }
+
+    default Long getCount(Map<String, Object> filter) {
+        return null;
+    }
+
     Optional<T> findById(Long id);
+
     T create(T baseEntity);
+
     Optional<T> update(Long id, T baseEntity);
-    Optional<T> patch(Long id, T baseEntity);
+
+    default Optional<T> patch(Long id, T baseEntity) {
+        return Optional.empty();
+    }
+
     Optional<T> delete(Long id);
-    Optional<T> findByCode(String code);
-  
+
+    default Optional<T> findByCode(String code) {
+        return Optional.empty();
+    }
 }

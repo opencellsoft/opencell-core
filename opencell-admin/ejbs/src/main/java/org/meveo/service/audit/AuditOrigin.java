@@ -20,44 +20,45 @@ package org.meveo.service.audit;
 
 import org.meveo.model.audit.ChangeOriginEnum;
 
-import javax.enterprise.context.RequestScoped;
-
 /**
- * keep the audit origin
+ * Keep track of invocation source for the the auditing
  *
  * @author Abdellatif BARI
  * @since 7.0
  */
-@RequestScoped
 public class AuditOrigin {
 
     /**
      * Source of change
      */
-    private ChangeOriginEnum auditOrigin;
+    private static final ThreadLocal<ChangeOriginEnum> auditOrigin = new ThreadLocal<ChangeOriginEnum>() {
+        @Override
+        protected ChangeOriginEnum initialValue() {
+            return ChangeOriginEnum.OTHER;
+        }
+    };
 
     /**
      * Source name of change
      */
-    private String auditOriginName;
-
+    private static final ThreadLocal<String> auditOriginName = new ThreadLocal<String>();
 
     /**
      * Get source of change value
      *
      * @return Source of change
      */
-    public ChangeOriginEnum getAuditOrigin() {
-        return auditOrigin;
+    public static ChangeOriginEnum getAuditOrigin() {
+        return auditOrigin.get();
     }
 
     /**
      * Set source of change value
      *
-     * @param auditOrigin Source of change
+     * @param auditOriginNew Source of change
      */
-    public void setAuditOrigin(ChangeOriginEnum auditOrigin) {
-        this.auditOrigin = auditOrigin;
+    public static void setAuditOrigin(ChangeOriginEnum auditOriginNew) {
+        auditOrigin.set(auditOriginNew);
     }
 
     /**
@@ -65,16 +66,21 @@ public class AuditOrigin {
      *
      * @return Source name of change
      */
-    public String getAuditOriginName() {
-        return auditOriginName;
+    public static String getAuditOriginName() {
+        return auditOriginName.get();
     }
 
     /**
      * Set source name of change value
      *
-     * @param auditOriginName Source name of change
+     * @param auditOriginNameNew Source name of change
      */
-    public void setAuditOriginName(String auditOriginName) {
-        this.auditOriginName = auditOriginName;
+    public static void setAuditOriginName(String auditOriginNameNew) {
+        auditOriginName.set(auditOriginNameNew);
+    }
+    
+    public static void setAuditOriginAndName(ChangeOriginEnum auditOriginNew, String auditOriginNameNew) {
+        auditOrigin.set(auditOriginNew);
+        auditOriginName.set(auditOriginNameNew);
     }
 }

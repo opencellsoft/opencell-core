@@ -5,6 +5,7 @@ import static javax.ws.rs.core.Response.ok;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.AcountReceivable.DeferralPayments;
 import org.meveo.model.audit.logging.AuditLog;
 import org.meveo.model.payments.AccountOperation;
@@ -16,9 +17,11 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.AccountOperationService;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import java.util.Date;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class AccountReceivableDeferralPaymentsResourceImpl implements AccountReceivableDeferralPaymentsResource {
 
     @Inject

@@ -87,6 +87,16 @@ public class CurrentUserProvider {
     };
 
     /**
+     * Contains a currently logged in user
+     */
+    private static final ThreadLocal<String> currentUsername = new ThreadLocal<String>() {
+        @Override
+        protected String initialValue() {
+            return "NA";
+        }
+    };
+
+    /**
      * Contains a forced authentication user username
      */
     private static final ThreadLocal<String> forcedUserUsername = new ThreadLocal<String>();
@@ -124,6 +134,7 @@ public class CurrentUserProvider {
         }
         log.debug("Force authentication to {}/{}", providerCode, userName);
         forcedUserUsername.set(userName);
+        setCurrentUsername(userName);
         setCurrentTenant(providerCode);
     }
 
@@ -157,6 +168,7 @@ public class CurrentUserProvider {
             }
 
             forcedUserUsername.set(lastCurrentUser.getUserName());
+            setCurrentUsername(lastCurrentUser.getUserName());
             setCurrentTenant(lastCurrentUser.getProviderCode());
             log.debug("Reestablished authentication to {}/{}", lastCurrentUser.getUserName(), lastCurrentUser.getProviderCode());
         }
@@ -189,6 +201,7 @@ public class CurrentUserProvider {
 
             user = new MeveoUserKeyCloakImpl(oidcPrincipal.getOidcSecurityContext().getToken());
             username = user.getUserName();
+            setCurrentUsername(username);
             setCurrentTenant(user.getProviderCode());
 
             // User was forced authenticated, so need to lookup the rest of user information
@@ -199,6 +212,7 @@ public class CurrentUserProvider {
         } else {
             username = ctx.getCallerPrincipal().getName();
             user = new MeveoUserKeyCloakImpl(ctx, null, null);
+            setCurrentUsername(user.getUserName());
         }
 
         // log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null, getForcedUsername(),
@@ -361,6 +375,25 @@ public class CurrentUserProvider {
     private static void setCurrentTenant(final String tenantName) {
         currentTenant.remove();
         currentTenant.set(tenantName);
+    }
+
+    /**
+     * Set currently logged in username value
+     * 
+     * @param username Currently logged in username
+     */
+    private static void setCurrentUsername(final String username) {
+        currentUsername.set(username);
+    }
+
+    /**
+     * Return a current user name from JAAS security context
+     * 
+     * @return Current user implementation
+     */
+    public static String getCurrentUsername() {
+
+        return currentUsername.get();
     }
 
     /**
