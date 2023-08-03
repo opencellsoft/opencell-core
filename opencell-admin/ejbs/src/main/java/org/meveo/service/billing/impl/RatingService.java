@@ -629,7 +629,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount,sellerIds, bareWalletOperation, null);
 			
 
-            	List<Contract> suitableContracts = lookupSuitableContract(customers, sellers,contracts);
+            List<Contract> suitableContracts = new ArrayList<>();
+        	Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null && "ACTIVE".equals(bareWalletOperation.getSubscription().getContract().getStatus()) ? bareWalletOperation.getSubscription().getContract() : null : null;
+            if(contractFromSubscription != null) {
+            	suitableContracts.add(contractFromSubscription);
+            }else {
+            	suitableContracts=lookupSuitableContract(customers, sellers,contracts);
+            }
             	if(!suitableContracts.isEmpty()) {
 
             		for(Contract contract:suitableContracts) {
@@ -646,10 +652,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 ContractItem contractItem = null;
                 if ( serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
-                    Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null && "ACTIVE".equals(bareWalletOperation.getSubscription().getContract().getStatus()) ? bareWalletOperation.getSubscription().getContract() : null : null;
-                    if(contractFromSubscription != null) {
-                        contract = contractFromSubscription;
-                    }
 
                     if (contract != null && bareWalletOperation.getOperationDate().compareTo(contract.getBeginDate()) >= 0
                             && bareWalletOperation.getOperationDate().compareTo(contract.getEndDate()) < 0) {
