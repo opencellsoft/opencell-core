@@ -86,7 +86,7 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
 
         // No finance setting was looked up yet
         if (FINANCE_SETTING_ID == null) {
-            List<FinanceSettings> financeSettings = getEntityManager().createQuery("from FinanceSettings f order by f.id desc", FinanceSettings.class).setMaxResults(1).getResultList();
+            List<FinanceSettings> financeSettings = getEntityManager().createQuery("from FinanceSettings f order by f.id asc", FinanceSettings.class).setMaxResults(1).getResultList();
             if (financeSettings.isEmpty()) {
                 FINANCE_SETTING_ID = -1L;
                 return null;
