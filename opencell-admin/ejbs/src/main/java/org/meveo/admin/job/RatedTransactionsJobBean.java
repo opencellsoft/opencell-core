@@ -111,7 +111,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
 
         Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 10000L);
         Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbThreads == -1) {
+        if (nbThreads <= -1) {
             nbThreads = (long) Runtime.getRuntime().availableProcessors();
         }
         int fetchSize = batchSize.intValue() * nbThreads.intValue();

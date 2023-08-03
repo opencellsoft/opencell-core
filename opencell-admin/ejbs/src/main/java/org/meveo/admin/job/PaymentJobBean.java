@@ -278,10 +278,10 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
 
         } catch (Exception e) {
         	log.error(" Error on createPaymentOrPayout [{}]", e.getMessage());
-        	this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
+        	 this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
+        	 jobExecutionResult.unRegisterSucces();// Reduce success as success is added automatically in main loop of IteratorBasedJobBean
+             jobExecutionResult.registerError(paymentItem.accountOperationId, e.getMessage());
 
-            jobExecutionResult.unRegisterSucces();// Reduce success as success is added automatically in main loop of IteratorBasedJobBean
-            jobExecutionResult.registerError(paymentItem.accountOperationId, e.getMessage());
         }
     }
 

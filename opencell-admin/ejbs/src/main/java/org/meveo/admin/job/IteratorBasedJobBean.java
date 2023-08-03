@@ -189,7 +189,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         jobExecutionResultService.persistResult(jobExecutionResult);
 
         Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbThreads == -1) {
+        if (nbThreads <= -1) {
             nbThreads = (long) Runtime.getRuntime().availableProcessors();
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);

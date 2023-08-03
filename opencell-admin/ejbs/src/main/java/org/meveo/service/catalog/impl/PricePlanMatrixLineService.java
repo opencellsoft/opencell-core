@@ -60,9 +60,6 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     
     @Inject
     private ProviderService providerService;
-    
-    @Inject
-    private TradingPricePlanMatrixLineService tradingPricePlanMatrixLineService;
 
     @Inject
     private TradingCurrencyService tradingCurrencyService;
@@ -292,47 +289,8 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         ppmVersion.getLines().clear();
         ppmVersion.getLines().addAll(lines);
     }
-    
-    public void updateWithoutDeletePricePlanMatrixLines(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
 
-        checkDuplicatePricePlanMatrixValues(dtoData.getPricePlanMatrixLines());
-        Provider provider = providerService.getProvider();
-        for (PricePlanMatrixLineDto pricePlanMatrixLineDto : dtoData.getPricePlanMatrixLines()) {
-
-
-            PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
-            if(pricePlanMatrixLineDto.getPpmLineId() != null){
-                pricePlanMatrixLine = findById(pricePlanMatrixLineDto.getPpmLineId());
-                if (pricePlanMatrixLine == null) {
-                    throw new EntityDoesNotExistsException(PricePlanMatrixLine.class, pricePlanMatrixLineDto.getPpmLineId());
-                }
-                converterPricePlanMatrixLineFromDto(ppmVersion, pricePlanMatrixLineDto, pricePlanMatrixLine);                
-                Set<PricePlanMatrixValue> pricePlanMatrixValues = getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
-                pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
-                pricePlanMatrixLine.getPricePlanMatrixValues().clear();
-                pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
-                Set<TradingPricePlanMatrixLine> tradingPricePlanMatrixLines = getTradingPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider);
-                pricePlanMatrixLine.getTradingPricePlanMatrixLines().clear();
-                pricePlanMatrixLine.getTradingPricePlanMatrixLines().addAll(tradingPricePlanMatrixLines);
-                pricePlanMatrixLine.setRatingAccuracy(pricePlanMatrixLine.getPricePlanMatrixValues().size());
-                update(pricePlanMatrixLine);
-            }
-            else {                
-                converterPricePlanMatrixLineFromDto(ppmVersion, pricePlanMatrixLineDto, pricePlanMatrixLine);               
-                pricePlanMatrixLine.setPricePlanMatrixValues(getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine));
-                pricePlanMatrixLine.setRatingAccuracy(pricePlanMatrixLine.getPricePlanMatrixValues().size());
-                pricePlanMatrixLine.setTradingPricePlanMatrixLines(getTradingPricePlanMatrixLine(pricePlanMatrixLineDto, pricePlanMatrixLine, provider));
-                create(pricePlanMatrixLine);                
- 
-                pricePlanMatrixLineDto.setPpmLineId(pricePlanMatrixLine.getId());
-       
-                ppmVersion.getLines().add(pricePlanMatrixLine);
-            }
-
-        }
-    }
-
-    private Set<TradingPricePlanMatrixLine> getTradingPricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto, PricePlanMatrixLine pricePlanMatrixLine,  Provider provider){
+    public Set<TradingPricePlanMatrixLine> getTradingPricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto, PricePlanMatrixLine pricePlanMatrixLine,  Provider provider){
         Set<TradingPricePlanMatrixLine> tradingPricePlanMatrixLines = new HashSet<>();
         List<String> checkDuplicateTradingCurrency = new ArrayList<>();
         for (TradingPricePlanMatrixLineDto convertedPPML : pricePlanMatrixLineDto.getTradingPricePlanMatrixLines()) {
@@ -361,7 +319,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         return tradingPricePlanMatrixLines;
     }
     
-    private void converterPricePlanMatrixLineFromDto(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLineDto pricePlanMatrixLineDto,
+    public void converterPricePlanMatrixLineFromDto(PricePlanMatrixVersion ppmVersion, PricePlanMatrixLineDto pricePlanMatrixLineDto,
             PricePlanMatrixLine pricePlanMatrixLineUpdate) {
 
         if(pricePlanMatrixLineDto.getPriceWithoutTax() != null && pricePlanMatrixLineDto.getValue() != null){
@@ -386,13 +344,13 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         BigDecimal value = pricePlanMatrixLineDto.getValue() != null? pricePlanMatrixLineDto.getValue():pricePlanMatrixLineDto.getPriceWithoutTax();
         pricePlanMatrixLineUpdate.setValue(value);
     }
-    
+
     public void checkDuplicatePricePlanMatrixValues(List<PricePlanMatrixLineDto> list) {
         for (int i = 0; i < list.size(); i++) {
-            var values = list.get(i).getPricePlanMatrixValues(); 
+            var values = list.get(i).getPricePlanMatrixValues();
             for (int k = i + 1; k < list.size(); k++) {
                 var valTobeCompared = list.get(k).getPricePlanMatrixValues();
-                if(!values.isEmpty() 
+                if(!values.isEmpty()
                         && !valTobeCompared.isEmpty() && Arrays.deepEquals(values.toArray(new PricePlanMatrixValueDto[] {}), valTobeCompared.toArray(new PricePlanMatrixValueDto[] {})))
                     throw new MeveoApiException("A line having similar values already exists!.");
             }
