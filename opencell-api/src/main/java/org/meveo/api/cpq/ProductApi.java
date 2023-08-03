@@ -1099,7 +1099,7 @@ public class ProductApi extends BaseApi {
 	                offerProduct.getProduct().setCurrentProductVersion(productVersionResponse);
 	            }
 	        }
-			for (OfferTemplateAttributeDTO attributeDto :  offertemplateDTO.getOfferAttributes()) {
+			for (ProductVersionAttributeDTO attributeDto :  offertemplateDTO.getOfferAttributes()) {
 				List<CommercialRuleHeader> commercialRules = commercialRulesContainerProvider.getForOfferAndAttribute(attributeDto.getAttributeCode() + "-"+ offertemplateDTO.getCode());
 	            // List<CommercialRuleHeader> commercialRulesOld = commercialRuleHeaderService.getOfferAttributeRules(attributeDto.getCode(), offertemplateDTO.getCode());
 	            if (commercialRules != null && !commercialRules.isEmpty()) {

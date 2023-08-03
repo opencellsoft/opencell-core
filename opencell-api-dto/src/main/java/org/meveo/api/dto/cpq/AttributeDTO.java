@@ -137,7 +137,9 @@ public class AttributeDTO extends EnableBusinessDto {
      * @param serviceTemplate the service template
      */
     public AttributeDTO(Attribute attribute) {
-        super(attribute);
+        
+    	super(attribute);
+        
         priority=attribute.getPriority();
         allowedValues=attribute.getAllowedValues();
         attributeType=attribute.getAttributeType();
