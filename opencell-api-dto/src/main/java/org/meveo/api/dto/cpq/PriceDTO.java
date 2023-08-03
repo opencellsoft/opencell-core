@@ -177,7 +177,7 @@ public class PriceDTO extends BaseEntityDto {
 
 	public PriceDTO(QuotePrice quotePrice, TradingCurrency currency, Map<String, TaxDTO> mapTaxIndexes) {
 		this(quotePrice, mapTaxIndexes);
-		this.setCurrencySymbol(currency.getSymbol());
+		this.setCurrencySymbol(currency != null ? currency.getSymbol() : null);
 	}
 
 	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields, Map<String, TaxDTO> mapTaxIndexes) {
