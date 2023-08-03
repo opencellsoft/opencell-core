@@ -69,7 +69,6 @@ public class CdrFlatFileImportScript extends Script {
 		            splitBy = ",";
 				}
 	            header = headerTmp.split(splitBy);
-				boolean noRejectExist = false;
                 while ((line = br.readLine()) != null) {
                     try {
                         cdr = new CDR();
