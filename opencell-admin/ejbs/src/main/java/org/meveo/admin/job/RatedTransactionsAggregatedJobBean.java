@@ -94,9 +94,15 @@ public class RatedTransactionsAggregatedJobBean extends IteratorBasedJobBean<Agg
      * @param jobExecutionResult Job execution result
      */
     private void convertWosToAggregatedRt(AggregatedWalletOperation aggregatedWo, JobExecutionResultImpl jobExecutionResult) {
-
-        log.debug("Aggregating WOs to RT {}", aggregatedWo);
-        ratedTransactionService.createRatedTransaction(aggregatedWo, aggregationSettings, invoicingDate);
+        try {
+            log.debug("Aggregating WOs to RT {}", aggregatedWo);
+            ratedTransactionService.createRatedTransaction(aggregatedWo, aggregationSettings, invoicingDate);
+        } catch (Exception exception) {
+            log.error("Error during processing aggregates : "
+                    + aggregatedWo.getWalletOperationsIds() + " : " + exception.getCause().toString());
+            throw new BusinessException("Error during processing aggregate "
+                    + aggregatedWo.getWalletOperationsIds() + " : " + exception.getCause().toString());
+        }
     }
 
     private void checkAggregatedWoCurrency(List<AggregatedWalletOperation> aggregatedWos) {
