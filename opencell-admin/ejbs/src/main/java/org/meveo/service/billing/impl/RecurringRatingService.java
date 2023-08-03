@@ -350,7 +350,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 	throw new IllegalStateException("The given date: " +currentPeriodFromDate +" is not in period [startDate,endDate] of banking Calendar: "+ cal.getCode());
                 }
                 
-                effectiveChargeToDate = currentPeriodToDate;
+                effectiveChargeToDate = currentPeriodToDate.before(applyChargeToDate) ? currentPeriodToDate : applyChargeToDate;
                 if (prorateLastPeriodToDate != null && currentPeriodToDate.after(prorateLastPeriodToDate)) {
                     effectiveChargeToDate = prorateLastPeriodToDate;
 
