@@ -531,8 +531,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     			computeTotalQuoteAmount((CpqQuote) billableEntity, new Date(0), lastTransactionDate);
     		}
     	}else {
-            BillingAccount billingAccount =
-                    (billableEntity instanceof Subscription) ? ((Subscription) billableEntity).getUserAccount().getBillingAccount() : (BillingAccount) billableEntity;
+            BillingAccount billingAccount = null;
+            if (billableEntity instanceof CommercialOrder) {
+                billingAccount = ((CommercialOrder) billableEntity).getBillingAccount();
+            } else if (billableEntity instanceof Subscription) {
+                billingAccount = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
+            } else {
+                billingAccount = (BillingAccount) billableEntity;
+            }
+
             Class[] accountClasses = new Class[] { ServiceInstance.class, Subscription.class,
                     UserAccount.class, BillingAccount.class, CustomerAccount.class, Customer.class };
             for (Class accountClass : accountClasses) {
@@ -553,6 +560,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             });
             totalInvoiceableAmounts.addAmounts(totalAmounts);
         }
+        billableEntity.setMinInvoiceLines(minAmountLines);
     }
 
     private Amounts computeTotalOrderInvoiceAmount(Order order, Date firstTransactionDate, Date lastTransactionDate) {

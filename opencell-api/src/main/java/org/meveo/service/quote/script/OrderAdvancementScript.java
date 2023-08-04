@@ -14,9 +14,11 @@ import org.meveo.api.cpq.CommercialOrderApi;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
@@ -188,8 +190,9 @@ OrderAdvancementScript extends ModuleScript {
                orderToInvoiceLine.put(orderArticleLineId, invoiceLine);
            
            }
-        }  
-        List<Invoice> invoices = invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false, isDepositInvoice);
+        }
+        MinAmountForAccounts minAmountForAccounts = invoiceLinesService.isMinAmountForAccountsActivated(commercialOrder.getBillingAccount(), ApplyMinimumModeEnum.NO_PARENT);
+        List<Invoice> invoices = invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, minAmountForAccounts, false, false, isDepositInvoice);
         invoices.stream()
                 .forEach(
                         invoice -> {
