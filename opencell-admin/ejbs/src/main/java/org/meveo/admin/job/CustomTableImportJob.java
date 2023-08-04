@@ -186,9 +186,11 @@ public class CustomTableImportJob extends Job {
 
             List<CustomEntityTemplate> cets = customEntityTemplateService.listCustomTableTemplates();
             CustomEntityTemplate customTable = null;
-
+            log.info("\n\n\n filename:"+filename);
             for (CustomEntityTemplate cet : cets) {
+            	log.info("\n\n\n cet.getDbTablename():"+cet.getDbTablename());
                 if (filename.startsWith(cet.getDbTablename())) {
+              //  if (cet.getDbTablename().indexOf(customTableDir) > 0) { 	
                     customTable = cet;
                     break;
                 }
@@ -199,7 +201,10 @@ public class CustomTableImportJob extends Job {
                     throw new BusinessException("No Custom table matched by name " + filename);
                 }
 
-                customTableService.importData(customTable, file, appendImportedData);
+                log.info("####################################");
+                log.info("import customTable:{} avec fichier:{}",customTable.getCode(),file.getName());
+                log.info("####################################");
+                //customTableService.importData(customTable, file, appendImportedData);
                 result.registerSucces();
                 FileUtils.moveFile(outputDir, file, filename);
 
