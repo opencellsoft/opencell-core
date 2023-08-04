@@ -1810,7 +1810,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setPriceOverCharged(wo.isOverrodePrice());
             quotePrice.setDiscountedAmount(wo.getDiscountedAmount());
             QuotePrice discounteQuotePrice = quotePriceService.findByUuid(wo.getUuid());
-            if (wo.getDiscountPlan() != null && discounteQuotePrice != null) {
+            if (discounteQuotePrice != null) {
                 quotePrice.setDiscountedQuotePrice(discounteQuotePrice);
                 quotePrice.setSequence(wo.getSequence());
             } else {
@@ -1844,6 +1844,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setPricePlanMatrixLine(wo.getPricePlanMatrixLine());
             quotePrice.setContractItem(wo.getContractLine());
             quotePriceService.create(quotePrice);
+            quotePriceService.getEntityManager().flush();
             quoteArticleLine.getQuotePrices().add(quotePrice);
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
             accountingPrices.add(quotePrice);

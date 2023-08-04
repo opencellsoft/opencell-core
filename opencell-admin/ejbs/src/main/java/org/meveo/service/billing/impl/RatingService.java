@@ -1531,6 +1531,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         BigDecimal quantity=bareWalletOperation.getQuantity();
         ChargeInstance chargeInstance=bareWalletOperation.getChargeInstance();
 
+        discountWalletOperation.setUuid(bareWalletOperation.getUuid());
         discountWalletOperation.setCode(bareWalletOperation.getCode());
         discountWalletOperation.setDescription(bareWalletOperation.getDescription());
         discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
