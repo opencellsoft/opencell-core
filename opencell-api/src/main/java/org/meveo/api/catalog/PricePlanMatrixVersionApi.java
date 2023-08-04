@@ -32,6 +32,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ListUtils;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.TradingCurrency;
@@ -310,38 +311,42 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
             if (pricePlanMatrixVersion == null) {
                 throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + currentVersion, "currentVersion");
-            }            
-            PricePlanMatrix pricePlanMatrix = pricePlanMatrixVersion.getPricePlanMatrix();
+            }
+            PricePlanMatrix pricePlanMatrix = PersistenceUtils.initializeAndUnproxy(pricePlanMatrixVersion.getPricePlanMatrix());
             if (pricePlanMatrix == null) {
                 throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanMatrixCode);
             }
-            List<PricePlanMatrixVersion> versions = pricePlanMatrixVersionService.findByChargeTemplates(pricePlanMatrix.getChargeTemplates()
-                                                                                                                       .stream()
-                                                                                                                       .map(ChargeTemplate::getId)
-                                                                                                                       .collect(Collectors.toSet()));
-            versions.stream()
-                    .filter(ppmv -> !pricePlanMatrixVersion.getId().equals(ppmv.getId()) && VersionStatusEnum.PUBLISHED.equals(ppmv.getStatus()))
-                    .forEach(ppmv -> {
-                        if(ppmv.getValidity() != null&& ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false)) {
-                            var formatter = new SimpleDateFormat("dd/MM/yyyy");
-                            String sourceFrom = pricePlanMatrixVersion.getValidity().getFrom() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getFrom()) : "";
-                            String sourceTo = pricePlanMatrixVersion.getValidity().getTo() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getTo()) : "";
-                            String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
-                            String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
-                            // throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
-                            ChargeTemplate chargeTemplate = pricePlanMatrixVersion.getPricePlanMatrix()
-                                                                                  .getChargeTemplates()
-                                                                                  .iterator()
-                                                                                  .next();
-                            throw new MeveoApiException(String.format("Validity overlapping is forbidden for PUBLISHED price versions linked to the same charge. " +
-                                            "Price version [id=%s,label=%s,validity.from=%s,validity.to=%s] " +
-                                            "would overlap with price version [id=%s,label=%s,validity.from=%s,validity.to=%s] " +
-                                            "in charge [id=%s,code=%s,description=%s]",
-                                    pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getLabel(), sourceFrom, sourceTo,
-                                    ppmv.getId(), ppmv.getLabel(), eFrom, eTo,
-                                    chargeTemplate.getId(), chargeTemplate.getCode(), chargeTemplate.getDescription()));
-                        }
-            });
+            // The validity overlapping check will be only between charges templates otherwise it's not mandatory example :
+            // duplication the price plan matrix in the framework agreements
+            if (!pricePlanMatrix.getChargeTemplates().isEmpty()) {
+                List<PricePlanMatrixVersion> versions = pricePlanMatrixVersionService.findByChargeTemplates(pricePlanMatrix.getChargeTemplates()
+                        .stream()
+                        .map(ChargeTemplate::getId)
+                        .collect(Collectors.toSet()));
+                versions.stream()
+                        .filter(ppmv -> !pricePlanMatrixVersion.getId().equals(ppmv.getId()) && VersionStatusEnum.PUBLISHED.equals(ppmv.getStatus()))
+                        .forEach(ppmv -> {
+                            if(ppmv.getValidity() != null&& ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false)) {
+                                var formatter = new SimpleDateFormat("dd/MM/yyyy");
+                                String sourceFrom = pricePlanMatrixVersion.getValidity().getFrom() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getFrom()) : "";
+                                String sourceTo = pricePlanMatrixVersion.getValidity().getTo() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getTo()) : "";
+                                String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
+                                String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
+                                // throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
+                                ChargeTemplate chargeTemplate = pricePlanMatrixVersion.getPricePlanMatrix()
+                                        .getChargeTemplates()
+                                        .iterator()
+                                        .next();
+                                throw new MeveoApiException(String.format("Validity overlapping is forbidden for PUBLISHED price versions linked to the same charge. " +
+                                                "Price version [id=%s,label=%s,validity.from=%s,validity.to=%s] " +
+                                                "would overlap with price version [id=%s,label=%s,validity.from=%s,validity.to=%s] " +
+                                                "in charge [id=%s,code=%s,description=%s]",
+                                        pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getLabel(), sourceFrom, sourceTo,
+                                        ppmv.getId(), ppmv.getLabel(), eFrom, eTo,
+                                        chargeTemplate.getId(), chargeTemplate.getCode(), chargeTemplate.getDescription()));
+                            }
+                        });
+            }
             pricePlanMatrixVersionService.updateProductVersionStatus(pricePlanMatrixVersion, status);
             return new GetPricePlanVersionResponseDto(pricePlanMatrixVersion);
         } catch (BusinessException e) {
