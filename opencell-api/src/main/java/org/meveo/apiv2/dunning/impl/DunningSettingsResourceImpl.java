@@ -9,6 +9,7 @@ import org.meveo.apiv2.dunning.ImmutableDunningSettings;
 import org.meveo.apiv2.dunning.resource.DunningSettingResource;
 import org.meveo.apiv2.dunning.service.DunningSettingsApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
+import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningTemplateService;
 
 public class DunningSettingsResourceImpl implements DunningSettingResource {
@@ -18,6 +19,9 @@ public class DunningSettingsResourceImpl implements DunningSettingResource {
 
 	@Inject
 	private DunningTemplateService dunningTemplateService;
+
+	@Inject
+	private DunningLevelService dunningLevelService;
 
 	private DunningSettingsMapper mapper = new DunningSettingsMapper();
 
@@ -29,6 +33,10 @@ public class DunningSettingsResourceImpl implements DunningSettingResource {
 
 		//Update DunningTemplate after creating a new DunningSettings
 		dunningTemplateService.updateDunningTemplateByDunningMode(dunningSettings.getDunningMode());
+
+		//Activate and Deactivate DunningLevel by DunningSettings
+		dunningLevelService.updateDunningLevelAfterCreatingOrUpdatingDunningSetting(dunningSettings.getDunningMode());
+
 		return Response.created(LinkGenerator.getUriBuilderFromResource(DunningSettingResource.class, savedDunning.getId()).build())
 				.entity(toResourceOrderWithLink(mapper.toResource(savedDunning)))
 				.build();
@@ -41,6 +49,10 @@ public class DunningSettingsResourceImpl implements DunningSettingResource {
 
 		//Update DunningTemplate after creating a new DunningSettings
 		dunningTemplateService.updateDunningTemplateByDunningMode(dunningSettings.getDunningMode());
+
+		//Activate and Deactivate DunningLevel by DunningSettings
+		dunningLevelService.updateDunningLevelAfterCreatingOrUpdatingDunningSetting(dunningSettings.getDunningMode());
+
 		return Response.status(Status.ACCEPTED).entity(toResourceOrderWithLink(mapper.toResource(updated))).build();
 	}
 	
