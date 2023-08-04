@@ -6,18 +6,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,6 +20,10 @@ import java.util.List;
 @Table(name = "dunning_level")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dunning_level_seq")})
+@NamedQueries({
+        @NamedQuery(name = "DunningLevel.activateByDunningMode", query = "UPDATE DunningLevel SET isActive = TRUE WHERE type = :dunningMode"),
+        @NamedQuery(name = "DunningLevel.deactivateByDunningMode", query = "UPDATE DunningLevel SET isActive = FALSE WHERE type != :dunningMode")
+})
 public class DunningLevel extends BusinessEntity {
 
     private static final long serialVersionUID = 8092970257735394941L;
