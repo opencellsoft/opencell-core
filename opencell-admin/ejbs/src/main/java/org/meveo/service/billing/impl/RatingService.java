@@ -1801,7 +1801,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP); 
     	BigDecimal quantity=bareWalletOperation.getQuantity();
     	ChargeInstance chargeInstance=bareWalletOperation.getChargeInstance();
-    
+    	discountWalletOperation.setUuid(bareWalletOperation.getUuid());
     	discountWalletOperation.setCode(bareWalletOperation.getCode());
     	discountWalletOperation.setDescription(bareWalletOperation.getDescription());  
     	discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
