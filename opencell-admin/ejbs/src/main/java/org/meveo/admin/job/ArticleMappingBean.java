@@ -1,77 +1,68 @@
 package org.meveo.admin.job;
 
-import org.apache.commons.collections.map.HashedMap;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.filter.FilterService;
-import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionErrorService;
-import org.meveo.service.script.ScriptInstanceService;
-import org.slf4j.Logger;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
+import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.AccountingArticleAssignmentItem;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 
 @Stateless
-public class ArticleMappingBean extends BaseJobBean {
-    @Inject
-    private Logger log;
+public class ArticleMappingBean extends IteratorBasedJobBean<AccountingArticleAssignmentItem> {
 
-    @Inject
-    private FilterService filterService;
-
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
-
-    @Inject
-    private BeanManager manager;
-
-    @Inject
-    private BillingRunService billingRunService;
+    private static final long serialVersionUID = 1402462714195024317L;
 
     @Inject
     private RatedTransactionService ratedTransactionService;
 
     @Inject
-    private JobExecutionErrorService jobExecutionErrorService;
+    private AccountingArticleService accountingArticleService;
 
-    @JpaAmpNewTx
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running for with parameter={}", jobInstance.getParametres());
+    @Inject
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::assignAccountingArticle, this::assignAccountingArticles, null, null, null);
+    }
+
+    private Optional<Iterator<AccountingArticleAssignmentItem>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+        List<AccountingArticleAssignmentItem> resultList = emWrapper.getEntityManager().createNamedQuery("RatedTransaction.getMissingAccountingArticleInputs").getResultList();
+        return Optional.of(new SynchronizedIterator<AccountingArticleAssignmentItem>(resultList));
+    }
+
+    private void assignAccountingArticles(List<AccountingArticleAssignmentItem> items, JobExecutionResultImpl jobExecutionResult) {
+
+        for (AccountingArticleAssignmentItem item : items) {
+            assignArticle(item);
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
+    }
 
-        List<EntityReferenceWrapper> billingRunWrappers = (List<EntityReferenceWrapper>)this.getParamOrCFValue(jobInstance, "billingRuns");
-        if(billingRunWrappers != null){
-            List<Long> billingRunIds = billingRunWrappers.stream()
-                    .map(br -> Long.valueOf(br.getCode().split("/")[0]))
-                    .collect(Collectors.toList());
-            Map<String, Object> filters = new HashedMap();
-            filters.put("inList id", billingRunIds);
-            PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
-            List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
-        }
+    private void assignAccountingArticle(AccountingArticleAssignmentItem item, JobExecutionResultImpl jobExecutionResult) {
+        assignArticle(item);
+    }
 
+    private void assignArticle(AccountingArticleAssignmentItem item) {
+        AccountingArticle article = accountingArticleService.getAccountingArticle(item.getServiceInstanceId(), item.getChargeTemplateId(), item.getOfferTemplateId());
+        ratedTransactionService.updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(item.getChargeInstancesIDs(), item.getServiceInstanceId(), item.getOfferTemplateId(), article);
+    }
+
+    @Override
+    protected boolean isProcessItemInNewTx() {
+        return false;
     }
 }

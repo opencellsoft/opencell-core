@@ -30,6 +30,7 @@ import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -38,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,6 +59,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoiceLinesFactory;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.generics.GenericRequestMapper;
 import org.meveo.api.generics.PersistenceServiceHelper;
@@ -1942,15 +1945,52 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		chargeInstances.stream().forEach(charge -> updateAccountingArticlesByChargeInstance(charge, accountingArticleService.getAccountingArticleByChargeInstance(charge)));
 	    return chargeInstances.size();
 	}
-    
-	private void updateAccountingArticlesByChargeInstance(ChargeInstance charge,
-			AccountingArticle accountingArticle) {
-        String strQuery = "UPDATE RatedTransaction rt SET rt.accountingArticle=:accountingArticle WHERE rt.status='OPEN' and rt.chargeInstance=:chargeInstance and rt.accountingArticle is null ";
+
+    public void updateAccountingArticlesByChargeInstance(ChargeInstance charge, AccountingArticle accountingArticle) {
+        updateAccountingArticlesByChargeInstanceIds(Arrays.asList(charge.getId()), accountingArticle);
+    }
+
+    public void updateAccountingArticlesByChargeInstanceIds(List<Long> ids, AccountingArticle accountingArticle) {
+        updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(ids, null, null, accountingArticle);
+    }
+
+    public void updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(List<Long> chargeInstances, Long serviceInstanceId, Long offerTemplateId, AccountingArticle accountingArticle) {
+
+        String strQuery = "UPDATE RatedTransaction rt SET rt.accountingArticle=:accountingArticle WHERE rt.status='OPEN' and rt.accountingArticle is null ";
+        if (chargeInstances != null) {
+            strQuery = strQuery + " and rt.chargeInstance.id in(:chargeInstanceIds) ";
+        } else {
+            strQuery = strQuery + " and rt.chargeInstance.id is null ";
+            if (serviceInstanceId != null) {
+                strQuery = strQuery + " and rt.serviceInstance.id =:serviceInstanceId ";
+            } else {
+                strQuery = strQuery + " and rt.serviceInstance.id is null ";
+            }
+            if (offerTemplateId != null) {
+                strQuery = strQuery + " and rt.offerTemplate.id =:offerTemplateId ";
+            } else {
+                strQuery = strQuery + " and rt.offerTemplate.id is null ";
+            }
+        }
         Query query = getEntityManager().createQuery(strQuery);
-        query.setParameter("chargeInstance", charge);
         query.setParameter("accountingArticle", accountingArticle);
-        query.executeUpdate();
-	}
+        if (chargeInstances != null) {
+            final int maxValue = Objects.requireNonNull(getInstance()).getPropertyAsInteger("database.number.of.inlist.limit", PersistenceService.SHORT_MAX_VALUE) - 1;
+            List<List<Long>> chargesSubList = partition(chargeInstances, maxValue);
+            for (List<Long> subList : chargesSubList) {
+                query.setParameter("chargeInstanceIds", subList);
+                query.executeUpdate();
+            }
+        } else {
+            if (serviceInstanceId != null) {
+                query.setParameter("serviceInstanceId", serviceInstanceId);
+            }
+            if (offerTemplateId != null) {
+                query.setParameter("offerTemplateId", offerTemplateId);
+            }
+            query.executeUpdate();
+        }
+    }
 
 	/**
 	 * @param billableEntity
