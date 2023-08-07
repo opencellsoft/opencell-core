@@ -182,9 +182,10 @@ public class CustomTableImportJob extends Job {
 
             List<CustomEntityTemplate> cets = customEntityTemplateService.listCustomTableTemplates();
             CustomEntityTemplate customTable = null;
-
+            String fileNameToCheck = filename.replaceAll(CustomTableService.FILE_APPEND, "");
+            fileNameToCheck = fileNameToCheck.substring(0,fileNameToCheck.length()-4);
             for (CustomEntityTemplate cet : cets) {
-                if (filename.startsWith(cet.getDbTablename())) {
+                if (fileNameToCheck.equals(cet.getDbTablename())) {
                     customTable = cet;
                     break;
                 }
