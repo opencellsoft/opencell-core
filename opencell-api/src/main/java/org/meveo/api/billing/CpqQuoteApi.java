@@ -2052,18 +2052,20 @@ public class CpqQuoteApi extends BaseApi {
 				for (UsageChargeInstance usageCharge : serviceInstance.getUsageChargeInstances()) {
 					if (!walletOperationService.ignoreChargeTemplate(usageCharge)) {
 						UsageChargeTemplate chargetemplate = (UsageChargeTemplate) usageCharge.getChargeTemplate();
-						usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(usageCharge);
-						if (usageArticle == null)
-							throw new BusinessException(
-									errorMsg + " and charge " + usageCharge.getChargeTemplate());
-						if (overrodeArticle.keySet().contains(usageArticle)) {
-							log.info("Usage quotation : usageArticle={}",usageArticle.getCode());
-							QuoteArticleLine quoteArticleLine = overrodeArticle.get(usageArticle).get(0);
-							usageCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
-							usageCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax().divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS,RoundingMode.HALF_UP));
-							usageCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
-							usageCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
-							log.info("Usage quotation : usageCharge amountWTax={}",usageCharge.getAmountWithoutTax());
+						if (overrodeArticle != null && !overrodeArticle.isEmpty()) {
+							usageArticle = accountingArticleService.getAccountingArticleByChargeInstance(usageCharge);
+							if (usageArticle == null)
+								throw new BusinessException(errorMsg + " and charge " + usageCharge.getChargeTemplate());
+							if (overrodeArticle.keySet().contains(usageArticle)) {
+								log.info("Usage quotation : usageArticle={}", usageArticle.getCode());
+								QuoteArticleLine quoteArticleLine = overrodeArticle.get(usageArticle).get(0);
+								usageCharge.setAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getUnitPriceWithoutTax());
+								usageCharge.setAmountWithTax(quoteArticleLine.getQuotePrices().get(0).getAmountWithTax()
+										.divide(quoteArticleLine.getQuantity(), BaseEntity.NB_DECIMALS,	RoundingMode.HALF_UP));
+								usageCharge.setApplyDiscountsOnOverridenPrice(quoteArticleLine.getQuotePrices().get(0).getApplyDiscountsOnOverridenPrice());
+								usageCharge.setOverchargedUnitAmountWithoutTax(quoteArticleLine.getQuotePrices().get(0).getOverchargedUnitAmountWithoutTax());
+								log.info("Usage quotation : usageCharge amountWTax={}", usageCharge.getAmountWithoutTax());
+							}
 						}
 						if (!quantityFound && chargetemplate.getUsageQuantityAttribute() != null) {
 							Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
