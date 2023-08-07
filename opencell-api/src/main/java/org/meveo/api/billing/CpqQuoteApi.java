@@ -1909,6 +1909,10 @@ public class CpqQuoteApi extends BaseApi {
 						if (usageArticle == null)
 							throw new BusinessException(
 									errorMsg + " and charge " + usageCharge.getChargeTemplate());
+						
+						if (usageCharge.getSeller() == null) {
+                            setChargeSeller(quoteOffer, usageCharge);
+                        }
 						if (overrodeArticle.keySet().contains(usageArticle)) {
 							log.info("Usage quotation : usageArticle={}",usageArticle.getCode());
 							QuoteArticleLine quoteArticleLine = overrodeArticle.get(usageArticle).get(0);
@@ -1953,7 +1957,7 @@ public class CpqQuoteApi extends BaseApi {
             offerEligibleFixedDiscountItems.addAll(productEligibleFixedDiscountItems);
         }
         
-        if(subscription.getOffer() != null && subscription.getOffer().isGenerateQuoteEdrPerProduct()) {
+        if(subscription.getOffer() != null && !subscription.getOffer().isGenerateQuoteEdrPerProduct()) {
         createEDR(edrQuantity, subscription, attributes, walletOperations);
         }
 
