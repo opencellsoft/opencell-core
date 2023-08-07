@@ -479,7 +479,7 @@
         <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
         <createSequence sequenceName="cpq_trading_contract_item_seq" startValue="1" />
         <createSequence sequenceName="audit_data_log_seq" startValue="1" />
-        <createSequence sequenceName="audit_data_log_rec_seq" startValue="1" />
+        <createSequence sequenceName="audit_data_log_rec_seq" startValue="1" incrementBy="1000"/>
         <createSequence sequenceName="audit_data_config_seq" startValue="1" />
     </changeSet>
 
@@ -18947,8 +18947,11 @@
                     data_tmp jsonb;
                     ref_id bigint;
                     ref_table varchar(60);
+                    save boolean; 
                 BEGIN
             
+                    save := true;
+                    
                     audit_info := current_setting('var.opencell_audit_info', true);
                     if (audit_info IS NOT NULL) then
 					    if (audit_info &lt;&gt; '') then
@@ -18970,7 +18973,9 @@
                             ref_id :=NEW.id;
                         end if;                        
                         data_new := jsonb_removeNull(data_new, TG_ARGV[0], TG_ARGV[1]);
-            
+                        
+                        save := TG_ARGV[2]::bool or data_new &lt;&gt; '{}';
+                        
                     elseif (TG_OP = 'UPDATE') then
                         data_old := to_jsonb(OLD);
                         data_new := to_jsonb(NEW);
@@ -18980,6 +18985,8 @@
                         data_tmp := jsonb_minus(data_new, data_old, TG_ARGV[0], TG_ARGV[1]);
                         data_old := jsonb_minus(data_old, data_new, TG_ARGV[0], TG_ARGV[1]);
                         data_new := data_tmp;
+                        
+                        save := TG_ARGV[2]::bool or data_new &lt;&gt; '{}';
             
                     else 
                         data_old := to_jsonb(OLD);
@@ -18987,14 +18994,18 @@
                             ref_id :=OLD.id;
                         end if;                        
                         data_old := jsonb_removeNull(data_old, TG_ARGV[0], TG_ARGV[1]);
+                        
+                        save := TG_ARGV[2]::bool or data_old &lt;&gt; '{}';
 
                     end if;
             
-                    INSERT INTO audit_data_log_rec (
-                        id, created, tx_id, ref_table, ref_id, action, origin, origin_name, user_name, data_old, data_new )
-                    VALUES(
-                        nextval('audit_data_log_rec_seq'), statement_timestamp(), txid_current(), TG_TABLE_NAME, ref_id, TG_OP, origin, origin_name, db_user, data_old, data_new );
-            
+                    if (save) then
+                        INSERT INTO audit_data_log_rec (
+                            id, created, tx_id, ref_table, ref_id, action, origin, origin_name, user_name, data_old, data_new )
+                        VALUES(
+                            nextval('audit_data_log_rec_seq'), statement_timestamp(), txid_current(), TG_TABLE_NAME, ref_id, TG_OP, origin, origin_name, db_user, data_old, data_new );
+                    end if;
+                    
                     if (TG_OP = 'DELETE') then
                         RETURN OLD;
                     else 
@@ -19005,7 +19016,7 @@
                 LANGUAGE plpgsql;
         </createProcedure>
         <createProcedure>
-          CREATE OR REPLACE procedure proc_recreate_audit_data_trigger(table_name varchar, fields varchar, actions varchar, preserveField varchar)
+          CREATE OR REPLACE procedure proc_recreate_audit_data_trigger(table_name varchar, fields varchar, actions varchar, preserveField varchar, saveEvenDiffIsEmpty boolean)
                 language plpgsql
                 as $$
 
@@ -19034,7 +19045,7 @@
             END IF;
 
             EXECUTE format ('DROP TRIGGER IF EXISTS %s ON %s', trigger_name, table_name );
-            EXECUTE format ('CREATE TRIGGER %I AFTER %s ON %s FOR EACH ROW EXECUTE FUNCTION audit_data_log_trigger_func(''%s'',''%s'')', trigger_name, trigger_actions, table_name, preserveField, fields );
+            EXECUTE format ('CREATE TRIGGER %I AFTER %s ON %s FOR EACH ROW EXECUTE FUNCTION audit_data_log_trigger_func(''%s'',''%s'',%I)', trigger_name, trigger_actions, table_name, preserveField, fields, saveEvenDiffIsEmpty::bool );
 
             END$$;
         </createProcedure>
