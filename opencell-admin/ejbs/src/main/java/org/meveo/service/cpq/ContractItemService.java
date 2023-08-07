@@ -130,10 +130,10 @@ public class ContractItemService extends BusinessService<ContractItem> {
 		StringBuilder builder = new StringBuilder("select c from ContractItem c where  c.contract.id=:contractId");
 
 		if(offer != null && offer.getId() != null){
-			builder.append(" and c.offerTemplate.id=:offerId");
+			builder.append(" and (c.offerTemplate is null or c.offerTemplate.id=:offerId)");
 		}
 		if(productId != null){
-			builder.append(" and c.product.id=:productId");
+			builder.append(" and (c.product is null or c.product.id=:productId)");
 		}
 		if(chargeTemplate != null && chargeTemplate.getId() != null){
 			builder.append(" and c.chargeTemplate.id=:chargeTemplate");
