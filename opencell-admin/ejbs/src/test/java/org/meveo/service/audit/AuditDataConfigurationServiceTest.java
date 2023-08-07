@@ -83,6 +83,8 @@ public class AuditDataConfigurationServiceTest {
         assertThat(queries.get(0).getTableName()).isEqualTo("adm_title");
         assertThat(queries.get(0).getFields()).isNull();
         assertThat(queries.get(0).getActions()).isNull();
+        assertThat(queries.get(0).getPreserveField()).isNull();
+        assertThat(queries.get(0).getSaveEvenDiffIsEmpty()).isEqualTo(false);
     }
 
     @Test
@@ -108,6 +110,8 @@ public class AuditDataConfigurationServiceTest {
         assertThat(queries.get(0).getTableName()).isEqualTo("adm_title");
         assertThat(queries.get(0).getFields()).isEqualTo("code,is_company");
         assertThat(queries.get(0).getActions()).isEqualTo("INSERT, UPDATE");
+        assertThat(queries.get(0).getPreserveField()).isNull();
+        assertThat(queries.get(0).getSaveEvenDiffIsEmpty()).isEqualTo(false);
     }
 
     @Test
@@ -133,81 +137,113 @@ public class AuditDataConfigurationServiceTest {
         assertThat(queries.get(0).getTableName()).isEqualTo("cat_offer_template");
         assertThat(queries.get(0).getFields()).isNull();
         assertThat(queries.get(0).getActions()).isNull();
+        assertThat(queries.get(0).getPreserveField()).isNull();
+        assertThat(queries.get(0).getSaveEvenDiffIsEmpty()).isEqualTo(true);
 
         assertThat(queries.get(1).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(1).getTableName()).isEqualTo("cat_offer_serv_templates");
         assertThat(queries.get(1).getFields()).isNull();
         assertThat(queries.get(1).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(1).getPreserveField()).isEqualTo("offer_template_id");
+        assertThat(queries.get(1).getSaveEvenDiffIsEmpty()).isEqualTo(true);
 
         assertThat(queries.get(2).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(2).getTableName()).isEqualTo("cat_offer_serv_incomp");
         assertThat(queries.get(2).getFields()).isNull();
         assertThat(queries.get(2).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(2).getPreserveField()).isEqualTo("offer_service_template_id");
+        assertThat(queries.get(2).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(3).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(3).getTableName()).isEqualTo("cat_offer_product_template");
         assertThat(queries.get(3).getFields()).isNull();
         assertThat(queries.get(3).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(3).getPreserveField()).isEqualTo("offer_template_id");
+        assertThat(queries.get(3).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(4).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(4).getTableName()).isEqualTo("cpq_offer_component");
         assertThat(queries.get(4).getFields()).isNull();
         assertThat(queries.get(4).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(4).getPreserveField()).isEqualTo("offer_template_id");
+        assertThat(queries.get(4).getSaveEvenDiffIsEmpty()).isEqualTo(true);
 
         assertThat(queries.get(5).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(5).getTableName()).isEqualTo("cpq_offer_component_tags");
         assertThat(queries.get(5).getFields()).isNull();
         assertThat(queries.get(5).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(5).getPreserveField()).isEqualTo("offer_component_id");
+        assertThat(queries.get(5).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(6).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(6).getTableName()).isEqualTo("cat_offer_tmpl_discount_plan");
         assertThat(queries.get(6).getFields()).isNull();
         assertThat(queries.get(6).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(6).getPreserveField()).isEqualTo("offer_tmpl_id");
+        assertThat(queries.get(6).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(7).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(7).getTableName()).isEqualTo("cpq_offer_template_tags");
         assertThat(queries.get(7).getFields()).isNull();
         assertThat(queries.get(7).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(7).getPreserveField()).isEqualTo("offer_template_id");
+        assertThat(queries.get(7).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(8).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(8).getTableName()).isEqualTo("cpq_offer_template_media");
         assertThat(queries.get(8).getFields()).isNull();
         assertThat(queries.get(8).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(8).getPreserveField()).isEqualTo("offer_template_id");
+        assertThat(queries.get(8).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(9).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(9).getTableName()).isEqualTo("offer_template_attribute");
         assertThat(queries.get(9).getFields()).isNull();
         assertThat(queries.get(9).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(9).getPreserveField()).isEqualTo("offer_template_id");
+        assertThat(queries.get(9).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(10).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(10).getTableName()).isEqualTo("cat_product_offer_tmpl_cat");
         assertThat(queries.get(10).getFields()).isNull();
         assertThat(queries.get(10).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(10).getPreserveField()).isEqualTo("product_id");
+        assertThat(queries.get(10).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(11).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(11).getTableName()).isEqualTo("cat_product_offer_digital_res");
         assertThat(queries.get(11).getFields()).isNull();
         assertThat(queries.get(11).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(11).getPreserveField()).isEqualTo("product_id");
+        assertThat(queries.get(11).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(12).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(12).getTableName()).isEqualTo("cat_product_offer_bam");
         assertThat(queries.get(12).getFields()).isNull();
         assertThat(queries.get(12).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(12).getPreserveField()).isEqualTo("product_id");
+        assertThat(queries.get(12).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(13).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(13).getTableName()).isEqualTo("cat_product_offer_channels");
         assertThat(queries.get(13).getFields()).isNull();
         assertThat(queries.get(13).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(13).getPreserveField()).isEqualTo("product_id");
+        assertThat(queries.get(13).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(14).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(14).getTableName()).isEqualTo("cat_product_offer_seller");
         assertThat(queries.get(14).getFields()).isNull();
         assertThat(queries.get(14).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(14).getPreserveField()).isEqualTo("product_id");
+        assertThat(queries.get(14).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(15).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(15).getTableName()).isEqualTo("cat_product_offer_customer_category");
         assertThat(queries.get(15).getFields()).isNull();
         assertThat(queries.get(15).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(15).getPreserveField()).isEqualTo("product_id");
+        assertThat(queries.get(15).getSaveEvenDiffIsEmpty()).isEqualTo(false);
     }
 
     @Test
@@ -233,21 +269,29 @@ public class AuditDataConfigurationServiceTest {
         assertThat(queries.get(0).getTableName()).isEqualTo("cat_offer_template");
         assertThat(queries.get(0).getFields()).isEqualTo("code");
         assertThat(queries.get(0).getActions()).isEqualTo("UPDATE,DELETE");
+        assertThat(queries.get(0).getPreserveField()).isNull();
+        assertThat(queries.get(0).getSaveEvenDiffIsEmpty()).isEqualTo(true);
 
         assertThat(queries.get(1).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(1).getTableName()).isEqualTo("cat_offer_serv_templates");
         assertThat(queries.get(1).getFields()).isNull();
         assertThat(queries.get(1).getActions()).isEqualTo("UPDATE,DELETE");
+        assertThat(queries.get(1).getPreserveField()).isEqualTo("offer_template_id");
+        assertThat(queries.get(1).getSaveEvenDiffIsEmpty()).isEqualTo(true);
 
         assertThat(queries.get(2).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(2).getTableName()).isEqualTo("cat_offer_serv_incomp");
         assertThat(queries.get(2).getFields()).isNull();
         assertThat(queries.get(2).getActions()).isEqualTo("UPDATE,DELETE");
+        assertThat(queries.get(2).getPreserveField()).isEqualTo("offer_service_template_id");
+        assertThat(queries.get(2).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(3).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(3).getTableName()).isEqualTo("cat_offer_tmpl_discount_plan");
         assertThat(queries.get(3).getFields()).isNull();
         assertThat(queries.get(3).getActions()).isEqualTo("UPDATE,DELETE");
+        assertThat(queries.get(3).getPreserveField()).isEqualTo("offer_tmpl_id");
+        assertThat(queries.get(3).getSaveEvenDiffIsEmpty()).isEqualTo(false);
     }
 
     @Test
@@ -273,6 +317,8 @@ public class AuditDataConfigurationServiceTest {
         assertThat(queries.get(0).getTableName()).isEqualTo("adm_title");
         assertThat(queries.get(0).getFields()).isNull();
         assertThat(queries.get(0).getActions()).isNull();
+        assertThat(queries.get(0).getPreserveField()).isNull();
+        assertThat(queries.get(0).getSaveEvenDiffIsEmpty()).isEqualTo(false);
     }
 
     @Test
@@ -388,6 +434,7 @@ public class AuditDataConfigurationServiceTest {
         assertThat(dataHierarchy.getFieldName()).isNull();
         assertThat(dataHierarchy.getParentIdDbColumn()).isNull();
         assertThat(dataHierarchy.getParentIdField()).isNull();
+        assertThat(dataHierarchy.getSaveEvenDiffIsEmpty()).isEqualTo(true);
         assertThat(dataHierarchy.getDbColumByFieldname("subscriptionRenewal.initialTermType")).isEqualTo("initial_term_type");
         assertThat(dataHierarchy.getDbColumByFieldname("statusDate")).isEqualTo("status_date");
         assertThat(dataHierarchy.getDbColumByFieldname("auditable.created")).isEqualTo("created");
@@ -400,6 +447,7 @@ public class AuditDataConfigurationServiceTest {
         assertThat(discountPlanDH.getFieldName()).isEqualTo("discountPlanInstances");
         assertThat(discountPlanDH.getParentIdDbColumn()).isEqualTo("subscription_id");
         assertThat(discountPlanDH.getParentIdField()).isEqualTo("subscription");
+        assertThat(discountPlanDH.getSaveEvenDiffIsEmpty()).isEqualTo(false);
         assertThat(discountPlanDH.getDbColumByFieldname("statusDate")).isEqualTo("status_date");
         assertThat(discountPlanDH.getDbColumByFieldname("billingAccount")).isEqualTo("billing_account_id");
 
@@ -408,6 +456,7 @@ public class AuditDataConfigurationServiceTest {
         assertThat(attributeInstanceDH.getFieldName()).isEqualTo("attributeInstances");
         assertThat(attributeInstanceDH.getParentIdDbColumn()).isEqualTo("subscription_id");
         assertThat(attributeInstanceDH.getParentIdField()).isEqualTo("subscription");
+        assertThat(attributeInstanceDH.getSaveEvenDiffIsEmpty()).isEqualTo(false);
         assertThat(attributeInstanceDH.getDbColumByFieldname("auditable.creator")).isEqualTo("creator");
         assertThat(attributeInstanceDH.getDbColumByFieldname("booleanValue")).isEqualTo("boolean_value");
         assertThat(attributeInstanceDH.getDbColumByFieldname("parentAttributeValue")).isEqualTo("parent_id");
@@ -436,16 +485,22 @@ public class AuditDataConfigurationServiceTest {
         assertThat(queries.get(0).getTableName()).isEqualTo("billing_subscription");
         assertThat(queries.get(0).getFields()).isNull();
         assertThat(queries.get(0).getActions()).isNull();
+        assertThat(queries.get(0).getPreserveField()).isNull();
+        assertThat(queries.get(0).getSaveEvenDiffIsEmpty()).isEqualTo(true);
 
         assertThat(queries.get(1).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(1).getTableName()).isEqualTo("billing_discount_plan_instance");
         assertThat(queries.get(1).getFields()).isNull();
         assertThat(queries.get(1).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(1).getPreserveField()).isEqualTo("subscription_id");
+        assertThat(queries.get(1).getSaveEvenDiffIsEmpty()).isEqualTo(false);
 
         assertThat(queries.get(2).getQueryName()).isEqualTo("AuditDataConfiguration.recreateDataAuditTrigger");
         assertThat(queries.get(2).getTableName()).isEqualTo("cpq_attribute_instance");
         assertThat(queries.get(2).getFields()).isNull();
         assertThat(queries.get(2).getActions()).isEqualTo("INSERT,UPDATE,DELETE");
+        assertThat(queries.get(2).getPreserveField()).isEqualTo("subscription_id");
+        assertThat(queries.get(2).getSaveEvenDiffIsEmpty()).isEqualTo(false);
     }
 
     private class ProcedureSimulation implements StoredProcedureQuery {
@@ -454,6 +509,8 @@ public class AuditDataConfigurationServiceTest {
         String tableName;
         String fields;
         String actions;
+        String preserveField;
+        boolean saveEvenDiffIsEmpty;
 
         @Override
         public Query setMaxResults(int maxResult) {
@@ -573,6 +630,10 @@ public class AuditDataConfigurationServiceTest {
                 fields = (String) value;
             } else if (name.equals("actions")) {
                 actions = (String) value;
+            } else if (name.equals("preserveField")) {
+                preserveField = (String) value;
+            } else if (name.equals("saveEvenDiffIsEmpty")) {
+                saveEvenDiffIsEmpty = (boolean) value;
             }
             return this;
         }
@@ -670,6 +731,14 @@ public class AuditDataConfigurationServiceTest {
 
         public String getActions() {
             return actions;
+        }
+
+        public String getPreserveField() {
+            return preserveField;
+        }
+
+        public boolean getSaveEvenDiffIsEmpty() {
+            return saveEvenDiffIsEmpty;
         }
 
         public void setQueryName(String queryName) {

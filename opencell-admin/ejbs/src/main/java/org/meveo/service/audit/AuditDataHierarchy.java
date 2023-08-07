@@ -504,4 +504,14 @@ public class AuditDataHierarchy implements Serializable {
             }
         }
     }
+
+    /**
+     * Shall data audit record be saved even if no changes are detected. For reporting purpose any change in related entity should be reported under the parent entity. E.g. Offer and its service configuration, order and
+     * order items.
+     * 
+     * @return True for entities that have related entities
+     */
+    public boolean getSaveEvenDiffIsEmpty() {
+        return !relatedEntities.isEmpty();
+    }
 }

@@ -190,7 +190,8 @@ public class AuditDataConfigurationService extends PersistenceService<AuditDataC
             boolean isDelete = auditDataConfig.getActions() == null || auditDataConfig.getActions().toUpperCase().contains(AuditCrudActionEnum.DELETE.name());
 
             em.createNamedStoredProcedureQuery("AuditDataConfiguration.recreateDataAuditTrigger").setParameter("tableName", auditDataHierarchy.getTableName()).setParameter("fields", dbFields)
-                .setParameter("actions", auditDataConfig.getActions()).setParameter("preserveField", auditDataHierarchy.getParentIdDbColumn()).execute();
+                .setParameter("actions", auditDataConfig.getActions()).setParameter("preserveField", auditDataHierarchy.getParentIdDbColumn()).setParameter("saveEvenDiffIsEmpty", auditDataHierarchy.getSaveEvenDiffIsEmpty())
+                .execute();
 
             // Create triggers for any @JoinTable and @OneToMany with Cascade=All/Persist/Merge
             for (AuditDataHierarchy fieldAuditDataHierarchy : auditDataHierarchy.getRelatedEntities()) {
@@ -216,7 +217,8 @@ public class AuditDataConfigurationService extends PersistenceService<AuditDataC
 
                 if (fieldAuditDataHierarchy.getRelatedEntities().isEmpty()) {
                     em.createNamedStoredProcedureQuery("AuditDataConfiguration.recreateDataAuditTrigger").setParameter("tableName", fieldAuditDataHierarchy.getTableName()).setParameter("fields", null)
-                        .setParameter("actions", fieldActions).setParameter("preserveField", fieldAuditDataHierarchy.getParentIdDbColumn()).execute();
+                        .setParameter("actions", fieldActions).setParameter("preserveField", fieldAuditDataHierarchy.getParentIdDbColumn()).setParameter("saveEvenDiffIsEmpty", fieldAuditDataHierarchy.getSaveEvenDiffIsEmpty())
+                        .execute();
 
                 } else {
 
@@ -416,12 +418,12 @@ public class AuditDataConfigurationService extends PersistenceService<AuditDataC
             } else if (field.isAnnotationPresent(JoinTable.class)) {
                 JoinTable joinTableDefinition = field.getAnnotation(JoinTable.class);
                 if (joinTableDefinition.name() != null) {
-                    AuditDataHierarchy hierarchyInfo = new AuditDataHierarchy(field.getName(), null, joinTableDefinition.name(), null);
-                    hierarchyInfo.setParentIdDbColumn(joinTableDefinition.joinColumns()[0].name());
-                    hierarchyInfo.setParentIdField(AuditDataHierarchy.LIST_ENTITY_FIELD_PARENTID);
-                    hierarchyInfo.getDbColumnToFieldMap().put(hierarchyInfo.getParentIdDbColumn(), hierarchyInfo.getParentIdField());
-                    hierarchyInfo.getDbColumnToFieldMap().put(joinTableDefinition.inverseJoinColumns()[0].name(), AuditDataHierarchy.LIST_ENTITY_FIELD_ID);
-                    hierarcyInfo.getRelatedEntities().add(hierarchyInfo);
+                    AuditDataHierarchy fieldHierarchy = new AuditDataHierarchy(field.getName(), null, joinTableDefinition.name(), null);
+                    fieldHierarchy.setParentIdDbColumn(joinTableDefinition.joinColumns()[0].name());
+                    fieldHierarchy.setParentIdField(AuditDataHierarchy.LIST_ENTITY_FIELD_PARENTID);
+                    fieldHierarchy.getDbColumnToFieldMap().put(fieldHierarchy.getParentIdDbColumn(), fieldHierarchy.getParentIdField());
+                    fieldHierarchy.getDbColumnToFieldMap().put(joinTableDefinition.inverseJoinColumns()[0].name(), AuditDataHierarchy.LIST_ENTITY_FIELD_ID);
+                    hierarcyInfo.getRelatedEntities().add(fieldHierarchy);
 
                 }
 

@@ -47,7 +47,7 @@ import org.meveo.model.AuditableEntity;
 @NamedStoredProcedureQueries({
         @NamedStoredProcedureQuery(name = "AuditDataConfiguration.recreateDataAuditTrigger", procedureName = "proc_recreate_audit_data_trigger", parameters = {
                 @StoredProcedureParameter(name = "tableName", type = String.class), @StoredProcedureParameter(name = "fields", type = String.class), @StoredProcedureParameter(name = "actions", type = String.class),
-                @StoredProcedureParameter(name = "preserveField", type = String.class) }),
+                @StoredProcedureParameter(name = "preserveField", type = String.class), @StoredProcedureParameter(name = "saveEvenDiffIsEmpty", type = boolean.class) }),
         @NamedStoredProcedureQuery(name = "AuditDataConfiguration.deleteDataAuditTrigger", procedureName = "proc_delete_audit_data_trigger", parameters = {
                 @StoredProcedureParameter(name = "tableName", type = String.class) }) })
 public class AuditDataConfiguration extends AuditableEntity {
