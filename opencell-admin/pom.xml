@@ -5,7 +5,7 @@
         <artifactId>opencell</artifactId>
         <groupId>com.opencellsoft</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>14.3.4-SNAPSHOT</version>
+        <version>14.3.3-620-7910192</version>
     </parent>
     <artifactId>opencell-admin</artifactId>
     <packaging>pom</packaging>
