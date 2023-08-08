@@ -42,16 +42,18 @@ public class CdrJsonImportScript extends Script {
         File[] fileList = dir.listFiles();
 	    
 	        for (File fileInput : fileList) {
+		        File file = new File(fileInput.getAbsolutePath().replace("input", "reject") + ".rejected");
+		        if (!file.getParentFile().exists()) {
+			        file.getParentFile().mkdirs();
+		        }
 		        try (FileWriter rejectFile = new FileWriter(fileInput.getAbsolutePath().replace("input", "reject") + ".rejected");
 		             FileReader fread = new FileReader(fileInput.getAbsolutePath()))
 		        {
-	                File file = new File(fileInput.getAbsolutePath().replace("input", "reject") + ".rejected");
-	                if (!file.getParentFile().exists()) {
-	                    file.getParentFile().mkdirs();
-	                }
-	                if (!file.exists()) {
-	                    file.createNewFile();
-	                }
+			        
+			        if (!file.exists()) {
+				        file.createNewFile();
+			        }
+	               
 	                Object obj = parser.parse(fread);
 	                JSONArray subjects = (JSONArray) obj;
 	                Iterator iterator = subjects.iterator();
