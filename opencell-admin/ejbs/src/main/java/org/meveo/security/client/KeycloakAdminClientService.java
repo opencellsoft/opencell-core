@@ -202,8 +202,8 @@ public class KeycloakAdminClientService implements Serializable {
     public List<User> listUsers(PaginationConfiguration paginationConfig) {
 
         String username = (String) paginationConfig.getFilters().get("userName");
-        String firstName = (String) paginationConfig.getFilters().get("firstName");
-        String lastName = (String) paginationConfig.getFilters().get("lastName");
+        String firstName = (String) paginationConfig.getFilters().get("name.firstName");
+        String lastName = (String) paginationConfig.getFilters().get("name.lastName");
         String email = (String) paginationConfig.getFilters().get("email");
 
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
