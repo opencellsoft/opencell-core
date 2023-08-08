@@ -47,7 +47,8 @@ import org.meveo.model.cpq.Product;
 	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c left join c.targetAccountingArticles article where  c.contract.id=:contractId "
 			+ " and (c.offerTemplate is null or c.offerTemplate.id=:offerId) "
 			+ " and (c.product is null or c.product.id=:productId) "
-			+ " and ((c.chargeTemplate is null and article.id =:accountingArticleId) or c.chargeTemplate.id=:chargeTemplateId)  " )})
+			+ " and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId) "
+			+ " and ((c.targetAccountingArticles is empty and c.chargeTemplate is not null) or article.id =:accountingArticleId)" )})
 	
 public class ContractItem extends EnableBusinessCFEntity {
 
