@@ -2067,6 +2067,9 @@ public class CpqQuoteApi extends BaseApi {
 								log.info("Usage quotation : usageCharge amountWTax={}", usageCharge.getAmountWithoutTax());
 							}
 						}
+						if (usageCharge.getSeller() == null) {
+                            setChargeSeller(quoteOffer, usageCharge);
+                        }
 						if (!quantityFound && chargetemplate.getUsageQuantityAttribute() != null) {
 							Object quantityValue = attributes.get(chargetemplate.getUsageQuantityAttribute().getCode());
 							if (quantityValue != null && quantityValue instanceof String) {
@@ -2091,7 +2094,7 @@ public class CpqQuoteApi extends BaseApi {
 					}
 				}
 			
-			if(subscription.getOffer() != null && subscription.getOffer().isGenerateQuoteEdrPerProduct()) {
+			if(subscription.getOffer() != null && !subscription.getOffer().isGenerateQuoteEdrPerProduct()) {
 		        createEDR(edrQuantity, subscription, attributes, walletOperations);
 			}
 			
