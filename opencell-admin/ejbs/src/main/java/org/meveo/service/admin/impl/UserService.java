@@ -33,6 +33,7 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidParameterException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.security.client.KeycloakAdminClientService;
 import org.meveo.service.base.PersistenceService;
@@ -111,16 +112,65 @@ public class UserService extends PersistenceService<User> {
 
     @Override
     public List<User> list(PaginationConfiguration config) {
-        List<User> users = keycloakAdminClientService.listUsers(config);
-        users.forEach(this::findKeycloakUser);
-        return super.list(config);
+    	
+    	 List<User> users =null;
+    	 String firstName = (String) config.getFilters().get("firstName");
+         String lastName = (String) config.getFilters().get("lastName");
+         String email = (String) config.getFilters().get("email");
+    	if(StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(email)) {
+    		users=super.list(config);
+    		users.forEach(this::fillKeycloakUserInfo);
+    	}else {
+    		users = keycloakAdminClientService.listUsers(config);
+    		config.getFilters().remove("firstName");
+    		config.getFilters().remove("lastName");
+    		config.getFilters().remove("email");
+    		List<String> usernamesList = users.stream()
+                    .map(User::getUserName)
+                    .collect(Collectors.toList());
+    		config.getFilters().put("inList userName", usernamesList);
+    		users=super.list(config);
+    		users.forEach(this::fillKeycloakUserInfo);
+    	}
+        return users;
+    }
+    
+    /**
+     * Lookup a keycloak user info 
+     *
+     * @param OC user 
+     * @return User found
+     */
+    private User fillKeycloakUserInfo(User user) {
+    	  User kcUser = keycloakAdminClientService.findUser(user.getUserName(), true);
+          if (kcUser == null) {
+              return null;
+          }
+        user.setEmail(kcUser.getEmail());
+        user.setName(kcUser.getName());
+        user.setRoles(kcUser.getRoles());
+        user.setUserLevel(kcUser.getUserLevel());
+        return user;
     }
 
     @Override
     public long count(PaginationConfiguration config) {
-        List<User> users = keycloakAdminClientService.listUsers(config);
-        users.forEach(this::findKeycloakUser);
-        return super.count(config);
+    	 String firstName = (String) config.getFilters().get("firstName");
+         String lastName = (String) config.getFilters().get("lastName");
+         String email = (String) config.getFilters().get("email");
+    	if(StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(email)) {
+    		return super.count(config);
+    	}else {
+    		List<User> users = keycloakAdminClientService.listUsers(config);
+    		config.getFilters().remove("firstName");
+    		config.getFilters().remove("lastName");
+    		config.getFilters().remove("email");
+    		List<String> usernamesList = users.stream()
+                    .map(User::getUserName)
+                    .collect(Collectors.toList());
+    		config.getFilters().put("inList userName", usernamesList);
+    		return super.count(config);
+    	}
     }
 
     /**
