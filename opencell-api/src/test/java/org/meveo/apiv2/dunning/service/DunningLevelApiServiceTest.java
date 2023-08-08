@@ -12,12 +12,17 @@ import org.junit.runner.RunWith;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.dunning.DunningLevel;
+import org.meveo.model.dunning.DunningModeEnum;
+import org.meveo.model.dunning.DunningSettings;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningLevelService;
+import org.meveo.service.payments.impl.DunningSettingsService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import javax.inject.Inject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DunningLevelApiServiceTest {
@@ -32,6 +37,9 @@ public class DunningLevelApiServiceTest {
     private DunningLevelService dunningLevelService;
 
     @Mock
+    private DunningSettingsService dunningSettingsService;
+
+    @Mock
     private AuditLogService auditLogService;
 
     @Mock
@@ -39,11 +47,11 @@ public class DunningLevelApiServiceTest {
 
     @Before
     public void setUp() {
-        Currency minBalanceCurrency = new Currency();
-        minBalanceCurrency.setCurrencyCode("EUR");
+        DunningSettings dunningSettings = new DunningSettings();
+        dunningSettings.setDunningMode(DunningModeEnum.INVOICE_LEVEL);
 
         when(dunningLevelService.findByCode("NEW_DL")).thenReturn(null);
-        when(currencyService.findByCode("EUR")).thenReturn(minBalanceCurrency);
+        when(dunningSettingsService.findLastOne()).thenReturn(dunningSettings);
         doNothing().when(globalSettingsVerifier).checkActivateDunning();
     }
 
