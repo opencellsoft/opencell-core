@@ -895,13 +895,15 @@ public class CpqQuoteApi extends BaseApi {
                     qv.setInvoicingPlan(invoicingPlan);
                 }
                 
-                if(quoteVersionDto.getDiscountPlanCode()==null) {
-                	qv.setDiscountPlan(null);
+                if(quoteVersionDto.getDiscountPlanCode() !=null ) {
+	                if(StringUtils.isNotBlank(quoteVersionDto.getDiscountPlanCode())) {
+		                qv.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
+	                }else{
+		                qv.setDiscountPlan(null);
+	                }
                 }
                 
-                if(StringUtils.isNotBlank(quoteVersionDto.getDiscountPlanCode())) {
-                    qv.setDiscountPlan(loadEntityByCode(discountPlanService, quoteVersionDto.getDiscountPlanCode(), DiscountPlan.class));
-                }
+                
                 qv.setContract(contractHierarchyHelper.checkContractHierarchy(quote.getBillableAccount(), quoteVersionDto.getContractCode()));
                 qv.getMedias().clear();
                 if(quoteVersionDto.getMediaCodes() != null) {
