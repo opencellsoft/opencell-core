@@ -114,16 +114,16 @@ public class UserService extends PersistenceService<User> {
     public List<User> list(PaginationConfiguration config) {
     	
     	 List<User> users =null;
-    	 String firstName = (String) config.getFilters().get("firstName");
-         String lastName = (String) config.getFilters().get("lastName");
+    	 String firstName = (String) config.getFilters().get("name.firstName");
+         String lastName = (String) config.getFilters().get("name.lastName");
          String email = (String) config.getFilters().get("email");
     	if(StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(email)) {
     		users=super.list(config);
     		users.forEach(this::fillKeycloakUserInfo);
     	}else {
     		users = keycloakAdminClientService.listUsers(config);
-    		config.getFilters().remove("firstName");
-    		config.getFilters().remove("lastName");
+    		config.getFilters().remove("name.firstName");
+    		config.getFilters().remove("name.lastName");
     		config.getFilters().remove("email");
     		List<String> usernamesList = users.stream()
                     .map(User::getUserName)
@@ -155,15 +155,15 @@ public class UserService extends PersistenceService<User> {
 
     @Override
     public long count(PaginationConfiguration config) {
-    	 String firstName = (String) config.getFilters().get("firstName");
-         String lastName = (String) config.getFilters().get("lastName");
+    	 String firstName = (String) config.getFilters().get("name.firstName");
+         String lastName = (String) config.getFilters().get("name.lastName");
          String email = (String) config.getFilters().get("email");
     	if(StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(email)) {
     		return super.count(config);
     	}else {
     		List<User> users = keycloakAdminClientService.listUsers(config);
-    		config.getFilters().remove("firstName");
-    		config.getFilters().remove("lastName");
+    		config.getFilters().remove("name.firstName");
+    		config.getFilters().remove("name.lastName");
     		config.getFilters().remove("email");
     		List<String> usernamesList = users.stream()
                     .map(User::getUserName)
