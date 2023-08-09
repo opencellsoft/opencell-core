@@ -84,9 +84,10 @@ public class ImportExportResourceImpl implements ImportExportResource {
             String executionId = generateExecutionId(fileName);    
             ExportImportStatistics exportImport= null;
         try {
-        	if(tempFile!=null)
-        	log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
+        	if(tempFile!=null) {
+        	log.info("Received file {} Execution id {}", fileName, executionId);
             exportImport = entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), false, true, true, checkForStatus);
+        	}
         } catch (StatusChangeViolationException e) {
             throw new BusinessApiException(e.getMessage());
         }
