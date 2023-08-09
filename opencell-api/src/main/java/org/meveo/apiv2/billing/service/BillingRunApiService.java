@@ -127,14 +127,16 @@ public class BillingRunApiService implements ApiService<BillingRun> {
         }
 
         if (billingRun.getStatus() != NEW && billingRun.getStatus() != INVOICE_LINES_CREATED
-                && billingRun.getStatus() != DRAFT_INVOICES && billingRun.getStatus() != REJECTED) {
-            throw new BadRequestException("Billing run status must be either {NEW, INVOICE_LINES_CREATED, DRAFT_INVOICES, REJECTED}");
+                && billingRun.getStatus() != DRAFT_INVOICES && billingRun.getStatus() != REJECTED
+                && billingRun.getStatus() != OPEN) {
+            throw new BadRequestException("Billing run status must be either {NEW, OPEN, INVOICE_LINES_CREATED, DRAFT_INVOICES, REJECTED}");
         }
 
         if (billingRun.getStatus() == NEW || billingRun.getStatus() == INVOICE_LINES_CREATED
-                || billingRun.getStatus() == DRAFT_INVOICES || billingRun.getStatus() == REJECTED) {
+                || billingRun.getStatus() == DRAFT_INVOICES || billingRun.getStatus() == REJECTED
+                || billingRun.getStatus() == OPEN) {
 
-            if (billingRun.getStatus() == NEW && executeInvoicingJob) {
+            if ((billingRun.getStatus() == NEW || billingRun.getStatus() == OPEN) && executeInvoicingJob) {
                 JobInstance invoiceLineJob = jobInstanceService.findByCode(INVOICE_LINES_JOB_CODE);
                 if (invoiceLineJob != null) {
                     Map<String, Object> invoiceLineJobParams = new HashMap<>();
