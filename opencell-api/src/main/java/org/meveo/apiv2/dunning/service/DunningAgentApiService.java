@@ -9,8 +9,10 @@ import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.dunning.DunningAgent;
 import org.meveo.model.dunning.DunningSettings;
+import org.meveo.service.payments.impl.DunningActionService;
 import org.meveo.service.payments.impl.DunningAgentService;
 import org.meveo.service.payments.impl.DunningSettingsService;
 
@@ -24,7 +26,11 @@ public class DunningAgentApiService implements ApiService<DunningAgent> {
 	@Inject
 	private DunningAgentService dunningAgentService;
 
+	@Inject
+	DunningActionService dunningActionService;
+
 	private static final String  NO_DUNNING_AGENT_FOUND = "Dunning Agent doesn't exist with code : %s and agent email : %s";
+	private static final String  DUNNING_AGENT_LINKED_TO_DUNNING_ACTION = "The dunning agent with id = %s is referenced to dunning actions";
 
 	@Override
 	public List<DunningAgent> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -105,8 +111,17 @@ public class DunningAgentApiService implements ApiService<DunningAgent> {
 	public DunningAgent delete(String dunningCode, String agentEmailItem) {
 		globalSettingsVerifier.checkActivateDunning();
 		var deletedgDunningAgent = dunningAgentService.findByDunningCodeAndAgentEmailItem(dunningCode, agentEmailItem);
-		if(deletedgDunningAgent == null)
+		if(deletedgDunningAgent == null) {
 			throw new BadRequestException(String.format(NO_DUNNING_AGENT_FOUND, dunningCode, agentEmailItem));
+		}
+
+		//Check if the dunning agent to delete is always attached to a dunning action
+		List<DunningAction> dunningActions = dunningActionService.getDunningActionsByAgentAndUpdateThem(deletedgDunningAgent.getId());
+
+		if(dunningActions != null && dunningActions.size() > 0) {
+			throw new BadRequestException(String.format(DUNNING_AGENT_LINKED_TO_DUNNING_ACTION, deletedgDunningAgent.getId()));
+		}
+
 		dunningAgentService.remove(deletedgDunningAgent);
 		return deletedgDunningAgent;
 	}
