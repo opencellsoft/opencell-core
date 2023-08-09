@@ -99,10 +99,6 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 			baseEntity.setCustomerBalance(customerBalance);
 		}
 		
-		if(baseEntity.getCustomerBalance() == null && baseEntity.getDunningMode().equals(DunningModeEnum.INVOICE_LEVEL)) {
-			throw new BadRequestException(CUSTOMER_BALANCE_IS_MANDATORY);
-		}
-		
 		//Customer Balance not selected and DunningMode is CUSTOMER_LEVEL -> Set the default CustomerBalance
 		if(baseEntity.getCustomerBalance() == null && baseEntity.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL)) {
 			CustomerBalance customerBalance = null;
@@ -166,10 +162,6 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 			if(customerBalance == null)
 				throw new BadRequestException(NO_CUSTOMER_BALANCE_FOUND + dunningSettings.getCustomerBalance().getId());
 			dunningSettingsUpdate.setCustomerBalance(customerBalance);
-		}
-		
-		if(dunningSettings.getCustomerBalance() == null && dunningSettings.getDunningMode().equals(DunningModeEnum.INVOICE_LEVEL)) {
-			throw new BadRequestException(CUSTOMER_BALANCE_IS_MANDATORY);
 		}
 		
 		//Customer Balance not selected and DunningMode is CUSTOMER_LEVEL -> Set the default CustomerBalance
