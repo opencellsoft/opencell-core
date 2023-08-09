@@ -6385,12 +6385,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             scAggregate.addInvoiceLine(invoiceLine, isEnterprise, true);
-            if(anyILUseSpecificConversion) {
-            	scAggregate.setUseSpecificPriceConversion(true);
-        		scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
-            	scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
-            	scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
-            	scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(), invoiceLine.getTransactionalAmountWithTax(), invoiceLine.getTransactionalAmountTax());
+            if (anyILUseSpecificConversion) {
+                BigDecimal appliedRate = invoice.getBillingAccount().getTradingCurrency().getCurrentRate();
+                scAggregate.setUseSpecificPriceConversion(true);
+                if (invoiceLine.isUseSpecificPriceConversion()) {
+                    scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
+                    scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
+                    scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
+                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(), invoiceLine.getTransactionalAmountWithTax(), invoiceLine.getTransactionalAmountTax());
+                } else {
+                    scAggregate.addTransactionAmountWithoutTax(toTransactional(invoiceLine.getAmountWithoutTax(), appliedRate));
+                    scAggregate.addTransactionAmountWithTax(toTransactional(invoiceLine.getAmountWithTax(), appliedRate));
+                    scAggregate.addTransactionAmountTax(toTransactional(invoiceLine.getAmountTax(), appliedRate));
+                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(scAggregate.getTransactionalAmountWithoutTax(), scAggregate.getTransactionalAmountWithTax(), scAggregate.getTransactionalAmountTax());
+                }
+            } else {
+                scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
+                scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
+                scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
+                scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(), invoiceLine.getTransactionalAmountWithTax(), invoiceLine.getTransactionalAmountTax());
             }
         }
         if (moreInvoiceLinesExpected) {
@@ -6401,6 +6414,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoice.getDiscountAmount().compareTo(BigDecimal.ZERO) == 0) {
             invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax());
         }
+    }
+
+    private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
+        return amount != null ? amount.multiply(rate) : ZERO;
     }
 
     private void addFixedDiscount(InvoiceLine invoiceLine) {
