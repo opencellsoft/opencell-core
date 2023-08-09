@@ -24,10 +24,12 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.dunning.*;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.DunningCollectionPlanStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -58,6 +60,9 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
 
     @Inject
     protected ResourceBundle resourceMessages;
+
+    @Inject
+    private DunningSettingsService dunningSettingsService;
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -296,7 +301,7 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
 	}
 
 	private boolean invoiceEligibilityCheck(Invoice invoice, DunningPolicy policy, Integer dayOverDue) {
-        boolean dayOverDueAndThresholdCondition;
+        boolean dayOverDueAndThresholdCondition = false;
         invoice = invoiceService.refreshOrRetrieve(invoice);
         Date today;
         Date dueDate;
@@ -307,15 +312,58 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
             throw new BusinessException(exception);
         }
         long daysDiff = TimeUnit.DAYS.convert((today.getTime() - dueDate.getTime()), TimeUnit.MILLISECONDS);
-        if (policy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
-            dayOverDueAndThresholdCondition = (dayOverDue.longValue() <= daysDiff);
-        } else {
-            BigDecimal minBalance = ofNullable(invoice.getRecordedInvoice())
-                                            .map(RecordedInvoice::getUnMatchingAmount)
-                                            .orElse(BigDecimal.ZERO);
-            dayOverDueAndThresholdCondition =
-                    (dayOverDue.longValue() == daysDiff || minBalance.doubleValue() >= policy.getMinBalanceTrigger());
+
+        DunningSettings dunningSettings = dunningSettingsService.findLastOne();
+
+        if(dunningSettings != null) {
+            if(dunningSettings.getDunningMode().equals(DunningModeEnum.INVOICE_LEVEL)) {
+                if (policy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
+                    dayOverDueAndThresholdCondition = (dayOverDue.longValue() <= daysDiff);
+                } else {
+                    BigDecimal minBalance = ofNullable(invoice.getRecordedInvoice())
+                            .map(RecordedInvoice::getUnMatchingAmount)
+                            .orElse(BigDecimal.ZERO);
+                    dayOverDueAndThresholdCondition =
+                            (dayOverDue.longValue() == daysDiff || minBalance.doubleValue() >= policy.getMinBalanceTrigger());
+                }
+            } else if(dunningSettings.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL)) {
+                if (policy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
+                    if(invoice != null && invoice.getBillingAccount() != null && invoice.getBillingAccount().getCustomerAccount() != null && invoice.getBillingAccount().getCustomerAccount().getAccountOperations() != null) {
+                        for(BillingAccount billingAccount : invoice.getBillingAccount().getCustomerAccount().getBillingAccounts()) {
+                            if(!dayOverDueAndThresholdCondition) {
+                                for(Invoice inv : billingAccount.getInvoices()) {
+                                    try {
+                                        daysDiff = TimeUnit.DAYS.convert((today.getTime() - simpleDateFormat.parse(simpleDateFormat.format(inv.getDueDate())).getTime()), TimeUnit.MILLISECONDS);
+                                    } catch (ParseException e) {
+                                        throw new RuntimeException(e);
+                                    }
+
+                                    if(dayOverDue.longValue() <= daysDiff) {
+                                        dayOverDueAndThresholdCondition = (dayOverDue.longValue() <= daysDiff);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    BigDecimal minBalance = BigDecimal.valueOf(0);
+
+                    if(invoice != null && invoice.getBillingAccount() != null && invoice.getBillingAccount().getCustomerAccount() != null && invoice.getBillingAccount().getCustomerAccount().getAccountOperations() != null) {
+                        for(BillingAccount billingAccount : invoice.getBillingAccount().getCustomerAccount().getBillingAccounts()) {
+                            for(Invoice inv : billingAccount.getInvoices()) {
+                                minBalance = minBalance.add(ofNullable(inv.getRecordedInvoice())
+                                        .map(RecordedInvoice::getUnMatchingAmount)
+                                        .orElse(BigDecimal.ZERO));
+                            }
+                        }
+                    }
+
+                    dayOverDueAndThresholdCondition = (dayOverDue.longValue() == daysDiff || minBalance.doubleValue() >= policy.getMinBalanceTrigger());
+                }
+            }
         }
+
         return (invoice.getPaymentStatus().equals(UNPAID) || invoice.getPaymentStatus().equals(PENDING))
                 && collectionPlanService.findByInvoiceId(invoice.getId()).isEmpty()
                 && dayOverDueAndThresholdCondition;
