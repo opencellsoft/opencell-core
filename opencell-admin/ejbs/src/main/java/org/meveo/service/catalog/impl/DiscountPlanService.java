@@ -172,7 +172,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     		WalletOperation discountWalletOperation = null;
     		AccountingArticle discountAccountingArticle = null;
     		BigDecimal taxPercent = null;
-    		BigDecimal walletOperationDiscountAmount = null; 
+    		BigDecimal walletOperationDiscountAmount = null;
     		BigDecimal discountValue=null;
     		BigDecimal discountedAmount=unitAmountWithoutTax;
     		Product product=null;
@@ -242,7 +242,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 						rounding, roundingMode.getRoundingMode());
 				BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amount, amount,
 						walletOperation.getTaxPercent(), appProvider.isEntreprise(), rounding,
-						roundingMode.getRoundingMode());           	
+						roundingMode.getRoundingMode());
     			discountedAmount=discountedAmount!=null?discountedAmount.add(walletOperationDiscountAmount):null;
     			
     		     log.info("calculateDiscountplanItems walletOperationDiscountAmount{},unitAmountWithoutTax{} ,discountValue{} ,discountedAmount{} ",walletOperationDiscountAmount,unitAmountWithoutTax,discountValue,discountedAmount);
@@ -259,6 +259,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 				discountWalletOperation.setTaxClass(taxInfo.taxClass);
     			discountWalletOperation.setDiscountValue(discountValue);
     			discountWalletOperation.setDiscountedAmount(discountedAmount);
+				discountWalletOperation.setOrderNumber(walletOperation != null ? walletOperation.getOrderNumber() : null);
+			    discountWalletOperation.setUuid(walletOperation.getUuid());
+    			
     			if(!isVirtual) {
     				discountWalletOperation.setSubscription(subscription);
     				discountWalletOperation.setUserAccount(subscription.getUserAccount());
@@ -267,9 +270,6 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 						discountWalletOperation.setDiscountedWO(walletOperation);
     					walletOperation.setDiscountedAmount(discountedAmount);
     				}
-    			}else if(walletOperation != null) {
-    				walletOperation.setDiscountedAmount(discountedAmount);
-    				discountWalletOperation.setUuid(walletOperation.getUuid());
     			}
 				log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",
 						walletOperation != null ? walletOperation.getCode() : null, discountValue);
@@ -304,5 +304,5 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 				.getResultList();
 		return discountPlans;
 	}
-	   
+	
 }
