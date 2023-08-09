@@ -81,11 +81,11 @@ public class ImportExportResourceImpl implements ImportExportResource {
             // Convert the uploaded file from inputstream to a file
             File tempFile = extractImportFile(inputPart, fileName);
 
-            String executionId = generateExecutionId(fileName);
-
-            log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
-        ExportImportStatistics exportImport= null;
+            String executionId = generateExecutionId(fileName);    
+            ExportImportStatistics exportImport= null;
         try {
+        	if(tempFile!=null)
+        	log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
             exportImport = entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), false, true, true, checkForStatus);
         } catch (StatusChangeViolationException e) {
             throw new BusinessApiException(e.getMessage());
