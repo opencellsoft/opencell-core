@@ -161,6 +161,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     
     @Inject
     private WalletOperationService walletOperationService;
+
+    @Inject
+    private RatedTransactionService ratedTransactionService;
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
@@ -650,15 +653,26 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.setSubscriptionTerminationReason(terminationReason);
         }
 
+        boolean woCanceled = false;
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
             if(recurringChargeInstance.isAnticipateEndOfSubscription()) {
                 List<WalletOperation> walletOperations = walletOperationService.getEntityManager()
                         .createNamedQuery("WalletOperation.findWalletOperationByChargeInstance")
                         .setParameter("chargeInstanceId", recurringChargeInstance.getId())
+                        .setParameter("subscriptionId", recurringChargeInstance.getSubscription().getId())
                         .getResultList();
-                if(walletOperations != null && !walletOperations.isEmpty()) {
-                    recurringChargeInstanceService.resetRecurringCharge(recurringChargeInstance.getId(),
-                            walletOperations.get(0).getStartDate(), true);
+                if (walletOperations != null && !walletOperations.isEmpty()) {
+                    walletOperationService.getEntityManager()
+                            .createNamedQuery("WalletOperation.setStatusToCanceledById")
+                            .setParameter("now", new Date())
+                            .setParameter("woIds", walletOperations)
+                            .executeUpdate();
+                    walletOperationService.getEntityManager()
+                            .createNamedQuery("RatedTransaction.cancelByWOIds")
+                            .setParameter("now", new Date())
+                            .setParameter("woIds", walletOperations)
+                            .executeUpdate();
+                    woCanceled = true;
                 }
             }
 			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
@@ -699,8 +713,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             } else if (applyReimbursment && chargeToDateOnTermination.before(chargedToDate)) {
 
+                boolean anticipatedTermination = recurringChargeInstance.isAnticipateEndOfSubscription() && woCanceled;
                 try {
-                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber);
+                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber, anticipatedTermination);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
