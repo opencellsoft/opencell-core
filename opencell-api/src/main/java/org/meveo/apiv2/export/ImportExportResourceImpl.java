@@ -77,15 +77,12 @@ public class ImportExportResourceImpl implements ImportExportResource {
             if (fileName == null) {
                 throw new MissingParameterException("Missing a file name");
             }
-
             // Convert the uploaded file from inputstream to a file
             File tempFile = extractImportFile(inputPart, fileName);
-
             String executionId = generateExecutionId(fileName);    
             ExportImportStatistics exportImport= null;
         try {
         	if(tempFile!=null) {
-        	log.info("Received file {} Execution id {}", fileName, executionId);
             exportImport = entityExportImportService.importEntitiesSynchronously(tempFile, fileName.replaceAll(" ", "_"), false, true, true, checkForStatus);
         	}
         } catch (StatusChangeViolationException e) {
