@@ -91,6 +91,7 @@ import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
@@ -134,6 +135,7 @@ import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.MediaService;
+import org.meveo.service.cpq.ProductVersionAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteArticleLineService;
 import org.meveo.service.cpq.QuoteAttributeService;
@@ -257,6 +259,9 @@ public class CpqQuoteApi extends BaseApi {
     
 	@Inject
 	private ContractHierarchyHelper contractHierarchyHelper;
+	
+	@Inject
+	private ProductVersionAttributeService productVersionAttributeService;
 	
     private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     
@@ -491,14 +496,23 @@ public class CpqQuoteApi extends BaseApi {
             LinkedHashMap<String, Object> selectedAttributes = new LinkedHashMap<>();
             quoteProductDTO.getProductAttributes()
                     .stream()
-                    .forEach(productAttribute -> selectedAttributes.put(productAttribute.getQuoteAttributeCode(), productAttribute.getStringValue()));
+                    .forEach(productAttribute -> {
+						selectedAttributes.put(productAttribute.getQuoteAttributeCode(), productAttribute.getStringValue());
+	                    Attribute attribute = attributeService.findByCode(productAttribute.getQuoteAttributeCode());
+						if(attribute != null){
+							ProductVersionAttribute productVersionAttribute = productVersionAttributeService.findByProductVersionAndAttribute(productVersion.getId(), attribute.getId());
+							if(productVersionAttribute != null) {
+								productAttribute.setSequence(productVersionAttribute.getSequence());
+							}
+						}
+                    });
             productContextDTO.setSelectedAttributes(selectedAttributes);
             //processReplacementRules(commercialRuleHeader, productContextDTO, offerQuoteAttribute);
             ++index;
         }
         
     }
-
+	
     private void newPopulateOfferAttribute(List<QuoteAttributeDTO> quoteAttributeDtos, QuoteOffer quoteOffer) {
         if (quoteAttributeDtos != null) {
             for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) {
@@ -1317,6 +1331,11 @@ public class CpqQuoteApi extends BaseApi {
         }
         if(isNew)
             quoteAttributeService.create(quoteAttribute);
+		ProductVersionAttribute productVersionAttribute = productVersionAttributeService.findByProductVersionAndAttribute(quoteProduct.getProductVersion().getId(), attribute.getId());
+		if(productVersionAttribute != null){
+			quoteAttributeDTO.setSequence(productVersionAttribute.getSequence());
+		}
+		
         return quoteAttribute;
     }
 
