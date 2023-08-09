@@ -28,7 +28,7 @@ import java.util.Objects;
 @NamedQueries({
 		@NamedQuery(name = "ProductVersionAttribute.findByAttributeAndProductVersion", query = "FROM ProductVersionAttribute pva where pva.attribute.id =:attributeId and pva.productVersion.id =:productVersionId")
 })
-public class ProductVersionAttribute extends AttributeBaseEntity {
+public class ProductVersionAttribute extends BaseEntity {
 
 	/**
 	 *
