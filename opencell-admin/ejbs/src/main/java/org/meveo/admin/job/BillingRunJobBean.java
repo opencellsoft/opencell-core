@@ -120,6 +120,11 @@ public class BillingRunJobBean extends BaseJobBean {
 
                 BillingRun billingRun = new BillingRun();
                 billingRun.setBillingCycle(billingCycle);
+                billingRun.setAggregateUnitAmounts(billingCycle.isAggregateUnitAmounts());
+                billingRun.setDateAggregation(billingCycle.getDateAggregation());
+                billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
+                billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
+                billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
                 billingRun.setProcessDate(new Date());
                 billingRun.setProcessType(billingCycleType);
                 billingRun.setStatus(BillingRunStatusEnum.NEW);

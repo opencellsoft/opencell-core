@@ -17120,4 +17120,23 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>create index idx__charge_instance__lower_description on billing_charge_instance(lower(description))</sql>
     </changeSet>
 
+	<changeSet id="#INTRD-17280_20230808" author="AdilElJaouhari">
+		<addColumn tableName="billing_billing_run">
+			<column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="date_aggregation" type="varchar(255)" defaultValue="MONTH_OF_USAGE_DATE" />
+			<column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
+			<column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
+		</addColumn>
+		<sql>UPDATE ${db.schema.adapted}billing_billing_run br
+			SET use_accounting_article_label = bc.use_accounting_article_label,
+			date_aggregation = bc.date_aggregation,
+			aggregate_unit_amounts = bc.aggregate_unit_amounts,
+			ignore_subscriptions = bc.ignore_subscriptions,
+			ignore_orders = bc.ignore_orders
+			FROM ${db.schema.adapted}billing_cycle bc
+			WHERE br.billing_cycle_id = bc.id;
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
