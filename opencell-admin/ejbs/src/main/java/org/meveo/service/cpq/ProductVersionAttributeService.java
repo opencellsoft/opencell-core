@@ -8,6 +8,7 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 import java.util.regex.Pattern;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.cpq.AttributeValidationType;
@@ -50,4 +51,15 @@ public class ProductVersionAttributeService extends PersistenceService<ProductVe
                 .append(attribute.getValidationPattern());
         return errorMessage.toString();
     }
+	
+	public ProductVersionAttribute findByProductVersionAndAttribute(Long productVersionId, Long attributeVersion) {
+		try{
+			return  this.getEntityManager().createNamedQuery("ProductVersionAttribute.findByAttributeAndProductVersion", ProductVersionAttribute.class)
+																	.setParameter("attributeId", attributeVersion)
+																	.setParameter("productVersionId", productVersionId)
+																	.getSingleResult();
+		}catch(NoResultException e) {
+			return null;
+		}
+	}
 }
