@@ -135,8 +135,10 @@ public class PricePlanMatrixResourceImpl implements PricePlanMatrixResource {
         fields.add("pricePlanMatrixValues");
         fields.add("priceEL");
         fields.add("priority");
+        fields.add("cfValues");
 
-        response.put("data", mapper.readValue(mapper.toJson(fields, PricePlanMatrixLine.class, pricePlanMatrixLines, null), List.class));
+        response.put("data", mapper.readValue(mapper.toJson(fields,
+                PricePlanMatrixLine.class, pricePlanMatrixLines, null), List.class));
         response.put("limit", limit);
         response.put("offset", offset);
         response.put("sortBy", sortBy);
