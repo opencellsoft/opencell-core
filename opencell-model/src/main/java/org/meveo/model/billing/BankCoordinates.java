@@ -26,6 +26,7 @@ import javax.validation.constraints.Size;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.commons.encryption.BankDataEncryptor;
+import org.meveo.commons.utils.AesEncrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,12 +181,23 @@ public class BankCoordinates implements Serializable, Cloneable {
     
 
     public String getIban() {
-		return iban;
-	}
+    	try {
+			return decryptIban(iban);
+		} catch (Exception e) {
+			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
+			log.error("Error when decrypting Iban", e);
+			return null;
+    }
+    }
 
-	public void setIban(String iban) {
-		this.iban = iban;
-	}
+    public void setIban(String iban) {
+    	try {
+			this.iban = encryptIban(encryptIban(iban));
+		} catch (Exception e) {
+			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
+			log.error("Error when encrypting Iban", e);
+    }
+    }
 
 	public String getBic() {
         return bic;
@@ -285,5 +297,35 @@ public class BankCoordinates implements Serializable, Cloneable {
 
         return StringUtils.compare(iban, other.getIban()) == 0;
     }
-    
+    /**
+	 * 
+	 * @param iban
+	 * @return encrypted iban if encryption key exist in config file else return iban
+	 * @throws Exception
+	 */
+	public String encryptIban(String iban) throws Exception {
+
+		if (iban != null && !(iban.startsWith("AES"))) {
+			AesEncrypt ae = new AesEncrypt();
+			return ae.getEncyptedIban(iban, ae);
+}
+		return iban;
+	}
+
+	/**
+	 * 
+	 * @param iban
+	 * @return decrypted iban if iban is already encypted
+	 * @throws Exception
+	 */
+	public String decryptIban(String iban) throws Exception {
+
+		if (iban != null && iban.startsWith("AES")) {
+			iban = iban.substring(3);
+			AesEncrypt ae = new AesEncrypt();
+			return ae.getDecryptedIban(iban, ae);
+		}
+		return iban;
+	}
+
 }
