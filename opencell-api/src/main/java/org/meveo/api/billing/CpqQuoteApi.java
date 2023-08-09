@@ -139,7 +139,6 @@ import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.MediaService;
-import org.meveo.service.cpq.OfferTemplateAttributeService;
 import org.meveo.service.cpq.ProductVersionAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteArticleLineService;
@@ -277,6 +276,9 @@ public class CpqQuoteApi extends BaseApi {
 	
 	@Inject
 	private OfferTemplateAttributeService offerTemplateAttributeService;
+	
+	@Inject
+	private ProductVersionAttributeService productVersionAttributeService;
 	
     private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     
@@ -521,13 +523,22 @@ public class CpqQuoteApi extends BaseApi {
             LinkedHashMap<String, Object> selectedAttributes = new LinkedHashMap<>();
             quoteProductDTO.getProductAttributes()
                     .stream()
-                    .forEach(productAttribute -> selectedAttributes.put(productAttribute.getQuoteAttributeCode(), productAttribute.getStringValue()));
+                    .forEach(productAttribute -> {
+						selectedAttributes.put(productAttribute.getQuoteAttributeCode(), productAttribute.getStringValue());
+	                    Attribute attribute = attributeService.findByCode(productAttribute.getQuoteAttributeCode());
+						if(attribute != null){
+							ProductVersionAttribute productVersionAttribute = productVersionAttributeService.findByProductVersionAndAttribute(productVersion.getId(), attribute.getId());
+							if(productVersionAttribute != null) {
+								productAttribute.setSequence(productVersionAttribute.getSequence());
+							}
+						}
+                    });
             productContextDTO.setSelectedAttributes(selectedAttributes);
             ++index;
         }
         
     }
-
+	
     private void newPopulateOfferAttribute(List<QuoteAttributeDTO> quoteAttributeDtos, QuoteOffer quoteOffer) {
         if (quoteAttributeDtos != null) {
             for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) {

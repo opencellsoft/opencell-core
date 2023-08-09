@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.quote.QuoteArticleLine;
@@ -120,7 +121,8 @@ public class QuoteProductDTO extends BaseEntityDto{
 		if(loadAttributes) {
 			productAttributes=new ArrayList<QuoteAttributeDTO>();
 			for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {
-				productAttributes.add(new QuoteAttributeDTO(quoteAttribute));
+				Integer sequence = quoteProduct.getProductVersion().getAttributes().stream().filter(pva -> pva.getAttribute().getCode().equals(quoteAttribute.getAttribute().getCode())).findFirst().map(ProductVersionAttribute::getSequence).orElse(0);
+				productAttributes.add(new QuoteAttributeDTO(quoteAttribute, sequence));
 			}
 		}
 		accountingArticlePrices=new ArrayList<AccountingArticlePricesDTO>();

@@ -90,7 +90,11 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 		doubleValue =quoteAttribute.getDoubleValue();
 		booleanValue = quoteAttribute.getBooleanValue();
 	}
-
+	
+	public QuoteAttributeDTO(QuoteAttribute quoteAttribute, Integer sequence) {
+		this(quoteAttribute);
+		this.sequence = sequence;
+	}
 	/**
 	 * @param quoteAttributeCode the quoteAttributeCode to set
 	 */
