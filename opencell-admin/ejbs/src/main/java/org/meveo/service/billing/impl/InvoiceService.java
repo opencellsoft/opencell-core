@@ -4310,8 +4310,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if (isEnterprise) {
             taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
+            taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
             taxAggregate.addTransactionAmountWithoutTax(amountByTax.getValue().getTransactionalAmountWithoutTax());
         } else {
+            taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
             taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
             taxAggregate.addTransactionAmountWithTax(amountByTax.getValue().getTransactionalAmountWithTax());
         }
