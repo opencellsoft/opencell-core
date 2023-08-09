@@ -267,18 +267,16 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			discountWalletOperation.setSequence(discountPlanItem.getFinalSequence());
     			discountWalletOperation.setDiscountedAmount(discountedAmount);
 				discountWalletOperation.setOrderNumber(walletOperation != null ? walletOperation.getOrderNumber() : null);
+			    discountWalletOperation.setUuid(walletOperation.getUuid());
     			
     			if(!isVirtual) {
     				discountWalletOperation.setSubscription(subscription);
     				discountWalletOperation.setUserAccount(subscription.getUserAccount());
     				if(walletOperation != null && walletOperation.getId() != null) {
     					discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());
-    					walletOperation.setDiscountedAmount(discountedAmount);
+					    discountWalletOperation.setUuid(null);
     					walletOperationService.create(discountWalletOperation);
     				}
-    			}else if(walletOperation != null) {
-    				walletOperation.setDiscountedAmount(discountedAmount);
-    				discountWalletOperation.setUuid(walletOperation.getUuid());
     			}
     			log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",walletOperation!=null?walletOperation.getCode():null,discountValue);
     			//TODO: must have wallet operation for : link discountWallet to the current wallet, and
