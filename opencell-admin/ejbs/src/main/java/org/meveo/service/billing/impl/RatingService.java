@@ -693,11 +693,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             bareWalletOperation.setContractLine(contractItem);
                         }
                     }
-
-                    if(unitPriceWithoutTax != null && ArticleSelectionModeEnum.AFTER_PRICING.equals(financeSettings.getArticleSelectionMode())){
-                        bareWalletOperation.setAccountingArticle(accountingArticle);
-                    }
-
                     // Check if price is not overriden by a pricelist in subscription
                 }
 
@@ -901,7 +896,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             log.trace("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
             executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance(), isVirtual);
         }
-        
+	    if(financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING){
+		    bareWalletOperation.setAccountingArticle(accountingArticle);
+	    }
         ratingResult.addWalletOperation(bareWalletOperation);
         if(discountedWalletOperation!=null) {
             ratingResult.addWalletOperation(discountedWalletOperation);
@@ -1270,11 +1267,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         walletOperation.setAmountWithoutTax(amount);
         walletOperation.setAmountWithTax(amount);
-	    FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
-	    if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING){
-		    AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
-		    walletOperation.setAccountingArticle(accountingArticle);
-	    }
         TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
         if (taxInfo == null) {
             throw new BusinessException("No tax found for the chargeInstance " + walletOperation.getChargeInstance().getCode());
