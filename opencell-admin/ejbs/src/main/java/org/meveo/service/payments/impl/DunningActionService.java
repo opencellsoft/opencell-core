@@ -1,6 +1,7 @@
 package org.meveo.service.payments.impl;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -11,10 +12,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.dunning.DunningAction;
-import org.meveo.model.dunning.DunningAgent;
-import org.meveo.model.dunning.DunningLevel;
-import org.meveo.model.dunning.DunningSettings;
+import org.meveo.model.dunning.*;
 import org.meveo.model.payments.ActionChannelEnum;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.model.payments.ActionTypeEnum;
@@ -128,5 +126,13 @@ public class DunningActionService  extends BusinessService<DunningAction> {
         validateDunningLevel(dunningAction);
         validateAssignedTo(dunningAction);
         return super.update(dunningAction);
+    }
+
+    public List<DunningAction> getDunningActionsByAgentAndUpdateThem(Long dunningAgentId) {
+        return getEntityManager()
+                .createNamedQuery("DunningAction.findByAgentId", DunningAction.class)
+                .setParameter("id", dunningAgentId)
+                .getResultList();
+
     }
 }
