@@ -60,6 +60,8 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 
+import static javax.persistence.FetchType.LAZY;
+
 /**
  * Billing run
  * 
@@ -454,6 +456,14 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_orders")
     private boolean ignoreOrders = true;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "pre_report_auto_on_create")
+    private boolean preReportAutoOnCreate = false;
+
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "pre_invoicing_report_id")
+    private BillingRunReport preInvoicingReport;
 
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -1081,5 +1091,20 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
 	public void setIgnoreOrders(boolean ignoreOrders) {
 		this.ignoreOrders = ignoreOrders;
 	}
-    
+
+    public boolean isPreReportAutoOnCreate() {
+        return preReportAutoOnCreate;
+    }
+
+    public void setPreReportAutoOnCreate(boolean preReportAutoOnCreate) {
+        this.preReportAutoOnCreate = preReportAutoOnCreate;
+    }
+
+    public BillingRunReport getPreInvoicingReport() {
+        return preInvoicingReport;
+    }
+
+    public void setPreInvoicingReport(BillingRunReport preInvoicingReport) {
+        this.preInvoicingReport = preInvoicingReport;
+    }
 }
