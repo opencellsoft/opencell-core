@@ -1913,7 +1913,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         	filter=BRfilter;
         }
 		if(billingCycle!=null && !billingCycle.isDisableAggregation()) {
-			aggregationConfiguration = new AggregationConfiguration(billingCycle);
+			aggregationConfiguration = new AggregationConfiguration(billingRun);
 		}
         if(aggregationConfiguration!=null) {
             String usageDateAggregation = getUsageDateAggregation(aggregationConfiguration.getDateAggregationOption());

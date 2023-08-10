@@ -434,6 +434,26 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
     private Boolean incrementalInvoiceLines = Boolean.FALSE;
+    
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "date_aggregation")
+    private DateAggregationOption dateAggregation = DateAggregationOption.MONTH_OF_USAGE_DATE;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "aggregate_unit_amounts")
+    private boolean aggregateUnitAmounts = false;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "use_accounting_article_label")
+    private boolean useAccountingArticleLabel = false;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_subscriptions")
+    private boolean ignoreSubscriptions = true;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_orders")
+    private boolean ignoreOrders = true;
 
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -1021,4 +1041,45 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setIncrementalInvoiceLines(Boolean incrementalInvoiceLines) {
         this.incrementalInvoiceLines = incrementalInvoiceLines;
     }
+
+	public DateAggregationOption getDateAggregation() {
+		return dateAggregation;
+	}
+
+	public void setDateAggregation(DateAggregationOption dateAggregation) {
+		this.dateAggregation = dateAggregation;
+	}
+
+	public boolean isAggregateUnitAmounts() {
+		return aggregateUnitAmounts;
+	}
+
+	public void setAggregateUnitAmounts(boolean aggregateUnitAmounts) {
+		this.aggregateUnitAmounts = aggregateUnitAmounts;
+	}
+
+	public boolean isUseAccountingArticleLabel() {
+		return useAccountingArticleLabel;
+	}
+
+	public void setUseAccountingArticleLabel(boolean useAccountingArticleLabel) {
+		this.useAccountingArticleLabel = useAccountingArticleLabel;
+	}
+
+	public boolean isIgnoreSubscriptions() {
+		return ignoreSubscriptions;
+	}
+
+	public void setIgnoreSubscriptions(boolean ignoreSubscriptions) {
+		this.ignoreSubscriptions = ignoreSubscriptions;
+	}
+
+	public boolean isIgnoreOrders() {
+		return ignoreOrders;
+	}
+
+	public void setIgnoreOrders(boolean ignoreOrders) {
+		this.ignoreOrders = ignoreOrders;
+	}
+    
 }

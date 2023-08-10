@@ -2765,6 +2765,11 @@
             	<constraints nullable="false" />
             </column>
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="date_aggregation" type="varchar(255)" defaultValue="MONTH_OF_USAGE_DATE" />
+			<column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
+			<column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -20317,6 +20322,7 @@
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
 	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
     <changeSet id="#INTRD-17451_20230731" author="ZBariki" />
+    <changeSet id="#INTRD-17280_20230808" author="AdilElJaouhari" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
