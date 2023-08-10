@@ -636,9 +636,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }else {
             	suitableContracts=lookupSuitableContract(customers, sellers,contracts);
             }
-            	if(!suitableContracts.isEmpty()) {
+            if(!suitableContracts.isEmpty()) {
 
-            		for(Contract contract:suitableContracts) {
+              for(Contract contract:suitableContracts) {
 
                 // Check if unit price was not overridden by a contract
                 // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
@@ -767,7 +767,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 	break;
                 }
             
-            	}
+              }
+            } else {
+                if (contracts != null && !contracts.isEmpty()) {
+                    bareWalletOperation.setRulesContract(lookupSuitableContract(customers, contracts,sellers, true).get(0));
+                }
+                bareWalletOperation.setOverrodePrice(true);
+            }
             	
             	if (unitPriceWithoutTax == null) {
                  	//Get the PriceList from subscription
@@ -864,12 +870,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             		}
             	}
             	
-            } else {
-                if (contracts != null && !contracts.isEmpty()) {
-                    bareWalletOperation.setRulesContract(lookupSuitableContract(customers, contracts,sellers, true).get(0));
-                }
-                bareWalletOperation.setOverrodePrice(true);
-            }
+
 
             // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
             if (recurringChargeTemplate != null && recurringChargeTemplate.getShareLevel() != null) {
@@ -1110,7 +1111,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         BigDecimal priceWithTax = null;
 
         ServiceInstance serviceInstance = wo.getServiceInstance();
-        Date ppmvDate = Optional.ofNullable(serviceInstance.getPriceVersionDate()).orElse(wo.getOperationDate());
+        Date ppmvDate = wo.getOperationDate();
+        if(ChargeTemplate.ChargeMainTypeEnum.ONESHOT.equals(wo.getChargeInstance().getChargeTemplate().getChargeMainType())) {
+            ppmvDate = Optional.ofNullable(serviceInstance.getPriceVersionDate()).orElse(wo.getOperationDate());
+        }
         PricePlanMatrixVersion ppmVersion = pricePlanSelectionService.getPublishedVersionValidForDate(pricePlan.getId(), serviceInstance, ppmvDate);
         if (ppmVersion != null) {
             wo.setPricePlanMatrixVersion(ppmVersion);
