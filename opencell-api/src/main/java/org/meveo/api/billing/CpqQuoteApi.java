@@ -2518,6 +2518,7 @@ public class CpqQuoteApi extends BaseApi {
 	        overrodPricesDto.getPrices()
 	                .forEach(overrodePrice -> {
 	                    List<QuotePrice> quotePrices = quotePriceService.loadByQuoteOfferAndArticleCodeAndPriceLevel(overrodePrice.getOfferId(), overrodePrice.getAccountingArticleCode());
+		                quotePrices = quotePrices.stream().filter(qp -> qp.getDiscountedQuotePrice() == null).collect(Collectors.toList());
 	                    if(!quotePrices.isEmpty()) {
 	                    	  BigDecimal unitPriceWithoutTax = overrodePrice.getUnitAmountWithoutTax().divide(BigDecimal.valueOf(quotePrices.size()), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 
