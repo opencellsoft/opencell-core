@@ -2,6 +2,7 @@ package org.meveo.admin.job;
 
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DateAggregationOption;
 
 public class AggregationConfiguration {
@@ -65,6 +66,16 @@ public class AggregationConfiguration {
 		this.ignoreOrders = billingCycle.isIgnoreOrders();
 		this.type=billingCycle.getType();
 	}
+	
+	public AggregationConfiguration(BillingRun billingRun) {
+		this.dateAggregationOption = billingRun.getDateAggregation()!=null? billingRun.getDateAggregation() : DateAggregationOption.NO_DATE_AGGREGATION;
+		this.aggregationPerUnitAmount= billingRun.isAggregateUnitAmounts();
+		this.useAccountingArticleLabel = billingRun.isUseAccountingArticleLabel() ;
+		this.ignoreSubscriptions = billingRun.isIgnoreSubscriptions();
+		this.ignoreOrders = billingRun.isIgnoreOrders();
+		this.type=billingRun.getBillingCycle().getType();
+	}
+
 
 	public boolean isEnterprise() {
 		return enterprise;

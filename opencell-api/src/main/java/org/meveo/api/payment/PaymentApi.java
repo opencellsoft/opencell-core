@@ -19,14 +19,12 @@
 package org.meveo.api.payment;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -157,43 +155,12 @@ public class PaymentApi extends BaseApi {
             throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
         }
 
-		BigDecimal functionalAmount = paymentDto.getAmount();
-		BigDecimal transactionalAmount = paymentDto.getAmount();
-		TradingCurrency functionalCurrency = appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode() != null ? tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode()) : null;
-		TradingCurrency transactionalCurrency = null;
-		BigDecimal lastApliedRate = BigDecimal.ONE;
-
-		String transactionalcurrencyCode = paymentDto.getTransactionalcurrency();
-		if (transactionalcurrencyCode != null && !StringUtils.isBlank(transactionalcurrencyCode)) {
-
-			transactionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalcurrencyCode);
-			checkTransactionalCurrency(transactionalcurrencyCode, transactionalCurrency);
-
-			transactionalAmount = paymentDto.getAmount();
-
-			if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency)) {
-				ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, functionalCurrency, paymentDto.getTransactionDate());
-				if (!Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
-					functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(),
-							new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
-					lastApliedRate = exchangeRate.getExchangeRate();
-				}
-			}
-
-		}
-
         Payment payment = new Payment();
+		paymentService.calculateAmountsByTransactionCurrency(payment, customerAccount,
+				paymentDto.getAmount(), paymentDto.getTransactionalcurrency(), payment.getTransactionDate());
 
 		payment.setJournal(occTemplate.getJournal());
         payment.setPaymentMethod(paymentDto.getPaymentMethod());
-        payment.setAmount(functionalAmount);
-        payment.setUnMatchingAmount(functionalAmount);
-        payment.setMatchingAmount(BigDecimal.ZERO);
-		payment.setTransactionalMatchingAmount(BigDecimal.ZERO);
-		payment.setTransactionalAmount(transactionalAmount);
-		payment.setTransactionalAmountWithoutTax(transactionalAmount);
-		payment.setAmountWithoutTax(functionalAmount);
-		payment.setTransactionalUnMatchingAmount(transactionalAmount);
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());
         payment.setDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
@@ -217,8 +184,8 @@ public class PaymentApi extends BaseApi {
         payment.setPaymentInfo6(paymentDto.getPaymentInfo6());
         payment.setBankCollectionDate(paymentDto.getBankCollectionDate());
 		payment.setCollectionDate(paymentDto.getCollectionDate() == null ? paymentDto.getBankCollectionDate() : paymentDto.getCollectionDate());
-		payment.setTransactionalCurrency(transactionalCurrency != null ? transactionalCurrency : functionalCurrency);
-		payment.setAppliedRate(lastApliedRate);
+		payment.setAccountingDate(new Date());
+		accountOperationService.handleAccountingPeriods(payment);
 
         // populate customFields
         try {

@@ -2,16 +2,7 @@ package org.meveo.model.dunning;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -27,6 +18,9 @@ import org.meveo.model.scripts.ScriptInstance;
 @Table(name = "ar_dunning_action")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_dunning_action_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "DunningAction.findByAgentId", query = "SELECT da FROM DunningAction da where da.assignedTo.id = :id")
+})
 public class DunningAction extends BusinessEntity {
 
     private static final long serialVersionUID = -3093051277357043210L;

@@ -20,6 +20,7 @@ package org.meveo.api.billing;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -935,14 +936,14 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
         }
-            // activate services
+        Map<String, ServiceToActivateDto> serviceToActivateByServiceCode = servicesToActivate.getService()
+                                                                      .stream()
+                                                                      .collect(Collectors.toMap(ServiceToActivateDto::getCode, Function.identity()));
+        // activate services
             for (ServiceInstance serviceInstance : serviceInstances) {
 
                 try {
                     serviceInstance.clearTransientSubscriptionChargeInstance();
-                    if (serviceInstance.getStatus().equals(InstanceStatusEnum.PENDING)) {
-                        serviceInstance.setDeliveryDate(new Date());
-                    }
                     serviceInstanceService.serviceActivation(serviceInstance);
                     
                 } catch (BusinessException e) {

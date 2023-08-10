@@ -63,6 +63,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -165,6 +166,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+
+    @Inject
+    private WalletOperationService walletOperationService;
+
+    @Inject
+    private RatedTransactionService ratedTransactionService;
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
@@ -412,7 +419,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         
 		if(PriceVersionDateSettingEnum.DELIVERY.equals(serviceInstance.getPriceVersionDateSetting())) {
-			serviceInstance.setPriceVersionDate(serviceInstance.getSubscriptionDate()); 
+			serviceInstance.setPriceVersionDate(serviceInstance.getDeliveryDate());
 		}else if(PriceVersionDateSettingEnum.RENEWAL.equals(serviceInstance.getPriceVersionDateSetting())) {
 			serviceInstance.setPriceVersionDate((serviceInstance.getRenewalNotifiedDate() != null && serviceInstance.isRenewed())?serviceInstance.getRenewalNotifiedDate():serviceInstance.getSubscriptionDate()); 
 		}else if(PriceVersionDateSettingEnum.QUOTE.equals(serviceInstance.getPriceVersionDateSetting())) {
@@ -649,7 +656,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @return Updated service instance
      * @throws BusinessException
      */
-    private ServiceInstance terminateServiceWithPastDate(Subscription subscription, ServiceInstance serviceInstance, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
+    private ServiceInstance terminateServiceWithPastDate(Subscription subscription, ServiceInstance serviceInstance,
+                                                         Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
             throws BusinessException {
 
         // Execute termination script
@@ -666,8 +674,28 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.setSubscriptionTerminationReason(terminationReason);
         }
 
+        boolean woCanceled = false;
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
-
+            if(recurringChargeInstance.isAnticipateEndOfSubscription()) {
+                List<WalletOperation> walletOperations = walletOperationService.getEntityManager()
+                        .createNamedQuery("WalletOperation.findWalletOperationByChargeInstance")
+                        .setParameter("chargeInstanceId", recurringChargeInstance.getId())
+                        .setParameter("subscriptionId", recurringChargeInstance.getSubscription().getId())
+                        .getResultList();
+                if (walletOperations != null && !walletOperations.isEmpty()) {
+                    walletOperationService.getEntityManager()
+                            .createNamedQuery("WalletOperation.setStatusToCanceledById")
+                            .setParameter("now", new Date())
+                            .setParameter("woIds", walletOperations)
+                            .executeUpdate();
+                    walletOperationService.getEntityManager()
+                            .createNamedQuery("RatedTransaction.cancelByWOIds")
+                            .setParameter("now", new Date())
+                            .setParameter("woIds", walletOperations)
+                            .executeUpdate();
+                    woCanceled = true;
+                }
+            }
 			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
 				Date lastChargedDate = recurringChargeInstance.getChargedToDate() != null ? recurringChargeInstance.getChargedToDate() : recurringChargeInstance.getChargeDate();
 				recurringChargeInstance.setChargeToDateOnTermination(lastChargedDate);
@@ -706,8 +734,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             } else if (applyReimbursment && chargeToDateOnTermination.before(chargedToDate)) {
 
+                boolean anticipatedTermination = recurringChargeInstance.isAnticipateEndOfSubscription() && woCanceled;
                 try {
-                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber);
+                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber, anticipatedTermination);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -1313,6 +1342,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             }
            
         }
+    }
         
+    public ServiceInstance findFetchProductById(Long id) {
+        return id == null ? null : (ServiceInstance)getEntityManager().createNamedQuery("ServiceInstance.findByIdAndFetchProduct").setParameter("id", id).getSingleResult();
     }
 }

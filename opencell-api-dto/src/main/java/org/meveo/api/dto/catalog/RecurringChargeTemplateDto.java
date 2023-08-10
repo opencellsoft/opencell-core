@@ -111,6 +111,10 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 
     @Schema(description = "code of attribute calendar")
     private String attributeCalendarCode;
+    
+    @Schema(description = "The flag to anticipate the end of Subscription")
+    private Boolean anticipateEndOfSubscription = false;
+    
     /**
      * Instantiates a new recurring charge template dto.
      */
@@ -145,6 +149,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         recurrenceType=recurringChargeTemplate.getRecurrenceType();
         this.attributeCalendarCode = recurringChargeTemplate.getAttributeCalendar() != null ? recurringChargeTemplate.getAttributeCalendar().getCode() : null;
         this.attributeDurationCode = recurringChargeTemplate.getAttributeDuration() != null ? recurringChargeTemplate.getAttributeDuration().getCode() : null;
+        this.anticipateEndOfSubscription = recurringChargeTemplate.isAnticipateEndOfSubscription();
     }
 
     /**
@@ -410,4 +415,19 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 	public void setAttributeCalendarCode(String attributeCalendarCode) {
 		this.attributeCalendarCode = attributeCalendarCode;
 	}
+
+	/**
+	 * @return the anticipateEndOfSubscription
+	 */
+	public Boolean getAnticipateEndOfSubscription() {
+		return anticipateEndOfSubscription;
+	}
+
+	/**
+	 * @param anticipateEndOfSubscription the anticipateEndOfSubscription to set
+	 */
+	public void setAnticipateEndOfSubscription(Boolean anticipateEndOfSubscription) {
+		this.anticipateEndOfSubscription = anticipateEndOfSubscription;
+	}
+	
 }

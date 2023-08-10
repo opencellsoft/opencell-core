@@ -33,11 +33,11 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
-import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
@@ -55,12 +55,13 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.Refund;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentHistoryService;
+import org.meveo.service.payments.impl.PaymentService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 /**
@@ -104,6 +105,13 @@ public class UnitSepaDirectDebitJobBean {
 	@Inject
 	@Rejected
 	private Event<Serializable> rejectededEdrProducer;
+
+	@Inject
+	@ApplicationProvider
+	protected Provider appProvider;
+
+	@Inject
+	private PaymentService paymentService;
 
 
 	/**
@@ -224,10 +232,9 @@ public class UnitSepaDirectDebitJobBean {
 			throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
 		}
 
+		paymentService.calculateAmountsByTransactionCurrency((Payment) automatedPayment, customerAccount, amount, null, transactionDate);
+
 		automatedPayment.setPaymentMethod(paymentMethodEnum);
-		automatedPayment.setAmount(amount);
-		automatedPayment.setUnMatchingAmount(amount);
-		automatedPayment.setMatchingAmount(BigDecimal.ZERO);
 		automatedPayment.setAccountingCode(occTemplate.getAccountingCode());
 		automatedPayment.setCode(occTemplate.getCode());
 		automatedPayment.setDescription(occTemplate.getDescription());
@@ -242,15 +249,13 @@ public class UnitSepaDirectDebitJobBean {
 		automatedPayment.setDueDate(dueDate);
 		automatedPayment.setTransactionDate(transactionDate);
 		automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
-		automatedPayment.setUnMatchingAmount(amount);
-		automatedPayment.setMatchingAmount(BigDecimal.ZERO);
 		automatedPayment.setDdRequestItem(ddRequestItem);
 		automatedPayment.setSeller(ddRequestItem.getDdRequestLOT().getSeller());
 		accountOperationService.handleAccountingPeriods(automatedPayment);
 
 		accountOperationService.create(automatedPayment);
 		if (isToMatching) {
-			List<Long> aoIds = new ArrayList<Long>();
+			List<Long> aoIds = new ArrayList<>();
 			for (AccountOperation ao : occForMatching) {
 				aoIds.add(ao.getId());
 			}

@@ -283,4 +283,9 @@ public interface InvoiceLine extends Resource {
 	@Schema(description = "The unit price currency")
 	@Nullable
 	String getUnitPriceCurrency();
+
+	@Schema(description = "The user account code")
+	@Nullable
+	String getUserAccountCode();
+
 }

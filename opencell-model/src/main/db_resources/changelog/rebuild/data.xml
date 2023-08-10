@@ -11960,6 +11960,70 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="version" value="1" />
         </insert>
     </changeSet>
+    
+    <changeSet id="#INTRD-17353__14-07-2023" author="Mohammed_ELAZZOUZI">
+	    <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_BillingAccountPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Process transactions by billing account"/>
+            <column name="field_type" value="BOOLEAN"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="1"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:2;fieldGroup:Performances"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_MaxRTsPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="preferred max RTs per transaction"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1000000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:3;fieldGroup:Performances"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_MaxLinesPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="preferred max lines per transaction"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="10000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:4;fieldGroup:Performances"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_MaxRTsPerLine"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="preferred max RTs per line"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="100000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:5;fieldGroup:Performances"/>
+        </insert>
+
+    </changeSet>
 
 	<changeSet id="INTRD-15458_2023_04_17" author="ZBariki">
 		<insert tableName="generic_sequence">
@@ -12049,6 +12113,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-16247_20230605" author="zelmeliani" />
     <changeSet id="#INTRD-16278_20230606" author="anasseh" />
     <changeSet id="INTRD-17129_20230627" author="TarikFA." />
+	<changeSet id="INTRD-16743_20230720" author="aelmalki" />
 
 	<changeSet id="INTRD-12827_20230705" author="zelmeliani">
 		<insert tableName="ar_dunning_action">

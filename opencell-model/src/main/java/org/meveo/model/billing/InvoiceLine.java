@@ -152,7 +152,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 				"il.amountTax=il.amountTax+:deltaAmountTax, il.quantity=il.quantity+:deltaQuantity, il.validity.from=:beginDate, " +
 				"il.validity.to=:endDate, il.auditable.updated=:now, il.unitPrice=:unitPrice WHERE il.id=:id"),
 		@NamedQuery(name = "InvoiceLine.updateStatusInvoiceLine", query = "UPDATE InvoiceLine il SET " +
-				"il.status =: statusToUpdate WHERE il.id =: id")
+				"il.status =: statusToUpdate WHERE il.id =: id"),
+		@NamedQuery(name = "InvoiceLine.cancelInvoiceLineByWoIds", query = "UPDATE InvoiceLine il SET il.auditable.updated = :now, il.status = org.meveo.model.billing.InvoiceLineStatusEnum.CANCELED WHERE il.status = org.meveo.model.billing.InvoiceLineStatusEnum.OPEN AND il.id in (SELECT wo.ratedTransaction.invoiceLine.id FROM WalletOperation wo WHERE wo.id IN :woIds)")
 	})
 public class InvoiceLine extends AuditableCFEntity {
 

@@ -57,7 +57,8 @@ import org.meveo.model.billing.UntdidAllowanceCode;
 		@Parameter(name = "sequence_name", value = "cat_discount_plan_seq"), })
 @NamedQueries({
 	@NamedQuery(name = "DiscountPlan.getAll", query = "select dp from DiscountPlan dp left join fetch dp.discountPlanItems"),
-	@NamedQuery(name = "discountPlan.getExpired", query = "select d.id from DiscountPlan d where d.endDate is not null and d.endDate<=:date and d.status in (:statuses)") })
+	@NamedQuery(name = "discountPlan.getExpired", query = "select d.id from DiscountPlan d where d.endDate is not null and d.endDate<=:date and d.status in (:statuses)"),
+	@NamedQuery(name = "DiscountPlan.getBySequence", query = "select dp from DiscountPlan dp where dp.sequence = :sequence and dp.status in (:statuses)")})
 
 public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable {
 
@@ -227,7 +228,12 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		/**
 		 * Day: 5
 		 */
-		DAY(Calendar.DAY_OF_MONTH);
+		DAY(Calendar.DAY_OF_MONTH),
+
+		/**
+		 * Year: 1
+		 */
+		YEAR(Calendar.YEAR);
 
 		int calendarField;
 
@@ -263,6 +269,14 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
     @JoinColumn(name = "allowance_code_id")
     private UntdidAllowanceCode allowanceCode;
 	
+
+	/**
+	 *If false then discount plan will be ignored if event price comes from a contract.
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "applicable_on_contract_price")
+	private boolean applicableOnContractPrice=true;
+	
 	public DiscountPlan() {
 		this.applicableOnDiscountedPrice = true;
 		this.applicableOnOverriddenPrice = true;
@@ -286,6 +300,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.sequence=dp.getSequence();
 		this.applicableOnDiscountedPrice=dp.getApplicableOnDiscountedPrice();
 		this.allowanceCode=dp.getAllowanceCode();
+		this.applicableOnContractPrice=dp.isApplicableOnContractPrice();
 	}
 	
 	public boolean isValid() {
@@ -528,4 +543,14 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	public void setAllowanceCode(UntdidAllowanceCode allowanceCode) {
 		this.allowanceCode = allowanceCode;
 	}
+
+	public boolean isApplicableOnContractPrice() {
+		return applicableOnContractPrice;
+	}
+
+	public void setApplicableOnContractPrice(boolean applicableOnContractPrice) {
+		this.applicableOnContractPrice = applicableOnContractPrice;
+	}
+
+	
 }

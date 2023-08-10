@@ -167,7 +167,7 @@ public class KeycloakAdminClientService implements Serializable {
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
         UsersResource usersResource = realmResource.users();
-        List<UserRepresentation> users = usersResource.search(username, firstName, lastName, email, paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows());
+        List<UserRepresentation> users = usersResource.search(username!=null?username.toLowerCase():null, firstName, lastName, email, paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows());
         return users.stream().map(u -> {
 
             List<GroupRepresentation> groups = usersResource.get(u.getId()).groups();
@@ -281,7 +281,7 @@ public class KeycloakAdminClientService implements Serializable {
             userName = email;
         }
 
-        List<UserRepresentation> users = usersResource.search(userName, true);
+        List<UserRepresentation> users = usersResource.search(userName!=null?userName.toLowerCase():null, true);
         for (UserRepresentation userRepresentation : users) {
             if (userRepresentation.getUsername().equalsIgnoreCase(userName)) {
                 user = userRepresentation;
@@ -846,7 +846,7 @@ public class KeycloakAdminClientService implements Serializable {
      * @lastModifiedVersion 5.0
      */
     private UserRepresentation getUserRepresentationByUsername(UsersResource usersResource, String username) throws ElementNotFoundException {
-        List<UserRepresentation> users = usersResource.search(username, true);
+        List<UserRepresentation> users = usersResource.search(username!=null?username.toLowerCase():null, true);
         for (UserRepresentation userRepresentation : users) {
             if (username.equalsIgnoreCase(userRepresentation.getUsername())) {
                 return userRepresentation;
@@ -1435,7 +1435,7 @@ public class KeycloakAdminClientService implements Serializable {
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
         UsersResource usersResource = realmResource.users();
 
-        List<UserRepresentation> users = usersResource.search(username, true);
+        List<UserRepresentation> users = usersResource.search(username!=null?username.toLowerCase():null, true);
         for (UserRepresentation userRepresentation : users) {
             if (username.equalsIgnoreCase(userRepresentation.getUsername())) {
                 return userRepresentation;

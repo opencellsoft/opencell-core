@@ -184,6 +184,13 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 					duplicate.setAmountWithTax(duplicate.getAmountWithTax() != null ? duplicate.getAmountWithTax().negate() : null);
 					duplicate.setRawAmountWithTax(duplicate.getRawAmountWithTax() != null ? duplicate.getRawAmountWithTax().negate() : null);
 					duplicate.setRawAmountWithoutTax(duplicate.getRawAmountWithoutTax() != null ? duplicate.getRawAmountWithoutTax().negate() : null);
+
+					duplicate.setTransactionalUnitAmountTax(duplicate.getTransactionalUnitAmountTax() != null ? duplicate.getTransactionalUnitAmountTax().negate() : null);
+					duplicate.setTransactionalUnitAmountWithoutTax(duplicate.getTransactionalUnitAmountWithoutTax() != null ? duplicate.getTransactionalUnitAmountWithoutTax().negate() : null);
+					duplicate.setTransactionalUnitAmountWithTax(duplicate.getTransactionalUnitAmountWithTax() != null ? duplicate.getTransactionalUnitAmountWithTax().negate() : null);
+					duplicate.setTransactionalAmountTax(duplicate.getTransactionalAmountTax() != null ? duplicate.getTransactionalAmountTax().negate() : null);
+					duplicate.setTransactionalAmountWithoutTax(duplicate.getTransactionalAmountWithoutTax() != null ? duplicate.getTransactionalAmountWithoutTax().negate() : null);
+					duplicate.setTransactionalAmountWithTax(duplicate.getTransactionalAmountWithTax() != null ? duplicate.getTransactionalAmountWithTax().negate() : null);
 				}
 				duplicate.setOriginRatedTransaction(ratedTransaction);
 				ratedTransactionService.create(duplicate);

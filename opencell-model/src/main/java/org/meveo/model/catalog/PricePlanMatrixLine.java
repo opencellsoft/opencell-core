@@ -1,6 +1,5 @@
 package org.meveo.model.catalog;
 
-
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
@@ -23,21 +22,22 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.Auditable;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.CustomFieldEntity;
 
 @Entity
 @Table(name = "cpq_price_plan_matrix_line")
 @Cacheable
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_line_sq") })
+@CustomFieldEntity(cftCodePrefix = "PricePlanMatrixLine")
 @NamedQueries({
     @NamedQuery(name = "PricePlanMatrixLine.findDefaultByPricePlanMatrixVersion", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId and ratingAccuracy=0", hints = {
             @QueryHint(name = "org.hibernate.cacheable", value = "TRUE"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
 	@NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersion", query = "select distinct(p) from PricePlanMatrixLine p left join fetch p.pricePlanMatrixValues pv where p.pricePlanMatrixVersion.id=:pricePlanMatrixVersionId order by p.priority, p.id", hints = {
             @QueryHint(name = "org.hibernate.cacheable", value = "TRUE"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
     @NamedQuery(name = "PricePlanMatrixLine.findByPricePlanMatrixVersionIds", query = "select p from PricePlanMatrixLine p where p.pricePlanMatrixVersion.id in (:ppmvIds)")})
-public class PricePlanMatrixLine extends AuditableEntity {
+public class PricePlanMatrixLine extends AuditableCFEntity {
 
     private static final long serialVersionUID = -4919786663248378605L;
 
@@ -82,10 +82,6 @@ public class PricePlanMatrixLine extends AuditableEntity {
     
     public PricePlanMatrixLine() {
         super();
-    }
-
-    public PricePlanMatrixLine(Auditable auditable) {
-        super(auditable);
     }
 
     public PricePlanMatrixLine(PricePlanMatrixLine copy) {

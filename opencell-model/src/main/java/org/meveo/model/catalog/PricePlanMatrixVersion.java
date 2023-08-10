@@ -64,6 +64,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
         @NamedQuery(name = "PricePlanMatrixVersion.findEndDates", query = "from PricePlanMatrixVersion p where p.status='PUBLISHED' and p.pricePlanMatrix=:pricePlanMatrix and (p.validity.to >= :date or p.validity.to is null) order by p.validity.from desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlan", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix=:priceplan and p.status<>'CLOSED'"),
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlans", query = "select p from PricePlanMatrixVersion p where p.pricePlanMatrix in :priceplans and p.status<>'CLOSED'"),
+        @NamedQuery(name = "PricePlanMatrixVersion.getAllVersionsForChargeTemplates", query = "select p from PricePlanMatrixVersion p join p.pricePlanMatrix.chargeTemplates ct where ct.id in (:charges)"),
     })
 @Cacheable
 public class PricePlanMatrixVersion extends AuditableEntity {

@@ -23,7 +23,6 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.model.payments.OperationCategoryEnum.CREDIT;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -151,8 +150,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         BigDecimal functionalDebitAmount = amount;
         BigDecimal invoiceRate = null;
         BigDecimal paymentRate = null;
-        MathContext mathContext =
-                new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         boolean fullMatch = false;
         boolean withWriteOff = false;
         boolean withRefund = false;
@@ -300,7 +297,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         .subtract(accountOperation.getTransactionalUnMatchingAmount()));
                 BigDecimal computedMatchingAmount =
                         (accountOperation.getAmount().multiply(accountOperation.getTransactionalMatchingAmount()))
-                                .divide(accountOperation.getTransactionalAmount(), mathContext);
+                                .divide(accountOperation.getTransactionalAmount(),
+                                        appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
                 accountOperation.setMatchingAmount(computedMatchingAmount);
                 accountOperation.setUnMatchingAmount((accountOperation.getAmount().subtract(computedMatchingAmount)).abs());
                 accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
@@ -444,7 +442,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         accountOperation.getTransactionalAmount().subtract(accountOperation.getTransactionalUnMatchingAmount()));
                 BigDecimal computedMatchingAmount =
                         (accountOperation.getAmount().multiply(accountOperation.getTransactionalMatchingAmount()))
-                                .divide(accountOperation.getTransactionalAmount(), mathContext);
+                                .divide(accountOperation.getTransactionalAmount(),
+                                        appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
                 accountOperation.setUnMatchingAmount((accountOperation.getAmount().subtract(computedMatchingAmount)).abs());
                 accountOperation.setMatchingAmount(computedMatchingAmount);
                 matchingAmount.setMatchingAmount((matchedAmount.subtract(accountOperation.getMatchingAmount())).abs());
@@ -509,15 +508,15 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     private void createExchangeGainLoss(AccountOperation accountOperation,
                                         MatchingAmount matchingAmount, BigDecimal invoiceRate, BigDecimal paymentRate) {
-        MathContext mathContext = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-
         if (invoiceRate != null && paymentRate != null
                 &&  paymentRate.compareTo(invoiceRate) != 0) {
             AccountOperation exchangeDeltaAccountOperation = new AccountOperation();
             BigDecimal computedInvoiceAmount =
-                    matchingAmount.getTransactionalMatchingAmount().divide(invoiceRate, mathContext);
+                    matchingAmount.getTransactionalMatchingAmount().divide(invoiceRate,
+                            appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
             BigDecimal computedPaymentAmount =
-                    matchingAmount.getTransactionalMatchingAmount().divide(paymentRate, mathContext);
+                    matchingAmount.getTransactionalMatchingAmount().divide(paymentRate,
+                            appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
             BigDecimal exchangeAmountDelta = computedPaymentAmount.subtract(computedInvoiceAmount);
             BigDecimal exchangeAmount = exchangeAmountDelta.abs();
             if(exchangeAmount.compareTo(ZERO) > 0) {
@@ -580,6 +579,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			SecurityDeposit securityDeposit = osd.get();
 			SecurityDepositTemplate securityDepositTemplate = osd.map(SecurityDeposit::getTemplate).get();
 			// Check that max Amount is not reached
+            // For existing sd without currentBalance : avoir NPE
+            if (securityDeposit.getCurrentBalance() == null) {
+                securityDeposit.setCurrentBalance(ZERO);
+            }
 			if(securityDepositTemplate.getMaxAmount() != null && securityDepositTemplate.getMaxAmount().compareTo(securityDeposit.getCurrentBalance().add(amountToMatch)) < 0) {
 				throw new BusinessException("The current balance + amount to credit must be less than or equal to the maximum amount of the Template");
 			}

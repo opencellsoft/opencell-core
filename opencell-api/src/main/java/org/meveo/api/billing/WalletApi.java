@@ -570,10 +570,55 @@ public class WalletApi extends BaseApi {
         }
 
         walletOperation.setTradingCurrency(userAccount.getBillingAccount().getTradingCurrency());
+        TradingCurrency tradingCurrency = walletOperation.getTradingCurrency();
+        if(postData.getTransactionalAmountTax() != null) {
+            walletOperation.setTransactionalAmountTax(postData.getTransactionalAmountTax());
+        } else {
+            walletOperation.setTransactionalAmountTax(computeTransactionalAmount(walletOperation.getAmountTax(),
+                    tradingCurrency));
+        }
+        if(postData.getTransactionalAmountWithoutTax() != null) {
+            walletOperation.setTransactionalAmountWithoutTax(postData.getTransactionalAmountWithoutTax());
+        } else {
+            walletOperation.setTransactionalAmountWithoutTax(computeTransactionalAmount(walletOperation.getAmountWithoutTax(),
+                    tradingCurrency));
+        }
+        if(postData.getTransactionalAmountWithTax() != null) {
+            walletOperation.setTransactionalAmountWithTax(postData.getTransactionalAmountWithTax());
+        } else {
+            walletOperation.setTransactionalAmountWithTax(computeTransactionalAmount(walletOperation.getAmountWithTax(),
+                    tradingCurrency));
+        }
+        if(postData.getTransactionalUnitAmountTax() != null) {
+            walletOperation.setTransactionalUnitAmountTax(postData.getTransactionalUnitAmountTax());
+        } else {
+            walletOperation.setTransactionalUnitAmountTax(computeTransactionalAmount(walletOperation.getUnitAmountTax(),
+                    tradingCurrency));
+        }
+        if(postData.getTransactionalUnitAmountWithoutTax() != null) {
+            walletOperation.setTransactionalUnitAmountWithoutTax(postData.getTransactionalUnitAmountWithoutTax());
+        } else {
+            walletOperation.setTransactionalUnitAmountWithoutTax(computeTransactionalAmount(walletOperation.getUnitAmountWithoutTax(),
+                    tradingCurrency));
+        }
+        if(postData.getTransactionalUnitAmountWithTax() != null) {
+            walletOperation.setTransactionalUnitAmountWithTax(postData.getTransactionalUnitAmountWithTax());
+        } else {
+            walletOperation.setTransactionalUnitAmountWithTax(computeTransactionalAmount(walletOperation.getUnitAmountWithTax(),
+                    tradingCurrency));
+        }
         walletOperationService.create(walletOperation);
 
         return walletOperation;
 
+    }
+
+    private BigDecimal computeTransactionalAmount(BigDecimal amount, TradingCurrency tradingCurrency) {
+        if(tradingCurrency != null && tradingCurrency.getCurrentRate() != null) {
+            return amount.multiply(tradingCurrency.getCurrentRate());
+        } else {
+            return BigDecimal.ZERO;
+        }
     }
 
     public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {

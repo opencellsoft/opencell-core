@@ -537,11 +537,19 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         BigDecimal uawot = rt.getUnitAmountWithoutTax() != null ? rt.getUnitAmountWithoutTax() : BigDecimal.ZERO;
         BigDecimal rtAwot = rt.getAmountWithoutTax() != null ? rt.getAmountWithoutTax() : BigDecimal.ZERO;
         BigDecimal newAwot = uawot.multiply(rt.getQuantity());
+
+        BigDecimal transactionalUawot = rt.getTransactionalUnitAmountWithoutTax() != null ? rt.getTransactionalUnitAmountWithoutTax() : BigDecimal.ZERO;
+        BigDecimal transactionalNewAwot = transactionalUawot.multiply(rt.getQuantity());
         if (newAwot.compareTo(rtAwot) != 0) {
             BigDecimal amountTax = NumberUtils.computeTax(newAwot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
             BigDecimal newAwt = newAwot.add(amountTax);
             BigDecimal unitAmountTax = NumberUtils.computeTax(uawot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
             BigDecimal uawt = uawot.add(unitAmountTax);
+
+            BigDecimal transactionlAmountTax = NumberUtils.computeTax(transactionalNewAwot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            BigDecimal transactionalNewAwt = transactionalNewAwot.add(transactionlAmountTax);
+            BigDecimal transactionalUnitAmountTax = NumberUtils.computeTax(transactionalUawot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            BigDecimal transactionalUawt = transactionalUawot.add(transactionalUnitAmountTax);
 
             rt.setUnitAmountTax(unitAmountTax);
             rt.setUnitAmountWithoutTax(uawot);
@@ -550,6 +558,14 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             rt.setAmountTax(amountTax);
             rt.setAmountWithoutTax(newAwot);
             rt.setAmountWithTax(newAwt);
+
+            rt.setTransactionalUnitAmountTax(transactionalUnitAmountTax);
+            rt.setTransactionalUnitAmountWithoutTax(transactionalUawot);
+            rt.setTransactionalAmountWithTax(transactionalUawt);
+
+            rt.setTransactionalAmountTax(transactionlAmountTax);
+            rt.setTransactionalAmountWithoutTax(transactionalNewAwot);
+            rt.setTransactionalAmountWithTax(transactionalNewAwt);
         }
     }
 

@@ -73,7 +73,7 @@ public class SecurityDeposit extends BusinessCFEntity {
     private BigDecimal amount;
 
     @Column(name = "current_balance")
-    private BigDecimal currentBalance;
+    private BigDecimal currentBalance = BigDecimal.ZERO;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")

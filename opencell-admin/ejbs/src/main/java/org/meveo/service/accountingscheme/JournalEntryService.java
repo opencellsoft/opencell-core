@@ -158,7 +158,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     }
 
     @Transactional
-    public List<JournalEntry> createFromPayment(Payment ao, OCCTemplate occT) {
+    public List<JournalEntry> createFromPayment(AccountOperation ao, OCCTemplate occT) {
         // INTRD-5613
         List<JournalEntry> saved = new ArrayList<>();
 
@@ -372,17 +372,19 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 BigDecimal amoutTax = taxAgr.getAmountTax() == null ? BigDecimal.ZERO : taxAgr.getAmountTax();
                 BigDecimal transactionAmoutTax = taxAgr.getTransactionalAmountTax() == null ? BigDecimal.ZERO : taxAgr.getTransactionalAmountTax();
 
-                if (accountingCodeJournal.get(groupKey) == null) {
-                    JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxACC,
-                            occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                            amoutTax,
-                            taxAgr.getTax(), recordedInvoice.getOperationNumber());
-                    taxEntry.setTransactionalAmount(transactionAmoutTax);
-                    accountingCodeJournal.put(groupKey, taxEntry);
-                } else {
-                    JournalEntry entry = accountingCodeJournal.get(groupKey);
-                    entry.setAmount(entry.getAmount().add(amoutTax));
-                    entry.setTransactionalAmount(entry.getTransactionalAmount().add(transactionAmoutTax));
+                if (amoutTax != null && amoutTax.compareTo(BigDecimal.ZERO) != 0) {
+	                if (accountingCodeJournal.get(groupKey) == null) {
+	                    JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxACC,
+	                            occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+	                            amoutTax,
+	                            taxAgr.getTax(), recordedInvoice.getOperationNumber());
+	                    taxEntry.setTransactionalAmount(transactionAmoutTax);
+	                    accountingCodeJournal.put(groupKey, taxEntry);
+	                } else {
+	                    JournalEntry entry = accountingCodeJournal.get(groupKey);
+	                    entry.setAmount(entry.getAmount().add(amoutTax));
+	                    entry.setTransactionalAmount(entry.getTransactionalAmount().add(transactionAmoutTax));
+	                }
                 }
             });
 

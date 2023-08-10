@@ -39,6 +39,8 @@ import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ONE;
 import static java.util.Objects.isNull;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.meveo.model.shared.DateUtils.setTimeToZero;
 
 @Stateless
@@ -93,7 +95,7 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
                 .stream()
                 .filter(exchangeRate -> exchangeRate.getFromDate().compareTo(today) >= 0).collect(Collectors.toList());
 
-        Optional.of(rateToRemove).orElse(Collections.emptyList())
+        of(rateToRemove).orElse(Collections.emptyList())
                 .forEach(exchangeRate -> exchangeRateService.remove(exchangeRate));
 
         return update(tradingCurrency);
@@ -133,4 +135,21 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
 	            return null;
 	        }
 	    }
+
+    /**
+     * Find trading currency by currency id
+     *
+     * @param currencyId currency id
+     * @return Optional<TradingCurrency>
+     */
+    public Optional<TradingCurrency> findByTradingCurrencyByCurrencyID(Long currencyId) {
+        try {
+            return of(getEntityManager().createNamedQuery("TradingCurrency.getTradingFromCurrency", TradingCurrency.class)
+                    .setParameter("currencyID", currencyId)
+                    .getSingleResult());
+        } catch (NoResultException e) {
+            log.warn("No Trading currency associated to currency={}", currencyId);
+            return empty();
+        }
+    }
 }

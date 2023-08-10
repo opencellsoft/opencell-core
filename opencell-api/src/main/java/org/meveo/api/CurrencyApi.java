@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -441,14 +442,14 @@ public class CurrencyApi extends BaseApi {
         DecimalFormat rateFormatter = new DecimalFormat("#0.######");
         DateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
 
-        boolean ratesAreChanged = fromRate.compareTo(toRate) != 0;
+        boolean ratesAreChanged = !(Objects.equals(fromRate, toRate) || (fromRate != null && toRate != null && fromRate.compareTo(toRate) == 0));
         boolean datesAreChanged = DateUtils.truncateTime(fromDate).compareTo(DateUtils.truncateTime(toDate)) != 0;
 
         StringBuilder parameters = new StringBuilder("User ").append(auditLogService.getActor()).append(" has changed ");
         if (ratesAreChanged) {
             parameters.append("the Exchange rate ");
             parameters.append("for ").append(exchangeRate.getTradingCurrency().getCurrencyCode()).append(" ");
-            parameters.append("from ").append(rateFormatter.format(fromRate)).append(" to ").append(rateFormatter.format(toRate));
+            parameters.append("from ").append((fromRate == null)? null : rateFormatter.format(fromRate)).append(" to ").append((toRate == null)? null : rateFormatter.format(toRate));
         }
 
         if (datesAreChanged) {

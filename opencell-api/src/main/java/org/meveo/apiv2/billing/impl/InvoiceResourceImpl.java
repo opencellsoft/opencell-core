@@ -550,6 +550,11 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Override
 	public Response validateInvoices(ValidateInvoiceDto validateInvoiceDto) {
-		return Response.ok().entity(invoiceApiService.validateInvoices(validateInvoiceDto.getFilters(), validateInvoiceDto.getMode(), validateInvoiceDto.getFailOnValidatedInvoice(), validateInvoiceDto.getFailOnCanceledInvoice(), validateInvoiceDto.getIgnoreValidationRules())).build();
+		return Response.ok()
+				.entity(invoiceApiService.validateInvoices(validateInvoiceDto.getFilters(),
+						validateInvoiceDto.getMode(), validateInvoiceDto.getFailOnValidatedInvoice(),
+						validateInvoiceDto.getFailOnCanceledInvoice(), validateInvoiceDto.getIgnoreValidationRules(),
+						validateInvoiceDto.getGenerateAO()))
+				.build();
 	}
 }
