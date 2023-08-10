@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>portalCPQ</groupId>
 	<artifactId>portalCPQ</artifactId>
-	<version>13.2.0</version>
+	<version>13.2.0-530-ca70ad1</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
