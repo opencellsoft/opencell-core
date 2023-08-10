@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBTransactionRolledbackException;
@@ -464,6 +465,11 @@ public class UsageRatingService extends RatingService implements Serializable {
                 }
 
                 for (WalletOperation wo : ratingResult.getWalletOperations()) {
+					if(wo.getDiscountedAmount() != null){
+						var discountedWallerOperation = ratingResult.getWalletOperations().stream().filter(wos -> wos.getId() != null && wo.getUuid().equals(wos.getUuid())).findFirst().map(WalletOperation::getId).orElse(null);
+						wo.setUuid(null);
+						wo.setDiscountedWalletOperation(discountedWallerOperation);
+					}
                     walletOperationService.chargeWalletOperation(wo);
                 }
             }
