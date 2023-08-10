@@ -709,10 +709,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         }
                     }
 
-                    if(unitPriceWithoutTax != null && ArticleSelectionModeEnum.AFTER_PRICING.equals(financeSettings.getArticleSelectionMode())){
-                        bareWalletOperation.setAccountingArticle(accountingArticle);
-                    }
-
                 }
 
                 if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
@@ -731,9 +727,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 		PricePlanMatrixLine pricePlanMatrixLine =null;
                 		bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
                 		bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
-                		if(financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING){
-                			bareWalletOperation.setAccountingArticle(accountingArticle);
-                		}
                     	
                     	boolean seperateDiscount=contractItem.isSeparateDiscount();
                     	bareWalletOperation.setContract(contract);
@@ -830,6 +823,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             log.trace("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
             executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance(), isVirtual);
         }
+	    
+	    if(financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING){
+		    bareWalletOperation.setAccountingArticle(accountingArticle);
+	    }
         
         ratedEDRResult.addWalletOperation(bareWalletOperation);
         if(discountedWalletOperation!=null) {
