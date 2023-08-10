@@ -69,6 +69,7 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
             this.billingRun = invoice.getBillingRun();
         }
         resetAmounts();
+        this.setUseSpecificPriceConversion(invoice.isUseSpecificPriceConversion());
     }
 
     /**

@@ -4308,15 +4308,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addInvoiceAggregate(taxAggregate);
         }
 
-        if (isEnterprise) {
-            taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
-            taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
-            taxAggregate.addTransactionAmountWithoutTax(amountByTax.getValue().getTransactionalAmountWithoutTax());
-        } else {
-            taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
-            taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
-            taxAggregate.addTransactionAmountWithTax(amountByTax.getValue().getTransactionalAmountWithTax());
-        }
+        taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
+        taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
+        taxAggregate.addAmountTax(amountByTax.getValue().getAmountTax());
+        taxAggregate.addTransactionAmountWithoutTax(amountByTax.getValue().getTransactionalAmountWithoutTax());
+        taxAggregate.addTransactionAmountWithTax(amountByTax.getValue().getTransactionalAmountWithTax());
+        taxAggregate.addTransactionAmountTax(amountByTax.getValue().getTransactionalAmountTax());
+
         return taxAggregate;
     }
 
@@ -6394,18 +6392,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
                     scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
                     scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
-                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(), invoiceLine.getTransactionalAmountWithTax(), invoiceLine.getTransactionalAmountTax());
+                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(),
+                            invoiceLine.getTransactionalAmountWithTax(),
+                            invoiceLine.getTransactionalAmountTax());
                 } else {
                     scAggregate.addTransactionAmountWithoutTax(toTransactional(invoiceLine.getAmountWithoutTax(), appliedRate));
                     scAggregate.addTransactionAmountWithTax(toTransactional(invoiceLine.getAmountWithTax(), appliedRate));
                     scAggregate.addTransactionAmountTax(toTransactional(invoiceLine.getAmountTax(), appliedRate));
-                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(scAggregate.getTransactionalAmountWithoutTax(), scAggregate.getTransactionalAmountWithTax(), scAggregate.getTransactionalAmountTax());
+                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(toTransactional(invoiceLine.getAmountWithoutTax(), appliedRate),
+                            toTransactional(invoiceLine.getAmountWithTax(), appliedRate),
+                            toTransactional(invoiceLine.getAmountTax(), appliedRate));
                 }
             } else {
                 scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
                 scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
                 scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
-                scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(), invoiceLine.getTransactionalAmountWithTax(), invoiceLine.getTransactionalAmountTax());
+                scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(),
+                        invoiceLine.getTransactionalAmountWithTax(),
+                        invoiceLine.getTransactionalAmountTax());
             }
         }
         if (moreInvoiceLinesExpected) {
