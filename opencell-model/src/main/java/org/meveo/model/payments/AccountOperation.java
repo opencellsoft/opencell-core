@@ -92,20 +92,20 @@ import org.meveo.model.finance.AccountingEntry;
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq") })
 @CustomFieldEntity(cftCodePrefix = "AccountOperation")
 @NamedQueries({
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
-                "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
-                "                               pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundByCA", query = "Select ao  from AccountOperation as ao where ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
-                + "                             in ('I','OCC') and (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and " +
-                "                                ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
-                "                                (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
-                "                                pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundBySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
-                + "                             in ('I','OCC')  and " +
-                "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
-                "                               pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
-        @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
+		@NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
+	            "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
+	            "                               pm.preferred is true and ao.collectionDate >=:fromDueDateIN and ao.collectionDate <:toDueDateIN  "),
+	    @NamedQuery(name = "AccountOperation.listAoToPayOrRefundByCA", query = "Select ao  from AccountOperation as ao where ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
+	            + "                             in ('I','OCC') and (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and " +
+	            "                                ao.collectionDate >=:fromDueDateIN and ao.collectionDate <:toDueDateIN  "),
+	    @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
+	            "                                (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
+	            "                                pm.preferred is true and ao.collectionDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
+	    @NamedQuery(name = "AccountOperation.listAoToPayOrRefundBySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
+	            + "                             in ('I','OCC')  and " +
+	            "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
+	            "                               pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
+    	@NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
                 + ".customerAccount=:customerAccount"),
         @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount"),
         @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao where :invoice MEMBER OF ao.invoices"),
@@ -340,7 +340,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Associated invoices
      */
-    @OneToMany(mappedBy = "recordedInvoice", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
+    @OneToMany(mappedBy = "recordedInvoice", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Invoice> invoices;
 
     /**
@@ -499,7 +499,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     private Date appliedRateDate = new Date();
     
     @Transient
-    private BigDecimal amountForUnmatching;
+    private BigDecimal amountForUnmatching = BigDecimal.ZERO;
     
     /**
      * Comments Text free if litigation or special conditions

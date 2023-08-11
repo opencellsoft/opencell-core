@@ -183,6 +183,9 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         if (postData.getRecurrenceType() != null) {
             chargeTemplate.setRecurrenceType(postData.getRecurrenceType());
         }
+        if (postData.getAnticipateEndOfSubscription() != null) {
+            chargeTemplate.setAnticipateEndOfSubscription(postData.getAnticipateEndOfSubscription());
+        }
 
         return chargeTemplate;
     }

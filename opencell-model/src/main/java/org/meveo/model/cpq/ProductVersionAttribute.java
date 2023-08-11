@@ -9,6 +9,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -23,8 +25,10 @@ import java.util.Objects;
 @Table(name = "cpq_product_version_attributes")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_version_attribute_seq"), })
-@Cacheable
-public class ProductVersionAttribute extends BaseEntity {    
+@NamedQueries({
+		@NamedQuery(name = "ProductVersionAttribute.findByAttributeAndProductVersion", query = "FROM ProductVersionAttribute pva where pva.attribute.id =:attributeId and pva.productVersion.id =:productVersionId")
+})
+public class ProductVersionAttribute extends BaseEntity {
 
 	/**
 	 *

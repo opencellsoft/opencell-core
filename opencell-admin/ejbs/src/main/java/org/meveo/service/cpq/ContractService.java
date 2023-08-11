@@ -19,6 +19,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -127,24 +128,20 @@ public class ContractService extends BusinessService<Contract>  {
 			}
 			List<PricePlanMatrixVersion> endDatePricePlanVersions = pricePlanVersions.stream().
 					filter(pricePlanMatrixVersion -> pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getTo() == null).collect(Collectors.toList());
-			
+
 			if (endDatePricePlanVersions.isEmpty() && !pricePlanVersions.isEmpty()){
 				pricePlanVersions.sort(comparing(PricePlanMatrixVersion::getValidity, nullsLast(naturalOrder())));
 				PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanVersions.get(0);
 				if (pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getFrom() != null
 						&& pricePlanMatrixVersion.getValidity().getFrom().compareTo(contract.getBeginDate()) < 0) {
-			//NOTE 2		
+			//NOTE 2
 					log.error("Start date of the price version id {} should not be prior to the Start date of the contract",pricePlanMatrixVersion.getId());
-					throw new BusinessApiException(
-							"Start date of a price version should not be prior to the Start date of the contract.");
-
 				}
 			//NOTE 3
 				pricePlanMatrixVersion = pricePlanVersions.get(pricePlanVersions.size()-1);
-				if (pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getTo().compareTo(contract.getEndDate()) > 0){
+				if (pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getTo() != null &&
+						pricePlanMatrixVersion.getValidity().getTo().compareTo(contract.getEndDate()) > 0) {
 					log.error("End date of of the price version id {} should not be after the End date of a contract",pricePlanMatrixVersion.getId());
-					throw new BusinessApiException(
-							"Start date of a price version should not be prior to the Start date of the contract.");
 				}
 			}
 		}
@@ -172,11 +169,11 @@ public class ContractService extends BusinessService<Contract>  {
 		
 	}
 
-	public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation) {
-		return this.getContractByAccount(Arrays.asList(customer.getId()), billingAccount, customerAccount, bareWalletOperation, null);
+	public List<Contract> getContractByAccount(Customer customer, BillingAccount billingAccount, CustomerAccount customerAccount,Seller seller, WalletOperation bareWalletOperation) {
+		return this.getContractByAccount(Arrays.asList(customer.getId()), billingAccount, customerAccount,Arrays.asList(seller.getId()), bareWalletOperation, null);
 	}
 
-	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, WalletOperation bareWalletOperation, Date operationDate) {
+	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount,List<Long> sellersId, WalletOperation bareWalletOperation, Date operationDate) {
 		try {
 			Date updateOD = bareWalletOperation != null ? bareWalletOperation.getOperationDate() : operationDate;
 			if(operationDate != null) {
@@ -190,9 +187,10 @@ public class ContractService extends BusinessService<Contract>  {
 
 			}
 			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
-					.setParameter("customerId", customersID).setParameter("billingAccountId", billingAccount.getId())
+					.setParameter("customerIds", customersID).setParameter("billingAccountId", billingAccount.getId())
 					.setParameter("customerAccountId",customerAccount.getId())
-					.setParameter("operationDate", updateOD).getResultList();
+					.setParameter("operationDate", updateOD)
+					.setParameter("sellerIds",sellersId).getResultList();
 
 
 			return contracts.stream()

@@ -24,7 +24,10 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
+import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
@@ -77,6 +80,9 @@ public class QuotePrice extends AuditableEntity {
 		this.overchargedUnitAmountWithoutTax=copy.getOverchargedUnitAmountWithoutTax();
 		this.discountedAmount=copy.getDiscountedAmount();
 		this.sequence=copy.getSequence();
+		this.contractItem=copy.contractItem;
+		this.pricePlanMatrixVersion=copy.getPricePlanMatrixVersion();
+		this.pricePlanMatrixLine=copy.getPricePlanMatrixLine();
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -181,6 +187,18 @@ public class QuotePrice extends AuditableEntity {
 	 */
 	@Column(name = "sequence")
 	private Integer sequence;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "price_plan_matrix_version_id")
+	private PricePlanMatrixVersion pricePlanMatrixVersion;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "price_plan_matrix_line_id")
+	private PricePlanMatrixLine pricePlanMatrixLine;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "contract_item_id")
+	private ContractItem contractItem;
     
 	public QuoteArticleLine getQuoteArticleLine() {
 		return quoteArticleLine;
@@ -396,6 +414,30 @@ public class QuotePrice extends AuditableEntity {
 
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+
+	public PricePlanMatrixVersion getPricePlanMatrixVersion() {
+		return pricePlanMatrixVersion;
+	}
+
+	public void setPricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
+		this.pricePlanMatrixVersion = pricePlanMatrixVersion;
+	}
+
+	public PricePlanMatrixLine getPricePlanMatrixLine() {
+		return pricePlanMatrixLine;
+	}
+
+	public void setPricePlanMatrixLine(PricePlanMatrixLine pricePlanMatrixLine) {
+		this.pricePlanMatrixLine = pricePlanMatrixLine;
+	}
+
+	public ContractItem getContractItem() {
+		return contractItem;
+	}
+
+	public void setContractItem(ContractItem contractItem) {
+		this.contractItem = contractItem;
 	}
 
 	

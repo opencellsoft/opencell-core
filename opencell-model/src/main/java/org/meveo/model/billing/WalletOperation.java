@@ -172,7 +172,9 @@ import org.meveo.model.tax.TaxClass;
 		@NamedQuery(name = "WalletOperation.discountWalletOperation", query = "SELECT o FROM WalletOperation o WHERE discountedWalletOperation is not null and o.id IN (:woIds)"),
 		@NamedQuery(name = "WalletOperation.findByTriggerdEdr", query = "SELECT o FROM WalletOperation o left join o.edr edr where o.edr in (select e.id FROM EDR e where e.walletOperation.id in :rerateWalletOperationIds)"),
         @NamedQuery(name = "WalletOperation.cancelTriggerEdr", query = "UPDATE WalletOperation o SET o.status='TO_RERATE' where o.id in (ids)"),
-        @NamedQuery(name = "WalletOperation.cancelDisountedWallet", query = "UPDATE WalletOperation o SET o.status='CANCELED' where o.discountedWalletOperation in (:walletOperationIds)")
+        @NamedQuery(name = "WalletOperation.cancelDisountedWallet", query = "UPDATE WalletOperation o SET o.status='CANCELED' where o.discountedWalletOperation in (:walletOperationIds)"),
+        @NamedQuery(name = "WalletOperation.findWalletOperationTradingCurrency", query = "SELECT wo.id, wo.tradingCurrency.id FROM WalletOperation wo WHERE wo.id in (:walletOperationIds)"),
+        @NamedQuery(name = "WalletOperation.findWalletOperationByChargeInstance", query = "SELECT wo.id FROM WalletOperation wo WHERE wo.chargeInstance.id = :chargeInstanceId AND wo.status = 'OPEN' AND wo.subscription.id = :subscriptionId")
 })
 
 @NamedNativeQueries({
@@ -1194,6 +1196,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setAmountTax(amountTax);
         result.setAmountWithoutTax(amountWithoutTax);
         result.setAmountWithTax(amountWithTax);
+        result.setTransactionalAmountTax(transactionalAmountTax);
+        result.setTransactionalAmountWithoutTax(transactionalAmountWithoutTax);
+        result.setTransactionalAmountWithTax(transactionalAmountWithTax);
         return result;
     }
 

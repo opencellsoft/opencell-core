@@ -130,29 +130,13 @@ public class ContractItemService extends BusinessService<ContractItem> {
         
 		StringBuilder builder = new StringBuilder("select c from ContractItem c where  c.contract.id=:contractId");
 
-        if (offer != null && offer.getId() != null) {
-            builder.append(" and c.offerTemplate.id=:offerId");
-        }
-        if (productId != null) {
-            builder.append(" and c.product.id=:productId");
-        }
-        if (chargeTemplate != null && chargeTemplate.getId() != null) {
-            builder.append(" and c.chargeTemplate.id=:chargeTemplate");
-        }
-
-        Query query = getEntityManager().createQuery(builder.toString());
-        
-        query.setParameter("contractId", contract.getId());
-        if (offer != null && offer.getId() != null) {
-            query.setParameter("offerId", offer.getId());
-        }
-        if (productId != null) {
-            query.setParameter("productId", productId);
-        }
-        if (chargeTemplate != null && chargeTemplate.getId() != null) {
-            query.setParameter("chargeTemplate", chargeTemplate.getId());
-        }
-        List<ContractItem> applicableContractItems = query.getResultList();
+	        Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
+					.setParameter("contractId", contract.getId())
+					.setParameter("offerId", offer.getId())
+					.setParameter("productId", productId)
+					.setParameter("chargeTemplateId", chargeTemplate.getId())
+			        .setParameter("accountingArticleId", walletOperation != null && walletOperation.getAccountingArticle() != null ? walletOperation.getAccountingArticle().getId() : 0L);
+	        List<ContractItem> applicableContractItems = query.getResultList();
 
         if (!applicableContractItems.isEmpty()) {
 			Map<Object, Object> contextVariables = new HashMap<>();
@@ -177,5 +161,5 @@ public class ContractItemService extends BusinessService<ContractItem> {
 					contractLine.getCode()));
 		}
 	}
-    
+ 
 }

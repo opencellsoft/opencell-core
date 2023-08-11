@@ -744,14 +744,21 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
     
-	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
-		Map<String, Object> filters = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
-		if(filters==null && billingRun.getBillingCycle() != null) {
-			filters=new TreeMap<>();
-			filters.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
-		} 
-		if(filters==null){
+    public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
+    	return getBillingAccountsIdsForOpenRTs(billingRun,false);
+    }
+	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun, boolean massData) {
+		Map<String, Object> configuredFilter = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
+		if(configuredFilter==null && billingRun.getBillingCycle() != null) {
+			configuredFilter = new TreeMap<String, Object>();
+			configuredFilter.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
+		}
+		if(configuredFilter==null){
 			throw new BusinessException("No filter found for billingRun "+billingRun.getId());
+		}
+		Map<String, Object> filters = new TreeMap<String, Object>(configuredFilter);
+		if(massData) {
+			filters.put("billingAccount.massData", "true");
 		}
 		filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
 		QueryBuilder queryBuilder = ratedTransactionService.getQueryFromFilters(filters, Arrays.asList("billingAccount.id"), true);
@@ -849,7 +856,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for(BillingRun billingRun : billingRuns) {
             List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun, v11Process );
             for (IBillableEntity be :  billableEntities){
-                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
+                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getLastTransactionDate(),
                         billingRun.isExceptionalBR() ? createFilter(billingRun, false) : null, rtPaginationSize));
             }
         }

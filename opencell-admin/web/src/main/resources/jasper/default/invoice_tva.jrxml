@@ -319,7 +319,7 @@
 					</reportElement>
 					<box padding="1"/>
 					<textElement markup="styled">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($F{previousInvoices}!=null && !String.valueOf($F{previousInvoices}).isEmpty() && !String.valueOf($F{previousInvoices}).equals("null")) ? "<style isBold='true'>Previous invoice: </style>" : "")]]></textFieldExpression>
 				</textField>
@@ -337,21 +337,21 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="12.5" isBold="true"/>
+						<font fontName="SansSerif" size="12.5" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Other references]]></text>
 				</staticText>
 				<textField>
 					<reportElement x="360" y="200" width="160" height="30" forecolor="#0D0101" uuid="ab46bcea-35b5-4ac0-8515-0e19afc2ba76"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="16"/>
+						<font fontName="SansSerif" size="16"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithTax})))]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="260" y="165" width="100" height="27" forecolor="#0D0101" uuid="a53473ae-1837-4e50-97d0-bae7f3e55ea7"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithoutTax})))]]></textFieldExpression>
 				</textField>
@@ -369,7 +369,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="16" isBold="false"/>
+						<font fontName="SansSerif" size="16" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{currencySymbol}]]></textFieldExpression>
 				</textField>
@@ -387,7 +387,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true" isItalic="false"/>
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[Total w/o tax]]></text>
 				</staticText>
@@ -405,7 +405,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="16" isBold="false" isItalic="false"/>
+						<font fontName="SansSerif" size="16" isBold="false" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[Net to pay]]></text>
 				</staticText>
@@ -445,21 +445,21 @@
 					</reportElement>
 					<box padding="1"/>
 					<textElement markup="none">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="SansSerif" size="10" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Customer PO:]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement x="40" y="80" width="190" height="54" uuid="df7ee8ee-040e-4444-9889-37f54051cbcf"/>
 					<textElement verticalAlignment="Top">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="SansSerif" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{previousInvoices}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="100" y="40" width="130" height="20" uuid="c5daa933-d657-4985-9716-c253875b09b9"/>
 					<textElement verticalAlignment="Top">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="SansSerif" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{customerPo}]]></textFieldExpression>
 				</textField>
@@ -483,7 +483,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="12.5" isBold="true"/>
+						<font fontName="SansSerif" size="12.5" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Beneficiary payment]]></text>
 				</staticText>
@@ -493,28 +493,28 @@
 					</reportElement>
 					<box padding="1"/>
 					<textElement markup="none">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="SansSerif" size="10" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Payment method:]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement x="130" y="191" width="102" height="20" uuid="7fb9a2aa-4144-4430-9a93-c9c26dd17baf"/>
 					<textElement verticalAlignment="Top">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="SansSerif" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{paymentMethod}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="28" y="210" width="204" height="20" uuid="af0af1ab-ae72-400d-a3f0-e644045e1f91"/>
 					<textElement verticalAlignment="Top">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="SansSerif" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{sellerIban}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="28" y="134" width="201" height="20" uuid="354bc65a-29b1-4678-9d82-d144c1017693"/>
 					<textElement verticalAlignment="Top" markup="styled">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="SansSerif" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[((($F{paymentStatus}!=null && !String.valueOf($F{paymentStatus}).isEmpty() && !String.valueOf($F{paymentStatus}).equals("null") && $F{paymentStatus} == "PAID") && ($F{paymentStatusDate}!=null && !String.valueOf($F{paymentStatusDate}).isEmpty() && !String.valueOf($F{paymentStatusDate}).equals("null"))) ? "<style isBold='true'>Invoice paid on: </style>" + $F{paymentStatusDate} : "")]]></textFieldExpression>
 				</textField>
@@ -532,7 +532,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true" isItalic="false"/>
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[Total tax]]></text>
 				</staticText>
@@ -550,21 +550,21 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true" isItalic="false"/>
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false"/>
 					</textElement>
 					<text><![CDATA[Total incl. tax]]></text>
 				</staticText>
 				<textField>
 					<reportElement x="470" y="165" width="99" height="27" forecolor="#0D0101" uuid="983641ac-adb5-41d1-a3cb-738dbfef4a78"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithTax})))]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="360" y="165" width="99" height="27" forecolor="#0D0101" uuid="89c8939a-e199-40dc-a708-52484264ee5b"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new java.math.BigDecimal(Double.valueOf($F{amountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($F{amountWithoutTax}))))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new java.math.BigDecimal(Double.valueOf($F{amountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($F{amountWithoutTax})))))]]></textFieldExpression>
 				</textField>
@@ -572,11 +572,10 @@
 					<reportElement x="248" y="84" width="346" height="59" forecolor="#878787" uuid="497ea258-6ffb-494f-be3b-4bc544034578"/>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="2"/>
 					<textElement markup="styled">
-						<font fontName="Arial" size="9"/>
+						<font fontName="SansSerif" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{baExemptionReason} != null ? ("<style isBold='true'>Exemption reason : </style> Not subject to VAT - " + $F{baExemptionReason}) : "") + 
-(($F{baExemptionReason} == null || $F{baExemptionReason}.isEmpty()) && $F{vatexReasons} != null ? ("<style isBold='true'>VAT exoneration reason : </style>" + $F{vatexReasons} + "\n") : "") 
-]]></textFieldExpression>
+(($F{baExemptionReason} == null || $F{baExemptionReason}.isEmpty()) && $F{vatexReasons} != null ? ("<style isBold='true'>VAT exoneration reason : </style>" + $F{vatexReasons} + "\n") : "")]]></textFieldExpression>
 				</textField>
 				<componentElement>
 					<reportElement key="" positionType="Float" stretchType="ElementGroupHeight" isPrintRepeatedValues="false" x="243" y="4" width="343" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="efb6e3e2-cf48-479d-a73b-0fabcbe6decb"/>
@@ -597,7 +596,7 @@
 										<leftPen lineWidth="0.0"/>
 									</box>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+										<font fontName="SansSerif" size="11" isBold="true"/>
 									</textElement>
 									<text><![CDATA[VAT Code]]></text>
 								</staticText>
@@ -613,7 +612,7 @@
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="55" height="15" uuid="27d16478-c309-4d54-8f66-c731ad068ece"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+										<font fontName="SansSerif" size="11" isBold="false"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{taxIndex}]]></textFieldExpression>
 								</textField>
@@ -632,7 +631,7 @@
 										<leftPen lineWidth="0.0"/>
 									</box>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+										<font fontName="SansSerif" size="11" isBold="true"/>
 									</textElement>
 									<text><![CDATA[VAT rate]]></text>
 								</staticText>
@@ -648,7 +647,7 @@
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="70" height="15" uuid="4ec8f0d4-7127-4805-bcbb-546aa1bf52e2"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+										<font fontName="SansSerif" size="11" isBold="false"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{country}=="FR" ? new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{percent}))+"%" : new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{percent}))+"%"]]></textFieldExpression>
 								</textField>
@@ -667,7 +666,7 @@
 										<leftPen lineWidth="0.0"/>
 									</box>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+										<font fontName="SansSerif" size="11" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA["Price w/o tax"]]></textFieldExpression>
 								</textField>
@@ -684,7 +683,7 @@
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="110" height="15" isPrintWhenDetailOverflows="true" uuid="afb9d91c-1878-4b38-9d12-32e0e1651260"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+										<font fontName="SansSerif" size="11" isBold="false"/>
 									</textElement>
 									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amountWithoutTax})))]]></textFieldExpression>
 								</textField>
@@ -704,7 +703,7 @@
 										<rightPen lineWidth="0.0"/>
 									</box>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Bold" size="11" isBold="true"/>
+										<font fontName="SansSerif" size="11" isBold="true"/>
 									</textElement>
 									<textFieldExpression><![CDATA["Tax"]]></textFieldExpression>
 								</textField>
@@ -721,7 +720,7 @@
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="100" height="15" uuid="f4bffe91-968b-40cf-8165-2f7198aeee52"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Bold" size="11" isBold="false"/>
+										<font fontName="SansSerif" size="11" isBold="false"/>
 									</textElement>
 									<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{amount}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{amount})))]]></textFieldExpression>
 								</textField>

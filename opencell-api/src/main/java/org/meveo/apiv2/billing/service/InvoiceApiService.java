@@ -421,7 +421,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
         if(true==invoice.isApplyBillingRules()) {
             Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
-            List<RatedTransaction> rts = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
+            List<RatedTransaction> rts = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, lastTransactionDate, ratedTransactionFilter, null);
 			if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
 				billingAccountsAfter = ratedTransactionService.applyInvoicingRules(rts);
 			}
@@ -442,6 +442,14 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		if (invoices == null || invoices.isEmpty()) {
 			throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
 		}
+		
+		for (Invoice inv : invoices) {
+			if (invoice.getPurchaseOrder() != null) {
+				inv.setExternalPurchaseOrderNumber(invoice.getPurchaseOrder());
+				invoiceService.update(inv);
+			}
+		}
+		
 		List<GenerateInvoiceResult> generateInvoiceResults = new ArrayList<>();
 		InvoiceMapper invoiceMapper = new InvoiceMapper();
 		for (Invoice inv : invoices) {
@@ -552,7 +560,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	public Invoice updateValidatedInvoice(Invoice invoice, org.meveo.apiv2.billing.InvoicePatchInput invoiceResource) {      
     	ICustomFieldEntity customFieldEntity = new Invoice();
 		customFieldEntity = invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), customFieldEntity, false);
-        return invoiceService.updateValidatedInvoice(invoice, invoiceResource.getComment(), customFieldEntity.getCfValues());
+        return invoiceService.updateValidatedInvoice(invoice, invoiceResource.getComment(), customFieldEntity.getCfValues(), invoiceResource.getPurchaseOrder());
     }
 	
 	/**
@@ -562,7 +570,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		invoiceService.refreshConvertedAmounts(invoice, exchangeRate, new Date());
 	}
 
-	public Object validateInvoices(Map<String, Object> filters, ProcessingModeEnum mode, boolean failOnValidatedInvoice, boolean failOnCanceledInvoice, boolean ignoreValidationRules) {
+	public Object validateInvoices(Map<String, Object> filters, ProcessingModeEnum mode, boolean failOnValidatedInvoice, boolean failOnCanceledInvoice, boolean ignoreValidationRules, boolean generateAO) {
 		ValidateInvoiceResult result = new ValidateInvoiceResult();
 		
 		if (ProcessingModeEnum.STOP_ON_FIRST_FAIL.equals(mode)) {
@@ -593,7 +601,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 						statics.addFail();
 					}
 				} else {
-					invoice = validateInvoice(ignoreValidationRules, invoice);
+					invoice = validateInvoice(ignoreValidationRules, invoice, generateAO);
 					if (InvoiceStatusEnum.VALIDATED.equals(invoice.getStatus())) {
 						result.getInvoicesValidated().add(invoice.getId());
 						statics.addSuccess();
@@ -616,14 +624,17 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		return result;
 	}
 
-	private Invoice validateInvoice(boolean ignoreValidationRules, Invoice invoice) throws Exception {
+	private Invoice validateInvoice(boolean ignoreValidationRules, Invoice invoice, boolean generateAO) throws Exception {
 		if (ignoreValidationRules) {
 			invoiceService.validateInvoice(invoice);
+			if (generateAO) {
+				invoiceService.generateRecordedInvoiceAO(invoice.getId());
+			}
 		} else {
 			invoiceService.rebuildInvoice(invoice, true);
 			invoice = invoiceService.retrieveIfNotManaged(invoice);
 			if (InvoiceStatusEnum.DRAFT.equals(invoice.getStatus())) { 
-				invoiceApi.validateInvoice(invoice.getId(), false, false, true);
+				invoiceApi.validateInvoice(invoice.getId(), generateAO, false, true);
 			}
 		}
 		return invoiceService.refreshOrRetrieve(invoice);

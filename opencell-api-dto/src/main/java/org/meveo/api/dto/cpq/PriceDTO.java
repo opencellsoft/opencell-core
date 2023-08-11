@@ -30,7 +30,10 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.tax.TaxCategory;
@@ -95,6 +98,16 @@ public class PriceDTO extends BaseEntityDto {
     private BigDecimal discountedAmount;
     private Integer sequence;
     private Long id;
+    private String contractCode;
+    private String contractDescription;
+    private String contractItemCode;
+    private String contractItemDescription;
+    private String contractType;
+    private String pricePlanMatrixCode;
+    private String pricePlanMatrixLabel;
+    private Long pricePlanMatrixVersionId;
+    private Long pricePlanMatrixLineId;
+    private ContractRateTypeEnum contractItemRateType;
     
     private CustomFieldsDto customFields;
     
@@ -143,12 +156,28 @@ public class PriceDTO extends BaseEntityDto {
 	   overchargedUnitAmountWithoutTax=quotePrice.getOverchargedUnitAmountWithoutTax();
 	   discountedAmount=quotePrice.getDiscountedAmount();
 	   sequence=quotePrice.getSequence();
+	   if(quotePrice.getContractItem()!=null) {
+		   ContractItem contractItem=quotePrice.getContractItem();
+		   contractCode=contractItem.getContract().getCode();
+		   contractDescription=contractItem.getContract().getDescription();
+		   contractItemCode=contractItem.getCode();
+		   contractItemDescription=contractItem.getDescription();
+		   contractItemRateType=contractItem.getContractRateType();
+	   }
+	   if(quotePrice.getPricePlanMatrixVersion()!=null) {
+		   PricePlanMatrixVersion ppmv=quotePrice.getPricePlanMatrixVersion();
+		   pricePlanMatrixVersionId=ppmv.getId();
+		   pricePlanMatrixCode=ppmv.getPricePlanMatrix().getCode();
+		   pricePlanMatrixLabel=ppmv.getPricePlanMatrix().getDescription();
+	   }
+	   pricePlanMatrixLineId=quotePrice.getPricePlanMatrixLine()!=null?quotePrice.getPricePlanMatrixLine().getId():null;
+
 		
 	}
 
 	public PriceDTO(QuotePrice quotePrice, TradingCurrency currency, Map<String, TaxDTO> mapTaxIndexes) {
 		this(quotePrice, mapTaxIndexes);
-		this.setCurrencySymbol(currency.getSymbol());
+		this.setCurrencySymbol(currency != null ? currency.getSymbol() : null);
 	}
 
 	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields, Map<String, TaxDTO> mapTaxIndexes) {
@@ -387,4 +416,87 @@ public class PriceDTO extends BaseEntityDto {
 	public void setCalendarCode(String calendarCode) {
 		this.calendarCode = calendarCode;
 	}
+
+	public String getContractCode() {
+		return contractCode;
+	}
+
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
+	}
+
+	public String getContractDescription() {
+		return contractDescription;
+	}
+
+	public void setContractDescription(String contractDescription) {
+		this.contractDescription = contractDescription;
+	}
+
+	public String getContractItemCode() {
+		return contractItemCode;
+	}
+
+	public void setContractItemCode(String contractItemCode) {
+		this.contractItemCode = contractItemCode;
+	}
+
+	public String getContractItemDescription() {
+		return contractItemDescription;
+	}
+
+	public void setContractItemDescription(String contractItemDescription) {
+		this.contractItemDescription = contractItemDescription;
+	}
+
+	public String getContractType() {
+		return contractType;
+	}
+
+	public void setContractType(String contractType) {
+		this.contractType = contractType;
+	}
+
+	public String getPricePlanMatrixCode() {
+		return pricePlanMatrixCode;
+	}
+
+	public void setPricePlanMatrixCode(String pricePlanMatrixCode) {
+		this.pricePlanMatrixCode = pricePlanMatrixCode;
+	}
+
+	public String getPricePlanMatrixLabel() {
+		return pricePlanMatrixLabel;
+	}
+
+	public void setPricePlanMatrixLabel(String pricePlanMatrixLabel) {
+		this.pricePlanMatrixLabel = pricePlanMatrixLabel;
+	}
+
+	public Long getPricePlanMatrixVersionId() {
+		return pricePlanMatrixVersionId;
+	}
+
+	public void setPricePlanMatrixVersionId(Long pricePlanMatrixVersionId) {
+		this.pricePlanMatrixVersionId = pricePlanMatrixVersionId;
+	}
+
+	public Long getPricePlanMatrixLineId() {
+		return pricePlanMatrixLineId;
+	}
+
+	public void setPricePlanMatrixLineId(Long pricePlanMatrixLineId) {
+		this.pricePlanMatrixLineId = pricePlanMatrixLineId;
+	}
+
+	public ContractRateTypeEnum getContractItemRateType() {
+		return contractItemRateType;
+	}
+
+	public void setContractItemRateType(ContractRateTypeEnum contractItemRateType) {
+		this.contractItemRateType = contractItemRateType;
+	}
+	
+	
+	
 }

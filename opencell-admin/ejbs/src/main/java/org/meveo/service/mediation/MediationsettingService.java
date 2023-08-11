@@ -1,5 +1,6 @@
 package org.meveo.service.mediation;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -215,6 +216,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                 //discountWoId.add(wo.getId());
                 List<WalletOperation> triggeredWo = (List<WalletOperation>) walletOperationService.getEntityManager().createNamedQuery("WalletOperation.findByTriggerdEdr").setParameter("rerateWalletOperationIds", discountWoId).getResultList();
                 discountWos.addAll(triggeredWo);
+	            discountWos.addAll(triggeredWo.stream().flatMap(wl -> walletOperationService.findByDiscountedWo(wl.getId()).stream()).collect(Collectors.toList()));
                 for (WalletOperation wallet : discountWos) {
                     if (!wallet.getStatus().equals(WalletOperationStatusEnum.CANCELED)) {
                         wallet.setStatus(WalletOperationStatusEnum.CANCELED);
@@ -264,6 +266,15 @@ public class MediationsettingService extends PersistenceService<MediationSetting
     		wo.setQuantity(woToRerate.getQuantity());
     		wo.setCode(woToRerate.getCode());
     		wo.setTradingCurrency(woToRerate.getBillingAccount().getTradingCurrency());
+            if(wo.getTradingCurrency() != null && wo.getTradingCurrency().getCurrentRate() != null) {
+                final BigDecimal rate = wo.getTradingCurrency().getCurrentRate();
+                wo.setTransactionalUnitAmountTax(wo.getUnitAmountTax().multiply(rate));
+                wo.setTransactionalUnitAmountWithTax(wo.getUnitAmountWithTax().multiply(rate));
+                wo.setTransactionalUnitAmountWithoutTax(wo.getUnitAmountWithoutTax().multiply(rate));
+                wo.setTransactionalAmountTax(wo.getAmountTax().multiply(rate));
+                wo.setTransactionalAmountWithTax(wo.getTransactionalAmountWithTax().multiply(rate));
+                wo.setTransactionalAmountWithoutTax(wo.getAmountWithoutTax().multiply(rate));
+            }
     		walletOperationService.update(wo);
 
     		RatedTransaction ratedTransaction = wo.getRatedTransaction();

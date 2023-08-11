@@ -47,7 +47,6 @@ public class PriceListService extends BusinessService<PriceList> {
 	public Long count(PriceListCriteria pPriceListCriteria) {
     	TypedQuery<Long> query = getEntityManager().createQuery(getPriceListQuery(pPriceListCriteria, true), Long.class);
     	this.setQueryParams(pPriceListCriteria, query);
-		query.getParameters().forEach(p -> System.out.println(p.getName() + " => " + query.getParameterValue(p.getName())));
 		return query.getSingleResult();
     	
 	}
@@ -66,38 +65,56 @@ public class PriceListService extends BusinessService<PriceList> {
 			jpqlQuery += "SELECT pl FROM ";
 		}
 
-		jpqlQuery += "PriceList pl WHERE pl.status = :activeStatus AND :currentDate BETWEEN pl.applicationStartDate AND pl.applicationEndDate ";
+		jpqlQuery += "PriceList pl LEFT JOIN pl.paymentMethods pms ";
+
+		jpqlQuery += "WHERE pl.status = :activeStatus AND :currentDate BETWEEN pl.applicationStartDate AND pl.applicationEndDate ";
 
     	if(pPriceListCriteria.getBrandId() != null) {
 			jpqlQuery += "AND (pl.brands IS EMPTY OR EXISTS (select 1 from CustomerBrand cb where cb.id=:brandId and cb member of pl.brands)) ";
+		} else {
+			jpqlQuery += "AND pl.brands IS EMPTY ";
 		}
 
 		if(pPriceListCriteria.getCustomerCategoryId() != null) {
 			jpqlQuery += "AND (pl.customerCategories IS EMPTY OR EXISTS (select 1 from CustomerCategory cc where cc.id=:customerCategoryId and cc member of pl.customerCategories)) ";
+		} else {
+			jpqlQuery += "AND pl.customerCategories IS EMPTY ";
 		}
 
 		if(pPriceListCriteria.getCreditCategoryId() != null) {
 			jpqlQuery += "AND (pl.creditCategories IS EMPTY OR EXISTS (select 1 from CreditCategory crc where crc.id=:creditCategoryId and crc member of pl.creditCategories)) ";
+		} else {
+			jpqlQuery += "AND pl.creditCategories IS EMPTY ";
 		}
 
 		if(pPriceListCriteria.getCountryId() != null) {
 			jpqlQuery += "AND (pl.countries IS EMPTY OR EXISTS (select 1 from Country cou where cou.id=:countryId and cou member of pl.countries)) ";
+		} else {
+			jpqlQuery += "AND pl.countries IS EMPTY ";
 		}
 
 		if(pPriceListCriteria.getCurrencyId() != null) {
 			jpqlQuery += "AND (pl.currencies IS EMPTY OR EXISTS (select 1 from Currency cur where cur.id=:currencyId and cur member of pl.currencies)) ";
+		} else {
+			jpqlQuery += "AND pl.currencies IS EMPTY ";
 		}
 
 		if(pPriceListCriteria.getTitleId() != null) {
 			jpqlQuery += "AND (pl.legalEntities IS EMPTY OR EXISTS (select 1 from Title ti where ti.id=:titleId and ti member of pl.legalEntities)) ";
+		} else {
+			jpqlQuery += "AND pl.legalEntities IS EMPTY ";
 		}
 
 		if(pPriceListCriteria.getSellerId() != null) {
 			jpqlQuery += "AND (pl.sellers IS EMPTY OR EXISTS (select 1 from Seller sel where sel.id=:sellerId and sel member of pl.sellers)) ";
+		} else {
+			jpqlQuery += "AND pl.sellers IS EMPTY ";
 		}
 
 		if(pPriceListCriteria.getPaymentMethodEnum() != null) {
-			jpqlQuery += "AND (pl.sellers IS EMPTY OR :paymentMethod member of pl.paymentMethods) ";
+			jpqlQuery += "AND (pms IS NULL OR :paymentMethod = pms) ";
+		} else {
+			jpqlQuery += "AND (pms IS NULL) ";
 		}
 
 		if(pPriceListCriteria.getAttachedPriceListId() != null) {
@@ -112,7 +129,7 @@ public class PriceListService extends BusinessService<PriceList> {
 	    	}
 		}
 
-		LOGGER.info("JPQL Query to execute: {}", jpqlQuery);
+		LOGGER.trace("JPQL Query to execute: {}", jpqlQuery);
 		return jpqlQuery;
 	}
 

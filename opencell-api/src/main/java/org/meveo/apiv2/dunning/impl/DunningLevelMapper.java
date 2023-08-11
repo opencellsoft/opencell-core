@@ -9,7 +9,6 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.dunning.DunningAction;
 import org.meveo.model.dunning.DunningLevel;
 import org.meveo.model.dunning.DunningLevelChargeTypeEnum;
-import org.meveo.model.dunning.DunningModeEnum;
 
 public class DunningLevelMapper extends ResourceMapper<org.meveo.apiv2.dunning.DunningLevel, DunningLevel> {
 
@@ -77,7 +76,6 @@ public class DunningLevelMapper extends ResourceMapper<org.meveo.apiv2.dunning.D
         entity.setEndOfDunningLevel(resource.isEndOfDunningLevel());
         entity.setDunningActions(getDunningActionsFromCodes(resource.getDunningActions()));
         entity.setId(resource.getId());
-		entity.setType(DunningModeEnum.INVOICE_LEVEL);
         return entity;
     }
 }

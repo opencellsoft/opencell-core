@@ -6436,6 +6436,13 @@
             <column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
         </insert>
     </changeSet>
+	
+	<changeSet id="INTRD-17572_20230721-ADJ-REF" author="aelmalki" failOnError="false">
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'ADJ_REF')" />
+			<column name="applies_to_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'COM')" />
+        </insert>
+    </changeSet>
     
     <changeSet id="#INTRD-16859_20230626" author="aeljaouhari" />
 

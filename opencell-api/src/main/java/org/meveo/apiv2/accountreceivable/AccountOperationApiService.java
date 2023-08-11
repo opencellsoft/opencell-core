@@ -207,18 +207,22 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		aos.stream().forEach(accountOperation -> {
 	          // check amount to match
 	        Optional<AccountOperationAndSequence> accountOperationAndSequenceOptional = accountOperations.stream().filter(aoas -> aoas.getId() == accountOperation.getId()).findFirst();
-	        if(accountOperationAndSequenceOptional.isPresent()) {
-	            BigDecimal amountToMatch = accountOperationAndSequenceOptional.get().getAmountToMatch();
-	            Integer sequence = accountOperationAndSequenceOptional.get().getSequence();
-	            if(amountToMatch != null) {
-	                if(amountToMatch.compareTo(BigDecimal.ZERO) <= 0) {
-	                    throw new BusinessApiException("The amount to match must be greater than 0");
-	                }else if(amountToMatch.compareTo(accountOperation.getUnMatchingAmount()) == 0) {
-	                    throw new BusinessApiException("The amount to match must be less than : " + accountOperation.getUnMatchingAmount().doubleValue() + " for sequence : " + sequence);
-	                }
-	                accountOperation.setAmountForUnmatching(amountToMatch);
-	            }
-	        }
+			if (accountOperationAndSequenceOptional.isPresent()) {
+				if (accountOperationAndSequenceOptional.get().getAmountToMatch() != null) {
+					BigDecimal amountToMatch = accountOperationAndSequenceOptional.get().getAmountToMatch();
+					Integer sequence = accountOperationAndSequenceOptional.get().getSequence();
+					if (amountToMatch != null) {
+						if (amountToMatch.compareTo(BigDecimal.ZERO) <= 0) {
+							throw new BusinessApiException("The amount to match must be greater than 0");
+						} else if (amountToMatch.compareTo(accountOperation.getUnMatchingAmount()) == 0) {
+							throw new BusinessApiException("The amount to match must be less than : " + accountOperation.getUnMatchingAmount().doubleValue() + " for sequence : " + sequence);
+						}
+						accountOperation.setAmountForUnmatching(amountToMatch);
+					}
+				} else {
+					accountOperation.setAmountForUnmatching(accountOperation.getUnMatchingAmount());
+				}
+			}
 		});
 		
 		Optional.of(aos.stream().filter(accountOperation -> accountOperation.getCustomerAccount() == null)
@@ -239,7 +243,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			if(aos.size()>0) {
 			    TradingCurrency theFirstTradingCurrency = aos.get(0).getTransactionalCurrency();
 			    for (AccountOperation accountOperation : aos) {
-			        if(theFirstTradingCurrency.getId() != accountOperation.getTransactionalCurrency().getId()) {
+			        if (!theFirstTradingCurrency.getId().equals(accountOperation.getTransactionalCurrency().getId())) {
 	                    throw new BusinessApiException(resourceMessages.getString("accountOperation.error.sameCurrency"));
 	                }
 	                Long aoId = accountOperation.getId();

@@ -23,11 +23,11 @@ public class PriceListLineService extends BusinessService<PriceListLine> {
         StringBuilder lStringBuilder = new StringBuilder("SELECT pll FROM PriceListLine pll WHERE pll.priceList.id = :priceListId");
 
         if (pOfferTemplateId != null) {
-            lStringBuilder.append(" AND pll.offerTemplate.id = :offerId");
+            lStringBuilder.append(" AND (pll.offerTemplate is null OR pll.offerTemplate.id = :offerId)");
         }
 
         if (pProductId != null) {
-            lStringBuilder.append(" AND pll.product.id = :productId");
+            lStringBuilder.append(" AND (pll.product is null OR pll.product.id = :productId)");
         }
 
         if (pChargeTemplateId != null) {

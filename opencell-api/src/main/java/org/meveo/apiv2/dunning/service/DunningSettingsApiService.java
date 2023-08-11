@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 
@@ -48,6 +47,7 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 	private static final String NO_ACCOUNTING_ARTICLE_FOUND = "No Accounting article was found for the id : ";
 	private static final String NO_CUSTOMER_BALANCE_FOUND = "No Customer Balance was found for the id : ";
 	private static final String NO_DEFAULT_CUSTOMER_BALANCE_FOUND = "No default Customer Balance was found";
+	private static final String CUSTOMER_BALANCE_IS_MANDATORY = "Customer balance is mandatory to create a dunning settings with mode INVOICE_LEVEL";
 	private static final String MANY_DEFAULT_CUSTOMER_BALANCE_FOUND = "Many Customer Balance are configured as default";
 	private static final String ACTIVE_OR_PAUSED_DUNNING_COLLECTION_PLAN_FOUND = "One or many Active/Paused Dunning Collection Plan was found";
 	private static final String AUTHORIZED_DUNNING_MODE = "Only dunning mode INVOICE_LEVEL is authorized for the first version of dunning";
@@ -79,6 +79,8 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 		//If the dunning mode is set to CUSTOMER_LEVEL for the first setting then return a functional exception
 		if(baseEntity.getDunningMode() == null) {
 			baseEntity.setDunningMode(DunningModeEnum.INVOICE_LEVEL);
+		} else if(baseEntity.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL) && dunningSettingsService.count() == 0) {
+			throw new BadRequestException(AUTHORIZED_DUNNING_MODE);
 		}
 
 		if(baseEntity.getMaxDunningLevels() == null)
@@ -101,6 +103,11 @@ public class DunningSettingsApiService implements ApiService<DunningSettings> {
 	public Optional<DunningSettings> update(Long id, DunningSettings dunningSettings) {
 		globalSettingsVerifier.checkActivateDunning();
 		var dunningSettingsUpdate = findById(id).orElseThrow(() -> new BadRequestException(NO_DUNNING_FOUND + id));
+
+		//If the dunning mode is set to CUSTOMER_LEVEL for the first setting then return a functional exception
+		if(dunningSettings.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL) && dunningSettingsService.count() == 1) {
+			throw new BadRequestException(AUTHORIZED_DUNNING_MODE);
+		}
 
 		if(dunningSettings.getAccountingArticle() != null) {
 			var accountingArticle = accountingArticleService.findById(dunningSettings.getAccountingArticle().getId());

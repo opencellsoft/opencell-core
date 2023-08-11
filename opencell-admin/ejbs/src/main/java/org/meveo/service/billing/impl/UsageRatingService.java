@@ -535,18 +535,12 @@ public class UsageRatingService extends RatingService implements Serializable {
                     String filter4 = chargeTemplate.getFilterParam4();
                     if (filter4 == null || filter4.equals(edr.getParameter4())) {
                         String filterExpression = chargeTemplate.getFilterExpression();
-                        if (filterExpression == null || matchExpression(chargeInstance, filterExpression, edr)) {              	 
+                        if (filterExpression == null || matchExpression(chargeInstance, filterExpression, edr)) {
 
-                        	 // Check if there is any attribute with value FALSE, indicating that service instance is not active
-                             if (chargeInstance.getServiceInstance() != null) {
-                                 boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-                                     .filter(attributeInstance -> chargeInstance.getChargeTemplate().getAttributes().contains(attributeInstance.getAttribute()))
-                                     .anyMatch(attributeInstance -> attributeInstance.getStringValue() == null || "false".equals(attributeInstance.getStringValue()));
-                                 if (anyFalseAttribute) {
-                                     return false;
-                                 }
-                             }                        	 
-                        	 
+                            // Check if there is any attribute with value FALSE, indicating that service instance is not active
+                            if (anyFalseAttributeMatch(chargeInstance)) {
+                                return false;
+                            }
                             return true;
                         }
                     }

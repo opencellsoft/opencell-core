@@ -56,6 +56,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
 
@@ -1250,7 +1251,10 @@ public class QueryBuilder {
             addCriterion(concatenatedFields, inclusive ? " <= " : " < ", BigDecimal.valueOf((Double) value), true, isFieldValueOptional);
         } else if (value instanceof Number) {
             addCriterion(concatenatedFields, inclusive ? " <= " : " < ", value, true, isFieldValueOptional);
-        } else if (value instanceof Date) {
+        } else if (value instanceof Date || (DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN) instanceof Date)) {
+            if(value instanceof String) {
+                value = DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN);
+            }
             addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
         }
         return this;
@@ -1362,7 +1366,15 @@ public class QueryBuilder {
     @SuppressWarnings({ "rawtypes" })
     public QueryBuilder addValueIsEqualToField(String concatenatedFields, Object value, boolean isNot, boolean isFieldValueOptional) {
 
-        concatenatedFields = createExplicitInnerJoins(concatenatedFields);
+        // extract fieldname to handle joins
+        if(concatenatedFields.contains(FROM_JSON_FUNCTION)) {
+            int beginIndex = concatenatedFields.indexOf(FROM_JSON_FUNCTION) + FROM_JSON_FUNCTION.length() - 2;
+            var extractedField = concatenatedFields.substring(beginIndex, concatenatedFields.indexOf(",", beginIndex));
+            String explicitInnerJoins = createExplicitInnerJoins(extractedField);
+            concatenatedFields = concatenatedFields.replace(extractedField, explicitInnerJoins);
+        } else {
+            concatenatedFields = createExplicitInnerJoins(concatenatedFields);
+        }
 
         // Search by equals/not equals to a string value
         if (value instanceof String) {

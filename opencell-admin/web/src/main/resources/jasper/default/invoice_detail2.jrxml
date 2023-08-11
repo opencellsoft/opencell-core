@@ -240,7 +240,7 @@
 					<reportElement x="519" y="3" width="64" height="15" uuid="36419c39-6603-4092-9dbe-b643b28ad12a"/>
 					<box rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="9"/>
+						<font fontName="SansSerif" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($V{amountWithoutTax_1}))]]></textFieldExpression>
 				</textField>
@@ -255,7 +255,7 @@
 					<reportElement mode="Transparent" x="420" y="3" width="56" height="15" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c"/>
 					<box leftPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="9" isBold="false"/>
+						<font fontName="SansSerif" size="9" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{unitAmountWithoutTax}))]]></textFieldExpression>
 				</textField>
@@ -299,7 +299,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Details - recurring charges]]></text>
 			</staticText>
@@ -317,7 +317,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Period]]></text>
 			</staticText>
@@ -335,7 +335,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Quantity]]></text>
 			</staticText>
@@ -353,7 +353,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Price w/o tax ("+$F{currencySymbol}+")"]]></textFieldExpression>
 			</textField>
@@ -371,7 +371,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Total with tax ("+$F{currencySymbol}+")"]]></textFieldExpression>
 			</textField>

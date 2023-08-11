@@ -41,6 +41,9 @@ public class DuplicateRatedTransactionJobBean extends IteratorBasedJobBean<Rated
                 duplicate.setAmountWithTax(duplicate.getAmountWithTax() != null ? duplicate.getAmountWithTax().negate() : null);
                 duplicate.setRawAmountWithTax(duplicate.getRawAmountWithTax() != null ? duplicate.getRawAmountWithTax().negate() : null);
                 duplicate.setRawAmountWithoutTax(duplicate.getRawAmountWithoutTax() != null ? duplicate.getRawAmountWithoutTax().negate() : null);
+                duplicate.setTransactionalAmountTax(duplicate.getTransactionalAmountTax() != null ? duplicate.getTransactionalAmountTax().negate() : null);
+                duplicate.setTransactionalAmountWithoutTax(duplicate.getTransactionalAmountWithoutTax() != null ? duplicate.getTransactionalAmountWithoutTax().negate() : null);
+                duplicate.setTransactionalAmountWithTax(duplicate.getTransactionalAmountWithTax() != null ? duplicate.getTransactionalAmountWithTax().negate() : null);
                 ratedTransaction.setPendingDuplicatesToNegate(ratedTransaction.getPendingDuplicatesToNegate() - 1);
             }else{
                 ratedTransaction.setPendingDuplicates(ratedTransaction.getPendingDuplicates() - 1);

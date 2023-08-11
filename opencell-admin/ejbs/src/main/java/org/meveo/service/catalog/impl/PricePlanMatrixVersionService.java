@@ -637,6 +637,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 .setParameter("priceplans", pricePlans).getResultList();
     }
 
+    public List<PricePlanMatrixVersion> findByChargeTemplates(Set<Long> chargeTemplateIds) {
+        return this.getEntityManager()
+                   .createNamedQuery("PricePlanMatrixVersion.getAllVersionsForChargeTemplates", entityClass)
+                   .setParameter("charges", chargeTemplateIds)
+                   .getResultList();
+    }
+
     class CSVPricePlanExportManager {
         private final String PATH_STRING_FOLDER = "exports" + File.separator + "priceplan_versions";
         private final String saveDirectory;

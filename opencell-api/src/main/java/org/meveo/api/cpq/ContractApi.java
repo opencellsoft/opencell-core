@@ -12,9 +12,11 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.ContractDto;
@@ -32,6 +34,7 @@ import org.meveo.apiv2.cpq.mapper.BillingRuleMapper;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -48,9 +51,12 @@ import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -63,6 +69,7 @@ import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TradingContractItemService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 /**
  * @author Tarik F.
@@ -102,6 +109,13 @@ public class ContractApi extends BaseApi{
 	private TradingContractItemService tradingContractItemService;
     @Inject
     private TradingCurrencyService tradingCurrencyService;
+    @Inject
+    private ResourceBundle resourceMessages;
+	
+	@Inject
+	private AccountingArticleService accountingArticleService;
+	@Inject
+	private FinanceSettingsService financeSettingsService;
 	
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
@@ -387,7 +401,14 @@ public class ContractApi extends BaseApi{
 			throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
 		}
     	item.setApplicationEl(contractItemDto.getApplicationEl());
-
+    	
+    	if (contractItemDto.getApplicableOnOverriddenPrice() != null) {
+			if (contractItemDto.getApplicableOnOverriddenPrice() && ContractRateTypeEnum.FIXED.equals(item.getContractRateType())) {
+				throw new BusinessException(resourceMessages.getString("contract.applicable.on.overridden.price.error"));
+			}
+    		item.setApplicableOnOverriddenPrice(contractItemDto.getApplicableOnOverriddenPrice());
+    	}
+	    item.getTargetAccountingArticles().addAll(getAccountingArticles(contractItemDto.getTargetAccountingArticleCodes()));
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
     		contractItemService.create(item);
@@ -396,7 +417,19 @@ public class ContractApi extends BaseApi{
     		throw new MeveoApiException(e);
     	}
     }
-    
+    private Set<AccountingArticle> getAccountingArticles(Set<String> codes){
+	    final Set<AccountingArticle> accountingArticles = new HashSet<>();
+	    if(CollectionUtils.isNotEmpty(codes)){
+		    codes.forEach(code -> {
+			    AccountingArticle accountingArticle = accountingArticleService.findByCode(code);
+			    if(accountingArticle == null){
+				    throw new EntityDoesNotExistsException(AccountingArticle.class, code);
+			    }
+			    accountingArticles.add(accountingArticle);
+		    });
+	    }
+		return accountingArticles;
+    }
     public void updateContractLine(ContractItemDto contractItemDto) {
 		checkParams(contractItemDto);
     	final ContractItem item = contractItemService.findByCode(contractItemDto.getCode());
@@ -438,6 +471,16 @@ public class ContractApi extends BaseApi{
 			throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
 		}
 		item.setApplicationEl(contractItemDto.getApplicationEl());
+		
+		if (contractItemDto.getApplicableOnOverriddenPrice() != null) {
+			if (contractItemDto.getApplicableOnOverriddenPrice() && ContractRateTypeEnum.FIXED.equals(item.getContractRateType())) {
+				throw new BusinessException(resourceMessages.getString("contract.applicable.on.overridden.price.error"));
+			}
+    		item.setApplicableOnOverriddenPrice(contractItemDto.getApplicableOnOverriddenPrice());
+    	}
+		item.getTargetAccountingArticles().clear();
+	    item.getTargetAccountingArticles().addAll(getAccountingArticles(contractItemDto.getTargetAccountingArticleCodes()));
+		
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);
     		contractItemService.updateContractItem(item);
@@ -481,9 +524,15 @@ public class ContractApi extends BaseApi{
     		missingParameters.add("contractCode");
     	if(Strings.isEmpty(contractItemDto.getCode()))  {
 			missingParameters.add("code");
-		}
-		if(Strings.isEmpty(contractItemDto.getChargeTemplateCode())) {
-			missingParameters.add("chargeTemplateCode");
+    	}
+		if(CollectionUtils.isEmpty(contractItemDto.getTargetAccountingArticleCodes()) || Strings.isEmpty(contractItemDto.getChargeTemplateCode())) {
+			FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
+			if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING && CollectionUtils.isNotEmpty(contractItemDto.getTargetAccountingArticleCodes())){
+				throw new BusinessApiException("targetAccountignArticles can be set only if articleSelectionMode=BEFORE_PRICING");
+			}else if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.BEFORE_PRICING &&
+						(CollectionUtils.isEmpty(contractItemDto.getTargetAccountingArticleCodes()) && Strings.isEmpty(contractItemDto.getChargeTemplateCode())) ){
+				throw new BusinessApiException("chargeTemplate and targetAccountingArticles cannot both be null/empty");
+			}
 		}
 		checkPricePlanPeriod(contractItemDto);
     	handleMissingParameters();

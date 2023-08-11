@@ -116,6 +116,7 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 		generateInvoiceRequestDto.setOrderNumber(invoiceInput.getOrderNumber());
 		generateInvoiceRequestDto.setApplyBillingRules(invoiceInput.isApplyBillingRules());
 		generateInvoiceRequestDto.setOpenOrderCode(invoiceInput.getOpenOrderCode());
+		generateInvoiceRequestDto.setPurchaseOrder(invoiceInput.getPurchaseOrder());
 		return generateInvoiceRequestDto;
 	}
 
@@ -153,6 +154,7 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 				.endDate(invoice.getEndDate())
 				.description(invoice.getDescription())
 				.previousInvoiceNumber(invoice.getPreviousInvoiceNumber())
+				.purchaseOrder(invoice.getExternalPurchaseOrderNumber())
 				.build();
 		return invoiceResult;
 	}

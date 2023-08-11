@@ -117,7 +117,7 @@ public class AliasToAggregatedWalletOperationResultTransformer extends AliasedTu
             throws NoSuchFieldException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
         Class classField = resultClass.getDeclaredField(field).getType();
-        if (BaseEntity.class.isAssignableFrom(classField)) {
+        if (value != null && BaseEntity.class.isAssignableFrom(classField)) {
             BaseEntity valueObject = (BaseEntity) classField.getDeclaredConstructor(null).newInstance();
             valueObject.setId((Long) value);
             return valueObject;

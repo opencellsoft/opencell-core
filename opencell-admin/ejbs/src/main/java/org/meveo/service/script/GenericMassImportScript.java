@@ -30,7 +30,7 @@ public class GenericMassImportScript extends GenericImportScript {
 				throw new ValidationException("no custom field template found for code: '" + cfCode + "'");
 			}
 			Object cfObjectValue = parseStringCf(cfCode, cfValue, entityName);
-			customFieldInstanceService.setCFValue(entity, cfCode, cfObjectValue);
+			customFieldInstanceService.setCFValue(entity, cfCode, cfObjectValue, null, null, 1);
 		});
 	}
 }

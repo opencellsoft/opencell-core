@@ -22946,7 +22946,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"invoiceType\": \"COM\",\r\n    \"description\": \"Amount\",\r\n    \"priority\": 1,\r\n    \"validFrom\": 1672581840000,\r\n    \"validTo\": 1735653840000,\r\n    \"failStatus\": \"REJECTED\",\r\n    \"type\": \"SCRIPT\",\r\n    \"validationScript\": \"org.meveo.service.script.CompareInvoiceAmount\",\r\n    \"ruleValues\": {\r\n        \"withOrWithoutTax\": \"without tax\",\r\n        \"operator\": \">\",\r\n        \"value\": 1000\r\n    },\r\n    \"code\": \"Amount\"\r\n}",
+											"raw": "{\r\n    \"invoiceType\": \"COM\",\r\n    \"description\": \"Amount\",\r\n    \"priority\": 1,\r\n    \"validFrom\": 1672581840000,\r\n    \"validTo\": 1735653840000,\r\n    \"failStatus\": \"REJECTED\",\r\n    \"type\": \"SCRIPT\",\r\n    \"validationScript\": \"org.meveo.service.script.CompareInvoiceAmountScript\",\r\n    \"ruleValues\": {\r\n        \"withOrWithoutTax\": \"without tax\",\r\n        \"operator\": \">\",\r\n        \"value\": 1000\r\n    },\r\n    \"code\": \"Amount\"\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"

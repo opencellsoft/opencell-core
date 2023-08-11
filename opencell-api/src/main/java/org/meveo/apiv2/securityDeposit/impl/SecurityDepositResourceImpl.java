@@ -25,6 +25,7 @@ import org.meveo.apiv2.securityDeposit.service.SecurityDepositApiService;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
@@ -47,6 +48,9 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
 
     @Inject
     BillingAccountService billingAccountService;
+    
+    @Inject
+    SellerService sellerService;
 
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
@@ -159,6 +163,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     public Response credit(Long id, SecurityDepositCreditInput securityDepositInput) {
         SecurityDeposit securityDepositToUpdate = securityDepositApiService.credit(id, securityDepositInput);
         securityDepositToUpdate.setBillingAccount(billingAccountService.refreshOrRetrieve(securityDepositToUpdate.getBillingAccount()));
+        securityDepositToUpdate.setSeller(sellerService.refreshOrRetrieve(securityDepositToUpdate.getSeller()));
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
 

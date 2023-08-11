@@ -773,7 +773,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Unit price]]></text>
 				</staticText>
@@ -792,7 +792,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total w.o tax]]></text>
 				</staticText>
@@ -811,7 +811,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Qty]]></text>
 				</staticText>
@@ -830,7 +830,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Invoiced elements]]></text>
 				</staticText>
@@ -1031,7 +1031,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[SKU]]></text>
 				</staticText>
@@ -1050,7 +1050,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[VAT]]></text>
 				</staticText>
@@ -1258,7 +1258,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[SKU]]></text>
 				</staticText>
@@ -1277,7 +1277,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Invoiced elements]]></text>
 				</staticText>
@@ -1296,7 +1296,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Qty]]></text>
 				</staticText>
@@ -1315,7 +1315,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Unit price]]></text>
 				</staticText>
@@ -1334,7 +1334,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total w.o tax]]></text>
 				</staticText>
@@ -1353,7 +1353,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Bold" size="10" isBold="true"/>
+						<font fontName="SansSerif" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[VAT]]></text>
 				</staticText>
