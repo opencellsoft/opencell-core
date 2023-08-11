@@ -1331,11 +1331,13 @@ public class CpqQuoteApi extends BaseApi {
         }
         if(isNew)
             quoteAttributeService.create(quoteAttribute);
-		ProductVersionAttribute productVersionAttribute = productVersionAttributeService.findByProductVersionAndAttribute(quoteProduct.getProductVersion().getId(), attribute.getId());
-		if(productVersionAttribute != null){
-			quoteAttributeDTO.setSequence(productVersionAttribute.getSequence());
+		if(quoteProduct != null){
+			ProductVersionAttribute productVersionAttribute = productVersionAttributeService.findByProductVersionAndAttribute(quoteProduct.getProductVersion().getId(), attribute.getId());
+			if(productVersionAttribute != null){
+				quoteAttributeDTO.setSequence(productVersionAttribute.getSequence());
+			}
+			
 		}
-		
         return quoteAttribute;
     }
 

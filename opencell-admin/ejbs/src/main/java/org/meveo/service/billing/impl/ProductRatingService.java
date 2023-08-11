@@ -59,6 +59,7 @@ public class ProductRatingService extends RatingService implements Serializable 
             if (!isVirtual && !ratingResult.getWalletOperations().isEmpty()) {
 
                 for (WalletOperation walletOperation : ratingResult.getWalletOperations()) {
+	                checkDiscountedWalletOpertion(walletOperation, ratingResult.getWalletOperations());
                     walletOperationService.chargeWalletOperation(walletOperation);
                 }
             }

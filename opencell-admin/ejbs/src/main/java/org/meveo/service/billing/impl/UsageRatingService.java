@@ -465,11 +465,7 @@ public class UsageRatingService extends RatingService implements Serializable {
                 }
 
                 for (WalletOperation wo : ratingResult.getWalletOperations()) {
-					if(wo.getDiscountedAmount() != null){
-						var discountedWallerOperation = ratingResult.getWalletOperations().stream().filter(wos -> wos.getId() != null && wo.getUuid().equals(wos.getUuid())).findFirst().map(WalletOperation::getId).orElse(null);
-						wo.setUuid(null);
-						wo.setDiscountedWalletOperation(discountedWallerOperation);
-					}
+	                checkDiscountedWalletOpertion(wo, ratingResult.getWalletOperations());
                     walletOperationService.chargeWalletOperation(wo);
                 }
             }
