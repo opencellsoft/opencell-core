@@ -476,6 +476,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 if(forSchedule){
                     wo.changeStatus(WalletOperationStatusEnum.SCHEDULED);
                 }
+	            checkDiscountedWalletOpertion(wo, ratingResult.getWalletOperations());
                 walletOperationService.chargeWalletOperation(wo);
             }
         }
