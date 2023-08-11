@@ -173,7 +173,6 @@
                     <sources>
                         <source>src/main/resources/einvoice</source>
                     </sources>
-                   <!-- <outputDirectory>${basedir}/src/main/java/org/meveo/xsd</outputDirectory> -->
                     <clearOutputDir>false</clearOutputDir>
                 </configuration>
             </plugin>

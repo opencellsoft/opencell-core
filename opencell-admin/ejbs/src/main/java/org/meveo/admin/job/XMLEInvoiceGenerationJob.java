@@ -48,12 +48,12 @@ public class XMLEInvoiceGenerationJob extends Job {
 
     /** The xml invoice generation job bean. */
     @Inject
-    private XMLEInvoiceGenerationJobBean XMLEInvoiceGenerationJobBean;
+    private XMLEInvoiceGenerationJobBean xmleInvoiceGenerationJobBean;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-	    XMLEInvoiceGenerationJobBean.execute(result, jobInstance);
+	    xmleInvoiceGenerationJobBean.execute(result, jobInstance);
         return result;
     }
 
@@ -69,7 +69,7 @@ public class XMLEInvoiceGenerationJob extends Job {
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
-        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+        Map<String, CustomFieldTemplate> result = new HashMap<>();
 
         final String APPLIES_TO = "JobInstance_XMLEInvoiceGenerationJob";
 
@@ -106,7 +106,7 @@ public class XMLEInvoiceGenerationJob extends Job {
         customFieldInvToProcess.setFieldType(CustomFieldTypeEnum.CHECKBOX_LIST);
         customFieldInvToProcess.setStorageType(CustomFieldStorageTypeEnum.LIST);
         
-        Map<String, String> invoicesStatusToProcessValues = new HashMap<String, String>();
+        Map<String, String> invoicesStatusToProcessValues = new HashMap<>();
         for (InvoiceStatusEnum e : InvoiceStatusEnum.values()) {
         	invoicesStatusToProcessValues.put(e.name(), resourceMessages.getString(e.getLabel()));
         }
