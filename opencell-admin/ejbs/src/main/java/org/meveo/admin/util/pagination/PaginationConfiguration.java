@@ -194,16 +194,6 @@ public class PaginationConfiguration implements Serializable {
             ordering = new Object[] { sortField, SortOrder.ASCENDING };
         }
     }
-	
-	public PaginationConfiguration(Map<String, Object> filters, String sortField, SortOrder sortOrder, int numberOfRows) {
-		this.filters = filters;
-		if (sortField != null && sortOrder != null) {
-			ordering = new Object[] { sortField, sortOrder };
-		} else if (sortField != null) {
-			ordering = new Object[] { sortField, SortOrder.ASCENDING };
-		}
-		this.numberOfRows = numberOfRows;
-	}
 
     public PaginationConfiguration(Map<String, Object> filters, String sortField, SortOrder sortOrder, int numberOfRows) {
         this.filters = filters;
