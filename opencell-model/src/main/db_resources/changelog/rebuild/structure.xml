@@ -3162,6 +3162,7 @@
     		<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="auto_matching" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="external_purchase_order_number" type="varchar(100)" />
+            <column name="ubl_reference" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
