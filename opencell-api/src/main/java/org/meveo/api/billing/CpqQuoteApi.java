@@ -92,6 +92,7 @@ import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
@@ -1442,6 +1443,13 @@ public class CpqQuoteApi extends BaseApi {
         }
         if(isNew)
             quoteAttributeService.create(quoteAttribute);
+		if(quoteProduct != null){
+			ProductVersionAttribute productVersionAttribute = productVersionAttributeService.findByProductVersionAndAttribute(quoteProduct.getProductVersion().getId(), attribute.getId());
+			if(productVersionAttribute != null){
+				quoteAttributeDTO.setSequence(productVersionAttribute.getSequence());
+			}
+			
+		}
         return quoteAttribute;
     }
 
@@ -1769,7 +1777,7 @@ public class CpqQuoteApi extends BaseApi {
 				quotePrice.setOverchargedUnitAmountWithoutTax(b.getOverchargedUnitAmountWithoutTax());
 			}
        	 if(b.getDiscountedQuotePrice()==null)
-            	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
+            	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax()));
             quotePrice.setTaxRate(a.getTaxRate());
             quotePrice.setCurrencyCode(a.getCurrencyCode());
             quotePrice.setChargeTemplate(a.getChargeTemplate());
@@ -2069,7 +2077,7 @@ public class CpqQuoteApi extends BaseApi {
                             walletOperations.addAll(ratingResult.getWalletOperations());
                         }
 
-                    }catch (NoTaxException e) { 
+                    }catch (NoTaxException e) {
                         throw new MeveoApiException(e.getMessage());
                     } catch (RatingException e) {
                         log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
