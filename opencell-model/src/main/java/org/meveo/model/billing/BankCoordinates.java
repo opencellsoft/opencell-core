@@ -18,7 +18,12 @@
 package org.meveo.model.billing;
 
 import java.io.Serializable;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Embeddable;
@@ -126,27 +131,14 @@ public class BankCoordinates implements Serializable, Cloneable {
     @Size(max = 35)
     private String ics;
 
+    
+    
+    
     public BankCoordinates() {
-    }
+		super();		
+	}
 
-    public BankCoordinates(BankCoordinates bankCoordinates) {
-        this(bankCoordinates.bankCode, bankCoordinates.branchCode, bankCoordinates.accountNumber, bankCoordinates.key, bankCoordinates.getIban(), bankCoordinates.bic,
-            bankCoordinates.accountOwner, bankCoordinates.bankName);
-    }
-
-    public BankCoordinates(String bankCode, String branchCode, String accountNumber, String key, String iban, String bic, String accountOwner, String bankName) {
-        super();
-        this.bankCode = bankCode;
-        this.branchCode = branchCode;
-        this.accountNumber = accountNumber;
-        this.key = key;
-        setIban(iban);
-        this.bic = bic;
-        this.accountOwner = accountOwner;
-        this.bankName = bankName;
-    }
-
-    public String getBankCode() {
+	public String getBankCode() {
         return bankCode;
     }
 
@@ -222,11 +214,11 @@ public class BankCoordinates implements Serializable, Cloneable {
     public void setBankName(String bankName) {
         this.bankName = bankName;
     }
-
+    
     @Override
     public Object clone() throws CloneNotSupportedException {
-        BankCoordinates o = (BankCoordinates) super.clone();
-        return o;
+    	return  super.clone();
+        
     }
 
     public void setBankId(String bankId) {
@@ -301,9 +293,14 @@ public class BankCoordinates implements Serializable, Cloneable {
 	 * 
 	 * @param iban
 	 * @return encrypted iban if encryption key exist in config file else return iban
+     * @throws NoSuchPaddingException 
+     * @throws NoSuchAlgorithmException 
+     * @throws BadPaddingException 
+     * @throws IllegalBlockSizeException 
+     * @throws InvalidKeyException 
 	 * @throws Exception
 	 */
-	public String encryptIban(String iban) throws Exception {
+	public String encryptIban(String iban) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException  {
 
 		if (iban != null && !(iban.startsWith("AES"))) {
 			AesEncrypt ae = new AesEncrypt();
@@ -316,9 +313,14 @@ public class BankCoordinates implements Serializable, Cloneable {
 	 * 
 	 * @param iban
 	 * @return decrypted iban if iban is already encypted
+	 * @throws NoSuchPaddingException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
 	 * @throws Exception
 	 */
-	public String decryptIban(String iban) throws Exception {
+	public String decryptIban(String iban) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException  {
 
 		if (iban != null && iban.startsWith("AES")) {
 			iban = iban.substring(3);
