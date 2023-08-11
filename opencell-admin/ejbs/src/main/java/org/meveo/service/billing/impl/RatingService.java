@@ -1846,5 +1846,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	
     	log.info("rateDiscountWalletOperation walletOperation code={},discountValue={},UnitAmountWithoutTax={},UnitAmountWithTax={},UnitAmountTax={}",discountWalletOperation.getCode(),discountedAmount,amounts[0],amounts[1],amounts[2]);
     	return discountWalletOperation;
-    } 
+    }
+	
+	protected void checkDiscountedWalletOpertion(WalletOperation wo, List<WalletOperation> walletOperations) {
+		if(wo.getDiscountedAmount() != null){
+			var discountedWallerOperation = walletOperations.stream().filter(wos -> wos.getId() != null && wo.getUuid().equals(wos.getUuid())).findFirst().map(WalletOperation::getId).orElse(null);
+			wo.setUuid(null);
+			wo.setDiscountedWalletOperation(discountedWallerOperation);
+		}
+	}
 }
