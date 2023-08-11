@@ -19,6 +19,7 @@
 package org.meveo.commons.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -40,6 +41,7 @@ public class AesEncrypt {
 	 * @throws NoSuchAlgorithmException
 	 * @throws NoSuchPaddingException
 	 */
+	@SuppressWarnings("java:S5542")
 	public AesEncrypt() throws NoSuchAlgorithmException, NoSuchPaddingException {
 		this.cipher = Cipher.getInstance("AES");
 	}
@@ -50,18 +52,16 @@ public class AesEncrypt {
 	 * @return Secret key
 	 * @throws Exception
 	 */
-	public SecretKey getKey(String key) throws Exception {
+	public SecretKey getKey(String key) {
 		byte[] keyBytes = Base64.decodeBase64(key);
-		SecretKeySpec spec = new SecretKeySpec(keyBytes, "AES");
-		return spec;
+		return new SecretKeySpec(keyBytes, "AES");		
 	}
 
 	/**
      * 
      * @return String encryption/decryption key from opencell-admin.properties
-     * @throws Exception
      */
-    public String getFileKey() throws Exception {
+    public String getFileKey()  {
         return ParamBean.getInstance().getProperty("opencell.aes.key", null);
     }
 
@@ -77,10 +77,10 @@ public class AesEncrypt {
 	 * @throws BadPaddingException
 	 * @throws InvalidKeyException
 	 */
-	public String encryptText(String msg, SecretKey key) throws NoSuchAlgorithmException, NoSuchPaddingException,
-			UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+	public String encryptText(String msg, SecretKey key) throws 
+			 IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
 		this.cipher.init(Cipher.ENCRYPT_MODE, key);
-		return Base64.encodeBase64String(cipher.doFinal(msg.getBytes("UTF-8")));
+		return Base64.encodeBase64String(cipher.doFinal(msg.getBytes(StandardCharsets.UTF_8)));
 	}
 
 	/**
@@ -94,9 +94,9 @@ public class AesEncrypt {
 	 * @throws BadPaddingException
 	 */
 	public String decryptText(String msg, SecretKey key)
-			throws InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
+			throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		this.cipher.init(Cipher.DECRYPT_MODE, key);
-		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
+		return new String(cipher.doFinal(Base64.decodeBase64(msg)),StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -112,9 +112,7 @@ public class AesEncrypt {
 	 * @throws BadPaddingException
 	 * @throws InvalidKeyException
 	 */
-	public String getEncyptedIban(String iban, AesEncrypt ae)
-			throws Exception, NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException,
-			IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+	public String getEncyptedIban(String iban, AesEncrypt ae) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException{
 		String encryptedIban;
 		String key = ae.getFileKey();
 		if(key == null || key.isEmpty()) {
@@ -136,8 +134,7 @@ public class AesEncrypt {
 	 * @throws IllegalBlockSizeException
 	 * @throws BadPaddingException
 	 */
-	public String getDecryptedIban(String iban, AesEncrypt ae) throws Exception, InvalidKeyException,
-			UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
+	public String getDecryptedIban(String iban, AesEncrypt ae) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		String decryptedIban;
 		String key = ae.getFileKey();
 		if(key == null || key.isEmpty()) {
