@@ -17,6 +17,7 @@ import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.ELUtils;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -133,6 +134,65 @@ public class PricePlanSelectionService implements Serializable {
         }
     }
 
+    public List<PricePlanMatrix> determineAvailablePricePlansForRating(WalletOperation bareWo, Long buyerCountryId, TradingCurrency buyerCurrency) {
+
+        long subscriptionAge = 0;
+        Date subscriptionDate = DateUtils.truncateTime(bareWo.getSubscriptionDate());
+        Date operationDate = DateUtils.truncateTime(bareWo.getOperationDate());
+        if (subscriptionDate != null && operationDate != null) {
+            subscriptionAge = DateUtils.monthsBetween(operationDate, DateUtils.addDaysToDate(subscriptionDate, -1));
+        }
+
+        Date startDate = operationDate;
+        Date endDate = operationDate;
+        RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(bareWo.getChargeInstance());
+
+        if ((recurringChargeTemplate != null && recurringChargeTemplate.isProrataOnPriceChange() && bareWo.getEndDate().after(bareWo.getStartDate()))) {
+            startDate = DateUtils.truncateTime(bareWo.getStartDate());
+            endDate = DateUtils.truncateTime(bareWo.getEndDate());
+        }
+
+        EntityManager em = getEntityManager();
+
+        Object[] params = new Object[] { "chargeCode", bareWo.getCode(), "sellerId", bareWo.getSeller().getId(), "tradingCountryId", buyerCountryId, "tradingCurrencyId",
+                buyerCurrency != null ? buyerCurrency.getId() : null, "subscriptionDate", subscriptionDate, "subscriptionAge", subscriptionAge, "operationDate", operationDate, "param1", bareWo.getParameter1(), "param2",
+                bareWo.getParameter2(), "param3", bareWo.getParameter3(), "offerId", bareWo.getOfferTemplate() != null ? bareWo.getOfferTemplate().getId() : null, "quantity", bareWo.getQuantity(), "startDate", startDate,
+                "endDate", endDate };
+
+        // When matching in DB only, no PricePlanMatrix.criteriaEl and validityCalendar fields will be consulted and the highest priority will be chosen
+        boolean matchDbOnly = ParamBean.getInstance().getPropertyAsBoolean("pricePlan.default.matchDBOnly", false);
+
+        if (matchDbOnly) {
+            TypedQuery<PricePlanMatrix> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRatingMatchDB", PricePlanMatrix.class);
+
+            for (int i = 0; i < 28; i = i + 2) {
+                query.setParameter((String) params[i], params[i + 1]);
+            }
+
+            return query.getResultList();
+
+        } else {
+            TypedQuery<PricePlanMatrixForRating> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRating", PricePlanMatrixForRating.class);
+
+            for (int i = 0; i < 28; i = i + 2) {
+                query.setParameter((String) params[i], params[i + 1]);
+            }
+
+            List<PricePlanMatrixForRating> chargePricePlans = query.getResultList();
+            List<Long> matchingPPMs = chargePricePlans.stream()
+                                                 .filter(ppm -> isMatchingPricePlan(ppm, bareWo))
+                                                 .map(PricePlanMatrixForRating::getId)
+                                                 .collect(Collectors.toList());
+            if (ListUtils.isEmtyCollection(matchingPPMs)) {
+                throw new NoPricePlanException("No active price plan matched for parameters: " + StringUtils.concatenate(params));
+            }
+
+            return em.createQuery("FROM PricePlanMatrix WHERE id in :ids", PricePlanMatrix.class)
+                     .setParameter("ids", matchingPPMs)
+                     .getResultList();
+        }
+    }
+
     /**
      * Find a matching price plan for a given wallet operation - used to resolve Price plan criteriaEL and validityCalendar fields that can not be done in DB
      *
@@ -172,6 +232,32 @@ public class PricePlanSelectionService implements Serializable {
 
     }
 
+    private boolean isMatchingPricePlan(PricePlanMatrixForRating pricePlan, WalletOperation bareOperation) throws InvalidELException {
+
+
+        log.trace("Try to verify price plan {} for WO {}", pricePlan.getId(), bareOperation.getCode());
+
+        if (!StringUtils.isBlank(pricePlan.getCriteriaEL())) {
+            UserAccount ua = bareOperation.getWallet().getUserAccount();
+            if (!elUtils.evaluateBooleanExpression(pricePlan.getCriteriaEL(), bareOperation, ua, null, pricePlan, null)) {
+                // log.trace("The operation is not compatible with price plan criteria EL: {}", pricePlan.getCriteriaEL());
+                return false;
+            }
+        }
+
+        if (pricePlan.getValidityCalendar() != null) {
+            org.meveo.model.catalog.Calendar validityCalendar = getEntityManager().find(org.meveo.model.catalog.Calendar.class, pricePlan.getValidityCalendar());
+            boolean validityCalendarOK = validityCalendar.previousCalendarDate(bareOperation.getOperationDate()) != null;
+            if (!validityCalendarOK) {
+                // log.trace("The operation date " + operationDate + " does not match pricePlan validity calendar " + validityCalendar.getCode() + "period range ");
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
     /**
      * get pricePlanVersion Valid for the given operationDate
      * 
@@ -190,7 +276,7 @@ public class PricePlanSelectionService implements Serializable {
             operationDateParam = serviceInstance.getPriceVersionDate();
         }
 
-        if (operationDateParam != null) {
+        if (operationDateParam == null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(operationDate);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -400,4 +486,6 @@ public class PricePlanSelectionService implements Serializable {
         }
         return recurringChargeTemplate;
     }
+
+
 }
