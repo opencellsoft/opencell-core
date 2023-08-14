@@ -193,6 +193,7 @@ OrderAdvancementScript extends ModuleScript {
         invoices.stream()
                 .forEach(
                         invoice -> {
+                            invoice = invoiceService.refreshOrRetrieve(invoice);
                             customFieldInstanceService.instantiateCFWithDefaultValue(invoice);
                             if(isDepositInvoice) {
                             	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
