@@ -103,7 +103,7 @@ public class DunningPolicyResourceImplTest {
                 .build();
         Response response = dunningPolicyResource.create(resource);
 
-        Assert.assertEquals(200, response.getStatus());
+        Assert.assertEquals(201, response.getStatus());
     }
 
     @Test

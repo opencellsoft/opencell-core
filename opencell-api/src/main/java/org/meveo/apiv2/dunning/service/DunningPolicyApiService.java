@@ -18,18 +18,10 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.apiv2.dunning.impl.DunningPolicyRuleLineMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.dunning.DunningLevel;
-import org.meveo.model.dunning.DunningPolicy;
-import org.meveo.model.dunning.DunningPolicyLevel;
-import org.meveo.model.dunning.DunningPolicyRule;
-import org.meveo.model.dunning.DunningPolicyRuleLine;
+import org.meveo.model.dunning.*;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.audit.logging.AuditLogService;
-import org.meveo.service.payments.impl.DunningLevelService;
-import org.meveo.service.payments.impl.DunningPolicyLevelService;
-import org.meveo.service.payments.impl.DunningPolicyRuleLineService;
-import org.meveo.service.payments.impl.DunningPolicyRuleService;
-import org.meveo.service.payments.impl.DunningPolicyService;
+import org.meveo.service.payments.impl.*;
 
 public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
@@ -59,6 +51,9 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
 
     @Inject
     protected ResourceBundle resourceMessages;
+
+    @Inject
+    DunningSettingsService dunningSettingsService;
     
     private List<String> fetchFields = asList("minBalanceTriggerCurrency");
 
@@ -93,6 +88,12 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     throw new NotFoundException("Currency with code " + dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode() + " not found");
                 }
                 dunningPolicy.setMinBalanceTriggerCurrency(currencyService.findByCode(dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode()));
+            }
+
+            DunningSettings dunningSettings = dunningSettingsService.findLastOne();
+
+            if(dunningSettings != null) {
+                dunningPolicy.setType(dunningSettings.getDunningMode());
             }
             dunningPolicyService.create(dunningPolicy);
             auditLogService.trackOperation("create", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
