@@ -89,6 +89,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.ProductVersionAttribute;
@@ -135,6 +136,7 @@ import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.MediaService;
+import org.meveo.service.cpq.OfferTemplateAttributeService;
 import org.meveo.service.cpq.ProductVersionAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteArticleLineService;
@@ -262,6 +264,9 @@ public class CpqQuoteApi extends BaseApi {
 	
 	@Inject
 	private ProductVersionAttributeService productVersionAttributeService;
+	
+	@Inject
+	private OfferTemplateAttributeService offerTemplateAttributeService;
 	
     private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     
@@ -1331,12 +1336,18 @@ public class CpqQuoteApi extends BaseApi {
         }
         if(isNew)
             quoteAttributeService.create(quoteAttribute);
+		ProductVersion productVersion = null;
+		
 		if(quoteProduct != null){
 			ProductVersionAttribute productVersionAttribute = productVersionAttributeService.findByProductVersionAndAttribute(quoteProduct.getProductVersion().getId(), attribute.getId());
 			if(productVersionAttribute != null){
 				quoteAttributeDTO.setSequence(productVersionAttribute.getSequence());
 			}
-			
+		}else if(quoteOffer != null) {
+			OfferTemplateAttribute offerTemplateAttribute = offerTemplateAttributeService.findByOfferTemplateAndAttribute(quoteOffer.getOfferTemplate().getId(), attribute.getId());
+			if(offerTemplateAttribute != null) {
+				quoteAttributeDTO.setSequence(offerTemplateAttribute.getSequence());
+			}
 		}
         return quoteAttribute;
     }
