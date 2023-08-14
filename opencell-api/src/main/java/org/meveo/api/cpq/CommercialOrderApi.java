@@ -801,6 +801,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		}
 		try {
 			CommercialOrder commercialOrder = commercialOrderService.validateOrder(order, orderCompleted);
+			commercialOrder = commercialOrderService.refreshOrRetrieve(commercialOrder);
 			return new CommercialOrderDto(commercialOrder);
 		}catch(BusinessException e) {
 			throw new BusinessApiException(e.getMessage());
