@@ -59,6 +59,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.ELUtils;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
@@ -813,11 +814,21 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             		BigDecimal amount= BigDecimal.ZERO;
             		BigDecimal discountRate=null;
             		PricePlanMatrixLine pricePlanMatrixLine =null;
-            		pricePlan = pricePlanSelectionService.determineDefaultPricePlan(bareWalletOperation, buyerCountryId, buyerCurrency);
-                    bareWalletOperation.setPriceplan(pricePlan);
-                    log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
+                    List<PricePlanMatrix> availablePricePlansForRating = pricePlanSelectionService.determineAvailablePricePlansForRating(bareWalletOperation, buyerCountryId, buyerCurrency);
+                    Amounts unitPrices = null;
+                    for (PricePlanMatrix ppm : availablePricePlansForRating) {
+                        log.debug("Check if price plan {} is applicable for {}", ppm.getId(), bareWalletOperation.getCode());
 
-                    Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
+                        unitPrices = determineUnitPrice(ppm, bareWalletOperation);
+                        if(unitPrices != null) {
+                            pricePlan = ppm;
+                            break;
+                        }
+                    }
+
+                    if(unitPrices == null) {
+                        throw new BusinessException("Couldn't find a price for charge " +  bareWalletOperation.getChargeInstance().getCode() + " : no price version and price plan amount is null");
+                    }
                     unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
                     unitPriceWithTax = unitPrices.getAmountWithTax();
                     bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
@@ -1164,7 +1175,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
                     }
                 }
-            } else {
+            } else if(ListUtils.isEmtyCollection(pricePlan.getVersions())){
                 priceWithTax = pricePlan.getAmountWithTax();
                 if (pricePlan.getAmountWithTaxEL() != null) {
                     priceWithTax = elUtils.evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), wo, wo.getWallet().getUserAccount(), pricePlan, priceWithTax);
@@ -1175,7 +1186,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
         }
         if(priceWithoutTax == null && priceWithTax == null) {
-            throw new BusinessException("Couldn't find a price for charge " + wo.getChargeInstance().getCode() + " and price plan " + pricePlan.getCode() + ": no price version and price plan amount is null");
+            log.debug("Couldn't find a price for charge " + wo.getChargeInstance().getCode() + " and price plan " + pricePlan.getCode() + ": no price version and price plan amount is null");
+            return null;
         }
         return new Amounts(priceWithoutTax, priceWithTax);
     }
