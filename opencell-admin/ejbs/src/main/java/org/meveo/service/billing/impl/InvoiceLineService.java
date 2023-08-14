@@ -859,6 +859,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	                    isExonerated, false, invoiceLine.getTax());
 	        invoiceLine.setTax(recalculatedTaxInfo.tax);
 	        invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
+            invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
+                    invoiceLine.getTaxRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()).add(invoiceLine.getAmountWithoutTax()));
 		}
         if(!appProvider.isEntreprise()) {
             BigDecimal taxAmount = NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
