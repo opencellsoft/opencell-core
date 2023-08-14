@@ -259,17 +259,18 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 				discountWalletOperation.setTaxClass(taxInfo.taxClass);
     			discountWalletOperation.setDiscountValue(discountValue);
     			discountWalletOperation.setDiscountedAmount(discountedAmount);
+				discountWalletOperation.setOrderNumber(walletOperation != null ? walletOperation.getOrderNumber() : null);
+			    discountWalletOperation.setUuid(walletOperation.getUuid());
+    			
     			if(!isVirtual) {
     				discountWalletOperation.setSubscription(subscription);
     				discountWalletOperation.setUserAccount(subscription.getUserAccount());
     				if(walletOperation != null ) {
     					discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());
 						discountWalletOperation.setDiscountedWO(walletOperation);
-    					walletOperation.setDiscountedAmount(discountedAmount);
+					    discountWalletOperation.setUuid(null);
+						walletOperation.setDiscountedAmount(discountedAmount);
     				}
-    			}else if(walletOperation != null) {
-    				walletOperation.setDiscountedAmount(discountedAmount);
-    				discountWalletOperation.setUuid(walletOperation.getUuid());
     			}
 				log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",
 						walletOperation != null ? walletOperation.getCode() : null, discountValue);

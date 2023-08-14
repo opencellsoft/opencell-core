@@ -66,6 +66,8 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 
 	@Schema(description = "The boolean value")
 	private Boolean booleanValue;
+	
+	private Integer sequence;
 
 	/**
 	 * @return the quoteAttributeCode
@@ -88,7 +90,11 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 		doubleValue =quoteAttribute.getDoubleValue();
 		booleanValue = quoteAttribute.getBooleanValue();
 	}
-
+	
+	public QuoteAttributeDTO(QuoteAttribute quoteAttribute, Integer sequence) {
+		this(quoteAttribute);
+		this.sequence = sequence;
+	}
 	/**
 	 * @param quoteAttributeCode the quoteAttributeCode to set
 	 */
@@ -161,5 +167,13 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	 */
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+	
+	public Integer getSequence() {
+		return sequence;
+	}
+	
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 }

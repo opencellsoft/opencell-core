@@ -90,8 +90,10 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.OfferTemplateAttribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
@@ -137,6 +139,8 @@ import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.MediaService;
+import org.meveo.service.cpq.OfferTemplateAttributeService;
+import org.meveo.service.cpq.ProductVersionAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteArticleLineService;
 import org.meveo.service.cpq.QuoteAttributeService;
@@ -267,6 +271,14 @@ public class CpqQuoteApi extends BaseApi {
     @Inject
     private PriceListService priceListService;
     
+	
+	@Inject
+	private ProductVersionAttributeService productVersionAttributeService;
+	
+	@Inject
+	private OfferTemplateAttributeService offerTemplateAttributeService;
+	
+	
     private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     
     private static final String ADMINISTRATION_MANAGEMENT = "administrationManagement";
@@ -510,13 +522,22 @@ public class CpqQuoteApi extends BaseApi {
             LinkedHashMap<String, Object> selectedAttributes = new LinkedHashMap<>();
             quoteProductDTO.getProductAttributes()
                     .stream()
-                    .forEach(productAttribute -> selectedAttributes.put(productAttribute.getQuoteAttributeCode(), productAttribute.getStringValue()));
+                    .forEach(productAttribute -> {
+						selectedAttributes.put(productAttribute.getQuoteAttributeCode(), productAttribute.getStringValue());
+	                    Attribute attribute = attributeService.findByCode(productAttribute.getQuoteAttributeCode());
+						if(attribute != null){
+							ProductVersionAttribute productVersionAttribute = productVersionAttributeService.findByProductVersionAndAttribute(productVersion.getId(), attribute.getId());
+							if(productVersionAttribute != null) {
+								productAttribute.setSequence(productVersionAttribute.getSequence());
+							}
+						}
+                    });
             productContextDTO.setSelectedAttributes(selectedAttributes);
             ++index;
         }
         
     }
-
+	
     private void newPopulateOfferAttribute(List<QuoteAttributeDTO> quoteAttributeDtos, QuoteOffer quoteOffer) {
         if (quoteAttributeDtos != null) {
             for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) {
@@ -1442,6 +1463,19 @@ public class CpqQuoteApi extends BaseApi {
         }
         if(isNew)
             quoteAttributeService.create(quoteAttribute);
+		ProductVersion productVersion = null;
+		
+		if(quoteProduct != null){
+			ProductVersionAttribute productVersionAttribute = productVersionAttributeService.findByProductVersionAndAttribute(quoteProduct.getProductVersion().getId(), attribute.getId());
+			if(productVersionAttribute != null){
+				quoteAttributeDTO.setSequence(productVersionAttribute.getSequence());
+			}
+		}else if(quoteOffer != null) {
+			OfferTemplateAttribute offerTemplateAttribute = offerTemplateAttributeService.findByOfferTemplateAndAttribute(quoteOffer.getOfferTemplate().getId(), attribute.getId());
+			if(offerTemplateAttribute != null) {
+				quoteAttributeDTO.setSequence(offerTemplateAttribute.getSequence());
+			}
+		}
         return quoteAttribute;
     }
 
@@ -1769,7 +1803,7 @@ public class CpqQuoteApi extends BaseApi {
 				quotePrice.setOverchargedUnitAmountWithoutTax(b.getOverchargedUnitAmountWithoutTax());
 			}
        	 if(b.getDiscountedQuotePrice()==null)
-            	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
+            	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax()));
             quotePrice.setTaxRate(a.getTaxRate());
             quotePrice.setCurrencyCode(a.getCurrencyCode());
             quotePrice.setChargeTemplate(a.getChargeTemplate());
@@ -2069,7 +2103,7 @@ public class CpqQuoteApi extends BaseApi {
                             walletOperations.addAll(ratingResult.getWalletOperations());
                         }
 
-                    }catch (NoTaxException e) { 
+                    }catch (NoTaxException e) {
                         throw new MeveoApiException(e.getMessage());
                     } catch (RatingException e) {
                         log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
