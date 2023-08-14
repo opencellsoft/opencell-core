@@ -1217,7 +1217,8 @@ public class QueryBuilder {
         String paramName = convertFieldToParam(field);
 
         if (value instanceof String) {
-            addSqlCriterion("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, value);
+        	List<String> values = new ArrayList<String>(Arrays.asList(((String) value).toLowerCase().replaceAll("'", "").split(",")));
+            addSqlCriterion("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, values);
 
         } else if (value instanceof Collection) {
 
