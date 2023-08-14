@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
+import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.model.cpq.ProductVersion;
@@ -31,12 +32,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties({ "attributeCodes","groupedAttributeCodes","tagCodes"})
 public class GetProductVersionResponse extends ProductVersionDto{ 
-	
-	
-	@XmlElementWrapper(name = "attributes")
-    @XmlElement(name = "attributes")
-    private Set<AttributeDTO> attributes=new HashSet<AttributeDTO>();
- 
 	
     @XmlElement(name = "tags")
     @XmlElementWrapper(name = "tags")
@@ -60,7 +55,10 @@ public class GetProductVersionResponse extends ProductVersionDto{
         this.longDescription =productVersion.getLongDescription();
         this.validity = productVersion.getValidity(); 
         if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
-            this.attributes=productVersion.getAttributes().stream().map(s -> new AttributeDTO(s.getAttribute())).collect(Collectors.toSet());
+        	 this.productAttributes = productVersion.getAttributes()
+                     .stream()
+                     .map(ProductVersionAttributeDTO::new)
+                     .collect(Collectors.toSet());
          }
        // this.groupedAttributes=productVersion.getGroupedAttributes().stream().map(GroupedAttributeDto::new).collect(Collectors.toSet());
         
@@ -74,7 +72,10 @@ public class GetProductVersionResponse extends ProductVersionDto{
 
 		 if(loadAttributes) {
 				if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
-					 attributes = productVersion.getAttributes().stream().map(s -> new AttributeDTO(s.getAttribute())).collect(Collectors.toSet());
+					 this.productAttributes = productVersion.getAttributes()
+		                     .stream()
+		                     .map(ProductVersionAttributeDTO::new)
+		                     .collect(Collectors.toSet());
 			 }
 			 if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
 				 groupedAttributes = productVersion.getGroupedAttributes().stream().map(d -> {
@@ -120,14 +121,7 @@ public class GetProductVersionResponse extends ProductVersionDto{
     public void setActionStatus(ActionStatus actionStatus) {
         this.actionStatus = actionStatus;
     }
-
-	/**
-	 * @return the attributes
-	 */
-	public Set<AttributeDTO> getAttributes() {
-		return attributes;
-	}
-
+ 
  
 
 	/**
@@ -143,14 +137,7 @@ public class GetProductVersionResponse extends ProductVersionDto{
 	public void setTagList(Set<TagDto> tagList) {
 		this.tagList = tagList;
 	}
-
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(Set<AttributeDTO> attributes) {
-		this.attributes = attributes;
-	}
-
+ 
 	/**
 	 * @return the groupedAttributes
 	 */
