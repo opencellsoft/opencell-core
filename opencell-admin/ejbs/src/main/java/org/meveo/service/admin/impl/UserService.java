@@ -118,6 +118,9 @@ public class UserService extends PersistenceService<User> {
          String lastName = (String) config.getFilters().get("name.lastName");
          String email = (String) config.getFilters().get("email");
     	if(StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(email)) {
+    		config.getFilters().remove("name.firstName");
+    		config.getFilters().remove("name.lastName");
+    		config.getFilters().remove("email");
     		users=super.list(config);
     		users.forEach(this::fillKeycloakUserInfo);
     	}else {
@@ -159,6 +162,9 @@ public class UserService extends PersistenceService<User> {
          String lastName = (String) config.getFilters().get("name.lastName");
          String email = (String) config.getFilters().get("email");
     	if(StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(email)) {
+    		config.getFilters().remove("name.firstName");
+    		config.getFilters().remove("name.lastName");
+    		config.getFilters().remove("email");
     		return super.count(config);
     	}else {
     		List<User> users = keycloakAdminClientService.listUsers(config);
