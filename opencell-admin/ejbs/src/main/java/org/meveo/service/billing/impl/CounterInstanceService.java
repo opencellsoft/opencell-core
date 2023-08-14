@@ -155,23 +155,23 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         switch (counterTemplate.getCounterLevel()) {
             case CUST:
 
-                counterInstance = instantiateCounter(customerService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer(), counterTemplate, chargeInstance, isVirtual);
+                counterInstance = instantiateCounter(customerService, customerService.refreshOrRetrieve(serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer()), counterTemplate, chargeInstance, isVirtual);
                 break;
 
             case CA:
-                counterInstance = instantiateCounter(customerAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount(), counterTemplate, chargeInstance, isVirtual);
+                counterInstance = instantiateCounter(customerAccountService, customerAccountService.refreshOrRetrieve(serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()), counterTemplate, chargeInstance, isVirtual);
                 break;
 
             case BA:
-                counterInstance = instantiateCounter(billingAccountService, serviceInstance.getSubscription().getUserAccount().getBillingAccount(), counterTemplate, chargeInstance, isVirtual);
+                counterInstance = instantiateCounter(billingAccountService, billingAccountService.refreshOrRetrieve(serviceInstance.getSubscription().getUserAccount().getBillingAccount()), counterTemplate, chargeInstance, isVirtual);
                 break;
 
             case UA:
-                counterInstance = instantiateCounter(userAccountService, serviceInstance.getSubscription().getUserAccount(), counterTemplate, chargeInstance, isVirtual);
+                counterInstance = instantiateCounter(userAccountService, userAccountService.refreshOrRetrieve(serviceInstance.getSubscription().getUserAccount()), counterTemplate, chargeInstance, isVirtual);
                 break;
 
             case SU:
-                counterInstance = instantiateCounter(subscriptionService, serviceInstance.getSubscription(), counterTemplate, chargeInstance, isVirtual);
+                counterInstance = instantiateCounter(subscriptionService, subscriptionService.refreshOrRetrieve(serviceInstance.getSubscription()), counterTemplate, chargeInstance, isVirtual);
                 break;
 
             case SI:
