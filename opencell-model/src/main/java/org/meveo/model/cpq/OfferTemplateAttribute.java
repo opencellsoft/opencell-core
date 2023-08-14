@@ -26,7 +26,7 @@ import org.meveo.model.catalog.OfferTemplate;
 @NamedQueries({
 		@NamedQuery(name = "OfferTemplateAttribute.findByAttributeAndOfferTemplate", query = "FROM OfferTemplateAttribute ota where ota.attribute.id =:attributeId and ota.offerTemplate.id =:offerTemplateId")
 })
-public class OfferTemplateAttribute extends AttributeBaseEntity {
+public class OfferTemplateAttribute extends BaseEntity {
 
 	/**
 	 *
