@@ -139,6 +139,7 @@ import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.MediaService;
+import org.meveo.service.cpq.OfferTemplateAttributeService;
 import org.meveo.service.cpq.ProductVersionAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteArticleLineService;
@@ -277,8 +278,6 @@ public class CpqQuoteApi extends BaseApi {
 	@Inject
 	private OfferTemplateAttributeService offerTemplateAttributeService;
 	
-	@Inject
-	private ProductVersionAttributeService productVersionAttributeService;
 	
     private static final String ADMINISTRATION_VISUALIZATION = "administrationVisualization";
     
