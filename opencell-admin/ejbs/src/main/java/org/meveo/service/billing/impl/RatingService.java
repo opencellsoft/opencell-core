@@ -510,7 +510,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             }
         }
-        if(evaluatEdrVersioning) {
+        if (evaluatEdrVersioning && !triggredEDRs.isEmpty()) {
             mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, true);
         }
         return triggredEDRs;

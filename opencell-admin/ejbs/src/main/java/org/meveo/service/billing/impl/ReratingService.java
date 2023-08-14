@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
@@ -117,10 +119,6 @@ public class ReratingService extends RatingService implements Serializable {
     /** Logger. */
     @Inject
     private Logger log;
-
-    @Inject
-    @MeveoJpa
-    private EntityManagerWrapper emWrapper;
 
     @Inject
     private WalletOperationService walletOperationService;
@@ -326,10 +324,6 @@ public class ReratingService extends RatingService implements Serializable {
         }
     }
 
-    public EntityManager getEntityManager() {
-        return emWrapper.getEntityManager();
-    }
-
     /**
      * Re-rate wallet operations. Each wallet operation is rerated independently and marked as "failed to rerate" if error occurs.
      *
@@ -399,7 +393,7 @@ public class ReratingService extends RatingService implements Serializable {
 
         try {
             // Validate that WO can be rerated and cancel all related WO, dicount WO, triggered EDR, RTs
-            String rejectReason = validateAndCancelDerivedWosEdrsAndRts(operationToRerate);
+            String rejectReason = validateAndCancelDerivedWosEdrsAndRts(Arrays.asList(operationToRerate), null);
 
             if (rejectReason != null) {
                 operationToRerate.changeStatus(WalletOperationStatusEnum.F_TO_RERATE);
@@ -425,21 +419,43 @@ public class ReratingService extends RatingService implements Serializable {
     }
 
     /**
+     * Validate if Wallet operations, derived from a given EDR, contain any billed Rated Transactions and if not - cancel all triggered EDRs, WO, discount WO, RTs and adjust Invoice line amounts and quantities<br/>
+     * Will return TRUE if any Wallet Operation, derived from a given EDR, including its a discount wallet operation or if any RT downwards the hierarchy was NOT billed yet
+     * 
+     * @param edr EDR to check
+     * @return Will return TRUE if any Wallet Operation, derived from a given EDR, including its discount wallet operation or if any RT downwards the hierarchy was NOT billed yet
+     */
+    public boolean validateAndCancelDerivedWosEdrsAndRts(EDR edr) {
+
+        // check if wallet operation related to EDR is treated
+        List<WalletOperation> wos = (List<WalletOperation>) getEntityManager()
+            .createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )", WalletOperation.class).setParameter("edrId", edr.getId())
+            .setHint("org.hibernate.readOnly", true).getResultList();
+        if (wos.isEmpty()) {
+            return true;
+        }
+
+        String cancelationReason = "Received new version EDR[id=" + edr.getId() + "]";
+        String errorReason = validateAndCancelDerivedWosEdrsAndRts(wos, cancelationReason);
+        if (errorReason == null) {
+            List<Long> woIdsToUpdate = wos.stream().map(wo -> wo.getId()).collect(Collectors.toList());
+            getEntityManager().createNamedQuery("WalletOperation.cancelWOs").setParameter("updatedDate", new Date()).setParameter("rejectReason", cancelationReason).setParameter("ids", woIdsToUpdate).executeUpdate();
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Validate if Wallet operation can be rerated and if so, cancel all triggered EDRs, WO, discount WO, RTs and adjust Invoice line amounts and quantities<br/>
      * Wallet operation can not be rerated if its a discount wallet operation or if any RT downwards the hierarchy was billed already
      * 
      * @param operationToRerate Wallet operation to rerate
+     * @param Cancelation reason to use. If not provided, a default reason "Origin wallet operation #XXX has been rerated" will be used.
      * @return A reason if rerating should be rejected
      */
     @SuppressWarnings("unchecked")
-    private String validateAndCancelDerivedWosEdrsAndRts(WalletOperation operationToRerate) {
-
-        // Discount operations can not be rerated - need to rerate a parent WO
-        if (operationToRerate.getDiscountPlanType() != null) {
-            return "Discount type operations are not reratable";
-        }
-
-        EntityManager em = getEntityManager();
+    private String validateAndCancelDerivedWosEdrsAndRts(List<WalletOperation> operationsToRerate, String cancelationReason) {
 
         // Contains all triggered EDRs that are not in status CANCELED
         List<Long> edrIdsToUpdate = new ArrayList<>();
@@ -448,14 +464,34 @@ public class ReratingService extends RatingService implements Serializable {
         // Contains all triggered and discount RTs that are not in status CANCELED
         List<Long> rtIdsToUpdate = new ArrayList<>();
 
+        List<Long> woIdsToCheck = new ArrayList<>();
         List<Long> rtIdsToCheck = new ArrayList<Long>();
-        if (operationToRerate.getRatedTransaction() != null) {
-            rtIdsToCheck.add(operationToRerate.getRatedTransaction().getId());
+
+        for (WalletOperation operationToRerate : operationsToRerate) {
+            // Discount operations can not be rerated - need to rerate a parent WO
+            if (operationToRerate.getDiscountPlanType() != null) {
+                if (operationsToRerate.size() == 1) {
+                    return "Discount type operations are not reratable";
+                }
+
+            } else {
+
+                // Set cancelation reason if not provided from outside.
+                if (cancelationReason == null) {
+                    cancelationReason = "Origin wallet operation #" + operationToRerate.getId() + " has been rerated";
+                }
+
+                if (operationToRerate.getRatedTransaction() != null) {
+                    rtIdsToCheck.add(operationToRerate.getRatedTransaction().getId());
+                }
+
+                woIdsToCheck.add(operationToRerate.getId());
+            }
         }
 
+        EntityManager em = getEntityManager();
+
         // Traverse down the WO/discountWO/EDR tree to gather a list of WOs, EDRs and RTs that resulted from an operation being rerated. Supports unlimited levels of hierarchy.
-        List<Long> woIdsToCheck = new ArrayList<>();
-        woIdsToCheck.add(operationToRerate.getId());
 
         while (!woIdsToCheck.isEmpty()) {
             // Find any discount WOs associated - Discount WOs with Canceled status are omitted
@@ -556,21 +592,19 @@ public class ReratingService extends RatingService implements Serializable {
         // -----------
         // Rerating should go on
 
-        String rejectReason = "Origin wallet operation #" + operationToRerate.getId() + " has been rerated";
-
         // Mark all triggered EDRs as CANCELED
         if (!edrIdsToUpdate.isEmpty()) {
-            em.createNamedQuery("EDR.cancelEDRs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", edrIdsToUpdate).executeUpdate();
+            em.createNamedQuery("EDR.cancelEDRs").setParameter("updatedDate", new Date()).setParameter("rejectReason", cancelationReason).setParameter("ids", edrIdsToUpdate).executeUpdate();
         }
 
         // Mark all triggered and discount WOs as CANCELED
         if (!woIdsToUpdate.isEmpty()) {
-            em.createNamedQuery("WalletOperation.cancelWOs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", woIdsToUpdate).executeUpdate();
+            em.createNamedQuery("WalletOperation.cancelWOs").setParameter("updatedDate", new Date()).setParameter("rejectReason", cancelationReason).setParameter("ids", woIdsToUpdate).executeUpdate();
         }
 
         // Mark all main, triggered and discount RTs as CANCELED
         if (!rtIdsToUpdate.isEmpty()) {
-            em.createNamedQuery("RatedTransaction.cancelRTs").setParameter("updatedDate", new Date()).setParameter("rejectReason", rejectReason).setParameter("ids", rtIdsToUpdate).executeUpdate();
+            em.createNamedQuery("RatedTransaction.cancelRTs").setParameter("updatedDate", new Date()).setParameter("rejectReason", cancelationReason).setParameter("ids", rtIdsToUpdate).executeUpdate();
         }
 
         // Update Invoice lines - adjust amounts and quantity
@@ -608,7 +642,7 @@ public class ReratingService extends RatingService implements Serializable {
 
             // Trigger EDRs
             for (WalletOperation walletOperation : ratingResult.getWalletOperations()) {
-                List<EDR> triggeredEdrs = instantiateTriggeredEDRs(walletOperation, operationToRerate.getEdr(), false, false);
+                List<EDR> triggeredEdrs = instantiateTriggeredEDRs(walletOperation, operationToRerate.getEdr(), false, true);
                 ratingResult.addTriggeredEDRs(triggeredEdrs);
             }
 

@@ -1,16 +1,17 @@
 package org.meveo.service.mediation;
 
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.RatingResult;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.mediation.MediationSetting;
 import org.meveo.model.rating.CDR;
@@ -20,35 +21,13 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.UsageRatingService;
-import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.catalog.impl.UsageChargeTemplateService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import org.meveo.service.billing.impl.ReratingService;
 
 @Stateless
 public class MediationsettingService extends PersistenceService<MediationSetting> {
 
     @Inject
-    private WalletOperationService walletOperationService;
-
-    @Inject
-    private RatedTransactionService ratedTransactionService;
-
-    @Inject
-    private UsageRatingService usageRatingService;
-
-    @Inject
-    private UsageChargeTemplateService usageChargeTemplateService;
+    private ReratingService reratingService;
 
     // Use MEDIATION_SETTING_ID to remember the mediation setting and look it up by ID next time.
     private static Long MEDIATION_SETTING_ID = null;
@@ -76,22 +55,16 @@ public class MediationsettingService extends PersistenceService<MediationSetting
         }).get();
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean applyEdrVersioningRule(List<EDR> edrs, CDR cdr, boolean isTriggeredEdr) {
+    public void applyEdrVersioningRule(List<EDR> edrs, CDR cdr, boolean isTriggeredEdr) {
 
         MediationSetting mediationSetting = getMediationSetting();
         if (mediationSetting == null || !mediationSetting.isEnableEdrVersioning()) {
-            return false;
+            return;
         }
 
         Iterator<EDR> edrIterate = edrs.iterator();
-        boolean isRated = false;
-
         while (edrIterate.hasNext()) {
             EDR edr = edrIterate.next();
-            if (edr.getId() == null) {
-                edrService.create(edr);
-            }
 
             String errorMessage = "Error evaluating %s  [id= %d, \"%s\"] for CDR: [%s] : %s";
             Optional<EdrVersioningRule> edrVersionRuleOption = mediationSetting.getRules().stream().filter(edrVersion -> {
@@ -117,13 +90,16 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                     }
 
                     EDR previousEdr = previousEdrs.get(0);
-
+                    if (previousEdr.getStatus() == EDRStatusEnum.CANCELLED) {
+                        edr.setEventVersion(previousEdr.getEventVersion() + 1);
+                        continue;
+                    }
                     boolean isNewVersion = (boolean) evaluateEdrVersion(edrVersionRule.getId(), edrVersionRule.getIsNewVersionEL(), edr, cdr, errorMsg, Boolean.class, previousEdr, edrIterate);
 
                     if (isNewVersion) {
 
-                        // When previous EDR with status : OPEN, CANCELLED, REJECTED
-                        if (previousEdr.getStatus() != EDRStatusEnum.RATED) { // all status : OPEN, CANCELLED, REJECTED
+                        // When previous EDR with status : OPEN, REJECTED
+                        if (previousEdr.getStatus() != EDRStatusEnum.RATED) { // all status : OPEN, REJECTED
                             previousEdr.setStatus(EDRStatusEnum.CANCELLED);
                             previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
                             edr.setEventVersion(previousEdr.getEventVersion() + 1);
@@ -131,45 +107,29 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                             // When previous EDR with status RATED
                         } else {
 
-                            // check if wallet operation related to EDR is treated
-                            List<WalletOperation> wos = (List<WalletOperation>) walletOperationService.getEntityManager()
-                                .createQuery("from WalletOperation wo where wo.edr.id=:edrId and  wo.status in ('TREATED', 'TO_RERATE', 'OPEN', 'SCHEDULED' )").setParameter("edrId", previousEdr.getId()).getResultList();
-							// Any WO is billed already - exists RT with status Billed
-                            boolean billedTransaction = wos.stream().anyMatch(wo -> wo.getRatedTransaction() != null && wo.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED && wo.getRatedTransaction().getInvoiceLine().getStatus() == InvoiceLineStatusEnum.BILLED );
+                            // Validate if Wallet operations, derived from a given EDR, contain any billed Rated Transactions and if not - cancel all triggered EDRs, WO, discount WO, RTs and adjust Invoice line amounts
+                            // and quantities
+                            boolean derivedWOwasCanceled = reratingService.validateAndCancelDerivedWosEdrsAndRts(previousEdr);
 
-                            if (billedTransaction) {
+                            if (derivedWOwasCanceled) {
+
+                                previousEdr.setStatus(EDRStatusEnum.CANCELLED);
+                                previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
+                                edr.setEventVersion(previousEdr.getEventVersion() + 1);
+
+                            } else {
+
                                 if (cdr != null) {
                                     cdr.setStatus(CDRStatusEnum.DISCARDED);
                                     cdr.setRejectReason("EDR[id=" + previousEdr.getId() + ", eventKey=" + keyEvent + "] has already been invoiced");
                                 }
-                                if (edr.getId() != null)
+                                edr.setStatus(EDRStatusEnum.CANCELLED);
+                                edr.setRejectReason("EDR[id=" + previousEdr.getId() + ", eventKey=" + keyEvent + "] has already been invoiced");
+
+                                if (edr.getId() != null) {
                                     edrService.remove(edr);
+                                }
                                 edrIterate.remove();
-                                continue;
-
-                                // All wallet operation that have a status OPEN
-                            } else {
-                                edr.setStatus(EDRStatusEnum.RATED);
-                                edr.setEventVersion(previousEdr.getEventVersion() + 1);
-                                previousEdr.setStatus(EDRStatusEnum.CANCELLED);
-                                previousEdr.setRejectReason("Received new version EDR[id=" + edr.getId() + "]");
-                                RatingResult rating = usageRatingService.rateUsage(edr, true, true, 0, 0, null, false);
-                                if (rating.getWalletOperations().size() == 0) {
-                                    throw new BusinessException("Error while rating new Edr version : " + edr.getEventVersion());
-                                }
-                                for (WalletOperation wo : wos) {
-                                    boolean oldChargeTriggerdNext = isChargeHasTriggeredNexCharge(wo, edr);
-                                    for (WalletOperation woToRerate : rating.getWalletOperations()) {
-                                        boolean newChargeTriggerdNext = isChargeHasTriggeredNexCharge(woToRerate, edr);
-                                        torerateWalletOperation(wo, woToRerate, edr);
-                                        if (oldChargeTriggerdNext && newChargeTriggerdNext) {
-                                            break;
-                                        }
-                                    }
-                                    isRated = true;
-                                    manageTriggeredEdr(wo, edr);
-                                }
-
                             }
                         }
                     } else {
@@ -178,125 +138,15 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                             String msgError = "Newer version already exists EDR[id=" + previousEdrs.get(0).getId() + "]";
                             cdr.setRejectReason(msgError);
                         }
-                        if (edr.getId() != null)
+
+                        edr.setStatus(EDRStatusEnum.CANCELLED);
+                        edr.setRejectReason("EDR[id=" + previousEdr.getId() + ", eventKey=" + keyEvent + "] has already been invoiced");
+
+                        if (edr.getId() != null) {
                             edrService.remove(edr);
+                        }
                         edrIterate.remove();
                     }
-                }
-
-            }
-
-        }
-        return isRated;
-    }
-	
-    private boolean isChargeHasTriggeredNexCharge(WalletOperation wo, EDR edr) {
-        ChargeInstance usageChargeInstance = wo.getChargeInstance();
-        boolean triggerNextCharge = false;
-        if (usageChargeInstance != null && usageChargeInstance.getChargeTemplate() != null) {
-            UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
-            triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
-            if (!StringUtils.isBlank(usageChargeTemplate.getTriggerNextChargeEL())) {
-                triggerNextCharge = usageRatingService.evaluateBooleanExpression(usageChargeTemplate.getTriggerNextChargeEL(), edr, wo);
-            }
-        }
-        return triggerNextCharge;
-    }
-
-    private void torerateWalletOperation(WalletOperation wo, WalletOperation woToRerate, EDR edr) {
-    	if(woToRerate.getDiscountValue()==null) {
-    		List<WalletOperation> discountWos=walletOperationService.findByDiscountedWo(wo.getId());
-			if(CollectionUtils.isNotEmpty(discountWos)) {
-				List<Long> discountWoId = discountWos.stream().map(WalletOperation::getId).collect(Collectors.toList());
-				//discountWoId.add(wo.getId());
-				List<WalletOperation> triggeredWo = (List<WalletOperation>) walletOperationService.getEntityManager().createNamedQuery("WalletOperation.findByTriggerdEdr").setParameter("rerateWalletOperationIds", discountWoId).getResultList();
-				discountWos.addAll(triggeredWo);
-				for (WalletOperation wallet : discountWos) {
-					if (!wallet.getStatus().equals(WalletOperationStatusEnum.CANCELED)) {
-						wallet.setStatus(WalletOperationStatusEnum.CANCELED);
-						walletOperationService.update(wallet);
-						if(wallet.getEdr() != null){
-							wallet.getEdr().setStatus(EDRStatusEnum.CANCELLED);
-							edrService.update(wallet.getEdr());
-						}
-                        RatedTransaction ratedTransaction = wallet.getRatedTransaction();
-						if (ratedTransaction != null) {
-							ratedTransactionService.update(ratedTransaction, RatedTransactionStatusEnum.CANCELED);
-						}
-					}
-				}
-			}
-    		wo.setStatus(WalletOperationStatusEnum.TO_RERATE);
-    		wo.setEdr(edr);
-    		wo.setAccountingArticle(woToRerate.getAccountingArticle());
-    		wo.setAccountingCode(woToRerate.getAccountingCode());
-    		wo.setAmountTax(woToRerate.getAmountTax());
-    		wo.setAmountWithoutTax(woToRerate.getAmountWithoutTax());
-    		wo.setAmountWithTax(woToRerate.getAmountWithTax());
-    		wo.setBillingAccount(woToRerate.getBillingAccount());
-    		wo.setChargeInstance(woToRerate.getChargeInstance());
-    		wo.setChargeMode(woToRerate.getChargeMode());
-    		wo.setParameter1(woToRerate.getParameter1());
-    		wo.setParameter2(woToRerate.getParameter2());
-    		wo.setParameter3(woToRerate.getParameter3());
-    		wo.setParameterExtra(woToRerate.getParameterExtra());
-    		wo.setTax(woToRerate.getTax());
-    		wo.setTaxClass(woToRerate.getTaxClass());
-    		wo.setTaxPercent(woToRerate.getTaxPercent());
-    		wo.setUnitAmountTax(woToRerate.getUnitAmountTax());
-    		wo.setUnitAmountWithTax(woToRerate.getUnitAmountWithTax());
-    		wo.setUnitAmountWithoutTax(woToRerate.getUnitAmountWithoutTax());
-    		wo.setSubscriptionDate(woToRerate.getSubscriptionDate());
-    		wo.setInvoiceSubCategory(woToRerate.getInvoiceSubCategory());
-    		wo.setUserAccount(woToRerate.getUserAccount());
-    		wo.setType(woToRerate.getType());
-    		wo.setSubscription(woToRerate.getSubscription());
-    		wo.setCurrency(woToRerate.getCurrency());
-    		wo.setCounter(woToRerate.getCounter());
-    		wo.setDescription(woToRerate.getDescription());
-    		wo.setInputUnitDescription(woToRerate.getInputUnitDescription());
-    		wo.setInputUnitOfMeasure(woToRerate.getInputUnitOfMeasure());
-    		wo.setInputQuantity(woToRerate.getInputQuantity());
-    		wo.setQuantity(woToRerate.getQuantity());
-    		wo.setCode(woToRerate.getCode());
-    		walletOperationService.update(wo);
-
-    		RatedTransaction ratedTransaction = wo.getRatedTransaction();
-    		if (ratedTransaction != null) {
-    			ratedTransactionService.update(ratedTransaction, RatedTransactionStatusEnum.CANCELED);
-    		}
-    	}
-    }
-
-    @SuppressWarnings("unchecked")
-    private void manageTriggeredEdr(WalletOperation walletOperation, EDR edr) {
-       if (walletOperation.getEdr() != null) {
-            List<EDR> tEdrs = (List<EDR>) edrService.getEntityManager().createNamedQuery("EDR.getByWO").setParameter("WO_IDS", List.of(walletOperation.getId())).getResultList();
-            tEdrs = tEdrs.stream().filter(e -> e.getStatus() != EDRStatusEnum.CANCELLED).collect(Collectors.toList());
-            if (CollectionUtils.isNotEmpty(tEdrs)) {
-                for (EDR triggeredEdr : tEdrs) {
-                    triggeredEdr.setStatus(EDRStatusEnum.CANCELLED);
-                    RatingResult ratingResult = usageRatingService.rateChargeAndInstantiateTriggeredEDRs(walletOperation.getChargeInstance(), edr.getEventDate(), edr.getQuantity(), null, null, null, null, null, null,
-                        edr, null, false, true);
-                    List<WalletOperation> walletOperations = walletOperationService.getEntityManager().createQuery("from WalletOperation wo where wo.edr.id=:edrId").setParameter("edrId", triggeredEdr.getId())
-                        .getResultList();
-                    if (CollectionUtils.isNotEmpty(walletOperations)) {
-                        WalletOperation trigWallet = walletOperations.get(0);
-                        trigWallet.setStatus(WalletOperationStatusEnum.CANCELED);
-                        RatedTransaction ratedTransaction = trigWallet.getRatedTransaction();
-                        if (ratedTransaction != null) {
-                            ratedTransactionService.update(ratedTransaction, RatedTransactionStatusEnum.CANCELED);
-                        }
-                        walletOperationService.cancelDiscountedWalletOperation(walletOperations.stream().map(WalletOperation::getId).collect(Collectors.toList()));
-                    }
-                    List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(ratingResult.getWalletOperations().get(0), edr, true, false);
-                    edrs.forEach(e -> {
-                        e.setStatus(edr.getStatus());
-                        e.setWalletOperation(walletOperation);
-                        e.setEventVersion(edr.getEventVersion());
-                        e.setEventKey(getEventKeyFromEdrVersionRule(e));
-                        edrService.create(e);
-                    });
                 }
             }
         }

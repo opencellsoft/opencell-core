@@ -129,6 +129,9 @@ public class ProcessCdrListResult extends BaseResponse {
      */
     public void updateAmountAndWOCountStatistics() {
         for (ChargeCDRResponseDto cdrCharge : getChargedCDRs()) {
+            if (cdrCharge == null) {
+                continue;
+            }
             setAmountWithTax(getAmountWithTax().add(cdrCharge.getAmountWithTax() != null ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
             setAmountWithoutTax(getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
             setAmountTax(getAmountTax().add(cdrCharge.getAmountTax() != null ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
