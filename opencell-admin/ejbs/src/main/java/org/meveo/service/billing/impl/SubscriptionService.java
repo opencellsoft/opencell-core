@@ -92,6 +92,7 @@ import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderHistoryService;
+import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 
 
@@ -129,6 +130,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @Inject
     private OneShotChargeInstanceService oneShotChargeInstanceService;
 
+    @Inject
+    private PaymentMethodService paymentMethodService;
+
     @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
@@ -137,7 +141,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if(offerTemplate.isDisabled()) {
         	throw new BusinessException("Cannot subscribe to disabled offer");
         }
-        checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
+        List<PaymentMethod> paymentMethods =
+                paymentMethodService.listByCustomerAccount(subscription.getUserAccount().getBillingAccount().getCustomerAccount(), null, null);
+        checkSubscriptionPaymentMethod(subscription, paymentMethods);
         updateSubscribedTillAndRenewalNotifyDates(subscription);
 
         subscription.createAutoRenewDate();

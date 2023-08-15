@@ -87,7 +87,8 @@ import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.DiscountPlanService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.cpq.ProductService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
 import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
@@ -136,7 +137,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * ServiceTemplateService
      */
     @Inject
-    ServiceTemplateService serviceTemplateService;
+    private OfferTemplateService offerTemplateService;
 
     /**
      * PaymentScheduleInstanceService
@@ -172,6 +173,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+
+
+    @Inject
+    private ProductService productService;
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
@@ -281,7 +286,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     private boolean checkProductAssociatedWithOffer(ServiceInstance serviceInstance) {
 
-        OfferTemplate offer = serviceInstance.getSubscription().getOffer();
+        OfferTemplate offer = offerTemplateService.findById(serviceInstance.getSubscription().getOffer().getId());
         if (!offer.haveProduct(serviceInstance.getCode())) {
             throw new ValidationException("Service " + serviceInstance.getCode() + " is not associated with Offer");
         }
@@ -441,6 +446,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         subscription.getServiceInstances().add(serviceInstance);
 
+        product = productService.refreshOrRetrieve(product);
         instanciateCharges(serviceInstance, product, subscriptionAmount, terminationAmount, isVirtual);
         
         if(CollectionUtils.isNotEmpty(product.getDiscountList())) {
