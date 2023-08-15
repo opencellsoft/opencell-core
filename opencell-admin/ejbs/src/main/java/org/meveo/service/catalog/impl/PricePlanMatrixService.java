@@ -99,7 +99,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
 	public void validatePricePlan(PricePlanMatrix pp) {
 		PricePlanMatrix ppm = findById(pp.getId());
-		if (ListUtils.isEmtyCollection(ppm.getChargeTemplates())) {
+		if (ppm != null && ListUtils.isEmtyCollection(ppm.getChargeTemplates())) {
 			for (ChargeTemplate ct : ppm.getChargeTemplates()) {
 				List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(ct.getCode());
 				for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices) {
