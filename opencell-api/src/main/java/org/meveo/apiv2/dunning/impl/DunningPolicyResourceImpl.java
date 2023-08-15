@@ -107,7 +107,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
             actionStatus.setStatus(ActionStatusEnum.SUCCESS);
             actionStatus.setMessage("Entity successfully created");
             actionStatus.setEntityId(savedEntity.getId());
-            return Response.ok(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, dunningPolicy.getId())
+            return Response.created(LinkGenerator.getUriBuilderFromResource(DunningPolicyResource.class, dunningPolicy.getId())
                     .build())
                     .entity(actionStatus)
                     .build();
