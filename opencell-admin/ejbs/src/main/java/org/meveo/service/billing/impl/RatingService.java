@@ -1166,7 +1166,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId() + "and charge instance : " + wo.getChargeInstance());
                 }
             }
-        } else {
+        } else if(ListUtils.isEmtyCollection(pricePlan.getVersions())){
             if (appProvider.isEntreprise()) {
                 priceWithoutTax = pricePlan.getAmountWithoutTax();
                 if (pricePlan.getAmountWithoutTaxEL() != null) {
@@ -1175,7 +1175,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
                     }
                 }
-            } else if(ListUtils.isEmtyCollection(pricePlan.getVersions())){
+            } else {
                 priceWithTax = pricePlan.getAmountWithTax();
                 if (pricePlan.getAmountWithTaxEL() != null) {
                     priceWithTax = elUtils.evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), wo, wo.getWallet().getUserAccount(), pricePlan, priceWithTax);
