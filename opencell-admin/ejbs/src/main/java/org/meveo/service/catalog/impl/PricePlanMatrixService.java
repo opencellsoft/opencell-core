@@ -97,20 +97,20 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         create(pp);
     }
 
-    public void validatePricePlan(PricePlanMatrix pp) {
-    	PricePlanMatrix ppm = findById(pp.getId());
-        if(ListUtils.isEmtyCollection(ppm.getChargeTemplates())) {
-            for (ChargeTemplate ct : ppm.getChargeTemplates()) {
-                List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(ct.getCode());
-                for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices){
-                    if(!pricePlanMatrix.getId().equals(pp.getId()) &&
-                            areValidityPeriodsOverlap(pp.getValidityFrom(), pp.getValidityDate(), pricePlanMatrix.getValidityFrom(), pricePlanMatrix.getValidityDate())){
-                        throw new BusinessException("price plan validity date overlaps with other charge price plans { "+pricePlanMatrix.getCode()+" } ");
-                    }
-                }
-            }
-        }
-    }
+	public void validatePricePlan(PricePlanMatrix pp) {
+		PricePlanMatrix ppm = findById(pp.getId());
+		if (ListUtils.isEmtyCollection(ppm.getChargeTemplates())) {
+			for (ChargeTemplate ct : ppm.getChargeTemplates()) {
+				List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(ct.getCode());
+				for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices) {
+					if (!pricePlanMatrix.getId().equals(pp.getId())
+							&& areValidityPeriodsOverlap(pp.getValidityFrom(), pp.getValidityDate(), pricePlanMatrix.getValidityFrom(), pricePlanMatrix.getValidityDate())) {
+						throw new BusinessException("price plan validity date overlaps with other charge price plans { " + pricePlanMatrix.getCode() + " } ");
+					}
+				}
+			}
+		}
+	}
 
     private boolean areValidityPeriodsOverlap(Date start1, Date end1, Date start2, Date end2){
         return  (start1 != null && isDateBetween(start1, start2, end2)) || (end1 != null && isDateBetween(end1, start2, end2));
