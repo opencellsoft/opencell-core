@@ -98,8 +98,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     }
 
     public void validatePricePlan(PricePlanMatrix pp) {
-        if(ListUtils.isEmtyCollection(pp.getChargeTemplates())) {
-            pp.getChargeTemplates().forEach(ct -> {
+    	PricePlanMatrix ppm = findById(pp.getId());
+        if(ListUtils.isEmtyCollection(ppm.getChargeTemplates())) {
+            for (ChargeTemplate ct : ppm.getChargeTemplates()) {
                 List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(ct.getCode());
                 for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices){
                     if(!pricePlanMatrix.getId().equals(pp.getId()) &&
@@ -107,7 +108,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
                         throw new BusinessException("price plan validity date overlaps with other charge price plans { "+pricePlanMatrix.getCode()+" } ");
                     }
                 }
-            });
+            }
         }
     }
 
