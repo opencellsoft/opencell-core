@@ -14,7 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,10 +74,11 @@ public class InvoiceLineAggregationService implements Serializable {
      * @param maxId Max RT id to lookup
      * @param incrementalInvoiceLines Shall Invoice lines be created in incremental mode
      * @param aggregationConfiguration
-     * @return A hibernate query
+     * @return Aggregation summary - number of ILs, BAs and a hibernate query
      */
     @SuppressWarnings("rawtypes")
-    public RTtoILAggregationQuery getILDetailsQuery(BillingRun billingRun, AggregationConfiguration aggregationConfiguration, StatelessSession statelessSession, Long maxId, boolean incrementalInvoiceLines) {
+    public RTtoILAggregationQuery getAggregationSummaryAndILDetailsQuery(BillingRun billingRun, AggregationConfiguration aggregationConfiguration, StatelessSession statelessSession, Long maxId,
+            boolean incrementalInvoiceLines) {
 
         // Get a basic RT to IL aggregation query
 
@@ -106,61 +106,48 @@ public class InvoiceLineAggregationService implements Serializable {
         params.put("invoiceUpToDate", billingRun.getInvoiceDate());
         params.put("maxId", maxId);
 
-        // In incremental mode aggregated RT information is written to a materialized view and then joined with a IL table
-        if (incrementalInvoiceLines) {
+        // Aggregated RT information is written to a materialized view. In case of incremental processing, materialized view is then joined with a IL table
 
-            String sql = PersistenceService.getNativeQueryFromJPA(em.createQuery(aggregationQuery), params);
+        String sql = PersistenceService.getNativeQueryFromJPA(em.createQuery(aggregationQuery), params);
 
-            Session hibernateSession = em.unwrap(Session.class);
+        Session hibernateSession = em.unwrap(Session.class);
 
-            String viewName = getMaterializedAggregationViewName(billingRun.getId());
-            String materializedViewFields = StringUtils.concatenate(",", aggregationFields);
-            hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+        String viewName = InvoiceLineAggregationService.getMaterializedAggregationViewName(billingRun.getId());
+        String materializedViewFields = StringUtils.concatenate(",", aggregationFields);
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
 
-                @Override
-                public void execute(Connection connection) throws SQLException {
+            @Override
+            public void execute(Connection connection) throws SQLException {
 
-                    try (Statement statement = connection.createStatement()) {
-                        log.info("Dropping and rereating materialized view {} with fields {} and request {}: ", viewName, materializedViewFields, sql);
-                        statement.execute("drop materialized view if exists " + viewName);
-                        statement.execute("create materialized view " + viewName + "(" + materializedViewFields + ") as " + sql);
-                        statement.execute("create index idx__" + viewName + " ON " + viewName + " USING btree (billing_account__id, offer_id, article_id, tax_id) ");
-                    } catch (Exception e) {
-                        log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
-                        throw new BusinessException(e);
-                    }
-                }
-            });
-
-            Long ilCount = ((BigInteger) em.createNativeQuery("select count(*) from " + InvoiceLineAggregationService.getMaterializedAggregationViewName(billingRun.getId())).getSingleResult()).longValue();
-
-            aggregationQuery = buildJoinWithILQuery(billingRun.getId(), aggregationFields, aggregationConfiguration);
-            aggregationFields = parseQueryFieldNames(aggregationQuery);
-
-            org.hibernate.query.Query query = statelessSession.createNativeQuery(aggregationQuery);
-
-            return new RTtoILAggregationQuery(query, aggregationFields, ilCount);
-
-            // A simple JPA query
-        } else {
-
-            String sql = PersistenceService.getNativeQueryFromJPA(em.createQuery(aggregationQuery), params);
-            sql = sql.substring(0, sql.toLowerCase().indexOf(" order by "));
-            sql = "select count(*) from (select billing_account__id " + sql.substring(sql.toLowerCase().indexOf("from")) + ") as b";
-
-            Long ilCount = ((BigInteger) em.createNativeQuery(sql).getSingleResult()).longValue();
-
-            org.hibernate.query.Query query = statelessSession.createQuery(aggregationQuery);
-            for (Entry<String, Object> paramInfo : params.entrySet()) {
-                if (paramInfo.getValue() != null && paramInfo.getValue().getClass().isEnum()) {
-                    query.setParameter(paramInfo.getKey(), paramInfo.getValue().toString());
-                } else {
-                    query.setParameter(paramInfo.getKey(), paramInfo.getValue());
+                try (Statement statement = connection.createStatement()) {
+                    log.info("Dropping and rereating materialized view {} with fields {} and request {}: ", viewName, materializedViewFields, sql);
+                    statement.execute("drop materialized view if exists " + viewName);
+                    statement.execute("create materialized view " + viewName + "(" + materializedViewFields + ") as " + sql);
+                    statement.execute("create index idx__" + viewName + " ON " + viewName + " USING btree (billing_account__id, offer_id, article_id, tax_id) ");
+                } catch (Exception e) {
+                    log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
+                    throw new BusinessException(e);
                 }
             }
+        });
 
-            return new RTtoILAggregationQuery(query, aggregationFields, ilCount);
+        Long ilCount = ((BigInteger) em.createNativeQuery("select count(*) from " + viewName).getSingleResult()).longValue();
+        Long baCount = 0L;
+        org.hibernate.query.Query query = null;
+        if (ilCount > 0) {
+            baCount = ((BigInteger) em.createNativeQuery("select count(distinct billing_account__id) from " + viewName).getSingleResult()).longValue();
+
+            if (incrementalInvoiceLines) {
+                aggregationQuery = buildJoinWithILQuery(billingRun.getId(), aggregationFields, aggregationConfiguration);
+                aggregationFields = parseQueryFieldNames(aggregationQuery);
+            } else {
+                aggregationQuery = "select " + materializedViewFields + " from {h-schema}" + viewName + " order by billing_account__id";
+            }
+            query = statelessSession.createNativeQuery(aggregationQuery);
         }
+
+        return new RTtoILAggregationQuery(query, aggregationFields, ilCount, baCount);
+
     }
 
     /**
@@ -423,6 +410,7 @@ public class InvoiceLineAggregationService implements Serializable {
         private org.hibernate.query.Query query;
         private List<String> fieldNames;
         private Long numberOfIL;
+        private Long numberOfBA;
 
         /**
          * Constructor
@@ -432,10 +420,11 @@ public class InvoiceLineAggregationService implements Serializable {
          * @param numberOfIL Number of Invoices lines that will result in aggregation
          */
         @SuppressWarnings("rawtypes")
-        public RTtoILAggregationQuery(Query query, List<String> fieldNames, Long numberOfIL) {
+        public RTtoILAggregationQuery(Query query, List<String> fieldNames, Long numberOfIL, Long numberOfBA) {
             this.query = query;
             this.fieldNames = fieldNames;
             this.numberOfIL = numberOfIL;
+            this.numberOfBA = numberOfBA;
         }
 
         /**
@@ -459,6 +448,13 @@ public class InvoiceLineAggregationService implements Serializable {
          */
         public Long getNumberOfIL() {
             return numberOfIL;
+        }
+
+        /**
+         * @return Number of distinct Billing accounts
+         */
+        public Long getNumberOfBA() {
+            return numberOfBA;
         }
     }
 }

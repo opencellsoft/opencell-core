@@ -142,7 +142,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 				"il.amountTax=il.amountTax+:deltaAmountTax, il.quantity=il.quantity+:deltaQuantity, il.validity.from=:beginDate, " +
 				"il.validity.to=:endDate, il.auditable.updated=:now, il.unitPrice=:unitPrice WHERE il.id=:id"),
 		@NamedQuery(name = "InvoiceLine.updateStatusInvoiceLine", query = "UPDATE InvoiceLine il SET " +
-				"il.status =: statusToUpdate WHERE il.id =: id")
+				"il.status =: statusToUpdate WHERE il.id =: id"),
+		@NamedQuery(name = "InvoiceLine.countDistinctBAByBR", query = "select count(distinct il.billingAccount) from InvoiceLine il where billingRun.id=:brId")
 	})
 
 @NamedNativeQueries({

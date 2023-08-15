@@ -57,6 +57,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoiceLinesFactory;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.generics.GenericRequestMapper;
 import org.meveo.api.generics.PersistenceServiceHelper;

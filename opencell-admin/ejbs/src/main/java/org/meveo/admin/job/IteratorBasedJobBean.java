@@ -136,8 +136,9 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction
      * @param processMultipleItemFunction A function to process multiple items. Will be executed in its own transaction.
      * @param hasMoreFunction A function to determine if the are more data to process even though this job run has completed. Optional.
-     * @param finalizeInitFunction A function to close any resources opened during initFunction call. Optional. Run once job is finished, independently if it was canceled or completed.
-     * @param finalizeFunction A function to finalize data to process. Optional. Run once job is finished, independently if it was canceled or completed. Consult job execution result status if needed.
+     * @param finalizeInitFunction A function to close any resources opened during initFunction call. Optional. Run once job is finished, independently if it no data was found to process, if it was canceled or completed.
+     * @param finalizeFunction A function to finalize data to process. Optional. Run once job is finished, independently if it was canceled or completed. Not run if no data were foudn to process. Consult job execution
+     *        result status if needed.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
@@ -163,6 +164,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             Optional<Iterator<T>> iteratorOpt = initFunction.apply(jobExecutionResult);
 
             if (!iteratorOpt.isPresent()) {
+                // When running as a primary job manager, Close data initialization
+                if (finalizeInitFunction != null) {
+                    finalizeInitFunction.accept(jobExecutionResult);
+                }
                 return;
             }
 
