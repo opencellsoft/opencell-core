@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.ProductVersion;
@@ -24,7 +27,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Rachid.AITYAAZZA
  * @version 11.0
  */ 
-
+@JsonInclude(Include.NON_NULL)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductVersionDto extends BaseEntityDto {
     
