@@ -23,6 +23,8 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ListUtils;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.primefaces.component.datatable.DataTable;
@@ -53,5 +55,12 @@ public class PricePlanMatrixListBean extends PricePlanMatrixBean {
 				messages.info(new BundleKey("messages", "pricePlanMatrix.updateCellFail"),entity.getCode(),(e.getMessage()!=null?e.getClass().getSimpleName():e.getMessage()));
 			}
 		}
+	}
+
+	public String getPricePlanEventCode(PricePlanMatrix item) {
+		if(!ListUtils.isEmtyCollection(item.getChargeTemplates())) {
+			return item.getChargeTemplates().stream().findFirst().map(ChargeTemplate::getCode).orElse(null);
+		}
+		return null;
 	}
 }
