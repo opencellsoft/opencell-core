@@ -345,7 +345,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                                         pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getLabel(), sourceFrom, sourceTo,
                                         ppmv.getId(), ppmv.getLabel(), eFrom, eTo,
                                         chargeTemplate.get().getId(), chargeTemplate.get().getCode(), chargeTemplate.get().getDescription()));
-                        });
+                            }});
             }
             pricePlanMatrixVersionService.updateProductVersionStatus(pricePlanMatrixVersion, status);
             return new GetPricePlanVersionResponseDto(pricePlanMatrixVersion);
