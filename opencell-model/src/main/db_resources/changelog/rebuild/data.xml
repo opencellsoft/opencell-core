@@ -12201,14 +12201,14 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="entity_class" value="org.meveo.model.payments.PaymentScheduleInstanceItem"/>
             <column name="entity_fields" value="requestPaymentDate,amount"/>
         </insert>
-        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst_item','request_pay_date,amount', null, null, null)</sql>
-        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst','amount', null, null, null)</sql>
-        <sql>call proc_recreate_audit_data_trigger('ar_customer_account','customer_id', null, null, null)</sql>
-        <sql>call proc_recreate_audit_data_trigger('ar_account_operation','collection_date', null, null, null)</sql>
-        <sql>call proc_recreate_audit_data_trigger('ord_order','status', null, null, null)</sql>
-        <sql>call proc_recreate_audit_data_trigger('billing_invoice','status,xml_date,pdf_date,email_sent_date,payment_status', null, null, null)</sql>
-        <sql>call proc_recreate_audit_data_trigger('billing_subscription','status,user_account_id,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, null)</sql>
-        <sql>call proc_recreate_audit_data_trigger('billing_service_instance','status,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, null)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst_item','request_pay_date,amount', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst','amount', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_customer_account','customer_id', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_account_operation','collection_date', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ord_order','status', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_invoice','status,xml_date,pdf_date,email_sent_date,payment_status', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_subscription','status,user_account_id,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_service_instance','status,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
     </changeSet>
 	
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
