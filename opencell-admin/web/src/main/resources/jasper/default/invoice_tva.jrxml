@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ExemptionReason2"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="externalPurchaseOrderNumber"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -264,8 +264,8 @@
 		<fieldDescription><![CDATA[/invoice/header/customerAccount/paymentMethod/@type]]></fieldDescription>
 	</field>
 	<field name="customerPo" class="java.lang.String">
-		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@customerAccountCode"/>
-		<fieldDescription><![CDATA[/invoice/@customerAccountCode]]></fieldDescription>
+		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/externalPurchaseOrder"/>
+		<fieldDescription><![CDATA[/invoice/header/externalPurchaseOrder]]></fieldDescription>
 	</field>
 	<field name="paymentStatusDate" class="java.lang.String">
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@paymentStatusDate"/>
