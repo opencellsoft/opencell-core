@@ -1969,9 +1969,12 @@ public class CpqQuoteApi extends BaseApi {
                     .stream()
                     .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(durationOrQuantityAttribute.getCode()))
                     .findAny();
-            if(productQuoteAttribute.isPresent())
+            if(productQuoteAttribute.isPresent()) {
                 durationTermInMonth = getDurationTermInMonth(productQuoteAttribute);
             }
+        } else if(quoteOffer.getOfferTemplate().getSubscriptionRenewal() != null) {
+            durationTermInMonth = quoteOffer.getOfferTemplate().getSubscriptionRenewal().getInitialyActiveFor();
+        }
         return durationTermInMonth != null ? durationTermInMonth : defaultValue != null ? defaultValue : 1;
     }
 
