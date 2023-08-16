@@ -17,7 +17,7 @@ public class AccountingArticleAssignmentItem {
         this.chargeTemplateId = chargeTemplateId;
         this.offerTemplateId = offerTemplateId;
         this.serviceInstanceId = serviceInstanceId;
-        this.chargeInstancesIDs = StringUtils.isBlank(chargeInstances) ? null : Pattern.compile(",").splitAsStream(chargeInstances).mapToLong(Long::parseLong).boxed().collect(Collectors.toList());
+        this.chargeInstancesIDs = StringUtils.isBlank(chargeInstances) ? null : Pattern.compile(",").splitAsStream(chargeInstances).mapToLong(Long::parseLong).boxed().distinct().collect(Collectors.toList());
     }
 
     public AccountingArticleAssignmentItem(Object[] fields) {
@@ -25,7 +25,7 @@ public class AccountingArticleAssignmentItem {
         this.chargeTemplateId = (Long) fields[i++];
         this.offerTemplateId = (Long) fields[i++];
         this.serviceInstanceId = (Long) fields[i++];
-        this.chargeInstancesIDs = Pattern.compile(",").splitAsStream((String) fields[i++]).mapToLong(Long::parseLong).boxed().collect(Collectors.toList());
+        this.chargeInstancesIDs = Pattern.compile(",").splitAsStream((String) fields[i++]).mapToLong(Long::parseLong).boxed().distinct().collect(Collectors.toList());
     }
 
     public Long getChargeTemplateId() {

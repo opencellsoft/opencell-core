@@ -63,6 +63,6 @@ public class ArticleMappingBean extends IteratorBasedJobBean<AccountingArticleAs
 
     @Override
     protected boolean isProcessItemInNewTx() {
-        return false;
+        return true;
     }
 }
