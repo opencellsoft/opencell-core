@@ -17667,7 +17667,7 @@
         <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
     </changeSet>
 
-    <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe">
+    <changeSet id="#INTRD-17581-wo-indexes-rebuild" author="a.rouaguebe">
         <sql>create index idx__billing_wo__charge_instance_id on billing_wallet_operation(charge_instance_id)</sql>
         <sql>create index idx__billing_wo__billing_account_id on billing_wallet_operation(billing_account_id)</sql>
         <sql>create index idx__billing_wo__subscription_id on billing_wallet_operation(subscription_id)</sql>
@@ -20320,6 +20320,7 @@
     <changeSet id="INTRD-17487_20230719" author="TarikFA." />
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
+    <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe" />
 	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
     <changeSet id="#INTRD-17451_20230731" author="ZBariki" />
     <changeSet id="#INTRD-17280_20230808" author="AdilElJaouhari" />
