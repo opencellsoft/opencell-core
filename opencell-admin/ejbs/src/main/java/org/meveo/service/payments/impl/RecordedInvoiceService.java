@@ -85,7 +85,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
     @Inject
     private InvoiceService invoiceService;
-    
+
     /**
      * @param recordedInvoiceId recored invoice id
      * @throws BusinessException business exception
@@ -267,13 +267,13 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     	if (invoice.getInvoiceType().isInvoiceAccountable() && VALIDATED.equals(invoice.getStatus())) {
 
             List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<>();
-            
+
             boolean useInvoiceBalance = invoice.getInvoiceBalance()!=null && !InvoiceTypeService.DEFAULT_ADVANCE_CODE.equals(invoice.getInvoiceType().getCode());
 
             BigDecimal remainingAmountWithoutTaxForRecordedIncoice = invoice.getAmountWithoutTax();
             BigDecimal remainingAmountWithTaxForRecordedIncoice = useInvoiceBalance?invoice.getInvoiceBalance() : invoice.getAmountWithTax();
             BigDecimal remainingAmountTaxForRecordedIncoice = invoice.getAmountTax();
-           
+
             boolean allowMultipleAOperInvoice = "true".equalsIgnoreCase(ParamBean.getInstance().getProperty("ao.generateMultipleAOperInvoice", "true"));
             //cannot dispatch invoiceBalance between categories, if this is needed by a client, we will have to decide how to change all amounts according to invoiceBalance.
             if (allowMultipleAOperInvoice && !useInvoiceBalance) {
@@ -368,7 +368,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             invoice.setRecordedInvoice(recordedInvoice);
             if(invoice.getDueDate() != null) {
                 var currentStatus = invoice.getDueDate().compareTo(new Date()) >= 1 ? PENDING : UNPAID;
-                log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 
+                log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " +
                         invoice.getPaymentStatus() + " - newPaymentStatus : " + currentStatus + "]");
                 invoiceService.checkAndUpdatePaymentStatus(invoice, invoice.getPaymentStatus(), currentStatus);
             }
@@ -568,31 +568,49 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         return qb.getQuery(getEntityManager()).getResultList();
     }
 
-    public Long getCountAgedReceivables(String customerAccountCode, String customerAccountDescription, String sellerCode, String sellerDescription, String invoiceNumber, String tradingCurrency, 
+    public Long getCountAgedReceivables(String customerAccountCode, String customerAccountDescription, String sellerCode, String sellerDescription, String invoiceNumber, String tradingCurrency,
     										Date startDueDate, Date endDueDate, Date startDate) {
-		QueryBuilder qb = new QueryBuilder("select count  (distinct agedReceivableReportKey) from " + RecordedInvoice.class.getSimpleName() + " as ao");
-		qb.addSql("(ao.matchingStatus='"+MatchingStatusEnum.O+"' or ao.matchingStatus='"+MatchingStatusEnum.P+"') ");
-        qb.addSql("ao.invoice.invoiceType.excludeFromAgedTrialBalance = false");
-        ofNullable(customerAccountCode).ifPresent(ca -> qb.addSql("UPPER(ao.customerAccount.code) like '%" + customerAccountCode.toUpperCase() +"%'"));
-        ofNullable(customerAccountDescription).ifPresent(caDescription -> qb.addSql("UPPER(ao.customerAccount.description) like '%" + caDescription.toUpperCase() +"%'"));
-        ofNullable(sellerDescription).ifPresent(sDescription -> qb.addSql("UPPER(ao.seller.description) like ('%" + sDescription.toUpperCase() +"%')"));
-        ofNullable(sellerCode).ifPresent(sel -> qb.addSql("UPPER(ao.seller.code) like '%" + sellerCode.toUpperCase() +"%'"));
-        ofNullable(invoiceNumber).ifPresent(invNumber -> qb.addSql("ao.invoice.invoiceNumber = '" + invNumber +"'"));
-        ofNullable(tradingCurrency).ifPresent(fc -> qb.addSql("ao.invoice.tradingCurrency.currency.currencyCode = '" + fc + "'"));
+        String select = "select count (distinct concat(concat(ao.amount, ao.due_date), ao.customer_account_id)) ";
+        String from = "from ar_account_operation ao " +
+                "inner join billing_invoice inv on ao.invoice_id=inv.id " +
+                "inner join billing_invoice_type invt on inv.invoice_type_id=invt.id ";
+        String where = "where ao.transaction_type='I' ";
+        where = where.concat(" and (ao.matching_status='"+MatchingStatusEnum.O+"' or ao.matching_status='"+MatchingStatusEnum.P+"')");
+        where = where.concat(" and invt.exclude_from_aged_trial_balance = 0");
+
+
+        if (StringUtils.isNotBlank(customerAccountCode) || StringUtils.isNotBlank(customerAccountDescription)) {
+            from = from.concat(" inner join account_entity ca on ao.customer_account_id=ca.id");
+            where = where.concat(StringUtils.isNotBlank(customerAccountCode) ? " and UPPER(ca.code) like '%" + customerAccountCode.toUpperCase() +"%'": "");
+            where = where.concat(StringUtils.isNotBlank(customerAccountDescription) ? " and UPPER(ca.description) like '%" + customerAccountDescription.toUpperCase() +"%'": "");
+        }
+
+        if (StringUtils.isNotBlank(sellerCode) || StringUtils.isNotBlank(sellerDescription)) {
+            from = from.concat(" inner join account_entity se on ao.seller_id=se.id");
+            where = where.concat(StringUtils.isNotBlank(sellerCode) ? " and UPPER(se.code) like '%" + sellerCode.toUpperCase() +"%'": "");
+            where = where.concat(StringUtils.isNotBlank(sellerDescription) ? " and UPPER(se.description) like '%" + sellerDescription.toUpperCase() +"%'": "");
+        }
+
+        if (StringUtils.isNotBlank(invoiceNumber)) {
+            where = where.concat(StringUtils.isNotBlank(invoiceNumber) ? " and inv.invoice_number = '" + invoiceNumber + "'" : "");
+        }
+        if (StringUtils.isNotBlank(tradingCurrency)) {
+            from = from.concat(" inner join billing_trading_currency tc on inv.trading_currency_id = tc.id" +
+                    " inner join adm_currency cur on tc.currency_id=cur.id");
+            where = where.concat(" and cur.currency_code = '" + tradingCurrency +"'");
+        }
+        if (DateUtils.compare(startDate, new Date()) < 0) {
+            where = where.concat(" and inv.status = '" + VALIDATED + "' and inv.invoice_date <= '"
+                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), "yyyy-MM-dd HH:mm:ss") + "'");
+            where = where.concat(" and (inv.payment_status = '" + PENDING + "' or inv.payment_status = '" + PPAID + "' or inv.payment_status ='" + UNPAID + "')");
+        }
 
         String datePattern = "yyyy-MM-dd";
         if (startDueDate != null && endDueDate != null) {
-            qb.addSql("(ao.dueDate >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
-                    + "' and ao.dueDate <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
+            where = where.concat(" and (ao.due_date >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
+                    + "' and ao.due_date <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
         }
-
-        if (DateUtils.compare(startDate, new Date()) < 0) {
-            qb.addSql("ao.invoice.status = '" + VALIDATED + "' and ao.invoice.invoiceDate <= '"
-                    + DateUtils.formatDateWithPattern(setDateToEndOfDay(startDate), "yyyy-MM-dd HH:mm:ss") + "'");
-            qb.addSql("(ao.invoice.paymentStatus = '" + PENDING + "' or ao.invoice.paymentStatus = '" + PPAID + "' or ao.invoice.paymentStatus ='" + UNPAID + "')");
-        }
-
-        return (Long) qb.getQuery(getEntityManager()).getSingleResult();
+        return (Long) getEntityManager().createNativeQuery(select.concat(from).concat(where)).getSingleResult();
     }
 
     /**
