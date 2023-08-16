@@ -54,7 +54,7 @@ public class RecordedInvoice extends AccountOperation {
 
     @Column(name = "net_to_pay", precision = 23, scale = 12)
     private BigDecimal netToPay;
-    
+
     @Column(name = "transactional_net_to_pay", precision = 23, scale = 12)
     private BigDecimal transactionalNetToPay;
 
@@ -78,10 +78,6 @@ public class RecordedInvoice extends AccountOperation {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
-
-    // concat function on oracle accept just two parameters
-    @Formula("concat(concat(amount, due_date), customer_account_id)")
-    private String agedReceivableReportKey;
 
     public Date getProductionDate() {
         return productionDate;
@@ -166,43 +162,29 @@ public class RecordedInvoice extends AccountOperation {
 		this.invoice = invoice;
 	}
 
-	/**
-	 * @return the agedReceivableReportKey
-	 */
-	public String getAgedReceivableReportKey() {
-		return agedReceivableReportKey;
-	}
-
-	/**
-	 * @param agedReceivableReportKey the agedReceivableReportKey to set
-	 */
-	public void setAgedReceivableReportKey(String agedReceivableReportKey) {
-		this.agedReceivableReportKey = agedReceivableReportKey;
-	}
-
-    public BigDecimal getTransactionalNetToPay() {
+	public BigDecimal getTransactionalNetToPay() {
         return transactionalNetToPay;
     }
 
     public void setTransactionalNetToPay(BigDecimal transactionalNetToPay) {
         this.transactionalNetToPay = transactionalNetToPay;
     }
-	
+
 	@Override
 	public BigDecimal getAppliedRate() {
 	    if(super.getAppliedRate() == null && invoice != null && invoice.getAppliedRate() != null) {
-	        return invoice.getAppliedRate(); 
+	        return invoice.getAppliedRate();
 	    }else {
-	        return super.getAppliedRate();  
+	        return super.getAppliedRate();
 	    }
     }
 
 	@Override
     public Date getAppliedRateDate() {
         if(super.getAppliedRateDate() == null && invoice != null && invoice.getLastAppliedRateDate() != null) {
-            return invoice.getLastAppliedRateDate(); 
+            return invoice.getLastAppliedRateDate();
         }else {
-            return super.getAppliedRateDate();  
+            return super.getAppliedRateDate();
         }
     }
 
