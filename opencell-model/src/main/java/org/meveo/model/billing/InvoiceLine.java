@@ -146,7 +146,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
                 + " GROUP BY bli.id.id, il.accountingArticle.id, il.tax.id, il.taxRate, il.taxMode, bli.linkedInvoiceValue.id "),
 		@NamedQuery(name = "InvoiceLine.sumAmountsDiscountByBillingAccount", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax), il.subscription.id, il.commercialOrder.id ,il.invoice.id ,il.billingAccount.id,  il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"
                 + " from  InvoiceLine il  where il.billingRun.id=:billingRunId and il.discountPlanItem is not null group by il.subscription.id, il.commercialOrder.id , il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
-		@NamedQuery(name = "InvoiceLine.getAdjustmentAmount", query = "SELECT SUM(li.amount) FROM Invoice i JOIN i.linkedInvoices li WHERE i.id= :ID_INVOICE and li.type = 'ADJUSTMENT'"),
+		@NamedQuery(name = "InvoiceLine.getAdjustmentAmount", query = "SELECT SUM(li.amount) FROM Invoice i JOIN i.linkedInvoices li" +
+				" WHERE i.id= :ID_INVOICE AND li.type = 'ADJUSTMENT' AND i.status = 'VALIDATED'"),
 		@NamedQuery(name = "InvoiceLine.updateByIncrementalMode", query = "UPDATE InvoiceLine il SET " +
 				"il.amountWithoutTax=il.amountWithoutTax+:deltaAmountWithoutTax, il.amountWithTax=il.amountWithTax+:deltaAmountWithTax, " +
 				"il.amountTax=il.amountTax+:deltaAmountTax, il.quantity=il.quantity+:deltaQuantity, il.validity.from=:beginDate, " +
@@ -403,6 +404,11 @@ public class InvoiceLine extends AuditableCFEntity {
 	@Column(name = "open_order_number")
 	@Size(max = 255)
 	private String openOrderNumber;
+
+	/** The source invoiceLine, from which the adjustment is made */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "linked_invoice_line_id", nullable = false, referencedColumnName = "id")
+	private InvoiceLine linkedInvoiceLine;
     
 	public InvoiceLine() {
 	}
@@ -917,8 +923,16 @@ public class InvoiceLine extends AuditableCFEntity {
 
 	public void setConversionFromBillingCurrency(boolean conversionFromBillingCurrency) {
 		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
-	}   
-    
+	}
+
+	public InvoiceLine getLinkedInvoiceLine() {
+		return linkedInvoiceLine;
+	}
+
+	public void setLinkedInvoiceLine(InvoiceLine linkedInvoiceLine) {
+		this.linkedInvoiceLine = linkedInvoiceLine;
+	}
+
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
