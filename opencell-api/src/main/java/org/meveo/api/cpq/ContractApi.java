@@ -135,6 +135,9 @@ public class ContractApi extends BaseApi{
 		// create new contract
 		contract = new Contract();
 		contract.setCode(dto.getCode());
+		if(dto.isDisabled()!=null) {
+		contract.setDisabled(dto.isDisabled());
+		}
 		contract.setBeginDate(dto.getBeginDate());
 		contract.setEndDate(dto.getEndDate());
 		contract.setContractDate(dto.getContractDate());
@@ -202,7 +205,10 @@ public class ContractApi extends BaseApi{
 			throw new BusinessApiException(String.format(CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN, format.format(dto.getEndDate()), format.format(dto.getBeginDate())));
 		}
 		//get the current contract
-		Contract contract = contractService.findById(dto.getId());
+		Contract contract=null;
+		if(dto.getId()!=null) {
+	     contract = contractService.findById(dto.getId());
+		}
 		if (contract == null) {
 			contract = contractService.findByCode(dto.getCode());
 		}
@@ -211,12 +217,13 @@ public class ContractApi extends BaseApi{
 		//check the status of the contract
 		if (ContractStatusEnum.CLOSED.toString().equals(contract.getStatus())) {
 			throw new MeveoApiException(CONTRACT_STATUS_CLOSED);
-		} else if (ContractStatusEnum.ACTIVE.toString().equals(contract.getStatus())) {
-			contract.setEndDate(dto.getEndDate());
-		} else {
+		} 
 			checkStatus(dto.getStatus());
 			contract.setStatus(dto.getStatus());
 			contract.setCode(dto.getCode());
+			if(dto.isDisabled()!=null) {
+			contract.setDisabled(dto.isDisabled());
+			}
 			contract.setBeginDate(dto.getBeginDate());
 			contract.setEndDate(dto.getEndDate());
 			contract.setContractDate(dto.getContractDate());
@@ -240,7 +247,6 @@ public class ContractApi extends BaseApi{
 					billingRuleService.create(br);
 					contract.getBillingRules().add(br);
 				}
-			}
 		}
 
 		try {
