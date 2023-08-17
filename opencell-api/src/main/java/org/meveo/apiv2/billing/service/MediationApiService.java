@@ -537,13 +537,9 @@ public class MediationApiService {
                 cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperations, returnWalletOperationDetails, returnEDRs, reservations,
                     new CdrError(cdr.getRejectReasonException() != null ? cdr.getRejectReasonException().getClass().getSimpleName() : null, cdr.getRejectReason(), cdr.getLine())));
 
-                if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
-                    if (cdr.getRejectReasonException() != null && cdr.getRejectReasonException() instanceof BusinessException) {
-                        throw (BusinessException) cdr.getRejectReasonException();
-                    } else {
-                        throw new BusinessException(cdr.getRejectReason());
-                    }
-                }
+				if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
+					throw new BusinessException(cdr.getRejectReason());
+				}
 
                 rejectededCdrEventProducer.fire(cdr);
                 cdrService.createOrUpdateCdr(cdr);
