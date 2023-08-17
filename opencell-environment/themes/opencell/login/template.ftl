@@ -3,7 +3,7 @@
 </#function>
 <#macro registrationLayout bodyClass="" displayWide="false" displayInfo=false displayMessage=true>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang="${getLangCode(locale.current)}" xmlns="http://www.w3.org/1999/xhtml" class="${properties.kcHtmlClass!}">
+<html lang="${getLangCode(locale.current)}" xml:lang="${getLangCode(locale.current)}" xmlns="http://www.w3.org/1999/xhtml" class="${properties.kcHtmlClass!}">
 
 <head>
     <meta charset="utf-8">
@@ -44,7 +44,7 @@
                         <a href="#" id="kc-current-locale-link">${locale.current}</a>
                         <ul>
                             <#list locale.supported as l>
-                                <li class="kc-dropdown-item"><a href="${l.url}">${l.label}</a></li>
+                                <li class="kc-dropdown-item"><a href="${l.url}" lang="${getLangCode(l.label)}" aria-label="${l.label}">${l.label}</a></li>
                             </#list>
                         </ul>
                     </div>
@@ -54,14 +54,14 @@
 
         <div id="kc-content" class="${properties.kcContentClass!}">
             <div id="logo-wrapper">
-                <img src="${url.resourcesPath}/img/opencell.svg" >
+                <img src="${url.resourcesPath}/img/opencell.svg" aria-label="Opencell Logo" >
             </div>
 
             <div id="kc-content-wrapper" class="${properties.kcContentWrapperClass!}">
                 <div id="kc-form-main">
                     <div id="kc-form-header">
                         <div id="kc-lock-wrapper">
-                            <img id="kc-lock-icon" src="${url.resourcesPath}/img/lock.svg" >
+                            <img id="kc-lock-icon" src="${url.resourcesPath}/img/lock.svg" aria-label="Secure Login" >
                         </div>
                     </div>
                     
