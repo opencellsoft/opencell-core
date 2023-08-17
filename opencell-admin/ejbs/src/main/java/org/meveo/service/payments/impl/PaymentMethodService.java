@@ -31,8 +31,8 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -113,6 +113,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             if (paymentGateway != null) {
                 createMandate(ddpaymentMethod);
             }
+        }
+        if (paymentMethod instanceof DDPaymentMethod) {        	
+	        List<DDPaymentMethod> ddPaymentMethods = paymentMethod.getCustomerAccount().getDDPaymentMethods();
+	        customerAccountService.validatePaymentMethod(paymentMethod.getCustomerAccount().getPreferredPaymentMethod(), ddPaymentMethods);
         }
         super.create(paymentMethod);
 
@@ -251,6 +255,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                     throw new BusinessException("Cant mark expired card as preferred");
                 }
             }
+        }
+        if (entity instanceof DDPaymentMethod) {        	
+	        List<DDPaymentMethod> ddPaymentMethods = entity.getCustomerAccount().getDDPaymentMethods();
+	        customerAccountService.validatePaymentMethod(entity.getCustomerAccount().getPreferredPaymentMethod(), ddPaymentMethods);
         }
         PaymentMethod paymentMethod = super.update(entity);
 
