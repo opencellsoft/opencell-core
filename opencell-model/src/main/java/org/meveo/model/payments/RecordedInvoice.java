@@ -76,10 +76,6 @@ public class RecordedInvoice extends AccountOperation {
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
-    // concat function on oracle accept just two parameters
-    @Formula("concat(concat(amount, due_date), customer_account_id)")
-    private String agedReceivableReportKey;
-
     public Date getProductionDate() {
         return productionDate;
     }
@@ -161,20 +157,6 @@ public class RecordedInvoice extends AccountOperation {
     */
 	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
-	}
-
-	/**
-	 * @return the agedReceivableReportKey
-	 */
-	public String getAgedReceivableReportKey() {
-		return agedReceivableReportKey;
-	}
-
-	/**
-	 * @param agedReceivableReportKey the agedReceivableReportKey to set
-	 */
-	public void setAgedReceivableReportKey(String agedReceivableReportKey) {
-		this.agedReceivableReportKey = agedReceivableReportKey;
 	}
 
 
