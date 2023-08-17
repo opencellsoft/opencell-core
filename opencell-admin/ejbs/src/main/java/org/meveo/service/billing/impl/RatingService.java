@@ -117,6 +117,7 @@ import org.meveo.model.pricelist.PriceListTypeEnum;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -177,6 +178,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     protected PriceListLineService priceListLineService;
+    
+    @Inject
+    protected TradingCurrencyService tradingCurrencyService;
 
     final private static BigDecimal HUNDRED = new BigDecimal("100");
     
@@ -1521,7 +1525,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @return Optional<Amounts> return computed Amounts or empty if no price plan found
      */
     public Optional<Amounts> determineTransactionalUnitPrice(PricePlanMatrix pricePlan, WalletOperation walletOperation) {
-        final TradingCurrency tradingCurrency = walletOperation.getBillingAccount().getTradingCurrency();
+        final TradingCurrency tradingCurrency = tradingCurrencyService.refreshOrRetrieve(walletOperation.getBillingAccount().getTradingCurrency());
         final Currency functionalCurrency = appProvider.getCurrency();
         if (functionalCurrency != null && functionalCurrency.getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
             return empty();

@@ -79,6 +79,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
@@ -89,6 +90,7 @@ import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderHistoryService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 
@@ -126,6 +128,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @Inject
     private PaymentMethodService paymentMethodService;
+    
+    @Inject
+    private CustomerAccountService customerAccountService;
 
     @MeveoAudit
     @Override
@@ -200,7 +205,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
     	if(offerTemplate.isDisabled()) {
     		throw new BusinessException("Cannot subscribe to disabled offer");
     	}
-        checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
+    	CustomerAccount customerAccount = customerAccountService.refreshOrRetrieve(subscription.getUserAccount().getBillingAccount().getCustomerAccount());
+        checkSubscriptionPaymentMethod(subscription, customerAccount.getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
        
         subscription.updateAutoRenewDate(subscriptionOld);
