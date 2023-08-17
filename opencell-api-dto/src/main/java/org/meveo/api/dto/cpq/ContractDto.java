@@ -5,12 +5,11 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.apiv2.cpq.contracts.BillingRuleDto;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
-import org.meveo.model.cpq.enums.ContractStatusEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -19,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @version 10.0
  */
 @SuppressWarnings("serial")
-public class ContractDto extends BusinessEntityDto {
+public class ContractDto extends EnableBusinessDto {
 
 	@Schema(description = "contract account level, associate seller or customer or customer account or billing account to this contract",
 			example = "possible value are : SELLER, CUSTOMER, CUSTOMER_ACCOUNT, BILLING_ACCOUNT")
