@@ -833,6 +833,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     if(unitPrices == null) {
                         throw new BusinessException("Couldn't find a price for charge " +  bareWalletOperation.getChargeInstance().getCode() + " : no price version and price plan amount is null");
                     }
+                    bareWalletOperation.setPriceplan(pricePlan);
                     unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
                     unitPriceWithTax = unitPrices.getAmountWithTax();
                     bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
