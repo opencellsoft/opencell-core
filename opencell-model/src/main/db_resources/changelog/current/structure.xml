@@ -17156,4 +17156,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="billing_invoice_line"/>
     </changeSet>
 
+	<changeSet id="#INTRD-17954_20230818" author="AdilElJaouhari">
+		<addColumn tableName="billing_billing_run">
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
