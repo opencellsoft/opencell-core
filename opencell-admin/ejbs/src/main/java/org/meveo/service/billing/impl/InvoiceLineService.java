@@ -1525,15 +1525,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("ids", invoiceLinesIds)
                 .getResultList();
     }
-    
-    /*public InvoiceLine adjustment(InvoiceLine invoiceLine, Invoice invoice) {
-        InvoiceType defaultAdjustement = invoiceTypeService.getDefaultAdjustement();
-        InvoiceType invoiceTypeOfInvoice = invoiceLine.getInvoice().getInvoiceType();
-        if(invoiceTypeOfInvoice.getId().equals(defaultAdjustement.getId())) {
-            validateAdjAmount(List.of(invoiceLine), invoice);
-        }
-        return invoiceLine;
-    }*/
 
     private BillingAccount getBillingAccount(Invoice invoice, InvoiceLine invoiceLine) {
         BillingAccount billingAccount = invoiceLine.getBillingAccount();
