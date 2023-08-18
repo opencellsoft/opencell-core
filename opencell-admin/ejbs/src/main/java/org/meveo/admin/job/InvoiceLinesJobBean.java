@@ -12,7 +12,6 @@ import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,7 +31,6 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -76,9 +74,12 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug(" Running for with parameter={}", jobInstance.getParametres());
         try {
-            List<EntityReferenceWrapper> billingRunWrappers = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun");
-            boolean aggregationPerUnitPrice = (Boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE, false);
-            DateAggregationOption dateAggregationOptions = (DateAggregationOption) DateAggregationOption.valueOf((String)getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS, "MONTH_OF_USAGE_DATE"));
+            List<EntityReferenceWrapper> billingRunWrappers = this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun") != null
+                    ? (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun") : null;
+            Object cfParam = getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE, false);
+            boolean aggregationPerUnitPrice = cfParam instanceof Boolean ? (Boolean) cfParam : false;
+            Object dateAggregationCfParam = getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS, "MONTH_OF_USAGE_DATE");
+            DateAggregationOption dateAggregationOptions = (DateAggregationOption) DateAggregationOption.valueOf(dateAggregationCfParam instanceof String ? (String) dateAggregationCfParam : "MONTH_OF_USAGE_DATE");
 
             List<Long> billingRunIds = billingRunWrappers != null ? billingRunWrappers.stream()
                     .map(br -> valueOf(br.getCode().split("/")[0]))
@@ -105,11 +106,14 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, CREATING_INVOICE_LINES, null);
                         List<Long> billingAccountsIDs = billingRunService.getBillingAccountsIdsForOpenRTs(billingRun, false);
 
-                        Long nbRunConfig = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+                        Long nbRunConfig = this.getParamOrCFValue(jobInstance, "nbRuns", -1L) instanceof Long
+                                ? (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L) : -1L;
 						final Long nbRuns = nbRunConfig == -1 ? (long) Runtime.getRuntime().availableProcessors() : nbRunConfig;
 						log.info(" ============ CREATING_INVOICE_LINES, DISPATCHING nbRuns/billableEntities: "+nbRuns+"/"+(billingAccountsIDs!=null?billingAccountsIDs.size():0));
-                        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
-                        Long maxInvoiceLinesPerTransaction = (Long) this.getParamOrCFValue(jobInstance, "maxInvoiceLinesPerTransaction", 10000L);
+                        Long waitingMillis = this.getParamOrCFValue(jobInstance, "waitingMillis", 0L) instanceof Long
+                                ? (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L) : 0L;
+                        Long maxInvoiceLinesPerTransaction = this.getParamOrCFValue(jobInstance, "maxInvoiceLinesPerTransaction", 10000L) instanceof Long
+                                ? (Long) this.getParamOrCFValue(jobInstance, "maxInvoiceLinesPerTransaction", 10000L) : 10000L;
                         BasicStatistics basicStatistics = new BasicStatistics();
                         int billableEntitiesSize=0;
                         final int maxValue = Objects.requireNonNull(getInstance()).getPropertyAsInteger("database.number.of.inlist.limit", PersistenceService.SHORT_MAX_VALUE);
@@ -121,7 +125,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         	processInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration, billingRun, nbRuns, waitingMillis,
 									maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, billingAccountsIDs);
                         }
-                        if(!(boolean) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.ONE_BILLING_ACCOUNT_PER_TRANSACTION, true)) {
+                        Object billingAccountPerTransactionParam = this.getParamOrCFValue(jobInstance, InvoiceLinesJob.ONE_BILLING_ACCOUNT_PER_TRANSACTION, true);
+                        boolean billingAccountPerTransaction = billingAccountPerTransactionParam instanceof Boolean ? (Boolean) billingAccountPerTransactionParam : true;
+                        if(!billingAccountPerTransaction) {
                         	billingAccountsIDs = billingRunService.getBillingAccountsIdsForOpenRTs(billingRun, true);
                         	processMassRTsInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration, billingRun, nbRuns, waitingMillis,
 									maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, billingAccountsIDs);
