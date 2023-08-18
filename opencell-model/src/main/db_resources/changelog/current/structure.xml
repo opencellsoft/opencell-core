@@ -17145,4 +17145,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-16955_20230816" author="aelmalki">
+        <addColumn tableName="billing_invoice_line">
+            <column name="linked_invoice_line_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="linked_invoice_line_id" baseTableName="billing_invoice_line"
+                                 constraintName="fk_linked_invoice_line" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="billing_invoice_line"/>
+    </changeSet>
+
 </databaseChangeLog>
