@@ -2795,6 +2795,9 @@
             <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
                 <constraints nullable="false" />
             </column>
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -20530,6 +20533,7 @@
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
     <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe" />
 	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
+	<changeSet id="#INTRD-17954_20230818" author="AdilElJaouhari" />
     
     <changeSet id="#INTRD-10574_20221013" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-10574_20221014" author="AndriusKarpavicius"/>
