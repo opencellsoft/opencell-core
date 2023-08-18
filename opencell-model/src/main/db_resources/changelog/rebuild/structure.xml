@@ -2770,6 +2770,9 @@
 			<column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
 			<column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
 			<column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -20336,6 +20339,7 @@
     <changeSet id="#INTRD-17280_20230808" author="AdilElJaouhari" />
     <changeSet id="INTRD-17134_20230704" author="TarikFA." />
 	<changeSet id="#INTRD-16955_20230816" author="aelmalki" />
+	<changeSet id="#INTRD-17954_20230818" author="AdilElJaouhari" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
