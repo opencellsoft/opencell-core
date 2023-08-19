@@ -4263,7 +4263,23 @@
             <column name="attribute_calendar_id" type="bigint"/>
             <column name="internal_note" type="${type.longtext}" />
             <column name="anticipate_end_of_subscription" type="${type.boolean}" defaultValueNumeric="0" />
-        </createTable>
+            <column name="parameter1_description" type="VARCHAR(255)" defaultValue="Parameter 1"/>
+        	<column name="parameter2_description" type="VARCHAR(255)" defaultValue="Parameter 2"/>
+        	<column name="parameter3_description" type="VARCHAR(255)" defaultValue="Parameter 3"/>
+        	<column name="parameter_extra_description" type="VARCHAR(255)" defaultValue="Parameter Extra"/>
+	    	<column name="parameter1_format" type="VARCHAR(50)"/>
+	    	<column name="parameter2_format" type="VARCHAR(50)"/>
+	    	<column name="parameter3_format" type="VARCHAR(50)"/>
+	    	<column name="parameter_extra_format" type="VARCHAR(50)"/>
+	    	<column name="parameter1_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+		    <column name="parameter1_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="parameter2_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+		    <column name="parameter2_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
+		    <column name="parameter3_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+		    <column name="parameter3_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="parameter_extra_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+	        <column name="parameter_extra_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
+	    </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-208">
         <createTable tableName="cat_chrg_edr">
@@ -17336,6 +17352,7 @@
                                  referencedColumnNames="id"/>
 
     </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -20235,6 +20252,242 @@
 		  <sql>CREATE INDEX idx__billing_rated_transaction__offer ON ${db.schema.adapted}billing_rated_transaction USING btree (offer_id) WHERE (status= 'OPEN') </sql>
 		  <sql>CREATE INDEX idx__billing_rated_transaction__service_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (service_instance_id) WHERE (status= 'OPEN') </sql>
 	</changeSet>
+	
+	<changeSet id="INTRD-17544_20230817_rebuild" author="hatimOUDAD">
+		<createTable tableName="charge_template_translated_desc_param1">
+            <column name="charge_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trading_language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parameter1_translated_description" type="text"/>
+        </createTable>
+        <addPrimaryKey columnNames="charge_template_id, trading_language_id"
+                       constraintName="pk_charge_template_translated_descriptions"
+                       tableName="charge_template_translated_desc_param1"/>
+        
+        <createTable tableName="charge_template_translated_desc_param2">
+            <column name="charge_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trading_language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parameter2_translated_description" type="text"/>
+        </createTable>
+        <addPrimaryKey columnNames="charge_template_id, trading_language_id"
+                       constraintName="pk_charge_template_translated_desc_param2"
+                       tableName="charge_template_translated_desc_param2"/>
+                              
+        <createTable tableName="charge_template_translated_desc_param3">
+            <column name="charge_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trading_language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parameter3_translated_description" type="text"/>
+        </createTable>
+         <addPrimaryKey columnNames="charge_template_id, trading_language_id"
+                       constraintName="pk_charge_template_translated_desc_param3"
+                       tableName="charge_template_translated_desc_param3"/>
+                         
+        <createTable tableName="charge_template_translated_desc_param_extra">
+            <column name="charge_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trading_language_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parameter_extra_translated_description" type="text"/>
+        </createTable>
+        <addPrimaryKey columnNames="charge_template_id, trading_language_id"
+                       constraintName="pk_charge_template_translated_desc_param_extra"
+                       tableName="charge_template_translated_desc_param_extra"/>
+        
+        
+        
+        
+	    <!-- Parameter 1 Translated Long Descriptions --> 
+	    <createTable tableName="parameter1_translated_long_descriptions">
+	    <column name="charge_template_id" type="BIGINT">
+	        <constraints nullable="false"/>
+	    </column>
+	    <column name="trading_language_id" type="BIGINT">
+	        <constraints nullable="false"/>
+	    </column>
+	    <column name="translated_description" type="VARCHAR(1000)">
+	        <constraints nullable="false"/>
+	    </column>
+	    </createTable>
+	     <!-- Parameter 1 Translated Long Descriptions -->
+	    <addPrimaryKey columnNames="charge_template_id, trading_language_id"
+	                   constraintName="pk_parameter1_translated_long_desc"
+	                   tableName="parameter1_translated_long_descriptions"/>
+	
+	    
+	    <!-- Parameter 2 Translated Long Descriptions -->
+	    <createTable tableName="parameter2_translated_long_descriptions">
+	        <column name="charge_template_id" type="BIGINT">
+	            <constraints nullable="false"/>
+	        </column>
+	        <column name="trading_language_id" type="BIGINT">
+	            <constraints nullable="false"/>
+	        </column>
+	        <column name="translated_description" type="VARCHAR(1000)">
+	            <constraints nullable="false"/>
+	        </column>
+	    </createTable>
+	    <!-- Parameter 2 Translated Long Descriptions -->
+	    <addPrimaryKey columnNames="charge_template_id, trading_language_id"
+	                   constraintName="pk_parameter2_translated_long_desc"
+	                   tableName="parameter2_translated_long_descriptions"/>
+	    
+	    
+	
+	    <!-- Parameter 3 Translated Long Descriptions -->
+	    <createTable tableName="parameter3_translated_long_descriptions">
+	        <column name="charge_template_id" type="BIGINT">
+	            <constraints nullable="false"/>
+	        </column>
+	        <column name="trading_language_id" type="BIGINT">
+	            <constraints nullable="false"/>
+	        </column>
+	        <column name="translated_description" type="VARCHAR(1000)">
+	            <constraints nullable="false"/>
+	        </column>
+	    </createTable>
+	     <!-- Parameter 3 Translated Long Descriptions -->
+	    <addPrimaryKey columnNames="charge_template_id, trading_language_id"
+	                   constraintName="pk_parameter3_translated_long_desc"
+	                   tableName="parameter3_translated_long_descriptions"/>
+	    
+	    
+	
+	    <!-- Parameter Extra Translated Long Descriptions -->
+	    <createTable tableName="parameter_extra_translated_long_descriptions">
+	        <column name="charge_template_id" type="BIGINT">
+	            <constraints nullable="false"/>
+	        </column>
+	        <column name="trading_language_id" type="BIGINT">
+	            <constraints nullable="false"/>
+	        </column>
+	        <column name="translated_description" type="VARCHAR(1000)">
+	            <constraints nullable="false"/>
+	        </column>
+	    </createTable>
+	    <!-- Parameter Extra Translated Long Descriptions -->
+	    <addPrimaryKey columnNames="charge_template_id, trading_language_id"
+	                   constraintName="pk_parameter_extra_translated_long_desc"
+	                   tableName="parameter_extra_translated_long_descriptions"/>
+	                   
+	    <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param1"
+	                                     baseColumnNames="charge_template_id"
+	                                     referencedTableName="cat_charge_template"
+	                                     referencedColumnNames="id"
+	                                     constraintName="fk_charge_template_id"/>
+	       <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param1"
+	                                     baseColumnNames="trading_language_id"
+	                                     referencedTableName="billing_trading_language"
+	                                     referencedColumnNames="id"
+	                                     constraintName="fk_trading_language_id"/>              
+	        <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param2"
+	                                 baseColumnNames="charge_template_id"
+	                                 referencedTableName="cat_charge_template"
+	                                 referencedColumnNames="id"
+	                                 constraintName="fk_charge_template_id_param2"/>
+	        <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param2"
+	                                 baseColumnNames="trading_language_id"
+	                                 referencedTableName="billing_trading_language"
+	                                 referencedColumnNames="id"
+	                                 constraintName="fk_trading_language_id_param2"/>                    
+	                       
+	        <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param3"
+	                                 baseColumnNames="charge_template_id"
+	                                 referencedTableName="cat_charge_template"
+	                                 referencedColumnNames="id"
+	                                 constraintName="fk_charge_template_id_param3"/>
+	        <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param3"
+	                                 baseColumnNames="trading_language_id"
+	                                 referencedTableName="billing_trading_language"
+	                                 referencedColumnNames="id"
+	                                 constraintName="fk_trading_language_id_param3"/>
+	                                                
+	        <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param_extra"
+	                                 baseColumnNames="charge_template_id"
+	                                 referencedTableName="cat_charge_template"
+	                                 referencedColumnNames="id"
+	                                 constraintName="fk_charge_template_id_param_extra"/>
+	        <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param_extra"
+	                                 baseColumnNames="trading_language_id"
+	                                 referencedTableName="billing_trading_language"
+	                                 referencedColumnNames="id"
+	                                 constraintName="fk_trading_language_id_param_extra"/>
+	                                 
+	                                 
+	                        
+	    
+	
+	
+			<addForeignKeyConstraint baseTableName="parameter1_translated_long_descriptions"
+		                             baseColumnNames="charge_template_id"
+		                             referencedTableName="cat_charge_template"
+		                             referencedColumnNames="id"
+		                             constraintName="fk_parameter1_translated_long_desc_charge_template"
+		                             onDelete="CASCADE"/>
+		
+		    <addForeignKeyConstraint baseTableName="parameter1_translated_long_descriptions"
+		                             baseColumnNames="trading_language_id"
+		                             referencedTableName="billing_trading_language"
+		                             referencedColumnNames="id"
+		                             constraintName="fk_parameter1_translated_long_desc_trading_language"
+		                             onDelete="CASCADE"/>
+		    
+		
+		    <addForeignKeyConstraint baseTableName="parameter2_translated_long_descriptions"
+		                             baseColumnNames="charge_template_id"
+		                             referencedTableName="cat_charge_template"
+		                             referencedColumnNames="id"
+		                             constraintName="fk_parameter2_translated_long_desc_charge_template"
+		                             onDelete="CASCADE"/>
+		
+		    <addForeignKeyConstraint baseTableName="parameter2_translated_long_descriptions"
+		                             baseColumnNames="trading_language_id"
+		                             referencedTableName="billing_trading_language"
+		                             referencedColumnNames="id"
+		                             constraintName="fk_parameter2_translated_long_desc_trading_language"
+		                             onDelete="CASCADE"/>
+		
+		    <addForeignKeyConstraint baseTableName="parameter3_translated_long_descriptions"
+		                             baseColumnNames="charge_template_id"
+		                             referencedTableName="cat_charge_template"
+		                             referencedColumnNames="id"
+		                             constraintName="fk_parameter3_translated_long_desc_charge_template"
+		                             onDelete="CASCADE"/>
+		
+		    <addForeignKeyConstraint baseTableName="parameter3_translated_long_descriptions"
+		                             baseColumnNames="trading_language_id"
+		                             referencedTableName="billing_trading_language"
+		                             referencedColumnNames="id"
+		                             constraintName="fk_parameter3_translated_long_desc_trading_language"
+		                             onDelete="CASCADE"/>
+		
+		    <addForeignKeyConstraint baseTableName="parameter_extra_translated_long_descriptions"
+		                             baseColumnNames="charge_template_id"
+		                             referencedTableName="cat_charge_template"
+		                             referencedColumnNames="id"
+		                             constraintName="fk_parameter_extra_translated_long_desc_charge_template"
+		                             onDelete="CASCADE"/>
+		
+		    <addForeignKeyConstraint baseTableName="parameter_extra_translated_long_descriptions"
+		                             baseColumnNames="trading_language_id"
+		                             referencedTableName="billing_trading_language"
+		                             referencedColumnNames="id"
+		                             constraintName="fk_parameter_extra_translated_long_desc_trading_language"
+		                             onDelete="CASCADE"/>                
+	</changeSet>
+    
 
 
    	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA."/>
@@ -20325,6 +20578,7 @@
 	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
     <changeSet id="#INTRD-17451_20230731" author="ZBariki" />
     <changeSet id="#INTRD-17280_20230808" author="AdilElJaouhari" />
+    <changeSet id="INTRD-17544_20230817" author="hatimOUDAD"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

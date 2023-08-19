@@ -28,9 +28,11 @@ import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -41,6 +43,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -61,6 +64,7 @@ import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
@@ -298,6 +302,124 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Type(type = "longText")
     @Column(name = "internal_note")
     private String internalNote;
+    
+    @ElementCollection
+    @CollectionTable(name = "charge_template_translated_desc_param1",
+                    joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "parameter1_translated_description", length = 1000)
+    private Map<TradingLanguage, String> parameter1TranslatedDescriptions;
+    
+    @ElementCollection
+    @CollectionTable(name = "charge_template_translated_desc_param2",
+                    joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "parameter2_translated_description", length = 1000)
+    private Map<TradingLanguage, String> parameter2TranslatedDescriptions;
+    
+    @ElementCollection
+    @CollectionTable(name = "charge_template_translated_desc_param3",
+                    joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "parameter3_translated_description", length = 1000)
+    private Map<TradingLanguage, String> parameter3TranslatedDescriptions;
+    
+    @ElementCollection
+    @CollectionTable(name = "charge_template_translated_desc_param_extra",
+                    joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "parameter_extra_translated_description", length = 1000)
+    private Map<TradingLanguage, String> parameterExtraTranslatedDescriptions;
+    
+    @Column(name = "parameter1_description")
+    private String parameter1Description;
+
+    @Column(name = "parameter2_description")
+    private String parameter2Description;
+
+    @Column(name = "parameter3_description")
+    private String parameter3Description;
+    
+    @Column(name = "parameter_extra_description")
+    private String parameterExtraDescription;
+    
+    public enum ParameterFormat {
+        TEXT,
+        INTEGER,
+        DECIMAL,
+        DATE,
+        BOOLEAN
+    }
+    
+    @Column(name = "parameter1_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameter1Format;
+    
+    @Column(name = "parameter2_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameter2Format;
+    
+    @Column(name = "parameter3_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameter3Format;
+    
+    @Column(name = "parameter_extra_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameterExtraFormat;
+    
+    @Column(name = "parameter1_is_mandatory")
+    private boolean parameter1IsMandatory;
+
+    @Column(name = "parameter1_is_hidden")
+    private boolean parameter1IsHidden;
+
+    @Column(name = "parameter2_is_mandatory")
+    private boolean parameter2IsMandatory;
+
+    @Column(name = "parameter2_is_hidden")
+    private boolean parameter2IsHidden;
+
+    @Column(name = "parameter3_is_mandatory")
+    private boolean parameter3IsMandatory;
+
+    @Column(name = "parameter3_is_hidden")
+    private boolean parameter3IsHidden;
+
+    @Column(name = "extra_is_mandatory")
+    private boolean extraIsMandatory;
+
+    @Column(name = "parameter_extra_is_hidden")
+    private boolean parameterExtraIsHidden;
+    
+    @ElementCollection
+    @CollectionTable(name = "charge_template_translation",
+                     joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "translated_description")
+    private Map<TradingLanguage, String> parameter1TranslatedLongDescriptions;
+
+    @ElementCollection
+    @CollectionTable(name = "parameter2_translation",
+                     joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "translated_description")
+    private Map<TradingLanguage, String> parameter2TranslatedLongDescriptions;
+
+    @ElementCollection
+    @CollectionTable(name = "parameter3_translation",
+                     joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "translated_description")
+    private Map<TradingLanguage, String> parameter3TranslatedLongDescriptions;
+
+    @ElementCollection
+    @CollectionTable(name = "parameter_extra_translation",
+                     joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "translated_description")
+    private Map<TradingLanguage, String> parameterExtraTranslatedLongDescriptions;
+
+    
     
     public String getInputUnitEL() {
         return inputUnitEL;
