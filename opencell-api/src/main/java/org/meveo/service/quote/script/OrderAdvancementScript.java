@@ -87,7 +87,6 @@ OrderAdvancementScript extends ModuleScript {
                     if(isOneShot100Payment(commercialOrder.getInvoicingPlan().getInvoicingPlanItems())){
                     	createIlsAndInvoice(commercialOrder,groupedPricesToBill,null, nextDay, firstTransactionDate, invoiceDate,true, true);
                     }
-                    var remainingRateToBill = 100 - commercialOrder.getRateInvoiced();
                     generateGlobalInvoice(commercialOrder,groupedPricesToBill, nextDay, firstTransactionDate, invoiceDate, true);
                     commercialOrder.setOrderProgressTmp(orderProgress);
                     commercialOrder.setRateInvoiced(100);
