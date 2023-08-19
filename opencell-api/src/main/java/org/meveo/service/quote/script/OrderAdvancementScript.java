@@ -87,6 +87,7 @@ OrderAdvancementScript extends ModuleScript {
                     if(isOneShot100Payment(commercialOrder.getInvoicingPlan().getInvoicingPlanItems())){
                     	createIlsAndInvoice(commercialOrder,groupedPricesToBill,null, nextDay, firstTransactionDate, invoiceDate,true, true);
                     }
+                    var remainingRateToBill = 100 - commercialOrder.getRateInvoiced();
                     generateGlobalInvoice(commercialOrder,groupedPricesToBill, nextDay, firstTransactionDate, invoiceDate, true);
                     commercialOrder.setOrderProgressTmp(orderProgress);
                     commercialOrder.setRateInvoiced(100);
@@ -199,7 +200,7 @@ OrderAdvancementScript extends ModuleScript {
                             	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
                                 serviceSingleton.assignInvoiceNumber(invoice, true);
                             }
-                            if(rateToBill.intValue() != 100 && invoice.getInvoiceType() != null && invoice.getInvoiceType().getCode().equals("ADV")) {
+                            if(!isBillOver && invoice.getInvoiceType() != null && invoice.getInvoiceType().getCode().equals("ADV")) {
                                 BigDecimal amountWithTax = invoice.getInvoiceLines().stream().map(InvoiceLine::getAmountWithTax).reduce(BigDecimal.ZERO, BigDecimal::add);
                                 invoice.setInvoiceBalance(amountWithTax);
                             }
@@ -214,7 +215,7 @@ OrderAdvancementScript extends ModuleScript {
     }
 
     private void generateGlobalInvoice(CommercialOrder commercialOrder,List<Object[]>  groupedPricesToBill, Date nextDay, Date firstTransactionDate, Date invoiceDate, boolean isBillOver) {
-        createIlsAndInvoice(commercialOrder,groupedPricesToBill, BigDecimal.valueOf(100), nextDay, firstTransactionDate, invoiceDate, false, isBillOver);
+        createIlsAndInvoice(commercialOrder,groupedPricesToBill, BigDecimal.valueOf(100 - commercialOrder.getRateInvoiced()), nextDay, firstTransactionDate, invoiceDate, false, isBillOver);
     }
     
     private AccountingArticle getDefaultAccountingArticle() {
