@@ -17164,4 +17164,121 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 
+    <changeSet id="#INTRD-17632_2023_08_09" author="zbariki">
+        <createSequence sequenceName="bill_run_report_seq" startValue="1" />
+        <createSequence sequenceName="bill_account_amount_seq" startValue="1" />
+        <createSequence sequenceName="bill_offer_amount_seq" startValue="1" />
+
+        <createTable tableName="billing_offer_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"	primaryKeyName="billing_offer_amount_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="offer_id" type="${cast.long}" />
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="billing_run_report_id" type="${cast.long}" />
+        </createTable>
+
+        <createTable tableName="billing_account_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"	primaryKeyName="billing_account_amount_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="billing_account_id" type="${cast.long}" />
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="billing_run_report_id" type="${cast.long}" />
+        </createTable>
+
+        <createTable tableName="billing_run_report">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"	primaryKeyName="billing_run_report_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="billing_run_id" type="${cast.long}">
+                <constraints nullable="false" />
+            </column>
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="creation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="billing_accounts_count" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="subscription_accounts_count" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="rated_transaction_accounts_count" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="one_shot_transactions_count" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="recurring_transactions_count" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="usage_transactions_count" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="one_shot_total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="recurring_total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+            <column name="usage_total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addColumn tableName="billing_billing_run">
+            <column name="pre_report_auto_on_create" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="pre_invoicing_report_id" type="${cast.long}" />
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="billing_offer_amount" baseColumnNames="offer_id"
+                                 constraintName="billing_offer_amount_offer_id_fk"
+                                 referencedTableName="cat_offer_template" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_offer_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="billing_offer_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_account_amount" baseColumnNames="billing_account_id"
+                                 constraintName="billing_account_amount_offer_id_fk"
+                                 referencedTableName="billing_billing_account" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_account_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="billing_account_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_run_report" baseColumnNames="billing_run_id"
+                                 constraintName="billing_run_report_billing_run_id_fk"
+                                 referencedTableName="billing_billing_run" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_billing_run" baseColumnNames="pre_invoicing_report_id"
+                                 constraintName="billing_billing_run_pre_invoicing_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+    </changeSet>
+
 </databaseChangeLog>
