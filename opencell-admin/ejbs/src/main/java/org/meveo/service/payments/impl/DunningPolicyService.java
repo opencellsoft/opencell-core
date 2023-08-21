@@ -426,4 +426,13 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         update(dunningPolicy);
     }
+
+    /**
+     * Update dunning policies by setting active = true or false according to the selected dunning settings (INVOICE_LEVEL or CUSTOMER_LEVEL)
+     * @param pDunningMode {@link DunningModeEnum}
+     */
+    public void updateDunningPoliciesAfterCreatingOrUpdatingDunningSetting(DunningModeEnum pDunningMode) {
+        getEntityManager().createNamedQuery("DunningPolicy.activateByDunningMode").setParameter("dunningMode", pDunningMode).executeUpdate();
+        getEntityManager().createNamedQuery("DunningPolicy.deactivateByDunningMode").setParameter("dunningMode", pDunningMode).executeUpdate();
+    }
 }
