@@ -1569,7 +1569,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         discountWalletOperation.setCurrency(bareWalletOperation.getCurrency()!=null?bareWalletOperation.getCurrency():bareWalletOperation.getBillingAccount().getCustomerAccount().getTradingCurrency().getCurrency());
         discountWalletOperation.setDiscountedWO(bareWalletOperation);
         discountWalletOperation.setDiscountPlanType(DiscountPlanItemTypeEnum.PERCENTAGE);
-        discountWalletOperation.setDiscountValue(discountValue.abs());
+        discountWalletOperation.setDiscountValue(discountValue);
         discountWalletOperation.setDiscountedAmount(discountedAmount);
         discountWalletOperation.setOrderNumber(bareWalletOperation.getOrderNumber());
         discountWalletOperation.setSubscription(bareWalletOperation.getSubscription());
