@@ -742,7 +742,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             if (ppmVersion != null) {
                                  pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
                                  discountRate= pricePlanMatrixLine.getValue();
-                                 if(discountRate!=null && discountRate.compareTo(BigDecimal.ZERO) > 0 ){
+                                 if(discountRate!=null){
                                      amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                                     if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !seperateDiscount)
                                         unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
