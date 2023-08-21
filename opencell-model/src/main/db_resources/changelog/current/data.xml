@@ -21420,5 +21420,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="applies_to_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'COM')" />
         </insert>
     </changeSet>
+	
+	<changeSet id="INTRD-12463_20230821" author="aelmalki">
+        <update tableName="billing_invoice_configuration">
+			<column name="default_advanced_payment_article_id" valueComputed="(SELECT id FROM billing_accounting_article WHERE code = 'ADV-STD')" />
+		</update>
+    </changeSet>
 	        
 </databaseChangeLog>
