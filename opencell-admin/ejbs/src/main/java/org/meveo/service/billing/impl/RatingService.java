@@ -731,9 +731,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         bareWalletOperation.setContractLine(contractItem);
 
                         // Discount rate is hardcoded in a contract
-                        if (contractItem.getRate() != null && contractItem.getRate() > 0) {
+                        if (contractItem.getRate() != null) {
                             discountRate = BigDecimal.valueOf(contractItem.getRate());
-                            amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
+                            amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                             if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !separateDiscount) {
                                 unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
                             }
@@ -743,7 +743,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlan(), bareWalletOperation);
                             if (pricePlanMatrixLine != null) {
                                 discountRate = pricePlanMatrixLine.getValue();
-                                if (discountRate != null && discountRate.compareTo(BigDecimal.ZERO) > 0) {
+                                if (discountRate != null) {
                                     amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                                     if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !separateDiscount) {
                                         unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
