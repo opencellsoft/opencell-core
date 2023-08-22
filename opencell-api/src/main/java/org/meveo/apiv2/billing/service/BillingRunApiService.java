@@ -285,4 +285,35 @@ public class BillingRunApiService implements ApiService<BillingRun> {
              linkedInvoiceService.removeLinkedAdvances(invoices.stream().map(Invoice::getId).collect(Collectors.toList()));
          }
 	 }
+	 
+	 public Optional<BillingRun> enableBillingRun(Long billingRunId) {
+	        BillingRun billingRun = billingRunService.findById(billingRunId);
+	        if (billingRun == null) {
+	            return empty();
+	        }
+	        try {
+	            billingRun.setActive(true);
+	            billingRunService.update(billingRun);
+	            return of(billingRun);
+	        } catch (Exception exception) {
+	            throw new BusinessException(exception.getMessage());
+	        }
+		}
+	 
+	 public Optional<BillingRun> disableBillingRun(Long billingRunId) {
+	        BillingRun billingRun = billingRunService.findById(billingRunId);
+	        if (billingRun == null) {
+	            return empty();
+	        }
+	        if (billingRun.getStatus() == VALIDATED || billingRun.getStatus() == CANCELLING || billingRun.getStatus() == CANCELED) {
+	            throw new BadRequestException("The billing run with status " + billingRun.getStatus() + " cannot be disabled");
+	        }
+	        try {
+	        	billingRun.setDisabled(true);
+	            billingRunService.update(billingRun);
+	            return of(billingRun);
+	        } catch (Exception exception) {
+	            throw new BusinessException(exception.getMessage());
+	        }
+		}
 }

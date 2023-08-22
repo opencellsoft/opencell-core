@@ -93,4 +93,22 @@ public class InvoicingResourceImpl implements InvoicingResource {
                         + ", \"executeInvoicingJob\": " + executeInvoicingJob + "}")
                 .build();
     }
+
+	@Override
+	public Response enableBillingRun(Long billingRunId) {
+		BillingRun billingRun = invoicingApiService.enableBillingRun(billingRunId)
+                .orElseThrow(() -> new NotFoundException("Billing run with id " + billingRunId + " does not exists"));
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Billing run successfully enabled\"},\"id\":" + billingRun.getId() + "}")
+                .build();
+	}
+
+	@Override
+	public Response disableBillingRun(Long billingRunId) {
+		BillingRun billingRun = invoicingApiService.disableBillingRun(billingRunId)
+                .orElseThrow(() -> new NotFoundException("Billing run with id " + billingRunId + " does not exists"));
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"Billing run successfully disabled\"},\"id\":" + billingRun.getId() + "}")
+                .build();
+	}
 }
