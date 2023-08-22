@@ -2,6 +2,7 @@ package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -189,9 +190,11 @@ public class PricePlanSelectionService implements Serializable {
                 throw new NoPricePlanException("No active price plan matched for parameters: " + StringUtils.concatenate(params));
             }
 
-            return em.createQuery("FROM PricePlanMatrix WHERE id in :ids", PricePlanMatrix.class)
-                     .setParameter("ids", matchingPPMs)
-                     .getResultList();
+            List<PricePlanMatrix> result = em.createQuery("FROM PricePlanMatrix WHERE id in :ids", PricePlanMatrix.class)
+                                          .setParameter("ids", matchingPPMs)
+                                          .getResultList();
+            result.sort(Comparator.comparingInt(a -> matchingPPMs.indexOf(a.getId())));
+            return result;
         }
     }
 
