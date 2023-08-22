@@ -396,10 +396,10 @@ public class ContractApi extends BaseApi{
         	item.setContractRateType(contractItemDto.getContractRateType());
     	}
     	
-    	if(contractItemDto.getSeparateDiscountLine()!=null) {
-    		item.setSeparateDiscount(contractItemDto.getSeparateDiscountLine()); 
+    	if(contractItemDto.getSeperateDiscountLine()!=null) {
+    		item.setSeparateDiscount(contractItemDto.getSeperateDiscountLine()); 
     	}
-    	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && Boolean.TRUE.equals(contractItemDto.getSeparateDiscountLine())){
+    	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && Boolean.TRUE.equals(contractItemDto.getSeperateDiscountLine())){
     		throw new InvalidParameterException("Generate separate discount line is valid only for the types 'Global discount' and 'Custom discount grid'");
     	}
     	item.setApplicationEl(contractItemDto.getApplicationEl());
@@ -467,8 +467,8 @@ public class ContractApi extends BaseApi{
         	item.setContractRateType(contractItemDto.getContractRateType());
     	}
     	
-    	if(contractItemDto.getSeparateDiscountLine()!=null) {
-    		item.setSeparateDiscount(contractItemDto.getSeparateDiscountLine()); 
+    	if(contractItemDto.getSeperateDiscountLine()!=null) {
+    		item.setSeparateDiscount(contractItemDto.getSeperateDiscountLine()); 
     	}
     	if(ContractRateTypeEnum.FIXED.equals(item.getContractRateType()) && item.isSeparateDiscount()){
     		throw new InvalidParameterException("Generate separate discount line is valid only for the types 'Global discount' and 'Custom discount grid'");

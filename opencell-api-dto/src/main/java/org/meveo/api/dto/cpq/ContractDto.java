@@ -157,10 +157,6 @@ public class ContractDto extends EnableBusinessDto {
 	public void setContractDuration(Integer contractDuration) {
 		this.contractDuration = contractDuration;
 	}
-
-	public void setApplicationEl(String applicationEl) {
-		this.applicationEl = applicationEl;
-	}
 	/**
 	 * @return the contractAccountLevel
 	 */
