@@ -40,7 +40,7 @@ public class ContractItemDto extends BusinessEntityDto {
 	@Schema(description = "amount without tax")
     private BigDecimal amountWithoutTax;
 	@Schema(description = "separate discount")
-	private Boolean seperateDiscountLine=Boolean.FALSE;
+	private Boolean separateDiscountLine=Boolean.FALSE;
 	@Schema(description = "Expression language to condition contract line application")
 	private String applicationEl;
 	@Schema(description = "If true then contract discount will apply to price overridden in quote.")
@@ -78,7 +78,7 @@ public class ContractItemDto extends BusinessEntityDto {
     	this.description = c.getDescription();
     	this.code = c.getCode();
     	this.contractRateType=c.getContractRateType();
-    	this.seperateDiscountLine=c.isSeparateDiscount();
+    	this.separateDiscountLine=c.isSeparateDiscount();
     	this.applicationEl = c.getApplicationEl();
     	this.applicableOnOverriddenPrice = c.isApplicableOnOverriddenPrice();
     }
@@ -202,12 +202,12 @@ public class ContractItemDto extends BusinessEntityDto {
 		this.contractRateType = contractRateType;
 	}
 
-	public Boolean getSeperateDiscountLine() {
-		return seperateDiscountLine;
+	public Boolean getSeparateDiscountLine() {
+		return separateDiscountLine;
 	}
 
-	public void setSeperateDiscountLine(Boolean seperateDiscountLine) {
-		this.seperateDiscountLine = seperateDiscountLine;
+	public void setSeparateDiscountLine(Boolean separateDiscountLine) {
+		this.separateDiscountLine = separateDiscountLine;
 	}
 
 	public String getApplicationEl() {

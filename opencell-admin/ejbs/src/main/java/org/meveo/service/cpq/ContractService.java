@@ -145,12 +145,6 @@ public class ContractService extends BusinessService<Contract>  {
 				}
 			}
 		}
-
-		if (ContractStatusEnum.ACTIVE.toString().equals(contract.getStatus())
-				&& (ContractStatusEnum.ACTIVE.toString().equals(status) || ContractStatusEnum.DRAFT.toString().equals(status))) {
-			 throw new BusinessApiException(String.format(CONTRACT_CAN_NOT_CHANGE_THE_STATUS_ACTIVE_TO, status));
-		}
-
 		contract.setStatus(status);
 		return  update(contract);
 	}
