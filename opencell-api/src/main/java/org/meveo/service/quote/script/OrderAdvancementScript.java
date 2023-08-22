@@ -61,6 +61,9 @@ OrderAdvancementScript extends ModuleScript {
         if(commercialOrder == null) {
             throw new BusinessException("No Commercial order is found");
         }
+        // Refresh entity from script context, due to nested entities not fetched
+        // All those nested entities are not fetched : quote, orderType, invoices, orderLots, orderPrices
+        commercialOrder = commercialOrderService.refreshOrRetrieve(commercialOrder);
         Integer orderProgress = commercialOrder.getOrderProgress() != null ? commercialOrder.getOrderProgress() : 0;
 
         if (commercialOrder.getInvoicingPlan() != null) {
