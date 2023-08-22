@@ -41,10 +41,10 @@ public class ContractDto extends EnableBusinessDto {
 	private Date endDate;
 
 	@Schema(description = "renwal a the contract")
-    @NotNull
-	private boolean renewal;
+	@NotNull
+	private Boolean renewal;
 	@Schema(description = "duration of the contract")
-	private int contractDuration;
+	private Integer contractDuration;
 	@Schema(description = "list of the custom field if any")
 	private CustomFieldsDto customFields;
 
@@ -140,31 +140,23 @@ public class ContractDto extends EnableBusinessDto {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-	/**
-	 * @return the renewal
-	 */
-	public boolean isRenewal() {
+	
+	public Boolean getRenewal() {
 		return renewal;
 	}
-	/**
-	 * @param renewal the renewal to set
-	 */
-	public void setRenewal(boolean renewal) {
+
+	public void setRenewal(Boolean renewal) {
 		this.renewal = renewal;
 	}
-	/**
-	 * @return the contractDuration
-	 */
-	public int getContractDuration() {
+
+	
+	public Integer getContractDuration() {
 		return contractDuration;
 	}
-	/**
-	 * @param contractDuration the contractDuration to set
-	 */
-	public void setContractDuration(int contractDuration) {
+
+	public void setContractDuration(Integer contractDuration) {
 		this.contractDuration = contractDuration;
 	}
-
 	/**
 	 * @return the contractAccountLevel
 	 */
