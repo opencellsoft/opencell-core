@@ -205,6 +205,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
@@ -4136,6 +4137,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
                     discountAggregates.add(discountAggregate);
                     otherDiscount = otherDiscount.add(discountAggregate.getAmountWithoutTax().abs());
+                    if (invoice.getDiscountPlan() != null && invoice.getDiscountPlan().getStatus() != DiscountPlanStatusEnum.IN_USE.IN_USE) {
+                        invoice.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE.IN_USE);
+                    }
                 }
             }
 
