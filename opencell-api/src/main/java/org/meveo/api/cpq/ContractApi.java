@@ -1,5 +1,7 @@
 package org.meveo.api.cpq;
 
+import static java.util.Optional.ofNullable;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import static java.util.Optional.ofNullable;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -27,7 +29,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
@@ -116,6 +117,7 @@ public class ContractApi extends BaseApi{
 	
 	private static final String CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN = "Date end (%s) must be great than date begin (%s)";
 	private static final String CONTRACT_STATUS_CLOSED = "Closed status of contract cannot be edited";
+	private final static String CONTRACT_ACTIVE_CAN_NOT_UPDATE = "status of the contract (%s) is %s, it can not be updated";
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 
@@ -199,6 +201,7 @@ public class ContractApi extends BaseApi{
 		}
 	}
 	public void updateContract(ContractDto dto) {
+		
 		//check if date end great than date begin
 		if(dto.getEndDate()!=null && dto.getBeginDate()!=null && dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
@@ -214,6 +217,11 @@ public class ContractApi extends BaseApi{
 		}
 		if (contract == null)
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
+		
+		if(contract.getStatus().equalsIgnoreCase(ContractStatusEnum.ACTIVE.toString())) {
+			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_UPDATE, contract.getCode(), contract.getStatus()));
+		}
+		
 		//check the status of the contract
 		if (ContractStatusEnum.CLOSED.toString().equals(contract.getStatus())) {
 			throw new MeveoApiException(CONTRACT_STATUS_CLOSED);
