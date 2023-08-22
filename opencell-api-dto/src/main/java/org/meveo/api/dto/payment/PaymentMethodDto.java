@@ -394,8 +394,10 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
             break;   
         case CASH:
         	pmEntity = new CashPaymentMethod(disabledBool, alias, disabledBool, customerAccount, userId);
+            break;
         case SIPS:
             pmEntity = new SipsPaymentMethod(disabledBool, alias, disabledBool, customerAccount, userId);
+            break;
         default:
             break;
         }
