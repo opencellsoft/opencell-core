@@ -695,7 +695,7 @@ public class CpqQuoteApi extends BaseApi {
 
         int i = 0;
         for (QuoteArticleLine quoteArticleLine : quoteVersion.getQuoteArticleLines()) {
-            for (QuotePrice quotePrice : quoteArticleLine.getQuotePrices()) {
+            for (QuotePrice quotePrice : quoteArticleLine.getQuotePrices().stream().filter(e -> PriceLevelEnum.QUOTE.equals(e.getPriceLevelEnum())).collect(Collectors.toList())) {
                 Tax tax = taxService.findTaxByPercent(quotePrice.getTaxRate());
 
                 TaxDTO taxDTO = mapTaxesIndexes.get(quotePrice.getTaxRate().toString());
