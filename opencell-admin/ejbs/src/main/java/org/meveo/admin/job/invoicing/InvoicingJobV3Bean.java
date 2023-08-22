@@ -8,6 +8,7 @@ import static org.meveo.model.billing.BillingProcessTypesEnum.AUTOMATIC;
 import static org.meveo.model.billing.BillingProcessTypesEnum.FULL_AUTOMATIC;
 import static org.meveo.model.billing.BillingRunStatusEnum.DRAFT_INVOICES;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.REJECTED;
@@ -112,6 +113,7 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 		Map<String, Object> filters = new HashedMap();
 		if (!billingRunIds.isEmpty()) {
 			filters.put("inList id", billingRunIds);
+			filters.put("ne status", OPEN);
 		} else {
 			filters.put("status", INVOICE_LINES_CREATED);
 		}
