@@ -47,30 +47,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @Stateless
-public class SipsXmlGeneratorJobBean extends IteratorBasedJobBean<PaymentItem> {
-
-    @Inject
-    private CustomerAccountService customerAccountService;
-
-    @Inject
-    private PaymentGatewayService paymentGatewayService;
-
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
-
-    /** The account operation service. */
-    @Inject
-    private AccountOperationService accountOperationService;
-
-    @Inject
-    private PaymentService paymentService;
-
-    private static BigDecimal oneHundred = new BigDecimal("100");
-
-    /**
-     * Operation category - Job execution parameter
-     */
-    private OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
+public class SipsXmlGeneratorJobBean extends IteratorBasedJobBean<SipsXmlGeneratorJobBean.SipsItem> {
 
     /**
      * Payment method type - Job execution parameter
@@ -138,7 +115,7 @@ public class SipsXmlGeneratorJobBean extends IteratorBasedJobBean<PaymentItem> {
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of Account operation ids
      */
-    private Optional<Iterator<PaymentItem>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+    private Optional<Iterator<SipsItem>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
         operationCategory = OperationCategoryEnum.CREDIT;
         paymentMethodType = PaymentMethodEnum.CARD;
@@ -303,12 +280,7 @@ public class SipsXmlGeneratorJobBean extends IteratorBasedJobBean<PaymentItem> {
         return null;
     }
 
-    /**
-     * Stores payment job iteration data
-     * 
-     * @author Andrius Karpavicius
-     */
-    public class PaymentItem implements Serializable, IEntity {
+    public class SipsItem implements Serializable, IEntity {
 
         private static final long serialVersionUID = -150870412565824278L;
 
@@ -316,11 +288,11 @@ public class SipsXmlGeneratorJobBean extends IteratorBasedJobBean<PaymentItem> {
         public Long accountOperationId;
         public Long amountToPay;
 
-        public PaymentItem() {
+        public SipsItem() {
 
         }
 
-        public PaymentItem(Long customerAccountId, Long accountOperationId, Long amountToPay) {
+        public SipsItem(Long customerAccountId, Long accountOperationId, Long amountToPay) {
             super();
             this.customerAccountId = customerAccountId;
             this.accountOperationId = accountOperationId;
