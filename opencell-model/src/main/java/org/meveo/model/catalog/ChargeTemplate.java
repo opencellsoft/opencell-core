@@ -786,4 +786,191 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     public void setPricePlans(Set<PricePlanMatrix> pricePlans) {
         this.pricePlans = pricePlans;
     }
+
+	public Map<TradingLanguage, String> getParameter1TranslatedDescriptions() {
+		return parameter1TranslatedDescriptions;
+	}
+
+	public void setParameter1TranslatedDescriptions(Map<TradingLanguage, String> parameter1TranslatedDescriptions) {
+		this.parameter1TranslatedDescriptions = parameter1TranslatedDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameter2TranslatedDescriptions() {
+		return parameter2TranslatedDescriptions;
+	}
+
+	public void setParameter2TranslatedDescriptions(Map<TradingLanguage, String> parameter2TranslatedDescriptions) {
+		this.parameter2TranslatedDescriptions = parameter2TranslatedDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameter3TranslatedDescriptions() {
+		return parameter3TranslatedDescriptions;
+	}
+
+	public void setParameter3TranslatedDescriptions(Map<TradingLanguage, String> parameter3TranslatedDescriptions) {
+		this.parameter3TranslatedDescriptions = parameter3TranslatedDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameterExtraTranslatedDescriptions() {
+		return parameterExtraTranslatedDescriptions;
+	}
+
+	public void setParameterExtraTranslatedDescriptions(Map<TradingLanguage, String> parameterExtraTranslatedDescriptions) {
+		this.parameterExtraTranslatedDescriptions = parameterExtraTranslatedDescriptions;
+	}
+
+	public String getParameter1Description() {
+		return parameter1Description;
+	}
+
+	public void setParameter1Description(String parameter1Description) {
+		this.parameter1Description = parameter1Description;
+	}
+
+	public String getParameter2Description() {
+		return parameter2Description;
+	}
+
+	public void setParameter2Description(String parameter2Description) {
+		this.parameter2Description = parameter2Description;
+	}
+
+	public String getParameter3Description() {
+		return parameter3Description;
+	}
+
+	public void setParameter3Description(String parameter3Description) {
+		this.parameter3Description = parameter3Description;
+	}
+
+	public String getParameterExtraDescription() {
+		return parameterExtraDescription;
+	}
+
+	public void setParameterExtraDescription(String parameterExtraDescription) {
+		this.parameterExtraDescription = parameterExtraDescription;
+	}
+
+	public ParameterFormat getParameter1Format() {
+		return parameter1Format;
+	}
+
+	public void setParameter1Format(ParameterFormat parameter1Format) {
+		this.parameter1Format = parameter1Format;
+	}
+
+	public ParameterFormat getParameter2Format() {
+		return parameter2Format;
+	}
+
+	public void setParameter2Format(ParameterFormat parameter2Format) {
+		this.parameter2Format = parameter2Format;
+	}
+
+	public ParameterFormat getParameter3Format() {
+		return parameter3Format;
+	}
+
+	public void setParameter3Format(ParameterFormat parameter3Format) {
+		this.parameter3Format = parameter3Format;
+	}
+
+	public ParameterFormat getParameterExtraFormat() {
+		return parameterExtraFormat;
+	}
+
+	public void setParameterExtraFormat(ParameterFormat parameterExtraFormat) {
+		this.parameterExtraFormat = parameterExtraFormat;
+	}
+
+	public boolean isParameter1IsMandatory() {
+		return parameter1IsMandatory;
+	}
+
+	public void setParameter1IsMandatory(boolean parameter1IsMandatory) {
+		this.parameter1IsMandatory = parameter1IsMandatory;
+	}
+
+	public boolean isParameter1IsHidden() {
+		return parameter1IsHidden;
+	}
+
+	public void setParameter1IsHidden(boolean parameter1IsHidden) {
+		this.parameter1IsHidden = parameter1IsHidden;
+	}
+
+	public boolean isParameter2IsMandatory() {
+		return parameter2IsMandatory;
+	}
+
+	public void setParameter2IsMandatory(boolean parameter2IsMandatory) {
+		this.parameter2IsMandatory = parameter2IsMandatory;
+	}
+
+	public boolean isParameter2IsHidden() {
+		return parameter2IsHidden;
+	}
+
+	public void setParameter2IsHidden(boolean parameter2IsHidden) {
+		this.parameter2IsHidden = parameter2IsHidden;
+	}
+
+	public boolean isParameter3IsMandatory() {
+		return parameter3IsMandatory;
+	}
+
+	public void setParameter3IsMandatory(boolean parameter3IsMandatory) {
+		this.parameter3IsMandatory = parameter3IsMandatory;
+	}
+
+	public boolean isParameter3IsHidden() {
+		return parameter3IsHidden;
+	}
+
+	public void setParameter3IsHidden(boolean parameter3IsHidden) {
+		this.parameter3IsHidden = parameter3IsHidden;
+	}
+
+	public boolean isParameterExtraIsHidden() {
+		return parameterExtraIsHidden;
+	}
+
+	public void setParameterExtraIsHidden(boolean parameterExtraIsHidden) {
+		this.parameterExtraIsHidden = parameterExtraIsHidden;
+	}
+
+	public Map<TradingLanguage, String> getParameter1TranslatedLongDescriptions() {
+		return parameter1TranslatedLongDescriptions;
+	}
+
+	public void setParameter1TranslatedLongDescriptions(Map<TradingLanguage, String> parameter1TranslatedLongDescriptions) {
+		this.parameter1TranslatedLongDescriptions = parameter1TranslatedLongDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameter2TranslatedLongDescriptions() {
+		return parameter2TranslatedLongDescriptions;
+	}
+
+	public void setParameter2TranslatedLongDescriptions(Map<TradingLanguage, String> parameter2TranslatedLongDescriptions) {
+		this.parameter2TranslatedLongDescriptions = parameter2TranslatedLongDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameter3TranslatedLongDescriptions() {
+		return parameter3TranslatedLongDescriptions;
+	}
+
+	public void setParameter3TranslatedLongDescriptions(Map<TradingLanguage, String> parameter3TranslatedLongDescriptions) {
+		this.parameter3TranslatedLongDescriptions = parameter3TranslatedLongDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameterExtraTranslatedLongDescriptions() {
+		return parameterExtraTranslatedLongDescriptions;
+	}
+
+	public void setParameterExtraTranslatedLongDescriptions(
+			Map<TradingLanguage, String> parameterExtraTranslatedLongDescriptions) {
+		this.parameterExtraTranslatedLongDescriptions = parameterExtraTranslatedLongDescriptions;
+	}
+    
+    
 }
