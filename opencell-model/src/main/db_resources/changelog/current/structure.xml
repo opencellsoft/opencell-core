@@ -17281,4 +17281,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="#INTRD-18008_20230823" author="aelmalki">
+    	<addColumn tableName="billing_invoice">
+			<column name="sips_batch_archive_name" type="varchar(255)" />
+    	</addColumn>
+    </changeSet>
+
 </databaseChangeLog>
