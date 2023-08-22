@@ -48,7 +48,11 @@ public class QuoteLine {
 
 
         }
-        this.prices = aggregatePricesPerType(line.getQuotePrices(), currencies, mapTaxIndexes);
+        List<QuotePrice> quotePrices = line.getQuotePrices()
+                                           .stream()
+                                           .filter(e -> PriceLevelEnum.QUOTE.equals(e.getPriceLevelEnum()))
+                                           .collect(Collectors.toList());
+        this.prices = aggregatePricesPerType(quotePrices, currencies, mapTaxIndexes);
         this.offer= offer;
         
         
