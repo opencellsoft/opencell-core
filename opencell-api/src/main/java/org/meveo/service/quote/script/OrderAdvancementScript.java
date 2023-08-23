@@ -63,8 +63,9 @@ OrderAdvancementScript extends ModuleScript {
         }
         // Force fetch nested entities to avoid LazyInitializationException
         // All those nested entities are not fetched : quote, orderType, invoices, orderLots, orderPrices
-        log.info("Process CommericalOrder [quote={}, orderType={}]"
-                , commercialOrder.getQuote().getCode(), commercialOrder.getOrderType().getCode());
+        log.info("Process CommericalOrder [quote='{}', orderType='{}']",
+                commercialOrder.getQuote() != null ? commercialOrder.getQuote().getCode() : "not specified",
+                commercialOrder.getOrderType() != null ? commercialOrder.getOrderType().getCode() : "not specified");
 
         Integer orderProgress = commercialOrder.getOrderProgress() != null ? commercialOrder.getOrderProgress() : 0;
 
