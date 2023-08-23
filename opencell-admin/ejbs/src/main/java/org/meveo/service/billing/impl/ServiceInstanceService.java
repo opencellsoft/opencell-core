@@ -740,9 +740,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             } else if (applyReimbursment && chargeToDateOnTermination.before(chargedToDate)) {
 
-                boolean anticipatedTermination = recurringChargeInstance.isAnticipateEndOfSubscription() && woCanceled;
                 try {
-                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber, anticipatedTermination);
+                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
