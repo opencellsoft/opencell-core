@@ -272,6 +272,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			if(!isVirtual) {
     				discountWalletOperation.setSubscription(subscription);
     				discountWalletOperation.setUserAccount(subscription.getUserAccount());
+    				if(walletOperation != null) {
+    					walletOperation.setDiscountedAmount(discountedAmount);
+    				}
     				if(walletOperation != null && walletOperation.getId() != null) {
     					discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());
 					    discountWalletOperation.setUuid(null);
