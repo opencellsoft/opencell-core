@@ -2086,6 +2086,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (discountsTag != null) {
             header.appendChild(discountsTag);
         }
+
+        Element externalPurchaseOrder = doc.createElement("externalPurchaseOrder");
+        externalPurchaseOrder.appendChild(createTextNode(doc, invoice.getExternalPurchaseOrderNumber()));
+        header.appendChild(externalPurchaseOrder);
+
         ofNullable(createSubTotals(doc, invoice.getInvoiceType(),
                 invoice.getInvoiceLines(), invoice.getBillingAccount().getTradingLanguage()))
                 .ifPresent(header::appendChild);
@@ -2728,6 +2733,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected List<Subscription> getSubscriptionsFromIls(List<InvoiceLine> invoiceLines) {
         List<Subscription> subscriptions = new ArrayList<>();
+
+        if (CollectionUtils.isEmpty(invoiceLines)) {
+            return subscriptions;
+        }
+
         Set<Long> subIds = new HashSet<>();
         for (InvoiceLine invoiceLine : invoiceLines) {
             if (invoiceLine.getSubscription() != null && !subIds.contains(invoiceLine.getSubscription().getId())) {

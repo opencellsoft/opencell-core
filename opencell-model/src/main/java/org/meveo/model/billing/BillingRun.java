@@ -49,8 +49,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IReferenceEntity;
 import org.meveo.model.ObservableEntity;
@@ -59,6 +59,8 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+
+import static javax.persistence.FetchType.LAZY;
 
 /**
  * Billing run
@@ -80,7 +82,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
         @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code "),
         @NamedQuery(name = "BillingRun.nullifyBillingRunXMLExecutionResultIds", query = "update BillingRun br set br.xmlJobExecutionResultId = null where br = :billingRun"),
         @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") })
-public class BillingRun extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
+public class BillingRun extends EnableEntity implements ICustomFieldEntity, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -454,6 +456,14 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_orders")
     private boolean ignoreOrders = true;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "pre_report_auto_on_create")
+    private boolean preReportAutoOnCreate = false;
+
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "pre_invoicing_report_id")
+    private BillingRunReport preInvoicingReport;
 
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -1081,5 +1091,20 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 	public void setIgnoreOrders(boolean ignoreOrders) {
 		this.ignoreOrders = ignoreOrders;
 	}
-    
+
+    public boolean isPreReportAutoOnCreate() {
+        return preReportAutoOnCreate;
+    }
+
+    public void setPreReportAutoOnCreate(boolean preReportAutoOnCreate) {
+        this.preReportAutoOnCreate = preReportAutoOnCreate;
+    }
+
+    public BillingRunReport getPreInvoicingReport() {
+        return preInvoicingReport;
+    }
+
+    public void setPreInvoicingReport(BillingRunReport preInvoicingReport) {
+        this.preInvoicingReport = preInvoicingReport;
+    }
 }

@@ -31,11 +31,13 @@ import javax.ws.rs.BadRequestException;
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.ordering.services.ApiService;
+
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.RatedTransactionAction;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -143,15 +145,18 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                     invoiceLineJobParams.put(INVOICE_LIENS_JOB_PARAMETERS,
                             asList(new EntityReferenceWrapper(BillingRun.class.getName(),
                                     null, billingRun.getReferenceCode())));
-                    JobInstance invoicingJob = jobInstanceService.refreshOrRetrieve(invoiceLineJob.getFollowingJob());
-                    if (invoicingJob != null && invoicingJob.getCfValues() != null) {
-                        if (invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS) != null
-                                && !((List) invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS)).isEmpty()) {
-                            ((List) invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS)).clear();
+                    JobInstance invoicingJob = invoiceLineJob.getFollowingJob() != null
+                            ? jobInstanceService.refreshOrRetrieve(invoiceLineJob.getFollowingJob())
+                            : jobInstanceService.findByCode(INVOICING_JOB_CODE);
+                    if (invoicingJob != null) {
+                        if (invoicingJob.getCfValues() == null) {
+                            invoicingJob.setCfValues(new CustomFieldValues());
                         }
                         invoicingJob.getCfValues().setValue(INVOICING_JOB_PARAMETERS,
                                 asList(new EntityReferenceWrapper(BillingRun.class.getName(),
                                         null, billingRun.getReferenceCode())));
+                        invoiceLineJob.setFollowingJob(invoicingJob);
+                        jobInstanceService.update(invoiceLineJob);
                         jobInstanceService.update(invoicingJob);
                     }
                     executeJob(invoiceLineJob, invoiceLineJobParams);
@@ -280,4 +285,35 @@ public class BillingRunApiService implements ApiService<BillingRun> {
              linkedInvoiceService.removeLinkedAdvances(invoices.stream().map(Invoice::getId).collect(Collectors.toList()));
          }
 	 }
+	 
+	 public Optional<BillingRun> enableBillingRun(Long billingRunId) {
+	        BillingRun billingRun = billingRunService.findById(billingRunId);
+	        if (billingRun == null) {
+	            return empty();
+	        }
+	        try {
+	            billingRun.setActive(true);
+	            billingRunService.update(billingRun);
+	            return of(billingRun);
+	        } catch (Exception exception) {
+	            throw new BusinessException(exception.getMessage());
+	        }
+		}
+	 
+	 public Optional<BillingRun> disableBillingRun(Long billingRunId) {
+	        BillingRun billingRun = billingRunService.findById(billingRunId);
+	        if (billingRun == null) {
+	            return empty();
+	        }
+	        if (billingRun.getStatus() == VALIDATED || billingRun.getStatus() == CANCELLING || billingRun.getStatus() == CANCELED) {
+	            throw new BadRequestException("The billing run with status " + billingRun.getStatus() + " cannot be disabled");
+	        }
+	        try {
+	        	billingRun.setDisabled(true);
+	            billingRunService.update(billingRun);
+	            return of(billingRun);
+	        } catch (Exception exception) {
+	            throw new BusinessException(exception.getMessage());
+	        }
+		}
 }

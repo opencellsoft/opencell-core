@@ -115,6 +115,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                 createMandate(ddpaymentMethod);
             }
         }
+        if (paymentMethod instanceof DDPaymentMethod) {        	
+	        List<DDPaymentMethod> ddPaymentMethods = paymentMethod.getCustomerAccount().getDDPaymentMethods();
+	        customerAccountService.validatePaymentMethod(paymentMethod.getCustomerAccount().getPreferredPaymentMethod(), ddPaymentMethods);
+        }
         super.create(paymentMethod);
 
         // Mark other payment methods as not preferred
@@ -252,6 +256,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                     throw new BusinessException("Cant mark expired card as preferred");
                 }
             }
+        }
+        if (entity instanceof DDPaymentMethod) {        	
+	        List<DDPaymentMethod> ddPaymentMethods = entity.getCustomerAccount().getDDPaymentMethods();
+	        customerAccountService.validatePaymentMethod(entity.getCustomerAccount().getPreferredPaymentMethod(), ddPaymentMethods);
         }
         PaymentMethod paymentMethod = super.update(entity);
 

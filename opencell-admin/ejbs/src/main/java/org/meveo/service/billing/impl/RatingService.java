@@ -119,6 +119,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
 import org.meveo.model.securityDeposit.FinanceSettings;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -203,6 +204,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 	
 	@Inject
 	private FinanceSettingsService financeSettingsService;
+	
+	@Inject
+    protected TradingCurrencyService tradingCurrencyService;
     
     /**
      * @param level level enum
@@ -727,9 +731,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         bareWalletOperation.setContractLine(contractItem);
 
                         // Discount rate is hardcoded in a contract
-                        if (contractItem.getRate() != null && contractItem.getRate() > 0) {
+                        if (contractItem.getRate() != null) {
                             discountRate = BigDecimal.valueOf(contractItem.getRate());
-                            amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
+                            amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                             if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !separateDiscount) {
                                 unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
                             }
@@ -739,7 +743,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlan(), bareWalletOperation);
                             if (pricePlanMatrixLine != null) {
                                 discountRate = pricePlanMatrixLine.getValue();
-                                if (discountRate != null && discountRate.compareTo(BigDecimal.ZERO) > 0) {
+                                if (discountRate != null) {
                                     amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                                     if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !separateDiscount) {
                                         unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
@@ -829,6 +833,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     if(unitPrices == null) {
                         throw new BusinessException("Couldn't find a price for charge " +  bareWalletOperation.getChargeInstance().getCode() + " : no price version and price plan amount is null");
                     }
+                    bareWalletOperation.setPriceplan(pricePlan);
                     unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
                     unitPriceWithTax = unitPrices.getAmountWithTax();
                     bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
@@ -1598,7 +1603,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @return Optional<Amounts> return computed Amounts or empty if no price plan found
      */
     public Optional<Amounts> determineTransactionalUnitPrice(PricePlanMatrix pricePlan, WalletOperation walletOperation) {
-        final TradingCurrency tradingCurrency = walletOperation.getBillingAccount().getTradingCurrency();
+    	final TradingCurrency tradingCurrency = tradingCurrencyService.refreshOrRetrieve(walletOperation.getBillingAccount().getTradingCurrency());
         final Currency functionalCurrency = appProvider.getCurrency();
         if (functionalCurrency != null && functionalCurrency.getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
             return empty();

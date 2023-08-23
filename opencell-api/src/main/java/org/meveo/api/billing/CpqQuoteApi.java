@@ -695,7 +695,7 @@ public class CpqQuoteApi extends BaseApi {
 
         int i = 0;
         for (QuoteArticleLine quoteArticleLine : quoteVersion.getQuoteArticleLines()) {
-            for (QuotePrice quotePrice : quoteArticleLine.getQuotePrices()) {
+            for (QuotePrice quotePrice : quoteArticleLine.getQuotePrices().stream().filter(e -> PriceLevelEnum.QUOTE.equals(e.getPriceLevelEnum())).collect(Collectors.toList())) {
                 Tax tax = taxService.findTaxByPercent(quotePrice.getTaxRate());
 
                 TaxDTO taxDTO = mapTaxesIndexes.get(quotePrice.getTaxRate().toString());
@@ -1938,9 +1938,12 @@ public class CpqQuoteApi extends BaseApi {
                     .stream()
                     .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(durationOrQuantityAttribute.getCode()))
                     .findAny();
-            if(productQuoteAttribute.isPresent())
+            if(productQuoteAttribute.isPresent()) {
                 durationTermInMonth = getDurationTermInMonth(productQuoteAttribute);
             }
+        } else if(quoteOffer.getOfferTemplate().getSubscriptionRenewal() != null) {
+            durationTermInMonth = quoteOffer.getOfferTemplate().getSubscriptionRenewal().getInitialyActiveFor();
+        }
         return durationTermInMonth != null ? durationTermInMonth : defaultValue != null ? defaultValue : 1;
     }
 

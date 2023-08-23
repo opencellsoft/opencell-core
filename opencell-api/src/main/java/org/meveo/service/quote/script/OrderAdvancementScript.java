@@ -61,6 +61,12 @@ OrderAdvancementScript extends ModuleScript {
         if(commercialOrder == null) {
             throw new BusinessException("No Commercial order is found");
         }
+        // Force fetch nested entities to avoid LazyInitializationException
+        // All those nested entities are not fetched : quote, orderType, invoices, orderLots, orderPrices
+        log.info("Process CommericalOrder [quote='{}', orderType='{}']",
+                commercialOrder.getQuote() != null ? commercialOrder.getQuote().getCode() : "not specified",
+                commercialOrder.getOrderType() != null ? commercialOrder.getOrderType().getCode() : "not specified");
+
         Integer orderProgress = commercialOrder.getOrderProgress() != null ? commercialOrder.getOrderProgress() : 0;
 
         if (commercialOrder.getInvoicingPlan() != null) {
@@ -199,7 +205,7 @@ OrderAdvancementScript extends ModuleScript {
                             	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
                                 serviceSingleton.assignInvoiceNumber(invoice, true);
                             }
-                            if(rateToBill.intValue() != 100 && invoice.getInvoiceType() != null && invoice.getInvoiceType().getCode().equals("ADV")) {
+                            if(!isBillOver && invoice.getInvoiceType() != null && invoice.getInvoiceType().getCode().equals("ADV")) {
                                 BigDecimal amountWithTax = invoice.getInvoiceLines().stream().map(InvoiceLine::getAmountWithTax).reduce(BigDecimal.ZERO, BigDecimal::add);
                                 invoice.setInvoiceBalance(amountWithTax);
                             }
@@ -214,7 +220,7 @@ OrderAdvancementScript extends ModuleScript {
     }
 
     private void generateGlobalInvoice(CommercialOrder commercialOrder,List<Object[]>  groupedPricesToBill, Date nextDay, Date firstTransactionDate, Date invoiceDate, boolean isBillOver) {
-        createIlsAndInvoice(commercialOrder,groupedPricesToBill, BigDecimal.valueOf(100), nextDay, firstTransactionDate, invoiceDate, false, isBillOver);
+        createIlsAndInvoice(commercialOrder,groupedPricesToBill, BigDecimal.valueOf(100 - commercialOrder.getRateInvoiced()), nextDay, firstTransactionDate, invoiceDate, false, isBillOver);
     }
     
     private AccountingArticle getDefaultAccountingArticle() {

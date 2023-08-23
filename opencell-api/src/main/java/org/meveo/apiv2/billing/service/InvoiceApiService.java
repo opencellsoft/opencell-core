@@ -250,12 +250,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 			invoice.getInvoiceLines().add(invoiceLine);
 			result.addInvoiceLines(invoiceLineResource);
 		}
-
-		String listAdjustmentCode = paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ, ADJ_INV, ADJ_REF");
-		if (listAdjustmentCode.contains(invoice.getInvoiceType().getCode())) {
-			invoiceLinesService.validateAdjAmount(invoice);
-		}
-
 		invoiceService.calculateInvoice(invoice);
 		invoiceService.updateBillingRunStatistics(invoice);
 		result.skipValidation(invoiceLinesInput.getSkipValidation());
@@ -288,8 +282,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		}
 		// Populate Custom fields
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
-		// for adjustment
-		invoiceLine = invoiceLinesService.adjustment(invoiceLine, invoice);
         // Update Invoice Line
 		invoiceLinesService.updateInvoiceLine(invoiceLine, invoiceLineInput.getInvoiceLine(), discountPlan);
 		invoiceService.getEntityManager().flush();

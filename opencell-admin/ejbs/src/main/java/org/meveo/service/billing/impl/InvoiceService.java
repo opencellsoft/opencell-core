@@ -45,7 +45,6 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -206,6 +205,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
@@ -4034,6 +4034,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
 
+        subscription = subscriptionService.refreshOrRetrieve(subscription);
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             addApplicableDiscount(subscriptionApplicableDiscountPlanItems,  subscription.getDiscountPlanInstances(), billingAccount, customerAccount, invoice);
         }
@@ -4137,6 +4138,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
                     discountAggregates.add(discountAggregate);
                     otherDiscount = otherDiscount.add(discountAggregate.getAmountWithoutTax().abs());
+                    if (invoice.getDiscountPlan() != null && invoice.getDiscountPlan().getStatus() != DiscountPlanStatusEnum.IN_USE.IN_USE) {
+                        invoice.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE.IN_USE);
+                    }
                 }
             }
 
@@ -7055,12 +7059,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+            duplicateInvoiceLine.setLinkedInvoiceLine(invoiceLine); // Add linked adjusted invoiceLine
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
-        }
-
-        if (isAdjustment) {
-            invoiceLinesService.validateAdjAmount(invoiceLines, invoice);
         }
 
         return duplicateInvoice;
@@ -7147,12 +7148,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+            duplicateInvoiceLine.setLinkedInvoiceLine(invoiceLine); // Add linked adjusted invoiceLine
             duplicateInvoiceLine.setRatedTransactions(invoiceLine.getRatedTransactions());
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
-
-        invoiceLinesService.validateAdjAmount(invoiceLines, invoice);
 
         return duplicateInvoice;
     }
@@ -7700,5 +7700,32 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		entityUpdatedEventProducer.fire(invoice);
 		return invoice;
 	}
-	
+
+    public void validateAdjAmount(Invoice newInvoice) {
+        // Check global Invoice Amount
+        LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(newInvoice.getId());
+        if (linkedInvoice != null) {
+            Invoice srcInvoice = linkedInvoice.getInvoice();
+
+            // check amount with tax
+            if (newInvoice.getAmountWithTax().compareTo(srcInvoice.getAmountWithTax()) > 0) {
+                throw new BusinessException("Adjustment Amount With Tax '"+ newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
+                        +"' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())+"'");
+            }
+        }
+
+        // Check invoice line
+        if (CollectionUtils.isNotEmpty(newInvoice.getInvoiceLines())) {
+            newInvoice.getInvoiceLines().forEach(invoiceLine -> {
+                if (invoiceLine.getLinkedInvoiceLine() != null) {
+                    // check amount with tax
+                    if (invoiceLine.getAmountWithTax().compareTo(invoiceLine.getLinkedInvoiceLine().getAmountWithTax()) > 0) {
+                        throw new BusinessException("Adjustment Line Amount With Tax '"+ invoiceLine.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
+                                +"' is greater than Linked Line '" + invoiceLine.getLinkedInvoiceLine().getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())+"'");
+                    }
+                }
+            });
+        }
+    }
+
 }

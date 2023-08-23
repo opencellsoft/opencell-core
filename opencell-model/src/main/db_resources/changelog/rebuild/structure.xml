@@ -478,6 +478,9 @@
         <createSequence sequenceName="cat_trading_discount_plan_item_seq" startValue="1" />
         <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
         <createSequence sequenceName="cpq_trading_contract_item_seq" startValue="1" />
+        <createSequence sequenceName="bill_run_report_seq" startValue="1" />
+        <createSequence sequenceName="bill_account_amount_seq" startValue="1" />
+        <createSequence sequenceName="bill_offer_amount_seq" startValue="1" />
     </changeSet>
 
 
@@ -2770,6 +2773,11 @@
 			<column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
 			<column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
 			<column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+            <column name="pre_report_auto_on_create" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="pre_invoicing_report_id" type="${cast.long}" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -3163,6 +3171,7 @@
             <column name="auto_matching" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="external_purchase_order_number" type="varchar(100)" />
             <column name="ubl_reference" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="sips_batch_archive_name" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -10903,6 +10912,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="adjustment_status" type="varchar(50)"/>
             <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="linked_invoice_line_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -12657,6 +12667,91 @@
 			</column>
 		</createTable>
 	</changeSet>
+
+    <changeSet id="#INTRD-17632_2023_08_09_rebuild" author="zbariki">
+        <createTable tableName="billing_offer_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_offer_amount_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="offer_id" type="${cast.long}"/>
+            <column name="amount" type="numeric(23, 12)"/>
+            <column name="billing_run_report_id" type="${cast.long}"/>
+        </createTable>
+        <createTable tableName="billing_account_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_account_amount_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="billing_account_id" type="${cast.long}"/>
+            <column name="amount" type="numeric(23, 12)"/>
+            <column name="billing_run_report_id" type="${cast.long}"/>
+        </createTable>
+
+        <createTable tableName="billing_run_report">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_run_report_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="billing_run_id" type="${cast.long}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="billing_accounts_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subscription_accounts_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rated_transaction_accounts_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="one_shot_transactions_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recurring_transactions_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usage_transactions_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="one_shot_total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recurring_total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usage_total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 
     <!-- end tables -->
 
@@ -17352,7 +17447,32 @@
                                  referencedColumnNames="id"/>
 
     </changeSet>
-    
+
+    <changeSet id="#INTRD-17632_2023_08_09_fk" author="zbariki">
+        <addForeignKeyConstraint baseTableName="billing_offer_amount" baseColumnNames="offer_id"
+                                 constraintName="billing_offer_amount_offer_id_fk"
+                                 referencedTableName="cat_offer_template" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_offer_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="billing_offer_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_account_amount" baseColumnNames="billing_account_id"
+                                 constraintName="billing_account_amount_offer_id_fk"
+                                 referencedTableName="billing_billing_account" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_account_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="billing_account_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_run_report" baseColumnNames="billing_run_id"
+                                 constraintName="billing_run_report_billing_run_id_fk"
+                                 referencedTableName="billing_billing_run" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_billing_run" baseColumnNames="pre_invoicing_report_id"
+                                 constraintName="billing_billing_run_pre_invoicing_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+    </changeSet>
+
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -20489,6 +20609,14 @@
 	</changeSet>
     
 
+    <changeSet id="#INTRD-16955_20230816-fk" author="aelmalki">
+        <addForeignKeyConstraint baseColumnNames="linked_invoice_line_id" baseTableName="billing_invoice_line"
+                                 constraintName="fk_linked_invoice_line" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="billing_invoice_line"/>
+    </changeSet>
+
 
    	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA."/>
    	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA."/>
@@ -20579,7 +20707,11 @@
     <changeSet id="#INTRD-17451_20230731" author="ZBariki" />
     <changeSet id="#INTRD-17280_20230808" author="AdilElJaouhari" />
     <changeSet id="INTRD-17544_20230817" author="hatimOUDAD"/>
-    
+    <changeSet id="INTRD-17134_20230704" author="TarikFA." />
+	<changeSet id="#INTRD-16955_20230816" author="aelmalki" />
+	<changeSet id="#INTRD-17954_20230818" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-17632_2023_08_09" author="zbariki" />
+	<changeSet id="#INTRD-18008_20230823" author="aelmalki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

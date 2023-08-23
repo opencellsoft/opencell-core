@@ -326,24 +326,25 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
                 versions.stream()
                         .filter(ppmv -> !pricePlanMatrixVersion.getId().equals(ppmv.getId()) && VersionStatusEnum.PUBLISHED.equals(ppmv.getStatus()))
                         .forEach(ppmv -> {
-                            if(ppmv.getValidity() != null&& ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false)) {
+                            if(ppmv.getValidity() == null || (ppmv.getValidity() != null && ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersion.getValidity(), false))) {
                                 var formatter = new SimpleDateFormat("dd/MM/yyyy");
-                                String sourceFrom = pricePlanMatrixVersion.getValidity().getFrom() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getFrom()) : "";
-                                String sourceTo = pricePlanMatrixVersion.getValidity().getTo() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getTo()) : "";
-                                String eFrom = ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
-                                String eTo = ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
+                                String sourceFrom = pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getFrom() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getFrom()) : "";
+                                String sourceTo = pricePlanMatrixVersion.getValidity() != null && pricePlanMatrixVersion.getValidity().getTo() != null ? formatter.format(pricePlanMatrixVersion.getValidity().getTo()) : "";
+                                String eFrom = ppmv.getValidity() != null && ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
+                                String eTo = ppmv.getValidity() != null && ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
                                 // throw new MeveoApiException("The current period is overlapping date with [" + eFrom + " - "+ eTo +"]");
-                                ChargeTemplate chargeTemplate = pricePlanMatrixVersion.getPricePlanMatrix()
+                                Optional<ChargeTemplate> chargeTemplate = ppmv.getPricePlanMatrix()
                                         .getChargeTemplates()
-                                        .iterator()
-                                        .next();
+                                        .stream()
+                                        .filter(pricePlanMatrix.getChargeTemplates()::contains)
+                                        .findFirst();
                                 throw new MeveoApiException(String.format("Validity overlapping is forbidden for PUBLISHED price versions linked to the same charge. " +
                                                 "Price version [id=%s,label=%s,validity.from=%s,validity.to=%s] " +
                                                 "would overlap with price version [id=%s,label=%s,validity.from=%s,validity.to=%s] " +
                                                 "in charge [id=%s,code=%s,description=%s]",
                                         pricePlanMatrixVersion.getId(), pricePlanMatrixVersion.getLabel(), sourceFrom, sourceTo,
                                         ppmv.getId(), ppmv.getLabel(), eFrom, eTo,
-                                        chargeTemplate.getId(), chargeTemplate.getCode(), chargeTemplate.getDescription()));
+                                        chargeTemplate.get().getId(), chargeTemplate.get().getCode(), chargeTemplate.get().getDescription()));
                             }
                         });
             }

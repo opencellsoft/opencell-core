@@ -254,42 +254,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		
 		return entity;
     }
-    
-    public void validateAdjAmount(List<InvoiceLine> invoiceLines, Invoice srcInvoice) {
-        BigDecimal adjAmountWithTax = getAdjustementAmounts(srcInvoice.getId());
-        if (adjAmountWithTax != null) {
-            if (adjAmountWithTax.compareTo(srcInvoice.getAmountWithTax()) >= 0) {
-                throw new BusinessException("One or more adjustments are already linked to the invoice");
-            }
-        } else {
-            // in case where no link found for the invoice in linkedInvoice with type ADJUSTEMENT, we can create ADJ with no problem
-            return;
-        }
-
-        BigDecimal possibleAdjAmount = srcInvoice.getAmountWithTax().subtract(adjAmountWithTax);
-
-        BigDecimal sumInvoiceLines = BigDecimal.ZERO;
-
-        for (InvoiceLine invoiceLine : invoiceLines) {
-            sumInvoiceLines = sumInvoiceLines.add(invoiceLine.getAmountWithTax());
-        }
-
-        if (sumInvoiceLines.compareTo(possibleAdjAmount) > 0) {
-            throw new BusinessException("The selected invoice line amount is greater than the possible remaining amount on invoice : " + new DecimalFormat("0.00").format(possibleAdjAmount));
-        }
-    }
-
-    /**
-     * Used for adding IL in new Invoice : we must validate that the source linkedInvoice amount are not exceeded
-     * @param newInvoice new ADJ Invoice created based on Commercial invoice
-     */
-    public void validateAdjAmount(Invoice newInvoice) {
-        // Check global Invoice Amount
-        LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(newInvoice.getId());
-        if (linkedInvoice != null) {
-            validateAdjAmount(newInvoice.getInvoiceLines(), linkedInvoice.getInvoice());
-        }
-    }
 
     private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
     	var isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discount,invoice!=null?invoice.getInvoiceDate():null);
@@ -1544,10 +1508,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return getEntityManager().createNamedQuery("InvoiceLine.getMaxIlAmountAdj").setParameter("invoiceId", id).getResultList();
     }
 
-    public BigDecimal getAdjustementAmounts(Long invoiceId) {
-        return (BigDecimal) getEntityManager().createNamedQuery("InvoiceLine.getAdjustmentAmount").setParameter("ID_INVOICE", invoiceId).getSingleResult();
-    }
-
     public List<BillingAccount> findBillingAccountsBy(List<Long> invoiceLinesIds) {
         final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
         if (invoiceLinesIds.size() > maxValue) {
@@ -1564,15 +1524,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .createNamedQuery("InvoiceLine.BillingAccountByILIds")
                 .setParameter("ids", invoiceLinesIds)
                 .getResultList();
-    }
-    
-    public InvoiceLine adjustment(InvoiceLine invoiceLine, Invoice invoice) {
-        InvoiceType defaultAdjustement = invoiceTypeService.getDefaultAdjustement();
-        InvoiceType invoiceTypeOfInvoice = invoiceLine.getInvoice().getInvoiceType();
-        if(invoiceTypeOfInvoice.getId().equals(defaultAdjustement.getId())) {
-            validateAdjAmount(List.of(invoiceLine), invoice);
-        }
-        return invoiceLine;
     }
 
     private BillingAccount getBillingAccount(Invoice invoice, InvoiceLine invoiceLine) {

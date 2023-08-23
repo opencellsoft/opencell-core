@@ -21321,5 +21321,11 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>code = 'XML_Job'</where>
         </update>
     </changeSet>
+	
+	<changeSet id="INTRD-12463_20230821" author="aelmalki">
+        <update tableName="billing_invoice_configuration">
+			<column name="default_advanced_payment_article_id" valueComputed="(SELECT id FROM billing_accounting_article WHERE code = 'ADV-STD')" />
+		</update>
+    </changeSet>
 
 </databaseChangeLog>
