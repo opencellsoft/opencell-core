@@ -120,15 +120,6 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             return Optional.empty();
         }
 
-        Object[] convertSummary = getProcessingSummary();
-        minId = (Long) convertSummary[0];
-        maxId = (Long) convertSummary[1];
-
-        // No data at all to process
-        if (minId == null) {
-            return Optional.empty();
-        }
-
         // Default aggregation configuration from parameters set on BR
         boolean aggregationPerUnitPrice = (Boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE, false);
         DateAggregationOption dateAggregationOptions = (DateAggregationOption) DateAggregationOption
@@ -185,13 +176,14 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
                 aggregationConfiguration = defaultAggregationConfiguration;
             }
 
-            aggregationQueryInfo = invoiceLineAggregationService.getAggregationSummaryAndILDetailsQuery(currentBillingRun, aggregationConfiguration, statelessSession, maxId, incrementalInvoiceLines);
+            aggregationQueryInfo = invoiceLineAggregationService.getAggregationSummaryAndILDetailsQuery(currentBillingRun, aggregationConfiguration, statelessSession, incrementalInvoiceLines);
             nrOfAccounts = aggregationQueryInfo.getNumberOfBA();
 
-            jobExecutionResult.addReport("Billing run #" + billingRun.getId() + ": will process " + nrOfAccounts + " accounts");
+            jobExecutionResult.addReport("Billing run #" + billingRun.getId() + ": will process " + nrOfAccounts + " accounts" + (incrementalInvoiceLines ? " in append mode." : "."));
 
             // If no records found for a BR to process, continue to another BR
             if (nrOfAccounts.intValue() == 0) {
+                dropView();
                 if (isLastBRToProcess) {
                     closeBillingRun(jobExecutionResult);
                     return Optional.empty();
@@ -203,6 +195,10 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
             break;
         }
+
+        Object[] convertSummary = getProcessingSummary();
+        minId = (Long) convertSummary[0];
+        maxId = (Long) convertSummary[1];
 
         scrollableResults = aggregationQueryInfo.getQuery().setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun).setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
 
@@ -290,6 +286,11 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             statelessSession.close();
         }
 
+        dropView();
+    }
+
+    private void dropView() {
+
         EntityManager em = emWrapper.getEntityManager();
         Session hibernateSession = em.unwrap(Session.class);
 
@@ -309,7 +310,6 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
                 }
             }
         });
-
     }
 
     /**
@@ -352,12 +352,17 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
     private Long[] getProcessingSummary() {
 
         EntityManager em = emWrapper.getEntityManager();
-        Object[] minMax = (Object[]) em.createQuery("select min(id), max(id) from RatedTransaction where status='OPEN'").getSingleResult();
+        Object[] minMax = (Object[]) em.createNativeQuery("select min(id), max(id) from {h-schema}billing_rt where status='OPEN'").getSingleResult();
 
-        Long minId = (Long) minMax[0];
-        Long maxId = (Long) minMax[1];
+        if (minMax[0] != null) {
+            Long minId = ((Number) minMax[0]).longValue();
+            Long maxId = ((Number) minMax[1]).longValue();
 
-        return new Long[] { minId, maxId };
+            return new Long[] { minId, maxId };
+
+        } else {
+            return new Long[] { null, null };
+        }
     }
 
     /**
@@ -367,6 +372,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
      * @param jobExecutionResult Job execution result
      * @return A list of Billing runs to process
      */
+    @SuppressWarnings("unchecked")
     private List<BillingRun> getBillingRunsToProcess(JobInstance jobInstance, JobExecutionResultImpl jobExecutionResult) {
 
         List<EntityReferenceWrapper> billingRunWrappers = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun");

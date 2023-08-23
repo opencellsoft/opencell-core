@@ -71,14 +71,12 @@ public class InvoiceLineAggregationService implements Serializable {
      * @param aggregationQuery Aggregation query
      * @param billingRun Billing run
      * @param statelessSession Stateless session for query creation
-     * @param maxId Max RT id to lookup
      * @param incrementalInvoiceLines Shall Invoice lines be created in incremental mode
      * @param aggregationConfiguration
      * @return Aggregation summary - number of ILs, BAs and a hibernate query
      */
     @SuppressWarnings("rawtypes")
-    public RTtoILAggregationQuery getAggregationSummaryAndILDetailsQuery(BillingRun billingRun, AggregationConfiguration aggregationConfiguration, StatelessSession statelessSession, Long maxId,
-            boolean incrementalInvoiceLines) {
+    public RTtoILAggregationQuery getAggregationSummaryAndILDetailsQuery(BillingRun billingRun, AggregationConfiguration aggregationConfiguration, StatelessSession statelessSession, boolean incrementalInvoiceLines) {
 
         // Get a basic RT to IL aggregation query
 
@@ -104,7 +102,6 @@ public class InvoiceLineAggregationService implements Serializable {
             params.put("lastTransactionDate", billingRun.getLastTransactionDate());
         }
         params.put("invoiceUpToDate", billingRun.getInvoiceDate());
-        params.put("maxId", maxId);
 
         // Aggregated RT information is written to a materialized view. In case of incremental processing, materialized view is then joined with a IL table
 
@@ -253,7 +250,7 @@ public class InvoiceLineAggregationService implements Serializable {
 
         PaginationConfiguration searchConfig = new PaginationConfiguration(null, null, bcFilter, null, fieldToFetch, groupBy, (Set<String>) null, "billingAccount.id", SortOrder.ASCENDING);
 
-        String extraCondition = (billingRun.getLastTransactionDate() != null ? " a.usageDate < :lastTransactionDate and a.id<=:maxId and " : " and a.id<:maxId and ") + QUERY_FILTER;
+        String extraCondition = (billingRun.getLastTransactionDate() != null ? " a.usageDate < :lastTransactionDate and " : " and ") + QUERY_FILTER;
 
         QueryBuilder queryBuilder = nativePersistenceService.getAggregateQuery("RatedTransaction", searchConfig, null, extraCondition, null);
         return queryBuilder.getQueryAsString();

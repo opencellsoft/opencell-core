@@ -3312,12 +3312,39 @@
             <column name="trading_currency_id" type="bigint" />
         </createTable>
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-185">
-        <createTable tableName="billing_rated_transaction">
+    
+    <changeSet id="rebuild-str-tbl-185-1" author="AndriusKarpavicius">
+        <createTable tableName="billing_rt">
              <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" />
             </column>
             <column name="version" type="int4" />
+            <column name="status" type="varchar(255)" />
+            <column name="invoice_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
+            <column name="aggregate_id_f" type="bigint" />
+            <column name="aggregate_id_r" type="bigint" />
+            <column name="aggregate_id_t" type="bigint" />
+            <column name="invoice_line_id" type="bigint"/>
+            <column name="discounted_ratedtransaction_id" type="bigint" />
+            <column name="usage_date_cp" type="datetime" />
+            <column name="updater" type="varchar(100)" />
+            <column name="updated" type="datetime" />
+            <column name="reject_reason" type="varchar(4000)" />
+        </createTable>
+        <modifySql dbms="postgresql">
+            <append value=" PARTITION BY LIST ( status )"/>
+        </modifySql>
+        <modifySql dbms="oracle">
+            <append value=" PARTITION BY LIST ( status ) ( PARTITION billing_rt_open VALUES ( 'OPEN' ), PARTITION billing_rt_other VALUES ( DEFAULT )) ENABLE ROW MOVEMENT"/>
+        </modifySql>          
+    </changeSet>
+
+    <changeSet id="rebuild-str-tbl-185-2" author="AndriusKarpavicius">
+        <createTable tableName="billing_rt_detail">            
+             <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>            
             <column name="amount_tax" type="numeric(23, 12)" />
             <column name="amount_with_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
@@ -3330,18 +3357,12 @@
             <column name="parameter_2" type="varchar(255)" />
             <column name="parameter_3" type="varchar(255)" />
             <column name="quantity" type="numeric(23, 12)" />
-            <column name="status" type="varchar(255)" />
             <column name="unit_amount_tax" type="numeric(23, 12)" />
             <column name="unit_amount_with_tax" type="numeric(23, 12)" />
             <column name="unit_amount_without_tax" type="numeric(23, 12)" />
             <column name="unity_description" type="varchar(20)" />
             <column name="usage_date" type="datetime" />
             <column name="billing_account__id" type="bigint" />
-            <column name="billing_run_id" type="bigint" />
-            <column name="invoice_id" type="bigint" />
-            <column name="aggregate_id_f" type="bigint" />
-            <column name="aggregate_id_r" type="bigint" />
-            <column name="aggregate_id_t" type="bigint" />
             <column name="invoice_sub_category_id" type="bigint" />
             <column name="priceplan_id" type="bigint" />
             <column name="wallet_id" type="bigint" />
@@ -3368,8 +3389,6 @@
             <column name="service_instance_id" type="bigInt"/>
             <column name="creator" type="varchar(100)" />
             <column name="created" type="datetime" />
-            <column name="updater" type="varchar(100)" />
-            <column name="updated" type="datetime" />
             <column name="tax_class_id" type="bigint" />
             <column name="input_quantity" type="numeric(23, 12)" />
             <column name="raw_amount_without_tax" type="numeric(23, 12)" />
@@ -3385,30 +3404,78 @@
             <column name="order_id" type="bigint" />
             <column name="order_lot_id" type="bigint" />
             <column name="product_version_id" type="bigint" />
-            <column name="invoice_line_id" type="bigint"/>
-			<column name="discount_plan_id" type="bigint"/>
-    		<column name="discounted_ratedtransaction_id" type="bigint" />
-    		<column name="discount_value" type="numeric(23,12)" />
-			<column name="discount_plan_type" type="varchar(50)" />
-			<column name="discount_plan_item_id" type="bigint"/>
+            <column name="discount_plan_id" type="bigint"/>
+            <column name="discount_value" type="numeric(23,12)" />
+            <column name="discount_plan_type" type="varchar(50)" />
+            <column name="discount_plan_item_id" type="bigint"/>
             <column name="invoicing_date" type="datetime" />
             <column name="sequence" type="int4"/>
-            <column name="reject_reason" type="varchar(4000)" />
             <column name="origin_billing_account" type="bigint" />
             <column name="rules_contract_id" type="bigint" />
             <column name="discounted_amount" type="numeric(23,12)" />
-    		<column name="origin_ratedtransaction_id" type="bigint" />
+            <column name="origin_ratedtransaction_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
-        	<append value=" PARTITION BY LIST(status)"/>
-    	</modifySql>
-    	<modifySql dbms="oracle">
-        	<append value=" PARTITION BY LIST ( status ) ( PARTITION billing_rated_transaction_open VALUES ( 'OPEN' ), PARTITION billing_rated_transaction_other VALUES ( DEFAULT )) ENABLE ROW MOVEMENT"/>
-    	</modifySql>
+            <append value=" PARTITION BY RANGE ( usage_date )"/>
+        </modifySql>
+        <modifySql dbms="oracle">
+            <append value=" PARTITION BY RANGE ( usage_date ) INTERVAL (NUMTODSINTERVAL(3,'MONTH') ( PARTITION billing_rt_detail_pre2023 VALUES LESS THAN ( TIMESTAMP' 2023-01-01 00:00:00' )) ENABLE ROW MOVEMENT"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-185-pk">
-        	<addPrimaryKey columnNames="id,status" constraintName="billing_rated_transaction_pkey" tableName="billing_rated_transaction" />
+    
+    <changeSet id="rebuild-str-tbl-185-3" author="AndriusKarpavicius">
+        <createProcedure dbms="postgresql"><![CDATA[
+            CREATE OR REPLACE FUNCTION create_partitions(table_name text, start_date text, frequency text default '3 month', partitions_number int default 4) RETURNS void AS $$
+            -- Function to create partition tables for a given table
+            -- Param1 : table_name => name of the table to be partitonned. Can include a schema name
+            -- Param2 : start_date => date of the beginning of partitonning (input format YYYY_MM_DD)
+            -- Param3 : frequency => interval of partionning. Specify as in interval parameter (7 day, 2 week, 1 month, 3 year)
+            -- Param4 : partitions_number : number of partitions to create starting form param start_date
+
+            -- Call Example : create_partitions('public.rating_edr','2019_03_01','3 month',5);
+
+            DECLARE
+                partition_date DATE;
+                query text;
+            BEGIN
+
+                if (start_date is null) then
+                    partition_date := date_trunc('year', now());
+                else 
+                    partition_date := to_date(start_date,'YYYY-MM-DD');
+                end if;
+                
+    
+                FOR counter IN 1..partitions_number LOOP
+    
+                    query := 'CREATE TABLE ' || table_name || '_' || to_char(partition_date,'YYYY_MM_DD') || ' PARTITION OF ' || table_name || ' FOR VALUES FROM (''' || to_char(partition_date,'YYYY_MM_DD') || ''') TO (''';
+
+                    partition_date := partition_date +  interval '3 month';
+        
+                    query := query || to_char(partition_date,'YYYY_MM_DD') || ''');';
+        
+                    EXECUTE query;
+        
+                    --partition_date := partition_date + interval '1 day';
+        
+                    RAISE NOTICE 'partition created : %', table_name || '_' || to_char(partition_date,'YYYY_MM_DD');
+    
+                END LOOP;
+            END;
+            $$ LANGUAGE plpgsql;
+            ]]>
+        </createProcedure>
+        
+        <sql>create table ${db.schema.adapted}billing_rt_open partition of ${db.schema.adapted}billing_rt for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}billing_rt_other partition of ${db.schema.adapted}billing_rt default partition by range ( usage_date_cp)</sql>  
+        <sql>select create_partitions('billing_rt_other','2022-01-01','3 month',8)</sql>
+        <sql>select create_partitions('billing_rt_detail','2022-01-01','3 month',8)</sql>       
     </changeSet>
+    <changeSet id="rebuild-str-tbl-185-6" author="AndriusKarpavicius">           
+        <addPrimaryKey columnNames="id, status, usage_date_cp" constraintName="billing_rt_pkey" tableName="billing_rt" />
+        <addPrimaryKey columnNames="id, usage_date" constraintName="billing_rt_detail_pkey" tableName="billing_rt_detail" />
+    </changeSet>        
+    
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-187">
         <createTable tableName="billing_rejected_billing_accounts">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -11092,7 +11159,7 @@
         <sql>alter table BILLING_INVOICE_SUB_CAT modify cf_values check (cf_values is json)</sql>
         <sql>alter table BILLING_INVOICE_TYPE modify cf_values check (cf_values is json)</sql>
         <sql>alter table BILLING_PRODUCT_INSTANCE modify cf_values check (cf_values is json)</sql>
-        <sql>alter table BILLING_RATED_TRANSACTION modify cf_values check (cf_values is json)</sql>
+        <sql>alter table BILLING_RT_DETAIL modify cf_values check (cf_values is json)</sql>
         <sql>alter table BILLING_SERVICE_INSTANCE modify cf_values check (cf_values is json)</sql>
         <sql>alter table BILLING_SUBSCRIPTION modify cf_values check (cf_values is json)</sql>
         <sql>alter table BILLING_TAX modify cf_values check (cf_values is json)</sql>
@@ -12398,7 +12465,7 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
         <addDefaultValue tableName="job_execution" columnName="id" defaultValueSequenceNext="job_execution_seq" />
         <addDefaultValue tableName="rating_edr" columnName="id" defaultValueSequenceNext="rating_edr_seq" />
-        <addDefaultValue tableName="billing_rated_transaction" columnName="id" defaultValueSequenceNext="billing_rated_transaction_seq" />
+        <addDefaultValue tableName="billing_rt" columnName="id" defaultValueSequenceNext="billing_rated_transaction_seq" />
         <addDefaultValue tableName="billing_invoice" columnName="id" defaultValueSequenceNext="billing_invoice_seq" />
         <addDefaultValue tableName="billing_invoice_agregate" columnName="id" defaultValueSequenceNext="billing_invoice_agregate_seq" />
     </changeSet>
@@ -13002,7 +13069,7 @@
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-607">
-        <addForeignKeyConstraint baseColumnNames="aggregate_id_t" baseTableName="billing_rated_transaction" constraintName="fk_8g8jlmakt1wyw73oxs5yltlsd" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="aggregate_id_t" baseTableName="billing_rt" constraintName="fk_rt_agr_t" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-609">
@@ -13082,11 +13149,11 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_counter" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-651">
-        <addForeignKeyConstraint baseColumnNames="aggregate_id_r" baseTableName="billing_rated_transaction" constraintName="fk_amwacie0nqfumpd1sc7y9nv0p" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="aggregate_id_r" baseTableName="billing_rt" constraintName="fk_rt_agr_r" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-652">
-        <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="billing_rated_transaction" constraintName="fk_anslvrbm465ossqx8surjyu22" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_wi" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-654">
@@ -13098,7 +13165,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-658">
-        <addForeignKeyConstraint baseColumnNames="billing_account__id" baseTableName="billing_rated_transaction" constraintName="fk_bbnhg8vn7jkttghphr65iwug5" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="billing_account__id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_ba" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-662">
@@ -13206,7 +13273,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-716">
-        <addForeignKeyConstraint baseColumnNames="priceplan_id" baseTableName="billing_rated_transaction" constraintName="fk_eucl7of9ovyut1c4r2jkf01u6" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="priceplan_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_ppm" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-718">
@@ -13266,7 +13333,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-756">
-        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_rated_transaction" constraintName="fk_gq86s178gc3orumcl8symk4nn" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_rt" constraintName="fk_rt_inv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-757">
@@ -13460,11 +13527,11 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notif_email" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-887">
-        <addForeignKeyConstraint baseColumnNames="billing_run_id" baseTableName="billing_rated_transaction" constraintName="fk_o2mp1mqcyi2l7q2b1p88h20dw" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="billing_run_id" baseTableName="billing_rt" constraintName="fk_rt_br" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_run" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-889">
-        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_rated_transaction" constraintName="fk_o5yu3c0bnac626w755w5f0voc" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_invsubcat" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-897">
@@ -13548,7 +13615,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-948">
-        <addForeignKeyConstraint baseColumnNames="aggregate_id_f" baseTableName="billing_rated_transaction" constraintName="fk_rjpm9k6xsumg297fxefffyryh" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="aggregate_id_f" baseTableName="billing_rt" constraintName="fk_rt_agr_f" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-949">
@@ -13682,23 +13749,6 @@
         <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="adm_notif_job" constraintName="fk_job_trigger_notif" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_job_instance" />
     </changeSet>
-    <!-- 
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1020">
-        <addForeignKeyConstraint baseColumnNames="header_edr_id" baseTableName="rating_edr" constraintName="fk_headeredrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="rating_edr" />
-    </changeSet>
-     -->
-    <!-- 
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1021">
-        <addForeignKeyConstraint baseColumnNames="edr_id" baseTableName="billing_wallet_operation" constraintName="fk_wopedrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="rating_edr" />
-    </changeSet>
-    
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1022">
-        <addForeignKeyConstraint baseColumnNames="edr_id" baseTableName="billing_rated_transaction" constraintName="fk_ropedrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-            referencedColumnNames="id" referencedTableName="rating_edr" />
-    </changeSet>
-    -->
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1027">
         <addForeignKeyConstraint constraintName="fk_billing_invoice_adjusted_invoice" referencedTableName="billing_invoice" baseColumnNames="invoice_id" baseTableName="billing_invoice" referencedColumnNames="id" />
     </changeSet>
@@ -14211,7 +14261,7 @@
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1209">
-        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_crm_seller" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_seller" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
     </changeSet>
 
@@ -14304,11 +14354,11 @@
         <addForeignKeyConstraint constraintName="fk_crm_customer_sequence_seller" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="crm_customer_sequence" referencedColumnNames="id" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1231">
-        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="billing_tax" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1232">
-        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_ua" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_ua" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1233">
@@ -14477,7 +14527,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1280">
-    	<addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_offer_template" deferrable="false"
+    	<addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_offer" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
     </changeSet>    
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1281">    
@@ -14485,7 +14535,7 @@
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
     </changeSet>
    	<changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1282">    
-		<addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
+		<addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_service_instance" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1283">    
@@ -14725,7 +14775,7 @@
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
     </changeSet> 
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1337">          
-        <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_tax_class_id" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_tax_class_id" deferrable="false"
             					 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
     </changeSet> 
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1338">          
@@ -14798,13 +14848,13 @@
                                  referencedTableName="cat_charge_template"/>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1346">          
-		<addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="billing_rated_transaction" 
-    	 						  constraintName="fk_input_billing_rated_transaction_cat_unit_of_measure" deferrable="false"
+		<addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="billing_rt_detail" 
+    	 						  constraintName="fk_rt_d_input_unit_of_measure" deferrable="false"
                                   initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1347">          
-        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_rated_transaction" 
-        						 constraintName="fk_rating_billing_rated_transaction_cat_unit_of_measure" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_rt_detail" 
+        						 constraintName="fk_rt_d_rating_unit_of_measure" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1348">          
@@ -14813,7 +14863,7 @@
                                  referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1349">          
-		<addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_accounting_code" deferrable="false"
+		<addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_accounting_code" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1350">          
@@ -14925,10 +14975,10 @@
                                  referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
     <changeSet author="hichamHANINE" id="rebuild-str-fk1-8743">
-        <addForeignKeyConstraint baseColumnNames="origin_billing_account" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_origin_ba" deferrable="false" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+        <addForeignKeyConstraint baseColumnNames="origin_billing_account" baseTableName="billing_rt_detail" constraintName="fk_rt_d_origin_ba" deferrable="false" referencedColumnNames="id" referencedTableName="billing_billing_account" />
     </changeSet>
     <changeSet author="hichamHANINE" id="rebuild-str-fk1-9442">
-		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rt_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
+		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
 		<addForeignKeyConstraint baseColumnNames="rules_contract_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wa_op_rules_contract" deferrable="false" referencedColumnNames="id" referencedTableName="cpq_contract" />
     </changeSet>
     <!-- media post FK -->
@@ -15491,19 +15541,19 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_lot" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1507">
-        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_order_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_order_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1508">
-        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_product_version_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_product_version_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1509">
-        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="billing_rated_transaction" constraintName="fk_rated_transaction_accounting_article_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_accounting_article_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_article" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1510">
-        <addForeignKeyConstraint baseColumnNames="order_lot_id" baseTableName="billing_rated_transaction" constraintName="fk_rated_transaction_lot_id" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="order_lot_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_lot_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_lot" />
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1511">
@@ -15673,8 +15723,8 @@
                                  referencedTableName="cpq_attribute" referencedColumnNames="id"/>
     </changeSet>
     <changeSet author="NabilOuachi" id="rebuild-str-fk-1551">
-        <addForeignKeyConstraint baseColumnNames="invoice_line_id" baseTableName="billing_rated_transaction"
-                                 constraintName="fk_billing_rated_transaction_invoice_line_id" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="invoice_line_id" baseTableName="billing_rt"
+                                 constraintName="fk_rt_invoice_line_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="billing_invoice_line" />
     </changeSet>
@@ -16109,11 +16159,11 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
     </changeSet>
       <changeSet author="TarikFA." id="rebuild-str-fk-1635">
-          <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_subscription_id" deferrable="false" initiallyDeferred="false"
+          <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_subscription_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
     </changeSet>
       <changeSet author="TarikFA." id="rebuild-str-fk-1636">
-          <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_charge_instance_id" deferrable="false" initiallyDeferred="false"
+          <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_charge_instance_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
     </changeSet>
 
@@ -16621,7 +16671,7 @@
        </changeSet>
        
          <changeSet id="rebuild-str-fk3-540-6296" author="Mbarek-Ay">
-        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_rated_transaction" constraintName="fk_rated_transaction_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_cat_discount_plan_item" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
        </changeSet>
        <changeSet id="rebuild-str-fk4-540-6296" author="Mbarek-Ay">
@@ -16801,8 +16851,6 @@
     <!-- start index -->
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-996">
         <sql>CREATE INDEX invoice_billing_run_index ON ${db.schema.adapted}billing_invoice_agregate(billing_run_id)</sql>
-        <sql>CREATE INDEX transaction_billing_account_index ON ${db.schema.adapted}billing_rated_transaction(billing_account__id)</sql>
-        <sql>CREATE INDEX transaction_billing_index ON ${db.schema.adapted}billing_rated_transaction(invoice_id,wallet_id, invoice_sub_category_id)</sql>
         <sql>CREATE INDEX invoice_agre_index ON ${db.schema.adapted}billing_invoice_agregate(invoice_id)</sql>
         <sql>CREATE INDEX billing_chrginst_wallet_index ON ${db.schema.adapted}billing_chrginst_wallet(wallet_instance_id)</sql>
         <sql>CREATE INDEX ar_customer_account_credit_cat_index ON ${db.schema.adapted}ar_customer_account(credit_category_id)</sql>
@@ -16877,7 +16925,7 @@
         <sql>CREATE INDEX ord_order_item_order_index ON ${db.schema.adapted}ord_order_item(order_id);</sql>
         <sql>CREATE INDEX ord_order_item_sub_index ON ${db.schema.adapted}ord_order_item(subscription_id);</sql>
         <sql>CREATE INDEX cat_offer_serv_templates_svtmpte_index ON ${db.schema.adapted} cat_offer_serv_templates(service_template_id);</sql>
-       <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema.adapted} cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
+        <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema.adapted} cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
         <sql>CREATE INDEX billing_wallet_ua_index ON ${db.schema.adapted} billing_wallet (user_account_id);</sql>
         <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema.adapted}cat_offer_serv_templates(offer_template_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id);</sql>
@@ -16903,7 +16951,6 @@
         <sql>CREATE INDEX rating_cdr_or_index ON ${db.schema.adapted}rating_cdr(origin_record)</sql>
         <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
         <sql>CREATE INDEX ar_ao_dd_item_idx  ON ${db.schema.adapted}ar_account_operation (ddrequest_item_id)</sql>
         <sql>CREATE INDEX ao_ref_idx ON ${db.schema.adapted}ar_account_operation (reference)</sql>
         <sql>CREATE INDEX audit_field_changes_history_index on ${db.schema.adapted}audit_field_changes_history (lower(entity_class), entity_id)</sql>
@@ -16924,7 +16971,6 @@
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
         <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
         <sql>CREATE INDEX idx__billing_invoice_line_il_job ON ${db.schema.adapted}billing_invoice_line USING btree (billing_run_id, billing_account_id, offer_template_id, accounting_article_id, tax_id) where status='OPEN'</sql>
-        <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE status= 'OPEN' and accounting_article_id is null </sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -17015,34 +17061,20 @@
         <sql>CREATE UNIQUE INDEX hierarchy_entity_code_index ON ${db.schema.adapted}hierarchy_entity(lower(code), hierarchy_type)</sql>
        	<sql>CREATE INDEX medina_access_lower_uid_index on ${db.schema.adapted}medina_access (lower(acces_user_id))</sql>
        	<sql>CREATE INDEX idx_ar_payment_history_external_payment_id ON ${db.schema.adapted}ar_payment_history (external_payment_id )</sql>
+
+        <sql>CREATE INDEX idx_rt_id_desc on ${db.schema.adapted}billing_rt (id desc)</sql>
+        <sql>CREATE INDEX idx_rt_invoice ON ${db.schema.adapted}billing_rt (invoice_id)</sql>
+        <sql>CREATE INDEX idx_rt_argr_f ON ${db.schema.adapted}billing_rt (aggregate_id_f)</sql>
+        <sql>CREATE INDEX idx_rt_br ON ${db.schema.adapted}billing_rt (billing_run_id)</sql>
+        <sql>CREATE INDEX idx_rt_d_ba_id ON ${db.schema.adapted}billing_rt_detail(billing_account__id)</sql>
+        <sql>CREATE INDEX idx_rt_d_charge_instance ON ${db.schema.adapted}billing_rt_detail USING btree (charge_instance_id) WHERE accounting_article_id is null </sql>
+        <sql>CREATE INDEX idx_rt_d_ba_invoice_sub ON ${db.schema.adapted}billing_rt_detail (billing_account__id, usage_date, subscription_id)</sql>
+        <sql>CREATE INDEX idx_rt_d_origin_ba ON ${db.schema.adapted}billing_rt_detail (origin_billing_account)</sql>
+        <sql>CREATE INDEX idx_rt_d_rules_contract ON ${db.schema.adapted}billing_rt_detail (rules_contract_id)</sql>
+        <sql>CREATE INDEX idx_rt_d_service_instance ON ${db.schema.adapted}billing_rt_detail (service_instance_id)</sql>
+
     </changeSet>
 
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-index-998" dbms="mysql">
-        <sql>CREATE INDEX adm_title_index ON ${db.schema.adapted}adm_title(code)</sql>
-        <sql>CREATE INDEX crm_customer_brand_index ON ${db.schema.adapted}crm_customer_brand(code)</sql>
-        <sql>CREATE INDEX crm_customer_category_index ON ${db.schema.adapted}crm_customer_category(code)</sql>
-        <sql>CREATE INDEX billing_charge_instance_index ON ${db.schema.adapted}billing_charge_instance(invoicing_calendar_id, code, charge_template_id)</sql>
-        <sql>CREATE INDEX seller_code ON ${db.schema.adapted}crm_seller(code);</sql>
-        <sql>CREATE INDEX customer_code ON ${db.schema.adapted}crm_customer(code);</sql>
-        <sql>CREATE INDEX ca_code ON ${db.schema.adapted}ar_customer_account(code);</sql>
-        <sql>CREATE INDEX ba_code ON ${db.schema.adapted}billing_billing_account(code);</sql>
-        <sql>CREATE INDEX ua_code ON ${db.schema.adapted}billing_user_account(code);</sql>
-        <sql>CREATE INDEX com_contact_code ON ${db.schema.adapted}com_contact(code);</sql>
-        <sql>CREATE INDEX cat_ofrt_code_index ON ${db.schema.adapted}cat_offer_template(code);</sql>
-        <sql>CREATE INDEX cat_service_template_code_index ON ${db.schema.adapted}cat_service_template(code);</sql>
-        <sql>CREATE INDEX cat_charge_template_code_index ON ${db.schema.adapted}cat_charge_template(code);</sql>
-        <sql>CREATE INDEX billing_subscription_code_index ON ${db.schema.adapted} billing_subscription(code);</sql>
-        <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema.adapted} billing_service_instance(code);</sql>
-        <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema.adapted} billing_charge_instance(code);</sql>
-        <sql>CREATE INDEX cust_cei_cet_and_code_index ON ${db.schema.adapted}cust_cei(cet_code,code);</sql>
-        <sql>CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el)</sql>
-        <sql>CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el)</sql>
-        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON billing_rated_transaction (billing_account__id, usage_date, service_instance_id)</sql>
-        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON billing_rated_transaction (billing_account__id, usage_date, subscription_id)</sql>
-        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON billing_rated_transaction (subscription_id, usage_date, service_instance_id)</sql>
-        <sql>CREATE INDEX rt_invoice_index ON billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id)</sql>
-        <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date)</sql>
-    </changeSet>
 
     <!--    specific index for postgres -->
     <changeSet id="rebuild-str-index-996-pg" author="MohamedSTITANE" dbms="postgresql">
@@ -17053,50 +17085,53 @@
         <sql>CREATE INDEX billing_service_instance_minimum_amount_el_index on ${db.schema.adapted}billing_service_instance(minimum_amount_el) where minimum_amount_el is not null</sql>
         <sql>CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
         <sql>CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
-        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, usage_date, service_instance_id) where status='OPEN' and service_instance_id is not null</sql>
-        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, usage_date, subscription_id) where status='OPEN'</sql>
-        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, usage_date, service_instance_id) where status='OPEN' and subscription_id is not null</sql>
-        <sql>CREATE INDEX rt_invoice_index ON ${db.schema.adapted}billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id) where status='BILLED'</sql>
-        <sql>CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number, status, usage_date) where order_number is not null</sql>
         <sql>CREATE INDEX wo_operation_date_index ON ${db.schema.adapted}billing_wallet_operation ((operation_date::DATE))</sql>
         <sql>CREATE INDEX edr_event_date_index ON ${db.schema.adapted}rating_edr ((event_date::DATE))</sql>
-        <sql>CREATE INDEX rt_usage_date_index ON ${db.schema.adapted}billing_rated_transaction ((usage_date::DATE))</sql>
         <sql>CREATE INDEX billing_invoice_agregate_br_index on ${db.schema.adapted}billing_invoice_agregate (billing_run_id)</sql>
-        <sql>CREATE INDEX rt_br_index ON billing_rated_transaction (billing_run_id) where status='BILLED'</sql>
-        <sql>CREATE INDEX rt_edr_id ON ${db.schema.adapted}billing_rated_transaction (edr_id ASC NULLS LAST)</sql>
         <sql>CREATE INDEX resa_origin_edr_id ON ${db.schema.adapted}billing_reservation (origin_edr_id ASC NULLS LAST)</sql>
         <sql>CREATE INDEX wo_edr_id ON ${db.schema.adapted}billing_wallet_operation (edr_id ASC NULLS LAST)</sql>
         <sql>CREATE INDEX cdr_header_edr_id ON ${db.schema.adapted}rating_cdr (header_edr_id ASC NULLS LAST)</sql>
         <sql>CREATE INDEX edr_header_edr_id ON ${db.schema.adapted}rating_edr (header_edr_id ASC NULLS LAST)</sql>
-        <sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx ASC NULLS LAST) </sql>
         <sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id ASC NULLS LAST) </sql>
-        <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id ASC NULLS LAST) </sql></changeSet>
+        <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id ASC NULLS LAST) </sql>
+    
+        <sql>CREATE INDEX idx_rt_d_ba_invoice_serv ON ${db.schema.adapted}billing_rt_detail (billing_account__id, usage_date, service_instance_id) where service_instance_id is not null</sql>
+        <sql>CREATE INDEX idx_rt_d_sub_invoice_serv ON ${db.schema.adapted}billing_rt_detail (subscription_id, usage_date, service_instance_id) where subscription_id is not null</sql>
+        <sql>CREATE INDEX idx_rt_d_order ON ${db.schema.adapted}billing_rt_detail (order_number) where order_number is not null</sql>
+        <sql>CREATE INDEX idx_rt_d_usage_date ON ${db.schema.adapted}billing_rt_detail ((usage_date::DATE))</sql>
+        <sql>CREATE INDEX idx_rt_d_usage_date_desc ON ${db.schema.adapted}billing_rt_detail ((usage_date::DATE) desc)</sql>
+        <sql>CREATE INDEX idx_rt_d_edr_id ON ${db.schema.adapted}billing_rt_detail (edr_id ASC NULLS LAST)</sql>
+        <sql>CREATE INDEX idx_rt_d_adjusted_rated_tx ON ${db.schema.adapted}billing_rt_detail (adjusted_rated_tx ASC NULLS LAST) </sql>    
+    </changeSet>
+    
     <!--    specific index for oracle -->
     <changeSet id="rebuild-str-index-996-oracle" author="MohamedSTITANE" dbms="oracle">
         <sql>CREATE INDEX billing_subscription_minimum_amount_el_index on ${db.schema.adapted}billing_subscription(minimum_amount_el)</sql>
         <sql>CREATE INDEX billing_service_instance_minimum_amount_el_index on ${db.schema.adapted}billing_service_instance(minimum_amount_el) </sql>
-        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, usage_date, service_instance_id)</sql>
-        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, usage_date, subscription_id)</sql>
-        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, usage_date, service_instance_id)</sql>
-        <sql>CREATE INDEX rt_invoice_index ON ${db.schema.adapted}billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id)</sql>
-        <sql>CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number, status, usage_date)</sql>
         <sql>CREATE INDEX wo_operation_date_index ON ${db.schema.adapted}billing_wallet_operation (TRUNC(operation_date))</sql>
         <sql>CREATE INDEX edr_event_date_index ON ${db.schema.adapted}rating_edr (TRUNC(event_date))</sql>
-        <sql>CREATE INDEX rt_usage_date_index ON ${db.schema.adapted}billing_rated_transaction (TRUNC(usage_date))</sql>
-        <sql>CREATE INDEX rt_br_index ON billing_rated_transaction (billing_run_id)</sql>
-        <sql>CREATE INDEX rt_edr_id ON ${db.schema.adapted}billing_rated_transaction (edr_id)</sql>
+
         <sql>CREATE INDEX resa_origin_edr_id ON ${db.schema.adapted}billing_reservation (origin_edr_id)</sql>
         <sql>CREATE INDEX wo_edr_id ON ${db.schema.adapted}billing_wallet_operation (edr_id)</sql>
         <sql>CREATE INDEX cdr_header_edr_id ON ${db.schema.adapted}rating_cdr (header_edr_id)</sql>
         <sql>CREATE INDEX edr_header_edr_id ON ${db.schema.adapted}rating_edr (header_edr_id)</sql>
-        <sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx) </sql>
         <sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id) </sql>
         <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id) </sql>
         <sql>CREATE INDEX rt_customer_id_contract_index ON ${db.schema.adapted}cpq_contract (customer_id) where status='ACTIVE'</sql>
         <sql>CREATE INDEX rt_billing_account_id_contract_index ON ${db.schema.adapted}cpq_contract (billing_account_id) where status='ACTIVE'</sql>
         <sql>CREATE INDEX rt_customer_account_contract_index ON ${db.schema.adapted}cpq_contract (customer_account_id) where status='ACTIVE'</sql>
         <sql>CREATE INDEX cpq_price_plan_matrix_value__ppml_id__idx ON cpq_price_plan_matrix_value(ppml_id)</sql>
-        <sql>CREATE INDEX CREATE INDEX cpq_ppl_ppVersion_index ON cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql></changeSet>
+        <sql>CREATE INDEX CREATE INDEX cpq_ppl_ppVersion_index ON cpq_price_plan_matrix_line(ppm_version_id, priority, accuracy)</sql>
+    
+        <sql>CREATE INDEX idx_rt_d_ba_invoice_serv ON ${db.schema.adapted}billing_rt_detail (billing_account__id, usage_date, service_instance_id)</sql>
+        <sql>CREATE INDEX idx_rt_d_sub_invoice_serv ON ${db.schema.adapted}billing_rt_detail (subscription_id, usage_date, service_instance_id)</sql>
+        <sql>CREATE INDEX idx_rt_d_order ON ${db.schema.adapted}billing_rt_detail (order_number)</sql>
+        <sql>CREATE INDEX idx_rt_d_usage_date ON ${db.schema.adapted}billing_rt_detail (TRUNC(usage_date))</sql>
+        <sql>CREATE INDEX idx_rt_d_usage_date_desc ON ${db.schema.adapted}billing_rt_detail (TRUNC(usage_date) desc)</sql>
+        <sql>CREATE INDEX idx_rt_d_edr_id ON ${db.schema.adapted}billing_rt_detail (edr_id ASC)</sql>
+        <sql>CREATE INDEX idx_rt_d_adjusted_rated_tx ON ${db.schema.adapted}billing_rt_detail (adjusted_rated_tx ASC) </sql>
+                
+    </changeSet>
         
         
     <changeSet id="#INTRD-12047-20230112-rebuild" author="AbdelmounaimAkadid">
@@ -17106,24 +17141,12 @@
 	  	<createIndex indexName="idx__cpq_attribute_instance__parent_id" tableName="cpq_attribute_instance">
 	      	<column name="parent_id"/>
 	  	</createIndex>
-	  	<createIndex indexName="idx__billing_rated_transaction__origin_billing_account" tableName="billing_rated_transaction">
-	      	<column name="origin_billing_account"/>
-	  	</createIndex>
-	  	<createIndex indexName="idx__billing_rated_transaction__rules_contract_id" tableName="billing_rated_transaction">
-	      	<column name="rules_contract_id"/>
-	  	</createIndex>
-	  	<createIndex indexName="idx__billing_rated_transaction__service_instance_id" tableName="billing_rated_transaction">
-	      	<column name="service_instance_id"/>
-	  	</createIndex>
         <createIndex tableName="rating_edr" indexName="rating_edr_eventKey_index_idx">
             <column name="event_key"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="#INTRD-17592-rt-indexes-rebuild" author="a.rouaguebe">
-        <sql>create index idx__billing_rating_transaction__id_desc on ${db.schema.adapted}billing_rated_transaction (id desc)</sql>
-        <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
-    </changeSet>
+    <changeSet id="#INTRD-17592-rt-indexes-rebuild" author="a.rouaguebe"/>
 
     <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe">
         <sql>create index idx__billing_wo__billing_account_id on ${db.schema.adapted}billing_wallet_operation(billing_account_id)</sql>
@@ -17155,16 +17178,6 @@
         <delete tableName="DATABASECHANGELOG"/>
     </changeSet>
 
-    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql">
-        <sql>create table ${db.schema.adapted}rating_edr_open partition of ${db.schema.adapted}rating_edr for values in('OPEN')</sql>
-        <sql>create table ${db.schema.adapted}rating_edr_other partition of ${db.schema.adapted}rating_edr default</sql>
-
-        <sql>create table ${db.schema.adapted}billing_wallet_operation_open partition of ${db.schema.adapted}billing_wallet_operation for values in('OPEN')</sql>
-        <sql>create table ${db.schema.adapted}billing_wallet_operation_other partition of ${db.schema.adapted}billing_wallet_operation default</sql>
-
-        <sql>create table ${db.schema.adapted}billing_rated_transaction_open partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
-        <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
-    </changeSet>
 
     <changeSet author="TarikFA." id="#INTRD-5385_20220228_build">
 	    <addForeignKeyConstraint baseColumnNames="discounted_quote_price" baseTableName="cpq_quote_price" constraintName="fk_discounted_quote_price" deferrable="false" initiallyDeferred="false"
@@ -17378,7 +17391,7 @@
         <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_wallet_operation" constraintName="fk_discount_plan_id_wallet_operation" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
                                  
-        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_rated_transaction" constraintName="fk_discount_plan_id_rated_transaction" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_rt_detail" constraintName="fk_rt_d_dpi" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
     </changeSet> 
     
@@ -19437,6 +19450,16 @@
     <changeSet id="#INTRD-16636_20230610" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16881_20230816" author="Mohammed_ElAzzouzi"/>
+    <changeSet id="#INTRD-17969_20230818-1" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-17969_20230818-2" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-17969_20230818-3" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-17969_20230818-4" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-17969_20230818-5" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-17969_20230818-6" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-17969_20230818-7" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-17969_20230818-8" author="AndriusKarpavicius"/> 
+    <changeSet id="#INTRD-17969_20230818-9" author="AndriusKarpavicius" dbms="postgresql"/>
+    <changeSet id="#INTRD-17969_20230818-9" author="AndriusKarpavicius" dbms="oracle"/>
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
