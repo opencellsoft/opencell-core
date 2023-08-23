@@ -1835,7 +1835,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             discountWalletOperation.setPriceplan(pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix());
             discountWalletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
         }
-        
+        bareWalletOperation.setDiscountedAmount(discountedAmount);
         discountWalletOperation.setParameter1(bareWalletOperation.getParameter1());
     	discountWalletOperation.setParameter2(bareWalletOperation.getParameter2());
     	discountWalletOperation.setParameter3(bareWalletOperation.getParameter3());
@@ -1851,8 +1851,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 	protected void checkDiscountedWalletOpertion(WalletOperation wo, List<WalletOperation> walletOperations) {
 		if(wo.getDiscountedAmount() != null){
 			var discountedWallerOperation = walletOperations.stream().filter(wos -> wos.getId() != null && wo.getUuid().equals(wos.getUuid())).findFirst().map(WalletOperation::getId).orElse(null);
+			if(discountedWallerOperation!=null) {
 			wo.setUuid(null);
 			wo.setDiscountedWalletOperation(discountedWallerOperation);
+			}
 		}
 	}
 }
