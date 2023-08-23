@@ -143,8 +143,12 @@ public class ContractApi extends BaseApi{
 		contract.setBeginDate(dto.getBeginDate());
 		contract.setEndDate(dto.getEndDate());
 		contract.setContractDate(dto.getContractDate());
+		if(dto.getRenewal()!=null) {
 		contract.setRenewal(dto.getRenewal());
+		}
+		if(dto.getContractDuration()!=null) {
 		contract.setContractDuration(dto.getContractDuration());
+		}
 		contract.setDescription(dto.getDescription());
 		contract.setApplicationEl(dto.getApplicationEl());
 		changeAccountLevel(dto, contract);
