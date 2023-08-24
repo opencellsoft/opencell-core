@@ -20381,7 +20381,7 @@
             <column name="trading_language_id" type="${cast.long}">
                 <constraints nullable="false"/>
             </column>
-            <column name="parameter1_translated_description" type="text"/>
+            <column name="parameter1_translated_description" type="${type.text}"/>
         </createTable>
         <addPrimaryKey columnNames="charge_template_id, trading_language_id"
                        constraintName="pk_charge_template_translated_descriptions"
@@ -20394,7 +20394,7 @@
             <column name="trading_language_id" type="${cast.long}">
                 <constraints nullable="false"/>
             </column>
-            <column name="parameter2_translated_description" type="text"/>
+            <column name="parameter2_translated_description" type="${type.text}"/>
         </createTable>
         <addPrimaryKey columnNames="charge_template_id, trading_language_id"
                        constraintName="pk_charge_template_translated_desc_param2"
@@ -20407,7 +20407,7 @@
             <column name="trading_language_id" type="${cast.long}">
                 <constraints nullable="false"/>
             </column>
-            <column name="parameter3_translated_description" type="text"/>
+            <column name="parameter3_translated_description" type="${type.text}"/>
         </createTable>
          <addPrimaryKey columnNames="charge_template_id, trading_language_id"
                        constraintName="pk_charge_template_translated_desc_param3"
@@ -20420,7 +20420,7 @@
             <column name="trading_language_id" type="${cast.long}">
                 <constraints nullable="false"/>
             </column>
-            <column name="parameter_extra_translated_description" type="text"/>
+            <column name="parameter_extra_translated_description" type="${type.text}"/>
         </createTable>
         <addPrimaryKey columnNames="charge_template_id, trading_language_id"
                        constraintName="pk_charge_template_translated_desc_param_extra"
