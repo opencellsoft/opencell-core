@@ -385,7 +385,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "parameter3_is_hidden")
     private boolean parameter3IsHidden;
 
-    @Column(name = "extra_is_mandatory")
+    @Column(name = "parameter_extra_is_mandatory")
     private boolean extraIsMandatory;
 
     @Column(name = "parameter_extra_is_hidden")
