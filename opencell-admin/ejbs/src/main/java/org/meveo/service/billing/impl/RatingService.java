@@ -1541,8 +1541,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         WalletOperation discountWalletOperation = new WalletOperation();
         BigDecimal discountedAmount=unitPriceWithoutTax.subtract(amount);
         BigDecimal taxPercent=bareWalletOperation.getTaxPercent();
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-        BigDecimal quantity=bareWalletOperation.getQuantity();
+        // Unit prices and unit taxes are with higher precision
+        BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());BigDecimal quantity=bareWalletOperation.getQuantity();
         ChargeInstance chargeInstance=bareWalletOperation.getChargeInstance();
 
         discountWalletOperation.setUuid(bareWalletOperation.getUuid());
@@ -1552,9 +1553,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         discountWalletOperation.setAmountWithTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[1]):BigDecimal.ZERO);
         discountWalletOperation.setAmountTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[2]):BigDecimal.ZERO);
         discountWalletOperation.setTaxPercent(taxPercent);
-        discountWalletOperation.setUnitAmountWithoutTax(amounts[0]);
-        discountWalletOperation.setUnitAmountWithTax(amounts[1]);
-        discountWalletOperation.setUnitAmountTax(amounts[2]);
+        discountWalletOperation.setUnitAmountWithoutTax(unitAmounts[0]);
+        discountWalletOperation.setUnitAmountWithTax(unitAmounts[1]);
+        discountWalletOperation.setUnitAmountTax(unitAmounts[2]);
         discountWalletOperation.setQuantity(quantity);
         discountWalletOperation.setTax(bareWalletOperation.getTax());//
         discountWalletOperation.setCreated(new Date());
