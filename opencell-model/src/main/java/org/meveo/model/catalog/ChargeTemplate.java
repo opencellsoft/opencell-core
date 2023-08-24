@@ -28,9 +28,11 @@ import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -41,6 +43,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -61,6 +64,7 @@ import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
@@ -298,6 +302,124 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Type(type = "longText")
     @Column(name = "internal_note")
     private String internalNote;
+    
+    @ElementCollection
+    @CollectionTable(name = "charge_template_translated_desc_param1",
+                    joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "parameter1_translated_description", length = 1000)
+    private Map<TradingLanguage, String> parameter1TranslatedDescriptions;
+    
+    @ElementCollection
+    @CollectionTable(name = "charge_template_translated_desc_param2",
+                    joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "parameter2_translated_description", length = 1000)
+    private Map<TradingLanguage, String> parameter2TranslatedDescriptions;
+    
+    @ElementCollection
+    @CollectionTable(name = "charge_template_translated_desc_param3",
+                    joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "parameter3_translated_description", length = 1000)
+    private Map<TradingLanguage, String> parameter3TranslatedDescriptions;
+    
+    @ElementCollection
+    @CollectionTable(name = "charge_template_translated_desc_param_extra",
+                    joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "parameter_extra_translated_description", length = 1000)
+    private Map<TradingLanguage, String> parameterExtraTranslatedDescriptions;
+    
+    @Column(name = "parameter1_description")
+    private String parameter1Description;
+
+    @Column(name = "parameter2_description")
+    private String parameter2Description;
+
+    @Column(name = "parameter3_description")
+    private String parameter3Description;
+    
+    @Column(name = "parameter_extra_description")
+    private String parameterExtraDescription;
+    
+    public enum ParameterFormat {
+        TEXT,
+        INTEGER,
+        DECIMAL,
+        DATE,
+        BOOLEAN
+    }
+    
+    @Column(name = "parameter1_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameter1Format;
+    
+    @Column(name = "parameter2_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameter2Format;
+    
+    @Column(name = "parameter3_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameter3Format;
+    
+    @Column(name = "parameter_extra_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameterExtraFormat;
+    
+    @Column(name = "parameter1_is_mandatory")
+    private boolean parameter1IsMandatory;
+
+    @Column(name = "parameter1_is_hidden")
+    private boolean parameter1IsHidden;
+
+    @Column(name = "parameter2_is_mandatory")
+    private boolean parameter2IsMandatory;
+
+    @Column(name = "parameter2_is_hidden")
+    private boolean parameter2IsHidden;
+
+    @Column(name = "parameter3_is_mandatory")
+    private boolean parameter3IsMandatory;
+
+    @Column(name = "parameter3_is_hidden")
+    private boolean parameter3IsHidden;
+
+    @Column(name = "extra_is_mandatory")
+    private boolean extraIsMandatory;
+
+    @Column(name = "parameter_extra_is_hidden")
+    private boolean parameterExtraIsHidden;
+    
+    @ElementCollection
+    @CollectionTable(name = "charge_template_translation",
+                     joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "translated_description")
+    private Map<TradingLanguage, String> parameter1TranslatedLongDescriptions;
+
+    @ElementCollection
+    @CollectionTable(name = "parameter2_translation",
+                     joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "translated_description")
+    private Map<TradingLanguage, String> parameter2TranslatedLongDescriptions;
+
+    @ElementCollection
+    @CollectionTable(name = "parameter3_translation",
+                     joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "translated_description")
+    private Map<TradingLanguage, String> parameter3TranslatedLongDescriptions;
+
+    @ElementCollection
+    @CollectionTable(name = "parameter_extra_translation",
+                     joinColumns = @JoinColumn(name = "charge_template_id"))
+    @MapKeyJoinColumn(name = "trading_language_id")
+    @Column(name = "translated_description")
+    private Map<TradingLanguage, String> parameterExtraTranslatedLongDescriptions;
+
+    
     
     public String getInputUnitEL() {
         return inputUnitEL;
@@ -664,4 +786,191 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     public void setPricePlans(Set<PricePlanMatrix> pricePlans) {
         this.pricePlans = pricePlans;
     }
+
+	public Map<TradingLanguage, String> getParameter1TranslatedDescriptions() {
+		return parameter1TranslatedDescriptions;
+	}
+
+	public void setParameter1TranslatedDescriptions(Map<TradingLanguage, String> parameter1TranslatedDescriptions) {
+		this.parameter1TranslatedDescriptions = parameter1TranslatedDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameter2TranslatedDescriptions() {
+		return parameter2TranslatedDescriptions;
+	}
+
+	public void setParameter2TranslatedDescriptions(Map<TradingLanguage, String> parameter2TranslatedDescriptions) {
+		this.parameter2TranslatedDescriptions = parameter2TranslatedDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameter3TranslatedDescriptions() {
+		return parameter3TranslatedDescriptions;
+	}
+
+	public void setParameter3TranslatedDescriptions(Map<TradingLanguage, String> parameter3TranslatedDescriptions) {
+		this.parameter3TranslatedDescriptions = parameter3TranslatedDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameterExtraTranslatedDescriptions() {
+		return parameterExtraTranslatedDescriptions;
+	}
+
+	public void setParameterExtraTranslatedDescriptions(Map<TradingLanguage, String> parameterExtraTranslatedDescriptions) {
+		this.parameterExtraTranslatedDescriptions = parameterExtraTranslatedDescriptions;
+	}
+
+	public String getParameter1Description() {
+		return parameter1Description;
+	}
+
+	public void setParameter1Description(String parameter1Description) {
+		this.parameter1Description = parameter1Description;
+	}
+
+	public String getParameter2Description() {
+		return parameter2Description;
+	}
+
+	public void setParameter2Description(String parameter2Description) {
+		this.parameter2Description = parameter2Description;
+	}
+
+	public String getParameter3Description() {
+		return parameter3Description;
+	}
+
+	public void setParameter3Description(String parameter3Description) {
+		this.parameter3Description = parameter3Description;
+	}
+
+	public String getParameterExtraDescription() {
+		return parameterExtraDescription;
+	}
+
+	public void setParameterExtraDescription(String parameterExtraDescription) {
+		this.parameterExtraDescription = parameterExtraDescription;
+	}
+
+	public ParameterFormat getParameter1Format() {
+		return parameter1Format;
+	}
+
+	public void setParameter1Format(ParameterFormat parameter1Format) {
+		this.parameter1Format = parameter1Format;
+	}
+
+	public ParameterFormat getParameter2Format() {
+		return parameter2Format;
+	}
+
+	public void setParameter2Format(ParameterFormat parameter2Format) {
+		this.parameter2Format = parameter2Format;
+	}
+
+	public ParameterFormat getParameter3Format() {
+		return parameter3Format;
+	}
+
+	public void setParameter3Format(ParameterFormat parameter3Format) {
+		this.parameter3Format = parameter3Format;
+	}
+
+	public ParameterFormat getParameterExtraFormat() {
+		return parameterExtraFormat;
+	}
+
+	public void setParameterExtraFormat(ParameterFormat parameterExtraFormat) {
+		this.parameterExtraFormat = parameterExtraFormat;
+	}
+
+	public boolean isParameter1IsMandatory() {
+		return parameter1IsMandatory;
+	}
+
+	public void setParameter1IsMandatory(boolean parameter1IsMandatory) {
+		this.parameter1IsMandatory = parameter1IsMandatory;
+	}
+
+	public boolean isParameter1IsHidden() {
+		return parameter1IsHidden;
+	}
+
+	public void setParameter1IsHidden(boolean parameter1IsHidden) {
+		this.parameter1IsHidden = parameter1IsHidden;
+	}
+
+	public boolean isParameter2IsMandatory() {
+		return parameter2IsMandatory;
+	}
+
+	public void setParameter2IsMandatory(boolean parameter2IsMandatory) {
+		this.parameter2IsMandatory = parameter2IsMandatory;
+	}
+
+	public boolean isParameter2IsHidden() {
+		return parameter2IsHidden;
+	}
+
+	public void setParameter2IsHidden(boolean parameter2IsHidden) {
+		this.parameter2IsHidden = parameter2IsHidden;
+	}
+
+	public boolean isParameter3IsMandatory() {
+		return parameter3IsMandatory;
+	}
+
+	public void setParameter3IsMandatory(boolean parameter3IsMandatory) {
+		this.parameter3IsMandatory = parameter3IsMandatory;
+	}
+
+	public boolean isParameter3IsHidden() {
+		return parameter3IsHidden;
+	}
+
+	public void setParameter3IsHidden(boolean parameter3IsHidden) {
+		this.parameter3IsHidden = parameter3IsHidden;
+	}
+
+	public boolean isParameterExtraIsHidden() {
+		return parameterExtraIsHidden;
+	}
+
+	public void setParameterExtraIsHidden(boolean parameterExtraIsHidden) {
+		this.parameterExtraIsHidden = parameterExtraIsHidden;
+	}
+
+	public Map<TradingLanguage, String> getParameter1TranslatedLongDescriptions() {
+		return parameter1TranslatedLongDescriptions;
+	}
+
+	public void setParameter1TranslatedLongDescriptions(Map<TradingLanguage, String> parameter1TranslatedLongDescriptions) {
+		this.parameter1TranslatedLongDescriptions = parameter1TranslatedLongDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameter2TranslatedLongDescriptions() {
+		return parameter2TranslatedLongDescriptions;
+	}
+
+	public void setParameter2TranslatedLongDescriptions(Map<TradingLanguage, String> parameter2TranslatedLongDescriptions) {
+		this.parameter2TranslatedLongDescriptions = parameter2TranslatedLongDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameter3TranslatedLongDescriptions() {
+		return parameter3TranslatedLongDescriptions;
+	}
+
+	public void setParameter3TranslatedLongDescriptions(Map<TradingLanguage, String> parameter3TranslatedLongDescriptions) {
+		this.parameter3TranslatedLongDescriptions = parameter3TranslatedLongDescriptions;
+	}
+
+	public Map<TradingLanguage, String> getParameterExtraTranslatedLongDescriptions() {
+		return parameterExtraTranslatedLongDescriptions;
+	}
+
+	public void setParameterExtraTranslatedLongDescriptions(
+			Map<TradingLanguage, String> parameterExtraTranslatedLongDescriptions) {
+		this.parameterExtraTranslatedLongDescriptions = parameterExtraTranslatedLongDescriptions;
+	}
+    
+    
 }
