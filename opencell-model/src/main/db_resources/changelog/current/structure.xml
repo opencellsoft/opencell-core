@@ -15910,14 +15910,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" >
                 <constraints nullable="false" />
             </column>
-            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <addColumn tableName="billing_cycle">
-            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
-                <constraints nullable="false" />
-            </column>
         </addColumn>
         <!--  Existing BC should be NO_AGGREGATION -->
         <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' </sql>
@@ -15932,6 +15924,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
               SET br.discount_aggregation = bc.discount_aggregation, br.disable_aggregation = bc.disable_aggregation, br.use_accounting_article_label = bc.use_accounting_article_label, br.date_aggregation = bc.date_aggregation,
               br.aggregate_unit_amounts = bc.aggregate_unit_amounts, br.ignore_subscriptions = bc.ignore_subscriptions, br.ignore_orders = bc.ignore_orders, br.incremental_invoice_lines = bc.incremental_invoice_lines"),
          </sql>
+    </changeSet>
+    <changeSet id="#INTRD-17987_20230825_discount_agg_cherry-pick" author="a.rouaguebe">
+        <addColumn tableName="billing_billing_run">
+            <column name="discount_aggregation" type="varchar(17)" />
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="discount_aggregation" type="varchar(17)" />
+        </addColumn>
+        <sql>UPDATE ${db.schema.adapted}billing_billing_run set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
+        <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET DEFAULT 'FULL_AGGREGATION';</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET NOT NULL</sql>
     </changeSet>
 
 
