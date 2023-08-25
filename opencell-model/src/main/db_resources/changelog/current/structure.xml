@@ -16206,5 +16206,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX idx_rt_d_edr_id ON ${db.schema.adapted}billing_rt_detail (edr_id ASC)</sql>
         <sql>CREATE INDEX idx_rt_d_adjusted_rated_tx ON ${db.schema.adapted}billing_rt_detail (adjusted_rated_tx ASC) </sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-17987_20230825_discount_agg" author="a.rouaguebe">
+        <addColumn tableName="billing_billing_run">
+            <column name="discount_aggregation" type="varchar(255)" defaultValue="NO_AGGREGATION"/>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="discount_aggregation" type="varchar(255)" defaultValue="NO_AGGREGATION">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

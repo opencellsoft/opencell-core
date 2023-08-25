@@ -2739,6 +2739,7 @@
             	<constraints nullable="false" />
             </column>
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="discount_aggregation" type="varchar(255)" defaultValue="NO_AGGREGATION"/>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -2948,6 +2949,9 @@
             <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="discount_aggregation" type="varchar(255)" defaultValue="NO_AGGREGATION">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -19460,6 +19464,7 @@
     <changeSet id="#INTRD-17969_20230818-8" author="AndriusKarpavicius"/> 
     <changeSet id="#INTRD-17969_20230818-9" author="AndriusKarpavicius" dbms="postgresql"/>
     <changeSet id="#INTRD-17969_20230818-9" author="AndriusKarpavicius" dbms="oracle"/>
+    <changeSet id="#INTRD-17987_20230825_discount_agg" author="a.rouaguebe" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

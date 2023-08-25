@@ -434,6 +434,10 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
     private Boolean incrementalInvoiceLines = Boolean.FALSE;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "discount_aggregation", nullable = false)
+    private DiscountAggregationMode discountAggregation = DiscountAggregationMode.FULL_AGGREGATION;
     
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
