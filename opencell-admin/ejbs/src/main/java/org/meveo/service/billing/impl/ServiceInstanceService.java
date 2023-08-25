@@ -661,6 +661,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                         .setParameter("chargeInstanceId", recurringChargeInstance.getId())
                         .setParameter("subscriptionId", recurringChargeInstance.getSubscription().getId())
                         .getResultList();
+
                 if (walletOperations != null && !walletOperations.isEmpty()) {
                     walletOperationService.getEntityManager()
                             .createNamedQuery("WalletOperation.setStatusToCanceledById")
@@ -669,6 +670,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                             .executeUpdate();
                     walletOperationService.getEntityManager()
                             .createNamedQuery("RatedTransaction.cancelByWOIds")
+                            .setParameter("now", new Date())
+                            .setParameter("woIds", walletOperations)
+                            .executeUpdate();
+                    walletOperationService.getEntityManager()
+                            .createNamedQuery("InvoiceLine.cancelInvoiceLineByWoIds")
                             .setParameter("now", new Date())
                             .setParameter("woIds", walletOperations)
                             .executeUpdate();
@@ -714,7 +720,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             } else if (applyReimbursment && chargeToDateOnTermination.before(chargedToDate)) {
 
                 try {
-                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber);
+                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber, woCanceled);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
