@@ -243,6 +243,10 @@ public class BillingCycle extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
     private boolean incrementalInvoiceLines = Boolean.FALSE;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "discount_aggregation", nullable = false)
+    private DiscountAggregationMode discountAggregation = DiscountAggregationMode.FULL_AGGREGATION;
     
     public boolean isThresholdPerEntity() {
         return thresholdPerEntity;
@@ -306,7 +310,7 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     /**
-     * @param invoiceDateProductionDelay Expression to calculate the number of days to add to a billing run date to compute the invoice date
+     * @param invoiceDateProductionDelayEL Expression to calculate the number of days to add to a billing run date to compute the invoice date
      */
     public void setInvoiceDateProductionDelayEL(String invoiceDateProductionDelayEL) {
         this.invoiceDateProductionDelayEL = invoiceDateProductionDelayEL;
@@ -586,5 +590,14 @@ public class BillingCycle extends BusinessCFEntity {
 
     public void setIncrementalInvoiceLines(boolean incrementalInvoiceLines) {
         this.incrementalInvoiceLines = incrementalInvoiceLines;
+    }
+
+    public DiscountAggregationMode getDiscountAggregation() {
+        return discountAggregation;
+    }
+
+    public BillingCycle setDiscountAggregation(DiscountAggregationMode discountAggregation) {
+        this.discountAggregation = discountAggregation;
+        return this;
     }
 }
