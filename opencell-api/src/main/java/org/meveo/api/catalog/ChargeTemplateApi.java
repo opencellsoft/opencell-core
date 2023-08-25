@@ -20,8 +20,10 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +33,7 @@ import javax.xml.bind.ValidationException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -41,6 +44,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -52,6 +56,7 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
@@ -90,6 +95,9 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
+    
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
     /**
      * Convert/update DTO object to an entity object
@@ -243,6 +251,35 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         if(postData.getInternalNote() != null) {
         	chargeTemplate.setInternalNote(StringUtils.isBlank(postData.getInternalNote()) ? null : postData.getInternalNote());
         }
+        
+        chargeTemplate.setParameter1Description(postData.getParameter1Description());
+        chargeTemplate.setParameter1TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter1TranslatedDescriptions()));
+        chargeTemplate.setParameter1TranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter1TranslatedLongDescriptions()));
+        chargeTemplate.setParameter1Format(postData.getParameter1Format());
+        chargeTemplate.setParameter1IsMandatory(postData.getParameter1IsMandatory());
+        chargeTemplate.setParameter1IsHidden(postData.getParameter1IsHidden());
+
+        chargeTemplate.setParameter2Description(postData.getParameter2Description());
+        chargeTemplate.setParameter2TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter2TranslatedDescriptions()));
+        chargeTemplate.setParameter2TranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter2TranslatedLongDescriptions()));
+        chargeTemplate.setParameter2Format(postData.getParameter2Format());
+        chargeTemplate.setParameter2IsMandatory(postData.getParameter2IsMandatory());
+        chargeTemplate.setParameter2IsHidden(postData.getParameter2IsHidden());
+
+        chargeTemplate.setParameter3Description(postData.getParameter3Description());
+        chargeTemplate.setParameter3TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter3TranslatedDescriptions()));
+        chargeTemplate.setParameter3TranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter3TranslatedLongDescriptions()));
+        chargeTemplate.setParameter3Format(postData.getParameter3Format());
+        chargeTemplate.setParameter3IsMandatory(postData.getParameter3IsMandatory());
+        chargeTemplate.setParameter3IsHidden(postData.getParameter3IsHidden());
+
+        chargeTemplate.setParameterExtraDescription(postData.getParameterExtraDescription());
+        chargeTemplate.setParameterExtraTranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameterExtraTranslatedDescriptions()));
+        chargeTemplate.setParameterExtraTranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameterExtraTranslatedLongDescriptions()));
+        chargeTemplate.setParameterExtraFormat(postData.getParameterExtraFormat());
+        chargeTemplate.setExtraIsMandatory(postData.getParameterExtraIsMandatory());
+        chargeTemplate.setParameterExtraIsHidden(postData.getParameterExtraIsHidden());
+
 
         // populate customFields
         try {
@@ -255,6 +292,21 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
             throw e;
         }
     }
+    
+    private Map<TradingLanguage, String> mapLanguageDtoToTradingLanguage(Map<LanguageDto, String> languageDtoMap) {
+        Map<TradingLanguage, String> tradingLanguageMap = new HashMap<>();
+        for (Map.Entry<LanguageDto, String> entry : languageDtoMap.entrySet()) {
+            LanguageDto languageDto = entry.getKey();
+            TradingLanguage tradingLanguage = findTradingLanguageByLanguageDto(languageDto);
+            tradingLanguageMap.put(tradingLanguage, entry.getValue());
+        }
+        return tradingLanguageMap;
+    }
+
+    private TradingLanguage findTradingLanguageByLanguageDto(LanguageDto languageDto) {
+    	return tradingLanguageService.findByTradingLanguageCode(languageDto.getCode());
+    }
+
 
     protected void checkInternalNote(ChargeTemplate entity, ChargeTemplateDto postData) {
     	// Internal note updatable only for Draft and Active Charge template

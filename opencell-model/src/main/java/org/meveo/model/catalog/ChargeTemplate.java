@@ -971,6 +971,15 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 			Map<TradingLanguage, String> parameterExtraTranslatedLongDescriptions) {
 		this.parameterExtraTranslatedLongDescriptions = parameterExtraTranslatedLongDescriptions;
 	}
+
+	public boolean isExtraIsMandatory() {
+		return extraIsMandatory;
+	}
+
+	public void setExtraIsMandatory(boolean extraIsMandatory) {
+		this.extraIsMandatory = extraIsMandatory;
+	}
+	
     
     
 }
