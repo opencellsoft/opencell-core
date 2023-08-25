@@ -437,7 +437,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Enumerated(EnumType.STRING)
     @Column(name = "discount_aggregation", nullable = false)
-    private DiscountAggregationMode discountAggregation = DiscountAggregationMode.FULL_AGGREGATION;
+    private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.NO_AGGREGATION;
     
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;

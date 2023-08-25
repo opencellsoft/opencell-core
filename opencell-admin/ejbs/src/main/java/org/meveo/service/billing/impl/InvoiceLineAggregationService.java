@@ -37,6 +37,7 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DateAggregationOption;
+import org.meveo.model.billing.DiscountAggregationModeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
@@ -191,23 +192,31 @@ public class InvoiceLineAggregationService implements Serializable {
      * @param type Billing entity type
      * @return A list of fields
      */
-    private List<String> buildAggregationFieldList(String usageDateAggregationFunction, String unitAmountAggregationFunction, boolean doNotAggregateBySubscription, boolean doNotAggregateByOrder, boolean withAggregation,
-            boolean useAccountingArticleLabel, BillingEntityTypeEnum type) {
+    private List<String> buildAggregationFieldList(AggregationConfiguration aggregationConfiguration, boolean withAggregation) {
+
+        String usageDateAggregationFunction = getUsageDateAggregationFunction(aggregationConfiguration.getDateAggregationOption(), "usageDate", "a");
+        String unitAmount = appProvider.isEntreprise() ? "unitAmountWithoutTax" : "unitAmountWithTax";
+        String unitAmountAggregationFunction = aggregationConfiguration.isAggregationPerUnitAmount() ? "SUM(a.unitAmountWithoutTax)" : unitAmount;
 
         List<String> fieldToFetch;
         if (withAggregation) {
             fieldToFetch = new ArrayList<>(
                 asList("string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id", "SUM(a.quantity) as quantity", unitAmountAggregationFunction + " as unit_amount_without_tax",
                     "SUM(a.amountWithoutTax) as sum_without_tax", "SUM(a.amountWithTax) as sum_with_tax", "offerTemplate.id as offer_id", usageDateAggregationFunction + " as usage_date", "min(a.startDate) as start_date",
-                    "max(a.endDate) as end_date", "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id", "accountingArticle.id as article_id",
-                    "discountedRatedTransaction as discounted_ratedtransaction_id", "discountPlanType as discount_plan_type", "discountValue as discount_value", "count(a.id) as rt_count"));
+                    "max(a.endDate) as end_date", "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id", "accountingArticle.id as article_id", "count(a.id) as rt_count"));
 
-            if (!doNotAggregateByOrder) {
+            if (aggregationConfiguration.getDiscountAggregation() == DiscountAggregationModeEnum.NO_AGGREGATION) {
+                fieldToFetch.add("discountedRatedTransaction as discounted_ratedtransaction_id");
+                fieldToFetch.add("discountPlanType as discount_plan_type");
+                fieldToFetch.add("discountValue as discount_value");
+            }
+
+            if (!aggregationConfiguration.isIgnoreOrders()) {
                 fieldToFetch.add("infoOrder.order.id as commercial_order_id");
                 fieldToFetch.add("orderNumber as order_number");
                 fieldToFetch.add("infoOrder.order.id as order_id");
             }
-            if (useAccountingArticleLabel) {
+            if (aggregationConfiguration.isUseAccountingArticleLabel()) {
                 fieldToFetch.add("accountingArticle.description as label");
             } else {
                 fieldToFetch.add("description as label");
@@ -221,7 +230,7 @@ public class InvoiceLineAggregationService implements Serializable {
                     "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id", "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
         }
 
-        if (BILLINGACCOUNT != type || !doNotAggregateBySubscription) {
+        if (BILLINGACCOUNT != aggregationConfiguration.getType() || !aggregationConfiguration.isIgnoreSubscriptions()) {
             fieldToFetch.add("subscription.id as subscription_id");
             fieldToFetch.add("serviceInstance.id as service_instance_id");
         }
@@ -239,12 +248,7 @@ public class InvoiceLineAggregationService implements Serializable {
      */
     private String buildAggregationQuery(BillingRun billingRun, AggregationConfiguration aggregationConfiguration, Map<String, Object> bcFilter) {
 
-        String usageDateAggregationFunction = getUsageDateAggregationFunction(aggregationConfiguration.getDateAggregationOption(), "usageDate", "a");
-        String unitAmount = appProvider.isEntreprise() ? "unitAmountWithoutTax" : "unitAmountWithTax";
-        String unitAmountAggregationFunction = aggregationConfiguration.isAggregationPerUnitAmount() ? "SUM(a.unitAmountWithoutTax)" : unitAmount;
-
-        List<String> fieldToFetch = buildAggregationFieldList(usageDateAggregationFunction, unitAmountAggregationFunction, aggregationConfiguration.isIgnoreSubscriptions(), aggregationConfiguration.isIgnoreOrders(),
-            true, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType());
+        List<String> fieldToFetch = buildAggregationFieldList(aggregationConfiguration, true);
 
         Set<String> groupBy = getAggregationQueryGroupBy(aggregationConfiguration);
 
@@ -275,7 +279,10 @@ public class InvoiceLineAggregationService implements Serializable {
             }
         }
 
-        sql.append(" and agr.discounted_ratedtransaction_id is null and agr.discount_value is null and ivl.discount_value is null and ivl.discounted_invoice_line is null and ivl.status='OPEN'");
+        if (aggregationConfiguration.getDiscountAggregation() == DiscountAggregationModeEnum.NO_AGGREGATION) {
+            sql.append(" and agr.discounted_ratedtransaction_id is null and agr.discount_value is null and ivl.discount_value is null and ivl.discounted_invoice_line is null");
+        }
+        sql.append(" and ivl.status='OPEN'");
 
         sql.append(" ORDER BY agr.billing_account__id");
         return sql.toString();
@@ -291,9 +298,11 @@ public class InvoiceLineAggregationService implements Serializable {
         groupBy.add("tax.id");
         groupBy.add("taxPercent");
         groupBy.add("infoOrder.productVersion.id");
-        groupBy.add("discountedRatedTransaction");
-        groupBy.add("discountValue");
-        groupBy.add("discountPlanType");
+        if (aggregationConfiguration.getDiscountAggregation() == DiscountAggregationModeEnum.NO_AGGREGATION) {
+            groupBy.add("discountedRatedTransaction");
+            groupBy.add("discountValue");
+            groupBy.add("discountPlanType");
+        }
         if (aggregationConfiguration.getType() == BillingEntityTypeEnum.ORDER) {
             groupBy.add("orderNumber");
         } else if (aggregationConfiguration.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {

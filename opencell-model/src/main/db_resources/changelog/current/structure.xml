@@ -16209,10 +16209,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
     
     <changeSet id="#INTRD-17987_20230825_discount_agg" author="a.rouaguebe">
         <addColumn tableName="billing_billing_run">
-            <column name="discount_aggregation" type="varchar(255)" defaultValue="NO_AGGREGATION"/>
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="NO_AGGREGATION"/>
         </addColumn>
         <addColumn tableName="billing_cycle">
-            <column name="discount_aggregation" type="varchar(255)" defaultValue="NO_AGGREGATION">
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="NO_AGGREGATION">
                 <constraints nullable="false" />
             </column>
         </addColumn>

@@ -2739,7 +2739,7 @@
             	<constraints nullable="false" />
             </column>
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="discount_aggregation" type="varchar(255)" defaultValue="NO_AGGREGATION"/>
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="NO_AGGREGATION"/>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -2949,7 +2949,7 @@
             <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="discount_aggregation" type="varchar(255)" defaultValue="NO_AGGREGATION">
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="NO_AGGREGATION">
                 <constraints nullable="false" />
             </column>
         </createTable>
