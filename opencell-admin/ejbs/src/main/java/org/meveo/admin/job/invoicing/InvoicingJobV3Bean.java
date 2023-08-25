@@ -117,6 +117,7 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 		} else {
 			filters.put("status", INVOICE_LINES_CREATED);
 		}
+		filters.put("disabled", false);
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
 		paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
 		List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);

@@ -150,6 +150,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             if (((List<Long>) jobInstance.getParamValue(BR_PROCESSED)).contains(billingRun.getId())) {
                 continue;
             }
+            filters.put("disabled", false);
 
             currentBillingRun = billingRun;
 

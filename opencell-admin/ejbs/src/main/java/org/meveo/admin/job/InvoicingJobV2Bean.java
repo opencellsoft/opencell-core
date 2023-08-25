@@ -91,6 +91,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 filters.put("inList id", billingRunIds);
                 filters.put("ne status", OPEN);
             }
+            filters.put("disabled", false);
             PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
             paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
             List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
