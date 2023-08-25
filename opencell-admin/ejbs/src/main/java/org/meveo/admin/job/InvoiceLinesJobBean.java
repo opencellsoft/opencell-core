@@ -92,6 +92,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
             } else {
                 filters.put("inList id", billingRunIds);
             }
+            filters.put("disabled", false);
             PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, Arrays.asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
             List<BillingRun> billingRuns = billingRunService.list(pagination);
             if(billingRuns != null && !billingRuns.isEmpty()) {
