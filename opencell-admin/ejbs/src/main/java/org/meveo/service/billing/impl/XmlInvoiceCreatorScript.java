@@ -24,6 +24,7 @@ import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1746,6 +1747,29 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     }
 
     /**
+     * Create invoice/details DOM element, with aggregate IL (merge IL content and calculating data to avoid huge XML file and Jasper slow generation)
+     * Used for Siplec : Fix 2023-08-25 V11.1.30
+     *
+     * @param doc                  XML invoice DOM
+     * @param invoice              Invoice to convert
+     * @param ratedTransactions    Rated transactions
+     * @param isVirtual            Is this a virtual invoice. If true, no invoice, invoice aggregate nor RT information is persisted in DB
+     * @param invoiceConfiguration Invoice configuration
+     * @param invoiceLines         Invoice lines
+     * @return DOM element
+     */
+    protected Element createDetailsSectionWithAggregatedIL(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isVirtual, InvoiceConfiguration invoiceConfiguration, List<InvoiceLine> invoiceLines) {
+
+        Element detail = doc.createElement("detail");
+        Element userAccountsTag = ratedTransactions != null ? createUserAccountsSection(doc, invoice, ratedTransactions, isVirtual, invoiceConfiguration)
+                :  createUserAccountsSectionILAggregated(doc, invoice, invoiceLines, isVirtual, invoiceConfiguration);
+        if (userAccountsTag != null) {
+            detail.appendChild(userAccountsTag);
+        }
+        return detail;
+    }
+
+    /**
      * Create invoice/details/userAccounts/userAccount/categories/category/subcategories/subcategory/edr DOM element
      *
      * @param doc                   XML invoice DOM
@@ -2381,6 +2405,41 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     }
 
     /**
+     * Create invoice/details/userAccounts DOM element
+     *
+     * @param doc                  XML invoice DOM
+     * @param invoice              Invoice to convert
+     * @param invoiceLines          invoice lines
+     * @param isVirtual            Is this a virtual invoice. If true, no invoice, invoice aggregate nor IL information is persisted in DB
+     * @param invoiceConfiguration Invoice configuration
+     * @return DOM element
+     */
+    protected Element createUserAccountsSectionILAggregated(Document doc, Invoice invoice, List<InvoiceLine> invoiceLines,
+                                                  boolean isVirtual, InvoiceConfiguration invoiceConfiguration) {
+
+        Element userAccountsTag = doc.createElement("userAccounts");
+        String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+        List<UserAccount> userAccounts=new ArrayList<>();
+        if(invoice.getSubscription()!=null) {
+            userAccounts.add(invoice.getSubscription().getUserAccount());
+        }
+        for (UserAccount userAccount : userAccounts.isEmpty()?invoice.getBillingAccount().getUsersAccounts():userAccounts) {
+            Element userAccountTag = createUserAccountSectionILAggregated(doc, invoice, userAccount, invoiceLines, isVirtual,
+                    false, invoiceLanguageCode, invoiceConfiguration);
+            if (userAccountTag == null) {
+                continue;
+            }
+            userAccountsTag.appendChild(userAccountTag);
+        }
+        Element userAccountTag = createUserAccountSectionILAggregated(doc, invoice, null, invoiceLines, isVirtual,
+                userAccountsTag.getChildNodes().getLength() == 0, invoiceLanguageCode, invoiceConfiguration);
+        if (userAccountTag != null) {
+            userAccountsTag.appendChild(userAccountTag);
+        }
+        return userAccountsTag;
+    }
+
+    /**
      * Create invoice/details/userAccounts/userAccount DOM element
      *
      * @param doc                  XML invoice DOM
@@ -2403,6 +2462,45 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element userAccountTag = doc.createElement("userAccount");
         if (userAccount == null) {
         	 userAccountTag.setAttribute("description", "-");
+        } else {
+            userAccountTag.setAttribute("id", userAccount.getId() + "");
+            userAccountTag.setAttribute("code", userAccount.getCode());
+            userAccountTag.setAttribute("jobTitle", getDefaultIfNull(userAccount.getJobTitle(), ""));
+            userAccountTag.setAttribute("description", getDefaultIfNull(userAccount.getDescription(), ""));
+            userAccountTag.setAttribute("registrationNo", getDefaultIfNull(userAccount.getRegistrationNo(), ""));
+            userAccountTag.setAttribute("vatNo", getDefaultIfNull(userAccount.getVatNo(), ""));
+            addCustomFields(userAccount, doc, userAccountTag);
+        }
+        if (invoiceConfiguration.isDisplaySubscriptions()) {
+            Element subscriptionsTag = createSubscriptionsSection(doc, invoice, userAccount, null, isVirtual, ignoreUA, invoiceConfiguration, invoiceLines);
+            if (subscriptionsTag != null) {
+                userAccountTag.appendChild(subscriptionsTag);
+            }
+        }
+        if (userAccount != null) {
+            Element nameTag = createNameSection(doc, userAccount, invoiceLanguageCode);
+            if (nameTag != null) {
+                userAccountTag.appendChild(nameTag);
+            }
+            Element addressTag = createAddressSection(doc, userAccount, invoiceLanguageCode);
+            if (addressTag != null) {
+                userAccountTag.appendChild(addressTag);
+            }
+        }
+        userAccountTag.appendChild(categoriesTag);
+        return userAccountTag;
+    }
+
+    public Element createUserAccountSectionILAggregated(Document doc, Invoice invoice, UserAccount userAccount,
+                                              List<InvoiceLine> invoiceLines, boolean isVirtual, boolean ignoreUA,
+                                              String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration) {
+        Element categoriesTag = createUAInvoiceCategoriesILAggregated(doc, invoice, userAccount, invoiceLines, isVirtual, invoiceConfiguration);
+        if (categoriesTag == null) {
+            return null;
+        }
+        Element userAccountTag = doc.createElement("userAccount");
+        if (userAccount == null) {
+            userAccountTag.setAttribute("description", "-");
         } else {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             userAccountTag.setAttribute("code", userAccount.getCode());
@@ -2467,6 +2565,31 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return categoriesTag.getChildNodes().getLength() > 0 ? categoriesTag : null;
     }
 
+    protected Element createUAInvoiceCategoriesILAggregated(Document doc, Invoice invoice,
+                                                      UserAccount userAccount, List<InvoiceLine> invoiceLines, boolean isVirtual,InvoiceConfiguration invoiceConfiguration) {
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
+        String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
+        String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+        List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<>();
+        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+            if (invoiceAgregate instanceof CategoryInvoiceAgregate && isValidCategoryInvoiceAgregate(userAccount, (CategoryInvoiceAgregate) invoiceAgregate)) {
+                CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
+                categoryInvoiceAgregates.add(categoryInvoiceAgregate);
+            }
+        }
+        Collections.sort(categoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceCategoryComparator());
+        Element categoriesTag = doc.createElement("categories");
+        for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
+            Element categoryTag = createDetailsUAInvoiceCategorySectionILAggregated(doc, invoice, categoryInvoiceAgregate,
+                    invoiceLines, isVirtual, invoiceDateFormat, invoiceLanguageCode);
+            if (categoryTag != null) {
+                categoriesTag.appendChild(categoryTag);
+            }
+        }
+        return categoriesTag.getChildNodes().getLength() > 0 ? categoriesTag : null;
+    }
+
     /**
      * Create invoice/details/userAccounts/userAccount/categories/category DOM element
      *
@@ -2520,6 +2643,88 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         return categoryTag;
     }
 
+    protected Element createDetailsUAInvoiceCategorySectionILAggregated(Document doc, Invoice invoice, CategoryInvoiceAgregate categoryInvoiceAggregate,
+                                                              List<InvoiceLine> invoiceLines, boolean isVirtual, String invoiceDateFormat,
+                                                              String invoiceDateTimeFormat, String invoiceLanguageCode, InvoiceConfiguration invoiceConfiguration) {
+        InvoiceCategory invoiceCategory = categoryInvoiceAggregate.getInvoiceCategory();
+        String invoiceCategoryLabel = categoryInvoiceAggregate.getDescription();
+        if (invoiceCategory != null && invoiceCategory.getDescriptionI18n() != null
+                && invoiceCategory.getDescriptionI18n().get(invoiceLanguageCode) != null) {
+            invoiceCategoryLabel = invoiceCategory.getDescriptionI18n().get(invoiceLanguageCode);
+        }
+        Element categoryTag = doc.createElement("category");
+        categoryTag.setAttribute("label", getDefaultIfNull(invoiceCategoryLabel, ""));
+        categoryTag.setAttribute("code", invoiceCategory != null ? invoiceCategory.getCode() : "");
+        categoryTag.setAttribute("sortIndex", (invoiceCategory != null && invoiceCategory.getSortIndex() != null)
+                ? invoiceCategory.getSortIndex() + "" : "");
+        Element amountWithoutTax = doc.createElement("amountWithoutTax");
+        amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAggregate.getAmountWithoutTax())));
+        categoryTag.appendChild(amountWithoutTax);
+        Element amountWithTax = doc.createElement("amountWithTax");
+        amountWithTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAggregate.getAmountWithTax())));
+        categoryTag.appendChild(amountWithTax);
+        Element amountTax = doc.createElement("amountTax");
+        amountTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAggregate.getAmountTax())));
+        categoryTag.appendChild(amountTax);
+        addCustomFields(invoiceCategory, doc, categoryTag);
+        Element subCategories = doc.createElement("subCategories");
+        categoryTag.appendChild(subCategories);
+        List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>(categoryInvoiceAggregate.getSubCategoryInvoiceAgregates());
+        Collections.sort(subCategoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceSubCategoryComparator());
+        for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
+            if (subCatInvoiceAgregate.isDiscountAggregate()) {
+                continue;
+            }
+            Element subCategory = createUAInvoiceSubcategorySectionILAggregated(doc, invoice, subCatInvoiceAgregate, invoiceLines,
+                    isVirtual, invoiceDateFormat, invoiceLanguageCode);
+            if (subCategory != null) {
+                subCategories.appendChild(subCategory);
+            }
+        }
+        return categoryTag;
+    }
+
+    protected Element createDetailsUAInvoiceCategorySectionILAggregated(Document doc, Invoice invoice, CategoryInvoiceAgregate categoryInvoiceAggregate,
+                                                              List<InvoiceLine> invoiceLines, boolean isVirtual, String invoiceDateFormat,
+                                                              String invoiceLanguageCode) {
+        InvoiceCategory invoiceCategory = categoryInvoiceAggregate.getInvoiceCategory();
+        String invoiceCategoryLabel = categoryInvoiceAggregate.getDescription();
+        if (invoiceCategory != null && invoiceCategory.getDescriptionI18n() != null
+                && invoiceCategory.getDescriptionI18n().get(invoiceLanguageCode) != null) {
+            invoiceCategoryLabel = invoiceCategory.getDescriptionI18n().get(invoiceLanguageCode);
+        }
+        Element categoryTag = doc.createElement("category");
+        categoryTag.setAttribute("label", getDefaultIfNull(invoiceCategoryLabel, ""));
+        categoryTag.setAttribute("code", invoiceCategory != null ? invoiceCategory.getCode() : "");
+        categoryTag.setAttribute("sortIndex", (invoiceCategory != null && invoiceCategory.getSortIndex() != null)
+                ? invoiceCategory.getSortIndex() + "" : "");
+        Element amountWithoutTax = doc.createElement("amountWithoutTax");
+        amountWithoutTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAggregate.getAmountWithoutTax())));
+        categoryTag.appendChild(amountWithoutTax);
+        Element amountWithTax = doc.createElement("amountWithTax");
+        amountWithTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAggregate.getAmountWithTax())));
+        categoryTag.appendChild(amountWithTax);
+        Element amountTax = doc.createElement("amountTax");
+        amountTax.appendChild(this.createTextNode(doc, toPlainString(categoryInvoiceAggregate.getAmountTax())));
+        categoryTag.appendChild(amountTax);
+        addCustomFields(invoiceCategory, doc, categoryTag);
+        Element subCategories = doc.createElement("subCategories");
+        categoryTag.appendChild(subCategories);
+        List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>(categoryInvoiceAggregate.getSubCategoryInvoiceAgregates());
+        Collections.sort(subCategoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceSubCategoryComparator());
+        for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
+            if (subCatInvoiceAgregate.isDiscountAggregate()) {
+                continue;
+            }
+            Element subCategory = createUAInvoiceSubcategorySectionILAggregated(doc, invoice, subCatInvoiceAgregate, invoiceLines,
+                    isVirtual, invoiceDateFormat, invoiceLanguageCode);
+            if (subCategory != null) {
+                subCategories.appendChild(subCategory);
+            }
+        }
+        return categoryTag;
+    }
+
     /**
      * Create invoice/details/userAccounts/userAccount/categories/category/subcategories/subcategory DOM element
      *
@@ -2566,6 +2771,85 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         addCustomFields(invoiceSubCat, doc, subCategory);
         return subCategory;
+    }
+
+    protected Element createUAInvoiceSubcategorySectionILAggregated(Document doc, Invoice invoice, SubCategoryInvoiceAgregate subCatInvoiceAggregate,
+                                                          List<InvoiceLine> invoiceLines, boolean isVirtual, String invoiceDateFormat,
+                                                          String invoiceLanguageCode) {
+        InvoiceSubCategory invoiceSubCat = subCatInvoiceAggregate.getInvoiceSubCategory();
+        if (isVirtual) {
+            invoiceLines = subCatInvoiceAggregate.getInvoiceLinesToAssociate();
+        }
+        String invoiceSubCategoryLabel = subCatInvoiceAggregate.getDescription();
+        if (invoiceSubCat != null && invoiceSubCat.getDescriptionI18n() != null
+                && invoiceSubCat.getDescriptionI18n().get(invoiceLanguageCode) != null) {
+            invoiceSubCategoryLabel = invoiceSubCat.getDescriptionI18n().get(invoiceLanguageCode);
+        }
+        Element subCategory = doc.createElement("subCategory");
+        subCategory.setAttribute("label", getDefaultIfNull(invoiceSubCategoryLabel, ""));
+        subCategory.setAttribute("code", invoiceSubCat != null ? invoiceSubCat.getCode() : "");
+        subCategory.setAttribute("amountWithoutTax", toPlainString(subCatInvoiceAggregate.getAmountWithoutTax()));
+        subCategory.setAttribute("amountWithTax", toPlainString(subCatInvoiceAggregate.getAmountWithTax()));
+        subCategory.setAttribute("amountTax", toPlainString(subCatInvoiceAggregate.getAmountTax()));
+        subCategory.setAttribute("sortIndex", (invoiceSubCat!= null && invoiceSubCat.getSortIndex() != null)
+                ? invoiceSubCat.getSortIndex() + "" : "");
+
+        // Group InvoiceLine by label
+        Map<String, List<InvoiceLine>> groupedILsByLabel = new HashMap<>();
+        for (InvoiceLine iL : invoiceLines) {
+            if ((iL.getInvoiceAggregateF() != null && iL.getInvoiceAggregateF().getId() != null
+                    && !iL.getInvoiceAggregateF().getId().equals(subCatInvoiceAggregate.getId()))
+                    || (iL.getInvoiceAggregateF() != null && iL.getInvoiceAggregateF().getId() == null
+                    && iL.getAccountingArticle() != null && !iL.getAccountingArticle().getInvoiceSubCategory().getId().equals(invoiceSubCat.getId()))) {
+                continue;
+            }
+            groupedILsByLabel.computeIfAbsent(iL.getLabel(), k -> new ArrayList<>()).add(iL);
+        }
+
+        // For each label, calculate quantity for iLs and build "line" tag
+        groupedILsByLabel.forEach((label, aggrIls) -> {
+            Element ilTag = createILSection(doc, invoice, aggrIls.get(0), invoiceDateFormat,
+                    aggrIls.stream().map(InvoiceLine::getQuantity).reduce(BigDecimal.valueOf(0), BigDecimal::add));
+            if (ilTag != null) {
+                subCategory.appendChild(ilTag);
+            }
+        });
+
+        addCustomFields(invoiceSubCat, doc, subCategory);
+        return subCategory;
+    }
+
+    protected Element createILSection(Document doc, Invoice invoice, InvoiceLine invoiceLine, String invoiceDateFormat,
+                                      BigDecimal sumQuantity) {
+
+        if (invoiceLine == null) {
+            return null;
+        }
+
+        Element line;
+        line = doc.createElement("line");
+        line.setAttribute("code", invoiceLine.getOrderRef());
+        Element label = doc.createElement("label");
+        label.appendChild(this.createTextNode(doc, getDefaultIfNull(invoiceLine.getLabel(), "")));
+        line.appendChild(label);
+        Element article = doc.createElement("article");
+        article.appendChild(this.createTextNode(doc, ""));
+        article.setAttribute("code", invoiceLine.getAccountingArticle() != null ? invoiceLine.getAccountingArticle().getCode() : "");
+        article.setAttribute("label", invoiceLine.getLabel());
+        line.appendChild(article);
+        Element quantity = doc.createElement("quantity");
+        Text quantityTxt = this.createTextNode(doc, sumQuantity != null ? sumQuantity.toPlainString() : "");
+        quantity.appendChild(quantityTxt);
+        line.appendChild(quantity);
+        ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
+        if (serviceInstance != null) {
+            String offerCode = invoiceLine.getOfferTemplate() != null ? invoiceLine.getOfferTemplate().getCode() : null;
+            Element serviceTag = createServiceSection(doc, invoice, serviceInstance, offerCode, true);
+            if (serviceTag != null) {
+                line.appendChild(serviceTag);
+            }
+        }
+        return line;
     }
 
     private Text createTextNode(Document doc, String data) {
