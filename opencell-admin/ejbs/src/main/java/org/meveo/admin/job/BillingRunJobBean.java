@@ -143,6 +143,7 @@ public class BillingRunJobBean extends BaseJobBean {
                 }
 
                 billingRun.setIncrementalInvoiceLines(billingCycle.getIncrementalInvoiceLines());
+                billingRun.setDiscountAggregation(billingCycle.getDiscountAggregation());
 
                 billingRunService.create(billingRun);
                 result.registerSucces();

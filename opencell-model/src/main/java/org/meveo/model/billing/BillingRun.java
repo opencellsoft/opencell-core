@@ -1021,4 +1021,13 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setIncrementalInvoiceLines(Boolean incrementalInvoiceLines) {
         this.incrementalInvoiceLines = incrementalInvoiceLines;
     }
+
+    public DiscountAggregationModeEnum getDiscountAggregation() {
+        return discountAggregation;
+    }
+
+    public BillingRun setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
+        this.discountAggregation = discountAggregation;
+        return this;
+    }
 }
