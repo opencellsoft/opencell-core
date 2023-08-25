@@ -262,7 +262,7 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "discount_aggregation", nullable = false)
-    private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.NO_AGGREGATION;
+    private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
 
     public boolean isThresholdPerEntity() {
         return thresholdPerEntity;

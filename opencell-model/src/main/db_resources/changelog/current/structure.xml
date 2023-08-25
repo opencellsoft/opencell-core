@@ -16209,13 +16209,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
     
     <changeSet id="#INTRD-17987_20230825_discount_agg" author="a.rouaguebe">
         <addColumn tableName="billing_billing_run">
-            <column name="discount_aggregation" type="varchar(17)" defaultValue="NO_AGGREGATION"/>
+            <column name="discount_aggregation" type="varchar(17)" />
         </addColumn>
         <addColumn tableName="billing_cycle">
-            <column name="discount_aggregation" type="varchar(17)" defaultValue="NO_AGGREGATION">
-                <constraints nullable="false" />
-            </column>
+            <column name="discount_aggregation" type="varchar(17)" />
         </addColumn>
+        <sql>UPDATE ${db.schema.adapted}billing_billing_run set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
+        <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET DEFAULT 'FULL_AGGREGATION';</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET NOT NULL</sql>
     </changeSet>
 
 </databaseChangeLog>
