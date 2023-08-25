@@ -164,7 +164,7 @@ public class InvoiceLinesFactory {
         	invoiceLine.setTransactionalAmountWithTax (convertedAmountWithTax);
 			invoiceLine.setTransactionalAmountWithoutTax(convertedAmountWithoutTax);
         	invoiceLine.setTransactionalAmountTax((BigDecimal) data.get("sum_converted_amount_tax"));
-        	BigDecimal unitAmount = isEnterprise ? (BigDecimal) data.getOrDefault("converted_unit_amount_without_tax", ZERO) : (BigDecimal) data.getOrDefault("converted_unit_amount_with_tax", ZERO);
+        	BigDecimal unitAmount = isEnterprise ? convertedAmountWithoutTax : convertedAmountWithTax;
             BigDecimal quantity = (BigDecimal) data.getOrDefault("quantity", ZERO);
             BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity,
                     appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());

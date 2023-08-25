@@ -835,6 +835,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountedAmount = walletOperation.getDiscountedAmount();
         this.sequence = walletOperation.getSequence();
         this.rulesContract = walletOperation.getRulesContract();
+        this.useSpecificPriceConversion = walletOperation.isUseSpecificPriceConversion();
+        this.transactionalUnitAmountTax = walletOperation.getTransactionalUnitAmountTax();
+        this.transactionalUnitAmountWithoutTax = walletOperation.getTransactionalUnitAmountWithoutTax();
+        this.transactionalUnitAmountTax = walletOperation.getTransactionalUnitAmountTax();
+        this.transactionalAmountTax = walletOperation.getTransactionalAmountTax();
+        this.transactionalAmountWithoutTax = walletOperation.getTransactionalAmountWithoutTax();
+        this.transactionalAmountWithTax = walletOperation.getTransactionalAmountWithTax();
     }
 
 
