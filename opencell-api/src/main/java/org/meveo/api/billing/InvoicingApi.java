@@ -113,6 +113,7 @@ public class InvoicingApi extends BaseApi {
         billingRun.setInvoiceDate(dto.getInvoiceDate());
         billingRun.setLastTransactionDate(dto.getLastTransactionDate());
         billingRun.setSkipValidationScript(dto.getSkipValidationScript());
+        billingRun.setDiscountAggregation(billingCycle.getDiscountAggregation());
         if(dto.getRejectAutoAction() == null) {
             billingRun.setRejectAutoAction(BillingRunAutomaticActionEnum.MANUAL_ACTION);
         }
@@ -436,7 +437,6 @@ public class InvoicingApi extends BaseApi {
 	 * Delete canceled invoices for a given billing run
 	 *
 	 * @param billingRunId
-	 * @param invoices
 	 */
 	public void canceledInvoices(Long billingRunId) {
 		invoiceService.deleteInvoices(billingRunId);
