@@ -1779,4 +1779,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	public List<Long> getBAsHavingOpenILs(BillingRun billingRun) {
 		return getEntityManager().createNamedQuery("InvoiceLine.getBAsHavingOpenILsByBR",Long.class).setParameter("billingRunId", billingRun.getId()).getResultList();
 	}
+
+    public void updateDiscountAggregationForBillingCycle(BillingCycle entity) {
+        String query = "UPDATE BillingRun SET discountAggregation = :newValue WHERE billingCycle = :bc AND status = '" + BillingRunStatusEnum.NEW + "'";
+        getEntityManager().createQuery(query)
+                          .setParameter("newValue", entity.getDiscountAggregation())
+                          .setParameter("bc", entity)
+                          .executeUpdate();
+    }
 }
