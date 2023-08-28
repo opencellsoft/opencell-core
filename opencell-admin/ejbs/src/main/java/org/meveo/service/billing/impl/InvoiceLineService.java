@@ -1083,7 +1083,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         int i = 0;
         for (Map<String, Object> groupedRT : groupedRTs) {
             Long invoiceLineId = null;
-            associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+            if (groupedRT.get("rated_transaction_ids") instanceof Number) {
+                associatedRtIds = new ArrayList<>();
+                associatedRtIds.add(((Number) groupedRT.get("rated_transaction_ids")).longValue());
+            } else {
+                associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+            }
 
             if (incrementalInvoiceLines && groupedRT.get("invoice_line_id") != null) {
                 invoiceLineId = ((Number) groupedRT.get("invoice_line_id")).longValue();

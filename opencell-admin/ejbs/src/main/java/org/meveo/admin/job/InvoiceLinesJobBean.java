@@ -36,7 +36,7 @@ import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.DateAggregationOption;
+import org.meveo.model.billing.DiscountAggregationModeEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
@@ -120,12 +120,6 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             return Optional.empty();
         }
 
-        // Default aggregation configuration from parameters set on BR
-        boolean aggregationPerUnitPrice = (Boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE, false);
-        DateAggregationOption dateAggregationOptions = (DateAggregationOption) DateAggregationOption
-            .valueOf((String) getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS, "MONTH_OF_USAGE_DATE"));
-        AggregationConfiguration defaultAggregationConfiguration = new AggregationConfiguration(appProvider.isEntreprise(), aggregationPerUnitPrice, dateAggregationOptions);
-
         // Number of Rated transactions to process in a single job run
         int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("invoiceLinesJob.processNrInJobRun", 4000000);
 
@@ -167,14 +161,9 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             // set status of billing run as CREATING_INVOICE_LINES, i.e. it indicates that the invoice line job is running
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.CREATING_INVOICE_LINES, null);
 
-            // Determine aggregation options either from Billing cycle (priority) or Billing run parameters (default)
-            if (currentBillingRun.getBillingCycle() != null && !currentBillingRun.getBillingCycle().isDisableAggregation()) {
-                aggregationConfiguration = new AggregationConfiguration(currentBillingRun.getBillingCycle());
-                aggregationConfiguration.setEnterprise(appProvider.isEntreprise());
-
-            } else {
-                aggregationConfiguration = defaultAggregationConfiguration;
-            }
+            // Determine aggregation options from Billing run
+            aggregationConfiguration = new AggregationConfiguration(currentBillingRun);
+            aggregationConfiguration.setEnterprise(appProvider.isEntreprise());
 
             aggregationQueryInfo = invoiceLineAggregationService.getAggregationSummaryAndILDetailsQuery(currentBillingRun, aggregationConfiguration, statelessSession, incrementalInvoiceLines);
             nrOfAccounts = aggregationQueryInfo.getNumberOfBA();
@@ -238,18 +227,20 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
                 @Override
                 public void initializeDecisionMaking(Map<String, Object> item) {
-                    totalRtCount = ((Number) item.get("rt_count")).longValue();
+                    totalRtCount = item.get("rt_count") != null ? ((Number) item.get("rt_count")).longValue() : 1L;
                     totalIlCount = 1;
                 }
 
                 @Override
                 public boolean isIncludeItem(Map<String, Object> item) {
 
-                    if (totalIlCount + 1 > nrILsPerTx || totalRtCount + ((Number) item.get("rt_count")).longValue() > nrRtsPerTx) {
+                    long rtCount = item.get("rt_count") != null ? ((Number) item.get("rt_count")).longValue() : 1L;
+
+                    if (totalIlCount + 1 > nrILsPerTx || totalRtCount + rtCount > nrRtsPerTx) {
                         return false;
                     }
 
-                    totalRtCount = totalRtCount + ((Number) item.get("rt_count")).longValue();
+                    totalRtCount = totalRtCount + rtCount;
                     totalIlCount++;
                     return true;
                 }
@@ -321,7 +312,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
         if (jobExecutionResult.getJobLauncherEnum() != JobLauncherEnum.WORKER) {
 
-            if (minId != null) {
+            if (minId != null && aggregationConfiguration.getDiscountAggregation() == DiscountAggregationModeEnum.NO_AGGREGATION) {
                 invoiceLinesService.bridgeDiscountILs(currentBillingRun.getId(), minId, maxId);
             }
 

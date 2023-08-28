@@ -62,14 +62,6 @@ public class InvoiceLinesJob extends Job {
         result.put(CF_INVOICE_LINES_NR_ILS_PER_TX, CustomFieldTemplateUtils.buildCF(CF_INVOICE_LINES_NR_ILS_PER_TX, resourceMessages.getString("jobExecution.ilJob.numberOfILsPerTX"), CustomFieldTypeEnum.LONG,
             "tab:Configuration:0;fieldGroup:Configuration:0;field:4", "10000", true, null, null, "JobInstance_InvoiceLinesJob"));
 
-        CustomFieldTemplate cft = CustomFieldTemplateUtils.buildCF(CF_INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS, resourceMessages.getString("jobExecution.ilJob.dateAggregation"), CustomFieldTypeEnum.LIST,
-            "tab:Configuration:0;fieldGroup:Aggregation:1;field:1", "0", false, null, null, "JobInstance_InvoiceLinesJob");
-        cft.setListValues(Map.of("NO_DATE_AGGREGATION", "NO_DATE_AGGREGATION", "DAY_OF_USAGE_DATE", "DAY_OF_USAGE_DATE", "WEEK_OF_USAGE_DATE", "WEEK_OF_USAGE_DATE", "MONTH_OF_USAGE_DATE", "MONTH_OF_USAGE_DATE"));
-        result.put(CF_INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS, cft);
-
-        result.put(CF_INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE, CustomFieldTemplateUtils.buildCF(CF_INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE, resourceMessages.getString("jobExecution.ilJob.unitPriceAggregation"),
-            CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;fieldGroup:Aggregation:1;field:2", "false", true, null, null, "JobInstance_InvoiceLinesJob"));
-
         result.put(CF_INVOICE_LINES_BR, CustomFieldTemplateUtils.buildCF(CF_INVOICE_LINES_BR, resourceMessages.getString("jobExecution.ilJob.billingRuns"), CustomFieldTypeEnum.ENTITY,
             "tab:Configuration:0;fieldGroup:Filtering:2;field:1", null, false, CustomFieldStorageTypeEnum.LIST, BillingRun.class.getName(), "JobInstance_InvoiceLinesJob"));
 

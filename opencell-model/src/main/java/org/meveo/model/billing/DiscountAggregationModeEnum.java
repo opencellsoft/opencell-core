@@ -12,5 +12,9 @@ public enum DiscountAggregationModeEnum {
     /**
      * All rated items will be aggregated regardless of discount details
      */
-    FULL_AGGREGATION
+    FULL_AGGREGATION;
+
+    public String getLabel() {
+        return this.getClass().getSimpleName() + "." + this.name();
+    }
 }

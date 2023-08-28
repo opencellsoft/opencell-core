@@ -16206,18 +16206,49 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX idx_rt_d_edr_id ON ${db.schema.adapted}billing_rt_detail (edr_id ASC)</sql>
         <sql>CREATE INDEX idx_rt_d_adjusted_rated_tx ON ${db.schema.adapted}billing_rt_detail (adjusted_rated_tx ASC) </sql>
     </changeSet>
-    
-    <changeSet id="#INTRD-17987_20230825_discount_agg" author="a.rouaguebe">
+
+    <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe">
         <addColumn tableName="billing_billing_run">
-            <column name="discount_aggregation" type="varchar(17)" />
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" >
+                <constraints nullable="false" />
+            </column>
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
+                <constraints nullable="false" />
+            </column>
         </addColumn>
         <addColumn tableName="billing_cycle">
-            <column name="discount_aggregation" type="varchar(17)" />
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
+                <constraints nullable="false" />
+            </column>
         </addColumn>
-        <sql>UPDATE ${db.schema.adapted}billing_billing_run set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
-        <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
-        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET DEFAULT 'FULL_AGGREGATION';</sql>
-        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET NOT NULL</sql>
+        <!--  Existing BC should be NO_AGGREGATION -->
+        <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' </sql>
+        
+        <sql dbms="postgresql">update ${db.schema.adapted}billing_billing_run set discount_aggregation = bc.discount_aggregation, disable_aggregation = bc.disable_aggregation, use_accounting_article_label = bc.use_accounting_article_label,
+            date_aggregation = bc.date_aggregation, aggregate_unit_amounts = bc.aggregate_unit_amounts, ignore_subscriptions = bc.ignore_subscriptions, ignore_orders = bc.ignore_orders, incremental_invoice_lines = bc.incremental_invoice_lines
+            from ${db.schema.adapted}billing_cycle bc where bc.id=billing_billing_run.billing_cycle_id
+        </sql>
+        <sql dbms="oracle">UPDATE (SELECT br.discount_aggregation, br.disable_aggregation, br.use_accounting_article_label, br.date_aggregation, br.aggregate_unit_amounts, br.ignore_subscriptions, br.ignore_orders, br.incremental_invoice_lines,
+              bc.discount_aggregation, bc.disable_aggregation, bc.use_accounting_article_label, bc.date_aggregation, bc.aggregate_unit_amounts, bc.ignore_subscriptions, bc.ignore_orders, bc.incremental_invoice_lines
+              FROM {h-schema}billing_billing_run br, {h-schema}billing_cycle bc WHERE bc.id=br.billing_cycle_id) 
+              SET br.discount_aggregation = bc.discount_aggregation, br.disable_aggregation = bc.disable_aggregation, br.use_accounting_article_label = bc.use_accounting_article_label, br.date_aggregation = bc.date_aggregation,
+              br.aggregate_unit_amounts = bc.aggregate_unit_amounts, br.ignore_subscriptions = bc.ignore_subscriptions, br.ignore_orders = bc.ignore_orders, br.incremental_invoice_lines = bc.incremental_invoice_lines"),
+         </sql>
     </changeSet>
 
 </databaseChangeLog>

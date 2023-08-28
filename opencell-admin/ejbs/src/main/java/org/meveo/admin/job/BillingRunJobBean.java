@@ -142,7 +142,14 @@ public class BillingRunJobBean extends BaseJobBean {
                     billingRun.setLastTransactionDate(billingRun.getProcessDate());
                 }
 
-                billingRun.setIncrementalInvoiceLines(billingCycle.getIncrementalInvoiceLines());
+                billingRun.setDisableAggregation(billingCycle.isDisableAggregation());
+                billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
+                billingRun.setIncrementalInvoiceLines(billingCycle.isIncrementalInvoiceLines());
+                billingRun.setAggregateUnitAmounts(billingCycle.isAggregateUnitAmounts());
+                billingRun.setDateAggregation(billingCycle.getDateAggregation());
+                billingRun.setDiscountAggregation(billingCycle.getDiscountAggregation());
+                billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
+                billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
 
                 billingRunService.create(billingRun);
                 result.registerSucces();

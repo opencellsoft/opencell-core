@@ -1,7 +1,7 @@
 package org.meveo.admin.job;
 
-import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.billing.DiscountAggregationModeEnum;
 
@@ -11,6 +11,11 @@ public class AggregationConfiguration {
      * Is application running in B2B or B2C mode.
      */
     private boolean enterprise;
+
+    /**
+     * Do not aggregate RTs to ILs at all
+     */
+    private boolean disableAggregation;
 
     /**
      * Aggregate by date option
@@ -43,6 +48,13 @@ public class AggregationConfiguration {
     private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
 
     private BillingEntityTypeEnum type = BillingEntityTypeEnum.BILLINGACCOUNT;
+
+    /**
+     * @return Do not aggregate RTs to ILs at all
+     */
+    public boolean isDisableAggregation() {
+        return disableAggregation;
+    }
 
     /**
      * @return Aggregate based on accounting article label instead of RT description
@@ -103,14 +115,15 @@ public class AggregationConfiguration {
         this.dateAggregationOption = dateAggregationOption;
     }
 
-    public AggregationConfiguration(BillingCycle billingCycle) {
-        this.dateAggregationOption = billingCycle.getDateAggregation() != null ? billingCycle.getDateAggregation() : DateAggregationOption.NO_DATE_AGGREGATION;
-        this.aggregationPerUnitAmount = billingCycle.isAggregateUnitAmounts();
-        this.useAccountingArticleLabel = billingCycle.isUseAccountingArticleLabel();
-        this.ignoreSubscriptions = billingCycle.isIgnoreSubscriptions();
-        this.ignoreOrders = billingCycle.isIgnoreOrders();
-        this.discountAggregation = billingCycle.getDiscountAggregation();
-        this.type = billingCycle.getType();
+    public AggregationConfiguration(BillingRun billingRun) {
+        this.dateAggregationOption = billingRun.getDateAggregation() != null ? billingRun.getDateAggregation() : DateAggregationOption.NO_DATE_AGGREGATION;
+        this.aggregationPerUnitAmount = billingRun.isAggregateUnitAmounts();
+        this.useAccountingArticleLabel = billingRun.isUseAccountingArticleLabel();
+        this.ignoreSubscriptions = billingRun.isIgnoreSubscriptions();
+        this.ignoreOrders = billingRun.isIgnoreOrders();
+        this.discountAggregation = billingRun.getDiscountAggregation();
+        this.disableAggregation = billingRun.isDisableAggregation();
+        this.type = billingRun.getBillingCycle().getType();
     }
 
     public boolean isEnterprise() {

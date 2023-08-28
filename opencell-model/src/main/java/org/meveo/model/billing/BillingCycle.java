@@ -206,11 +206,14 @@ public class BillingCycle extends BusinessCFEntity {
     private Map<String, Object> filters;
 
     /**
-     * Higher priority macth with lowest priority value
+     * Higher priority match with lowest priority value
      */
     @Column(name = "priority")
     private int priority = 0;
 
+    /**
+     * Do not aggregate RTs to ILs at all
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "disable_aggregation")
     private boolean disableAggregation = false;
@@ -255,7 +258,7 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
-    private boolean incrementalInvoiceLines = Boolean.FALSE;
+    private boolean incrementalInvoiceLines = false;
 
     /**
      * Discount aggregation type
@@ -627,7 +630,7 @@ public class BillingCycle extends BusinessCFEntity {
         this.ignoreOrders = ignoreOrders;
     }
 
-    public Boolean getIncrementalInvoiceLines() {
+    public boolean isIncrementalInvoiceLines() {
         return incrementalInvoiceLines;
     }
 

@@ -135,7 +135,7 @@ public class InvoiceLineAggregationService implements Serializable {
         if (ilCount > 0) {
             baCount = ((BigInteger) em.createNativeQuery("select count(distinct billing_account__id) from " + viewName).getSingleResult()).longValue();
 
-            if (incrementalInvoiceLines) {
+            if (!aggregationConfiguration.isDisableAggregation() && incrementalInvoiceLines) {
                 aggregationQuery = buildJoinWithILQuery(billingRun.getId(), aggregationFields, aggregationConfiguration);
                 aggregationFields = parseQueryFieldNames(aggregationQuery);
             } else {
@@ -187,19 +187,26 @@ public class InvoiceLineAggregationService implements Serializable {
      * @param unitAmountAggregationFunction Unit amount field aggregation function
      * @param doNotAggregateBySubscription True if no aggregation should be done by subscription
      * @param doNotAggregateByOrder True if no aggregation should be done by order
-     * @param withAggregation Apply aggregation. If False, one RatedTransaction will result in one InvoiceLine
      * @param aggregateByDescription Aggregate by description
      * @param type Billing entity type
      * @return A list of fields
      */
-    private List<String> buildAggregationFieldList(AggregationConfiguration aggregationConfiguration, boolean withAggregation) {
+    private List<String> buildAggregationFieldList(AggregationConfiguration aggregationConfiguration) {
 
         String usageDateAggregationFunction = getUsageDateAggregationFunction(aggregationConfiguration.getDateAggregationOption(), "usageDate", "a");
         String unitAmount = appProvider.isEntreprise() ? "unitAmountWithoutTax" : "unitAmountWithTax";
         String unitAmountAggregationFunction = aggregationConfiguration.isAggregationPerUnitAmount() ? "SUM(a.unitAmountWithoutTax)" : unitAmount;
 
         List<String> fieldToFetch;
-        if (withAggregation) {
+        if (aggregationConfiguration.isDisableAggregation()) {
+            fieldToFetch = new ArrayList<>(
+                asList("id as rated_transaction_ids", "billingAccount.id as billing_account__id", "description as label", "quantity as quantity", unitAmount + " as unit_amount_without_tax",
+                    "amountWithoutTax as sum_without_tax", "amountWithTax as sum_with_tax", "offerTemplate.id as offer_id", "serviceInstance.id as service_instance_id", "usageDate as usage_date",
+                    "startDate as start_date", "endDate as end_date", "orderNumber as order_number", "infoOrder.order.id as commercial_order_id", "infoOrder.order.id as order_id", "taxPercent as tax_percent",
+                    "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id", "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id", "accountingArticle.id as article_id",
+                    "discountedRatedTransaction as discounted_ratedtransaction_id", "discountPlanType as discount_plan_type", "discountValue as discount_value", "subscription.id as subscription_id"));
+
+        } else {
             fieldToFetch = new ArrayList<>(
                 asList("string_agg_long(a.id) as rated_transaction_ids", "billingAccount.id as billing_account__id", "SUM(a.quantity) as quantity", unitAmountAggregationFunction + " as unit_amount_without_tax",
                     "SUM(a.amountWithoutTax) as sum_without_tax", "SUM(a.amountWithTax) as sum_with_tax", "offerTemplate.id as offer_id", usageDateAggregationFunction + " as usage_date", "min(a.startDate) as start_date",
@@ -222,17 +229,10 @@ public class InvoiceLineAggregationService implements Serializable {
                 fieldToFetch.add("description as label");
             }
 
-        } else {
-            fieldToFetch = new ArrayList<>(
-                asList("CAST(a.id as string) as rated_transaction_ids", "billingAccount.id as billing_account__id", "description as label", "quantity AS quantity", "amountWithoutTax as sum_without_tax",
-                    "amountWithTax as sum_with_tax", "offerTemplate.id as offer_id", "serviceInstance.id as service_instance_id", "startDate as start_date", "endDate as end_date", "orderNumber as order_number",
-                    "infoOrder.order.id as commercial_order_id", "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.order.id as order_id", "infoOrder.productVersion.id as product_version_id",
-                    "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id", "accountingArticle.id as article_id", "discountedRatedTransaction as discounted_ratedtransaction_id"));
-        }
-
-        if (BILLINGACCOUNT != aggregationConfiguration.getType() || !aggregationConfiguration.isIgnoreSubscriptions()) {
-            fieldToFetch.add("subscription.id as subscription_id");
-            fieldToFetch.add("serviceInstance.id as service_instance_id");
+            if (BILLINGACCOUNT != aggregationConfiguration.getType() || !aggregationConfiguration.isIgnoreSubscriptions()) {
+                fieldToFetch.add("subscription.id as subscription_id");
+                fieldToFetch.add("serviceInstance.id as service_instance_id");
+            }
         }
 
         return fieldToFetch;
@@ -248,7 +248,7 @@ public class InvoiceLineAggregationService implements Serializable {
      */
     private String buildAggregationQuery(BillingRun billingRun, AggregationConfiguration aggregationConfiguration, Map<String, Object> bcFilter) {
 
-        List<String> fieldToFetch = buildAggregationFieldList(aggregationConfiguration, true);
+        List<String> fieldToFetch = buildAggregationFieldList(aggregationConfiguration);
 
         Set<String> groupBy = getAggregationQueryGroupBy(aggregationConfiguration);
 
@@ -291,7 +291,12 @@ public class InvoiceLineAggregationService implements Serializable {
 
     private Set<String> getAggregationQueryGroupBy(AggregationConfiguration aggregationConfiguration) {
 
+        if (aggregationConfiguration.isDisableAggregation()) {
+            return null;
+        }
+
         Set<String> groupBy = new LinkedHashSet<String>();
+
         groupBy.add("billingAccount.id");
         groupBy.add("offerTemplate");
         groupBy.add("accountingArticle.id");
