@@ -134,6 +134,9 @@ public class CreateBillingRunDto extends BaseEntityDto {
     @Schema(description = "Use incremental mode in invoice lines or not", nullable = true)
     private Boolean incrementalInvoiceLines;
 
+    @Schema(description = "Decide if Report job will be launched automatically at billing run creation")
+    private Boolean preReportAutoOnCreate = false;
+
     public Long getId() {
 		return id;
 	}
@@ -397,7 +400,15 @@ public class CreateBillingRunDto extends BaseEntityDto {
         return incrementalInvoiceLines;
     }
 
-	@Override
+    public Boolean getPreReportAutoOnCreate() {
+        return preReportAutoOnCreate;
+    }
+
+    public void setPreReportAutoOnCreate(Boolean preReportAutoOnCreate) {
+        this.preReportAutoOnCreate = preReportAutoOnCreate;
+    }
+
+    @Override
     public String toString() {
         return "CreateBillingRunDto{" + "billingCycleCode='" + billingCycleCode + '\'' + ", billingRunTypeEnum=" + billingRunTypeEnum + ", startDate=" + startDate + ", endDate="
                 + endDate + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + ", referenceDate=" + referenceDate + ", customFields=" + customFields
