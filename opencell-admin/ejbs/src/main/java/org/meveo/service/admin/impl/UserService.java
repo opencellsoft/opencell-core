@@ -105,7 +105,7 @@ public class UserService extends PersistenceService<User> {
      * @return User found
      */
     public User findByUsername(String username, boolean extendedInfo, boolean syncWithKC) {
-        String lUserManagementSource = ParamBeanFactory.getAppScopeInstance().getProperty("userManagement.master", "KC");
+        String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
 
         User lUser = null;
 
@@ -135,7 +135,7 @@ public class UserService extends PersistenceService<User> {
 
     @Override
     public List<User> list(PaginationConfiguration config) {
-        String lUserManagementSource = ParamBeanFactory.getAppScopeInstance().getProperty("userManagement.master", "KC");
+        String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
 
         List<User> users = new ArrayList<>();
 
@@ -183,7 +183,7 @@ public class UserService extends PersistenceService<User> {
 
     @Override
     public long count(PaginationConfiguration config) {
-        String userManagementSource = ParamBeanFactory.getAppScopeInstance().getProperty("userManagement.master", "KC");
+        String userManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
 
         List<User> users;
 
@@ -216,7 +216,7 @@ public class UserService extends PersistenceService<User> {
     }
 
     public UserRepresentation getUserRepresentationByUsername(String username) throws ElementNotFoundException {
-        String userManagementSource = ParamBeanFactory.getAppScopeInstance().getProperty("userManagement.master", "KC");
+        String userManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
 
         if(userManagementSource.equals("KC")) {
             return keycloakAdminClientService.getUserRepresentationByUsername(username);
