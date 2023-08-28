@@ -197,7 +197,7 @@ public class KeycloakAdminClientService implements Serializable {
     /**
      * List users in KC from a current realm
      * 
-     * @param Filtering and pagination criteria
+     * @param paginationConfig and pagination criteria
      */
     public List<User> listUsers(PaginationConfiguration paginationConfig) {
 
@@ -231,7 +231,7 @@ public class KeycloakAdminClientService implements Serializable {
     /**
      * Count users in KC from a current realm
      * 
-     * @param Filtering and pagination criteria
+     * @param paginationConfig and pagination criteria
      */
     public long countUsers(PaginationConfiguration paginationConfig) {
 
@@ -382,6 +382,10 @@ public class KeycloakAdminClientService implements Serializable {
         //Check if update and attributes are not empty then add the list to user object
         if(isUpdate && pAttributes != null && !pAttributes.isEmpty()) {
             Map<String, List<String>> attributes = user.getAttributes();
+
+            if(attributes == null) {
+                attributes = new HashMap<>();
+            }
 
             for (Map.Entry<String, String> entry : pAttributes.entrySet()) {
                 attributes.put(entry.getKey(), Arrays.asList(entry.getValue()));
@@ -892,7 +896,7 @@ public class KeycloakAdminClientService implements Serializable {
     private UserRepresentation getUserRepresentationByUsername(UsersResource usersResource, String username) throws ElementNotFoundException {
         List<UserRepresentation> users = usersResource.search(username!=null?username.toLowerCase():null, true);
         for (UserRepresentation userRepresentation : users) {
-            if (username.equalsIgnoreCase(userRepresentation.getUsername())) {
+            if (username != null && !username.isEmpty() && username.equalsIgnoreCase(userRepresentation.getUsername())) {
                 return userRepresentation;
             }
         }

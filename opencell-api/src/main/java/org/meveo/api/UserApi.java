@@ -244,28 +244,15 @@ public class UserApi extends BaseApi {
 //    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
 //    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
     public UserDto find(String username) throws MeveoApiException, BusinessException {
-
         if (StringUtils.isBlank(username)) {
             missingParameters.add("username");
         }
 
         handleMissingParameters();
-
-        boolean isSameUser = currentUser.getUserName().equals(username);
-        boolean isManagingSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
-        boolean isUsersManager = currentUser.hasRole(ROLE_API_USER_MANAGEMENT) || currentUser.hasRole(ROLE_API_USER_VISUALIZATION);
-        boolean isAllowed = isManagingSelf || isUsersManager;
-        boolean isSelfManaged = isManagingSelf && !isUsersManager;
-
-        if (!isAllowed) {
-            throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_MANAGE_USERS);
-        }
-
-        if (isSelfManaged && !isSameUser) {
-            throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_MANAGE_OTHER_USERS);
-        }
+        checkPermissions(username);
 
         User user = userService.findByUsername(username, true, false);
+
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, username, "username");
         }
@@ -281,22 +268,41 @@ public class UserApi extends BaseApi {
         return userDto;
     }
 
+    private void checkPermissions(String username) {
+        boolean isSameUser = currentUser.getUserName().equals(username);
+        boolean isManagingSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
+        boolean isUsersManager = currentUser.hasRole(ROLE_API_USER_MANAGEMENT) || currentUser.hasRole(ROLE_API_USER_VISUALIZATION);
+        boolean isAllowed = isManagingSelf || isUsersManager;
+        boolean isSelfManaged = isManagingSelf && !isUsersManager;
+
+        if (!isAllowed) {
+            throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_MANAGE_USERS);
+        }
+
+        if (isSelfManaged && !isSameUser) {
+            throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_MANAGE_OTHER_USERS);
+        }
+    }
+
     /**
      * Get keycloak attributes by given username
      * @param userDto {@link UserDto}
      */
     private void getKeycloakAttributesByUsername(UserDto userDto) {
         UserRepresentation userRepresentation = userService.getUserRepresentationByUsername(userDto.getUsername());
-        Map<String, List<String>> keycloakAttributes = userRepresentation.getAttributes();
 
-        if(keycloakAttributes != null && !keycloakAttributes.isEmpty()) {
-            Map<String, String> attributes = new HashMap<>();
+        if(userRepresentation != null) {
+            Map<String, List<String>> keycloakAttributes = userRepresentation.getAttributes();
 
-            for (Map.Entry<String, List<String>> entry : keycloakAttributes.entrySet()) {
-                attributes.put(entry.getKey(), String.join(", ", entry.getValue()));
+            if(keycloakAttributes != null && !keycloakAttributes.isEmpty()) {
+                Map<String, String> attributes = new HashMap<>();
+
+                for (Map.Entry<String, List<String>> entry : keycloakAttributes.entrySet()) {
+                    attributes.put(entry.getKey(), String.join(", ", entry.getValue()));
+                }
+
+                userDto.setAttributes(attributes);
             }
-
-            userDto.setAttributes(attributes);
         }
     }
 
