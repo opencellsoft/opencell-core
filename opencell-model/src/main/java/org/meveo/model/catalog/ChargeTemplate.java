@@ -392,28 +392,28 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     private boolean parameterExtraIsHidden;
     
     @ElementCollection
-    @CollectionTable(name = "charge_template_translation",
+    @CollectionTable(name = "parameter1_translated_long_descriptions",
                      joinColumns = @JoinColumn(name = "charge_template_id"))
     @MapKeyJoinColumn(name = "trading_language_id")
     @Column(name = "translated_description")
     private Map<TradingLanguage, String> parameter1TranslatedLongDescriptions;
 
     @ElementCollection
-    @CollectionTable(name = "parameter2_translation",
+    @CollectionTable(name = "parameter2_translated_long_descriptions",
                      joinColumns = @JoinColumn(name = "charge_template_id"))
     @MapKeyJoinColumn(name = "trading_language_id")
     @Column(name = "translated_description")
     private Map<TradingLanguage, String> parameter2TranslatedLongDescriptions;
 
     @ElementCollection
-    @CollectionTable(name = "parameter3_translation",
+    @CollectionTable(name = "parameter3_translated_long_descriptions",
                      joinColumns = @JoinColumn(name = "charge_template_id"))
     @MapKeyJoinColumn(name = "trading_language_id")
     @Column(name = "translated_description")
     private Map<TradingLanguage, String> parameter3TranslatedLongDescriptions;
 
     @ElementCollection
-    @CollectionTable(name = "parameter_extra_translation",
+    @CollectionTable(name = "parameter_extra_translated_long_descriptions",
                      joinColumns = @JoinColumn(name = "charge_template_id"))
     @MapKeyJoinColumn(name = "trading_language_id")
     @Column(name = "translated_description")
