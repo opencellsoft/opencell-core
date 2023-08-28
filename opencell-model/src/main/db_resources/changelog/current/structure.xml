@@ -13797,9 +13797,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <sql>update ${db.schema.adapted}ord_quote set routed_to_user_group=(select code from ${db.schema.adapted}hierarchy_entity he where he.id=routed_to_user_group_id)</sql>
         <dropColumn tableName="ord_quote" columnName="routed_to_user_group_id"/>
 
-        <dropColumn tableName="adm_user" columnName="email"/>
-        <dropColumn tableName="adm_user" columnName="firstname"/>
-        <dropColumn tableName="adm_user" columnName="lastname"/>
         <dropColumn tableName="adm_user" columnName="title_id"/>
         <dropColumn tableName="adm_user" columnName="hierarchy_level_id"/>
         <dropColumn tableName="adm_user" columnName="last_login_date"/>
