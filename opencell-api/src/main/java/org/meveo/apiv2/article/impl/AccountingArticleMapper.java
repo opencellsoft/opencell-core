@@ -86,6 +86,7 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
         accountingArticleEntity.setAccountingCodeEl(resource.getAccountingCodeEl());
         accountingArticleEntity.setInvoiceTypeEl(resource.getInvoiceTypeEl());
         accountingArticleEntity.setIgnoreAggregation(resource.getIgnoreAggregation());
+        accountingArticleEntity.setPhysical(resource.getPhysical());
         return accountingArticleEntity;
     }
 }

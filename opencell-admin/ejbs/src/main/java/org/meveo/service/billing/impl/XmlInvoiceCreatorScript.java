@@ -124,6 +124,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     private static final String INVOICE_DATE_FORMAT = "invoice.dateFormat";
     private static final String DEFAULT_VATEX_EU_O_VALUE = "VATEX-EU-O";
+    private static final String YES = "Yes";
+    private static final String NO = "No";
 
     @Inject
     @CurrentUser
@@ -2780,6 +2782,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         article.setAttribute("code", invoiceLine.getAccountingArticle() != null ? invoiceLine.getAccountingArticle().getCode() : "");
         article.setAttribute("label", invoiceLine.getAccountingArticle() != null ? invoiceLine.getAccountingArticle().getDescription() : "");
         article.setAttribute("allowanceCode", invoiceLine.getAccountingArticle() != null && invoiceLine.getAccountingArticle().getAllowanceCode() != null ? invoiceLine.getAccountingArticle().getAllowanceCode().getCode() : "");
+        article.setAttribute("isPhysical", invoiceLine.getAccountingArticle() != null && invoiceLine.getAccountingArticle().isPhysical() ? YES : NO);
         line.appendChild(article);
         if (invoiceLine.getUnitPrice() != null) {
             Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
