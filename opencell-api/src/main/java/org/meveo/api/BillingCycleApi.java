@@ -28,11 +28,13 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.script.ScriptInstanceService;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -48,6 +50,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
 
     @Inject
     private BillingCycleService billingCycleService;
+
+    @Inject
+    private BillingRunService billingRunService;
 
     @Inject
     private CalendarService calendarService;
@@ -86,6 +91,7 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
     }
 
     @Override
+    @TransactionAttribute
     public BillingCycle update(BillingCycleDto dto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCode())) {
@@ -108,6 +114,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         dtoToEntity(entity, dto);
 
         entity = billingCycleService.update(entity);
+        billingRunService.updateDiscountAggregationForBillingCycle(entity);
+
         return entity;
     }
 
@@ -275,6 +283,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         }
         if (dto.getIncrementalInvoiceLines() != null) {
             entity.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
+        }
+        if(dto.getDiscountAggregation() != null) {
+            entity.setDiscountAggregation(dto.getDiscountAggregation());
         }
 
        	// populate customFields
