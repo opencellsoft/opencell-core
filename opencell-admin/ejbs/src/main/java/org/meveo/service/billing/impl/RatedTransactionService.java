@@ -502,6 +502,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             i++;
         }
 
+        em.flush();
+
         // Update WOs with Rated transaction information
 
         // Mass update WO status
@@ -532,7 +534,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         });
 
         // Need to flush, so WOs can be updated in mass
-        em.flush();
+        //em.flush();
 
         // Mass update WOs with status and RT info
         em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).executeUpdate();
