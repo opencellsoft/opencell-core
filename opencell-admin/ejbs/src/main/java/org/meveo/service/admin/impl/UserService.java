@@ -17,6 +17,7 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidParameterException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.security.client.KeycloakAdminClientService;
@@ -53,11 +55,8 @@ public class UserService extends PersistenceService<User> {
     @Override
     @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
     public void create(User user) throws UsernameAlreadyExistsException, InvalidParameterException {
-
         user.setUserName(user.getUserName().toUpperCase());
-
         keycloakAdminClientService.createUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
-
         super.create(user);
     }
 
@@ -103,80 +102,106 @@ public class UserService extends PersistenceService<User> {
      * @return User found
      */
     public User findByUsername(String username, boolean extendedInfo, boolean syncWithKC) {
-        User kcUser = keycloakAdminClientService.findUser(username, extendedInfo);
-        if (kcUser == null) {
-            return null;
+        ParamBean lParamBean = paramBeanFactory.getInstance();
+        String lUserManagementSource = lParamBean.getProperty("userManagement.master", "KC");
+
+        User lUser = null;
+
+        if(lUserManagementSource.equals("OC")) {
+            lUser = getUserFromDatabase(username);
+
+            if (lUser != null) {
+                this.fillKeycloakUserInfo(lUser);
+            }
+        } else  {
+            lUser = keycloakAdminClientService.findUser(username, extendedInfo);
         }
-        return findKeycloakUser(kcUser);
+
+        return lUser;
+    }
+
+    private User getUserFromDatabase(String pUserName) {
+        User lUser = null;
+        try {
+            lUser = getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", pUserName.toLowerCase()).getSingleResult();
+        } catch (NoResultException ex) {
+            //ADD Log
+        }
+
+        return lUser;
     }
 
     @Override
     public List<User> list(PaginationConfiguration config) {
-    	
-    	 List<User> users =null;
-    	 String firstName = (String) config.getFilters().get("name.firstName");
-         String lastName = (String) config.getFilters().get("name.lastName");
-         String email = (String) config.getFilters().get("email");
-    	if(StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(email)) {
-    		config.getFilters().remove("name.firstName");
-    		config.getFilters().remove("name.lastName");
-    		config.getFilters().remove("email");
-    		users=super.list(config);
-    		users.forEach(this::fillKeycloakUserInfo);
-    	}else {
-    		users = keycloakAdminClientService.listUsers(config);
-    		config.getFilters().remove("name.firstName");
-    		config.getFilters().remove("name.lastName");
-    		config.getFilters().remove("email");
-    		List<String> usernamesList = users.stream()
-                    .map(User::getUserName)
-                    .collect(Collectors.toList());
-    		config.getFilters().put("inList userName", usernamesList);
-    		users=super.list(config);
-    		users.forEach(this::fillKeycloakUserInfo);
-    	}
+        ParamBean lParamBean = paramBeanFactory.getInstance();
+        String lUserManagementSource = lParamBean.getProperty("userManagement.master", "KC");
+
+        List<User> users = new ArrayList<>();
+
+        if(lUserManagementSource.equals("OC")) {
+            String firstName = (String) config.getFilters().get("name.firstName");
+            String lastName = (String) config.getFilters().get("name.lastName");
+            String email = (String) config.getFilters().get("email");
+
+            if(StringUtils.isBlank(firstName)) {
+                this.removeFilters(config, "name.firstName");
+            }
+
+            if(StringUtils.isBlank(lastName)) {
+                this.removeFilters(config, "name.lastName");
+            }
+
+            if(StringUtils.isBlank(email)) {
+                this.removeFilters(config, "email");
+            }
+
+            users = super.list(config);
+            users.forEach(this::fillKeycloakUserInfo);
+        } else {
+            //Get user from keycloak
+            users = keycloakAdminClientService.listUsers(config);
+            this.removeFilters(config, "name.firstName", "name.lastName", "email");
+
+            //Construct a list of names
+            List<String> usernamesList = users.stream().map(User::getUserName).collect(Collectors.toList());
+            config.getFilters().put("inList userName", usernamesList);
+
+            //Get list of users from database and fill all fields
+            List<User> lDbUsers = super.list(config);
+            users.forEach(keycloakUser -> {
+                lDbUsers.forEach(dbUser -> {
+                    if(keycloakUser.getUserName().equalsIgnoreCase(dbUser.getUserName())) {
+                        fillEmptyFields(keycloakUser, dbUser);
+                    }
+                });
+            });
+        }
+
         return users;
-    }
-    
-    /**
-     * Lookup a keycloak user info 
-     *
-     * @param OC user 
-     * @return User found
-     */
-    private User fillKeycloakUserInfo(User user) {
-    	  User kcUser = keycloakAdminClientService.findUser(user.getUserName(), true);
-          if (kcUser == null) {
-              return null;
-          }
-        user.setEmail(kcUser.getEmail());
-        user.setName(kcUser.getName());
-        user.setRoles(kcUser.getRoles());
-        user.setUserLevel(kcUser.getUserLevel());
-        return user;
     }
 
     @Override
     public long count(PaginationConfiguration config) {
-    	 String firstName = (String) config.getFilters().get("name.firstName");
-         String lastName = (String) config.getFilters().get("name.lastName");
-         String email = (String) config.getFilters().get("email");
-    	if(StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(email)) {
-    		config.getFilters().remove("name.firstName");
-    		config.getFilters().remove("name.lastName");
-    		config.getFilters().remove("email");
-    		return super.count(config);
-    	}else {
-    		List<User> users = keycloakAdminClientService.listUsers(config);
-    		config.getFilters().remove("name.firstName");
-    		config.getFilters().remove("name.lastName");
-    		config.getFilters().remove("email");
-    		List<String> usernamesList = users.stream()
-                    .map(User::getUserName)
-                    .collect(Collectors.toList());
-    		config.getFilters().put("inList userName", usernamesList);
-    		return super.count(config);
-    	}
+        ParamBean param = paramBeanFactory.getInstance();
+        String userManagementSource = param.getProperty("userManagement.master", "KC");
+
+        List<User> users;
+
+        if(userManagementSource.equals("OC")) {
+            String firstName = (String) config.getFilters().get("name.firstName");
+            String lastName = (String) config.getFilters().get("name.lastName");
+            String email = (String) config.getFilters().get("email");
+
+            if(StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(email)) {
+                this.removeFilters(config, "name.firstName", "name.lastName", "email");
+                return super.count(config);
+            } else {
+                return super.count(config);
+            }
+        } else {
+            users = keycloakAdminClientService.listUsers(config);
+            return users.size();
+        }
     }
 
     /**
@@ -191,7 +216,40 @@ public class UserService extends PersistenceService<User> {
     }
 
     public UserRepresentation getUserRepresentationByUsername(String username) throws ElementNotFoundException {
-        return keycloakAdminClientService.getUserRepresentationByUsername(username);
+        ParamBean param = paramBeanFactory.getInstance();
+        String userManagementSource = param.getProperty("userManagement.master", "KC");
+
+        if(userManagementSource.equals("KC")) {
+            return keycloakAdminClientService.getUserRepresentationByUsername(username);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Lookup a user by an id
+     *
+     * @param extendedInfo Shall group membership and roles be retrieved
+     * @return User found
+     */
+    @Override
+    public User findById(Long id, boolean extendedInfo) {
+        if(id==null) {
+            return null;
+        }
+        User user=findById(id);
+         if (user == null) {
+             return null;
+         }
+        User kcUser = keycloakAdminClientService.findUser(user.getUserName(), extendedInfo);
+        if (kcUser == null) {
+            return null;
+        }
+        user.setEmail(kcUser.getEmail());
+        user.setName(kcUser.getName());
+        user.setRoles(kcUser.getRoles());
+        user.setUserLevel(kcUser.getUserLevel());
+        return user;
     }
 
     /**
@@ -221,31 +279,46 @@ public class UserService extends PersistenceService<User> {
         user.setUserLevel(kcUser.getUserLevel());
         return user;
     }
-    
+
     /**
-     * Lookup a user by a id
-     * 
-     * @param id to lookup by
-     * @param extendedInfo Shall group membership and roles be retrieved
-     * @return User found
+     * Lookup a keycloak user info
+     *
+     * @param user user
      */
-    @Override
-    public User findById(Long id, boolean extendedInfo) {
-        if(id==null) {
-            return null;
+    private void fillKeycloakUserInfo(User user) {
+        User kcUser = keycloakAdminClientService.findUser(user.getUserName(), true);
+        if (kcUser != null) {
+            user.setEmail(kcUser.getEmail());
+            user.setName(kcUser.getName());
+            user.setRoles(kcUser.getRoles());
+            user.setUserLevel(kcUser.getUserLevel());
         }
-        User user=findById(id);
-         if (user == null) {
-             return null;
-         }
-        User kcUser = keycloakAdminClientService.findUser(user.getUserName(), extendedInfo);
-        if (kcUser == null) {
-            return null;
+    }
+
+    /**
+     * Remove filters from config
+     *
+     * @param pConfig {@link PaginationConfiguration}
+     * @param pKeys A list of keys to remove
+     */
+    private void removeFilters(PaginationConfiguration pConfig, String ... pKeys) {
+        for(String key : pKeys) {
+            pConfig.getFilters().remove(key);
         }
-        user.setEmail(kcUser.getEmail());
-        user.setName(kcUser.getName());
-        user.setRoles(kcUser.getRoles());
-        user.setUserLevel(kcUser.getUserLevel());
-        return user;
+    }
+
+    /**
+     * Fill Empty field to return it
+     * @param pKeycloakUser {@link User} User returned from keycloak
+     * @param pDbUser {@link User} User returned from database
+     */
+    private void fillEmptyFields(User pKeycloakUser, User pDbUser) {
+        if(pKeycloakUser.getEmail() == null && pDbUser.getEmail() != null && !pDbUser.getEmail().isBlank()) {
+            pKeycloakUser.setEmail(pDbUser.getEmail());
+        }
+
+        if(pKeycloakUser.getUuid() == null && pDbUser.getUuid() != null && !pDbUser.getUuid().isEmpty()) {
+            pKeycloakUser.setUuid(pDbUser.getUuid());
+        }
     }
 }
