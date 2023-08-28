@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.DateAggregationOption;
+import org.meveo.model.billing.DiscountAggregationModeEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 
@@ -208,6 +209,12 @@ public class BillingCycleDto extends BusinessEntityDto {
     private Boolean ignoreOrders;
 
     /**
+     * Discount type Rated transaction aggregation mode
+     */
+    @Schema(description = "Discount aggregation mode", allowableValues = {"NO_AGGREGATION", "FULL_AGGREGATION"}, defaultValue = "FULL_AGGREGATION")
+    private DiscountAggregationModeEnum discountAggregation;
+
+    /**
      * To decide to use incremental invoice lines or not.
      */
     @Schema(description = "Use incremental mode in invoice lines or not", nullable = true)
@@ -295,6 +302,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             aggregateUnitAmounts = billingCycleEntity.isAggregateUnitAmounts();
             ignoreSubscriptions = billingCycleEntity.isIgnoreSubscriptions();
             ignoreOrders = billingCycleEntity.isIgnoreOrders();
+            discountAggregation = billingCycleEntity.getDiscountAggregation();
         }
     }
 
@@ -780,5 +788,22 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     public Boolean getIncrementalInvoiceLines() {
         return incrementalInvoiceLines;
+    }
+
+    /**
+     * Get the discountAggregation
+     * @return discountAggregation value
+     */
+    public DiscountAggregationModeEnum getDiscountAggregation() {
+        return discountAggregation;
+    }
+
+    /**
+     * set the discountAggregation
+     *
+     * @param discountAggregation to set
+     */
+    public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
+        this.discountAggregation = discountAggregation;
     }
 }
