@@ -34,7 +34,7 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidParameterException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.security.client.KeycloakAdminClientService;
@@ -51,6 +51,9 @@ public class UserService extends PersistenceService<User> {
 
     @Inject
     KeycloakAdminClientService keycloakAdminClientService;
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
     @Override
     @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
@@ -102,8 +105,7 @@ public class UserService extends PersistenceService<User> {
      * @return User found
      */
     public User findByUsername(String username, boolean extendedInfo, boolean syncWithKC) {
-        ParamBean lParamBean = paramBeanFactory.getInstance();
-        String lUserManagementSource = lParamBean.getProperty("userManagement.master", "KC");
+        String lUserManagementSource = ParamBeanFactory.getAppScopeInstance().getProperty("userManagement.master", "KC");
 
         User lUser = null;
 
@@ -133,8 +135,7 @@ public class UserService extends PersistenceService<User> {
 
     @Override
     public List<User> list(PaginationConfiguration config) {
-        ParamBean lParamBean = paramBeanFactory.getInstance();
-        String lUserManagementSource = lParamBean.getProperty("userManagement.master", "KC");
+        String lUserManagementSource = ParamBeanFactory.getAppScopeInstance().getProperty("userManagement.master", "KC");
 
         List<User> users = new ArrayList<>();
 
@@ -182,8 +183,7 @@ public class UserService extends PersistenceService<User> {
 
     @Override
     public long count(PaginationConfiguration config) {
-        ParamBean param = paramBeanFactory.getInstance();
-        String userManagementSource = param.getProperty("userManagement.master", "KC");
+        String userManagementSource = ParamBeanFactory.getAppScopeInstance().getProperty("userManagement.master", "KC");
 
         List<User> users;
 
@@ -216,8 +216,7 @@ public class UserService extends PersistenceService<User> {
     }
 
     public UserRepresentation getUserRepresentationByUsername(String username) throws ElementNotFoundException {
-        ParamBean param = paramBeanFactory.getInstance();
-        String userManagementSource = param.getProperty("userManagement.master", "KC");
+        String userManagementSource = ParamBeanFactory.getAppScopeInstance().getProperty("userManagement.master", "KC");
 
         if(userManagementSource.equals("KC")) {
             return keycloakAdminClientService.getUserRepresentationByUsername(username);
