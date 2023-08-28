@@ -55,8 +55,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
-@NamedQueries({ @NamedQuery(name = "WalletOperationNative.listConvertToRTs", query = "SELECT o FROM WalletOperationNative o WHERE o.status='OPEN' and o.id<=:maxId " +
-        "and (o.discountedWalletOperation is null or (SELECT count(d.id) FROM WalletOperation d WHERE d.id = o.discountedWalletOperation and d.ratedTransaction is not null) > 0)") })
+@NamedQueries({ @NamedQuery(name = "WalletOperationNative.listConvertToRTs", query = "SELECT o FROM WalletOperationNative o WHERE o.status='OPEN' and o.id<=:maxId") })
 public class WalletOperationNative extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -1113,13 +1112,5 @@ public class WalletOperationNative extends BaseEntity {
 
     public void setRulesContractId(Long rulesContractId) {
         this.rulesContractId = rulesContractId;
-    }
-
-    public Long getDiscountedWalletOperation() {
-        return discountedWalletOperation;
-    }
-
-    public void setDiscountedWalletOperation(Long discountedWalletOperation) {
-        this.discountedWalletOperation = discountedWalletOperation;
     }
 }
