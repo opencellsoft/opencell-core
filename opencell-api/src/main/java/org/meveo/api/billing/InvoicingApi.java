@@ -118,6 +118,7 @@ public class InvoicingApi extends BaseApi {
         billingRun.setInvoiceDate(dto.getInvoiceDate());
         billingRun.setLastTransactionDate(dto.getLastTransactionDate());
         billingRun.setSkipValidationScript(dto.getSkipValidationScript());
+        billingRun.setPreReportAutoOnCreate(dto.getPreReportAutoOnCreate());
         if(dto.getRejectAutoAction() == null) {
             billingRun.setRejectAutoAction(BillingRunAutomaticActionEnum.MANUAL_ACTION);
         }
@@ -292,6 +293,7 @@ public class InvoicingApi extends BaseApi {
         	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
         }
 
+        billingRun.setPreReportAutoOnCreate(dto.getPreReportAutoOnCreate());
         billingRunService.update(billingRun);
         
         return billingRun.getId();

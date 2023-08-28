@@ -226,18 +226,26 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@Override
 	public void create(BillingRun billingRun) throws BusinessException {
 		setBillingRunType(billingRun);
-		super.create(billingRun);
+        launchBillingRunReportJob(billingRun.isPreReportAutoOnCreate());
+        super.create(billingRun);
 	}
 
-	@MeveoAudit
+    private void launchBillingRunReportJob(boolean execute) {
+        if(execute) {
+            //TODO : launch report job : will be implemented in INTRD-17634
+        }
+    }
+
+    @MeveoAudit
 	@Override
 	public BillingRun update(BillingRun billingRun) throws BusinessException {
 		setBillingRunType(billingRun);
-		return super.update(billingRun);
+        launchBillingRunReportJob(billingRun.isPreReportAutoOnCreate() && billingRun.getPreInvoicingReport() == null);
+        return super.update(billingRun);
 	}
 
 	/**
-	 * Put the BR type to CYCLE if a BC is attached, EXEPTIONAL otherwise
+	 * Put the BR type to CYCLE if a BC is attached, EXCEPTIONAL otherwise
 	 *
 	 * @param billingRun
 	 */
