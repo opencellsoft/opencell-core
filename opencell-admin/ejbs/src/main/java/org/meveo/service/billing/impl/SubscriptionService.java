@@ -51,6 +51,7 @@ import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -60,6 +61,8 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
@@ -98,6 +101,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @EJB
     private ServiceInstanceService serviceInstanceService;
+
+    @Inject
+    private GenericChargeInstanceService chargeInstanceService;
+
+    @Inject
+    private WalletOperationService walletOperationService;
 
     @Inject
     private AccessService accessService;
@@ -329,8 +338,22 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 if (serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
                     serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
                     serviceInstanceService.update(serviceInstance);
+                    //INTRD-18044: Also force service's charges termination
+                    for (ChargeInstance chargeInstance : serviceInstance.getChargeInstances()) {
+                        chargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
+                        // services with sub dates in futur, termination date is set to their sub dates
+                        chargeInstance.setTerminationDate(serviceInstance.getSubscriptionDate());
+                        chargeInstanceService.update(chargeInstance);
+                        // cancel charge's WOs that are still opened with operation date > termination date
+                        for (WalletOperation wo : chargeInstance.getWalletOperations()) {
+                            if (WalletOperationStatusEnum.OPEN.equals(wo.getStatus()) && wo.getOperationDate().after(terminationDate)) {
+                                wo.changeStatus(WalletOperationStatusEnum.CANCELED);
+                                wo.setDescription(wo.getDescription() + " (canceled due to charge early termination)");
+                                walletOperationService.update(wo);
+                            }
+                        }
+                    }
                 }
-
                 orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
             }
         }
