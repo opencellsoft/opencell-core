@@ -53,6 +53,7 @@ import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.BillingRunReportService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.util.MeveoParamBean;
@@ -75,6 +76,9 @@ public class InvoicingApi extends BaseApi {
 
     @Inject
     private AccountHierarchyApi accountHierarchyApi;
+
+    @Inject
+    private BillingRunReportService billingRunReportService;
 
     @Inject
     @MeveoParamBean
@@ -190,6 +194,7 @@ public class InvoicingApi extends BaseApi {
         }
 
         billingRunService.update(billingRun);
+        billingRunReportService.launchBillingRunReportJob(billingRun);
         
         return billingRun.getId();
     }
@@ -295,7 +300,8 @@ public class InvoicingApi extends BaseApi {
 
         billingRun.setPreReportAutoOnCreate(dto.getPreReportAutoOnCreate());
         billingRunService.update(billingRun);
-        
+        billingRunReportService.launchBillingRunReportJob(billingRun);
+
         return billingRun.getId();
     }
 

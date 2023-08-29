@@ -216,9 +216,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
-
-    @Inject
-    private JobExecutionResultService jobExecutionResultService;
     
     private static final  int rtPaginationSize = 30000;
 
@@ -226,21 +223,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@Override
 	public void create(BillingRun billingRun) throws BusinessException {
 		setBillingRunType(billingRun);
-        launchBillingRunReportJob(billingRun.isPreReportAutoOnCreate());
         super.create(billingRun);
-	}
-
-    private void launchBillingRunReportJob(boolean execute) {
-        if(execute) {
-            //TODO : launch report job : will be implemented in INTRD-17634
-        }
     }
 
     @MeveoAudit
 	@Override
 	public BillingRun update(BillingRun billingRun) throws BusinessException {
 		setBillingRunType(billingRun);
-        launchBillingRunReportJob(billingRun.isPreReportAutoOnCreate() && billingRun.getPreInvoicingReport() == null);
         return super.update(billingRun);
 	}
 

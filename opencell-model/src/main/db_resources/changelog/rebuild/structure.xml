@@ -12724,10 +12724,10 @@
             <column name="billing_accounts_count" type="numeric(23, 12)">
                 <constraints nullable="false"/>
             </column>
-            <column name="subscription_accounts_count" type="numeric(23, 12)">
+            <column name="subscriptions_count" type="numeric(23, 12)">
                 <constraints nullable="false"/>
             </column>
-            <column name="rated_transaction_accounts_count" type="numeric(23, 12)">
+            <column name="rated_transactions_count" type="numeric(23, 12)">
                 <constraints nullable="false"/>
             </column>
             <column name="total_amount_without_tax" type="numeric(23, 12)">
@@ -20713,6 +20713,7 @@
 	<changeSet id="#INTRD-17954_20230818" author="AdilElJaouhari" />
     <changeSet id="#INTRD-17632_2023_08_09" author="zbariki" />
 	<changeSet id="#INTRD-18008_20230823" author="aelmalki" />
+    <changeSet id="#INTRD-17634_2023-09-29" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

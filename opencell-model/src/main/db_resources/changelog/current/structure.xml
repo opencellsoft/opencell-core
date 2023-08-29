@@ -7924,4 +7924,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-17634_2023-09-29" author="ZBariki">
+        <renameColumn  oldColumnName="subscription_accounts_count"
+                       newColumnName="subscriptions_count" tableName="billing_run_report"/>
+        <renameColumn  oldColumnName="rated_transaction_accounts_count"
+                       newColumnName="rated_transactions_count" tableName="billing_run_report"/>
+    </changeSet>
+
 </databaseChangeLog>
