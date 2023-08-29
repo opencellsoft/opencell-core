@@ -42,6 +42,7 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
                 .accountingCodeEl(entity.getAccountingCodeEl())
                 .columCriteriaEL(entity.getColumnCriteriaEL())
                 .ignoreAggregation(entity.isIgnoreAggregation())
+                .physical(entity.isPhysical())
                 .allowanceCode(allowanceCode)
                 .build();
     }
