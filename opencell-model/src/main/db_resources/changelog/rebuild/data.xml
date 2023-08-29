@@ -11115,24 +11115,133 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-13762_20230206" author="aelmalki" />
 
 	<changeSet id="#INTRD-11208_20230131" author="zelmeliani">
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-11" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B+5" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-11" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2B+5" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-1" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
                     <p>Hello, </p>
-                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have debit of #{customerAccount balance} #{currencySymbol}.</p>
+                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have a debit of #{customerAccountBalance} #{currencySymbol}.</p>
+                    <p>
+                        Please take the necessary steps to ensure payment of your last(s) invoice(s). <br>
+                    </p>
+                    <p>If you have any additional questions, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+			</column>
+		</insert>
+
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-12" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2B +10" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-1" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
+                    <p>Hello, </p>
+                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccountBalance} #{currencySymbol}).</p>
+                    <p>
+                        Please take contact with us to clear the situation.<br>
+                        If you have already done a payment, you can discard this email.
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+			</column>
+		</insert>
+
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-13" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2B +20" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-1" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
+                    <p>Hello, </p>
+                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccountBalance} #{currencySymbol}).</p>
+                    <p>
+                        Please take contact with us to clear the situation.<br>
+                        If you have already done a payment, you can discard this email.
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+			</column>
+		</insert>
+
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-14" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2B +30" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-1" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
+                    <p>Hello, </p>
+                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccountBalance} #{currencySymbol}).</p>
+                    <p>As it seems we were not able to clear the situation, the services you have with us have been suspended.</p>
+                    <p>If you have already done a payment, please contact us so that we can re-activate your services.</p>
+                    <p>If you have any additional question, please contact our services.</p>
+                    <p>Best regards,</p>
+                ]]>
+			</column>
+		</insert>
+
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-15" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2C +1" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-1" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have debit of #{customerAccountBalance} #{currencySymbol}.</p>
                     <p>
                         Please take necessary steps to insure payments of your last(s) invoice(s). <br>
                         You
@@ -11140,27 +11249,27 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
                     <p>Best regards,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-12" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +10" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello, </p>
-                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccount balance} #{currencySymbol}).</p>
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-16" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2C +5" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-1" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccountBalance} #{currencySymbol}).</p>
                     <p>
                         Please take contact with us to clear the situation.<br>
                         If you have already done a payment, you can discard this email.
@@ -11168,27 +11277,27 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
                     <p>Best regards,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-13" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +20" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello, </p>
-                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccount balance} #{currencySymbol}).</p>
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-17" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2C +10" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-1" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccountBalance} #{currencySymbol}).</p>
                     <p>
                         Please take contact with us to clear the situation.<br>
                         If you have already done a payment, you can discard this email.
@@ -11196,351 +11305,241 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
                     <p>Best regards,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-14" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +30" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello, </p>
-                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccount balance} #{currencySymbol}).</p>
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-18" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2C +15" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-1" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccountBalance} #{currencySymbol}).</p>
                     <p>As it seems we were not able to clear the situation, the services you have with us have been suspended.</p>
                     <p>If you have already done a payment, please contact us so that we can re-activate your services.</p>
                     <p>If you have any additional question, please contact our services.</p>
                     <p>Best regards,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-15" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +1" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have debit of #{customerAccount balance} #{currencySymbol}.</p>
-                    <p>
-                        Please take necessary steps to insure payments of your last(s) invoice(s). <br>
-                        You
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-16" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +5" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccount balance} #{currencySymbol}).</p>
-                    <p>
-                        Please take contact with us to clear the situation.<br>
-                        If you have already done a payment, you can discard this email.
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-17" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +10" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccount balance} #{currencySymbol}).</p>
-                    <p>
-                        Please take contact with us to clear the situation.<br>
-                        If you have already done a payment, you can discard this email.
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-18" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +15" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-1" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccount balance} #{currencySymbol}).</p>
-                    <p>As it seems we were not able to clear the situation, the services you have with us have been suspended.</p>
-                    <p>If you have already done a payment, please contact us so that we can re-activate your services.</p>
-                    <p>If you have any additional question, please contact our services.</p>
-                    <p>Best regards,</p>
-                ]]>
-            </column>
-        </insert>
-
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-19" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +5fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-19" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2B +5fr" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-2" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
                     <p>Bonjour,</p>
-                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccount balance} #{currencySymbol}.</p>
+                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccountBalance} #{currencySymbol}.</p>
                     <p>Nous vous invitons a faire le nécessaires pour assurer le paiement de votre (vos) dernière(s) facture(s).</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-20" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +10fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-20" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2B +10fr" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-2" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
                     <p>Bonjour,</p>
-                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccountBalance} #{currencySymbol}).</p>
                     <p>Merci de prendre contact avec nous pour échanger sur la situation.</p>
                     <p>Si vous avez déjà effectué un paiement, veuillez ne pas prendre cet e-mail en considération.</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-21" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +20fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-21" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2B +20fr" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-2" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
                     <p>Bonjour,</p>
-                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccountBalance} #{currencySymbol}).</p>
                     <p>Merci de prendre contact avec nous pour éclaircir la situation.</p>
                     <p>Si vous avez déjà effectué un paiement, vous pouvez ne pas prendre compte de cet e-mail.</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-22" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2B +30fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-22" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2B +30fr" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-2" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
                     <p>Bonjour,</p>
-                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccountBalance} #{currencySymbol}).</p>
                     <p>La situation ne s’étant pas régler à l’amiable, l’ensemble des services que vous avez avec nous ont été suspendus.</p>
                     <p>Si vous avez déjà effectué un paiement, veuillez nous contacter afin que nous puissions réactiver vos services.</p>
                     <p>Si vous avez des questions supplémentaires, veuillez contacter nos services.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-23" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +1fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-23" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2C +1fr" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-2" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
                     <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccount balance} #{currencySymbol}.</p>
+                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccountBalance} #{currencySymbol}.</p>
                     <p>Nous vous invitons a faire le nécessaires pour assurer le paiement de votre (vos) dernière(s) facture(s).</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-24" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +5fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-24" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2C +5fr" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-2" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
                     <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccountBalance} #{currencySymbol}).</p>
                     <p>Merci de prendre contact avec nous pour échanger sur la situation.</p>
                     <p>Si vous avez déjà effectué un paiement, veuillez ne pas prendre cet e-mail en considération.</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-25" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +10fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-25" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2C +10fr" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-2" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
                     <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccountBalance} #{currencySymbol}).</p>
                     <p>Merci de prendre contact avec nous pour éclaircir la situation.</p>
                     <p>Si vous avez déjà effectué un paiement, vous pouvez ne pas prendre compte de cet e-mail.</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-            </column>
-        </insert>
+			</column>
+		</insert>
 
-        <insert tableName="com_message_template">
-            <column name="media" value="DUNNING_MEDIA" />
-            <column name="id" value="-26" />
-            <column name="version" value="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="B2C +15fr" />
-            <column name="type" value="DUNNING" />
-            <column name="tag_start" value="#{" />
-            <column name="tag_end" value="}" />
-            <column name="subject" value="" />
-            <column name="is_active" value="1" />
-            <column name="channel" value="EMAIL" />
-            <column name="trading_language_id" value="-2" />
-            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-            <column name="htmlcontent">
-                <![CDATA[
+		<insert tableName="com_message_template">
+			<column name="media" value="DUNNING_MEDIA" />
+			<column name="id" value="-26" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="B2C +15fr" />
+			<column name="type" value="DUNNING" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="" />
+			<column name="is_active" value="1" />
+			<column name="channel" value="EMAIL" />
+			<column name="trading_language_id" value="-2" />
+			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+			<column name="htmlcontent">
+				<![CDATA[
                     <p>Bonjour #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccountBalance} #{currencySymbol}).</p>
                     <p>La situation ne s’étant pas régler à l’amiable, l’ensemble des services que vous avez avec nous ont été suspendus.</p>
                     <p>Si vous avez déjà effectué un paiement, veuillez nous contacter afin que nous puissions réactiver vos services.</p>
                     <p>Si vous avez des questions supplémentaires, veuillez contacter nos services.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-            </column>
-        </insert>
-    </changeSet>
+			</column>
+		</insert>
+	</changeSet>
     <changeSet id="#INTRD-13967_20230215" author="houdad"/>
     <changeSet id="#INTRD-13967_20230217" author="houdad"/>
     <changeSet id="#INTRD-13968" author="houdad"/>
