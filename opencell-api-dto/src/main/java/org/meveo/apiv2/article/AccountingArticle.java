@@ -94,4 +94,10 @@ public interface AccountingArticle extends Resource {
     default Boolean getIgnoreAggregation() {
         return Boolean.FALSE;
     }
+
+    @Value.Default
+    @Schema(description = "Is Physical")
+    default boolean getPhysical() {
+        return false;
+    }
 }

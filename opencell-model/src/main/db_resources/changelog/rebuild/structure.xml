@@ -10207,6 +10207,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="allowance_code" type="bigint" />
+			<column name="physical" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">

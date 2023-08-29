@@ -7918,4 +7918,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
     	</addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-17184_20230829" author="aelmalki">
+        <addColumn tableName="billing_accounting_article">
+            <column name="physical" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
