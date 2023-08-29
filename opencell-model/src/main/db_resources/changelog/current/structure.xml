@@ -6703,6 +6703,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_unmatching_code" />
 
     </changeSet>
+    
+    <changeSet id="#INTRD-INTRD-17719_20230829" author="AbdelmounaimAkadid" failOnError="false">
+		<addColumn tableName="adm_user">
+			<column name="email" type="varchar(100)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
 
   	<changeSet id="#INTRD-15841_20230502" author="AdilElJaouhari">
         <addColumn tableName="billing_invoice_type">
