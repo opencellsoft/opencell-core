@@ -15576,6 +15576,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+    
+    <changeSet id="#INTRD-INTRD-17719_20230829" author="AbdelmounaimAkadid" failOnError="false">
+		<addColumn tableName="adm_user">
+			<column name="email" type="varchar(100)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
 
 
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle">
