@@ -1980,6 +1980,10 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				if(quoteAttribute.get().getDateValue()!=null) {
 					return quoteAttribute.get().getDateValue();  
 				}break;
+			case BOOLEAN:
+				if(quoteAttribute.get().getBooleanValue()!=null) {
+					return quoteAttribute.get().getBooleanValue();  
+				}break;
 			default:
 				break;  
 			}
@@ -2038,6 +2042,10 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				if(attributInstance.get().getDateValue()!=null) {
 					return attributInstance.get().getDateValue();  
 				}break;
+			case BOOLEAN:
+				if(attributInstance.get().getBooleanValue()!=null) {
+					return attributInstance.get().getBooleanValue();  
+				}break;
 			default:
 				break;  
 			}
@@ -2087,6 +2095,10 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				if(attributInstance.get().getDateValue()!=null) {
 					return attributInstance.get().getDateValue();  
 				}break;
+			case BOOLEAN:
+				if(attributInstance.get().getBooleanValue()!=null) {
+					return attributInstance.get().getBooleanValue();  
+				}break;
 			default:
 				break;  
 			}
@@ -2128,6 +2140,10 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case DATE:
 				if(attributInstance.get().getDateValue()!=null) {
 					return attributInstance.get().getDateValue();  
+				}break;
+			case BOOLEAN:
+				if(attributInstance.get().getBooleanValue()!=null) {
+					return attributInstance.get().getBooleanValue();  
 				}break;
 			default:
 				break;  
