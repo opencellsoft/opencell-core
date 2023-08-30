@@ -112,7 +112,7 @@ public class UserService extends PersistenceService<User> {
         if(lUserManagementSource.equals("OC")) {
             lUser = getUserFromDatabase(username);
 
-            if (lUser != null) {
+            if (lUser != null && extendedInfo) {
                 this.fillKeycloakUserInfo(lUser);
             }
         } else  {
@@ -233,21 +233,19 @@ public class UserService extends PersistenceService<User> {
      */
     @Override
     public User findById(Long id, boolean extendedInfo) {
-        if(id==null) {
+        if(id == null) {
             return null;
         }
-        User user=findById(id);
-         if (user == null) {
+
+        User user = findById(id);
+        if (user == null) {
              return null;
-         }
-        User kcUser = keycloakAdminClientService.findUser(user.getUserName(), extendedInfo);
-        if (kcUser == null) {
-            return null;
         }
-        user.setEmail(kcUser.getEmail());
-        user.setName(kcUser.getName());
-        user.setRoles(kcUser.getRoles());
-        user.setUserLevel(kcUser.getUserLevel());
+
+        if(extendedInfo) {
+            this.fillKeycloakUserInfo(user);
+        }
+
         return user;
     }
 
@@ -263,7 +261,7 @@ public class UserService extends PersistenceService<User> {
             user = getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", kcUser.getUserName().toLowerCase()).getSingleResult();
         } catch (NoResultException ex) {
             user = new User();
-            // Set fields, even they are transient, so they can be used in a notification if any is fired uppon user creation
+            // Set fields, even they are transient, so they can be used in a notification if any is fired upon user creation
             user.setEmail(kcUser.getEmail());
             user.setName(kcUser.getName());
             user.setRoles(kcUser.getRoles());
@@ -287,8 +285,6 @@ public class UserService extends PersistenceService<User> {
     private void fillKeycloakUserInfo(User user) {
         User kcUser = keycloakAdminClientService.findUser(user.getUserName(), true);
         if (kcUser != null) {
-            user.setEmail(kcUser.getEmail());
-            user.setName(kcUser.getName());
             user.setRoles(kcUser.getRoles());
             user.setUserLevel(kcUser.getUserLevel());
         }
