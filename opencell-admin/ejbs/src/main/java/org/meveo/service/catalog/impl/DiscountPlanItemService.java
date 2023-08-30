@@ -324,7 +324,9 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
                   }
         
         log.debug("isDiscountPlanItemApplicable discountPlanItem code={},accountingArticle={}, isApplicable={}",discountPlanItem.getCode(),accountingArticle, isApplicable);
-       
+        log.debug("discountPlanItem.getTargetAccountingArticle() = {},discountPlanItem.getTargetAccountingArticle().contains(accountingArticle) = {}",discountPlanItem.getTargetAccountingArticle(),(discountPlanItem.getTargetAccountingArticle().contains(accountingArticle)));
+        log.debug("billingAccount={}, walletOperation={}, subscription={}, matchDiscountPlanExpression = {}",billingAccount,walletOperation,subscription,discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation,subscription, accountingArticle));
+        
         return isApplicable;
     }
     
