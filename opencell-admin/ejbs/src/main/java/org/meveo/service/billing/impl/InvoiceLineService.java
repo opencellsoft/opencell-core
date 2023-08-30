@@ -1098,7 +1098,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 basicStatistics.addToAmountWithTax(amounts[1]);
                 basicStatistics.addToAmountTax(amounts[2]);
                 commit();
-                associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+                associatedRtIds = stream(groupedRT.get("rated_transaction_ids").toString().split(",")).map(Long::parseLong).collect(toList());
                 basicStatistics.setCount(associatedRtIds.size());
                 ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLineId, billingRunId);
             }
@@ -1110,11 +1110,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
                 create(invoiceLine);
                 commit();
-                associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+                associatedRtIds = stream(groupedRT.get("rated_transaction_ids").toString().split(",")).map(Long::parseLong).collect(toList());
                 basicStatistics.setCount(associatedRtIds.size());
                 ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId(), billingRunId);
                 if(groupedRT.get("rated_transaction_ids") != null) {
-                    var ratedTransIds = ((String) groupedRT.get("rated_transaction_ids")).split(",");
+                    var ratedTransIds = groupedRT.get("rated_transaction_ids").toString().split(",");
                     for(String id: ratedTransIds) {
                         iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
                     }
