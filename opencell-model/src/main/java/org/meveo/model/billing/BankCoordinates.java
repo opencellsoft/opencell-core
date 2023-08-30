@@ -18,7 +18,12 @@
 package org.meveo.model.billing;
 
 import java.io.Serializable;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Embeddable;
@@ -26,6 +31,7 @@ import javax.validation.constraints.Size;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.commons.encryption.BankDataEncryptor;
+import org.meveo.commons.utils.AesEncrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,27 +131,14 @@ public class BankCoordinates implements Serializable, Cloneable {
     @Size(max = 35)
     private String ics;
 
+    
+    
+    
     public BankCoordinates() {
-    }
+		super();		
+	}
 
-    public BankCoordinates(BankCoordinates bankCoordinates) {
-        this(bankCoordinates.bankCode, bankCoordinates.branchCode, bankCoordinates.accountNumber, bankCoordinates.key, bankCoordinates.getIban(), bankCoordinates.bic,
-            bankCoordinates.accountOwner, bankCoordinates.bankName);
-    }
-
-    public BankCoordinates(String bankCode, String branchCode, String accountNumber, String key, String iban, String bic, String accountOwner, String bankName) {
-        super();
-        this.bankCode = bankCode;
-        this.branchCode = branchCode;
-        this.accountNumber = accountNumber;
-        this.key = key;
-        setIban(iban);
-        this.bic = bic;
-        this.accountOwner = accountOwner;
-        this.bankName = bankName;
-    }
-
-    public String getBankCode() {
+	public String getBankCode() {
         return bankCode;
     }
 
@@ -180,12 +173,23 @@ public class BankCoordinates implements Serializable, Cloneable {
     
 
     public String getIban() {
-		return iban;
-	}
+    	try {
+			return decryptIban(iban);
+		} catch (Exception e) {
+			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
+			log.error("Error when decrypting Iban", e);
+			return null;
+    }
+    }
 
-	public void setIban(String iban) {
-		this.iban = iban;
-	}
+    public void setIban(String iban) {
+    	try {
+			this.iban = encryptIban(encryptIban(iban));
+		} catch (Exception e) {
+			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
+			log.error("Error when encrypting Iban", e);
+    }
+    }
 
 	public String getBic() {
         return bic;
@@ -210,11 +214,11 @@ public class BankCoordinates implements Serializable, Cloneable {
     public void setBankName(String bankName) {
         this.bankName = bankName;
     }
-
+    
     @Override
     public Object clone() throws CloneNotSupportedException {
-        BankCoordinates o = (BankCoordinates) super.clone();
-        return o;
+    	return  super.clone();
+        
     }
 
     public void setBankId(String bankId) {
@@ -285,5 +289,45 @@ public class BankCoordinates implements Serializable, Cloneable {
 
         return StringUtils.compare(iban, other.getIban()) == 0;
     }
-    
+    /**
+	 * 
+	 * @param iban
+	 * @return encrypted iban if encryption key exist in config file else return iban
+     * @throws NoSuchPaddingException 
+     * @throws NoSuchAlgorithmException 
+     * @throws BadPaddingException 
+     * @throws IllegalBlockSizeException 
+     * @throws InvalidKeyException 
+	 * @throws Exception
+	 */
+	public String encryptIban(String iban) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException  {
+
+		if (iban != null && !(iban.startsWith("AES"))) {
+			AesEncrypt ae = new AesEncrypt();
+			return ae.getEncyptedIban(iban, ae);
+}
+		return iban;
+	}
+
+	/**
+	 * 
+	 * @param iban
+	 * @return decrypted iban if iban is already encypted
+	 * @throws NoSuchPaddingException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws InvalidKeyException 
+	 * @throws Exception
+	 */
+	public String decryptIban(String iban) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException  {
+
+		if (iban != null && iban.startsWith("AES")) {
+			iban = iban.substring(3);
+			AesEncrypt ae = new AesEncrypt();
+			return ae.getDecryptedIban(iban, ae);
+		}
+		return iban;
+	}
+
 }
