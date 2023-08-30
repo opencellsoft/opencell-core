@@ -21327,5 +21327,59 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="default_advanced_payment_article_id" valueComputed="(SELECT id FROM billing_accounting_article WHERE code = 'ADV-STD')" />
 		</update>
     </changeSet>
+    
+    <changeSet id="INTRD-18097_20230830" author="houdad">
+	    <update tableName="cat_charge_template">
+	    <column name="parameter1_translated_description" value='{
+	        "ENG": "Parameter 1",
+	        "FRA": "Paramètre 1"
+	    }'/>
+	    <where>parameter1_translated_description IS NULL</where>
+		</update>
+	
+		<update tableName="cat_charge_template">
+		    <column name="parameter2_translated_description" value='{
+		        "ENG": "Parameter 2",
+		        "FRA": "Paramètre 2"
+		    }'/>
+		    <where>parameter2_translated_description IS NULL</where>
+		</update>
+		
+		<update tableName="cat_charge_template">
+		    <column name="parameter3_translated_description" value='{
+		        "ENG": "Parameter 3",
+		        "FRA": "Paramètre 3"
+		    }'/>
+		    <where>parameter3_translated_description IS NULL</where>
+		</update>
+		
+		<update tableName="cat_charge_template">
+		    <column name="parameter_extra_translated_description" value='{
+		        "ENG": "Parameter Extra",
+		        "FRA": "Paramètre Extra"
+		    }'/>
+		    <where>parameter_extra_translated_description IS NULL</where>
+		</update>
+		<update tableName="cat_charge_template">
+	    <column name="parameter1_format" value="TEXT"/>
+	    <where>parameter1_format IS NULL</where>
+		</update>
+		
+		<update tableName="cat_charge_template">
+		    <column name="parameter2_format" value="TEXT"/>
+		    <where>parameter2_format IS NULL</where>
+		</update>
+		
+		<update tableName="cat_charge_template">
+		    <column name="parameter3_format" value="TEXT"/>
+		    <where>parameter3_format IS NULL</where>
+		</update>
+		
+		<update tableName="cat_charge_template">
+		    <column name="parameter_extra_format" value="TEXT"/>
+		    <where>parameter_extra_format IS NULL</where>
+		</update>
+		
+    </changeSet>
 
 </databaseChangeLog>

@@ -252,33 +252,34 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         	chargeTemplate.setInternalNote(StringUtils.isBlank(postData.getInternalNote()) ? null : postData.getInternalNote());
         }
         
-        chargeTemplate.setParameter1Description(postData.getParameter1Description());
-        chargeTemplate.setParameter1TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter1TranslatedDescriptions()));
+        chargeTemplate.setParameter1Description(StringUtils.isBlank(postData.getParameter1Description()) ? null : postData.getParameter1Description());
+        chargeTemplate.setParameter1TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter1TranslatedDescriptions(), isNew, "1"));
         chargeTemplate.setParameter1TranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter1TranslatedLongDescriptions()));
-        chargeTemplate.setParameter1Format(postData.getParameter1Format());
-        chargeTemplate.setParameter1IsMandatory(postData.getParameter1IsMandatory());
-        chargeTemplate.setParameter1IsHidden(postData.getParameter1IsHidden());
+        chargeTemplate.setParameter1Format(StringUtils.isBlank(postData.getParameter1Format()) ? null : postData.getParameter1Format());
+        chargeTemplate.setParameter1IsMandatory(postData.getParameter1IsMandatory() != null ? postData.getParameter1IsMandatory() : false);
+        chargeTemplate.setParameter1IsHidden(postData.getParameter1IsHidden() != null ? postData.getParameter1IsHidden() : false);
 
-        chargeTemplate.setParameter2Description(postData.getParameter2Description());
-        chargeTemplate.setParameter2TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter2TranslatedDescriptions()));
+        chargeTemplate.setParameter2Description(StringUtils.isBlank(postData.getParameter2Description()) ? null : postData.getParameter2Description());
+        chargeTemplate.setParameter2TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter2TranslatedDescriptions(), isNew, "2"));
         chargeTemplate.setParameter2TranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter2TranslatedLongDescriptions()));
-        chargeTemplate.setParameter2Format(postData.getParameter2Format());
-        chargeTemplate.setParameter2IsMandatory(postData.getParameter2IsMandatory());
-        chargeTemplate.setParameter2IsHidden(postData.getParameter2IsHidden());
+        chargeTemplate.setParameter2Format(StringUtils.isBlank(postData.getParameter2Format()) ? null : postData.getParameter2Format());
+        chargeTemplate.setParameter2IsMandatory(postData.getParameter2IsMandatory() != null ? postData.getParameter2IsMandatory() : false);
+        chargeTemplate.setParameter2IsHidden(postData.getParameter2IsHidden() != null ? postData.getParameter2IsHidden() : false);
 
-        chargeTemplate.setParameter3Description(postData.getParameter3Description());
-        chargeTemplate.setParameter3TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter3TranslatedDescriptions()));
+        chargeTemplate.setParameter3Description(StringUtils.isBlank(postData.getParameter3Description()) ? null : postData.getParameter3Description());
+        chargeTemplate.setParameter3TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter3TranslatedDescriptions(), isNew, "3"));
         chargeTemplate.setParameter3TranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter3TranslatedLongDescriptions()));
-        chargeTemplate.setParameter3Format(postData.getParameter3Format());
-        chargeTemplate.setParameter3IsMandatory(postData.getParameter3IsMandatory());
-        chargeTemplate.setParameter3IsHidden(postData.getParameter3IsHidden());
+        chargeTemplate.setParameter3Format(StringUtils.isBlank(postData.getParameter3Format()) ? null : postData.getParameter3Format());
+        chargeTemplate.setParameter3IsMandatory(postData.getParameter3IsMandatory() != null ? postData.getParameter3IsMandatory() : false);
+        chargeTemplate.setParameter3IsHidden(postData.getParameter3IsHidden() != null ? postData.getParameter3IsHidden() : false);
 
-        chargeTemplate.setParameterExtraDescription(postData.getParameterExtraDescription());
-        chargeTemplate.setParameterExtraTranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameterExtraTranslatedDescriptions()));
+        chargeTemplate.setParameterExtraDescription(StringUtils.isBlank(postData.getParameterExtraDescription()) ? null : postData.getParameterExtraDescription());
+        chargeTemplate.setParameterExtraTranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameterExtraTranslatedDescriptions(), isNew, "Extra"));
         chargeTemplate.setParameterExtraTranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameterExtraTranslatedLongDescriptions()));
-        chargeTemplate.setParameterExtraFormat(postData.getParameterExtraFormat());
-        chargeTemplate.setExtraIsMandatory(postData.getParameterExtraIsMandatory());
-        chargeTemplate.setParameterExtraIsHidden(postData.getParameterExtraIsHidden());
+        chargeTemplate.setParameterExtraFormat(StringUtils.isBlank(postData.getParameterExtraFormat()) ? null : postData.getParameterExtraFormat());
+        chargeTemplate.setExtraIsMandatory(postData.getParameterExtraIsMandatory() != null ? postData.getParameterExtraIsMandatory() : false);
+        chargeTemplate.setParameterExtraIsHidden(postData.getParameterExtraIsHidden() != null ? postData.getParameterExtraIsHidden() : false);
+
 
 
         // populate customFields
@@ -293,12 +294,37 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         }
     }
     
-    private Map<TradingLanguage, String> mapLanguageDtoToTradingLanguage(Map<LanguageDto, String> languageDtoMap) {
-        Map<TradingLanguage, String> tradingLanguageMap = new HashMap<>();
-        for (Map.Entry<LanguageDto, String> entry : languageDtoMap.entrySet()) {
-            LanguageDto languageDto = entry.getKey();
-            TradingLanguage tradingLanguage = findTradingLanguageByLanguageDto(languageDto);
-            tradingLanguageMap.put(tradingLanguage, entry.getValue());
+    private Map<String, String> mapLanguageDtoToTradingLanguage(Map<String, String> languageDtoMap, boolean isNew, String parameterNumber) {
+        Map<String, String> tradingLanguageMap = new HashMap<>();
+
+        if (languageDtoMap != null  && !languageDtoMap.isEmpty()) {
+            for (Map.Entry<String, String> entry : languageDtoMap.entrySet()) {
+                String languageCode = entry.getKey();
+                TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode);
+                if(tradingLanguage == null) {
+                	throw new EntityDoesNotExistsException(" TradingLanguage with code=" + languageCode
+            				+ " does not exists.");
+                }
+                tradingLanguageMap.put(tradingLanguage.getLanguageCode(), entry.getValue());
+            }
+        } else if (isNew) {
+            tradingLanguageMap.put("ENG", "Parameter " + parameterNumber);
+            tradingLanguageMap.put("FRA", "Paramètre " + parameterNumber);
+        }
+
+        return tradingLanguageMap;
+    }
+    
+    private Map<String, String> mapLanguageDtoToTradingLanguage(Map<String, String> languageDtoMap) {
+        Map<String, String> tradingLanguageMap = new HashMap<>();
+        for (Map.Entry<String, String> entry : languageDtoMap.entrySet()) {
+            String languageCode = entry.getKey();
+            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode);
+            if(tradingLanguage == null) {
+            	throw new EntityDoesNotExistsException(" TradingLanguage with code=" + languageCode
+        				+ " does not exists.");
+            }
+            tradingLanguageMap.put(tradingLanguage.getLanguageCode(), entry.getValue());
         }
         return tradingLanguageMap;
     }
