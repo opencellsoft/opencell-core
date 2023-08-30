@@ -28,11 +28,9 @@ import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -43,7 +41,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -64,7 +61,6 @@ import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
@@ -305,31 +301,19 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     
     @Type(type = "json")
     @Column(name = "parameter1_translated_description", columnDefinition = "jsonb")
-    private Map<String, String> parameter1TranslatedDescriptions = new HashMap<String, String>() {{
-        put("ENG", "Parameter 1");
-        put("FRA", "Paramètre 1");
-    }};
+    private Map<String, String> parameter1TranslatedDescriptions;
 
     @Type(type = "json")
     @Column(name = "parameter2_translated_description", columnDefinition = "jsonb")
-    private Map<String, String> parameter2TranslatedDescriptions = new HashMap<String, String>() {{
-        put("ENG", "Parameter 2");
-        put("FRA", "Paramètre 2");
-    }};
+    private Map<String, String> parameter2TranslatedDescriptions;
 
     @Type(type = "json")
     @Column(name = "parameter3_translated_description", columnDefinition = "jsonb")
-    private Map<String, String> parameter3TranslatedDescriptions = new HashMap<String, String>() {{
-        put("ENG", "Parameter 3");
-        put("FRA", "Paramètre 3");
-    }};
+    private Map<String, String> parameter3TranslatedDescriptions;
 
     @Type(type = "json")
     @Column(name = "parameter_extra_translated_description", columnDefinition = "jsonb")
-    private Map<String, String> parameterExtraTranslatedDescriptions = new HashMap<String, String>() {{
-        put("ENG", "Parameter Extra");
-        put("FRA", "Paramètre Extra");
-    }};
+    private Map<String, String> parameterExtraTranslatedDescriptions;
     
     @Column(name = "parameter1_description")
     private String parameter1Description;
