@@ -77,8 +77,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         log.debug(" Running for with parameter={}", jobInstance.getParametres());
         try {
             List<EntityReferenceWrapper> billingRunWrappers = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun");
-            boolean aggregationPerUnitPrice = (Boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE, false);
-            DateAggregationOption dateAggregationOptions = (DateAggregationOption) DateAggregationOption.valueOf((String)getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS, "MONTH_OF_USAGE_DATE"));
 
             List<Long> billingRunIds = billingRunWrappers != null ? billingRunWrappers.stream()
                     .map(br -> valueOf(br.getCode().split("/")[0]))
@@ -99,8 +97,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 if (excludedBRCount == billingRuns.size()) {
                     result.registerError("No valid billing run with status = NEW found");
                 } else {
-                    AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(appProvider.isEntreprise(), aggregationPerUnitPrice, dateAggregationOptions);
                     for(BillingRun billingRun : billingRuns) {
+                        AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(billingRun);
                         // set status of billing run as CREATING_INVOICE_LINES, i.e. it indicates that the invoice line job is running
                         billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, CREATING_INVOICE_LINES, null);
                         List<Long> billingAccountsIDs = billingRunService.getBillingAccountsIdsForOpenRTs(billingRun, false);

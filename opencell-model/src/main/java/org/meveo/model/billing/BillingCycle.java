@@ -73,24 +73,22 @@ public class BillingCycle extends BusinessCFEntity {
     private Calendar calendar;
 
     /**
-     * Expression to calculate a delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate value.
-     * BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
+     * Expression to calculate a delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate value. BillingRun.lastTransactionDate =
+     * BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
     @Column(name = "transaction_date_delay_EL", length = 2000)
     @Size(max = 2000)
     private String lastTransactionDateDelayEL;
 
     /**
-     * Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate = BillingCycle.lastTransactionDate
-     * (resolved from EL)
+     * Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate = BillingCycle.lastTransactionDate (resolved from EL)
      */
     @Column(name = "transaction_date_el", length = 2000)
     @Size(max = 2000)
     private String lastTransactionDateEL;
 
     /**
-     * Expression to calculate a delay to apply when calculating the invoice date. Invoice.invoiceDate = BillingRun.invoiceDate = BillingRun.processDate +
-     * BillingCycle.invoiceDateProductionDelay (resolved from EL).
+     * Expression to calculate a delay to apply when calculating the invoice date. Invoice.invoiceDate = BillingRun.invoiceDate = BillingRun.processDate + BillingCycle.invoiceDateProductionDelay (resolved from EL).
      */
     @Column(name = "invoice_date_production_delay_el", length = 2000)
     @Size(max = 2000)
@@ -199,40 +197,58 @@ public class BillingCycle extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "billing_run_validation_script_id")
     private ScriptInstance billingRunValidationScript;
-    
+
     /**
      * Filtering option used in billing cycle.
      */
     @Type(type = "json")
     @Column(name = "filters", columnDefinition = "jsonb")
     private Map<String, Object> filters;
-    
+
     /**
-     *  Higher priority macth with lowest priority value
+     * Higher priority match with lowest priority value
      */
     @Column(name = "priority")
     private int priority = 0;
-    
+
+    /**
+     * Do not aggregate RTs to ILs at all
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "disable_aggregation")
     private boolean disableAggregation = false;
-    
+
+    /**
+     * Aggregate based on accounting article label instead of RT description
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "use_accounting_article_label")
     private boolean useAccountingArticleLabel = false;
-    
+
+    /**
+     * Aggregate by date option
+     */
     @Enumerated(value = EnumType.STRING)
     @Column(name = "date_aggregation")
     private DateAggregationOption dateAggregation = DateAggregationOption.NO_DATE_AGGREGATION;
-    
+
+    /**
+     * Aggregate per unit amount
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "aggregate_unit_amounts")
     private boolean aggregateUnitAmounts = false;
-    
+
+    /**
+     * If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_subscriptions")
     private boolean ignoreSubscriptions = true;
-    
+
+    /**
+     * If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_orders")
     private boolean ignoreOrders = true;
@@ -242,8 +258,15 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
-    private boolean incrementalInvoiceLines = Boolean.FALSE;
-    
+    private boolean incrementalInvoiceLines = false;
+
+    /**
+     * Discount aggregation type
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "discount_aggregation", nullable = false)
+    private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
+
     public boolean isThresholdPerEntity() {
         return thresholdPerEntity;
     }
@@ -267,32 +290,30 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     /**
-     * @return Expression to calculate a delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate
-     *         value. BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
+     * @return Expression to calculate a delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate value. BillingRun.lastTransactionDate =
+     *         BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
     public String getLastTransactionDateDelayEL() {
         return lastTransactionDateDelayEL;
     }
 
     /**
-     * @param lastTransactionDateDelayEL Expression to calculate a delay to apply when calculating the maximum date up to which to include rated transactions in the invoice -
-     *        BillingRun.lastTransactionDate value. BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
+     * @param lastTransactionDateDelayEL Expression to calculate a delay to apply when calculating the maximum date up to which to include rated transactions in the invoice - BillingRun.lastTransactionDate value.
+     *        BillingRun.lastTransactionDate = BillingRun.processDate + BillingCycle.transactionDateDelay (resolved from EL).
      */
     public void setLastTransactionDateDelayEL(String lastTransactionDateDelayEL) {
         this.lastTransactionDateDelayEL = lastTransactionDateDelayEL;
     }
 
     /**
-     * @return Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate = BillingCycle.lastTransactionDate
-     *         (resolved from EL)
+     * @return Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate = BillingCycle.lastTransactionDate (resolved from EL)
      */
     public String getLastTransactionDateEL() {
         return lastTransactionDateEL;
     }
 
     /**
-     * @param lastTransactionDateEL Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate =
-     *        BillingCycle.lastTransactionDate (resolved from EL)
+     * @param lastTransactionDateEL Expression to calculate the maximum date up to which to include rated transactions in the invoice. BillingRun.lastTransactionDate = BillingCycle.lastTransactionDate (resolved from EL)
      */
     public void setLastTransactionDateEL(String lastTransactionDateEL) {
         this.lastTransactionDateEL = lastTransactionDateEL;
@@ -306,7 +327,7 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     /**
-     * @param invoiceDateProductionDelay Expression to calculate the number of days to add to a billing run date to compute the invoice date
+     * @param invoiceDateProductionDelayEL Expression to calculate the number of days to add to a billing run date to compute the invoice date
      */
     public void setInvoiceDateProductionDelayEL(String invoiceDateProductionDelayEL) {
         this.invoiceDateProductionDelayEL = invoiceDateProductionDelayEL;
@@ -423,8 +444,7 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     /**
-     * @param referenceDate What reference date to use when calculating the next invoicing date with an invoice calendar as in:
-     *        BillingCycle.calendar.nextCalendarDate(referenceDate)
+     * @param referenceDate What reference date to use when calculating the next invoicing date with an invoice calendar as in: BillingCycle.calendar.nextCalendarDate(referenceDate)
      */
     public void setReferenceDate(ReferenceDateEnum referenceDate) {
         this.referenceDate = referenceDate;
@@ -475,7 +495,7 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     public String getLocalizedDescription(String lang) {
-        if(descriptionI18n != null) {
+        if (descriptionI18n != null) {
             return descriptionI18n.getOrDefault(lang, this.description);
         } else {
             return this.description;
@@ -508,31 +528,31 @@ public class BillingCycle extends BusinessCFEntity {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
 
-	public ScriptInstance getBillingRunValidationScript() {
-		return billingRunValidationScript;
-	}
+    public ScriptInstance getBillingRunValidationScript() {
+        return billingRunValidationScript;
+    }
 
-	public void setBillingRunValidationScript(ScriptInstance billingRunValidationScript) {
-		this.billingRunValidationScript = billingRunValidationScript;
-	}
+    public void setBillingRunValidationScript(ScriptInstance billingRunValidationScript) {
+        this.billingRunValidationScript = billingRunValidationScript;
+    }
 
-	public Map<String, Object> getFilters() {
-		return filters;
-	}
+    public Map<String, Object> getFilters() {
+        return filters;
+    }
 
-	public void setFilters(Map<String, Object> filters) {
-		this.filters = filters;
-	}
+    public void setFilters(Map<String, Object> filters) {
+        this.filters = filters;
+    }
 
-	public int getPriority() {
-		return priority;
-	}
+    public int getPriority() {
+        return priority;
+    }
 
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
-	
-	public boolean isDisableAggregation() {
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public boolean isDisableAggregation() {
         return disableAggregation;
     }
 
@@ -540,51 +560,95 @@ public class BillingCycle extends BusinessCFEntity {
         this.disableAggregation = disableAggregation;
     }
 
+    /**
+     * @return Aggregate based on accounting article label instead of RT description
+     */
     public boolean isUseAccountingArticleLabel() {
         return useAccountingArticleLabel;
     }
 
+    /**
+     * @param useAccountingArticleLabel Aggregate based on accounting article label instead of RT description
+     */
     public void setUseAccountingArticleLabel(boolean useAccountingArticleLabel) {
         this.useAccountingArticleLabel = useAccountingArticleLabel;
     }
 
+    /**
+     * @return Aggregate by date option
+     */
     public DateAggregationOption getDateAggregation() {
         return dateAggregation;
     }
 
+    /**
+     * @param dateAggregation Aggregate by date option
+     */
     public void setDateAggregation(DateAggregationOption dateAggregation) {
         this.dateAggregation = dateAggregation;
     }
 
+    /**
+     * @return Aggregate per unit amount
+     */
     public boolean isAggregateUnitAmounts() {
         return aggregateUnitAmounts;
     }
 
+    /**
+     * @param aggregateUnitAmounts Aggregate per unit amount
+     */
     public void setAggregateUnitAmounts(boolean aggregateUnitAmounts) {
         this.aggregateUnitAmounts = aggregateUnitAmounts;
     }
 
+    /**
+     * @return If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)
+     */
     public boolean isIgnoreSubscriptions() {
         return ignoreSubscriptions;
     }
 
+    /**
+     * @param ignoreSubscriptions If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)
+     */
     public void setIgnoreSubscriptions(boolean ignoreSubscriptions) {
         this.ignoreSubscriptions = ignoreSubscriptions;
     }
 
+    /**
+     * @return If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)
+     */
     public boolean isIgnoreOrders() {
         return ignoreOrders;
     }
 
+    /**
+     * @param ignoreOrders If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)
+     */
     public void setIgnoreOrders(boolean ignoreOrders) {
         this.ignoreOrders = ignoreOrders;
     }
 
-    public Boolean getIncrementalInvoiceLines() {
+    public boolean isIncrementalInvoiceLines() {
         return incrementalInvoiceLines;
     }
 
     public void setIncrementalInvoiceLines(boolean incrementalInvoiceLines) {
         this.incrementalInvoiceLines = incrementalInvoiceLines;
+    }
+
+    /**
+     * @return Discount aggregation type
+     */
+    public DiscountAggregationModeEnum getDiscountAggregation() {
+        return discountAggregation;
+    }
+
+    /**
+     * @param discountAggregation Discount aggregation type
+     */
+    public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
+        this.discountAggregation = discountAggregation;
     }
 }
