@@ -1423,14 +1423,29 @@ public class QueryBuilder {
             concatenatedFields = concatenatedFields.substring(alias.length());
         }
         String[] fields = concatenatedFields.split("\\.");
+
+        var tmpFields = new ArrayList<>(List.of(fields));
+        boolean isFilterById = false;
+        if(tmpFields.size() > 1 && "id".equals(fields[fields.length -1])) {
+            tmpFields.remove(tmpFields.size() - 1);
+            isFilterById = true;
+        }
+
         if(innerJoins.get(concatenatedFields) != null){
             concatenatedFields = innerJoins.get(concatenatedFields).getJoinAlias();
-        }else if(fields.length > 1){
-            JoinWrapper joinWrapper = parse(concatenatedFields);
+        }else if(tmpFields.size() > 1){
+            JoinWrapper joinWrapper = parse(String.join(".", tmpFields));
             innerJoins.put(concatenatedFields, joinWrapper);
             concatenatedFields = joinWrapper.getJoinAlias();
-        } else if(fields.length == 1){
-            return this.alias + "." + concatenatedFields;
+            if(isFilterById) {
+                concatenatedFields = concatenatedFields + ".id";
+            }
+        } else if(tmpFields.size() == 1){
+            String result = this.alias + "." + String.join(".", tmpFields);
+            if(isFilterById) {
+                result = result + ".id";
+            }
+            return result;
         }
         return concatenatedFields;
     }
