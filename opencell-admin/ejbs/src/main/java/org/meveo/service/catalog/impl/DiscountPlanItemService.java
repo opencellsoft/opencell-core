@@ -313,20 +313,19 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         log.debug("getApplicableDiscountPlanItems discountPlan code={},applicableDiscountPlanItems size={}",discountPlan.getCode(),applicableDiscountPlanItems.size());
         return applicableDiscountPlanItems;
      }
+    
     public boolean isDiscountPlanItemApplicable(BillingAccount billingAccount,DiscountPlanItem discountPlanItem,AccountingArticle accountingArticle,Subscription subscription,WalletOperation walletOperation)
             throws BusinessException {
-    	boolean isApplicable=false;
-        if (discountPlanItem.isActive() 
-                		  && (discountPlanItem.getTargetAccountingArticle().isEmpty()  || accountingArticle == null || (discountPlanItem.getTargetAccountingArticle().contains(accountingArticle))) 
-                		  && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation,subscription, accountingArticle)) {
-                  	
-        	isApplicable=true;
-                  }
-        
-        log.debug("isDiscountPlanItemApplicable discountPlanItem code={},accountingArticle={}, isApplicable={}",discountPlanItem.getCode(),accountingArticle, isApplicable);
-        log.debug("discountPlanItem.getTargetAccountingArticle() = {},discountPlanItem.getTargetAccountingArticle().contains(accountingArticle) = {}",discountPlanItem.getTargetAccountingArticle(),(discountPlanItem.getTargetAccountingArticle().contains(accountingArticle)));
-        log.debug("billingAccount={}, walletOperation={}, subscription={}, matchDiscountPlanExpression = {}",billingAccount,walletOperation,subscription,discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation,subscription, accountingArticle));
-        
+        boolean isApplicable = false;
+        if (discountPlanItem.isActive()
+						&& (discountPlanItem.getTargetAccountingArticle().isEmpty() || accountingArticle == null
+						                        || (discountPlanItem.getTargetAccountingArticle().stream().anyMatch(o -> accountingArticle.getId().equals(o.getId()))))
+						&& discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation, subscription, accountingArticle)) {
+
+        	isApplicable = true;
+        }
+        log.debug("isDiscountPlanItemApplicable discountPlanItem code={},accountingArticle={}, isApplicable={}", discountPlanItem.getCode(), accountingArticle, isApplicable);
+
         return isApplicable;
     }
     
