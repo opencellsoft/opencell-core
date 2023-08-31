@@ -32,6 +32,18 @@ public class BasicStatistics {
         return sumAmountTax;
     }
 
+    public void setSumAmountWithoutTax(BigDecimal sumAmountWithoutTax) {
+        this.sumAmountWithoutTax = sumAmountWithoutTax;
+    }
+
+    public void setSumAmountWithTax(BigDecimal sumAmountWithTax) {
+        this.sumAmountWithTax = sumAmountWithTax;
+    }
+
+    public void setSumAmountTax(BigDecimal sumAmountTax) {
+        this.sumAmountTax = sumAmountTax;
+    }
+
     public BigDecimal addToAmountWithoutTax(BigDecimal amount) {
         sumAmountWithoutTax = this.sumAmountWithoutTax.add(amount);
         return sumAmountWithoutTax;
