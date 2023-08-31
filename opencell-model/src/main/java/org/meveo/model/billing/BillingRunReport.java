@@ -1,11 +1,14 @@
 package org.meveo.model.billing;
 
+import static java.math.BigDecimal.ZERO;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.TemporalType.TIMESTAMP;
+import static org.meveo.model.billing.BillingRunReportTypeEnum.OPEN_RATED_TRANSACTIONS;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 
 import javax.persistence.Column;
@@ -46,13 +49,13 @@ public class BillingRunReport extends AuditableEntity {
     @NotNull
     private BigDecimal billingAccountsCount;
 
-    @Column(name = "subscription_accounts_count", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "subscriptions_count", precision = NB_PRECISION, scale = NB_DECIMALS)
     @NotNull
-    private BigDecimal subscriptionAccountsCount;
+    private BigDecimal subscriptionsCount;
 
-    @Column(name = "rated_transaction_accounts_count", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "rated_transactions_count", precision = NB_PRECISION, scale = NB_DECIMALS)
     @NotNull
-    private BigDecimal ratedTransactionAccountsCount;
+    private BigDecimal ratedTransactionsCount;
 
     @Column(name = "total_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @NotNull
@@ -88,6 +91,21 @@ public class BillingRunReport extends AuditableEntity {
     @OneToMany(mappedBy = "billingRunReport", fetch = LAZY)
     private List<OfferAmount> topOffers;
 
+    public BillingRunReport() {
+        this.totalAmountWithoutTax = ZERO;
+        this.recurringTotalAmountWithoutTax = ZERO;
+        this.usageTotalAmountWithoutTax = ZERO;
+        this.oneShotTotalAmountWithoutTax = ZERO;
+        this.oneShotTransactionsCount = ZERO;
+        this.recurringTransactionsCount = ZERO;
+        this.usageTransactionsCount = ZERO;
+        this.subscriptionsCount = ZERO;
+        this.billingAccountsCount = ZERO;
+        this.ratedTransactionsCount = ZERO;
+        this.creationDate = new Date();
+        this.type = OPEN_RATED_TRANSACTIONS;
+    }
+
     public BillingRun getBillingRun() {
         return billingRun;
     }
@@ -120,20 +138,20 @@ public class BillingRunReport extends AuditableEntity {
         this.billingAccountsCount = billingAccountsCount;
     }
 
-    public BigDecimal getSubscriptionAccountsCount() {
-        return subscriptionAccountsCount;
+    public BigDecimal getSubscriptionsCount() {
+        return subscriptionsCount;
     }
 
-    public void setSubscriptionAccountsCount(BigDecimal subscriptionAccountsCount) {
-        this.subscriptionAccountsCount = subscriptionAccountsCount;
+    public void setSubscriptionsCount(BigDecimal subscriptionAccountsCount) {
+        this.subscriptionsCount = subscriptionAccountsCount;
     }
 
-    public BigDecimal getRatedTransactionAccountsCount() {
-        return ratedTransactionAccountsCount;
+    public BigDecimal getRatedTransactionsCount() {
+        return ratedTransactionsCount;
     }
 
-    public void setRatedTransactionAccountsCount(BigDecimal ratedTransactionAccountsCount) {
-        this.ratedTransactionAccountsCount = ratedTransactionAccountsCount;
+    public void setRatedTransactionsCount(BigDecimal ratedTransactionAccountsCount) {
+        this.ratedTransactionsCount = ratedTransactionAccountsCount;
     }
 
     public BigDecimal getTotalAmountWithoutTax() {

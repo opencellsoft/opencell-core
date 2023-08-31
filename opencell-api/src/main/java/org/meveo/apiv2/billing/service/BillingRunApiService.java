@@ -39,6 +39,7 @@ import org.meveo.model.billing.RatedTransactionAction;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.BillingRunReportService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceLineService;
@@ -74,6 +75,9 @@ public class BillingRunApiService implements ApiService<BillingRun> {
     @Inject
     private LinkedInvoiceService linkedInvoiceService;
 
+    @Inject
+    private BillingRunReportService billingRunReportService;
+
     private static final String INVOICING_JOB_CODE = "Invoicing_Job_V2";
     private static final String INVOICE_LINES_JOB_CODE = "Invoice_Lines_Job_V2";
 
@@ -83,6 +87,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
     @Override
     public BillingRun create(BillingRun billingRun) {
         billingRunService.create(billingRun);
+        billingRunReportService.launchBillingRunReportJob(billingRun);
         return billingRun;
     }
 

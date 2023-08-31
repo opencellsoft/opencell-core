@@ -1107,4 +1107,8 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     public void setPreInvoicingReport(BillingRunReport preInvoicingReport) {
         this.preInvoicingReport = preInvoicingReport;
     }
+
+    public boolean hasPreInvoicingReport() {
+        return preInvoicingReport != null;
+    }
 }
