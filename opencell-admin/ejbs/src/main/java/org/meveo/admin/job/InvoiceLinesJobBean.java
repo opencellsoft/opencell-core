@@ -116,22 +116,24 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         Long maxInvoiceLinesPerTransaction = this.getParamOrCFValue(jobInstance, "maxInvoiceLinesPerTransaction", 10000L) instanceof Long
                                 ? (Long) this.getParamOrCFValue(jobInstance, "maxInvoiceLinesPerTransaction", 10000L) : 10000L;
                         BasicStatistics basicStatistics = new BasicStatistics();
-                        int billableEntitiesSize=0;
+
                         final int maxValue = Objects.requireNonNull(getInstance()).getPropertyAsInteger("database.number.of.inlist.limit", PersistenceService.SHORT_MAX_VALUE);
                         if (billingAccountsIDs.size() > maxValue) {
                             List<List<Long>> invoiceLineIdsSubList = partition(billingAccountsIDs, maxValue);
                             invoiceLineIdsSubList.forEach(subIdsList -> processInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration,
-                            		billingRun, nbRuns, waitingMillis, maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, subIdsList));
+                                    billingRun, nbRuns, waitingMillis, basicStatistics, subIdsList));
                         } else {
-                        	processInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration, billingRun, nbRuns, waitingMillis,
-									maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, billingAccountsIDs);
+                            processInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration, billingRun, nbRuns, waitingMillis,
+                                    basicStatistics, billingAccountsIDs);
                         }
                         Object billingAccountPerTransactionParam = this.getParamOrCFValue(jobInstance, InvoiceLinesJob.ONE_BILLING_ACCOUNT_PER_TRANSACTION, true);
                         boolean billingAccountPerTransaction = billingAccountPerTransactionParam instanceof Boolean ? (Boolean) billingAccountPerTransactionParam : true;
-                        if(!billingAccountPerTransaction) {
-                        	billingAccountsIDs = billingRunService.getBillingAccountsIdsForOpenRTs(billingRun, true);
-                        	processMassRTsInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration, billingRun, nbRuns, waitingMillis,
-									maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, billingAccountsIDs);
+                        int billableEntitiesSize = billingAccountsIDs.size();
+                        if (!billingAccountPerTransaction) {
+                            billingAccountsIDs = billingRunService.getBillingAccountsIdsForOpenRTs(billingRun, true);
+                            processMassRTsInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration, billingRun, nbRuns, waitingMillis,
+                                    basicStatistics, billingAccountsIDs);
+                            billableEntitiesSize += billingAccountsIDs.size();
                         }
 
                         // in case of incrementalInvoiceLines, update status of billing run as OPEN, and ready to update
@@ -155,9 +157,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         }
     }
 
-	private int processInvoiceLinesGeneration(JobExecutionResultImpl result, JobInstance jobInstance,
+	private void processInvoiceLinesGeneration(JobExecutionResultImpl result, JobInstance jobInstance,
 			AggregationConfiguration aggregationConfiguration, BillingRun billingRun, Long nbRuns, Long waitingMillis,
-			Long maxInvoiceLinesPerTransaction, BasicStatistics basicStatistics, int billableEntitiesSize, List<Long> billingAccountsIDs) {
+			BasicStatistics basicStatistics, List<Long> billingAccountsIDs) {
 		List billableEntitiesList = billingAccountService.findByIds(billingAccountsIDs);
 		
 		Map<String, Object> perfConfig = initPerfConfig(jobInstance);
@@ -167,8 +169,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 		iteratorBasedJobProcessing.processItems(result,
                 new SynchronizedIterator<>(billableEntitiesList), task, null, null, nbRuns,
                 waitingMillis, false, jobInstance.getJobSpeed(),true);
-		billableEntitiesSize+=billingAccountsIDs.size();
-        return billableEntitiesSize;
+        return;
     }
 
 	private Map<String, Object> initPerfConfig(JobInstance jobInstance) {
@@ -182,7 +183,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 	
 	private void processMassRTsInvoiceLinesGeneration(JobExecutionResultImpl result, JobInstance jobInstance,
 			AggregationConfiguration aggregationConfiguration, BillingRun billingRun, Long nbRuns, Long waitingMillis,
-			Long maxInvoiceLinesPerTransaction, BasicStatistics basicStatistics, int billableEntitiesSize, List<Long> billingAccountsIDs) {
+			BasicStatistics basicStatistics, List<Long> billingAccountsIDs) {
 		List<BillingAccount> billableEntitiesList = billingAccountService.findByIds(billingAccountsIDs);
 		for (BillingAccount be : billableEntitiesList) {
 			List<Map<String, Object>> groupedRTsWithAggregation = ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate());
