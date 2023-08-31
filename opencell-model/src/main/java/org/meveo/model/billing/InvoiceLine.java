@@ -8,6 +8,7 @@ import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.billing.AdjustmentStatusEnum.NOT_ADJUSTED;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -936,14 +937,21 @@ public class InvoiceLine extends AuditableCFEntity {
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
+		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
 		if (this.transactionalUnitPrice == null || (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency)) {
-			BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
 			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
 			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
 			setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
 			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
 			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
 			setTransactionalUnitPrice(toTransactional(unitPrice, appliedRate));
+		} else if (this.useSpecificPriceConversion) {
+			setAmountWithoutTax(toFunctional(transactionalAmountWithoutTax, appliedRate));
+			setAmountWithTax(toFunctional(transactionalAmountWithTax, appliedRate));
+			setAmountTax(toFunctional(transactionalAmountTax, appliedRate));
+			setDiscountAmount(toFunctional(transactionalDiscountAmount, appliedRate));
+			setRawAmount(toFunctional(transactionalRawAmount, appliedRate));
+			setUnitPrice(toFunctional(transactionalUnitPrice, appliedRate));
 		}
 	}
 
@@ -968,6 +976,10 @@ public class InvoiceLine extends AuditableCFEntity {
 	
 	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
 		return amount != null ? amount.multiply(rate) : ZERO;
+	}
+
+	private BigDecimal toFunctional(BigDecimal amount, BigDecimal rate) {
+		return amount != null ? amount.divide(rate, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : ZERO;
 	}
 
 }
