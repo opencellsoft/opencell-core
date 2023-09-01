@@ -992,8 +992,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
             invoiceLinesService.uninvoiceILs(excludedPrepaidInvoices);//reopen ILs not created from  RTs
             invoiceLinesService.cancelIlByInvoices(excludedPrepaidInvoices);//cancell ILs created from RTs
-            invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
+            invoiceService.deleteInvoices(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
                 BillingAccount ba = getEntityManager().getReference(BillingAccount.class, rejectedBillingAccountId);
                 rejectedBillingAccountService.create(ba, getEntityManager().getReference(BillingRun.class, billingRun.getId()), "Billing account did not reach invoicing threshold");
