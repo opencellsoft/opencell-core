@@ -107,6 +107,7 @@ public class UserService extends PersistenceService<User> {
     public User findByUsername(String username, boolean extendedInfo, boolean syncWithKC) {
         String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
 
+        log.info("lUserManagementSource {}", lUserManagementSource);
         User lUser = null;
 
         if(lUserManagementSource.equals("OC")) {
