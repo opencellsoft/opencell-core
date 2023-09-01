@@ -224,7 +224,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 
 				TaxInfo taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(), seller, billingAccount, null, operationDate, discountWalletOperation, false, false, null);
     			taxPercent = taxInfo.tax.getPercent();
-    			if ((BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || appProvider.isActivateCascadingDiscounts())
+			    if ((BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || appProvider.isActivateCascadingDiscounts())
     					&& walletOperation!=null 
     					&& walletOperation.getDiscountedAmount()!=null 
     					&& walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0) {
@@ -270,8 +270,10 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     					walletOperation.setDiscountedAmount(discountedAmount);
     				}
     			}
-				log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",
-						walletOperation != null ? walletOperation.getCode() : null, discountValue);
+			    if(walletOperation != null){
+				    walletOperation.setDiscountedAmount(discountedAmount);
+			    }
+    			log.debug("calculateDiscountplanItems walletOperation code={},discountValue={}",walletOperation!=null?walletOperation.getCode():null,discountValue);
     			//TODO: must have wallet operation for : link discountWallet to the current wallet, and
     			discountWalletOperations.add(discountWalletOperation);
 				if (BooleanUtils.isTrue(discountPlanItem.getLastDiscount())) {
