@@ -1223,6 +1223,14 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 				BasicStatistics ilBasicStatistics = anotherInvoiceLineService.createInvoiceLines(group,aggregationConfiguration, result, billingRun);
 			    basicStatistics.append(ilBasicStatistics);
 		    }
+            if (billingRun.getIncrementalInvoiceLines() == Boolean.TRUE) {
+                List<Object[]> amounts = sumAmountsPerBR(billingRun.getId());
+                for (Object[] amount : amounts) {
+                    basicStatistics.setSumAmountWithoutTax((BigDecimal) amount[0]);
+                    basicStatistics.setSumAmountTax((BigDecimal) amount[1]);
+                    basicStatistics.setSumAmountWithTax((BigDecimal) amount[2]);
+                }
+            }
 	    }
 	    
 	}
@@ -1588,5 +1596,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     public void updateInvoiceLine(InvoiceLine invoiceLine, org.meveo.apiv2.billing.InvoiceLine resource, DiscountPlan discountPlan) {
         updateDsicountPlan(invoiceLine, resource, discountPlan);
         update(invoiceLine);
+    }
+
+    /**
+     * Gets the sum of invoice lines amounts per a provided billing run.
+     *
+     * @param billingRunId the billing run id
+     * @return list of array object
+     */
+    public List<Object[]> sumAmountsPerBR(Long billingRunId) {
+        return getEntityManager().createNamedQuery("InvoiceLine.sumAmountsPerBR")
+                .setParameter("billingRunId", billingRunId)
+                .getResultList();
     }
 }
