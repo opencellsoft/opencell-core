@@ -57,8 +57,7 @@ public class WsRestApiInterceptor {
         AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.API, AuditUtils.getAuditOrigin(invocationContext));
 
         if (log.isDebugEnabled()) {
-            log.debug("\r\n\r\n===========================================================");
-            log.debug("Entering method {}.{}", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod().getName());
+            log.debug("======== Entering method {}.{}", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod().getName());
 
             if (invocationContext.getParameters() != null) {
                 for (Object obj : invocationContext.getParameters()) {

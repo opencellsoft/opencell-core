@@ -3,15 +3,18 @@ package org.meveo.apiv2.payments.resource;
 import java.util.Objects;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.PayByCardOrSepaDto;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.apiv2.refund.CardRefund;
 import org.meveo.model.payments.CreditCardTypeEnum;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class PaymentResourceImpl implements PaymentResource{
 
     @Inject

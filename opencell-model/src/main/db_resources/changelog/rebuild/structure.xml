@@ -478,7 +478,7 @@
         <createSequence sequenceName="cat_trading_discount_plan_item_seq" startValue="1" />
         <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
         <createSequence sequenceName="cpq_trading_contract_item_seq" startValue="1" />
-        <createSequence sequenceName="audit_data_log_seq" startValue="1" />
+        <createSequence sequenceName="audit_data_log_seq" startValue="1" incrementBy="100"/>
         <createSequence sequenceName="audit_data_log_rec_seq" startValue="1" incrementBy="1000"/>
         <createSequence sequenceName="audit_data_config_seq" startValue="1" />
     </changeSet>
@@ -20495,6 +20495,7 @@
 	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
     
     <changeSet id="#INTRD-10574_20221013" author="AndriusKarpavicius" />
+    <changeSet id="#INTRD-10574_20221014" author="AndriusKarpavicius"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

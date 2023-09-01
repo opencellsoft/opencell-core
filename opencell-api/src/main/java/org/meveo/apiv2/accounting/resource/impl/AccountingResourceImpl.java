@@ -8,6 +8,7 @@ import static javax.ws.rs.core.Response.serverError;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.accounting.AuxiliaryAccount;
 import org.meveo.apiv2.accounting.ImmutableAuxiliaryAccount;
 import org.meveo.apiv2.accounting.resource.AccountingResource;
@@ -22,6 +23,7 @@ import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.validation.ValidationByNumberCountryService;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
@@ -35,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import javax.xml.ws.soap.*;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class AccountingResourceImpl implements AccountingResource {
 
     @Inject

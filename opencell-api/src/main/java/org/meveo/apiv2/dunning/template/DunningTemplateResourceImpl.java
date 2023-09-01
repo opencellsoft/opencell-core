@@ -1,16 +1,19 @@
 package org.meveo.apiv2.dunning.template;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.DunningTemplate;
 import org.meveo.apiv2.dunning.service.GlobalSettingsVerifier;
 import org.meveo.service.payments.impl.DunningTemplateService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class DunningTemplateResourceImpl implements DunningTemplateResource{
     @Inject
     private GlobalSettingsVerifier globalSettingsVerifier;

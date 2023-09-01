@@ -2,13 +2,16 @@ package org.meveo.apiv2.ordering.resource.ooq;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.ordering.services.ooq.OpenOrderQuoteApi;
 import org.meveo.model.ordering.OpenOrderQuoteStatusEnum;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class OpenOrderQuoteResourceImpl implements OpenOrderQuoteResource {
 
     @Inject

@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -23,6 +24,7 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.query.DownloadReportQueryResponseDto;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
@@ -35,6 +37,7 @@ import org.meveo.model.report.query.QueryScheduler;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.service.report.ReportQueryService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Inject

@@ -5,14 +5,17 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.EmailTemplatePatchDto;
 import org.meveo.api.dto.communication.sms.SMSTemplateDto;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.communication.InternationalSettingsResource;
 import org.meveo.apiv2.communication.service.InternationalSettingsApiService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 
 @Stateless
+@Interceptors({ WsRestApiInterceptor.class })
 public class InternationalSettingsResourceImpl implements InternationalSettingsResource {
 
     @Inject

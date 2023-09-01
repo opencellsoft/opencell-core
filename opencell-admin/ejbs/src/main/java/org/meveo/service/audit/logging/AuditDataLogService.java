@@ -269,7 +269,7 @@ public class AuditDataLogService extends PersistenceService<AuditDataLog> {
                 auditDataLog.setCreated(auditDataLogRaw.getCreated());
                 auditDataLog.setOrigin(auditDataLogRaw.getOrigin());
                 auditDataLog.setOriginName(auditDataLogRaw.getOriginName());
-                auditDataLog.setUserName(auditDataLogRaw.getUserName());
+                auditDataLog.setUserName(auditDataLogRaw.getUserName() != null ? auditDataLogRaw.getUserName() : "UN");
                 auditDataLog.setEntityClassAsClass(dataHierarchy.getEntityClass());
                 auditDataLog.setEntityId(auditDataLogRaw.getReferenceId());
 

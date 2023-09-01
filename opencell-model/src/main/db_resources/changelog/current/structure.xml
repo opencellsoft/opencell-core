@@ -7474,6 +7474,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="data_old" type="${type.json}" />
             <column name="data_new" type="${type.json}" />                  
         </createTable>        
+    </changeSet>
+    <changeSet id="#INTRD-10574_20221014" author="AndriusKarpavicius">
+        <alterSequence sequenceName="audit_data_log_seq" incrementBy="100"/>        
         <createProcedure>
             CREATE OR REPLACE FUNCTION jsonb_minus ( arg1 jsonb, arg2 jsonb, preserveField varchar, retainOnlyFields varchar ) RETURNS jsonb
                 AS $$
