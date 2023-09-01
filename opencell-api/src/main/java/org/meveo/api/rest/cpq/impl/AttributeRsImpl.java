@@ -1,6 +1,7 @@
 package org.meveo.api.rest.cpq.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.AttributeApi;
@@ -9,10 +10,12 @@ import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.AttributeRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.cpq.Attribute;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class AttributeRsImpl extends BaseRs implements AttributeRs {
 
 	@Inject

@@ -92,7 +92,7 @@ public class EntityManagerProvider {
         String providerCode = CurrentUserProvider.getCurrentTenant();
 
         if (providerCode == null || !isMultiTenancyEnabled) {
-            
+
             // MDC is used only in multitenany case
             if (isMultiTenancyEnabled) {
                 MDC.remove("providerCode");
@@ -116,9 +116,9 @@ public class EntityManagerProvider {
                 return new EntityManagerWrapper(emProxy, true);
             }
         }
-        
+
         MDC.put("providerCode", providerCode);
-        
+
         // log.error("AKK will get a Factory wrapper for tenant");
         // Create an application managed persistence context for a secondary tenant
         final EntityManager em = createEntityManager(providerCode);
@@ -183,7 +183,7 @@ public class EntityManagerProvider {
             if (isMultiTenancyEnabled) {
                 MDC.remove("providerCode");
             }
-            
+
             // Create an container managed persistence context main provider, for API and JOBs
             if (FacesContext.getCurrentInstance() == null) {
                 setAuditContext(emfForJobs);
@@ -262,7 +262,12 @@ public class EntityManagerProvider {
     }
 
     /**
-     * Set a variable in DB connection with an auditinhg context - current username and origin of method
+     * Set a variable in DB connection with an auditing context - current username and origin of method<br/>
+     * This method should be called every time a new TX is started so variables are present for DB trigger<br/>
+     * Note that EntityManager (EntityManagerWrapper) is produced as request scope bean. <br/>
+     * For cases when a method A, that runs in NO TX mode, calls methods B and C, that run in TX mode and use injected entityManager, EntityManagerWrapper will be produced in method B and audit context will be set at
+     * EntityManagerWrapper production time. Yet in a new TX of method C, audit variables will be lost and thus need to be set again.<br/>
+     * See EntityManagerWrapper.getEntityManager()
      * 
      * @param entityManager Entity manager
      */

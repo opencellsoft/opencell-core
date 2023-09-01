@@ -1,6 +1,7 @@
 package org.meveo.api.rest.cpq.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.GroupedAttributesApi;
@@ -9,9 +10,11 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.response.cpq.GetGroupedAttributesResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.GroupedAttributesRs;
 import org.meveo.api.rest.impl.BaseRs;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class GroupedAttributeRsImpl  extends BaseRs implements GroupedAttributesRs {
 
 	@Inject

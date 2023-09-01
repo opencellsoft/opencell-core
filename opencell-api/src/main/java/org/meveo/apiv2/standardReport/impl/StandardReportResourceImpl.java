@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.AgedReceivableDto;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
@@ -25,6 +27,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.util.ApplicationProvider;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class StandardReportResourceImpl implements StandardReportResource {
 	
     private static final String EN_DATE_FORMAT = "MM/dd/yyyy";

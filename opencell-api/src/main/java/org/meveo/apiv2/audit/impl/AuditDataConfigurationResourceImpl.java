@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.audit.AuditDataConfigurationDto;
 import org.meveo.apiv2.audit.ImmutableAuditDataConfigurationDto;
 import org.meveo.apiv2.audit.ImmutableAuditDataConfigurationListDto;
@@ -23,6 +25,7 @@ import org.meveo.apiv2.audit.service.AuditDataConfigurationApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.audit.AuditDataConfiguration;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class AuditDataConfigurationResourceImpl implements AuditDataConfigurationResource {
 
     @Inject

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.restful.filter.AuthenticationFilter;
 import org.meveo.api.restful.pagingFiltering.PagingAndFilteringRest;
 import org.meveo.api.restful.services.Apiv1DeleteService;
@@ -29,7 +30,7 @@ import java.util.Map;
  * @author Thang Nguyen
  */
 @RequestScoped
-@Interceptors({ AuthenticationFilter.class })
+@Interceptors({ AuthenticationFilter.class, WsRestApiInterceptor.class })
 public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     @Inject

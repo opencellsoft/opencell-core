@@ -3,10 +3,12 @@ package org.meveo.apiv2.mediation.impl;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.mediation.EdrVersioningRuleSwapping;
 import org.meveo.apiv2.mediation.ImmutableEdrVersioningRule;
 import org.meveo.apiv2.mediation.ImmutableMediationSetting;
@@ -26,6 +28,7 @@ import org.meveo.model.mediation.MediationSetting;
  * @version 13.0.0
  *
  */
+@Interceptors({ WsRestApiInterceptor.class })
 public class MediationSettingResourceImpl implements MediationSettingResource {
 
 	private MediationSettingMapper mapper = new MediationSettingMapper();

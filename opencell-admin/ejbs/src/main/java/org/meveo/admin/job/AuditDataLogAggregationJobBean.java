@@ -28,6 +28,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -89,7 +90,9 @@ public class AuditDataLogAggregationJobBean extends IteratorBasedJobBean<List<Au
         }
         int fetchSize = batchSize.intValue() * nbThreads.intValue();
 
-        Object[] convertSummary = (Object[]) emWrapper.getEntityManager().createNamedQuery("AuditDataLogRecord.getConvertToAggregateSummary").getSingleResult();
+        EntityManager em = emWrapper.getEntityManager();
+
+        Object[] convertSummary = (Object[]) em.createNamedQuery("AuditDataLogRecord.getConvertToAggregateSummary").getSingleResult();
 
         nrOfRecords = ((BigInteger) convertSummary[0]).longValue();
 
@@ -97,9 +100,9 @@ public class AuditDataLogAggregationJobBean extends IteratorBasedJobBean<List<Au
             return Optional.empty();
         }
 
-        maxId = ((BigInteger)  convertSummary[1]).longValue();
+        maxId = ((BigInteger) convertSummary[1]).longValue();
 
-        statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
+        statelessSession = em.unwrap(Session.class).getSessionFactory().openStatelessSession();
         scrollableResults = statelessSession.createNamedQuery("AuditDataLogRecord.listConvertToAggregate").setParameter("maxId", maxId).setReadOnly(true).setCacheable(false).setFetchSize(fetchSize)
             .scroll(ScrollMode.FORWARD_ONLY);
 

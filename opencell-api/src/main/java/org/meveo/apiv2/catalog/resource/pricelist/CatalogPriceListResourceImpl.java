@@ -3,11 +3,13 @@ package org.meveo.apiv2.catalog.resource.pricelist;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.catalog.ImmutablePriceList;
 import org.meveo.apiv2.catalog.ImmutablePriceLists;
@@ -15,6 +17,7 @@ import org.meveo.apiv2.catalog.PriceLists;
 import org.meveo.apiv2.catalog.service.PriceListApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class CatalogPriceListResourceImpl implements CatalogPriceListResource {
 
 	@Inject

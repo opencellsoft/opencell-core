@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.audit.AuditDataLogDto;
 import org.meveo.apiv2.audit.ImmutableAuditDataConfigurationListDto;
 import org.meveo.apiv2.audit.ImmutableAuditDataLogDto;
@@ -21,6 +23,7 @@ import org.meveo.model.audit.AuditDataConfiguration;
 import org.meveo.model.audit.AuditDataLog;
 import org.meveo.service.audit.logging.AuditDataLogService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class AuditDataLogResourceImpl implements AuditDataLogResource {
 
     @Inject

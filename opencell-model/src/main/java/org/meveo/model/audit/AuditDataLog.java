@@ -34,7 +34,8 @@ import org.meveo.model.IEntity;
 
 @Entity
 @Table(name = "audit_data_log")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "audit_data_log_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "audit_data_log_seq"),
+        @Parameter(name = "increment_size", value = "100") })
 
 @NamedNativeQueries({
         @NamedNativeQuery(name = "AuditDataLogRecord.listConvertToAggregate", query = "select id, created, user_name, ref_table, ref_id, tx_id, action, origin, origin_name, data_old #>> '{}' as values_old, data_new #>> '{}' as values_new  from {h-schema}audit_data_log_rec where id<=:maxId order by tx_id, id", resultSetMapping = "AuditDataLogRecordResultMapping"),

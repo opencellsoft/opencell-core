@@ -28,6 +28,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.dto.response.crm.GetContactResponseDto;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.crm.ContactRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
@@ -35,12 +36,14 @@ import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.PathParam;
 
 /**
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
+@Interceptors({ WsRestApiInterceptor.class })
 public class ContactRsImpl extends BaseRs implements ContactRs {
 
 	@Inject

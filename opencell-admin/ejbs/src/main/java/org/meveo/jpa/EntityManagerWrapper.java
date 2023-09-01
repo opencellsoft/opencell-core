@@ -22,6 +22,9 @@ import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 
+import org.meveo.model.audit.ChangeOriginEnum;
+import org.meveo.service.audit.AuditOrigin;
+
 /**
  * A wrapper for Entity manager injection and its manipulation in application manager persistence context. Only one level of depth is supported. That is, can not nest two interceptors.
  * 
@@ -69,7 +72,12 @@ public class EntityManagerWrapper implements Serializable {
      * @return Current entity manager
      */
     public EntityManager getEntityManager() {
-        if (amp) {
+
+        // Set Audit context on EM in case it is Application managed persistence context (GUI and multitenancy) or audit origin is anything other than JOB
+        // The later rule is useful in cases when a single (API for example) method that runs in NO TX will call multiple methods that do run in TX.
+        // As EntityManager is produced as request scope bean, it will be instantiated only on a call to the first method and not to the second one.
+        // As second method runs in a new TX, all audit parameters will be lost.
+        if (amp || AuditOrigin.getAuditOrigin() != ChangeOriginEnum.JOB) {
             EntityManagerProvider.setAuditContext(entityManager);
         }
         return entityManager;
@@ -98,7 +106,7 @@ public class EntityManagerWrapper implements Serializable {
         // log.error("AKK EMW setting a nested EM");
         previousEntityManager = entityManager;
         entityManager = newEntityManager;
-        if (amp) {
+        if (amp || AuditOrigin.getAuditOrigin() != ChangeOriginEnum.JOB) {
             EntityManagerProvider.setAuditContext(entityManager);
         }
     }
@@ -118,7 +126,7 @@ public class EntityManagerWrapper implements Serializable {
         entityManager.close();
         entityManager = previousEntityManager;
         previousEntityManager = null;
-        if (amp) {
+        if (amp || AuditOrigin.getAuditOrigin() != ChangeOriginEnum.JOB) {
             EntityManagerProvider.setAuditContext(entityManager);
         }
     }
