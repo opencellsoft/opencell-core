@@ -330,11 +330,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.getResultList();
 	}
 
-	public AccountingCode getArticleAccountingCode(InvoiceLine invoiceLine, AccountingArticle accountingArticle) {
-		// **1** if accountingCodeEL is filled then return the evaluated accountingCode
+	public AccountingCode getArticleAccountingCode(Invoice invoice, AccountingArticle accountingArticle) {
+		if (invoice == null || accountingArticle == null) {
+			return null;
+		}
+
+		 // **1** if accountingCodeEL is filled then return the evaluated accountingCode
 		if (StringUtils.isNotBlank(accountingArticle.getAccountingCodeEl())) {
 			String resultEl = evaluateAccountingCodeArticleEl(accountingArticle.getAccountingCodeEl(),
-					accountingArticle, invoiceLine.getInvoice(), String.class);
+					accountingArticle, invoice, String.class);
 
 			if (StringUtils.isBlank(resultEl)) {
 				throw new BusinessException("No accounting code found for EL=" + accountingArticle.getAccountingCodeEl());
@@ -355,7 +359,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.setParameter("ACCOUNTING_ARTICLE_ID", accountingArticle.getId()).getResultList();
 
 		if (codeMappings != null && !codeMappings.isEmpty()) {
-			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoiceLine.getInvoice(), accountingArticle);
+			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoice, accountingArticle);
 
 			if (accountingCode != null) {
 				return accountingCode;
