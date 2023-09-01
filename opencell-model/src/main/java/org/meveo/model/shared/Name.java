@@ -19,12 +19,7 @@ package org.meveo.model.shared;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.meveo.commons.encryption.PersonnalDataEncryptor;
@@ -43,8 +38,9 @@ public class Name implements Serializable, Cloneable {
     /**
      * Title
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "title_id")
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "title_id")
+    @Transient
     private Title title;
 
     /**
