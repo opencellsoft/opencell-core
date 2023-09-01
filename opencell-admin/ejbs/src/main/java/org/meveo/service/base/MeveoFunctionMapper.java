@@ -1983,7 +1983,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case BOOLEAN:
 				if(quoteAttribute.get().getBooleanValue()!=null) {
 					return quoteAttribute.get().getBooleanValue();  
-				}break;
+				} else {
+					if(attributInstance.get().getStringValue()!=null) {
+						return attributInstance.get().getStringValue();  
+					}
+				}
+				break;
 			default:
 				break;  
 			}
@@ -2045,7 +2050,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case BOOLEAN:
 				if(attributInstance.get().getBooleanValue()!=null) {
 					return attributInstance.get().getBooleanValue();  
-				}break;
+				} else {
+					if(attributInstance.get().getStringValue()!=null) {
+						return attributInstance.get().getStringValue();  
+					}
+				}
+				break;
 			default:
 				break;  
 			}
@@ -2098,7 +2108,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case BOOLEAN:
 				if(attributInstance.get().getBooleanValue()!=null) {
 					return attributInstance.get().getBooleanValue();  
-				}break;
+				} else {
+					if(attributInstance.get().getStringValue()!=null) {
+						return attributInstance.get().getStringValue();  
+					}
+				}
+				break;
 			default:
 				break;  
 			}
@@ -2144,7 +2159,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case BOOLEAN:
 				if(attributInstance.get().getBooleanValue()!=null) {
 					return attributInstance.get().getBooleanValue();  
-				}break;
+				} else {
+					if(attributInstance.get().getStringValue()!=null) {
+						return attributInstance.get().getStringValue();  
+					}
+				}
+				break;
 			default:
 				break;  
 			}
