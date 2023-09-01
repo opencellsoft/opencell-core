@@ -153,7 +153,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 				"il.validity.to=:endDate, il.auditable.updated=:now, il.unitPrice=:unitPrice WHERE il.id=:id"),
 		@NamedQuery(name = "InvoiceLine.updateStatusInvoiceLine", query = "UPDATE InvoiceLine il SET " +
 				"il.status =: statusToUpdate WHERE il.id =: id"),
-		@NamedQuery(name = "InvoiceLine.cancelInvoiceLineByWoIds", query = "UPDATE InvoiceLine il SET il.auditable.updated = :now, il.status = org.meveo.model.billing.InvoiceLineStatusEnum.CANCELED WHERE il.status = org.meveo.model.billing.InvoiceLineStatusEnum.OPEN AND il.id in (SELECT wo.ratedTransaction.invoiceLine.id FROM WalletOperation wo WHERE wo.id IN :woIds)")
+		@NamedQuery(name = "InvoiceLine.cancelInvoiceLineByWoIds", query = "UPDATE InvoiceLine il SET il.auditable.updated = :now, il.status = org.meveo.model.billing.InvoiceLineStatusEnum.CANCELED WHERE il.status = org.meveo.model.billing.InvoiceLineStatusEnum.OPEN AND il.id in (SELECT wo.ratedTransaction.invoiceLine.id FROM WalletOperation wo WHERE wo.id IN :woIds)"),
+		@NamedQuery(name = "InvoiceLine.sumAmountsPerBR", query = "SELECT SUM(il.amountWithoutTax), SUM(il.amountTax), SUM(il.amountWithTax) FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId")
 	})
 public class InvoiceLine extends AuditableCFEntity {
 
