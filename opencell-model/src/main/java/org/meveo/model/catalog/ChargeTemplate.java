@@ -368,27 +368,35 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     private ParameterFormat parameterExtraFormat;
     
     @Column(name = "parameter1_is_mandatory")
+	@Type(type = "numeric_boolean")
     private boolean parameter1IsMandatory;
 
     @Column(name = "parameter1_is_hidden")
+	@Type(type = "numeric_boolean")
     private boolean parameter1IsHidden;
 
     @Column(name = "parameter2_is_mandatory")
+	@Type(type = "numeric_boolean")
     private boolean parameter2IsMandatory;
 
     @Column(name = "parameter2_is_hidden")
+	@Type(type = "numeric_boolean")
     private boolean parameter2IsHidden;
 
     @Column(name = "parameter3_is_mandatory")
+	@Type(type = "numeric_boolean")
     private boolean parameter3IsMandatory;
 
     @Column(name = "parameter3_is_hidden")
+	@Type(type = "numeric_boolean")    
     private boolean parameter3IsHidden;
 
     @Column(name = "parameter_extra_is_mandatory")
+	@Type(type = "numeric_boolean")
     private boolean extraIsMandatory;
 
     @Column(name = "parameter_extra_is_hidden")
+	@Type(type = "numeric_boolean")
     private boolean parameterExtraIsHidden;
     
     @ElementCollection
