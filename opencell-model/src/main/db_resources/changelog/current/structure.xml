@@ -13801,9 +13801,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <sql>update ${db.schema.adapted}ord_quote set routed_to_user_group=(select code from ${db.schema.adapted}hierarchy_entity he where he.id=routed_to_user_group_id)</sql>
         <dropColumn tableName="ord_quote" columnName="routed_to_user_group_id"/>
 
-        <dropColumn tableName="adm_user" columnName="email"/>
-        <dropColumn tableName="adm_user" columnName="firstname"/>
-        <dropColumn tableName="adm_user" columnName="lastname"/>
         <dropColumn tableName="adm_user" columnName="title_id"/>
         <dropColumn tableName="adm_user" columnName="hierarchy_level_id"/>
         <dropColumn tableName="adm_user" columnName="last_login_date"/>
@@ -16000,6 +15997,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="display_rated_items" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-17719_20230829" author="AbdelmounaimAkadid" failOnError="false">
+		<addColumn tableName="adm_user">
+			<column name="email" type="varchar(100)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
 
     <changeSet id="#INTRD-14555_20230303" author="AdilElJaouhari">
         <addColumn tableName="crm_customer_category">
