@@ -11990,6 +11990,7 @@
             <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="enable_price_list" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="entities_with_huge_volume" type="${type.json}"/>
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -20533,6 +20534,7 @@
     <changeSet id="#INTRD-16636_20230610" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" />
+    <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

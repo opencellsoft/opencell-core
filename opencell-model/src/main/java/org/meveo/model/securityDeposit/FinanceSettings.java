@@ -1,6 +1,10 @@
 package org.meveo.model.securityDeposit;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
@@ -49,14 +53,18 @@ public class FinanceSettings extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "enable_billing_redirection_rules")
     private boolean enableBillingRedirectionRules = false;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "discount_advanced_mode")
     private boolean discountAdvancedMode = false;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "enable_price_list")
     private boolean enablePriceList = false;
+
+    @Type(type = "json")
+    @Column(name = "entities_with_huge_volume", columnDefinition = "jsonb")
+    private Map<String, List<String>> entitiesWithHugeVolume;
 
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
@@ -152,4 +160,12 @@ public class FinanceSettings extends BusinessEntity {
 	public void setEnablePriceList(boolean enablePriceList) {
 		this.enablePriceList = enablePriceList;
 	}
+
+    public Map<String, List<String>> getEntitiesWithHugeVolume() {
+        return entitiesWithHugeVolume;
+    }
+
+    public void setEntitiesWithHugeVolume(Map<String, List<String>> entitiesWithHugeVolume) {
+        this.entitiesWithHugeVolume = entitiesWithHugeVolume;
+    }
 }

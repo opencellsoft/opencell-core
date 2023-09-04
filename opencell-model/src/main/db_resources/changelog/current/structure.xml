@@ -7716,4 +7716,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 
+    <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD">
+        <addColumn tableName="finance_settings">
+            <column name="entities_with_huge_volume" type="${type.json}"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
