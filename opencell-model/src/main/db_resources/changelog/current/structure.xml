@@ -8011,6 +8011,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <renameColumn  oldColumnName="rated_transaction_accounts_count"
                        newColumnName="rated_transactions_count" tableName="billing_run_report"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD">
+        <addColumn tableName="finance_settings">
+            <column name="entities_with_huge_volume" type="${type.json}"/>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#INTRD-17637_2023-09-04" author="ZBariki">
         <addColumn tableName="billing_billing_run">

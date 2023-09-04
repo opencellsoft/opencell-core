@@ -1,5 +1,8 @@
 package org.meveo.apiv2.securityDeposit.financeSettings.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.apiv2.securityDeposit.ImmutableFinanceSettings;
 import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingMapper;
@@ -35,6 +38,10 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          if(entity.getOpenOrderSetting() != null) {
             builder.openOrderSetting(openOrderSettingMapper.toResource(entity.getOpenOrderSetting()));
         }
+         
+        // Set the entitiesWithHugeVolume field
+        Map<String, List<String>> entitiesWithHugeVolume = entity.getEntitiesWithHugeVolume();
+        builder.entitiesWithHugeVolume(entitiesWithHugeVolume);
         return builder.build();
     }
 
@@ -69,6 +76,9 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
 	     if(resource.getArticleSelectionMode() != null) {
 		     financeSettings.setArticleSelectionMode(resource.getArticleSelectionMode());
 	     }
+	     // Set the entitiesWithHugeVolume field
+	     Map<String, List<String>> entitiesWithHugeVolume = resource.getEntitiesWithHugeVolume();
+	     financeSettings.setEntitiesWithHugeVolume(entitiesWithHugeVolume);
          return financeSettings;
     }
 }
