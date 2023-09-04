@@ -11992,6 +11992,7 @@
             <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="enable_price_list" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="article_selection_mode" defaultValue="AFTER_PRICING" type="varchar(30)"/>
+            <column name="entities_with_huge_volume" type="${type.json}"/>
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -20717,6 +20718,7 @@
     <changeSet id="#INTRD-17632_2023_08_09" author="zbariki" />
 	<changeSet id="#INTRD-18008_20230823" author="aelmalki" />
     <changeSet id="#INTRD-17634_2023-09-29" author="ZBariki" />
+    <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

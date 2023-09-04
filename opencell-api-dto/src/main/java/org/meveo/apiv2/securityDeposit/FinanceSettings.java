@@ -9,6 +9,8 @@ import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -80,5 +82,8 @@ public interface FinanceSettings extends Resource {
 	@Nullable
 	@Schema(description = "determinate if the article will be compute before or after pricing")
 	ArticleSelectionModeEnum getArticleSelectionMode();
+	
+	@Schema(description = "Entities with Huge Volume")
+    Map<String, List<String>> getEntitiesWithHugeVolume();
 	
 }
