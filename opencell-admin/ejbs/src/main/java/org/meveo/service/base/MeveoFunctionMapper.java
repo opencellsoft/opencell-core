@@ -1984,8 +1984,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
 				if(quoteAttribute.get().getBooleanValue()!=null) {
 					return quoteAttribute.get().getBooleanValue();  
 				} else {
-					if(attributInstance.get().getStringValue()!=null) {
-						return attributInstance.get().getStringValue();  
+					if(quoteAttribute.get().getStringValue()!=null) {
+						return quoteAttribute.get().getStringValue();  
 					}
 				}
 				break;
