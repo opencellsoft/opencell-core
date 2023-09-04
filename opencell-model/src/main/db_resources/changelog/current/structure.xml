@@ -8012,4 +8012,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
                        newColumnName="rated_transactions_count" tableName="billing_run_report"/>
     </changeSet>
 
+    <changeSet id="#INTRD-17637_2023-09-04" author="ZBariki">
+        <addColumn tableName="billing_billing_run">
+            <column name="pre_report_auto_on_invoice_line_job" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="billed_rated_transactions_report_id" type="${cast.long}" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="billing_billing_run" baseColumnNames="billed_rated_transactions_report_id"
+                                 constraintName="billing_billing_run_billed_rated_transactions_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+    </changeSet>
+
 </databaseChangeLog>

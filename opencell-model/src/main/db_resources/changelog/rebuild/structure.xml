@@ -2781,6 +2781,8 @@
 			</column>
             <column name="pre_report_auto_on_create" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="pre_invoicing_report_id" type="${cast.long}" />
+            <column name="pre_report_auto_on_invoice_line_job" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="billed_rated_transactions_report_id" type="${cast.long}" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -17483,6 +17485,12 @@
                                  constraintName="billing_billing_run_pre_invoicing_report_id_fk"
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
     </changeSet>
+    <changeSet id="#INTRD-17637_2023-09-04_FK" author="ZBariki">
+        <addForeignKeyConstraint baseTableName="billing_billing_run"
+                                 baseColumnNames="billed_rated_transactions_report_id"
+                                 constraintName="billing_billing_run_billed_rated_transactions_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+    </changeSet>
 
 
     <!-- end fk -->
@@ -20493,6 +20501,7 @@
 	<changeSet id="#INTRD-18008_20230823" author="aelmalki" />
 	<changeSet id="INTRD-17573_20230829" author="hatimOUDAD"/>
     <changeSet id="#INTRD-17634_2023-09-29" author="ZBariki" />
+    <changeSet id="#INTRD-17637_2023-09-04" author="ZBariki" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

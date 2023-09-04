@@ -465,6 +465,14 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @JoinColumn(name = "pre_invoicing_report_id")
     private BillingRunReport preInvoicingReport;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "pre_report_auto_on_invoice_line_job")
+    private boolean preReportAutoOnInvoiceLinesJob = false;
+
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "billed_rated_transactions_report_id")
+    private BillingRunReport billedRatedTransactionsReport;
+
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
 	}
@@ -1110,5 +1118,21 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
 
     public boolean hasPreInvoicingReport() {
         return preInvoicingReport != null;
+    }
+
+    public boolean isPreReportAutoOnInvoiceLinesJob() {
+        return preReportAutoOnInvoiceLinesJob;
+    }
+
+    public void setPreReportAutoOnInvoiceLinesJob(boolean preReportAutoOnInvoiceLinesJob) {
+        this.preReportAutoOnInvoiceLinesJob = preReportAutoOnInvoiceLinesJob;
+    }
+
+    public BillingRunReport getBilledRatedTransactionsReport() {
+        return billedRatedTransactionsReport;
+    }
+
+    public void setBilledRatedTransactionsReport(BillingRunReport billedRatedTransactionsReport) {
+        this.billedRatedTransactionsReport = billedRatedTransactionsReport;
     }
 }
