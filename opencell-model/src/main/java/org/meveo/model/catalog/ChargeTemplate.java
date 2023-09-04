@@ -399,7 +399,37 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "parameter_extra_translated_long_descriptions", columnDefinition = "jsonb")
     private Map<String, String> parameterExtraTranslatedLongDescriptions;
 
+    public enum BusinessKeyFormat {
+        TEXT,
+        INTEGER
+    }
     
+    @Column(name = "business_key_el", length = 2000)
+    @Size(max = 2000)
+    private String businessKeyEl;
+    
+    @Column(name = "business_key_description")
+    private String businessKeyDescription;
+    
+    @Type(type = "json")
+    @Column(name = "business_key_translated_descriptions", columnDefinition = "jsonb")
+    private Map<String, String> businessKeyTranslatedDescriptions;
+    
+    @Type(type = "json")
+    @Column(name = "business_key_translated_long_descriptions", columnDefinition = "jsonb")
+    private Map<String, String> businessKeyTranslatedLongDescriptions;
+    
+    @Column(name = "business_key_format")
+    @Enumerated(EnumType.STRING)
+    private BusinessKeyFormat businessKeyFormat= BusinessKeyFormat.TEXT;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "business_key_is_mandatory")
+    private boolean businessKeyIsMandatory = false;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "business_key_is_hidden")
+    private boolean businessKeyIsHidden = false;
     
     public String getInputUnitEL() {
         return inputUnitEL;
@@ -958,4 +988,61 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 	public void setParameterExtraTranslatedLongDescriptions(Map<String, String> parameterExtraTranslatedLongDescriptions) {
 		this.parameterExtraTranslatedLongDescriptions = parameterExtraTranslatedLongDescriptions;
 	}
+
+	public String getBusinessKeyEl() {
+		return businessKeyEl;
+	}
+
+	public void setBusinessKeyEl(String businessKeyEl) {
+		this.businessKeyEl = businessKeyEl;
+	}
+
+	public String getBusinessKeyDescription() {
+		return businessKeyDescription;
+	}
+
+	public void setBusinessKeyDescription(String businessKeyDescription) {
+		this.businessKeyDescription = businessKeyDescription;
+	}
+
+	public Map<String, String> getBusinessKeyTranslatedDescriptions() {
+		return businessKeyTranslatedDescriptions;
+	}
+
+	public void setBusinessKeyTranslatedDescriptions(Map<String, String> businessKeyTranslatedDescriptions) {
+		this.businessKeyTranslatedDescriptions = businessKeyTranslatedDescriptions;
+	}
+
+	public Map<String, String> getBusinessKeyTranslatedLongDescriptions() {
+		return businessKeyTranslatedLongDescriptions;
+	}
+
+	public void setBusinessKeyTranslatedLongDescriptions(Map<String, String> businessKeyTranslatedLongDescriptions) {
+		this.businessKeyTranslatedLongDescriptions = businessKeyTranslatedLongDescriptions;
+	}
+
+	public BusinessKeyFormat getBusinessKeyFormat() {
+		return businessKeyFormat;
+	}
+
+	public void setBusinessKeyFormat(BusinessKeyFormat businessKeyFormat) {
+		this.businessKeyFormat = businessKeyFormat;
+	}
+
+	public boolean isBusinessKeyIsMandatory() {
+		return businessKeyIsMandatory;
+	}
+
+	public void setBusinessKeyIsMandatory(boolean businessKeyIsMandatory) {
+		this.businessKeyIsMandatory = businessKeyIsMandatory;
+	}
+
+	public boolean isBusinessKeyIsHidden() {
+		return businessKeyIsHidden;
+	}
+
+	public void setBusinessKeyIsHidden(boolean businessKeyIsHidden) {
+		this.businessKeyIsHidden = businessKeyIsHidden;
+	}
+	
 }
