@@ -15949,5 +15949,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
               br.aggregate_unit_amounts = bc.aggregate_unit_amounts, br.ignore_subscriptions = bc.ignore_subscriptions, br.ignore_orders = bc.ignore_orders, br.incremental_invoice_lines = bc.incremental_invoice_lines"),
          </sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD">
+        <addColumn tableName="finance_settings">
+            <column name="entities_with_huge_volume" type="${type.json}"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
