@@ -7922,6 +7922,82 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="sips_batch_archive_name" type="varchar(255)" />
     	</addColumn>
     </changeSet>
+    
+    <changeSet id="INTRD-17573_20230829" author="hatimOUDAD">
+	   	 <!-- Drop foreign key constraints -->
+	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param1" constraintName="fk_charge_template_id"/>
+	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param1" constraintName="fk_trading_language_id"/>
+	    
+	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param2" constraintName="fk_charge_template_id_param2"/>
+	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param2" constraintName="fk_trading_language_id_param2"/>
+	    
+	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param3" constraintName="fk_charge_template_id_param3"/>
+	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param3" constraintName="fk_trading_language_id_param3"/>
+	    
+	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param_extra" constraintName="fk_charge_template_id_param_extra"/>
+	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param_extra" constraintName="fk_trading_language_id_param_extra"/>
+	    
+	    <dropForeignKeyConstraint baseTableName="parameter1_translated_long_descriptions" constraintName="fk_parameter1_translated_long_desc_charge_template"/>
+	    <dropForeignKeyConstraint baseTableName="parameter1_translated_long_descriptions" constraintName="fk_parameter1_translated_long_desc_trading_language"/>
+	    
+	    <dropForeignKeyConstraint baseTableName="parameter2_translated_long_descriptions" constraintName="fk_parameter2_translated_long_desc_charge_template"/>
+	    <dropForeignKeyConstraint baseTableName="parameter2_translated_long_descriptions" constraintName="fk_parameter2_translated_long_desc_trading_language"/>
+	    
+	    <dropForeignKeyConstraint baseTableName="parameter3_translated_long_descriptions" constraintName="fk_parameter3_translated_long_desc_charge_template"/>
+	    <dropForeignKeyConstraint baseTableName="parameter3_translated_long_descriptions" constraintName="fk_parameter3_translated_long_desc_trading_language"/>
+	    <dropForeignKeyConstraint baseTableName="parameter_extra_translated_long_descriptions" constraintName="fk_parameter_extra_translated_long_desc_charge_template"/>
+	    <dropForeignKeyConstraint baseTableName="parameter_extra_translated_long_descriptions" constraintName="fk_parameter_extra_translated_long_desc_trading_language"/>
+	    
+	    <!-- Drop primary key constraints -->
+	    <dropPrimaryKey constraintName="pk_charge_template_translated_descriptions" tableName="charge_template_translated_desc_param1"/>
+	    <dropPrimaryKey constraintName="pk_charge_template_translated_desc_param2" tableName="charge_template_translated_desc_param2"/>
+	    <dropPrimaryKey constraintName="pk_charge_template_translated_desc_param3" tableName="charge_template_translated_desc_param3"/>
+	    <dropPrimaryKey constraintName="pk_charge_template_translated_desc_param_extra" tableName="charge_template_translated_desc_param_extra"/>
+	    <dropPrimaryKey constraintName="pk_parameter1_translated_long_desc" tableName="parameter1_translated_long_descriptions"/>
+	    <dropPrimaryKey constraintName="pk_parameter2_translated_long_desc" tableName="parameter2_translated_long_descriptions"/>
+	    <dropPrimaryKey constraintName="pk_parameter3_translated_long_desc" tableName="parameter3_translated_long_descriptions"/>
+	    <dropPrimaryKey constraintName="pk_parameter_extra_translated_long_desc" tableName="parameter_extra_translated_long_descriptions"/>
+	    
+	    <!-- Drop tables -->
+	    <dropTable tableName="charge_template_translated_desc_param1"/>
+	    <dropTable tableName="charge_template_translated_desc_param2"/>
+	    <dropTable tableName="charge_template_translated_desc_param3"/>
+	    <dropTable tableName="charge_template_translated_desc_param_extra"/>
+	    <dropTable tableName="parameter1_translated_long_descriptions"/>
+	    <dropTable tableName="parameter2_translated_long_descriptions"/>
+	    <dropTable tableName="parameter3_translated_long_descriptions"/>
+	    <dropTable tableName="parameter_extra_translated_long_descriptions"/>
+	    
+	    <!-- add Columns -->
+	    <addColumn tableName="cat_charge_template">
+        <column name="parameter1_translated_description" type="${type.json}"/>
+        <column name="parameter2_translated_description" type="${type.json}"/>
+        <column name="parameter3_translated_description" type="${type.json}"/>
+        <column name="parameter_extra_translated_description" type="${type.json}"/>
+        <column name="parameter1_translated_long_descriptions" type="${type.json}"/>
+        <column name="parameter2_translated_long_descriptions" type="${type.json}"/>
+        <column name="parameter3_translated_long_descriptions" type="${type.json}"/>
+        <column name="parameter_extra_translated_long_descriptions" type="${type.json}"/>
+    	</addColumn>
+    	
+    	
+         <sql>
+        <![CDATA[
+        ALTER TABLE ${db.schema.adapted}cat_charge_template
+        ALTER COLUMN parameter1_format SET DEFAULT 'TEXT';
+
+        ALTER TABLE ${db.schema.adapted}cat_charge_template
+        ALTER COLUMN parameter2_format SET DEFAULT 'TEXT';
+
+        ALTER TABLE ${db.schema.adapted}cat_charge_template
+        ALTER COLUMN parameter3_format SET DEFAULT 'TEXT';
+
+        ALTER TABLE ${db.schema.adapted}cat_charge_template
+        ALTER COLUMN parameter_extra_format SET DEFAULT 'TEXT';
+        ]]>
+    	</sql>
+
+	</changeSet>
 
     <changeSet id="#INTRD-17184_20230829" author="aelmalki">
         <addColumn tableName="billing_accounting_article">
@@ -7941,5 +8017,33 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="entities_with_huge_volume" type="${type.json}"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-17637_2023-09-04" author="ZBariki">
+        <addColumn tableName="billing_billing_run">
+            <column name="pre_report_auto_on_invoice_line_job" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="billed_rated_transactions_report_id" type="${cast.long}" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="billing_billing_run" baseColumnNames="billed_rated_transactions_report_id"
+                                 constraintName="billing_billing_run_billed_rated_transactions_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-18140_20230904" author="AdilElJaouhari">
+		<addColumn tableName="cat_charge_template">
+			<column name="business_key_el" type="varchar(2000)" />
+			<column name="business_key_description" type="VARCHAR(255)" defaultValue="Business key"/>
+			<column name="business_key_translated_descriptions" type="${type.json}" defaultValue='{"FRA":"Clé métier", "ENG":"Business key"}'>
+                <constraints nullable="false" />
+            </column>
+			<column name="business_key_translated_long_descriptions" type="${type.json}" defaultValue='{"FRA":"La clé métier est calculé à la valorisation en utilisant une formule personnalisé enregistrée sur la charge", "ENG":"Business key is computed at rating using a custom expression set on the charge"}'>
+                <constraints nullable="false" />
+            </column>
+            <column name="business_key_format" type="VARCHAR(50)" defaultValue="TEXT">
+	            <constraints nullable="false" />
+            </column>
+			<column name="business_key_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="business_key_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
