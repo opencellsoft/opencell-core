@@ -200,6 +200,7 @@ public class ContractApi extends BaseApi{
 				contract.setCustomerAccount(cusotmerAccount);
 				break;
 			default:
+				contract.setCustomerAccount(null);
 				break;
 		}
 		}
@@ -564,10 +565,6 @@ public class ContractApi extends BaseApi{
 	private void checkParams(ContractDto dto) {
 		if(Strings.isEmpty(dto.getCode()))
 			missingParameters.add("code");
-		if(dto.getContractAccountLevel() == null)
-			missingParameters.add("contractAccountLevel");
-		if(Strings.isEmpty(dto.getAccountCode()))
-			missingParameters.add("accountCode");
 		if(dto.getBeginDate() == null)
 			missingParameters.add("beginDate");
 		if(dto.getEndDate() == null)
