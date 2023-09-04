@@ -277,7 +277,7 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         chargeTemplate.setParameterExtraTranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameterExtraTranslatedDescriptions(), isNew, "Extra"));
         chargeTemplate.setParameterExtraTranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameterExtraTranslatedLongDescriptions()));
         chargeTemplate.setParameterExtraFormat(StringUtils.isBlank(postData.getParameterExtraFormat()) ? null : postData.getParameterExtraFormat());
-        chargeTemplate.setExtraIsMandatory(postData.getParameterExtraIsMandatory() != null ? postData.getParameterExtraIsMandatory() : false);
+        chargeTemplate.setParameterExtraIsMandatory(postData.getParameterExtraIsMandatory() != null ? postData.getParameterExtraIsMandatory() : false);
         chargeTemplate.setParameterExtraIsHidden(postData.getParameterExtraIsHidden() != null ? postData.getParameterExtraIsHidden() : false);
 
 

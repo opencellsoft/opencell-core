@@ -322,33 +322,10 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 
         parameterExtraDescription = chargeTemplate.getParameterExtraDescription();
         parameterExtraFormat = chargeTemplate.getParameterExtraFormat();
-        parameterExtraIsMandatory = chargeTemplate.isExtraIsMandatory();
+        parameterExtraIsMandatory = chargeTemplate.isParameterExtraIsMandatory();
         parameterExtraIsHidden = chargeTemplate.isParameterExtraIsHidden();
     }
-        
-     // Mapping TradingLanguage instances to LanguageDto instances
-        /*parameter1TranslatedDescriptions = mapTradingLanguageToLanguageDto(chargeTemplate.getParameter1TranslatedDescriptions());
-        parameter2TranslatedDescriptions = mapTradingLanguageToLanguageDto(chargeTemplate.getParameter2TranslatedDescriptions());
-        parameter3TranslatedDescriptions = mapTradingLanguageToLanguageDto(chargeTemplate.getParameter3TranslatedDescriptions());
-        parameterExtraTranslatedDescriptions = mapTradingLanguageToLanguageDto(chargeTemplate.getParameterExtraTranslatedDescriptions());
-        
-        parameter1TranslatedLongDescriptions = mapTradingLanguageToLanguageDto(chargeTemplate.getParameter1TranslatedLongDescriptions());
-        parameter2TranslatedLongDescriptions = mapTradingLanguageToLanguageDto(chargeTemplate.getParameter2TranslatedLongDescriptions());
-        parameter3TranslatedLongDescriptions = mapTradingLanguageToLanguageDto(chargeTemplate.getParameter3TranslatedLongDescriptions());
-        parameterExtraTranslatedLongDescriptions = mapTradingLanguageToLanguageDto(chargeTemplate.getParameterExtraTranslatedLongDescriptions());
-
-
-    }
-    
-    private Map<LanguageDto, String> mapTradingLanguageToLanguageDto(Map<String, String> tradingLanguageMap) {
-        Map<LanguageDto, String> languageDtoMap = new HashMap<>();
-        for (Map.Entry<String, String> entry : tradingLanguageMap.entrySet()) {
-            String tradingLanguageCode = entry.getKey();
-            LanguageDto languageDto = new LanguageDto(tradingLanguage);
-            languageDtoMap.put(languageDto, entry.getValue());
-        }
-        return languageDtoMap;
-    }*/
+     
 
     /**
      * Gets the language descriptions.

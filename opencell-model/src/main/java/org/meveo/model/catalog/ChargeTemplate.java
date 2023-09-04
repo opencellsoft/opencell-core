@@ -377,7 +377,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "parameter_extra_is_mandatory")
-    private boolean extraIsMandatory;
+    private boolean parameterExtraIsMandatory;
 
     @Type(type = "numeric_boolean")
     @Column(name = "parameter_extra_is_hidden")
@@ -887,12 +887,12 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 		this.parameterExtraIsHidden = parameterExtraIsHidden;
 	}
 
-	public boolean isExtraIsMandatory() {
-		return extraIsMandatory;
+	public boolean isParameterExtraIsMandatory() {
+		return parameterExtraIsMandatory;
 	}
 
-	public void setExtraIsMandatory(boolean extraIsMandatory) {
-		this.extraIsMandatory = extraIsMandatory;
+	public void setParameterExtraIsMandatory(boolean parameterExtraIsMandatory) {
+		this.parameterExtraIsMandatory = parameterExtraIsMandatory;
 	}
 
 	public Map<String, String> getParameter1TranslatedDescriptions() {
