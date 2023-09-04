@@ -141,7 +141,7 @@ public enum ColumnTypeEnum {
                 return false;
             } else if (pricePlanMatrixValue.getFromDateValue() != null && pricePlanMatrixValue.getToDateValue() == null) {
                 return attributeValue.getDateValue().equals(pricePlanMatrixValue.getFromDateValue()) || attributeValue.getDateValue().after(pricePlanMatrixValue.getFromDateValue());
-            } else if (pricePlanMatrixValue.getFromDateValue() == null || pricePlanMatrixValue.getToDateValue() != null) {
+            } else if (pricePlanMatrixValue.getFromDateValue() == null && pricePlanMatrixValue.getToDateValue() != null) {
                 return attributeValue.getDateValue().equals(pricePlanMatrixValue.getToDateValue()) || attributeValue.getDateValue().before(pricePlanMatrixValue.getToDateValue());
             } else {
                 return (attributeValue.getDateValue().equals(pricePlanMatrixValue.getFromDateValue()) || attributeValue.getDateValue().after(pricePlanMatrixValue.getFromDateValue()))

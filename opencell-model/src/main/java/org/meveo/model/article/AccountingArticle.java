@@ -114,6 +114,13 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "allowance_code")
     private UntdidAllowanceCode allowanceCode;
+
+    /**
+     * Need to know if article is physical of not : used by Tax calculation
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "physical", nullable = false)
+    private boolean physical;
     
     public UntdidAllowanceCode getAllowanceCode() {
         return allowanceCode;
@@ -288,5 +295,13 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 
     public void setIgnoreAggregation(boolean ignoreAggregation) {
         this.ignoreAggregation = ignoreAggregation;
+    }
+
+    public boolean isPhysical() {
+        return physical;
+    }
+
+    public void setPhysical(boolean physical) {
+        this.physical = physical;
     }
 }

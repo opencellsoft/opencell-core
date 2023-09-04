@@ -73,4 +73,11 @@ public interface ExceptionalBillingRun extends Resource {
     default Boolean isIncrementalInvoiceLines() {
         return FALSE;
     }
+
+    @Default
+    @Schema(description = "Decide if Report job will be launched automatically at billing run creation")
+    @JsonProperty("preReportAutoOnCreate")
+    default Boolean isPreReportAutoOnCreate() {
+        return FALSE;
+    }
 }

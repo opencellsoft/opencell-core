@@ -50,6 +50,7 @@ import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -538,6 +539,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             i++;
         }
 
+        em.flush();
+
         // Update WOs with Rated transaction information
 
         // Mass update WO status
@@ -568,7 +571,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         });
 
         // Need to flush, so WOs can be updated in mass
-        em.flush();
+        //em.flush();
 
         // Mass update WOs with status and RT info
         em.createNamedQuery("WalletOperation.massUpdateWithRTInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).executeUpdate();
@@ -2581,5 +2584,46 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         linesFactory.update(invoiceLine.getId(), deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);
+    }
+
+    public List<RatedTransaction> getReportRatedTransactions(BillingRun billingRun) {
+        Map<String, Object> filters = billingRun.getBillingCycle() != null
+                ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
+        if (filters == null && billingRun.getBillingCycle() != null) {
+            filters = new HashMap<>();
+            filters.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
+        }
+        filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
+        return (List<RatedTransaction>) getQueryFromFilters(filters, Collections.emptyList(), true)
+                .getQuery(getEntityManager()).getResultList();
+    }
+
+    public List<Object[]> getReportStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds) {
+        return getEntityManager()
+                .createNamedQuery("RatedTransaction.findBillingRunReportDetails")
+                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+                .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
+                .setParameter("ids", ratedTransactionIds)
+                .getResultList();
+    }
+
+    public List<Object[]> getBillingAccountStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds) {
+        return getEntityManager()
+                .createNamedQuery("RatedTransaction.findAmountsPerBillingAccount")
+                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+                .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
+                .setParameter("ids", ratedTransactionIds)
+                .setMaxResults(10)
+                .getResultList();
+    }
+
+    public List<Object[]> getOfferStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds) {
+        return getEntityManager()
+                .createNamedQuery("RatedTransaction.findAmountsPerOffer")
+                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+                .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
+                .setParameter("ids", ratedTransactionIds)
+                .setMaxResults(10)
+                .getResultList();
     }
 }

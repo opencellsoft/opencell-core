@@ -350,37 +350,37 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "parameter_extra_format")
     @Enumerated(EnumType.STRING)
     private ParameterFormat parameterExtraFormat= ParameterFormat.TEXT;
-    
-    @Type(type = "numeric_boolean")
+        
     @Column(name = "parameter1_is_mandatory")
+	@Type(type = "numeric_boolean")
     private boolean parameter1IsMandatory;
 
-    @Type(type = "numeric_boolean")
     @Column(name = "parameter1_is_hidden")
+	@Type(type = "numeric_boolean")
     private boolean parameter1IsHidden;
 
-    @Type(type = "numeric_boolean")
     @Column(name = "parameter2_is_mandatory")
+	@Type(type = "numeric_boolean")
     private boolean parameter2IsMandatory;
 
-    @Type(type = "numeric_boolean")
     @Column(name = "parameter2_is_hidden")
+	@Type(type = "numeric_boolean")
     private boolean parameter2IsHidden;
 
-    @Type(type = "numeric_boolean")
     @Column(name = "parameter3_is_mandatory")
+	@Type(type = "numeric_boolean")
     private boolean parameter3IsMandatory;
 
-    @Type(type = "numeric_boolean")
     @Column(name = "parameter3_is_hidden")
+	@Type(type = "numeric_boolean")    
     private boolean parameter3IsHidden;
 
     @Type(type = "numeric_boolean")
     @Column(name = "parameter_extra_is_mandatory")
     private boolean parameterExtraIsMandatory;
 
-    @Type(type = "numeric_boolean")
     @Column(name = "parameter_extra_is_hidden")
+	@Type(type = "numeric_boolean")
     private boolean parameterExtraIsHidden;
     
     @Type(type = "json")

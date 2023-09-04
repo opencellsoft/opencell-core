@@ -4170,9 +4170,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <sql>update ${db.schema.adapted}ord_quote set routed_to_user_group=(select code from ${db.schema.adapted}hierarchy_entity he where he.id=routed_to_user_group_id)</sql>
         <dropColumn tableName="ord_quote" columnName="routed_to_user_group_id"/>
 
-        <dropColumn tableName="adm_user" columnName="email"/>
-        <dropColumn tableName="adm_user" columnName="firstname"/>
-        <dropColumn tableName="adm_user" columnName="lastname"/>
         <dropColumn tableName="adm_user" columnName="title_id"/>
         <dropColumn tableName="adm_user" columnName="hierarchy_level_id"/>
         <dropColumn tableName="adm_user" columnName="last_login_date"/>
@@ -7439,6 +7436,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id"/>
 
     </changeSet>
+    
+    <changeSet id="#INTRD-17719_20230829" author="AbdelmounaimAkadid" failOnError="false">
+		<addColumn tableName="adm_user">
+			<column name="email" type="varchar(100)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
 
     <changeSet id="INTRD-17307_20230712" author="TarikFA.">
         <addColumn tableName="finance_settings">
@@ -7993,5 +7998,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
     	</sql>
 
 	</changeSet>
+
+    <changeSet id="#INTRD-17184_20230829" author="aelmalki">
+        <addColumn tableName="billing_accounting_article">
+            <column name="physical" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-17634_2023-09-29" author="ZBariki">
+        <renameColumn  oldColumnName="subscription_accounts_count"
+                       newColumnName="subscriptions_count" tableName="billing_run_report"/>
+        <renameColumn  oldColumnName="rated_transaction_accounts_count"
+                       newColumnName="rated_transactions_count" tableName="billing_run_report"/>
+    </changeSet>
 
 </databaseChangeLog>

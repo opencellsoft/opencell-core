@@ -8,6 +8,7 @@ import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.billing.AdjustmentStatusEnum.NOT_ADJUSTED;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -97,7 +98,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableBySubscription", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.subscription=:subscription"),
 		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableByBA", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.billingAccount=:billingAccount"),
 		@NamedQuery(name = "InvoiceLine.sumPositiveILByBillingRun", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax),il.subscription.id, il.commercialOrder.id, il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id FROM InvoiceLine il where il.billingRun.id=:billingRunId and il.amountWithoutTax > 0 and il.status='BILLED' group by il.subscription.id, il.commercialOrder.id, il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
-		@NamedQuery(name = "InvoiceLine.unInvoiceByInvoiceIds", query = "update InvoiceLine il set il.status='OPEN', il.auditable.updated = :now , il.billingRun= null, il.invoice=null where il.invoice.id IN (:invoiceIds) and orderOffer is not null"),
+		@NamedQuery(name = "InvoiceLine.unInvoiceByInvoiceIds", query = "update InvoiceLine il set il.status='OPEN', il.auditable.updated = :now , il.billingRun= null, il.invoice=null, il.invoiceAggregateF = null where il.invoice.id IN (:invoiceIds) and orderOffer is not null"),
 		@NamedQuery(name = "InvoiceLine.cancelForRemoveByInvoiceIds", query = "update InvoiceLine il set il.status='CANCELED', il.auditable.updated = :now, il.invoice=null, il.invoiceAggregateF=null WHERE il.invoice.id IN (:invoicesIds)"),
 		@NamedQuery(name = "InvoiceLine.cancelByInvoiceIds", query = "update InvoiceLine il set il.status='CANCELED', il.auditable.updated = :now, il.invoice=null WHERE il.invoice.id IN (:invoicesIds) and orderOffer is null"),
 	    @NamedQuery(name = "InvoiceLine.listToInvoiceByCommercialOrder", query = "FROM InvoiceLine il where il.commercialOrder.id=:commercialOrderId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
@@ -154,7 +155,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 				"il.validity.to=:endDate, il.auditable.updated=:now, il.unitPrice=:unitPrice WHERE il.id=:id"),
 		@NamedQuery(name = "InvoiceLine.updateStatusInvoiceLine", query = "UPDATE InvoiceLine il SET " +
 				"il.status =: statusToUpdate WHERE il.id =: id"),
-		@NamedQuery(name = "InvoiceLine.cancelInvoiceLineByWoIds", query = "UPDATE InvoiceLine il SET il.auditable.updated = :now, il.status = org.meveo.model.billing.InvoiceLineStatusEnum.CANCELED WHERE il.status = org.meveo.model.billing.InvoiceLineStatusEnum.OPEN AND il.id in (SELECT wo.ratedTransaction.invoiceLine.id FROM WalletOperation wo WHERE wo.id IN :woIds)")
+		@NamedQuery(name = "InvoiceLine.cancelInvoiceLineByWoIds", query = "UPDATE InvoiceLine il SET il.auditable.updated = :now, il.status = org.meveo.model.billing.InvoiceLineStatusEnum.CANCELED WHERE il.status = org.meveo.model.billing.InvoiceLineStatusEnum.OPEN AND il.id in (SELECT wo.ratedTransaction.invoiceLine.id FROM WalletOperation wo WHERE wo.id IN :woIds)"),
+		@NamedQuery(name = "InvoiceLine.sumAmountsPerBR", query = "SELECT SUM(il.amountWithoutTax), SUM(il.amountTax), SUM(il.amountWithTax) FROM InvoiceLine il WHERE il.billingRun.id =:billingRunId")
 	})
 public class InvoiceLine extends AuditableCFEntity {
 
@@ -936,14 +938,21 @@ public class InvoiceLine extends AuditableCFEntity {
 	@PrePersist
 	@PreUpdate
 	public void prePersistOrUpdate() {
+		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
 		if (this.transactionalUnitPrice == null || (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency)) {
-			BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
 			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
 			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
 			setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
 			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
 			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
 			setTransactionalUnitPrice(toTransactional(unitPrice, appliedRate));
+		} else if (this.useSpecificPriceConversion) {
+			setAmountWithoutTax(toFunctional(transactionalAmountWithoutTax, appliedRate));
+			setAmountWithTax(toFunctional(transactionalAmountWithTax, appliedRate));
+			setAmountTax(toFunctional(transactionalAmountTax, appliedRate));
+			setDiscountAmount(toFunctional(transactionalDiscountAmount, appliedRate));
+			setRawAmount(toFunctional(transactionalRawAmount, appliedRate));
+			setUnitPrice(toFunctional(transactionalUnitPrice, appliedRate));
 		}
 	}
 
@@ -968,6 +977,10 @@ public class InvoiceLine extends AuditableCFEntity {
 	
 	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
 		return amount != null ? amount.multiply(rate) : ZERO;
+	}
+
+	private BigDecimal toFunctional(BigDecimal amount, BigDecimal rate) {
+		return amount != null ? amount.divide(rate, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : ZERO;
 	}
 
 }

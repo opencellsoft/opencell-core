@@ -25,6 +25,7 @@ import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
 import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -693,7 +694,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         String from = "from ar_account_operation ao " +
                 "inner join billing_invoice inv on ao.invoice_id=inv.id " +
                 "inner join billing_invoice_type invt on inv.invoice_type_id=invt.id ";
-        String where = "where ao.transaction_type='I' ";
+        String where = " where ao.transaction_type='I' ";
         where = where.concat(" and (ao.matching_status='"+MatchingStatusEnum.O+"' or ao.matching_status='"+MatchingStatusEnum.P+"')");
         where = where.concat(" and invt.exclude_from_aged_trial_balance = 0");
 
@@ -729,7 +730,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             where = where.concat(" and (ao.due_date >= '" + DateUtils.formatDateWithPattern(startDueDate, datePattern)
                     + "' and ao.due_date <= '" + DateUtils.formatDateWithPattern(endDueDate, datePattern) + "')");
         }
-        return (Long) getEntityManager().createNativeQuery(select.concat(from).concat(where)).getSingleResult();
+        return ((BigInteger) getEntityManager().createNativeQuery(select.concat(from).concat(where)).getSingleResult()).longValue();
     }
 
     /**

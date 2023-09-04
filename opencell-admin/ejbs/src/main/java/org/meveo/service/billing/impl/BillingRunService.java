@@ -216,9 +216,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
-
-    @Inject
-    private JobExecutionResultService jobExecutionResultService;
     
     private static final  int rtPaginationSize = 30000;
 
@@ -226,18 +223,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@Override
 	public void create(BillingRun billingRun) throws BusinessException {
 		setBillingRunType(billingRun);
-		super.create(billingRun);
-	}
+        super.create(billingRun);
+    }
 
-	@MeveoAudit
+    @MeveoAudit
 	@Override
 	public BillingRun update(BillingRun billingRun) throws BusinessException {
 		setBillingRunType(billingRun);
-		return super.update(billingRun);
+        return super.update(billingRun);
 	}
 
 	/**
-	 * Put the BR type to CYCLE if a BC is attached, EXEPTIONAL otherwise
+	 * Put the BR type to CYCLE if a BC is attached, EXCEPTIONAL otherwise
 	 *
 	 * @param billingRun
 	 */
@@ -1038,8 +1035,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
             invoiceLinesService.uninvoiceILs(excludedPrepaidInvoices);//reopen ILs not created from  RTs
             invoiceLinesService.cancelIlForRemoveByInvoices(excludedPrepaidInvoices);//cancell ILs created from RTs
-            invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
+            invoiceService.deleteInvoices(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
                 BillingAccount ba = getEntityManager().getReference(BillingAccount.class, rejectedBillingAccountId);
                 rejectedBillingAccountService.create(ba, getEntityManager().getReference(BillingRun.class, billingRun.getId()), "Billing account did not reach invoicing threshold");
