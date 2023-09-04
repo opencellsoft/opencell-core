@@ -431,7 +431,7 @@ public class QueryBuilder {
         if (value instanceof String) {
             String filterString = (String) value;
             Stream.of(fields)
-                    .forEach(f -> addCriterionWildcard(tableNameAlias + "." + f, filterString, true));
+                    .forEach(f -> addCriterionWildcard(!f.contains(FROM_JSON_FUNCTION) ? tableNameAlias+"."+f : f, filterString, true));
         }
         endOrClause();
     }
@@ -439,8 +439,8 @@ public class QueryBuilder {
     public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value) {
         startOrClause();
         Stream.of(fields).forEach(field -> {
-        	String concatenatedFields = tableNameAlias+"."+field;
-        	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
+        	String concatenatedFields = !field.contains(FROM_JSON_FUNCTION) ? tableNameAlias+"."+field : field;
+            concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
             addSqlCriterion(concatenatedFields + " like :" + param, param, "%" + value + "%");
         });
@@ -452,7 +452,7 @@ public class QueryBuilder {
         String valueStr = "%" + String.valueOf(value).toLowerCase() + "%";
         startOrClause();
         Stream.of(fields).forEach(field -> {
-        	String concatenatedFields = tableNameAlias+"."+field;
+        	String concatenatedFields = !field.contains(FROM_JSON_FUNCTION) ? tableNameAlias+"."+field : field;
         	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
             addSqlCriterion("lower(" + concatenatedFields + ") like :" + param, param, valueStr);
@@ -1264,14 +1264,7 @@ public class QueryBuilder {
     public QueryBuilder addValueIsEqualToField(String concatenatedFields, Object value, boolean isNot, boolean isFieldValueOptional) {
 
         // extract fieldname to handle joins
-        if(concatenatedFields.contains(FROM_JSON_FUNCTION)) {
-            int beginIndex = concatenatedFields.indexOf(FROM_JSON_FUNCTION) + FROM_JSON_FUNCTION.length() - 2;
-            var extractedField = concatenatedFields.substring(beginIndex, concatenatedFields.indexOf(",", beginIndex));
-            String explicitInnerJoins = createExplicitInnerJoins(extractedField);
-            concatenatedFields = concatenatedFields.replace(extractedField, explicitInnerJoins);
-        } else {
-            concatenatedFields = createExplicitInnerJoins(concatenatedFields);
-        }
+        concatenatedFields = createExplicitInnerJoins(concatenatedFields);
 
         // Search by equals/not equals to a string value
         if (value instanceof String) {
@@ -1310,6 +1303,18 @@ public class QueryBuilder {
     }
 
     private String createExplicitInnerJoins(String concatenatedFields) {
+        if(concatenatedFields.contains(FROM_JSON_FUNCTION)) {
+            int beginIndex = concatenatedFields.indexOf(FROM_JSON_FUNCTION) + FROM_JSON_FUNCTION.length() - 2;
+            var extractedField = concatenatedFields.substring(beginIndex, concatenatedFields.indexOf(",", beginIndex));
+            String explicitInnerJoins = calculateExplicitInnerJoins(extractedField);
+            concatenatedFields = concatenatedFields.replace(extractedField, explicitInnerJoins);
+        } else {
+            concatenatedFields = calculateExplicitInnerJoins(concatenatedFields);
+        }
+        return concatenatedFields;
+    }
+
+    private String calculateExplicitInnerJoins(String concatenatedFields) {
         if(concatenatedFields.contains(FROM_JSON_FUNCTION)){
             return concatenatedFields;
         }
