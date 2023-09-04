@@ -183,7 +183,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.markAsProcessed", query = "UPDATE RatedTransaction rt set rt.status='BILLED' WHERE rt.id in (:listOfIds)"),
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByRtIdInBatch", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.billingAccount.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND r.id in (:ids) group by r.billingAccount.id"),
         @NamedQuery(name = "RatedTransaction.BillingAccountByRTIds", query = "SELECT distinct rt.billingAccount FROM RatedTransaction rt WHERE rt.id in (:ids)"),
-        @NamedQuery(name = "RatedTransaction.linkRTWithInvoiceLine", query = "UPDATE RatedTransaction rt set rt.status='BILLED', rt.invoiceLine.id = :il, rt.billingRun.id = :billingRunId WHERE rt.id in :ids"),
+        @NamedQuery(name = "RatedTransaction.linkRTWithInvoiceLine", query = "UPDATE RatedTransaction rt set rt.status='BILLED', rt.invoiceLine.id = :il, rt.billingRun.id = :billingRunId WHERE rt.status='OPEN' AND rt.id in :ids"),
         @NamedQuery(name = "RatedTransaction.linkRTWithInvoice", query = "UPDATE RatedTransaction rt set rt.invoice = :invoice, rt.billingRun = :billingRun, rt.status = 'BILLED', rt.updated = :now WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoiceLines", query = "UPDATE RatedTransaction rt set rt.invoiceLine = null, rt.status = 'OPEN' WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoices", query = "UPDATE RatedTransaction r SET r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceLine=null, r.invoiceAgregateF=null WHERE r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice.id IN (:ids)) "),
@@ -193,6 +193,9 @@ import org.meveo.model.tax.TaxClass;
                 "SET rt.status =: statusToUpdate WHERE rt.id IN (:ids)"),
         @NamedQuery(name = "RatedTransaction.getDiscountedRTIds", query = "SELECT rt FROM RatedTransaction rt " +
                 "WHERE rt.invoiceLine.status != 'BILLED' AND rt.discountedRatedTransaction =: id"),
+        @NamedQuery(name = "RatedTransaction.getMissingAccountingArticleInputs", query =
+    	"select new org.meveo.model.billing.AccountingArticleAssignementItem(ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id, (string_agg(cast(ci.id as text),','))) "
+    		+ " FROM RatedTransaction rt left join rt.chargeInstance ci WHERE rt.status = 'OPEN' and rt.accountingArticle is null group by ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id"),
         @NamedQuery(name = "RatedTransaction.cancelRTs", query = "UPDATE RatedTransaction set status='CANCELED', rejectReason=:rejectReason, updated=:updatedDate where id in :ids")
         })
 
@@ -629,6 +632,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "rules_contract_id")
     private Contract rulesContract;
     
+    @ManyToOne
+    @JoinColumn(name = "origin_ratedtransaction_id")
+    private RatedTransaction originRatedTransaction;
+    
     /**
   	 * 
   	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
@@ -796,6 +803,62 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.rulesContract = walletOperation.getRulesContract();
     }
 
+
+    public RatedTransaction(RatedTransaction rateTransactionToDuplicate) {
+
+        super();
+        this.code = rateTransactionToDuplicate.getCode();
+        this.description = rateTransactionToDuplicate.getDescription();
+        this.chargeInstance = rateTransactionToDuplicate.getChargeInstance();
+        this.usageDate = rateTransactionToDuplicate.getUsageDate();
+        this.unitAmountWithoutTax = rateTransactionToDuplicate.getUnitAmountWithoutTax();
+        this.unitAmountWithTax = rateTransactionToDuplicate.getUnitAmountWithTax();
+        this.unitAmountTax = rateTransactionToDuplicate.getUnitAmountTax();
+        this.quantity = rateTransactionToDuplicate.getQuantity();
+        this.amountWithoutTax = rateTransactionToDuplicate.getAmountWithoutTax();
+        this.amountWithTax = rateTransactionToDuplicate.getAmountWithTax();
+        this.inputQuantity = rateTransactionToDuplicate.getInputQuantity();
+        this.rawAmountWithTax = rateTransactionToDuplicate.getRawAmountWithTax();
+        this.rawAmountWithoutTax = rateTransactionToDuplicate.getRawAmountWithoutTax();
+        this.amountTax = rateTransactionToDuplicate.getAmountTax();
+        this.wallet = rateTransactionToDuplicate.getWallet();
+        this.userAccount = rateTransactionToDuplicate.getUserAccount();
+        this.billingAccount = rateTransactionToDuplicate.getBillingAccount();
+        this.seller = rateTransactionToDuplicate.getSeller();
+        this.parameter1 = rateTransactionToDuplicate.getParameter1();
+        this.parameter2 = rateTransactionToDuplicate.getParameter2();
+        this.parameter3 = rateTransactionToDuplicate.getParameter3();
+        this.parameterExtra = rateTransactionToDuplicate.getParameterExtra();
+        this.orderNumber = rateTransactionToDuplicate.getOrderNumber();
+        this.subscription = rateTransactionToDuplicate.getSubscription();
+        this.priceplan = rateTransactionToDuplicate.getPriceplan();
+        this.offerTemplate = rateTransactionToDuplicate.getOfferTemplate();
+        this.startDate = rateTransactionToDuplicate.getStartDate();
+        this.endDate = rateTransactionToDuplicate.getEndDate();
+        this.tax = rateTransactionToDuplicate.getTax();
+        this.taxPercent = rateTransactionToDuplicate.getTaxPercent();
+        this.serviceInstance = rateTransactionToDuplicate.getServiceInstance();
+        this.status = RatedTransactionStatusEnum.OPEN;
+        this.updated = new Date();
+        this.taxClass = rateTransactionToDuplicate.getTaxClass();
+        this.inputUnitOfMeasure = rateTransactionToDuplicate.getInputUnitOfMeasure();
+        this.ratingUnitOfMeasure = rateTransactionToDuplicate.getRatingUnitOfMeasure();
+        this.accountingCode = rateTransactionToDuplicate.getAccountingCode();
+        this.accountingArticle = rateTransactionToDuplicate.getAccountingArticle();
+        this.infoOrder = rateTransactionToDuplicate.getOrderInfo();
+        this.invoicingDate = rateTransactionToDuplicate.getInvoicingDate();
+        this.unityDescription = rateTransactionToDuplicate.getUnityDescription();
+        this.ratingUnitDescription = rateTransactionToDuplicate.getRatingUnitDescription();
+        this.sortIndex = rateTransactionToDuplicate.getSortIndex();
+        this.cfValues = rateTransactionToDuplicate.getCfValues();
+        this.discountPlan = rateTransactionToDuplicate.getDiscountPlan();
+        this.discountPlanItem = rateTransactionToDuplicate.getDiscountPlanItem();
+        this.discountPlanType = rateTransactionToDuplicate.getDiscountPlanType();
+        this.discountValue = rateTransactionToDuplicate.getDiscountValue();
+        this.sequence = rateTransactionToDuplicate.getSequence();
+        this.rulesContract = rateTransactionToDuplicate.getRulesContract();
+    }
+    
     public WalletInstance getWallet() {
         return wallet;
     }
@@ -1615,5 +1678,19 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     public void setCreated(Date created) {
         this.created = created;
     }
+
+	/**
+	 * @return the originRatedTransaction
+	 */
+	public RatedTransaction getOriginRatedTransaction() {
+		return originRatedTransaction;
+	}
+
+	/**
+	 * @param originRatedTransaction the originRatedTransaction to set
+	 */
+	public void setOriginRatedTransaction(RatedTransaction originRatedTransaction) {
+		this.originRatedTransaction = originRatedTransaction;
+	}
 	
 }

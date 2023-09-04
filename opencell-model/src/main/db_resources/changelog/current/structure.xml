@@ -15762,6 +15762,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropUniqueConstraint tableName="cpq_price_plan_version" constraintName="cpq_price_plan_version_UNIC"/>
         <addUniqueConstraint columnNames="ppm_id,current_version" constraintName="cpq_price_plan_version_UNIC" tableName="cpq_price_plan_version" />
     </changeSet>
+    
+    <changeSet id="#INTRD-14264_20230222" author="TarikFA.">
+    	<addColumn tableName="billing_rated_transaction">
+    		<column name="origin_ratedtransaction_id" type="bigint" />
+    	</addColumn>
+        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
+                                 constraintName="fk_origin_ratedtransaction_id"
+                                 referencedTableName="billing_rated_transaction"
+                                 referencedColumnNames="id,status"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
+    </changeSet>
 
     <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
         <addColumn tableName="billing_rated_transaction">
@@ -15835,6 +15847,19 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+     <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi">
+		  <sql>CREATE INDEX idx__billing_rated_transaction__accountingArticle_id ON ${db.schema.adapted}billing_rated_transaction USING btree (accounting_article_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__offer ON ${db.schema.adapted}billing_rated_transaction USING btree (offer_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__service_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (service_instance_id) WHERE (status= 'OPEN') </sql>
+	</changeSet>
+	
+    <changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI">
+        <addColumn tableName="billing_billing_account">
+            <column name="mass_data" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres">
         <dropView viewName="billing_wallet_operation_period" />
@@ -15856,6 +15881,73 @@ public class AgedBalanceReporting extends ReportExtractScript {
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius">
         <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI">
+        <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe">
+        <sql>create index idx__billing_billing_account__lower_code on ${db.schema.adapted}billing_billing_account (lower(code))</sql>
+        <sql>create index idx__billing_rating_transaction__id_desc on ${db.schema.adapted}billing_rated_transaction (id desc)</sql>
+        <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
+    </changeSet>
+	
+	<changeSet id="#INTRD-14263_20200304" author="TarikFA.">
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
+    </changeSet>
+
+    <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe">
+        <sql>create index idx__billing_wo__charge_instance_id on billing_wallet_operation(charge_instance_id)</sql>
+        <sql>create index idx__billing_wo__billing_account_id on billing_wallet_operation(billing_account_id)</sql>
+        <sql>create index idx__billing_wo__subscription_id on billing_wallet_operation(subscription_id)</sql>
+
+        <sql>create index idx__charge_instance__lower_code on billing_charge_instance(lower(code))</sql>
+        <sql>create index idx__charge_instance__lower_description on billing_charge_instance(lower(description))</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe">
+        <addColumn tableName="billing_billing_run">
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" >
+                <constraints nullable="false" />
+            </column>
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <!--  Existing BC should be NO_AGGREGATION -->
+        <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' </sql>
+        
+        <sql dbms="postgresql">update ${db.schema.adapted}billing_billing_run set discount_aggregation = bc.discount_aggregation, disable_aggregation = bc.disable_aggregation, use_accounting_article_label = bc.use_accounting_article_label,
+            date_aggregation = bc.date_aggregation, aggregate_unit_amounts = bc.aggregate_unit_amounts, ignore_subscriptions = bc.ignore_subscriptions, ignore_orders = bc.ignore_orders, incremental_invoice_lines = bc.incremental_invoice_lines
+            from ${db.schema.adapted}billing_cycle bc where bc.id=billing_billing_run.billing_cycle_id
+        </sql>
+        <sql dbms="oracle">UPDATE (SELECT br.discount_aggregation, br.disable_aggregation, br.use_accounting_article_label, br.date_aggregation, br.aggregate_unit_amounts, br.ignore_subscriptions, br.ignore_orders, br.incremental_invoice_lines,
+              bc.discount_aggregation, bc.disable_aggregation, bc.use_accounting_article_label, bc.date_aggregation, bc.aggregate_unit_amounts, bc.ignore_subscriptions, bc.ignore_orders, bc.incremental_invoice_lines
+              FROM {h-schema}billing_billing_run br, {h-schema}billing_cycle bc WHERE bc.id=br.billing_cycle_id) 
+              SET br.discount_aggregation = bc.discount_aggregation, br.disable_aggregation = bc.disable_aggregation, br.use_accounting_article_label = bc.use_accounting_article_label, br.date_aggregation = bc.date_aggregation,
+              br.aggregate_unit_amounts = bc.aggregate_unit_amounts, br.ignore_subscriptions = bc.ignore_subscriptions, br.ignore_orders = bc.ignore_orders, br.incremental_invoice_lines = bc.incremental_invoice_lines"),
+         </sql>
     </changeSet>
 
 </databaseChangeLog>

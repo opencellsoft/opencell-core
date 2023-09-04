@@ -35,7 +35,7 @@ public class ProcessCdrListResult extends BaseResponse {
     /**
      * Processing mode
      */
-    private ProcessCdrListModeEnum mode;
+    private ProcessingModeEnum mode;
 
     /**
      * Processing statistics
@@ -56,7 +56,7 @@ public class ProcessCdrListResult extends BaseResponse {
 
     }
 
-    public ProcessCdrListResult(ProcessCdrListModeEnum mode, int total) {
+    public ProcessCdrListResult(ProcessingModeEnum mode, int total) {
         this.mode = mode;
         this.statistics = new Statistics(total, 0, 0);
         this.chargedCDRs = new ChargeCDRResponseDto[total];
@@ -69,14 +69,14 @@ public class ProcessCdrListResult extends BaseResponse {
     /**
      * @return Processing mode
      */
-    public ProcessCdrListModeEnum getMode() {
+    public ProcessingModeEnum getMode() {
         return mode;
     }
 
     /**
      * @param mode Processing mode
      */
-    public void setMode(ProcessCdrListModeEnum mode) {
+    public void setMode(ProcessingModeEnum mode) {
         this.mode = mode;
     }
 

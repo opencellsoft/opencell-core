@@ -2675,6 +2675,7 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="icd_id" type="bigint" />
+            <column name="mass_data" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -2738,7 +2739,30 @@
             <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
             	<constraints nullable="false" />
             </column>
-            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" >
+                <constraints nullable="false" />
+            </column>
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
+                <constraints nullable="false" />
+            </column>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -2941,13 +2965,30 @@
             	<constraints nullable="true" />
             </column>
             <column name="priority" type="int4" defaultValueNumeric="0" />
-            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" />
-            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" >
+                <constraints nullable="false" />
+            </column>
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -3397,6 +3438,7 @@
             <column name="origin_billing_account" type="bigint" />
             <column name="rules_contract_id" type="bigint" />
             <column name="discounted_amount" type="numeric(23,12)" />
+    		<column name="origin_ratedtransaction_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -16920,6 +16962,7 @@
         <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
+        <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -17115,6 +17158,20 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="#INTRD-17592-rt-indexes-rebuild" author="a.rouaguebe">
+        <sql>create index idx__billing_billing_account__lower_code on ${db.schema.adapted}billing_billing_account (lower(code))</sql>
+        <sql>create index idx__billing_rating_transaction__id_desc on ${db.schema.adapted}billing_rated_transaction (id desc)</sql>
+        <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe">
+        <sql>create index idx__billing_wo__charge_instance_id on billing_wallet_operation(charge_instance_id)</sql>
+        <sql>create index idx__billing_wo__billing_account_id on billing_wallet_operation(billing_account_id)</sql>
+        <sql>create index idx__billing_wo__subscription_id on billing_wallet_operation(subscription_id)</sql>
+
+        <sql>create index idx__charge_instance__lower_code on billing_charge_instance(lower(code))</sql>
+        <sql>create index idx__charge_instance__lower_description on billing_charge_instance(lower(description))</sql>
+    </changeSet>
 
     <!-- end index -->
 
@@ -18105,6 +18162,13 @@
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+
+     <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi">
+		  <sql>CREATE INDEX idx__billing_rated_transaction__accountingArticle_id ON ${db.schema.adapted}billing_rated_transaction USING btree (accounting_article_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__offer ON ${db.schema.adapted}billing_rated_transaction USING btree (offer_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__service_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (service_instance_id) WHERE (status= 'OPEN') </sql>
+	</changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -19416,6 +19480,10 @@
     <changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
 	<changeSet id="INTRD-16050_20230515" author="ThangNguyen" />
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
+    <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
+	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
+    <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -183,8 +183,6 @@ public class NativePersistenceService extends BaseService {
             if (canCheck) {
                 query.addScalar("id", new LongType());
                 query.setFlushMode(FlushMode.COMMIT);
-                query.addScalar("code", new StringType());
-                query.addScalar("description", new StringType());
             }
 
             query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);

@@ -9,6 +9,8 @@ import javax.ws.rs.core.Response;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import org.meveo.apiv2.billing.DuplicateRTDto;
 import org.meveo.apiv2.billing.Invoice;
 import org.meveo.apiv2.billing.RatedTransactionInput;
 
@@ -63,4 +65,11 @@ public interface RatedTransactionResource {
 					content = @Content(schema = @Schema(implementation = ApiException.class))) })
 	Response find(@Parameter(description = "code of the Rated transaction", required = true) @PathParam("code") String code,
 						@Context Request request);
+	
+
+	@POST
+	@Path("/duplication")
+	@Operation(summary = "duplicate list of rated transaction fron their ids", tags = {
+			"RatedTransaction" })
+	Response duplication(@Parameter(description = "dto contains list of id for rated transaction", required = true) DuplicateRTDto duplicateRTDto);
 }

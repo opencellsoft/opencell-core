@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.function.BiConsumer;
 
 import javax.ejb.Stateless;
@@ -76,8 +77,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         log.debug(" Running for with parameter={}", jobInstance.getParametres());
         try {
             List<EntityReferenceWrapper> billingRunWrappers = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun");
-            boolean aggregationPerUnitPrice = (Boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE, false);
-            DateAggregationOption dateAggregationOptions = (DateAggregationOption) DateAggregationOption.valueOf((String)getParamOrCFValue(jobInstance, InvoiceLinesJob.INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS, "MONTH_OF_USAGE_DATE"));
 
             List<Long> billingRunIds = billingRunWrappers != null ? billingRunWrappers.stream()
                     .map(br -> valueOf(br.getCode().split("/")[0]))
@@ -98,11 +97,11 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 if (excludedBRCount == billingRuns.size()) {
                     result.registerError("No valid billing run with status = NEW found");
                 } else {
-                    AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(appProvider.isEntreprise(), aggregationPerUnitPrice, dateAggregationOptions);
                     for(BillingRun billingRun : billingRuns) {
+                        AggregationConfiguration aggregationConfiguration = new AggregationConfiguration(billingRun);
                         // set status of billing run as CREATING_INVOICE_LINES, i.e. it indicates that the invoice line job is running
                         billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, CREATING_INVOICE_LINES, null);
-                        List<Long> billingAccountsIDs = billingRunService.getBillingAccountsIdsForOpenRTs(billingRun);
+                        List<Long> billingAccountsIDs = billingRunService.getBillingAccountsIdsForOpenRTs(billingRun, false);
 
                         Long nbRunConfig = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
 						final Long nbRuns = nbRunConfig == -1 ? (long) Runtime.getRuntime().availableProcessors() : nbRunConfig;
@@ -118,6 +117,11 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                             		billingRun, nbRuns, waitingMillis, maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, subIdsList));
                         } else {
                         	processInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration, billingRun, nbRuns, waitingMillis,
+									maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, billingAccountsIDs);
+                        }
+                        if(!(boolean) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.ONE_BILLING_ACCOUNT_PER_TRANSACTION, true)) {
+                        	billingAccountsIDs = billingRunService.getBillingAccountsIdsForOpenRTs(billingRun, true);
+                        	processMassRTsInvoiceLinesGeneration(result, jobInstance, aggregationConfiguration, billingRun, nbRuns, waitingMillis,
 									maxInvoiceLinesPerTransaction, basicStatistics, billableEntitiesSize, billingAccountsIDs);
                         }
 
@@ -146,46 +150,38 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 			AggregationConfiguration aggregationConfiguration, BillingRun billingRun, Long nbRuns, Long waitingMillis,
 			Long maxInvoiceLinesPerTransaction, BasicStatistics basicStatistics, int billableEntitiesSize, List<Long> billingAccountsIDs) {
 		List billableEntitiesList = billingAccountService.findByIds(billingAccountsIDs);
-		assignAccountingArticleIfMissingInRTs(result, billableEntitiesList, maxInvoiceLinesPerTransaction, waitingMillis, jobInstance, nbRuns);
+		
+		Map<String, Object> perfConfig = initPerfConfig(jobInstance);
+		
 		BiConsumer<BillingAccount, JobExecutionResultImpl> task = (billableEntity, jobResult) ->
-                invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics);
+                invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics, perfConfig);
 		iteratorBasedJobProcessing.processItems(result,
                 new SynchronizedIterator<>(billableEntitiesList), task, null, null, nbRuns,
-                waitingMillis, true, jobInstance.getJobSpeed(),true);
+                waitingMillis, false, jobInstance.getJobSpeed(),true);
 		billableEntitiesSize+=billingAccountsIDs.size();
         return billableEntitiesSize;
     }
 
-    /**
-    	 * @param waitingMillis
-         * @param jobInstance 
-    	 * @param nbRuns
-         * @param jobInstance
-         * @param nbRuns
-    	 */
-    	private void assignAccountingArticleIfMissingInRTs(JobExecutionResultImpl result, List<? extends IBillableEntity> billableEntities,
-    			Long maxInvoiceLinesPerTransaction, Long waitingMillis, JobInstance jobInstance, Long nbRuns) {
-    		BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (billableEntity, jobResult) -> updateRTAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction);
-    		iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, true, jobInstance.getJobSpeed(), true);
-    	}
-    
-    	/**
-    	 * @param result
-    	 * @param billableEntity
-    	 * @param maxInvoiceLinesPerTransaction
-    	 * @return
-    	 */
-    	private void updateRTAccountingArticle(JobExecutionResultImpl result, IBillableEntity billableEntity, Long maxInvoiceLinesPerTransaction) {
-    		if(maxInvoiceLinesPerTransaction==null || maxInvoiceLinesPerTransaction < 1) {
-    			ratedTransactionService.calculateAccountingArticle(result, billableEntity, null, null);
-    		} else {
-    			int index=0;
-    			int count = maxInvoiceLinesPerTransaction.intValue();
-    			while(count >= maxInvoiceLinesPerTransaction){
-    				count = ratedTransactionService.calculateAccountingArticle(result, billableEntity, maxInvoiceLinesPerTransaction.intValue(), index++);
-   			}
-    		}
-    	}
+	private Map<String, Object> initPerfConfig(JobInstance jobInstance) {
+		Map<String, Object> perfConfig = new TreeMap<String, Object>();
+		perfConfig.put(InvoiceLinesJob.ONE_BILLING_ACCOUNT_PER_TRANSACTION, (boolean) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.ONE_BILLING_ACCOUNT_PER_TRANSACTION, true));
+		perfConfig.put(InvoiceLinesJob.MAX_INVOICE_LINES_PER_TRANSACTION, (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.MAX_INVOICE_LINES_PER_TRANSACTION, 10000L));
+		perfConfig.put(InvoiceLinesJob.MAX_RATED_TRANSACTIONS_PER_INVOICE_LINE, (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.MAX_RATED_TRANSACTIONS_PER_INVOICE_LINE, 100000L));
+		perfConfig.put(InvoiceLinesJob.MAX_RATED_TRANSACTIONS_PER_TRANSACTION, (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.MAX_RATED_TRANSACTIONS_PER_TRANSACTION, 1000000L));
+		return perfConfig;
+	}
+	
+	private void processMassRTsInvoiceLinesGeneration(JobExecutionResultImpl result, JobInstance jobInstance,
+			AggregationConfiguration aggregationConfiguration, BillingRun billingRun, Long nbRuns, Long waitingMillis,
+			Long maxInvoiceLinesPerTransaction, BasicStatistics basicStatistics, int billableEntitiesSize, List<Long> billingAccountsIDs) {
+		List<BillingAccount> billableEntitiesList = billingAccountService.findByIds(billingAccountsIDs);
+		for (BillingAccount be : billableEntitiesList) {
+			List<Map<String, Object>> groupedRTsWithAggregation = ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate());
+			BiConsumer<Map<String, Object>, JobExecutionResultImpl> task = (invoiceLineData, jobResult) -> invoiceLinesService.createInvoiceLineInNewTransaction(invoiceLineData, jobResult, aggregationConfiguration, billingRun, be, basicStatistics);
+			iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator<>(groupedRTsWithAggregation), task, null, null, nbRuns, waitingMillis, false, jobInstance.getJobSpeed(), true);
+			billingAccountService.changeMassUpdateProcessing(be.getId(),false);
+		}
+    }
 
     private long validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {
         List<BillingRun> excludedBRs = billingRuns.stream()
