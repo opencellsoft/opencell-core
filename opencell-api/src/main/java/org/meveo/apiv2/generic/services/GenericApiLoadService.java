@@ -27,6 +27,7 @@ import javax.inject.Named;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.GenericOpencellRestful;
 import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
@@ -52,6 +53,9 @@ public class GenericApiLoadService {
     
     @Inject
     private GenericFileExportManager genericExportManager;
+    
+    @Inject
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     public Long count(Class entityClass, PaginationConfiguration searchConfig) {
         return persistenceDelegate.count(entityClass, searchConfig);
