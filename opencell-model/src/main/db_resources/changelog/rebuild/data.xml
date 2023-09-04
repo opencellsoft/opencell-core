@@ -12999,6 +12999,50 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		<!-- END Dunning Policy B2B -->
 	</changeSet>
 
+	<changeSet id="INTRD-12827_20230904" author="zelmeliani">
+		<insert tableName="meveo_script_instance">
+			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
+			<column name="version" valueNumeric="0" />
+			<column name="code" value="org.meveo.service.script.DunningSuspendSubscriptionScript" />
+			<column name="src_type" value="JAVA_CLASS" />
+			<column name="description" value="Suspend all subscriptions linked to customer and link it to B2CSuspend and B2BSuspend"/>
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="script">
+				<![CDATA[package org.meveo.service.script;
+						public class DunningSuspendSubscription extends DunningSuspendSubscriptionScript {}
+				]]>
+			</column>
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-97" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2CSuspend" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SCRIPT" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="" />
+			<column name="script_instance_id" valueComputed="(SELECT id from meveo_script_instance where code = 'org.meveo.service.script.DunningSuspendSubscriptionScript')" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+		<insert tableName="ar_dunning_action">
+			<column name="id" valueNumeric="-98" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="code" value="B2B+10" />
+			<column name="description" value="N/A" />
+			<column name="is_action_active" valueNumeric="1" />
+			<column name="action_type" value="SCRIPT" />
+			<column name="action_mode" value="AUTOMATIC" />
+			<column name="action_channel" value="" />
+			<column name="script_instance_id" valueComputed="(SELECT id from meveo_script_instance where code = 'org.meveo.service.script.DunningSuspendSubscriptionScript')" />
+			<column name="type" value="CUSTOMER_LEVEL" />
+		</insert>
+	</changeSet>
+
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
