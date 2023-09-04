@@ -199,7 +199,7 @@ public class BillingCycleDto extends BusinessEntityDto {
     
     private Boolean useAccountingArticleLabel;
     
-    private DateAggregationOption dateAggregation;
+    private DateAggregationOption dateAggregation = DateAggregationOption.NO_DATE_AGGREGATION;
     
     private Boolean aggregateUnitAmounts;
     
