@@ -8045,6 +8045,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="business_key_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari">
+		<addColumn tableName="billing_wallet_operation">
+			<column name="business_key" type="VARCHAR(255)" />
+		</addColumn>
+		<addColumn tableName="rating_edr">
+			<column name="business_key" type="VARCHAR(255)" />
+		</addColumn>
+		<addColumn tableName="billing_rated_transaction">
+			<column name="business_key" type="VARCHAR(255)" />
+		</addColumn>
+	</changeSet>
 
     <changeSet id="#INTRD-10574_20221013" author="AndriusKarpavicius">
         <createSequence sequenceName="audit_data_config_seq" startValue="1" />

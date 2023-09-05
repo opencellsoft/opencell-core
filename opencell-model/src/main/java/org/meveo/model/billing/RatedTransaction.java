@@ -679,6 +679,9 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @Column(name = "pending_duplicates_to_negate")
     private Integer pendingDuplicatesToNegate = 0;
     
+    @Column(name = "business_key")
+    private String businessKey;
+    
     public RatedTransaction() {
         super();
     }
@@ -903,6 +906,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.rulesContract = rateTransactionToDuplicate.getRulesContract();
         this.pendingDuplicates = 0;
         this.pendingDuplicatesToNegate = 0;
+        this.businessKey = rateTransactionToDuplicate.getBusinessKey();
     }
     
     public WalletInstance getWallet() {
@@ -1874,4 +1878,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     public void setPendingDuplicatesToNegate(Integer pendingDuplicatesToNegate) {
         this.pendingDuplicatesToNegate = pendingDuplicatesToNegate;
     }
+
+	public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}
+    
 }

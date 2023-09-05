@@ -329,6 +329,9 @@ public class EDR extends BaseEntity {
      */
     @Transient
     private BigDecimal quantityLeftToRate;
+    
+    @Column(name = "business_key")
+    private String businessKey;
 
     public Subscription getSubscription() {
         return subscription;
@@ -708,5 +711,13 @@ public class EDR extends BaseEntity {
     public void setWalletOperation(WalletOperation walletOperation) {
         this.walletOperation = walletOperation;
     }
+
+	public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}
 
 }

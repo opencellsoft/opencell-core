@@ -688,6 +688,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @JoinColumn(name = "price_list_line_id")
     private PriceListLine priceListLine;
     
+    @Column(name = "business_key")
+    private String businessKey;
+    
     /**
      * Constructor
      */
@@ -1901,6 +1904,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	 */
 	public void setPriceListLine(PriceListLine priceListLine) {
 		this.priceListLine = priceListLine;
+	}
+
+	public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
 	}  
     
 }
