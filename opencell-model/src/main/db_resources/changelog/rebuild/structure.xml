@@ -3438,6 +3438,7 @@
             <column name="rules_contract_id" type="bigint" />
             <column name="discounted_amount" type="numeric(23,12)" />
     		<column name="origin_ratedtransaction_id" type="bigint" />
+            <column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4041,6 +4042,7 @@
 			<column name="price_plan_matrix_version_id" type="bigint" />
 			<column name="price_plan_matrix_line_id" type="bigint" />
 			<column name="contract_id" type="bigint" />
+			<column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -5965,6 +5967,7 @@
             <column name="event_key" type="varchar(100)" />
             <column name="event_version" type="int4" />
 			<column name="wallet_operation_id" type="bigint"/>
+			<column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -19484,6 +19487,7 @@
     <changeSet id="#INTRD-14264_20230222" author="TarikFA." />
     <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe" />
     
+    <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
