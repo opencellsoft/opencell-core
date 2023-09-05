@@ -317,14 +317,16 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
     
     private Map<String, String> mapLanguageDtoToTradingLanguage(Map<String, String> languageDtoMap) {
         Map<String, String> tradingLanguageMap = new HashMap<>();
-        for (Map.Entry<String, String> entry : languageDtoMap.entrySet()) {
-            String languageCode = entry.getKey();
-            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode);
-            if(tradingLanguage == null) {
-            	throw new EntityDoesNotExistsException(" TradingLanguage with code=" + languageCode
-        				+ " does not exists.");
-            }
-            tradingLanguageMap.put(tradingLanguage.getLanguageCode(), entry.getValue());
+        if(languageDtoMap != null) {
+	        for (Map.Entry<String, String> entry : languageDtoMap.entrySet()) {
+	            String languageCode = entry.getKey();
+	            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode);
+	            if(tradingLanguage == null) {
+	            	throw new EntityDoesNotExistsException(" TradingLanguage with code=" + languageCode
+	        				+ " does not exists.");
+	            }
+	            tradingLanguageMap.put(tradingLanguage.getLanguageCode(), entry.getValue());
+	        }
         }
         return tradingLanguageMap;
     }
