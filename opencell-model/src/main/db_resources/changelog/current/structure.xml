@@ -8032,10 +8032,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		<addColumn tableName="cat_charge_template">
 			<column name="business_key_el" type="varchar(2000)" />
 			<column name="business_key_description" type="VARCHAR(255)" defaultValue="Business key"/>
-			<column name="business_key_translated_descriptions" type="${type.json}" defaultValue='{"FRA":"Clé métier", "ENG":"Business key"}'>
+			<column name="business_key_translated_descriptions" type="${type.json}" defaultValue='{"FRA":"ClÃ© mÃ©tier", "ENG":"Business key"}'>
                 <constraints nullable="false" />
             </column>
-			<column name="business_key_translated_long_descriptions" type="${type.json}" defaultValue='{"FRA":"La clé métier est calculé à la valorisation en utilisant une formule personnalisé enregistrée sur la charge", "ENG":"Business key is computed at rating using a custom expression set on the charge"}'>
+			<column name="business_key_translated_long_descriptions" type="${type.json}" defaultValue='{"FRA":"La clÃ© mÃ©tier est calculÃ© Ã  la valorisation en utilisant une formule personnalisÃ© enregistrÃ©e sur la charge", "ENG":"Business key is computed at rating using a custom expression set on the charge"}'>
                 <constraints nullable="false" />
             </column>
             <column name="business_key_format" type="VARCHAR(50)" defaultValue="TEXT">
