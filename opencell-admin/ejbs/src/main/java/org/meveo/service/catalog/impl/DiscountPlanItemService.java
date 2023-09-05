@@ -357,16 +357,16 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
     public boolean isDiscountPlanItemApplicable(BillingAccount billingAccount,DiscountPlanItem discountPlanItem,AccountingArticle accountingArticle,Subscription subscription,WalletOperation walletOperation)
             throws BusinessException {
-    	boolean isApplicable=false;
-        if (discountPlanItem.isActive() 
-                		  && (discountPlanItem.getTargetAccountingArticle().isEmpty()  || accountingArticle == null || (discountPlanItem.getTargetAccountingArticle().contains(accountingArticle))) 
-                		  && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation,subscription, accountingArticle)) {
-                  	
-        	isApplicable=true;
-                  }
-        
-        log.debug("isDiscountPlanItemApplicable discountPlanItem code={},accountingArticle={}, isApplicable={}",discountPlanItem.getCode(),accountingArticle, isApplicable);
-       
+        boolean isApplicable = false;
+        if (discountPlanItem.isActive()
+						&& (discountPlanItem.getTargetAccountingArticle().isEmpty() || accountingArticle == null
+						                        || (discountPlanItem.getTargetAccountingArticle().stream().anyMatch(o -> accountingArticle.getId().equals(o.getId()))))
+						&& discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation, subscription, accountingArticle)) {
+
+        	isApplicable = true;
+        }
+        log.debug("isDiscountPlanItemApplicable discountPlanItem code={},accountingArticle={}, isApplicable={}", discountPlanItem.getCode(), accountingArticle, isApplicable);
+
         return isApplicable;
     }
     
