@@ -137,6 +137,9 @@ public class CreateBillingRunDto extends BaseEntityDto {
     @Schema(description = "Decide if Report job will be launched automatically at billing run creation")
     private Boolean preReportAutoOnCreate = false;
 
+    @Schema(description = "Decide if Report job will be launched automatically during invoice line job")
+    private Boolean preReportAutoOnInvoiceLinesJob = false;
+
     public Long getId() {
 		return id;
 	}
@@ -406,6 +409,14 @@ public class CreateBillingRunDto extends BaseEntityDto {
 
     public void setPreReportAutoOnCreate(Boolean preReportAutoOnCreate) {
         this.preReportAutoOnCreate = preReportAutoOnCreate;
+    }
+
+    public Boolean getPreReportAutoOnInvoiceLinesJob() {
+        return preReportAutoOnInvoiceLinesJob;
+    }
+
+    public void setPreReportAutoOnInvoiceLinesJob(Boolean preReportAutoOnInvoiceLinesJob) {
+        this.preReportAutoOnInvoiceLinesJob = preReportAutoOnInvoiceLinesJob;
     }
 
     @Override
