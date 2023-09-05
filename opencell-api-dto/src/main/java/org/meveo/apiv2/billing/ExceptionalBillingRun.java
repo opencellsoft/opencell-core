@@ -80,4 +80,11 @@ public interface ExceptionalBillingRun extends Resource {
     default Boolean isPreReportAutoOnCreate() {
         return FALSE;
     }
+
+    @Default
+    @Schema(description = "Decide if Report job will be launched automatically during invoice line job")
+    @JsonProperty("preReportAutoOnInvoiceLinesJob")
+    default Boolean isPreReportAutoOnInvoiceLinesJob() {
+        return FALSE;
+    }
 }
