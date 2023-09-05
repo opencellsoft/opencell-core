@@ -409,15 +409,15 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     private String businessKeyEl;
     
     @Column(name = "business_key_description")
-    private String businessKeyDescription;
+    private String businessKeyDescription = "Business key";
     
     @Type(type = "json")
     @Column(name = "business_key_translated_descriptions", columnDefinition = "jsonb")
-    private Map<String, String> businessKeyTranslatedDescriptions;
+    private Map<String, String> businessKeyTranslatedDescriptions = initBusinessKeyTranslatedDescriptions();
     
     @Type(type = "json")
     @Column(name = "business_key_translated_long_descriptions", columnDefinition = "jsonb")
-    private Map<String, String> businessKeyTranslatedLongDescriptions;
+    private Map<String, String> businessKeyTranslatedLongDescriptions = initBusinessKeyTranslatedLongDescriptions();
     
     @Column(name = "business_key_format")
     @Enumerated(EnumType.STRING)
@@ -1045,4 +1045,17 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 		this.businessKeyIsHidden = businessKeyIsHidden;
 	}
 	
+	private Map<String, String> initBusinessKeyTranslatedDescriptions() {
+        Map<String, String> tradingLanguageMap = new HashMap<>();
+        tradingLanguageMap.put("ENG", "Business key");
+        tradingLanguageMap.put("FRA", "Clé métier");
+        return tradingLanguageMap;
+	}
+	
+	private Map<String, String> initBusinessKeyTranslatedLongDescriptions() {
+        Map<String, String> tradingLanguageMap = new HashMap<>();
+        tradingLanguageMap.put("ENG", "Business key is computed at rating using a custom expression set on the charge");
+        tradingLanguageMap.put("FRA", "La clé métier est calculé à la valorisation en utilisant une formule personnalisé enregistrée sur la charge");
+        return tradingLanguageMap;
+	}
 }
