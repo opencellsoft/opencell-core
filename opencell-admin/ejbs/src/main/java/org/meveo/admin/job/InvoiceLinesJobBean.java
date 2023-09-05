@@ -6,18 +6,22 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.ListUtils.partition;
 import static org.meveo.commons.utils.ParamBean.getInstance;
+import static org.meveo.model.billing.BillingRunReportTypeEnum.BILLED_RATED_TRANSACTIONS;
 import static org.meveo.model.billing.BillingRunStatusEnum.CREATING_INVOICE_LINES;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
+import static org.meveo.model.billing.RatedTransactionStatusEnum.BILLED;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -42,6 +46,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.BasicStatistics;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
+import org.meveo.service.billing.impl.BillingRunReportService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -63,6 +68,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     
     @Inject
     private IteratorBasedJobProcessing iteratorBasedJobProcessing;
+
+    @Inject
+    private BillingRunReportService billingRunReportService;
     
     public static final String FIELD_PRIORITY_SORT = "billingCycle.priority, auditable.created";
     
@@ -151,6 +159,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                     }
                 }
             }
+            createBillingRunReports();
         } catch(BusinessException exception) {
             result.registerError(exception.getMessage());
             log.error(format("Failed to run invoice lines job: %s", exception));
@@ -200,5 +209,19 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         excludedBRs.forEach(br -> result.registerWarning(format("BillingRun[id={%d}] has been ignored", br.getId())));
         billingRuns.removeAll(excludedBRs);
         return excludedBRs.size();
+    }
+
+    @Asynchronous
+    private void createBillingRunReports() {
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("not-inList status", Arrays.asList(NEW, OPEN, CREATING_INVOICE_LINES));
+        filters.put("preInvoicingReport", "IS_NULL");
+        List<BillingRun> billingRuns = billingRunService.list(new PaginationConfiguration(filters));
+        filters.clear();
+        filters.put("status", BILLED.toString());
+        for (BillingRun billingRun : billingRuns) {
+            filters.put("billingRun", billingRun);
+            billingRunReportService.createBillingRunReport(billingRun, filters, BILLED_RATED_TRANSACTIONS);
+        }
     }
 }
