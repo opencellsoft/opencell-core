@@ -3463,6 +3463,7 @@
             <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
             <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
             <column name="discounted_amount" type="numeric(23,12)" />
+            <column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4082,6 +4083,7 @@
 			<column name="trading_currency_id" type="bigint" />
             <column name="contract_line_id" type="bigint" />
 			<column name="price_list_line_id" type="bigint" />
+			<column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -6046,6 +6048,7 @@
             <column name="event_key" type="varchar(100)" />
             <column name="event_version" type="int4" />
 			<column name="wallet_operation_id" type="bigint"/>
+			<column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -20518,6 +20521,7 @@
     <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD"/>
     <changeSet id="#INTRD-17637_2023-09-04" author="ZBariki" />
     <changeSet id="#INTRD-18140_20230904" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
