@@ -3,8 +3,10 @@ package org.meveo.apiv2.generic;
 import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,8 @@ import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.securityDeposit.FinanceSettings;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.util.Inflector;
 
 @Stateless
@@ -40,6 +44,9 @@ public class GenericResourceImpl implements GenericResource {
 
     @Inject
     private GenericApiAlteringService genericApiAlteringService;
+
+    @Inject
+    private FinanceSettingsService financeSettingsService;
 
     @Override
     public Response getAll(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
@@ -52,7 +59,17 @@ public class GenericResourceImpl implements GenericResource {
             excludedFields = searchConfig.getExcluding();
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
-        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+        boolean isHugeVolume = false;
+        if(searchConfig != null && StringUtils.isBlank(searchConfig.getSortOrder())) {
+            FinanceSettings financeSetting = financeSettingsService.getFinanceSetting();
+            isHugeVolume = Optional.ofNullable(financeSetting)
+                                           .map(FinanceSettings::getEntitiesWithHugeVolume)
+                                           .map(Map::keySet)
+                                           .orElse(new HashSet<>())
+                                           .stream()
+                                           .anyMatch(e -> e.equalsIgnoreCase(entityName));
+        }
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService(), !isHugeVolume);
         return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), null, excludedFields))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }

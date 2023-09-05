@@ -42,6 +42,10 @@ public class GenericRequestMapper {
                 genericPagingAndFiltering.getSortBy(), PagingAndFiltering.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
     }
     private List<String> computeFetchFields(GenericPagingAndFiltering genericPagingAndFiltering) {
+        if(genericPagingAndFiltering.getSortBy() == null) {
+            return Collections.emptyList();
+        }
+
         List<String> sortByFetchList = Stream.of(genericPagingAndFiltering.getSortBy().split(","))
                 .filter(s -> !s.isBlank() && s.contains("."))
                 .map(s -> getFetchList(s))
