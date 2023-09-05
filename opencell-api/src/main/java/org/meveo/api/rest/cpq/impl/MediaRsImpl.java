@@ -1,6 +1,7 @@
 package org.meveo.api.rest.cpq.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.MediaApi;
@@ -10,9 +11,11 @@ import org.meveo.api.dto.cpq.MediaListResponsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetMediaDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.MediaRs;
 import org.meveo.api.rest.impl.BaseRs;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class MediaRsImpl extends BaseRs implements MediaRs{
 
 	@Inject

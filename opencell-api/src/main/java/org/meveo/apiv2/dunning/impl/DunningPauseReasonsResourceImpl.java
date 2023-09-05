@@ -1,6 +1,7 @@
 package org.meveo.apiv2.dunning.impl;
 
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.DunningPauseReason;
 import org.meveo.apiv2.dunning.ImmutableDunningPauseReason;
 import org.meveo.apiv2.dunning.resource.DunningPauseReasonResource;
@@ -8,9 +9,11 @@ import org.meveo.apiv2.dunning.service.DunningPauseReasonApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class DunningPauseReasonsResourceImpl implements DunningPauseReasonResource {
 
 	@Inject

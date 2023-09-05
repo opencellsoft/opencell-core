@@ -3,6 +3,7 @@ package org.meveo.api.rest.catalog.impl;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 
@@ -23,6 +24,7 @@ import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductLineDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ProductRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.cpq.Product;
@@ -30,6 +32,7 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class ProductRsImpl extends BaseRs implements ProductRs {
 
 	@Inject

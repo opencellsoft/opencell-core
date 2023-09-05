@@ -1,6 +1,7 @@
 package org.meveo.apiv2.dunning.impl;
 
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.DunningStopReason;
 import org.meveo.apiv2.dunning.ImmutableDunningStopReason;
 import org.meveo.apiv2.dunning.resource.DunningStopReasonResource;
@@ -8,9 +9,11 @@ import org.meveo.apiv2.dunning.service.DunningStopReasonApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class DunningStopReasonsResourceImpl implements DunningStopReasonResource {
 
 	@Inject

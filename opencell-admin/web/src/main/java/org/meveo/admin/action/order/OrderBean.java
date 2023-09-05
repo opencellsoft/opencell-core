@@ -47,8 +47,6 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -77,7 +75,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.api.EntityToDtoConverter;
-import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -132,9 +129,6 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private AuditableFieldService auditableFieldService;
     
     @Inject
     private EntityToDtoConverter entityToDtoConverter;
@@ -431,11 +425,6 @@ public class OrderBean extends CustomFieldBean<Order> {
             entity = orderApi.initiateWorkflow(entity);
         }
 
-        if (OrderStatusEnum.IN_CREATION.equals(entity.getStatus())) {
-            // Status audit (to trace the passage from before "" to creation "IN_CREATION") need for lifecycle
-            auditableFieldService.createFieldHistory(entity, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "",
-                    String.valueOf(entity.getStatus()));
-        }
         return result;
     }
 

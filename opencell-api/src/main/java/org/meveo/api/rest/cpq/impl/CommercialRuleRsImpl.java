@@ -1,6 +1,7 @@
 package org.meveo.api.rest.cpq.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.CommercialRuleApi;
@@ -11,6 +12,7 @@ import org.meveo.api.dto.response.cpq.GetListCommercialRulesResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CommercialRuleRs;
 import org.meveo.api.rest.impl.BaseRs;
 
@@ -18,6 +20,7 @@ import org.meveo.api.rest.impl.BaseRs;
  * @author Mbarek-Ay
  **/
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class CommercialRuleRsImpl extends BaseRs implements CommercialRuleRs {
 
 	@Inject

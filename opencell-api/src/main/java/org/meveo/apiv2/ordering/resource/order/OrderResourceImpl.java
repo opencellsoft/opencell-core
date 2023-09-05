@@ -18,11 +18,13 @@
 
 package org.meveo.apiv2.ordering.resource.order;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.apiv2.ordering.services.OrderApiService;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
@@ -30,6 +32,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class OrderResourceImpl implements OrderResource {
     @Inject
     private OrderApiService orderService;

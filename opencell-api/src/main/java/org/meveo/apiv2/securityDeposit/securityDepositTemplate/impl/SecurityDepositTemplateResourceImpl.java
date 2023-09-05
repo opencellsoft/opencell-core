@@ -2,6 +2,7 @@ package org.meveo.apiv2.securityDeposit.securityDepositTemplate.impl;
 
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.securityDeposit.SDTemplateListStatus;
 import org.meveo.apiv2.securityDeposit.SecurityDepositTemplate;
@@ -10,12 +11,14 @@ import org.meveo.model.securityDeposit.SecurityTemplateStatusEnum;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTemplateService;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class SecurityDepositTemplateResourceImpl implements SecurityDepositTemplateResource {
 
 

@@ -34,17 +34,20 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.QueueBasedIterator;
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.async.SynchronizedIteratorGrouped;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.IEntity;
+import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.jobs.JobClusterBehaviorEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.audit.AuditOrigin;
 import org.meveo.service.job.Job;
 
 /**
@@ -152,6 +155,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         if (EjbUtils.isRunningInClusterMode()) {
             jobExecutionResult.addReport("Node " + EjbUtils.getCurrentClusterNode());
+
         }
 
         // When running as a primary job manager, initialize job history tracking
@@ -168,6 +172,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             if (iterator instanceof SynchronizedIterator) {
                 jobExecutionResult.setNbItemsToProcess(((SynchronizedIterator) iterator).getSize());
+            } else if (iterator instanceof SynchronizedIteratorGrouped) {
+                jobExecutionResult.setNbItemsToProcess(((SynchronizedIteratorGrouped) iterator).getSize());
             }
 
             if (jobExecutionResult.getNbItemsToProcess() == 0) {
@@ -402,11 +408,15 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             int batchSize, int checkJobStatusEveryNr, int updateJobStatusEveryNr, JobExecutionResultImpl jobExecutionResult, boolean isNewTx, boolean useMultipleItemProcessing,
             BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction) {
 
+        String auditOriginName = jobExecutionResult.getJobInstance().getJobTemplate() + "/" + jobInstanceCode;
+
         Runnable task = () -> {
 
             Thread.currentThread().setName(jobInstanceCode + "-" + threadNr);
 
             currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+            AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.JOB, auditOriginName);
 
             int i = 0;
             long globalI = 0;
@@ -520,6 +530,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                                 i++;
                             }
 
+                            // Record a message if there is no single item processing function available
                         } else {
                             globalI = jobExecutionResult.registerError(e.getMessage());
                         }

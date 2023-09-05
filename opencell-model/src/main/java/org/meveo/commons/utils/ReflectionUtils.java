@@ -97,11 +97,9 @@ public class ReflectionUtils {
      *
      * @param packageName Package name
      * @return A list of classes
-     * @throws ClassNotFoundException Class discovery issue
-     * @throws IOException Class discovery issue
      */
     @SuppressWarnings("rawtypes")
-    public static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
+    public static List<Class> getClasses(String packageName)  {
 
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -150,6 +148,12 @@ public class ReflectionUtils {
         return fields;
     }
 
+    /**
+     * Get fields of a given class and it's superclasses
+     *
+     * @param type Class
+     * @return A list of fields
+     */
     public static List<Field> getAllFields(Class<?> type) {
         return getAllFields(new ArrayList<>(), type);
     }
@@ -341,6 +345,26 @@ public class ReflectionUtils {
             }
         }
         return entityClass;
+    }
+
+    /**
+     * Find a class by its simple name in a given package
+     *
+     * @param className Simple classname to match
+     * @param packageName Package name
+     * @return A class object
+     * @throws ClassNotFoundException Class was not found by a given name
+     */
+    @SuppressWarnings({ "rawtypes" })
+    public static Class<?> getClassBySimpleNameAndPackage(String className, String packageName) throws ClassNotFoundException {
+
+        List<Class> classes = getClasses(packageName);
+        for (Class<?> clazz : classes) {
+            if (className.equals(clazz.getSimpleName())) {
+                return clazz;
+            }
+        }
+        throw new ClassNotFoundException("Class with a simple name " + className + " was not found");
     }
 
     /**

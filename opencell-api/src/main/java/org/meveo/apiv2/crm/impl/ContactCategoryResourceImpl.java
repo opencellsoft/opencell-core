@@ -1,6 +1,7 @@
 package org.meveo.apiv2.crm.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -8,11 +9,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.DeleteReferencedEntityException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.crm.ContactCategoryDto;
 import org.meveo.apiv2.crm.ContactCategoryResource;
 import org.meveo.apiv2.crm.service.ContactCategoryApiService;
 import org.meveo.model.communication.contact.ContactCategory;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class ContactCategoryResourceImpl implements ContactCategoryResource {
 
 	@Inject

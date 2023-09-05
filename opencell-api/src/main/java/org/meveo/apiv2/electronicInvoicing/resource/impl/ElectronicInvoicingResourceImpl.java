@@ -1,12 +1,14 @@
 package org.meveo.apiv2.electronicInvoicing.resource.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.electronicInvoicing.resource.ElectronicInvoicingResource;
 import org.meveo.apiv2.electronicInvoicing.resource.IsoIcd;
 import org.meveo.apiv2.electronicInvoicing.resource.UntdidAllowanceCode;
@@ -25,6 +27,7 @@ import org.meveo.service.billing.impl.UntdidTaxationCategoryService;
 import org.meveo.service.billing.impl.UntdidVatPaymentOptionService;
 import org.meveo.service.billing.impl.UntdidVatexService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class ElectronicInvoicingResourceImpl implements ElectronicInvoicingResource {
 
     @Inject private IsoIcdService isoIcdService;

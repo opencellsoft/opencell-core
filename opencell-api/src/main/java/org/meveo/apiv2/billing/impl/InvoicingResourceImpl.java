@@ -3,11 +3,13 @@ package org.meveo.apiv2.billing.impl;
 import static javax.ws.rs.core.Response.ok;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.CancelBillingRunInput;
 import org.meveo.apiv2.billing.ExceptionalBillingRun;
 import org.meveo.apiv2.billing.ImmutableExceptionalBillingRun;
@@ -18,6 +20,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class InvoicingResourceImpl implements InvoicingResource {
 
     @Inject

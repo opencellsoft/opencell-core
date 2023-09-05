@@ -1,5 +1,6 @@
 package org.meveo.apiv2.dunning.impl;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.DunningPaymentRetry;
 import org.meveo.apiv2.dunning.ImmutableDunningPaymentRetry;
 import org.meveo.apiv2.dunning.resource.DunningPaymentRetryResource;
@@ -7,9 +8,11 @@ import org.meveo.apiv2.dunning.service.DunningPaymentRetryApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class DunningPaymentRetryResourceImpl implements DunningPaymentRetryResource {
 
 	@Inject

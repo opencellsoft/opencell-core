@@ -54,8 +54,6 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.RatingResult;
-import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
@@ -87,7 +85,6 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -127,9 +124,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
     private DiscountPlanInstanceService discountPlanInstanceService;
 
     @Inject
-    private AuditableFieldService auditableFieldService;
-
-    @Inject
     private OneShotChargeInstanceService oneShotChargeInstanceService;
 
     @Inject
@@ -154,9 +148,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.createAutoRenewDate();
         subscription.setVersionNumber(1);
         super.create(subscription);
-
-        // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
-        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(subscription.getStatus()));
         
         // execute subscription script
         if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
@@ -194,9 +185,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.createAutoRenewDate();
         subscription.setVersionNumber(1);
         super.createWithoutNotif(subscription);
-
-        // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
-        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(subscription.getStatus()));
         
         // execute subscription script
         if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {

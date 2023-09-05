@@ -1,8 +1,10 @@
 package org.meveo.apiv2.dunning.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.DunningAgentInput;
 import org.meveo.apiv2.dunning.ImmutableDunningAgentInput;
 import org.meveo.apiv2.dunning.resource.DunningAgentResource;
@@ -10,6 +12,7 @@ import org.meveo.apiv2.dunning.resource.DunningSettingResource;
 import org.meveo.apiv2.dunning.service.DunningAgentApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class DunningAgentResourceImpl implements DunningAgentResource {
 
 	@Inject

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Link;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.GenericOpencellRestful;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.apiv2.generic.core.GenericHelper;
@@ -31,6 +33,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.util.Inflector;
 
 @Stateless
+@Interceptors({ WsRestApiInterceptor.class })
 public class GenericResourceImpl implements GenericResource {
     @Inject
     private GenericApiLoadService loadService;

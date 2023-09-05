@@ -65,7 +65,7 @@ public class DiscountPlanInstanceStatusJob extends Job {
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         String activateDiscountPlanInstanceFromDateEl = (String) this.getParamOrCFValue(jobInstance, "activateDiscountPlanInstanceFromDateEl");
         String expireDiscountPlanInstanceToDateEl = (String) this.getParamOrCFValue(jobInstance, "expireDiscountPlanInstanceToDateEl");
-        boolean expireDiscountPlanInstance = (boolean) this.getParamOrCFValue(jobInstance, "expireDiscountPlanInstance");
+        boolean expireDiscountPlanInstance = (boolean) this.getParamOrCFValue(jobInstance, "expireDiscountPlanInstance", false);
         if (expireDiscountPlanInstance) {
             expireDiscountPlanInstance(result, jobInstance, expireDiscountPlanInstanceToDateEl);
         } else {
