@@ -179,7 +179,7 @@ public class ServiceSingleton {
                 }
                 previousInvoiceNb = sequence.getCurrentInvoiceNb();
                 sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
-                // invoiceType = invoiceTypeService.update(invoiceType);
+                
             } else {
                 InvoiceSequence sequenceGlobal = new InvoiceSequence();
                 sequenceGlobal.setSequenceSize(sequence.getSequenceSize());
@@ -221,14 +221,9 @@ public class ServiceSingleton {
 
         Seller seller = sellerService.findById(sellerId);
         seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
-
-        InvoiceSequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
-        return sequence;
-
-        /*
-         * try { sequence = (InvoiceSequence) BeanUtils.cloneBean(sequence); return sequence; } catch (IllegalAccessException | InstantiationException | InvocationTargetException |
-         * NoSuchMethodException e) { throw new BusinessException("Failed to close invoice numbering sequence", e); }
-         */
+        
+        return incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
+       
     }
 
     /**
@@ -256,7 +251,7 @@ public class ServiceSingleton {
         String occTemplateCode = null;
         try {
             occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue, appProvider, true);
-            log.debug("occTemplateCode:" + occTemplateCode);
+            log.debug("occTemplateCode:{}" , occTemplateCode);
             occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         } catch (Exception e) {
             log.error("error while getting occ template ", e);
