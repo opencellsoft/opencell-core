@@ -251,7 +251,7 @@ public class PaginationConfiguration implements Serializable {
     }
     
     /**
-     * @param Sort field and sort order
+     * @param ordering field and sort order
      */
     public void setOrderings(Object[] ordering) {
         this.ordering = ordering;
