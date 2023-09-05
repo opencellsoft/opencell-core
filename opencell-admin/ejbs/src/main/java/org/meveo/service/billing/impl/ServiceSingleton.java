@@ -20,6 +20,7 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 
+import javax.ejb.AccessTimeout;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -178,7 +179,7 @@ public class ServiceSingleton {
                 }
                 previousInvoiceNb = sequence.getCurrentInvoiceNb();
                 sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
-                // invoiceType = invoiceTypeService.update(invoiceType);
+                
             } else {
                 InvoiceSequence sequenceGlobal = new InvoiceSequence();
                 sequenceGlobal.setSequenceSize(sequence.getSequenceSize());
@@ -220,14 +221,9 @@ public class ServiceSingleton {
 
         Seller seller = sellerService.findById(sellerId);
         seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
-
-        InvoiceSequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
-        return sequence;
-
-        /*
-         * try { sequence = (InvoiceSequence) BeanUtils.cloneBean(sequence); return sequence; } catch (IllegalAccessException | InstantiationException | InvocationTargetException |
-         * NoSuchMethodException e) { throw new BusinessException("Failed to close invoice numbering sequence", e); }
-         */
+        
+        return incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
+       
     }
 
     /**
@@ -255,7 +251,7 @@ public class ServiceSingleton {
         String occTemplateCode = null;
         try {
             occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue, appProvider, true);
-            log.debug("occTemplateCode:" + occTemplateCode);
+            log.debug("occTemplateCode:{}" , occTemplateCode);
             occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         } catch (Exception e) {
             log.error("error while getting occ template ", e);
@@ -346,6 +342,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @AccessTimeout(value=30000)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumberVirtual(Invoice invoice) throws BusinessException {
@@ -359,6 +356,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @AccessTimeout(value=30000)    
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
