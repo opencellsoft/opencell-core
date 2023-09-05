@@ -20,6 +20,7 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 
+import javax.ejb.AccessTimeout;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -346,6 +347,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @AccessTimeout(value=30000)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumberVirtual(Invoice invoice) throws BusinessException {
@@ -359,6 +361,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @AccessTimeout(value=30000)    
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
