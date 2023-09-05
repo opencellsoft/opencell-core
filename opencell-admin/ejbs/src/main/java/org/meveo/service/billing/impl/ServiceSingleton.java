@@ -51,6 +51,7 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
+import javax.ejb.AccessTimeout;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -296,7 +297,7 @@ public class ServiceSingleton {
         String occTemplateCode = null;
         try {
             occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue, appProvider, true);
-            log.debug("occTemplateCode:" + occTemplateCode);
+            log.debug("occTemplateCode:{}" , occTemplateCode);
             occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         } catch (Exception e) {
             log.error("error while getting occ template ", e);
@@ -389,6 +390,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @AccessTimeout(value=30000)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumberVirtual(Invoice invoice) throws BusinessException {
@@ -402,6 +404,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @AccessTimeout(value=30000)    
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
