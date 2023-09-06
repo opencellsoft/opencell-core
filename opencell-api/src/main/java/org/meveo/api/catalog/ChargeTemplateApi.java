@@ -33,6 +33,7 @@ import javax.xml.bind.ValidationException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
@@ -280,7 +281,27 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         chargeTemplate.setParameterExtraIsMandatory(postData.getParameterExtraIsMandatory() != null ? postData.getParameterExtraIsMandatory() : false);
         chargeTemplate.setParameterExtraIsHidden(postData.getParameterExtraIsHidden() != null ? postData.getParameterExtraIsHidden() : false);
 
-
+        if (postData.getBusinessKeyEl() != null) {
+            chargeTemplate.setBusinessKeyEl(postData.getBusinessKeyEl());
+        }
+        if (postData.getBusinessKeyDescription() != null) {
+            chargeTemplate.setBusinessKeyDescription(postData.getBusinessKeyDescription());
+        }
+        if (postData.getBusinessKeyTranslatedDescriptions() != null && !postData.getBusinessKeyTranslatedDescriptions().isEmpty()) {
+            chargeTemplate.setBusinessKeyTranslatedDescriptions(convertMultiLanguageToMapOfValues(postData.getBusinessKeyTranslatedDescriptions(), null));
+        }
+        if (postData.getBusinessKeyTranslatedLongDescriptions() != null && !postData.getBusinessKeyTranslatedLongDescriptions().isEmpty()) {
+            chargeTemplate.setBusinessKeyTranslatedLongDescriptions(convertMultiLanguageToMapOfValues(postData.getBusinessKeyTranslatedLongDescriptions(), null));
+        }
+        if (postData.getBusinessKeyFormat() != null) {
+            chargeTemplate.setBusinessKeyFormat(postData.getBusinessKeyFormat());
+        }
+        if (postData.getBusinessKeyIsMandatory() != null) {
+            chargeTemplate.setBusinessKeyIsMandatory(postData.getBusinessKeyIsMandatory());
+        }
+        if (postData.getBusinessKeyIsHidden() != null) {
+            chargeTemplate.setBusinessKeyIsHidden(postData.getBusinessKeyIsHidden());
+        }
 
         // populate customFields
         try {
