@@ -152,8 +152,7 @@ public class InvoiceLinesFactory {
             BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity, mc);
             invoiceLine.setUnitPrice(unitPrice);
         } else {
-            invoiceLine.setUnitPrice(isEnterprise ? (BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO)
-                    : (BigDecimal) data.getOrDefault("unit_amount_with_tax", ZERO));
+            invoiceLine.setUnitPrice((BigDecimal) data.getOrDefault("unit_amount_without_tax", ZERO));
         }
         invoiceLine.setRawAmount(isEnterprise ? amountWithoutTax : amountWithTax);
         DatePeriod validity = new DatePeriod();
