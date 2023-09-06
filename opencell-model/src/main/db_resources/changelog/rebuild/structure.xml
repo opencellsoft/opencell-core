@@ -2738,7 +2738,30 @@
             <column name="generate_ao" type="${type.boolean}" defaultValueNumeric="0">
             	<constraints nullable="false" />
             </column>
-            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" >
+                <constraints nullable="false" />
+            </column>
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
+                <constraints nullable="false" />
+            </column>
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -2941,13 +2964,30 @@
             	<constraints nullable="true" />
             </column>
             <column name="priority" type="int4" defaultValueNumeric="0" />
-            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" />
-            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="disable_aggregation" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="date_aggregation" type="varchar(255)" defaultValue="NO_DATE_AGGREGATION" >
+                <constraints nullable="false" />
+            </column>
+            <column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" >
+                <constraints nullable="false" />
+            </column>
+            <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -19437,6 +19477,7 @@
     <changeSet id="#INTRD-16636_20230610" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16881_20230816" author="Mohammed_ElAzzouzi"/>
+    <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

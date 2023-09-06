@@ -429,12 +429,61 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     private Boolean generateAO = Boolean.FALSE;
 
     /**
+     * Do not aggregate RTs to ILs at all
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "disable_aggregation")
+    private boolean disableAggregation = false;
+
+    /**
+     * Aggregate based on accounting article label instead of RT description
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "use_accounting_article_label")
+    private boolean useAccountingArticleLabel = false;
+
+    /**
+     * Aggregate by date option
+     */
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "date_aggregation")
+    private DateAggregationOption dateAggregation = DateAggregationOption.NO_DATE_AGGREGATION;
+
+    /**
+     * Aggregate per unit amount
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "aggregate_unit_amounts")
+    private boolean aggregateUnitAmounts = false;
+
+    /**
+     * If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_subscriptions")
+    private boolean ignoreSubscriptions = true;
+
+    /**
+     * If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_orders")
+    private boolean ignoreOrders = true;
+
+    /**
      * To decide if adding invoice lines incrementally or not.
      */
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
     private Boolean incrementalInvoiceLines = Boolean.FALSE;
     
+    /**
+     * Discount aggregation type
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "discount_aggregation", nullable = false)
+    private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
+
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
 	}
@@ -840,11 +889,11 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 		this.suspectAutoAction = autoSuspectAction;
 	}
 
-	public boolean isSkipValidationScript() {
+    public boolean isSkipValidationScript() {
 		return skipValidationScript;
 	}
 	
-	public void setSkipValidationScript(boolean skipValidationScript) {
+    public void setSkipValidationScript(boolean skipValidationScript) {
 		this.skipValidationScript = skipValidationScript;
 	}
 	
@@ -1010,11 +1059,109 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 		this.generateAO = generateAO;
 	}
 
+    public boolean isDisableAggregation() {
+        return disableAggregation;
+    }
+
+    public void setDisableAggregation(boolean disableAggregation) {
+        this.disableAggregation = disableAggregation;
+    }
+
+    /**
+     * @return Aggregate based on accounting article label instead of RT description
+     */
+    public boolean isUseAccountingArticleLabel() {
+        return useAccountingArticleLabel;
+    }
+
+    /**
+     * @param useAccountingArticleLabel Aggregate based on accounting article label instead of RT description
+     */
+    public void setUseAccountingArticleLabel(boolean useAccountingArticleLabel) {
+        this.useAccountingArticleLabel = useAccountingArticleLabel;
+    }
+
+    /**
+     * @return Aggregate by date option
+     */
+    public DateAggregationOption getDateAggregation() {
+        return dateAggregation;
+    }
+
+    /**
+     * @param dateAggregation Aggregate by date option
+     */
+    public void setDateAggregation(DateAggregationOption dateAggregation) {
+        this.dateAggregation = dateAggregation;
+    }
+
+    /**
+     * @return Aggregate per unit amount
+     */
+    public boolean isAggregateUnitAmounts() {
+        return aggregateUnitAmounts;
+    }
+
+    /**
+     * @param aggregateUnitAmounts Aggregate per unit amount
+     */
+    public void setAggregateUnitAmounts(boolean aggregateUnitAmounts) {
+        this.aggregateUnitAmounts = aggregateUnitAmounts;
+    }
+
+    /**
+     * @return If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)
+     */
+    public boolean isIgnoreSubscriptions() {
+        return ignoreSubscriptions;
+    }
+
+    /**
+     * @param ignoreSubscriptions If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)
+     */
+    public void setIgnoreSubscriptions(boolean ignoreSubscriptions) {
+        this.ignoreSubscriptions = ignoreSubscriptions;
+    }
+
+    /**
+     * @return If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)
+     */
+    public boolean isIgnoreOrders() {
+        return ignoreOrders;
+    }
+
+    /**
+     * @param ignoreOrders If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)
+     */
+    public void setIgnoreOrders(boolean ignoreOrders) {
+        this.ignoreOrders = ignoreOrders;
+    }
+
+    /**
+     * @return To decide if adding invoice lines incrementally or not.
+     */
     public Boolean getIncrementalInvoiceLines() {
         return incrementalInvoiceLines;
     }
 
+    /**
+     * @param incrementalInvoiceLines To decide if adding invoice lines incrementally or not.
+     */
     public void setIncrementalInvoiceLines(Boolean incrementalInvoiceLines) {
         this.incrementalInvoiceLines = incrementalInvoiceLines;
+    }
+
+    /**
+     * @return Discount aggregation type
+     */
+    public DiscountAggregationModeEnum getDiscountAggregation() {
+        return discountAggregation;
+}
+
+    /**
+     * @param discountAggregation Discount aggregation type
+     */
+    public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
+        this.discountAggregation = discountAggregation;
     }
 }
