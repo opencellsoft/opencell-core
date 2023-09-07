@@ -219,7 +219,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 								result.addReport("no invoice to process");
 								return;
 							}
-							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPayTprocess, ddRequestBuilder, result);
+							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPayTprocess, ddRequestBuilder, result,nbRuns,waitingMillis);
 	
 							if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
 								dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider, result);
