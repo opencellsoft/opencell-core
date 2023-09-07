@@ -337,9 +337,9 @@ public class InvoiceUblHelper {
 		PartyLegalEntity partyLegalEntity = objectFactoryCommonAggrement.createPartyLegalEntity();
 		
 		// AccountingCustomerParty/Party/PartyLegalEntity/RegistrationName
-		if(StringUtils.isNotBlank(billingAccount.getRegistrationNo())){
+		if(StringUtils.isNotBlank(billingAccount.getDescription())){
 			RegistrationName registrationName = objectFactorycommonBasic.createRegistrationName();
-			registrationName.setValue(billingAccount.getRegistrationNo());
+			registrationName.setValue(billingAccount.getDescription());
 			partyLegalEntity.setRegistrationName(registrationName);
 		}
 		if(billingAccount.getAddress() != null){
@@ -438,7 +438,7 @@ public class InvoiceUblHelper {
 		PartyLegalEntity partyLegalEntity = objectFactoryCommonAggrement.createPartyLegalEntity();
 		// AccountingSupplierParty/Party/PartyLegalEntity/RegistrationName
 		RegistrationName registrationName = objectFactorycommonBasic.createRegistrationName();
-		registrationName.setValue(seller.getRegistrationNo());
+		registrationName.setValue(seller.getDescription());
 		partyLegalEntity.setRegistrationName(registrationName);
 		partyType.getPartyLegalEntities().add(partyLegalEntity);
 		// AccountingSupplierParty/Party/PartyLegalEntity/RegistrationAddress/StreetName
