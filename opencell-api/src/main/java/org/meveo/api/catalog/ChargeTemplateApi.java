@@ -252,35 +252,83 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         if(postData.getInternalNote() != null) {
         	chargeTemplate.setInternalNote(StringUtils.isBlank(postData.getInternalNote()) ? null : postData.getInternalNote());
         }
+
+        if (postData.getParameter1Description() != null) {
+            chargeTemplate.setParameter1Description(postData.getParameter1Description());
+        }
+        if (postData.getParameter1TranslatedDescriptions() != null && !postData.getParameter1TranslatedDescriptions().isEmpty()) {
+            chargeTemplate.setParameter1TranslatedDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter1TranslatedDescriptions(), null));
+        }
+        if (postData.getParameter1TranslatedLongDescriptions() != null && !postData.getParameter1TranslatedLongDescriptions().isEmpty()) {
+            chargeTemplate.setParameter1TranslatedLongDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter1TranslatedLongDescriptions(), null));
+        }
+        if (postData.getParameter1Format() != null) {
+            chargeTemplate.setParameter1Format(postData.getParameter1Format());
+        }
+        if (postData.getParameter1IsMandatory() != null) {
+            chargeTemplate.setParameter1IsMandatory(postData.getParameter1IsMandatory());
+        }
+        if (postData.getParameter1IsHidden() != null) {
+            chargeTemplate.setParameter1IsHidden(postData.getParameter1IsHidden());
+        }
         
-        chargeTemplate.setParameter1Description(StringUtils.isBlank(postData.getParameter1Description()) ? null : postData.getParameter1Description());
-        chargeTemplate.setParameter1TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter1TranslatedDescriptions(), isNew, "1"));
-        chargeTemplate.setParameter1TranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter1TranslatedLongDescriptions()));
-        chargeTemplate.setParameter1Format(StringUtils.isBlank(postData.getParameter1Format()) ? null : postData.getParameter1Format());
-        chargeTemplate.setParameter1IsMandatory(postData.getParameter1IsMandatory() != null ? postData.getParameter1IsMandatory() : false);
-        chargeTemplate.setParameter1IsHidden(postData.getParameter1IsHidden() != null ? postData.getParameter1IsHidden() : false);
-
-        chargeTemplate.setParameter2Description(StringUtils.isBlank(postData.getParameter2Description()) ? null : postData.getParameter2Description());
-        chargeTemplate.setParameter2TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter2TranslatedDescriptions(), isNew, "2"));
-        chargeTemplate.setParameter2TranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter2TranslatedLongDescriptions()));
-        chargeTemplate.setParameter2Format(StringUtils.isBlank(postData.getParameter2Format()) ? null : postData.getParameter2Format());
-        chargeTemplate.setParameter2IsMandatory(postData.getParameter2IsMandatory() != null ? postData.getParameter2IsMandatory() : false);
-        chargeTemplate.setParameter2IsHidden(postData.getParameter2IsHidden() != null ? postData.getParameter2IsHidden() : false);
-
-        chargeTemplate.setParameter3Description(StringUtils.isBlank(postData.getParameter3Description()) ? null : postData.getParameter3Description());
-        chargeTemplate.setParameter3TranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter3TranslatedDescriptions(), isNew, "3"));
-        chargeTemplate.setParameter3TranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameter3TranslatedLongDescriptions()));
-        chargeTemplate.setParameter3Format(StringUtils.isBlank(postData.getParameter3Format()) ? null : postData.getParameter3Format());
-        chargeTemplate.setParameter3IsMandatory(postData.getParameter3IsMandatory() != null ? postData.getParameter3IsMandatory() : false);
-        chargeTemplate.setParameter3IsHidden(postData.getParameter3IsHidden() != null ? postData.getParameter3IsHidden() : false);
-
-        chargeTemplate.setParameterExtraDescription(StringUtils.isBlank(postData.getParameterExtraDescription()) ? null : postData.getParameterExtraDescription());
-        chargeTemplate.setParameterExtraTranslatedDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameterExtraTranslatedDescriptions(), isNew, "Extra"));
-        chargeTemplate.setParameterExtraTranslatedLongDescriptions(mapLanguageDtoToTradingLanguage(postData.getParameterExtraTranslatedLongDescriptions()));
-        chargeTemplate.setParameterExtraFormat(StringUtils.isBlank(postData.getParameterExtraFormat()) ? null : postData.getParameterExtraFormat());
-        chargeTemplate.setParameterExtraIsMandatory(postData.getParameterExtraIsMandatory() != null ? postData.getParameterExtraIsMandatory() : false);
-        chargeTemplate.setParameterExtraIsHidden(postData.getParameterExtraIsHidden() != null ? postData.getParameterExtraIsHidden() : false);
-
+        if (postData.getParameter2Description() != null) {
+            chargeTemplate.setParameter2Description(postData.getParameter2Description());
+        }
+        if (postData.getParameter2TranslatedDescriptions() != null && !postData.getParameter2TranslatedDescriptions().isEmpty()) {
+            chargeTemplate.setParameter2TranslatedDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter2TranslatedDescriptions(), null));
+        }
+        if (postData.getParameter2TranslatedLongDescriptions() != null && !postData.getParameter2TranslatedLongDescriptions().isEmpty()) {
+            chargeTemplate.setParameter2TranslatedLongDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter2TranslatedLongDescriptions(), null));
+        }
+        if (postData.getParameter2Format() != null) {
+            chargeTemplate.setParameter2Format(postData.getParameter2Format());
+        }
+        if (postData.getParameter2IsMandatory() != null) {
+            chargeTemplate.setParameter2IsMandatory(postData.getParameter2IsMandatory());
+        }
+        if (postData.getParameter2IsHidden() != null) {
+            chargeTemplate.setParameter2IsHidden(postData.getParameter2IsHidden());
+        }
+        
+        if (postData.getParameter3Description() != null) {
+            chargeTemplate.setParameter3Description(postData.getParameter3Description());
+        }
+        if (postData.getParameter3TranslatedDescriptions() != null && !postData.getParameter3TranslatedDescriptions().isEmpty()) {
+            chargeTemplate.setParameter3TranslatedDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter3TranslatedDescriptions(), null));
+        }
+        if (postData.getParameter3TranslatedLongDescriptions() != null && !postData.getParameter3TranslatedLongDescriptions().isEmpty()) {
+            chargeTemplate.setParameter3TranslatedLongDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter3TranslatedLongDescriptions(), null));
+        }
+        if (postData.getParameter3Format() != null) {
+            chargeTemplate.setParameter3Format(postData.getParameter3Format());
+        }
+        if (postData.getParameter3IsMandatory() != null) {
+            chargeTemplate.setParameter3IsMandatory(postData.getParameter3IsMandatory());
+        }
+        if (postData.getParameter3IsHidden() != null) {
+            chargeTemplate.setParameter3IsHidden(postData.getParameter3IsHidden());
+        }
+        
+        if (postData.getParameterExtraDescription() != null) {
+            chargeTemplate.setParameterExtraDescription(postData.getParameterExtraDescription());
+        }
+        if (postData.getParameterExtraTranslatedDescriptions() != null && !postData.getParameterExtraTranslatedDescriptions().isEmpty()) {
+            chargeTemplate.setParameterExtraTranslatedDescriptions(convertMultiLanguageToMapOfValues(postData.getParameterExtraTranslatedDescriptions(), null));
+        }
+        if (postData.getParameterExtraTranslatedLongDescriptions() != null && !postData.getParameterExtraTranslatedLongDescriptions().isEmpty()) {
+            chargeTemplate.setParameterExtraTranslatedLongDescriptions(convertMultiLanguageToMapOfValues(postData.getParameterExtraTranslatedLongDescriptions(), null));
+        }
+        if (postData.getParameterExtraFormat() != null) {
+            chargeTemplate.setParameterExtraFormat(postData.getParameterExtraFormat());
+        }
+        if (postData.getParameterExtraIsMandatory() != null) {
+            chargeTemplate.setParameterExtraIsMandatory(postData.getParameterExtraIsMandatory());
+        }
+        if (postData.getParameterExtraIsHidden() != null) {
+            chargeTemplate.setParameterExtraIsHidden(postData.getParameterExtraIsHidden());
+        }
+        
         if (postData.getBusinessKeyEl() != null) {
             chargeTemplate.setBusinessKeyEl(postData.getBusinessKeyEl());
         }
@@ -315,48 +363,6 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         }
     }
     
-    private Map<String, String> mapLanguageDtoToTradingLanguage(Map<String, String> languageDtoMap, boolean isNew, String parameterNumber) {
-        Map<String, String> tradingLanguageMap = new HashMap<>();
-
-        if (languageDtoMap != null  && !languageDtoMap.isEmpty()) {
-            for (Map.Entry<String, String> entry : languageDtoMap.entrySet()) {
-                String languageCode = entry.getKey();
-                TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode);
-                if(tradingLanguage == null) {
-                	throw new EntityDoesNotExistsException(" TradingLanguage with code=" + languageCode
-            				+ " does not exists.");
-                }
-                tradingLanguageMap.put(tradingLanguage.getLanguageCode(), entry.getValue());
-            }
-        } else if (isNew) {
-            tradingLanguageMap.put("ENG", "Parameter " + parameterNumber);
-            tradingLanguageMap.put("FRA", "Paramètre " + parameterNumber);
-        }
-
-        return tradingLanguageMap;
-    }
-    
-    private Map<String, String> mapLanguageDtoToTradingLanguage(Map<String, String> languageDtoMap) {
-        Map<String, String> tradingLanguageMap = new HashMap<>();
-        if(languageDtoMap != null) {
-	        for (Map.Entry<String, String> entry : languageDtoMap.entrySet()) {
-	            String languageCode = entry.getKey();
-	            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(languageCode);
-	            if(tradingLanguage == null) {
-	            	throw new EntityDoesNotExistsException(" TradingLanguage with code=" + languageCode
-	        				+ " does not exists.");
-	            }
-	            tradingLanguageMap.put(tradingLanguage.getLanguageCode(), entry.getValue());
-	        }
-        }
-        return tradingLanguageMap;
-    }
-
-    private TradingLanguage findTradingLanguageByLanguageDto(LanguageDto languageDto) {
-    	return tradingLanguageService.findByTradingLanguageCode(languageDto.getCode());
-    }
-
-
     protected void checkInternalNote(ChargeTemplate entity, ChargeTemplateDto postData) {
     	// Internal note updatable only for Draft and Active Charge template
 		if (postData.getInternalNote() != null && !postData.getInternalNote().equals(entity.getInternalNote()) && 

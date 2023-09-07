@@ -20,10 +20,8 @@ package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,9 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
-import org.meveo.api.dto.LanguageDto;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -173,10 +169,10 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     private String parameter1Description;
 
     @Schema(description = "Translated descriptions of Parameter 1")
-    private Map<String, String> parameter1TranslatedDescriptions;
+    private List<LanguageDescriptionDto> parameter1TranslatedDescriptions;
 
     @Schema(description = "Translated long descriptions of Parameter 1")
-    private Map<String, String> parameter1TranslatedLongDescriptions;
+    private List<LanguageDescriptionDto> parameter1TranslatedLongDescriptions;
 
     @Schema(description = "Format of Parameter 1")
     private ChargeTemplate.ParameterFormat parameter1Format;
@@ -192,10 +188,10 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     private String parameter2Description;
 
     @Schema(description = "Translated descriptions of Parameter 2")
-    private Map<String, String> parameter2TranslatedDescriptions;
+    private List<LanguageDescriptionDto> parameter2TranslatedDescriptions;
 
     @Schema(description = "Translated long descriptions of Parameter 2")
-    private Map<String, String> parameter2TranslatedLongDescriptions;
+    private List<LanguageDescriptionDto> parameter2TranslatedLongDescriptions;
 
     @Schema(description = "Format of Parameter 2")
     private ChargeTemplate.ParameterFormat parameter2Format;
@@ -211,10 +207,10 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     private String parameter3Description;
 
     @Schema(description = "Translated descriptions of Parameter 3")
-    private Map<String, String> parameter3TranslatedDescriptions;
+    private List<LanguageDescriptionDto> parameter3TranslatedDescriptions;
 
     @Schema(description = "Translated long descriptions of Parameter 3")
-    private Map<String, String> parameter3TranslatedLongDescriptions;
+    private List<LanguageDescriptionDto> parameter3TranslatedLongDescriptions;
 
     @Schema(description = "Format of Parameter 3")
     private ChargeTemplate.ParameterFormat parameter3Format;
@@ -230,10 +226,10 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     private String parameterExtraDescription;
 
     @Schema(description = "Translated descriptions of Extra Parameter")
-    private Map<String, String> parameterExtraTranslatedDescriptions;
+    private List<LanguageDescriptionDto> parameterExtraTranslatedDescriptions;
 
     @Schema(description = "Translated long descriptions of Extra Parameter")
-    private Map<String, String> parameterExtraTranslatedLongDescriptions;
+    private List<LanguageDescriptionDto> parameterExtraTranslatedLongDescriptions;
 
     @Schema(description = "Format of Extra Parameter")
     private ChargeTemplate.ParameterFormat parameterExtraFormat;
@@ -326,23 +322,31 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
         }
         internalNote = chargeTemplate.getInternalNote();
         
-     // New Fields for Parameters
+        // New Fields for Parameters
         parameter1Description = chargeTemplate.getParameter1Description();
+        parameter1TranslatedDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter1TranslatedDescriptions());
+        parameter1TranslatedLongDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter1TranslatedLongDescriptions());
         parameter1Format = chargeTemplate.getParameter1Format();
         parameter1IsMandatory = chargeTemplate.isParameter1IsMandatory();
         parameter1IsHidden = chargeTemplate.isParameter1IsHidden();
 
         parameter2Description = chargeTemplate.getParameter2Description();
+        parameter2TranslatedDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter2TranslatedDescriptions());
+        parameter2TranslatedLongDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter2TranslatedLongDescriptions());
         parameter2Format = chargeTemplate.getParameter2Format();
         parameter2IsMandatory = chargeTemplate.isParameter2IsMandatory();
         parameter2IsHidden = chargeTemplate.isParameter2IsHidden();
 
         parameter3Description = chargeTemplate.getParameter3Description();
+        parameter3TranslatedDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter3TranslatedDescriptions());
+        parameter3TranslatedLongDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter3TranslatedLongDescriptions());
         parameter3Format = chargeTemplate.getParameter3Format();
         parameter3IsMandatory = chargeTemplate.isParameter3IsMandatory();
         parameter3IsHidden = chargeTemplate.isParameter3IsHidden();
 
         parameterExtraDescription = chargeTemplate.getParameterExtraDescription();
+        parameterExtraTranslatedDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameterExtraTranslatedDescriptions());
+        parameterExtraTranslatedLongDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameterExtraTranslatedLongDescriptions());
         parameterExtraFormat = chargeTemplate.getParameterExtraFormat();
         parameterExtraIsMandatory = chargeTemplate.isParameterExtraIsMandatory();
         parameterExtraIsHidden = chargeTemplate.isParameterExtraIsHidden();
@@ -763,19 +767,19 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 		this.parameter1Description = parameter1Description;
 	}
 
-	public Map<String, String> getParameter1TranslatedDescriptions() {
+	public List<LanguageDescriptionDto> getParameter1TranslatedDescriptions() {
 		return parameter1TranslatedDescriptions;
 	}
 
-	public void setParameter1TranslatedDescriptions(Map<String, String> parameter1TranslatedDescriptions) {
+	public void setParameter1TranslatedDescriptions(List<LanguageDescriptionDto> parameter1TranslatedDescriptions) {
 		this.parameter1TranslatedDescriptions = parameter1TranslatedDescriptions;
 	}
 
-	public Map<String, String> getParameter1TranslatedLongDescriptions() {
+	public List<LanguageDescriptionDto> getParameter1TranslatedLongDescriptions() {
 		return parameter1TranslatedLongDescriptions;
 	}
 
-	public void setParameter1TranslatedLongDescriptions(Map<String, String> parameter1TranslatedLongDescriptions) {
+	public void setParameter1TranslatedLongDescriptions(List<LanguageDescriptionDto> parameter1TranslatedLongDescriptions) {
 		this.parameter1TranslatedLongDescriptions = parameter1TranslatedLongDescriptions;
 	}
 
@@ -811,19 +815,19 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 		this.parameter2Description = parameter2Description;
 	}
 
-	public Map<String, String> getParameter2TranslatedDescriptions() {
+	public List<LanguageDescriptionDto> getParameter2TranslatedDescriptions() {
 		return parameter2TranslatedDescriptions;
 	}
 
-	public void setParameter2TranslatedDescriptions(Map<String, String> parameter2TranslatedDescriptions) {
+	public void setParameter2TranslatedDescriptions(List<LanguageDescriptionDto> parameter2TranslatedDescriptions) {
 		this.parameter2TranslatedDescriptions = parameter2TranslatedDescriptions;
 	}
 
-	public Map<String, String> getParameter2TranslatedLongDescriptions() {
+	public List<LanguageDescriptionDto> getParameter2TranslatedLongDescriptions() {
 		return parameter2TranslatedLongDescriptions;
 	}
 
-	public void setParameter2TranslatedLongDescriptions(Map<String, String> parameter2TranslatedLongDescriptions) {
+	public void setParameter2TranslatedLongDescriptions(List<LanguageDescriptionDto> parameter2TranslatedLongDescriptions) {
 		this.parameter2TranslatedLongDescriptions = parameter2TranslatedLongDescriptions;
 	}
 
@@ -859,19 +863,19 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 		this.parameter3Description = parameter3Description;
 	}
 
-	public Map<String, String> getParameter3TranslatedDescriptions() {
+	public List<LanguageDescriptionDto> getParameter3TranslatedDescriptions() {
 		return parameter3TranslatedDescriptions;
 	}
 
-	public void setParameter3TranslatedDescriptions(Map<String, String> parameter3TranslatedDescriptions) {
+	public void setParameter3TranslatedDescriptions(List<LanguageDescriptionDto> parameter3TranslatedDescriptions) {
 		this.parameter3TranslatedDescriptions = parameter3TranslatedDescriptions;
 	}
 
-	public Map<String, String> getParameter3TranslatedLongDescriptions() {
+	public List<LanguageDescriptionDto> getParameter3TranslatedLongDescriptions() {
 		return parameter3TranslatedLongDescriptions;
 	}
 
-	public void setParameter3TranslatedLongDescriptions(Map<String, String> parameter3TranslatedLongDescriptions) {
+	public void setParameter3TranslatedLongDescriptions(List<LanguageDescriptionDto> parameter3TranslatedLongDescriptions) {
 		this.parameter3TranslatedLongDescriptions = parameter3TranslatedLongDescriptions;
 	}
 
@@ -907,20 +911,20 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 		this.parameterExtraDescription = parameterExtraDescription;
 	}
 
-	public Map<String, String> getParameterExtraTranslatedDescriptions() {
+	public List<LanguageDescriptionDto> getParameterExtraTranslatedDescriptions() {
 		return parameterExtraTranslatedDescriptions;
 	}
 
-	public void setParameterExtraTranslatedDescriptions(Map<String, String> parameterExtraTranslatedDescriptions) {
+	public void setParameterExtraTranslatedDescriptions(List<LanguageDescriptionDto> parameterExtraTranslatedDescriptions) {
 		this.parameterExtraTranslatedDescriptions = parameterExtraTranslatedDescriptions;
 	}
 
-	public Map<String, String> getParameterExtraTranslatedLongDescriptions() {
+	public List<LanguageDescriptionDto> getParameterExtraTranslatedLongDescriptions() {
 		return parameterExtraTranslatedLongDescriptions;
 	}
 
 	public void setParameterExtraTranslatedLongDescriptions(
-			Map<String, String> parameterExtraTranslatedLongDescriptions) {
+			List<LanguageDescriptionDto> parameterExtraTranslatedLongDescriptions) {
 		this.parameterExtraTranslatedLongDescriptions = parameterExtraTranslatedLongDescriptions;
 	}
 
