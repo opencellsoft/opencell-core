@@ -1045,7 +1045,9 @@ public class QueryBuilder {
 
         Date start = calFrom.getTime();
 
-        String startDateParameterName = "start" + field.replace(".", "");
+        String param = convertFieldToParam(field);
+
+        String startDateParameterName = "start" + param;
 
         if (isFieldValueOptional) {
             return addSqlCriterion("(" + field + " IS NULL or " + field + ">=:" + startDateParameterName + ")", startDateParameterName, start);
@@ -1079,7 +1081,9 @@ public class QueryBuilder {
 
         Date end = calTo.getTime();
 
-        String endDateParameterName = "end" + field.replace(".", "");
+        String param = convertFieldToParam(field);
+
+        String endDateParameterName = "end" + param;
         if (optional) {
             return addSqlCriterion("(" + field + " IS NULL or " + field + "<:" + endDateParameterName + ")", endDateParameterName, end);
         } else {
