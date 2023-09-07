@@ -22464,4 +22464,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </insert>
     </changeSet>
 
+    <changeSet id="#INTRD-18212_20230907" author="zelmeliani">
+		<sql>update ar_dunning_action set action_channel = null where action_channel = ''</sql>
+		
+		<update tableName="ar_dunning_action">
+            <column name="code" value="B2BSuspend" />
+            <where>code = 'B2B+10' and action_type='SCRIPT'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
