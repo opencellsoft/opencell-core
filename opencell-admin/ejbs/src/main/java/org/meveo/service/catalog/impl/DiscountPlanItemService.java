@@ -296,8 +296,9 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         		}
 
         		if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
-        			if (isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
-
+        			if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) &&
+					        isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
+				        lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
         				if(discountPlanItem.getSequence()==null) {
         					setDisountPlanItemSequence(discountPlanItem);
         					super.update(discountPlanItem);

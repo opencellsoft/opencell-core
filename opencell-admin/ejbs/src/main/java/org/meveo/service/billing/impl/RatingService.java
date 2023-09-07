@@ -1835,9 +1835,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             discountWalletOperation.setPriceplan(pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix());
             discountWalletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
         }
-        if(discountWalletOperation.getDiscountPlan()!=null && discountWalletOperation.getDiscountPlan().getApplicableOnDiscountedPrice() || appProvider.isActivateCascadingDiscounts()) {
+		
         bareWalletOperation.setDiscountedAmount(discountedAmount);
-        }
         discountWalletOperation.setParameter1(bareWalletOperation.getParameter1());
     	discountWalletOperation.setParameter2(bareWalletOperation.getParameter2());
     	discountWalletOperation.setParameter3(bareWalletOperation.getParameter3());
