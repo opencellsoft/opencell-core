@@ -301,31 +301,31 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     
     @Type(type = "json")
     @Column(name = "parameter1_translated_description", columnDefinition = "jsonb")
-    private Map<String, String> parameter1TranslatedDescriptions;
+    private Map<String, String> parameter1TranslatedDescriptions = initParameterTranslatedDescriptions("1");
 
     @Type(type = "json")
     @Column(name = "parameter2_translated_description", columnDefinition = "jsonb")
-    private Map<String, String> parameter2TranslatedDescriptions;
+    private Map<String, String> parameter2TranslatedDescriptions = initParameterTranslatedDescriptions("2");
 
     @Type(type = "json")
     @Column(name = "parameter3_translated_description", columnDefinition = "jsonb")
-    private Map<String, String> parameter3TranslatedDescriptions;
+    private Map<String, String> parameter3TranslatedDescriptions = initParameterTranslatedDescriptions("3");
 
     @Type(type = "json")
     @Column(name = "parameter_extra_translated_description", columnDefinition = "jsonb")
-    private Map<String, String> parameterExtraTranslatedDescriptions;
+    private Map<String, String> parameterExtraTranslatedDescriptions = initParameterTranslatedDescriptions("extra");
     
     @Column(name = "parameter1_description")
-    private String parameter1Description;
+    private String parameter1Description = "Parameter 1";
 
     @Column(name = "parameter2_description")
-    private String parameter2Description;
+    private String parameter2Description = "Parameter 2";
 
     @Column(name = "parameter3_description")
-    private String parameter3Description;
+    private String parameter3Description = "Parameter 3";
     
     @Column(name = "parameter_extra_description")
-    private String parameterExtraDescription;
+    private String parameterExtraDescription = "Parameter extra";
     
     public enum ParameterFormat {
         TEXT,
@@ -1043,6 +1043,13 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
 	public void setBusinessKeyIsHidden(boolean businessKeyIsHidden) {
 		this.businessKeyIsHidden = businessKeyIsHidden;
+	}
+     
+ 	private Map<String, String> initParameterTranslatedDescriptions(String parameterNumber) {
+        Map<String, String> tradingLanguageMap = new HashMap<>();
+        tradingLanguageMap.put("ENG", "Parameter " + parameterNumber);
+        tradingLanguageMap.put("FRA", "Paramètre " + parameterNumber);
+        return tradingLanguageMap;
 	}
 	
 	private Map<String, String> initBusinessKeyTranslatedDescriptions() {
