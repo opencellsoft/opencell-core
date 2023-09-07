@@ -2047,6 +2047,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
+            <column name="email" type="varchar(100)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-144">
