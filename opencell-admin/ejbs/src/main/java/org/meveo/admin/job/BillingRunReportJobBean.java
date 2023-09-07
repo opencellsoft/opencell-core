@@ -35,7 +35,7 @@ public class BillingRunReportJobBean extends BaseJobBean {
         try {
             List<BillingRun> billingRuns = initJobAndGetDataToProcess();
             jobExecutionResult.setNbItemsToProcess(billingRuns.size());
-            jobExecutionResult.registerSucces(createBillingRunReport(billingRuns));
+            jobExecutionResult.registerSucces(createBillingRunReport(billingRuns, jobExecutionResult));
         } catch (Exception exception) {
             jobExecutionResult.registerError(exception.getMessage());
             log.error(exception.getMessage());
@@ -55,10 +55,11 @@ public class BillingRunReportJobBean extends BaseJobBean {
         return billingRunService.getBillingRuns(NEW, OPEN);
     }
 
-    private int createBillingRunReport(List<BillingRun> billingRuns) {
+    private int createBillingRunReport(List<BillingRun> billingRuns, JobExecutionResultImpl jobExecutionResult) {
         int countOfReportCreated = 0;
         for (BillingRun billingRun : billingRuns) {
             billingRunReportService.createBillingRunReport(billingRun);
+            billingRunService.updateBillingRunJobExecution(billingRun, jobExecutionResult);
             countOfReportCreated++;
         }
         return countOfReportCreated;
