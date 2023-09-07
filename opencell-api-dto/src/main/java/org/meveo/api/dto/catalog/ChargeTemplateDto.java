@@ -243,6 +243,28 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 
     @Schema(description = "Is Extra Parameter Hidden?")
     private Boolean parameterExtraIsHidden;
+    
+    // Business Key
+    @Schema(description = "Business Key El")
+    private String businessKeyEl;
+    
+    @Schema(description = "Business Key Description")
+    private String businessKeyDescription;
+
+    @Schema(description = "Translated descriptions of Business Key")
+    private List<LanguageDescriptionDto> businessKeyTranslatedDescriptions;
+
+    @Schema(description = "Translated long descriptions of Business Key")
+    private List<LanguageDescriptionDto> businessKeyTranslatedLongDescriptions;
+
+    @Schema(description = "Format of Business Key")
+    private ChargeTemplate.BusinessKeyFormat businessKeyFormat;
+
+    @Schema(description = "Is Business Key Mandatory?")
+    private Boolean businessKeyIsMandatory;
+
+    @Schema(description = "Is Business Key Hidden?")
+    private Boolean businessKeyIsHidden;
 
     /**
      * Instantiates a new charge template dto.
@@ -324,6 +346,16 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
         parameterExtraFormat = chargeTemplate.getParameterExtraFormat();
         parameterExtraIsMandatory = chargeTemplate.isParameterExtraIsMandatory();
         parameterExtraIsHidden = chargeTemplate.isParameterExtraIsHidden();
+
+        // Business Key
+        businessKeyEl = chargeTemplate.getBusinessKeyEl();
+        businessKeyDescription = chargeTemplate.getBusinessKeyDescription();
+        businessKeyTranslatedDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getBusinessKeyTranslatedDescriptions());
+        businessKeyTranslatedLongDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getBusinessKeyTranslatedLongDescriptions());
+        businessKeyFormat = chargeTemplate.getBusinessKeyFormat();
+        businessKeyIsMandatory = chargeTemplate.isBusinessKeyIsMandatory();
+        businessKeyIsHidden = chargeTemplate.isBusinessKeyIsHidden();
+        
     }
      
 
@@ -914,6 +946,62 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 
 	public void setParameterExtraIsHidden(Boolean parameterExtraIsHidden) {
 		this.parameterExtraIsHidden = parameterExtraIsHidden;
+	}
+
+	public String getBusinessKeyEl() {
+		return businessKeyEl;
+	}
+
+	public void setBusinessKeyEl(String businessKeyEl) {
+		this.businessKeyEl = businessKeyEl;
+	}
+
+	public String getBusinessKeyDescription() {
+		return businessKeyDescription;
+	}
+
+	public void setBusinessKeyDescription(String businessKeyDescription) {
+		this.businessKeyDescription = businessKeyDescription;
+	}
+
+	public List<LanguageDescriptionDto> getBusinessKeyTranslatedDescriptions() {
+		return businessKeyTranslatedDescriptions;
+	}
+
+	public void setBusinessKeyTranslatedDescriptions(List<LanguageDescriptionDto> businessKeyTranslatedDescriptions) {
+		this.businessKeyTranslatedDescriptions = businessKeyTranslatedDescriptions;
+	}
+
+	public List<LanguageDescriptionDto> getBusinessKeyTranslatedLongDescriptions() {
+		return businessKeyTranslatedLongDescriptions;
+	}
+
+	public void setBusinessKeyTranslatedLongDescriptions(List<LanguageDescriptionDto> businessKeyTranslatedLongDescriptions) {
+		this.businessKeyTranslatedLongDescriptions = businessKeyTranslatedLongDescriptions;
+	}
+
+	public ChargeTemplate.BusinessKeyFormat getBusinessKeyFormat() {
+		return businessKeyFormat;
+	}
+
+	public void setBusinessKeyFormat(ChargeTemplate.BusinessKeyFormat businessKeyFormat) {
+		this.businessKeyFormat = businessKeyFormat;
+	}
+
+	public Boolean getBusinessKeyIsMandatory() {
+		return businessKeyIsMandatory;
+	}
+
+	public void setBusinessKeyIsMandatory(Boolean businessKeyIsMandatory) {
+		this.businessKeyIsMandatory = businessKeyIsMandatory;
+	}
+
+	public Boolean getBusinessKeyIsHidden() {
+		return businessKeyIsHidden;
+	}
+
+	public void setBusinessKeyIsHidden(Boolean businessKeyIsHidden) {
+		this.businessKeyIsHidden = businessKeyIsHidden;
 	}
     
 }
