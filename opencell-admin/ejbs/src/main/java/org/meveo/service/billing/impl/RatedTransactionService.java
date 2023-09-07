@@ -28,6 +28,7 @@ import static org.meveo.commons.utils.ParamBean.getInstance;
 import static org.meveo.model.BaseEntity.NB_DECIMALS;
 import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
 import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -127,6 +128,7 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.ProductVersion;
@@ -1714,7 +1716,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode,
                                                    Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal quantity,
                                                    String param1, String param2, String param3,
-                                                   String paramExtra, String description) {
+                                                   String paramExtra, String description, String businessKey) {
         String errors = "";
         if (billingAccountCode == null) {
             errors = errors + " billingAccountCode,";
@@ -1744,8 +1746,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<String, Object> serviceInstanceCriterions = ImmutableMap.of("code", serviceInstanceCode, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
         ServiceInstance serviceInstance = (ServiceInstance) tryToFindByEntityClassAndMap(ServiceInstance.class, serviceInstanceCriterions);
         Map<String, Object> chargeInstanceCriterions = ImmutableMap.of("code", chargeInstanceCode, "serviceInstance", serviceInstance, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
-        ChargeInstance chargeInstance = (ChargeInstance) tryToFindByEntityClassAndMap(ChargeInstance.class, chargeInstanceCriterions);
-
+        ChargeInstance chargeInstance = (ChargeInstance) tryToFindByEntityClassAndMap(ChargeInstance.class, chargeInstanceCriterions); 
+        
         AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
         TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, new Date(), accountingArticle);
         TaxClass taxClass = taxInfo.taxClass;
@@ -1766,6 +1768,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 chargeTemplate.getCode(), rtDescription, null, null, subscription.getSeller(), taxInfo.tax,
                 taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
         rt.setAccountingArticle(accountingArticle);
+        
+       
+        if(businessKey != null) {
+        	rt.setBusinessKey(businessKey);
+        }else {
+        	String expression = null;
+        	if(chargeTemplate instanceof RecurringChargeTemplate || chargeTemplate instanceof OneShotChargeTemplate) {
+        		expression = chargeTemplate.getBusinessKeyEl();
+        	}
+        	 if (!StringUtils.isBlank(expression)) {
+                 Map<Object, Object> contextMap = new HashMap<>();
+                 contextMap.put("chargeTemplate", chargeTemplate);
+                 try {
+                     String value = evaluateExpression(expression, contextMap, String.class);
+                     rt.setBusinessKey(value);
+                 } catch (BusinessException e) {
+                	 log.warn("Error when evaluate El for chargeTemplate id=" + chargeTemplate.getId());
+                 }
+             }
+        }
         if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
             applyInvoicingRules(rt);
         }

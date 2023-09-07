@@ -106,7 +106,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 		return ratedTransactionService.createRatedTransaction(input.getBillingAccountCode(), input.getUserAccountCode(),
 				input.getSubscriptionCode(), input.getServiceInstanceCode(), input.getChargeInstanceCode(), input.getUsageDate(),
 				input.getUnitAmountWithoutTax(), input.getQuantity(), input.getParameter1(), input.getParameter2(),
-				input.getParameter3(), input.getParameterExtra(), input.getDescription());
+				input.getParameter3(), input.getParameterExtra(), input.getDescription(), input.getBusinessKey());
 	}
 
 
