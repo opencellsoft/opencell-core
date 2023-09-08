@@ -238,10 +238,6 @@ public class ContractApi extends BaseApi{
 		}
 		if (ContractStatusEnum.CLOSED.toString().equals(contract.getStatus())) {
 			throw new MeveoApiException(CONTRACT_STATUS_CLOSED);
-		} 
-		if(!StringUtils.isBlank(dto.getStatus())) {
-			checkStatus(dto.getStatus());
-			contract.setStatus(dto.getStatus());
 		}
 		if(!StringUtils.isBlank(dto.getStatus())) {
 			checkStatus(dto.getStatus());
