@@ -194,7 +194,7 @@ public class ContractService extends BusinessService<Contract>  {
 			return contracts.stream()
 					.filter(c -> {
 						try {
-							return StringUtils.isBlank(c.getApplicationEl()) || ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c);
+							return (c.getSeller()!=null || c.getCustomer()!=null || c.getCustomerAccount()!=null || c.getBillingAccount()!=null) && (StringUtils.isBlank(c.getApplicationEl()) ||( !StringUtils.isBlank(c.getApplicationEl()!=null) && ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c)));
 						} catch (Exception e) {
 							throw new BusinessException("Error evaluating the contract’s application EL [contract_id="+c.getId()+",  “"+c.getApplicationEl()+"“]: "+e.getMessage(), e);
 						}
