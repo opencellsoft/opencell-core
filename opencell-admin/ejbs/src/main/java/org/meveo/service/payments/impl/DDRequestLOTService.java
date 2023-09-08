@@ -126,7 +126,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void addItems(DDRequestLotOp ddrequestLotOp, DDRequestLOT ddRequestLOT, List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder,
-			JobExecutionResultImpl result) throws BusinessEntityException, Exception {
+			JobExecutionResultImpl result,Long nbRuns,Long waitingMillis) throws BusinessEntityException, Exception {
 
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		int nbItemsKo = 0;
@@ -136,9 +136,14 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
 
 			List<Future<Map<String, Object>>> futures = new ArrayList<>();
-			SubListCreator<AccountOperation> subListCreator = new SubListCreator(listAoToPay, Runtime.getRuntime().availableProcessors());
+			SubListCreator<AccountOperation> subListCreator = new SubListCreator(listAoToPay, nbRuns.intValue());
 			while (subListCreator.isHasNext()) {
 				futures.add(sepaDirectDebitAsync.launchAndForgetDDRequesltLotCreation(ddRequestLOT, subListCreator.getNextWorkSet(), appProvider));
+				try {
+					Thread.sleep(waitingMillis);
+				} catch (InterruptedException e) {
+					log.error("", e);
+				}
 			}
 			// Wait for all async methods to finish
 			for (Future<Map<String, Object>> future : futures) {
