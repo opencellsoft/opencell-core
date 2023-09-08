@@ -54,8 +54,8 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
     		if(quoteAttribute.getQuoteProduct() != null
     				&& quoteAttribute.getQuoteProduct().getProductVersion() != null) {
 	        	var mandatoryEl = findMandatoryByProductVersion(quoteAttribute, quoteAttribute.getQuoteProduct().getProductVersion());
-	        	var productVersionAttribute = mandatoryEl.get();
 	        	if(mandatoryEl.isPresent()) {
+	        		var productVersionAttribute = mandatoryEl.get();
 	        		super.evaluateMandatoryEl(productVersionAttribute.getValidationType(), 
 							productVersionAttribute.getValidationPattern(),
 							productVersionAttribute.getValidationLabel(),
@@ -68,8 +68,8 @@ public class QuoteAttributeService extends AttributeValueService<QuoteAttribute>
     		if(quoteAttribute.getQuoteOffer() != null 
     				&& quoteAttribute.getQuoteOffer().getOfferTemplate() != null) {
 	    		var offerTemplatMandatoryEl = findMandatoryByOfferTemplate(quoteAttribute, quoteAttribute.getQuoteOffer().getOfferTemplate());
-	    		var offerTempalteAttribute = offerTemplatMandatoryEl.get();
 				if(offerTemplatMandatoryEl.isPresent()) {
+					var offerTempalteAttribute = offerTemplatMandatoryEl.get();
 	        		super.evaluateMandatoryEl(offerTempalteAttribute.getValidationType(), 
 	        									offerTempalteAttribute.getValidationPattern(),
 	        									offerTempalteAttribute.getValidationLabel(),
