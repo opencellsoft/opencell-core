@@ -210,7 +210,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	 */
 	@Type(type = "numeric_boolean")
 	@Column(name = "applicable_on_discounted_price")
-	private boolean applicableOnDiscountedPrice;
+	private Boolean applicableOnDiscountedPrice;
 	
 	/**
 	 *determines whether the discount plan is applicable on the gross or discounted amount
@@ -278,8 +278,6 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	private boolean applicableOnContractPrice=true;
 	
 	public DiscountPlan() {
-		this.applicableOnDiscountedPrice = true;
-		this.applicableOnOverriddenPrice = true;
 	}
 	
 	public DiscountPlan(DiscountPlan dp) {
@@ -488,11 +486,11 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	}
 	
 
-	public boolean getApplicableOnDiscountedPrice() {
+	public Boolean getApplicableOnDiscountedPrice() {
 		return applicableOnDiscountedPrice;
 	}
 
-	public void setApplicableOnDiscountedPrice(boolean applicableOnDiscountedPrice) {
+	public void setApplicableOnDiscountedPrice(Boolean applicableOnDiscountedPrice) {
 		this.applicableOnDiscountedPrice = applicableOnDiscountedPrice;
 	}
 
