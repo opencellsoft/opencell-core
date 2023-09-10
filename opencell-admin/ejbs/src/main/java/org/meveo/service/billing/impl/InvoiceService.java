@@ -7707,10 +7707,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (linkedInvoice != null) {
             Invoice srcInvoice = linkedInvoice.getInvoice();
 
-            // check amount with tax
-            if (newInvoice.getAmountWithTax().compareTo(srcInvoice.getAmountWithTax()) > 0) {
-                throw new BusinessException("Adjustment Amount With Tax '"+ newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
-                        +"' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())+"'");
+            // get sum of validated linked invoice using srcInvoice
+            BigDecimal sumValidatedLinkedInvoice = (BigDecimal) getEntityManager()
+                    .createNamedQuery("Invoice.SUM_VALIDATED_LINKED_INVOICES").setParameter("SRC_INVOICE_ID", srcInvoice.getId()).getSingleResult();
+
+            if (sumValidatedLinkedInvoice == null) {
+                sumValidatedLinkedInvoice = ZERO;
+            }
+
+            if (!ZERO.equals(sumValidatedLinkedInvoice)) {
+                if(newInvoice.getAmountWithTax().add(sumValidatedLinkedInvoice).compareTo(srcInvoice.getAmountWithTax()) > 0) {
+                    throw new BusinessException("Adjustment Amount With Tax '" + newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
+                            + "' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()) + "'");
+                }
+            } else {
+                // check amount with tax
+                if (newInvoice.getAmountWithTax().compareTo(srcInvoice.getAmountWithTax()) > 0) {
+                    throw new BusinessException("Adjustment Amount With Tax '"+ newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
+                            +"' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())+"'");
+                }
             }
         }
 
