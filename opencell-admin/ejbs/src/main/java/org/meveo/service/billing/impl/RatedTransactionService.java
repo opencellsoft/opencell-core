@@ -20,6 +20,7 @@ package org.meveo.service.billing.impl;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections4.ListUtils.partition;
@@ -582,7 +583,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
         if (serviceInstance == null) {
-            return Collections.emptyList();
+            return emptyList();
         }
         return serviceInstance.getAttributeInstances().stream().map(attributeInstance -> (AttributeValue) attributeInstance).collect(toList());
     }
@@ -2586,44 +2587,78 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         linesFactory.update(invoiceLine.getId(), deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);
     }
 
-    public List<RatedTransaction> getReportRatedTransactions(BillingRun billingRun) {
-        Map<String, Object> filters = billingRun.getBillingCycle() != null
-                ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
-        if (filters == null && billingRun.getBillingCycle() != null) {
-            filters = new HashMap<>();
-            filters.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
+    public List<RatedTransaction> getReportRatedTransactions(BillingRun billingRun, Map<String, Object> filters) {
+        if(filters != null && !filters.isEmpty()) {
+            return (List<RatedTransaction>) getQueryFromFilters(filters, emptyList(), true)
+                    .getQuery(getEntityManager()).getResultList();
+        } else {
+            Map<String, Object> billingRunFilters = billingRun.getBillingCycle() != null
+                    ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
+            if (billingRunFilters == null && billingRun.getBillingCycle() != null) {
+                billingRunFilters = new HashMap<>();
+                billingRunFilters.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
+            }
+            billingRunFilters.put("status", RatedTransactionStatusEnum.OPEN.toString());
+            return (List<RatedTransaction>) getQueryFromFilters(billingRunFilters, emptyList(), true)
+                    .getQuery(getEntityManager()).getResultList();
         }
-        filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
-        return (List<RatedTransaction>) getQueryFromFilters(filters, Collections.emptyList(), true)
-                .getQuery(getEntityManager()).getResultList();
     }
 
-    public List<Object[]> getReportStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds) {
-        return getEntityManager()
-                .createNamedQuery("RatedTransaction.findBillingRunReportDetails")
-                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-                .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
-                .setParameter("ids", ratedTransactionIds)
-                .getResultList();
+    public List<Object[]> getReportStatisticsDetails(BillingRun billingRun,
+                                                     List<Long> ratedTransactionIds, Map<String, Object> filters) {
+        if(filters != null && !filters.isEmpty()) {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findBillingRunReportBilledDetails")
+                    .setParameter("ids", ratedTransactionIds)
+                    .setParameter("billingRun", billingRun)
+                    .getResultList();
+        } else {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findBillingRunReportDetails")
+                    .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+                    .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
+                    .setParameter("ids", ratedTransactionIds)
+                    .getResultList();
+        }
     }
 
-    public List<Object[]> getBillingAccountStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds) {
-        return getEntityManager()
-                .createNamedQuery("RatedTransaction.findAmountsPerBillingAccount")
-                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-                .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
-                .setParameter("ids", ratedTransactionIds)
-                .setMaxResults(10)
-                .getResultList();
+    public List<Object[]> getBillingAccountStatisticsDetails(BillingRun billingRun,
+                                                             List<Long> ratedTransactionIds, Map<String, Object> filters) {
+        if(filters != null && !filters.isEmpty()) {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findAmountsPerBillingAccountBilledDetails")
+                    .setParameter("billingRun", billingRun)
+                    .setParameter("ids", ratedTransactionIds)
+                    .setMaxResults(10)
+                    .getResultList();
+        } else {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findAmountsPerBillingAccount")
+                    .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+                    .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
+                    .setParameter("ids", ratedTransactionIds)
+                    .setMaxResults(10)
+                    .getResultList();
+        }
     }
 
-    public List<Object[]> getOfferStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds) {
-        return getEntityManager()
-                .createNamedQuery("RatedTransaction.findAmountsPerOffer")
-                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-                .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
-                .setParameter("ids", ratedTransactionIds)
-                .setMaxResults(10)
-                .getResultList();
+    public List<Object[]> getOfferStatisticsDetails(BillingRun billingRun,
+                                                    List<Long> ratedTransactionIds, Map<String, Object> filters) {
+        if(filters != null && !filters.isEmpty()) {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findAmountsPerOfferBilledDetails")
+                    .setParameter("billingRun", billingRun)
+                    .setParameter("ids", ratedTransactionIds)
+                    .setMaxResults(10)
+                    .getResultList();
+        } else {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findAmountsPerOffer")
+                    .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+                    .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
+                    .setParameter("ids", ratedTransactionIds)
+                    .setMaxResults(10)
+                    .getResultList();
+        }
     }
 }

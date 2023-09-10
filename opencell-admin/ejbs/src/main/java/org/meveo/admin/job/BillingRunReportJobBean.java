@@ -3,6 +3,7 @@ package org.meveo.admin.job;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.meveo.model.billing.BillingRunReportTypeEnum.OPEN_RATED_TRANSACTIONS;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 
@@ -58,7 +59,7 @@ public class BillingRunReportJobBean extends BaseJobBean {
     private int createBillingRunReport(List<BillingRun> billingRuns, JobExecutionResultImpl jobExecutionResult) {
         int countOfReportCreated = 0;
         for (BillingRun billingRun : billingRuns) {
-            billingRunReportService.createBillingRunReport(billingRun);
+            billingRunReportService.createBillingRunReport(billingRun, null, OPEN_RATED_TRANSACTIONS);
             billingRunService.updateBillingRunJobExecution(billingRun, jobExecutionResult);
             countOfReportCreated++;
         }
