@@ -8300,4 +8300,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </createProcedure>
     </changeSet>
 
+    <changeSet id="#INTRD-18276_20230908" author="aelmalki">
+        <addColumn tableName="finance_settings">
+            <column name="billing_run_process_warning" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
