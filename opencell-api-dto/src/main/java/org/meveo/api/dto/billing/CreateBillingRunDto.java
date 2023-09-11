@@ -24,6 +24,7 @@ package org.meveo.api.dto.billing;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -139,6 +140,9 @@ public class CreateBillingRunDto extends BaseEntityDto {
 
     @Schema(description = "Decide if Report job will be launched automatically during invoice line job")
     private Boolean preReportAutoOnInvoiceLinesJob = false;
+
+    @Size(max = 2000)
+    private String applicationEl;
 
     public Long getId() {
 		return id;
@@ -419,10 +423,19 @@ public class CreateBillingRunDto extends BaseEntityDto {
         this.preReportAutoOnInvoiceLinesJob = preReportAutoOnInvoiceLinesJob;
     }
 
+    public String getApplicationEl() {
+        return applicationEl;
+    }
+
+    public void setApplicationEl(String applicationEl) {
+        this.applicationEl = applicationEl;
+    }
+
     @Override
     public String toString() {
         return "CreateBillingRunDto{" + "billingCycleCode='" + billingCycleCode + '\'' + ", billingRunTypeEnum=" + billingRunTypeEnum + ", startDate=" + startDate + ", endDate="
-                + endDate + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + ", referenceDate=" + referenceDate + ", customFields=" + customFields
+                + endDate + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + ", referenceDate=" + referenceDate
+                + ", customFields=" + customFields + ", applicationEl=" + applicationEl
                 + '}';
     }
 }

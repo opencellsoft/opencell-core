@@ -2786,6 +2786,7 @@
             <column name="pre_invoicing_report_id" type="${cast.long}" />
             <column name="pre_report_auto_on_invoice_line_job" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="billed_rated_transactions_report_id" type="${cast.long}" />
+			<column name="application_el" type="varchar(2000)" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -20771,6 +20772,7 @@
 
     <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-18276_20230908" author="aelmalki" />
+	<changeSet id="#INTRD-18280_20230911" author="aelmalki" />
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
