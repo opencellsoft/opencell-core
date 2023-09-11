@@ -71,6 +71,10 @@ public class FinanceSettings extends BusinessEntity {
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "billing_run_process_warning")
+    private boolean billingRunProcessWarning;
+
     public FinanceSettings() {
         super();
     }
@@ -178,4 +182,12 @@ public class FinanceSettings extends BusinessEntity {
 	public void setEntitiesWithHugeVolume(Map<String, List<String>> entitiesWithHugeVolume) {
 		this.entitiesWithHugeVolume = entitiesWithHugeVolume;
 	}
+
+    public boolean isBillingRunProcessWarning() {
+        return billingRunProcessWarning;
+    }
+
+    public void setBillingRunProcessWarning(boolean billingRunProcessWarning) {
+        this.billingRunProcessWarning = billingRunProcessWarning;
+    }
 }

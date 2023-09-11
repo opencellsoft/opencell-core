@@ -85,5 +85,10 @@ public interface FinanceSettings extends Resource {
 	
 	@Schema(description = "Entities with Huge Volume")
     Map<String, List<String>> getEntitiesWithHugeVolume();
-	
+
+    @Value.Default
+    @Schema(description = "Display warning before process billing Run")
+    default boolean getBillingRunProcessWarning() {
+        return false;
+    }
 }
