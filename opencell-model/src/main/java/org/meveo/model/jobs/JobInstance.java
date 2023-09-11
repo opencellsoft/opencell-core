@@ -18,6 +18,7 @@
 package org.meveo.model.jobs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -419,7 +420,7 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @param runTimeParameters Runtime parameters to append
      */
     public void addRunTimeValues(Map<String, Object> runTimeParameters) {
-        this.runTimeValues = runTimeValues;
+        this.runTimeValues.putAll(runTimeParameters);
     }
 
     /**
@@ -440,6 +441,19 @@ public class JobInstance extends EnableBusinessCFEntity {
             return null;
         }
         return this.runTimeValues.get(key);
+    }
+
+    /**
+     * Set the runtime value
+     * 
+     * @param key The key
+     * @param value The value
+     */
+    public void setParamValue(String key, Object value) {
+        if (this.runTimeValues == null) {
+            this.runTimeValues = new HashMap<String, Object>();
+        }
+        this.runTimeValues.put(key, value);
     }
 
     /**

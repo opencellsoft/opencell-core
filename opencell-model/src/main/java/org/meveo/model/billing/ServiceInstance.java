@@ -73,6 +73,8 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
@@ -1342,5 +1344,18 @@ public class ServiceInstance extends BusinessCFEntity implements IInvoicingMinim
     	}
     	return subscription.getSeller();
     }
-    
+
+    @SuppressWarnings("rawtypes")
+    public Map<String, Object> extractAttributes() {
+        Map<String, Object> attributes = new HashMap<>();
+        List<AttributeValue> attributeValues = getAttributeInstances().stream().map(ai -> (AttributeValue) ai).collect(Collectors.toList());
+        for (AttributeValue attributeValue : attributeValues) {
+            Attribute attribute = attributeValue.getAttribute();
+            Object value = attribute.getAttributeType().getValue(attributeValue);
+            if (value != null) {
+                attributes.put(attributeValue.getAttribute().getCode(), value);
+            }
+        }
+        return attributes;
+    }
 }

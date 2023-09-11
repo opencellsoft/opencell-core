@@ -1311,8 +1311,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             }
            
         }
-    }
         
+    }
+    
     public ServiceInstance findFetchProductById(Long id) {
         return id == null ? null : (ServiceInstance)getEntityManager().createNamedQuery("ServiceInstance.findByIdAndFetchProduct").setParameter("id", id).getSingleResult();
     }

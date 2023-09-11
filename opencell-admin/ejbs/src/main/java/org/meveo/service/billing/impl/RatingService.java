@@ -1211,6 +1211,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         walletOperation.setAmountWithoutTax(amount);
         walletOperation.setAmountWithTax(amount);
         AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
+        if (accountingArticle == null) {
+            throw new RatingException("Unable to match an accounting article for a charge " + walletOperation.getChargeInstance().getId() + "/" + walletOperation.getChargeInstance().getCode());
+        }
         walletOperation.setAccountingArticle(accountingArticle);
         TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
         if (taxInfo == null) {

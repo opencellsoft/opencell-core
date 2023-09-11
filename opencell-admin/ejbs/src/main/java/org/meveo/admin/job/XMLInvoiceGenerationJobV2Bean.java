@@ -72,7 +72,7 @@ public class XMLInvoiceGenerationJobV2Bean extends IteratorBasedJobBean<Long> {
             if (billingRun != null) {
                 billingRunExtensionService.updateBillingRunWithXMLPDFExecutionResult(billingRunId,
                         jobExecutionResult.getId(), null);
-                billingRunService.updateBillingRunJobExecution(billingRun, jobExecutionResult);
+                billingRunService.updateBillingRunJobExecution(billingRun.getId(), jobExecutionResult);
                 billingRunService.refreshOrRetrieve(billingRun);
             }
         }
