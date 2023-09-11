@@ -3025,6 +3025,7 @@
             <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
                 <constraints nullable="false" />
             </column>
+			<column name="application_el" type="varchar(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -20545,7 +20546,7 @@
     <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" />
     <changeSet id="INTRD-18839_20231012" author="AkadidAbdelmounaim" />
     <changeSet id="#INTRD-18439_20230120" author="TarikFA." />
-
+	<changeSet id="#INTRD-18252_20230908" author="aelmalki" />
 	<changeSet id="#INTRD-18280_20230911" author="aelmalki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

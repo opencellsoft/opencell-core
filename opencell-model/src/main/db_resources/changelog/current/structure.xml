@@ -7627,6 +7627,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="application_el" type="varchar(2000)" />
         </addColumn>
     </changeSet>
+	
+	<changeSet id="#INTRD-18252_20230908" author="aelmalki">
+        <addColumn tableName="billing_cycle">
+            <column name="application_el" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
 
 
     <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius">

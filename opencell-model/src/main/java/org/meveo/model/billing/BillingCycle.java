@@ -246,6 +246,10 @@ public class BillingCycle extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
     private boolean incrementalInvoiceLines = false;
+    
+    @Column(name = "application_el", length = 2000)
+    @Size(max = 2000)
+    private String applicationEl;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "discount_aggregation", nullable = false)
@@ -593,6 +597,14 @@ public class BillingCycle extends BusinessCFEntity {
 
     public void setIncrementalInvoiceLines(boolean incrementalInvoiceLines) {
         this.incrementalInvoiceLines = incrementalInvoiceLines;
+    }
+    
+    public String getApplicationEl() {
+        return applicationEl;
+    }
+
+    public void setApplicationEl(String applicationEl) {
+        this.applicationEl = applicationEl;
     }
 
     public DiscountAggregationModeEnum getDiscountAggregation() {

@@ -286,6 +286,8 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
             entity.setDiscountAggregation(dto.getDiscountAggregation());
         }
 
+        entity.setApplicationEl(dto.getApplicationEl());
+
        	// populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), entity, isNew, true);
