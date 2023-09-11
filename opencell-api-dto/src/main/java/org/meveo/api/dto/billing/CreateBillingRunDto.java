@@ -29,13 +29,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRunAutomaticActionEnum;
+import org.meveo.model.billing.DateAggregationOption;
+import org.meveo.model.billing.DiscountAggregationModeEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class CreateBillingRunDto.
@@ -113,10 +116,10 @@ public class CreateBillingRunDto extends BaseEntityDto {
     private Boolean computeDatesAtValidation;
 
     private Boolean skipValidationScript = false;
-    
+
     private BillingRunAutomaticActionEnum rejectAutoAction;
-    
-    private BillingRunAutomaticActionEnum suspectAutoAction; 
+
+    private BillingRunAutomaticActionEnum suspectAutoAction;
 
     /**
      * To decide whether or not generate AO.
@@ -127,6 +130,45 @@ public class CreateBillingRunDto extends BaseEntityDto {
      * The description I18N.
      */
     private List<LanguageDescriptionDto> descriptionsTranslated;
+
+    @Schema(description = " Do not aggregate Rated transactions to Invoice lines at all", nullable = true)
+    private Boolean disableAggregation = false;
+
+    /**
+     * Aggregate based on accounting article label instead of RT description
+     */
+    @Schema(description = "Aggregate based on accounting article label instead of RT description", nullable = true)
+    private Boolean useAccountingArticleLabel = false;
+
+    /**
+     * Aggregate by date option
+     */
+    @Schema(description = "Aggregate by date option", nullable = true)
+    private DateAggregationOption dateAggregation;
+
+    /**
+     * Aggregate per unit amount
+     */
+    @Schema(description = "Aggregate per unit amount", nullable = true)
+    private Boolean aggregateUnitAmounts;
+
+    /**
+     * If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)
+     */
+    @Schema(description = "If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)", nullable = true)
+    private Boolean ignoreSubscriptions;
+
+    /**
+     * If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)
+     */
+    @Schema(description = "If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)", nullable = true)
+    private Boolean ignoreOrders;
+
+    /**
+     * Discount aggregation type
+     */
+    @Schema(description = "Use incremental mode in invoice lines or not", nullable = true)
+    private DiscountAggregationModeEnum discountAggregation;
 
     /**
      * To decide if adding invoice lines incrementally or not.
@@ -141,38 +183,38 @@ public class CreateBillingRunDto extends BaseEntityDto {
     private Boolean preReportAutoOnInvoiceLinesJob = false;
 
     public Long getId() {
-		return id;
-	}
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Boolean getSkipValidationScript() {
-		return skipValidationScript;
-	}
+    public Boolean getSkipValidationScript() {
+        return skipValidationScript;
+    }
 
-	public void setSkipValidationScript(Boolean skipValidationScript) {
-		this.skipValidationScript = skipValidationScript;
-	}
+    public void setSkipValidationScript(Boolean skipValidationScript) {
+        this.skipValidationScript = skipValidationScript;
+    }
 
-	public BillingRunAutomaticActionEnum getRejectAutoAction() {
-		return rejectAutoAction;
-	}
+    public BillingRunAutomaticActionEnum getRejectAutoAction() {
+        return rejectAutoAction;
+    }
 
-	public void setRejectAutoAction(BillingRunAutomaticActionEnum rejectAutoAction) {
-		this.rejectAutoAction = rejectAutoAction;
-	}
+    public void setRejectAutoAction(BillingRunAutomaticActionEnum rejectAutoAction) {
+        this.rejectAutoAction = rejectAutoAction;
+    }
 
-	public BillingRunAutomaticActionEnum getSuspectAutoAction() {
-		return suspectAutoAction;
-	}
+    public BillingRunAutomaticActionEnum getSuspectAutoAction() {
+        return suspectAutoAction;
+    }
 
-	public void setSuspectAutoAction(BillingRunAutomaticActionEnum suspectAutoAction) {
-		this.suspectAutoAction = suspectAutoAction;
-	}
+    public void setSuspectAutoAction(BillingRunAutomaticActionEnum suspectAutoAction) {
+        this.suspectAutoAction = suspectAutoAction;
+    }
 
-	/**
+    /**
      * Instantiates a new creates the billing run dto.
      */
     public CreateBillingRunDto() {
@@ -358,32 +400,32 @@ public class CreateBillingRunDto extends BaseEntityDto {
     public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
-    
+
     public List<LanguageDescriptionDto> getDescriptionsTranslated() {
-		return descriptionsTranslated;
-	}
+        return descriptionsTranslated;
+    }
 
-	public void setDescriptionsTranslated(List<LanguageDescriptionDto> descriptionsTranslated) {
-		this.descriptionsTranslated = descriptionsTranslated;
-	}
+    public void setDescriptionsTranslated(List<LanguageDescriptionDto> descriptionsTranslated) {
+        this.descriptionsTranslated = descriptionsTranslated;
+    }
 
-	/**
-	 * Gets the generateAO
-	 * 
-	 * @return
-	 */
-	public Boolean getGenerateAO() {
-		return generateAO;
-	}
+    /**
+     * Gets the generateAO
+     * 
+     * @return
+     */
+    public Boolean getGenerateAO() {
+        return generateAO;
+    }
 
-	/**
-	 * Set the generateAO
-	 * 
-	 * @param generateAO
-	 */
-	public void setGenerateAO(Boolean generateAO) {
-		this.generateAO = generateAO;
-	}
+    /**
+     * Set the generateAO
+     * 
+     * @param generateAO
+     */
+    public void setGenerateAO(Boolean generateAO) {
+        this.generateAO = generateAO;
+    }
 
     /**
      * Set the incrementalInvoiceLines
@@ -402,6 +444,7 @@ public class CreateBillingRunDto extends BaseEntityDto {
     public Boolean getIncrementalInvoiceLines() {
         return incrementalInvoiceLines;
     }
+//-*
 
     public Boolean getPreReportAutoOnCreate() {
         return preReportAutoOnCreate;
@@ -419,10 +462,61 @@ public class CreateBillingRunDto extends BaseEntityDto {
         this.preReportAutoOnInvoiceLinesJob = preReportAutoOnInvoiceLinesJob;
     }
 
+    public Boolean getAggregateUnitAmounts() {
+        return aggregateUnitAmounts;
+    }
+
+    public void setAggregateUnitAmounts(Boolean aggregateUnitAmounts) {
+        this.aggregateUnitAmounts = aggregateUnitAmounts;
+    }
+
+    public DateAggregationOption getDateAggregation() {
+        return dateAggregation;
+    }
+
+    public void setDateAggregation(DateAggregationOption dateAggregation) {
+        this.dateAggregation = dateAggregation;
+    }
+
+    public DiscountAggregationModeEnum getDiscountAggregation() {
+        return discountAggregation;
+    }
+
+    public void setDisableAggregation(Boolean disableAggregation) {
+        this.disableAggregation = disableAggregation;
+    }
+
+    public Boolean getDisableAggregation() {
+        return disableAggregation;
+    }
+
+    public Boolean getUseAccountingArticleLabel() {
+        return useAccountingArticleLabel;
+    }
+
+    public void setUseAccountingArticleLabel(Boolean useAccountingArticleLabel) {
+        this.useAccountingArticleLabel = useAccountingArticleLabel;
+    }
+
+    public Boolean getIgnoreOrders() {
+        return ignoreOrders;
+    }
+
+    public void setIgnoreOrders(Boolean ignoreOrders) {
+        this.ignoreOrders = ignoreOrders;
+    }
+
+    public Boolean getIgnoreSubscriptions() {
+        return ignoreSubscriptions;
+    }
+
+    public void setIgnoreSubscriptions(Boolean ignoreSubscriptions) {
+        this.ignoreSubscriptions = ignoreSubscriptions;
+    }
+
     @Override
     public String toString() {
-        return "CreateBillingRunDto{" + "billingCycleCode='" + billingCycleCode + '\'' + ", billingRunTypeEnum=" + billingRunTypeEnum + ", startDate=" + startDate + ", endDate="
-                + endDate + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + ", referenceDate=" + referenceDate + ", customFields=" + customFields
-                + '}';
+        return "CreateBillingRunDto{" + "billingCycleCode='" + billingCycleCode + '\'' + ", billingRunTypeEnum=" + billingRunTypeEnum + ", startDate=" + startDate + ", endDate=" + endDate + ", invoiceDate=" + invoiceDate
+                + ", lastTransactionDate=" + lastTransactionDate + ", referenceDate=" + referenceDate + ", customFields=" + customFields + '}';
     }
 }

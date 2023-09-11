@@ -60,7 +60,7 @@ public class BillingRunReportJobBean extends BaseJobBean {
         int countOfReportCreated = 0;
         for (BillingRun billingRun : billingRuns) {
             billingRunReportService.createBillingRunReport(billingRun, null, OPEN_RATED_TRANSACTIONS);
-            billingRunService.updateBillingRunJobExecution(billingRun, jobExecutionResult);
+            billingRunService.updateBillingRunJobExecution(billingRun.getId(), jobExecutionResult);
             countOfReportCreated++;
         }
         return countOfReportCreated;

@@ -1,6 +1,7 @@
 package org.meveo.apiv2.billing;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.immutables.value.Value.Default;
 import static org.immutables.value.Value.Immutable;
 import static org.immutables.value.Value.Style;
@@ -12,6 +13,8 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRunAutomaticActionEnum;
+import org.meveo.model.billing.DateAggregationOption;
+import org.meveo.model.billing.DiscountAggregationModeEnum;
 
 import javax.annotation.Nullable;
 import java.util.Date;
@@ -65,6 +68,62 @@ public interface ExceptionalBillingRun extends Resource {
     @JsonProperty("computeDatesAtValidation")
     default Boolean isComputeDatesAtValidation() {
         return FALSE;
+    }
+
+    @Nullable
+    @Default
+    @Schema(description = "Do not aggregate Rated transactions to Invoice lines at all")
+    @JsonProperty("disableAggregation")
+    default Boolean isDisableAggregation() {
+        return FALSE;
+    }
+
+    @Nullable
+    @Default
+    @Schema(description = "Aggregate based on accounting article label instead of RT description")
+    @JsonProperty("useAccountingArticleLabel")
+    default Boolean isUseAccountingArticleLabel() {
+        return FALSE;
+    }
+
+    @Nullable
+    @Default
+    @Schema(description = "Aggregate by date option")
+    @JsonProperty("dateAggregation")
+    default DateAggregationOption getDateAggregation() {
+        return DateAggregationOption.NO_DATE_AGGREGATION;
+    }
+
+    @Nullable
+    @Default
+    @Schema(description = "Aggregate per unit amount")
+    @JsonProperty("aggregateUnitAmounts")
+    default Boolean isAggregateUnitAmounts() {
+        return TRUE;
+    }
+
+    @Nullable
+    @Default
+    @Schema(description = "If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)")
+    @JsonProperty("ignoreSubscriptions")
+    default Boolean isIgnoreSubscriptions() {
+        return TRUE;
+    }
+
+    @Nullable
+    @Default
+    @Schema(description = "If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)")
+    @JsonProperty("ignoreOrders")
+    default Boolean isIgnoreOrders() {
+        return TRUE;
+    }
+
+    @Nullable
+    @Default
+    @Schema(description = "Use incremental mode in invoice lines or not")
+    @JsonProperty("discountAggregation")
+    default DiscountAggregationModeEnum getDiscountAggregation() {
+        return DiscountAggregationModeEnum.FULL_AGGREGATION;
     }
 
     @Default

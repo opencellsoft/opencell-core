@@ -13,13 +13,11 @@ import javax.inject.Inject;
 @Stateless
 public class ArticleMappingJob extends Job {
 
-
     /**
      * Job bean
      */
     @Inject
     private ArticleMappingBean articleMappingBean;
-
 
     @Override
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
@@ -29,6 +27,7 @@ public class ArticleMappingJob extends Job {
 
     /**
      * Get job category
+     * 
      * @return {@link MeveoJobCategoryEnum#UTILS}
      */
     @Override
