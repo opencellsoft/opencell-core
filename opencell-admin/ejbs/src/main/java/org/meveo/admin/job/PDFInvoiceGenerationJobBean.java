@@ -61,7 +61,9 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-
+    	
+    	log.info("DDRRFF start method execute in PDFInvoiceGenerationJobBean");
+    	
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
@@ -83,10 +85,11 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
                 }
             }
 
+            log.info("DDRRFF fetchInvoiceIdsToProcess invoicesToProcessEnum {} billingRunId {}", invoicesToProcessEnum, billingRunId);
             List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
 
             result.setNbItemsToProcess(invoiceIds.size());
-            log.debug("PDFInvoiceGenerationJob number of invoices to process=" + invoiceIds.size());
+            log.info("DDRRFF PDFInvoiceGenerationJob number of invoices to process=" + invoiceIds.size());
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
@@ -120,6 +123,9 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
             log.error("Failed to generate PDF invoices", e);
             result.registerError(e.getMessage());
         }
+        
+        log.info("end method execute in PDFInvoiceGenerationJobBean");
+        
     }
 
     private List<Long> fetchInvoiceIdsToProcess(InvoicesToProcessEnum invoicesToProcessEnum, Long billingRunId) {
