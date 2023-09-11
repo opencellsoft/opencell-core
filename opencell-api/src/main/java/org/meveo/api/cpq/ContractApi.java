@@ -121,6 +121,7 @@ public class ContractApi extends BaseApi{
 	
 	private static final String CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN = "Date end (%s) must be great than date begin (%s)";
 	private static final String CONTRACT_STATUS_CLOSED = "Closed status of contract cannot be edited";
+	private final static String CONTRACT_ACTIVE_CAN_NOT_UPDATE = "status of the contract (%s) is %s, it can not be updated";
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 
@@ -133,7 +134,7 @@ public class ContractApi extends BaseApi{
 
 		checkParams(dto);
 		//check if date end great than date begin
-		if(dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
+		if(dto.getEndDate()!=null && dto.getBeginDate()!=null && dto.getEndDate().compareTo(dto.getBeginDate()) < 0) { 
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			throw new BusinessApiException(String.format(CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN, format.format(dto.getEndDate()), format.format(dto.getBeginDate())));
 		}
@@ -144,11 +145,18 @@ public class ContractApi extends BaseApi{
 		// create new contract
 		contract = new Contract();
 		contract.setCode(dto.getCode());
+		if(dto.isDisabled()!=null) {
+			contract.setDisabled(dto.isDisabled());
+		}
 		contract.setBeginDate(dto.getBeginDate());
 		contract.setEndDate(dto.getEndDate());
 		contract.setContractDate(dto.getContractDate());
-		contract.setRenewal(dto.isRenewal());
-		contract.setContractDuration(dto.getContractDuration());
+		if(dto.getRenewal()!=null) {
+			contract.setRenewal(dto.getRenewal());
+		}
+		if(dto.getContractDuration()!=null) {
+			contract.setContractDuration(dto.getContractDuration());
+		}
 		contract.setDescription(dto.getDescription());
 		contract.setApplicationEl(dto.getApplicationEl());
 		changeAccountLevel(dto, contract);
@@ -213,7 +221,7 @@ public class ContractApi extends BaseApi{
 		checkBillingRulesRedirectionIsEnabled(dto);
 		checkParams(dto);
 		//check if date end great than date begin
-		if(dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
+		if(dto.getEndDate()!=null && dto.getBeginDate()!=null && dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			throw new BusinessApiException(String.format(CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN, format.format(dto.getEndDate()), format.format(dto.getBeginDate())));
 		}
@@ -225,26 +233,40 @@ public class ContractApi extends BaseApi{
 		if (contract == null)
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
 		//check the status of the contract
+		if(contract.getStatus().equalsIgnoreCase(ContractStatusEnum.ACTIVE.toString())) {
+			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_UPDATE, contract.getCode(), contract.getStatus()));
+		}
 		if (ContractStatusEnum.CLOSED.toString().equals(contract.getStatus())) {
 			throw new MeveoApiException(CONTRACT_STATUS_CLOSED);
-		} else if (ContractStatusEnum.ACTIVE.toString().equals(contract.getStatus())) {
-			contract.setEndDate(dto.getEndDate());
-		} else {
+		}
+		if(!StringUtils.isBlank(dto.getStatus())) {
 			checkStatus(dto.getStatus());
 			contract.setStatus(dto.getStatus());
-			contract.setCode(dto.getCode());
+		}
+		if(dto.isDisabled()!=null) {
+			contract.setDisabled(dto.isDisabled());
+		}
+		if(dto.getBeginDate()!=null) {
 			contract.setBeginDate(dto.getBeginDate());
+		}
+		if(dto.getEndDate()!=null) {
 			contract.setEndDate(dto.getEndDate());
+		}
+		if(dto.getContractDate()!=null) {
 			contract.setContractDate(dto.getContractDate());
-			contract.setRenewal(dto.isRenewal());
+		}
+		if(dto.getRenewal()!=null) {
+			contract.setRenewal(dto.getRenewal());
+		}
+		if(dto.getContractDuration()!=null) {
 			contract.setContractDuration(dto.getContractDuration());
+		}
+		if(!StringUtils.isBlank(dto.getDescription())) {
 			contract.setDescription(dto.getDescription());
+		}
+		if(!StringUtils.isBlank(dto.getApplicationEl())) {
 			contract.setApplicationEl(dto.getApplicationEl());
-
-			contract.setBillingAccount(null);
-			contract.setSeller(null);
-			contract.setCustomer(null);
-			contract.setCustomerAccount(null);
+		}
 			changeAccountLevel(dto, contract);
 
 			// update billing rules
@@ -257,7 +279,7 @@ public class ContractApi extends BaseApi{
 					contract.getBillingRules().add(br);
 				}
 			}
-		}
+		
 
 		try {
 			populateCustomFields(dto.getCustomFields(), contract, false);
@@ -311,12 +333,13 @@ public class ContractApi extends BaseApi{
 	}
 
 	private void checkStatus(String contractStatus) {
-		if(StringUtils.isBlank(contractStatus)) throw new MissingParameterException("status");
+		if(!StringUtils.isBlank(contractStatus)) {
 		List<String> allStatus = allStatus(ContractStatusEnum.class, "contract.status", "");
-		if(!allStatus.contains(contractStatus.toLowerCase())) {
+		if(!allStatus.contains(contractStatus.toLowerCase())) 
 			throw new MeveoApiException("Status is invalid, here is the list of available status : " + allStatus);
 		}
 	}
+	
 
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "contracts.contract", 
