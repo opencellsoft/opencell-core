@@ -8305,5 +8305,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="billing_run_process_warning" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+	
+	<changeSet id="#INTRD-18252_20230908" author="aelmalki">
+        <addColumn tableName="billing_cycle">
+            <column name="application_el" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

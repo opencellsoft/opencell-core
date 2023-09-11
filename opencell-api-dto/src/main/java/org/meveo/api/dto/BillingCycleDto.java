@@ -213,6 +213,9 @@ public class BillingCycleDto extends BusinessEntityDto {
     @Schema(description = "Use incremental mode in invoice lines or not", nullable = true)
     private Boolean incrementalInvoiceLines;
 
+    @Size(max = 2000)
+    private String applicationEl;
+
     public String getLastTransactionDateDelayEL() {
 		return lastTransactionDateDelayEL;
 	}
@@ -780,5 +783,13 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     public Boolean getIncrementalInvoiceLines() {
         return incrementalInvoiceLines;
+    }
+
+    public String getApplicationEl() {
+        return applicationEl;
+    }
+
+    public void setApplicationEl(String applicationEl) {
+        this.applicationEl = applicationEl;
     }
 }

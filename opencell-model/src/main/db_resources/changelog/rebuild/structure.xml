@@ -2996,6 +2996,7 @@
             <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="application_el" type="varchar(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -20766,6 +20767,7 @@
     <changeSet id="#INTRD-18140_20230904" author="AdilElJaouhari" />
     <changeSet id="#INTRD-10574_20221013" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-10574_20221014" author="AndriusKarpavicius"/>
+	<changeSet id="#INTRD-18252_20230908" author="aelmalki" />
 
     <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
