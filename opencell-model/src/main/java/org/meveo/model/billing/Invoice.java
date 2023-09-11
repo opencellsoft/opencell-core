@@ -156,7 +156,9 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.findValidatedInvoiceAdvWithOrder", query = "select inv from Invoice inv  where  inv.commercialOrder=:commercialOrder and inv.status='VALIDATED' and inv.invoiceType.code = 'ADV' and inv.invoiceBalance > 0 and inv.billingAccount.id =:billingAccountId"),
         @NamedQuery(name = "Invoice.findWithFuntionalCurrencyDifferentFromOne", query = "SELECT i FROM Invoice i JOIN Provider p ON p.currency.id = i.tradingCurrency.currency.id WHERE i.lastAppliedRate <> :EXPECTED_RATE"),
         @NamedQuery(name = "Invoice.countByValidationRule", query = "SELECT count(id) FROM Invoice WHERE rejectedByRule.id = :ruleId"),
-		@NamedQuery(name = "Invoice.xmlWithStatusForUBL", query = "select inv.id from Invoice inv where inv.status in(:statusList) and inv.ublReference = false")
+		@NamedQuery(name = "Invoice.xmlWithStatusForUBL", query = "select inv.id from Invoice inv where inv.status in(:statusList) and inv.ublReference = false"),
+        @NamedQuery(name = "Invoice.SUM_VALIDATED_LINKED_INVOICES", query = "SELECT SUM(i.amountWithTax) FROM Invoice i" +
+                " WHERE i.id in (SELECT li.linkedInvoiceValue.id FROM LinkedInvoice li WHERE li.id.id = :SRC_INVOICE_ID) AND i.status = 'VALIDATED'")
 })
 @NamedNativeQueries({
 	@NamedNativeQuery(name = "Invoice.rollbackAdvance", query = "update billing_invoice set invoice_balance = invoice_balance + li.amount from (select bli.linked_invoice_id, bli.amount from billing_linked_invoices bli join billing_invoice i on i.id = bli.id where i.billing_run_id = :billingRunId and bli.type = 'ADVANCEMENT_PAYMENT') li where li.linked_invoice_id = id")
