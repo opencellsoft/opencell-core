@@ -21,6 +21,7 @@ package org.meveo.api.dto.billing;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -178,6 +179,9 @@ public class BillingRunDto extends AuditableEntityDto {
      * To decide whether or not generate AO.
      */
     private Boolean generateAO;
+
+    @Size(max = 2000)
+    private String applicationEl;
 
     /**
      * Instantiates a new billing run dto.
@@ -737,7 +741,15 @@ public class BillingRunDto extends AuditableEntityDto {
 		this.generateAO = generateAO;
 	}
 
-	/**
+    public String getApplicationEl() {
+        return applicationEl;
+    }
+
+    public void setApplicationEl(String applicationEl) {
+        this.applicationEl = applicationEl;
+    }
+
+    /**
      * Sets the from entity.
      *
      * @param billingRunEntity the new from entity
@@ -778,6 +790,7 @@ public class BillingRunDto extends AuditableEntityDto {
         setRejectAutoAction(billingRunEntity.getRejectAutoAction());
         setSuspectAutoAction(billingRunEntity.getSuspectAutoAction());
         setGenerateAO(billingRunEntity.getGenerateAO());
+        setApplicationEl(billingRunEntity.getApplicationEl());
     }
 
     @Override
@@ -810,6 +823,7 @@ public class BillingRunDto extends AuditableEntityDto {
                 ", selectedBillingAccounts='" + selectedBillingAccounts + '\'' +
                 ", customFields=" + customFields +
                 ", generateAO=" + generateAO +
+                ", applicationEl=" + applicationEl +
                 '}';
     }
 }
