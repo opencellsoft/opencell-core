@@ -382,7 +382,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 }
             }
         }
-
+	    entity.setCode(entity.getCode().toLowerCase());
         entity = saveOrUpdate(entity);
 
         if (killConversation) {
