@@ -53,4 +53,7 @@ public interface RatedTransactionInput extends Resource {
 	@Schema(description = "Rated transaction description")
 	@Nullable
 	String getDescription();
+	
+	@Nullable
+	String getBusinessKey();
 }

@@ -106,7 +106,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 		return ratedTransactionService.createRatedTransaction(input.getBillingAccountCode(), input.getUserAccountCode(),
 				input.getSubscriptionCode(), input.getServiceInstanceCode(), input.getChargeInstanceCode(), input.getUsageDate(),
 				input.getUnitAmountWithoutTax(), input.getQuantity(), input.getParameter1(), input.getParameter2(),
-				input.getParameter3(), input.getParameterExtra(), input.getDescription());
+				input.getParameter3(), input.getParameterExtra(), input.getDescription(), input.getBusinessKey());
 	}
 
 
@@ -136,9 +136,9 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	 * @param usageDate usage date
 	 */
 	public void update(RatedTransaction ratedTransaction, String description, BigDecimal unitAmountWithoutTax,
-					   BigDecimal quantity, String param1, String param2, String param3, String paramExtra, Date usageDate) {
+					   BigDecimal quantity, String param1, String param2, String param3, String paramExtra, Date usageDate, String businessKey) {
 		ratedTransactionService.updateRatedTransaction(ratedTransaction,
-				description, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra, usageDate);
+				description, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra, usageDate, businessKey);
 	}
 
 	public Object duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
