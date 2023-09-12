@@ -299,66 +299,84 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     
     
     private boolean valueCompare(RuleOperatorEnum operator,String sourceAttributeValue,Object convertedValue) {
-    	if(convertedValue==null && StringUtils.isBlank(sourceAttributeValue)) {
-    		return true;
-    	}
-    	if(sourceAttributeValue!=null &&  operator!=null) {
-    		String convertedValueStr=convertedValue !=null?String.valueOf(convertedValue):null;
-    		switch(operator) {
-    		case EQUAL:
-    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) &&  NumberUtils.isCreatable(sourceAttributeValue.trim())) {
-    				 if(Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue))==0) {
-    					 return true;
-    				 }
-    			}
-    			if (sourceAttributeValue.equals(convertedValueStr))
-    				return true;
-    			break;
-    		case NOT_EQUAL:
-    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
-   				 if(Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue))!=0) {
-   					 return true;
-   				 }
-   				 break;
-   			    }
-    			if (!sourceAttributeValue.equals(convertedValueStr))
-    				return true;
-    			break;
-    		case LESS_THAN:
-    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
-    			if (Double.valueOf(convertedValueStr)<Double.valueOf(sourceAttributeValue))
-    				return true;
-    			}
-    			break;
-    		case LESS_THAN_OR_EQUAL:
-    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
-    			if (Double.valueOf(convertedValueStr)<=Double.valueOf(sourceAttributeValue))
-    				return true;
-    			}
-    			break;
-    		case GREATER_THAN:
-    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
-    			if (Double.valueOf(convertedValueStr)>Double.valueOf(sourceAttributeValue))
-    				return true;	
-    			}
-    			break;
-
-    		case GREATER_THAN_OR_EQUAL:
-    			if(StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
-    			if (Double.valueOf(convertedValueStr)>=Double.valueOf(sourceAttributeValue))
-    				return true;	
-    			}break;
-    		
-    		case CONTAINS:
-    			
-    			List<String> values = convertedValueStr!=null?Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)):new ArrayList<String>();
-				if (values.contains(sourceAttributeValue.trim())){
-					return true;
-				}
-    			break;
-    		}
-    	}
-    	return false;
+        if (convertedValue == null && StringUtils.isBlank(sourceAttributeValue)) {
+            if (operator == RuleOperatorEnum.NOT_EQUAL) {
+                return false;
+            }
+            return true;
+        }
+        if (operator != null) {
+            String convertedValueStr = convertedValue != null ? String.valueOf(convertedValue) : null;
+            switch (operator) {
+                case EQUAL:
+                    if (StringUtils.isBlank(convertedValueStr) || StringUtils.isBlank(sourceAttributeValue)) {
+                        return false;
+                    }
+                    if (NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+                        if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) == 0) {
+                            return true;
+                        }
+                    }
+                    if (sourceAttributeValue.equals(convertedValueStr)) {
+                        return true;
+                    }
+                    break;
+                case NOT_EQUAL:
+                    if (StringUtils.isBlank(convertedValueStr) || StringUtils.isBlank(sourceAttributeValue)) {
+                        return true;
+                    }
+                    if (NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+                        if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) != 0) {
+                            return true;
+                        }
+                        break;
+                    }
+                    if (!sourceAttributeValue.equals(convertedValueStr)) {
+                        return true;
+                    }
+                    break;
+                case LESS_THAN:
+                    if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) &&
+                            StringUtils.isNotBlank(sourceAttributeValue) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+                        if (Double.valueOf(convertedValueStr) < Double.valueOf(sourceAttributeValue)) {
+                            return true;
+                        }
+                    }
+                    break;
+                case LESS_THAN_OR_EQUAL:
+                    if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) &&
+                            StringUtils.isNotBlank(sourceAttributeValue) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+                        if (Double.valueOf(convertedValueStr) <= Double.valueOf(sourceAttributeValue)) {
+                            return true;
+                        }
+                    }
+                    break;
+                case GREATER_THAN:
+                    if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) &&
+                            StringUtils.isNotBlank(sourceAttributeValue) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+                        if (Double.valueOf(convertedValueStr) > Double.valueOf(sourceAttributeValue)) {
+                            return true;
+                        }
+                    }
+                    break;
+                case GREATER_THAN_OR_EQUAL:
+                    if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) &&
+                            StringUtils.isNotBlank(sourceAttributeValue) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+                        if (Double.valueOf(convertedValueStr) >= Double.valueOf(sourceAttributeValue)) {
+                            return true;
+                        }
+                    }
+                    break;
+                case CONTAINS:
+                    multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+                    List<String> values = convertedValueStr != null ? Arrays.asList(convertedValueStr.split(multiValuesAttributeSeparator)) : new ArrayList<String>();
+                    if (StringUtils.isNotBlank(sourceAttributeValue) && values.contains(sourceAttributeValue.trim())) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
     }
     
     private  boolean  isSelectedAttribute(LinkedHashMap<String, Object> selectedAttributes, CommercialRuleLine line, MutableBoolean continueProcess, boolean isPreRequisite,String offerCode,boolean isLastLine) {
