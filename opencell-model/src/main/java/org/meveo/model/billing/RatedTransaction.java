@@ -806,6 +806,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountedAmount = walletOperation.getDiscountedAmount();
         this.sequence = walletOperation.getSequence();
         this.rulesContract = walletOperation.getRulesContract();
+        this.businessKey = walletOperation.getBusinessKey();
     }
 
 
