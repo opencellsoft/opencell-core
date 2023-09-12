@@ -110,6 +110,15 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         entity = billingCycleService.update(entity);
         return entity;
     }
+    
+    @Override
+    public BillingCycle createOrUpdate(BillingCycleDto dto) throws MeveoApiException, BusinessException {
+	    if(billingCycleService.findByCode(dto.getCode()) != null) {
+	        return update(dto);
+	    } else {
+	        return create(dto);
+	    }
+    }
 
     /**
      * Populate entity with fields from DTO entity
