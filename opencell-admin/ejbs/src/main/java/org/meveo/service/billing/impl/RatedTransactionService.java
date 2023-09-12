@@ -29,6 +29,7 @@ import static org.meveo.commons.utils.ParamBean.getInstance;
 import static org.meveo.model.BaseEntity.NB_DECIMALS;
 import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
 import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -2663,4 +2664,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .getResultList();
         }
     }
+
+    public String evaluateEl(String expression, Map<Object, Object> contextMap, Class<String> class1) {
+		return evaluateExpression(expression, contextMap, String.class);
+	}
 }
+
