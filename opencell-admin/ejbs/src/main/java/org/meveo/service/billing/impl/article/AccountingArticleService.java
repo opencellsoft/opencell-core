@@ -508,11 +508,17 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	private boolean valueCompareCollection(RuleOperatorEnum operator, List<String> source, List<Object> input) {
 		if (CollectionUtils.isEmpty(source) && CollectionUtils.isEmpty(input)) {
+			if (operator == RuleOperatorEnum.NOT_EQUAL) {
+				return false;
+			}
 			return true;
 		}
 
 		if ((CollectionUtils.isEmpty(source) && CollectionUtils.isNotEmpty(input)) ||
 				(CollectionUtils.isNotEmpty(source) && CollectionUtils.isEmpty(input))) {
+			if (operator == RuleOperatorEnum.NOT_EQUAL) {
+				return true;
+			}
 			return false;
 		}
 
@@ -537,50 +543,64 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	private boolean valueCompare(RuleOperatorEnum operator, String sourceAttributeValue, Object convertedValue) {
 		if (convertedValue == null && StringUtils.isBlank(sourceAttributeValue)) {
+			if (operator == RuleOperatorEnum.NOT_EQUAL) {
+				return false;
+			}
 			return true;
 		}
-		if (sourceAttributeValue != null && operator != null) {
+		if (operator != null) {
 			String convertedValueStr = convertedValue != null ? String.valueOf(convertedValue) : null;
 			switch (operator) {
 				case EQUAL:
-					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isBlank(convertedValueStr) || StringUtils.isBlank(sourceAttributeValue)) {
+						return false;
+					}
+					if (NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) == 0) {
 							return true;
 						}
 					}
-					if (sourceAttributeValue.equals(convertedValueStr))
+					if (sourceAttributeValue.equals(convertedValueStr)) {
 						return true;
+					}
 					break;
 				case NOT_EQUAL:
-					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isBlank(convertedValueStr) || StringUtils.isBlank(sourceAttributeValue)) {
+						return true;
+					}
+					if (NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr).compareTo(Double.valueOf(sourceAttributeValue)) != 0) {
 							return true;
 						}
 					}
-					if (!sourceAttributeValue.equals(convertedValueStr))
+					if (!sourceAttributeValue.equals(convertedValueStr)) {
 						return true;
+					}
 					break;
 				case LESS_THAN:
-					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) &&
+							StringUtils.isNotBlank(sourceAttributeValue) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) < Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case LESS_THAN_OR_EQUAL:
-					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) &&
+							StringUtils.isNotBlank(sourceAttributeValue) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) <= Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
 				case GREATER_THAN:
-					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) &&
+							StringUtils.isNotBlank(sourceAttributeValue) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) > Double.valueOf(sourceAttributeValue))
 							return true;
 					}
 					break;
-
 				case GREATER_THAN_OR_EQUAL:
-					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+					if (StringUtils.isNotBlank(convertedValueStr) && NumberUtils.isCreatable(convertedValueStr.trim()) &&
+							StringUtils.isNotBlank(sourceAttributeValue) && NumberUtils.isCreatable(sourceAttributeValue.trim())) {
 						if (Double.valueOf(convertedValueStr) >= Double.valueOf(sourceAttributeValue))
 							return true;
 					}
