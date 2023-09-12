@@ -1768,26 +1768,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 chargeTemplate.getCode(), rtDescription, null, null, subscription.getSeller(), taxInfo.tax,
                 taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
         rt.setAccountingArticle(accountingArticle);
+        rt.setBusinessKey(businessKey);
         
-       
-        if(businessKey != null) {
-        	rt.setBusinessKey(businessKey);
-        }else {
-        	String expression = null;
-        	if(chargeTemplate instanceof RecurringChargeTemplate || chargeTemplate instanceof OneShotChargeTemplate) {
-        		expression = chargeTemplate.getBusinessKeyEl();
-        	}
-        	 if (!StringUtils.isBlank(expression)) {
-                 Map<Object, Object> contextMap = new HashMap<>();
-                 contextMap.put("chargeTemplate", chargeTemplate);
-                 try {
-                     String value = evaluateExpression(expression, contextMap, String.class);
-                     rt.setBusinessKey(value);
-                 } catch (BusinessException e) {
-                	 log.warn("Error when evaluate El for chargeTemplate id=" + chargeTemplate.getId());
-                 }
-             }
-        }
         if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
             applyInvoicingRules(rt);
         }
@@ -1810,7 +1792,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public void updateRatedTransaction(RatedTransaction ratedTransaction, String description,
                                        BigDecimal unitAmountWithoutTax, BigDecimal quantity, String param1,
-                                       String param2, String param3, String paramExtra, Date usageDate) {
+                                       String param2, String param3, String paramExtra, Date usageDate, String businessKey) {
         ratedTransaction.setDescription(description);
         BigDecimal[] unitAmounts = computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
                 ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), NB_DECIMALS, HALF_UP);
@@ -1830,6 +1812,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setParameter3(param3);
         ratedTransaction.setParameterExtra(paramExtra);
         ratedTransaction.setUsageDate(usageDate);
+        if(businessKey !=null)
+        	ratedTransaction.setBusinessKey(businessKey);
+        
 
         update(ratedTransaction);
     }
