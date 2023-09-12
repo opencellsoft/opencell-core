@@ -471,6 +471,9 @@ public class WalletOperationNative extends BaseEntity {
 //
 //    @Column(name = "contract_line_id")
 //    private Long contractLineId;
+    
+    @Column(name = "business_key")
+    private String businessKey;
 
     /**
      * Constructor
@@ -1113,4 +1116,13 @@ public class WalletOperationNative extends BaseEntity {
     public void setRulesContractId(Long rulesContractId) {
         this.rulesContractId = rulesContractId;
     }
+
+	public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}
+    
 }
