@@ -453,6 +453,11 @@ public class UsageRatingService extends RatingService implements Serializable {
 
             edr.changeStatus(EDRStatusEnum.RATED);
             edr.setRejectReason(null);
+            
+            WalletOperation walletOperation = ratingResult.getWalletOperations().stream().filter(e -> e.getEdr().equals(edr)).findFirst().orElse(null);
+            if (walletOperation != null) {
+            	edr.setBusinessKey(walletOperation.getBusinessKey());
+            }
 
             // If not virtual, persist triggered EDRs and created Wallet operations
             if (!isVirtual && currentRatingDepth == 0) {

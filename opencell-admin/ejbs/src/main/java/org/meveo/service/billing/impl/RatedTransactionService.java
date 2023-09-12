@@ -519,6 +519,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (walletOperation.getTradingCurrencyId() != null) {
                 ratedTransaction.setTradingCurrency(em.getReference(TradingCurrency.class, walletOperation.getTradingCurrencyId()));
             }
+            
+            ratedTransaction.setBusinessKey(walletOperation.getBusinessKey());
 
             if (cftEndPeriodEnabled) {
                 customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
