@@ -31,6 +31,13 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.*;
 import org.meveo.service.crm.impl.CustomerService;
@@ -40,6 +47,7 @@ import org.primefaces.model.SortOrder;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +60,7 @@ import java.util.Map;
  * @lastModifiedVersion 5.2
  */
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class PaymentMethodApi extends BaseApi {
 
     /** The customer account service. */
@@ -77,7 +86,7 @@ public class PaymentMethodApi extends BaseApi {
      * @throws BusinessException the business exception
      */
     @SuppressWarnings("deprecation")
-	public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
         validate(paymentMethodDto, true);
 
         CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
@@ -102,6 +111,7 @@ public class PaymentMethodApi extends BaseApi {
      * @throws EntityDoesNotExistsException the entity does not exists exception
      * @throws BusinessException the business exception
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "customerAccountCode", entityClass = CustomerAccount.class))
     public void update(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
         if (StringUtils.isBlank(paymentMethodDto.getId())) {
             missingParameters.add("Id");
@@ -150,6 +160,7 @@ public class PaymentMethodApi extends BaseApi {
      * @throws InvalidParameterException the invalid parameter exception
      */
     @Deprecated // used only for listCardPaymentMethods for the moment, please use list(PagingAndFiltering pagingAndFiltering) instead.
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(index = 1, entityClass = CustomerAccount.class))
     public PaymentMethodTokensDto list(Long customerAccountId, String customerAccountCode) throws InvalidParameterException {
         PagingAndFiltering pagingAndFiltering = new PagingAndFiltering();
         Map<String, Object> filters = new HashedMap<String, Object>();
@@ -171,6 +182,8 @@ public class PaymentMethodApi extends BaseApi {
      * @return the payment method tokens dto
      * @throws InvalidParameterException the invalid parameter exception
      */
+    @SecuredBusinessEntityMethod(resultFilter= ListFilter.class)
+    @FilterResults(propertyToFilter = "paymentMethods", itemPropertiesToFilter = { @FilterProperty(property = "customerAccountCode", entityClass = CustomerAccount.class) })
     public PaymentMethodTokensDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
         PaymentMethodTokensDto result = new PaymentMethodTokensDto();
         PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.DESCENDING, null, pagingAndFiltering, PaymentMethod.class);
@@ -186,6 +199,8 @@ public class PaymentMethodApi extends BaseApi {
         return result;
     }
 
+    @SecuredBusinessEntityMethod(resultFilter= ListFilter.class)
+    @FilterResults(propertyToFilter = "paymentMethods", itemPropertiesToFilter = { @FilterProperty(property = "customerAccountCode", entityClass = CustomerAccount.class) })
     public PaymentMethodTokensDto listGet(PagingAndFiltering pagingAndFiltering) {
         PaymentMethodTokensDto result = new PaymentMethodTokensDto();
         result.setPaging( pagingAndFiltering );
@@ -207,6 +222,7 @@ public class PaymentMethodApi extends BaseApi {
      * @return the payment method tokens dto
      * @throws MeveoApiException the meveo api exception
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public PaymentMethodTokensDto listByCustomerAccountCode(String customerAccountCode, Integer firstRow, Integer numberOfRows) throws MeveoApiException {
         
         if (StringUtils.isBlank(customerAccountCode)) {
@@ -259,6 +275,7 @@ public class PaymentMethodApi extends BaseApi {
      * @param paymentMethodDto paymentMethodDto to check.
      * @param isRoot is the root Dto or sub Dto.
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(parser = ObjectPropertyParser.class, property = "customerAccountCode", entityClass = CustomerAccount.class))
     public void validate(PaymentMethodDto paymentMethodDto, boolean isRoot) {
         PaymentMethodEnum type = paymentMethodDto.getPaymentMethodType();
         if (type == null) {
