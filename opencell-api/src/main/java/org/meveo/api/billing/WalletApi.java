@@ -569,6 +569,9 @@ public class WalletApi extends BaseApi {
             throw e;
         }
 
+        
+        walletOperation.setBusinessKey(postData.getBusinessKey());
+        
         walletOperationService.create(walletOperation);
 
         return walletOperation;

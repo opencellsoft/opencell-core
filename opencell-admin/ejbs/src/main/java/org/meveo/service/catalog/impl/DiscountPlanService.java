@@ -262,6 +262,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 				discountWalletOperation.setTaxClass(taxInfo.taxClass);
 				discountWalletOperation.setDiscountValue(discountValue);
 				discountWalletOperation.setDiscountedAmount(discountedAmount);
+			    discountWalletOperation.setBusinessKey(walletOperation != null ? walletOperation.getBusinessKey() : null);
     			
     			if(!isVirtual) {
     				discountWalletOperation.setSubscription(subscription);

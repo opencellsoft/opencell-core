@@ -4904,6 +4904,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null, null, null, null);
 
         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
+        rt.setBusinessKey(ratedTransactionDto.getBusinessKey());
         // #3355 : setting params 1,2,3
         if (isDetailledInvoiceMode) {
             rt.setParameter1(ratedTransactionDto.getParameter1());
