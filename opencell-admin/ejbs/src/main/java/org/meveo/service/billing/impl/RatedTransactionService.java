@@ -1537,6 +1537,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             ratedTransaction.setStartDate(dto.getStartDate());
             ratedTransaction.setEndDate(dto.getEndDate());
             ratedTransaction.setTaxPercent(dto.getTaxPercent());
+            ratedTransaction.setBusinessKey(dto.getBusinessKey());
             create(ratedTransaction);
         }
     }

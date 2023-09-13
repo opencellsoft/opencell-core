@@ -607,6 +607,9 @@ public class WalletApi extends BaseApi {
             walletOperation.setTransactionalUnitAmountWithTax(computeTransactionalAmount(walletOperation.getUnitAmountWithTax(),
                     tradingCurrency));
         }
+        
+        walletOperation.setBusinessKey(postData.getBusinessKey());
+        
         walletOperationService.create(walletOperation);
 
         return walletOperation;

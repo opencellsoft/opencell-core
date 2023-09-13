@@ -718,8 +718,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     wallet != null ? wallet.getUserAccount() : null, wallet != null ? wallet.getUserAccount().getBillingAccount() : null);
             }
             Integer sortIndex = RatingService.getSortIndex(wo);
-            wo.setSortIndex(sortIndex);
-            create(wo);
+            wo.setSortIndex(sortIndex);        
+        	wo.setBusinessKey(dto.getBusinessKey());
+
+        	create(wo);
         }
     }
 
