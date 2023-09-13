@@ -484,6 +484,9 @@
         <createSequence sequenceName="audit_data_log_seq" startValue="1"  incrementBy="100"/>
         <createSequence sequenceName="audit_data_log_rec_seq" startValue="1" incrementBy="1000"/>
         <createSequence sequenceName="audit_data_config_seq" startValue="1" />
+        <createSequence sequenceName="product_amount_seq" startValue="1"/>
+        <createSequence sequenceName="subscription_amount_seq" startValue="1"/>
+        <createSequence sequenceName="accounting_article_amount_seq" startValue="1"/>
     </changeSet>
 
 
@@ -2804,6 +2807,7 @@
             <column name="pre_invoicing_report_id" type="${cast.long}" />
             <column name="pre_report_auto_on_invoice_line_job" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="billed_rated_transactions_report_id" type="${cast.long}" />
+			<column name="application_el" type="varchar(2000)" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -3031,6 +3035,19 @@
             <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
                 <constraints nullable="false" />
             </column>
+			<column name="application_el" type="varchar(2000)" />
+            <column name="report_config_pre_report_auto_on_create" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="report_config_pre_report_auto_on_invoice_lines_job" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="report_config_display_billing_accounts" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="report_config_display_subscriptions" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="report_config_display_offers" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="report_config_display_products" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="report_config_display_articles" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="report_config_block_size_billing_accounts" type="int4" defaultValueNumeric="10"/>
+            <column name="report_config_block_size_subscriptions" type="int4" defaultValueNumeric="10"/>
+            <column name="report_config_block_size_offers" type="int4" defaultValueNumeric="10"/>
+            <column name="report_config_block_size_products" type="int4" defaultValueNumeric="10"/>
+            <column name="report_config_block_size_articles" type="int4" defaultValueNumeric="10"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -12900,6 +12917,54 @@
         </createTable>
     </changeSet>
         
+    <changeSet id="#INTRD-17696_2023_09_11_rebuild_tbl" author="zbariki">
+        <createTable tableName="product_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="product_amount_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="product_id" type="${cast.long}"/>
+            <column name="amount" type="numeric(23, 12)"/>
+            <column name="billing_run_report_id" type="${cast.long}"/>
+        </createTable>
+        <createTable tableName="subscription_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="subscription_amount_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="amount" type="numeric(23, 12)"/>
+            <column name="subscription_id" type="${cast.long}"/>
+            <column name="billing_run_report_id" type="${cast.long}"/>
+        </createTable>
+        <createTable tableName="accounting_article_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="accounting_article_amount_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="amount" type="numeric(23, 12)"/>
+            <column name="accounting_article_id" type="${cast.long}"/>
+            <column name="billing_run_report_id" type="${cast.long}"/>
+        </createTable>
+    </changeSet>
+        
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -17625,6 +17690,26 @@
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="#INTRD-17632_2023_09_11_fk" author="zbariki">
+        <addForeignKeyConstraint baseTableName="product_amount" baseColumnNames="product_id"
+                                 constraintName="product_amount_product_id_fk"
+                                 referencedTableName="cpq_product" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="product_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="product_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="subscription_amount" baseColumnNames="subscription_id"
+                                 constraintName="subscription_amount_subscription_id_fk"
+                                 referencedTableName="billing_subscription" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="subscription_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="subscription_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="accounting_article_amount" baseColumnNames="accounting_article_id"
+                                 constraintName="accounting_article_amount_accounting_article_id_fk"
+                                 referencedTableName="billing_accounting_article" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="accounting_article_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="accounting_article_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+    </changeSet>
 
     <!-- end fk -->
 
@@ -20790,12 +20875,15 @@
     <changeSet id="#INTRD-18140_20230904" author="AdilElJaouhari" />
     <changeSet id="#INTRD-10574_20221013" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-10574_20221014" author="AndriusKarpavicius"/>
+	<changeSet id="#INTRD-18252_20230908" author="aelmalki" />
+    <changeSet id="#INTRD-17696_2023_09_11" author="zbariki" />
     <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi"/>
     <changeSet id="#INTRD-16881_20230816" author="Mohammed_ElAzzouzi"/>    
     <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe" />
 
     <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-18276_20230908" author="aelmalki" />
+	<changeSet id="#INTRD-18280_20230911" author="aelmalki" />
 	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

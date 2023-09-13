@@ -8,7 +8,6 @@ import static org.meveo.model.billing.BillingRunReportTypeEnum.OPEN_RATED_TRANSA
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 
 import javax.persistence.Column;
@@ -90,6 +89,15 @@ public class BillingRunReport extends AuditableEntity {
 
     @OneToMany(mappedBy = "billingRunReport", fetch = LAZY)
     private List<OfferAmount> topOffers;
+
+    @OneToMany(mappedBy = "billingRunReport", fetch = LAZY)
+    private List<ProductAmount> topProducts;
+
+    @OneToMany(mappedBy = "billingRunReport", fetch = LAZY)
+    private List<AccountingArticleAmount> topAccountingArticles;
+
+    @OneToMany(mappedBy = "billingRunReport", fetch = LAZY)
+    private List<SubscriptionAmount> topSubscriptions;
 
     public BillingRunReport() {
         this.totalAmountWithoutTax = ZERO;
@@ -224,5 +232,29 @@ public class BillingRunReport extends AuditableEntity {
 
     public void setTopOffers(List<OfferAmount> topOffers) {
         this.topOffers = topOffers;
+    }
+
+    public List<ProductAmount> getTopProducts() {
+        return topProducts;
+    }
+
+    public void setTopProducts(List<ProductAmount> topProducts) {
+        this.topProducts = topProducts;
+    }
+
+    public List<AccountingArticleAmount> getTopAccountingArticles() {
+        return topAccountingArticles;
+    }
+
+    public void setTopAccountingArticles(List<AccountingArticleAmount> topAccountingArticles) {
+        this.topAccountingArticles = topAccountingArticles;
+    }
+
+    public List<SubscriptionAmount> getTopSubscriptions() {
+        return topSubscriptions;
+    }
+
+    public void setTopSubscriptions(List<SubscriptionAmount> topSubscriptions) {
+        this.topSubscriptions = topSubscriptions;
     }
 }

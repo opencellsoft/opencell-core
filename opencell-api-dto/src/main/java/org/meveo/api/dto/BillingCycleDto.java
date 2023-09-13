@@ -152,7 +152,7 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     /** The billing cycle type. */
     @XmlElement
-    private BillingEntityTypeEnum type;
+    private BillingEntityTypeEnum type = BillingEntityTypeEnum.BILLINGACCOUNT;
 
     /**
      * What reference date to use when calculating the next invoicing date with an invoice calendar as in: BillingCycle.calendar.nextCalendarDate(referenceDate)
@@ -219,6 +219,9 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     @Schema(description = "Use incremental mode in invoice lines or not", nullable = true)
     private Boolean incrementalInvoiceLines;
+
+    @Size(max = 2000)
+    private String applicationEl;
 
     public String getLastTransactionDateDelayEL() {
 		return lastTransactionDateDelayEL;
@@ -790,6 +793,9 @@ public class BillingCycleDto extends BusinessEntityDto {
         return incrementalInvoiceLines;
     }
 
+    public String getApplicationEl() {
+        return applicationEl;
+
     /**
      * Get the discountAggregation
      * @return discountAggregation value
@@ -797,6 +803,11 @@ public class BillingCycleDto extends BusinessEntityDto {
     public DiscountAggregationModeEnum getDiscountAggregation() {
         return discountAggregation;
     }
+
+    public void setApplicationEl(String applicationEl) {
+        this.applicationEl = applicationEl;
+    }
+}
 
     /**
      * set the discountAggregation

@@ -501,6 +501,10 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @JoinColumn(name = "billed_rated_transactions_report_id")
     private BillingRunReport billedRatedTransactionsReport;
 
+    @Column(name = "application_el", length = 2000)
+    @Size(max = 2000)
+    private String applicationEl;
+
     public BillingRun getNextBillingRun() {
         return nextBillingRun;
     }
@@ -1216,5 +1220,13 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
 
     public void setBilledRatedTransactionsReport(BillingRunReport billedRatedTransactionsReport) {
         this.billedRatedTransactionsReport = billedRatedTransactionsReport;
+    }
+
+    public String getApplicationEl() {
+        return applicationEl;
+    }
+
+    public void setApplicationEl(String applicationEl) {
+        this.applicationEl = applicationEl;
     }
 }

@@ -25,6 +25,7 @@ import static org.apache.commons.collections4.ListUtils.partition;
 import static org.meveo.commons.utils.NumberUtils.computeDerivedAmounts;
 import static org.meveo.commons.utils.ParamBean.getInstance;
 import static org.meveo.model.BaseEntity.NB_DECIMALS;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -114,6 +115,7 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
@@ -502,6 +504,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (walletOperation.getTradingCurrencyId() != null) {
                 ratedTransaction.setTradingCurrency(em.getReference(TradingCurrency.class, walletOperation.getTradingCurrencyId()));
             }
+
+            ratedTransaction.setBusinessKey(walletOperation.getBusinessKey());
 
             if (cftEndPeriodEnabled) {
                 customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
@@ -1682,7 +1686,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode,
                                                    Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal quantity,
                                                    String param1, String param2, String param3,
-                                                   String paramExtra, String description) {
+                                                   String paramExtra, String description, String businessKey) {
         String errors = "";
         if (billingAccountCode == null) {
             errors = errors + " billingAccountCode,";
@@ -1734,6 +1738,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 chargeTemplate.getCode(), rtDescription, null, null, subscription.getSeller(), taxInfo.tax,
                 taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL, chargeInstance, null);
         rt.setAccountingArticle(accountingArticle);
+        rt.setBusinessKey(businessKey);
+        
         if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
             applyInvoicingRules(rt);
         }
@@ -1756,7 +1762,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public void updateRatedTransaction(RatedTransaction ratedTransaction, String description,
                                        BigDecimal unitAmountWithoutTax, BigDecimal quantity, String param1,
-                                       String param2, String param3, String paramExtra, Date usageDate) {
+                                       String param2, String param3, String paramExtra, Date usageDate, String businessKey) {
         ratedTransaction.setDescription(description);
         BigDecimal[] unitAmounts = computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithoutTax,
                 ratedTransaction.getTaxPercent(), appProvider.isEntreprise(), NB_DECIMALS, HALF_UP);
@@ -1776,6 +1782,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setParameter3(param3);
         ratedTransaction.setParameterExtra(paramExtra);
         ratedTransaction.setUsageDate(usageDate);
+        if(businessKey !=null)
+        	ratedTransaction.setBusinessKey(businessKey);
+
 
         update(ratedTransaction);
     }

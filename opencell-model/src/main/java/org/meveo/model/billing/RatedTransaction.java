@@ -855,6 +855,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.transactionalAmountTax = walletOperation.getTransactionalAmountTax();
         this.transactionalAmountWithoutTax = walletOperation.getTransactionalAmountWithoutTax();
         this.transactionalAmountWithTax = walletOperation.getTransactionalAmountWithTax();
+        this.businessKey = walletOperation.getBusinessKey();
     }
 
 

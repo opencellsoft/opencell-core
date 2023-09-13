@@ -124,6 +124,7 @@ public class InvoicingApi extends BaseApi {
         billingRun.setSkipValidationScript(dto.getSkipValidationScript());
         billingRun.setPreReportAutoOnCreate(dto.getPreReportAutoOnCreate());
         billingRun.setPreReportAutoOnInvoiceLinesJob(dto.getPreReportAutoOnInvoiceLinesJob());
+        billingRun.setApplicationEl(dto.getApplicationEl());
         if(dto.getRejectAutoAction() == null) {
             billingRun.setRejectAutoAction(BillingRunAutomaticActionEnum.MANUAL_ACTION);
         }
@@ -404,6 +405,8 @@ public class InvoicingApi extends BaseApi {
         if(dto.getPreReportAutoOnInvoiceLinesJob() != null) {
             billingRun.setPreReportAutoOnInvoiceLinesJob(dto.getPreReportAutoOnInvoiceLinesJob());
         }
+
+        billingRun.setApplicationEl(dto.getApplicationEl());
 
         billingRunService.update(billingRun);
         billingRunReportService.launchBillingRunReportJob(billingRun);

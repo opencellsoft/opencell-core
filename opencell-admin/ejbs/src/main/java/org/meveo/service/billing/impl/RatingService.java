@@ -488,6 +488,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 newEdr.setParameter4(elUtils.evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
                 newEdr.setQuantity(BigDecimal.valueOf(elUtils.evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
                 newEdr.setWalletOperation(walletOperation);
+                newEdr.setBusinessKey(walletOperation.getBusinessKey());
 
                 Subscription sub = null;
 
@@ -597,6 +598,17 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 		    bareWalletOperation.setAccountingArticle(accountingArticle);
 	    }
 	    bareWalletOperation.setOverrodePrice( unitPriceWithoutTaxOverridden != null || unitPriceWithTaxOverridden != null);
+	    
+		try {
+			String businessKey = (String) ValueExpressionWrapper.evaluateExpression(
+					bareWalletOperation.getChargeInstance().getChargeTemplate().getBusinessKeyEl(), Map.of("op", bareWalletOperation), String.class);
+			bareWalletOperation.setBusinessKey(businessKey);
+		} catch (Exception e) {
+			throw new InvalidELException(String.format("Error during businessKeyEl evaluation: subscription=%s, product instance=%s,%s, charge=%s, EDR=%s",
+					bareWalletOperation.getSubscription().getCode(), getProductId(bareWalletOperation), getProductCode(bareWalletOperation), 
+					getChargeTemplateCode(bareWalletOperation), (bareWalletOperation.getEdr() == null)? null : bareWalletOperation.getEdr().getId()));
+		}
+	   
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
 
@@ -937,6 +949,21 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         return chargeTemplateId;
     }
+    
+    /**
+     * Get Charge Template code
+     * @param bareWalletOperation {@link WalletOperation}
+     * @return Charge Template code
+     */
+    private static String getChargeTemplateCode(WalletOperation bareWalletOperation) {
+        String chargeTemplateCode = null;
+
+        if(bareWalletOperation.getChargeInstance() != null && bareWalletOperation.getChargeInstance().getChargeTemplate() != null) {
+            chargeTemplateCode = bareWalletOperation.getChargeInstance().getChargeTemplate().getCode();
+        }
+
+        return chargeTemplateCode;
+    }
 
     /**
      * Get Offer Template Id
@@ -969,6 +996,22 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
 
         return productId;
+    }
+    
+    /**
+     * Get Product code
+     * @param bareWalletOperation {@link WalletOperation}
+     * @return Product code
+     */
+    private static String getProductCode(WalletOperation bareWalletOperation) {
+        String productCode = null;
+
+        if(bareWalletOperation.getServiceInstance() != null && bareWalletOperation.getServiceInstance().getProductVersion() != null
+                && bareWalletOperation.getServiceInstance().getProductVersion().getProduct() != null ) {
+            productCode = bareWalletOperation.getServiceInstance().getProductVersion().getProduct().getCode();
+        }
+
+        return productCode;
     }
 
     private List<Contract> lookupSuitableContract(List<Customer> customers,List<Seller> sellers, List<Contract> contracts) {
@@ -1594,6 +1637,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	discountWalletOperation.setParameter2(bareWalletOperation.getParameter2());
     	discountWalletOperation.setParameter3(bareWalletOperation.getParameter3());
         discountWalletOperation.setTradingCurrency(bareWalletOperation.getBillingAccount().getTradingCurrency());
+        discountWalletOperation.setBusinessKey(bareWalletOperation.getBusinessKey());
 
         AccountingArticle discountArticle=accountingArticleService.findByCode(defaultDiscountArticle);
         if(discountArticle!=null) {
