@@ -17485,7 +17485,6 @@
         <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema.adapted}cat_offer_serv_templates(offer_template_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id);</sql>
         <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
-        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
         <sql>CREATE INDEX medina_access_user_id_index ON ${db.schema.adapted}medina_access(acces_user_id)</sql>
         <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id)</sql>
         <sql>CREATE INDEX counter_period_ci_id ON ${db.schema.adapted}billing_counter_period(counter_instance_id)</sql>
