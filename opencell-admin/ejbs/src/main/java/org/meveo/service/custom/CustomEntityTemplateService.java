@@ -127,7 +127,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
                 disabled.setValueRequired(false);
                 disabled.setActive(true);
                 disabled.setDescription(FIELD_DISABLED);
-                disabled.setAppliesTo("CE_" + cet.getDbTablename());
+                disabled.setAppliesTo("CE_" + cet.getCode());
                 disabled.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
                 disabled.setFieldType(CustomFieldTypeEnum.BOOLEAN);
                 disabled.setGuiPosition("tab:" + cet.getName() + ":0;field:0");
@@ -140,7 +140,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
                 validFrom.setValueRequired(false);
                 validFrom.setActive(true);
                 validFrom.setDescription(FIELD_VALID_FROM);
-                validFrom.setAppliesTo("CE_" + cet.getDbTablename());
+                validFrom.setAppliesTo("CE_" + cet.getCode());
                 validFrom.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
                 validFrom.setFieldType(CustomFieldTypeEnum.DATE);
                 validFrom.setGuiPosition("tab:" + cet.getName() + ":0;field:1");
@@ -151,7 +151,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
                 validTo.setValueRequired(false);
                 validTo.setActive(true);
                 validTo.setDescription(FIELD_VALID_TO);
-                validTo.setAppliesTo("CE_" + cet.getDbTablename());
+                validTo.setAppliesTo("CE_" + cet.getCode());
                 validTo.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
                 validTo.setFieldType(CustomFieldTypeEnum.DATE);
                 validTo.setGuiPosition("tab:" + cet.getName() + ":0;field:2");
@@ -162,7 +162,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
                 priority.setValueRequired(false);
                 priority.setActive(true);
                 priority.setDescription(FIELD_VALID_PRIORITY);
-                priority.setAppliesTo("CE_" + cet.getDbTablename());
+                priority.setAppliesTo("CE_" + cet.getCode());
                 priority.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
                 priority.setFieldType(CustomFieldTypeEnum.LONG);
                 priority.setGuiPosition("tab:" + cet.getName() + ":0;field:3");
