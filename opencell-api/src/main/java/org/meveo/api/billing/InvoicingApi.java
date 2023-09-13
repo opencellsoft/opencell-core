@@ -124,7 +124,11 @@ public class InvoicingApi extends BaseApi {
         billingRun.setSkipValidationScript(dto.getSkipValidationScript());
         billingRun.setPreReportAutoOnCreate(dto.getPreReportAutoOnCreate());
         billingRun.setPreReportAutoOnInvoiceLinesJob(dto.getPreReportAutoOnInvoiceLinesJob());
-        billingRun.setApplicationEl(dto.getApplicationEl());
+        if (dto.getApplicationEl() != null) { // PO expected that the value shall be different from null, if it is empty, then we store the empty value (see Business rules INTRD-17689)
+            billingRun.setApplicationEl(dto.getApplicationEl());
+        } else {
+            billingRun.setApplicationEl(billingCycle.getApplicationEl());
+        }
         if(dto.getRejectAutoAction() == null) {
             billingRun.setRejectAutoAction(BillingRunAutomaticActionEnum.MANUAL_ACTION);
         }
