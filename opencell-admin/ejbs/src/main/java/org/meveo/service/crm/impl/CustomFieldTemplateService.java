@@ -219,7 +219,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             return findByCodeAndAppliesTo(code, CustomFieldTemplateService.calculateAppliesToValue(entity));
 
         } catch (CustomFieldException e) {
-            log.error("Can not determine applicable CFT type for entity of {} class.", entity.getClass().getSimpleName());
+            log.error("Can not determine applicable CFT type for entity of {} class.", entity.getClass().getSimpleName(), e);
         }
         return null;
     }
@@ -498,7 +498,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                     try {
                         Object fieldValue = FieldUtils.getField(entity.getClass(), fieldName, true).get(entity);
                         if (fieldValue == null) {
-                            throw new CustomFieldException("Can not calculate AppliesTo value");
+                            throw new CustomFieldException("Can not calculate AppliesTo value for field " + fieldName + " of class " + entity.getClass().getSimpleName());
                         }
 //                        appliesTo = appliesTo + "_" + fieldValue;
                         appliesToSB.append("_" + fieldValue);
