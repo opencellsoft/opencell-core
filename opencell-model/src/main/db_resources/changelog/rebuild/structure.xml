@@ -11898,6 +11898,7 @@
             <column name="auxiliary_account_label_el" type="varchar(2000)"
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="entities_with_huge_volume" type="${type.json}"/>
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -19485,6 +19486,7 @@
 	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
     <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe" />
     
+    <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD"/>
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

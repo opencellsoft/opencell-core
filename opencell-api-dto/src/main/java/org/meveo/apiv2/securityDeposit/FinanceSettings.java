@@ -4,6 +4,8 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -59,4 +61,7 @@ public interface FinanceSettings extends Resource {
     default Boolean getActivateDunning() {
         return FALSE;
     }
+	@Schema(description = "Entities with Huge Volume")
+    Map<String, List<String>> getEntitiesWithHugeVolume();
+	
 }
