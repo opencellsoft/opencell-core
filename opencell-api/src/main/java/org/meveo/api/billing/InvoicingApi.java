@@ -311,7 +311,9 @@ public class InvoicingApi extends BaseApi {
             billingRun.setPreReportAutoOnInvoiceLinesJob(dto.getPreReportAutoOnInvoiceLinesJob());
         }
 
-        billingRun.setApplicationEl(dto.getApplicationEl());
+        if (dto.getApplicationEl() != null) { // On update, if applicationEL is null then don’t update the field.
+            billingRun.setApplicationEl(dto.getApplicationEl());
+        }
 
         billingRunService.update(billingRun);
         billingRunReportService.launchBillingRunReportJob(billingRun);
