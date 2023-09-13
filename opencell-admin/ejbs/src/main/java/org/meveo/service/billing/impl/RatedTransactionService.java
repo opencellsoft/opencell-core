@@ -2670,4 +2670,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .getResultList();
         }
     }
+
+    public String evaluateEl(String expression, Map<Object, Object> contextMap, Class<String> class1) {
+		return evaluateExpression(expression, contextMap, String.class);
+	}
 }
+

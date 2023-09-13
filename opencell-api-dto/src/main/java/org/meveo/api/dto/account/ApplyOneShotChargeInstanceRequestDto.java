@@ -126,6 +126,11 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
      */
     @XmlElement(required = false)
     private CustomFieldsDto customFields;
+    
+    /**
+     * The business key
+     */
+	private String businessKey;
 
     /**
      * Gets the one shot charge.
@@ -397,7 +402,7 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
     public String toString() {
         return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription + ", wallet=" + wallet + ", operationDate=" + operationDate
                 + ", description=" + description + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1=" + criteria1 + ", criteria2="
-                + criteria2 + ", criteria3=" + criteria3 + ", generateRTs=" + generateRTs + "]";
+                + criteria2 + ", criteria3=" + criteria3 + ", generateRTs=" + generateRTs + ", businessKey=" + businessKey +"]";
     }
 
 	/**
@@ -412,5 +417,13 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
 	 */
 	public void setGenerateRTs(Boolean generateRTs) {
 		this.generateRTs = generateRTs;
+	}
+
+	public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
 	}
 }

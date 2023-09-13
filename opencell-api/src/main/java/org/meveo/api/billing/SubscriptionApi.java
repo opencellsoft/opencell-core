@@ -119,6 +119,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductInstance;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -1235,8 +1236,27 @@ public class SubscriptionApi extends BaseApi {
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION, isVirtual);
 
         	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
-        		osho.getWalletOperations().stream().forEach(wo->ratedTransactionService.createRatedTransaction(wo,false));
+        		osho.getWalletOperations().stream().forEach(wo -> {
+        		    RatedTransaction ratedTransaction = ratedTransactionService.createRatedTransaction(wo, false);
+
+        		    if (postData.getBusinessKey() != null) {
+        		        ratedTransaction.setBusinessKey(postData.getBusinessKey());
+        		    } else {
+        		        String expression = oneShotChargeTemplate.getBusinessKeyEl();
+        		        if (!StringUtils.isBlank(expression)) {
+        		            Map<Object, Object> contextMap = new HashMap<>();
+        		            contextMap.put("op", wo);
+        		            try {
+        		                String value = ratedTransactionService.evaluateEl(expression, contextMap, String.class);
+        		                ratedTransaction.setBusinessKey(value);
+        		            } catch (BusinessException e) {
+        		                log.warn("Error when evaluating EL for chargeTemplate id=" + oneShotChargeTemplate.getId());
+        		            }
+        		        }
+        		    }
+        		});
         	}
+        	 
         	return osho;
         } catch (RatingException e) {
             log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
