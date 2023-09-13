@@ -249,7 +249,7 @@ public class CustomFieldInstanceService extends BaseService {
             }
         } catch (CustomFieldException e) {
             log.error("Can not determine applicable CFT type for entity of {} class. Value from propeties file will NOT be saved as customfield",
-                entity.getClass().getSimpleName());
+                entity.getClass().getSimpleName(), e);
         }
         return value;
     }
