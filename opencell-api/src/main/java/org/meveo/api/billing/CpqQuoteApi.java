@@ -26,7 +26,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -42,7 +52,14 @@ import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.cpq.*;
+import org.meveo.api.dto.cpq.OverrideChargedPricesDto;
+import org.meveo.api.dto.cpq.PriceDTO;
+import org.meveo.api.dto.cpq.ProductContextDTO;
+import org.meveo.api.dto.cpq.QuoteAttributeDTO;
+import org.meveo.api.dto.cpq.QuoteDTO;
+import org.meveo.api.dto.cpq.QuoteOfferDTO;
+import org.meveo.api.dto.cpq.QuoteProductDTO;
+import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.cpq.xml.TaxPricesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
@@ -134,6 +151,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PriceListService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.AttributeValueService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
@@ -546,12 +564,8 @@ public class CpqQuoteApi extends BaseApi {
                 quoteAttribute.setAttribute(attribute);
                 quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
                 quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
-                if(quoteAttribute.getDoubleValue()==null && quoteAttribute.getStringValue()!=null ) {
-                	if(org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
-                		quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
-        			}
-                }
                 quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
+                quoteAttributeService.PopulateAttributeValue(quoteAttribute);
                 quoteAttribute.updateAudit(currentUser);
                 quoteAttribute.setQuoteOffer(quoteOffer);
 
@@ -597,14 +611,10 @@ public class CpqQuoteApi extends BaseApi {
         }
         QuoteAttribute quoteAttribute = new QuoteAttribute();
         quoteAttribute.setAttribute(attribute);
-        quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
-        quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
-        if(quoteAttribute.getDoubleValue()==null && quoteAttribute.getStringValue()!=null ) {
-        	if(org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
-        		quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
-			}
-        }
+        quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());  
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
+        quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+        quoteAttributeService.PopulateAttributeValue(quoteAttribute);
         if(productAttributes != null) {
             quoteProduct.getQuoteAttributes().add(quoteAttribute);
             quoteAttribute.setQuoteProduct(quoteProduct);
@@ -1452,11 +1462,7 @@ public class CpqQuoteApi extends BaseApi {
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
         quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
-        if (quoteAttribute.getDoubleValue() == null && quoteAttribute.getStringValue() != null) {
-            if (org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
-                quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
-            }
-        }
+        quoteAttributeService.PopulateAttributeValue(quoteAttribute);
         if(quoteOffer!=null){
         	quoteAttribute.setQuoteOffer(quoteOffer);
         }
