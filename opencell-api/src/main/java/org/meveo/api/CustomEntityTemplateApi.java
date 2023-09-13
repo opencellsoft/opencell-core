@@ -102,7 +102,6 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
 
         handleMissingParameters();
-	    dto.setCode(dto.getCode().toLowerCase());
         if (dto.getStoreAsTable() == null) {
             dto.setStoreAsTable(Boolean.FALSE);
         }
