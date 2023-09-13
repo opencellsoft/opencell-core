@@ -685,10 +685,11 @@ public class BillingCycle extends BusinessCFEntity {
 
     public String getApplicationEl() {
         return applicationEl;
-
+    }
+    
     public DiscountAggregationModeEnum getDiscountAggregation() {
         return discountAggregation;
-}
+    }
 
     public void setApplicationEl(String applicationEl) {
         this.applicationEl = applicationEl;
@@ -789,7 +790,6 @@ public class BillingCycle extends BusinessCFEntity {
     public void setReportConfigBlockSizeArticles(int reportConfigBlockSizeArticles) {
         this.reportConfigBlockSizeArticles = reportConfigBlockSizeArticles;
     }
-}
 
     public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
         this.discountAggregation = discountAggregation;

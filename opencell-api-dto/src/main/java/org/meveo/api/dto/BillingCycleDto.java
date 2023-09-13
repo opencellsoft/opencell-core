@@ -795,7 +795,8 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     public String getApplicationEl() {
         return applicationEl;
-
+    }
+    
     /**
      * Get the discountAggregation
      * @return discountAggregation value
@@ -807,7 +808,6 @@ public class BillingCycleDto extends BusinessEntityDto {
     public void setApplicationEl(String applicationEl) {
         this.applicationEl = applicationEl;
     }
-}
 
     /**
      * set the discountAggregation
