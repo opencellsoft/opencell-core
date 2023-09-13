@@ -178,6 +178,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
 	@Override
 	public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
+		ddRequestLot = ddRequestLOTService.findById(ddRequestLot.getId(), Arrays.asList("ddrequestItems"));
 		if (ddRequestLot.getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.DEBIT) {
 			generateDDRequestLotFileForSSD(ddRequestLot, appProvider);
 		} else {
