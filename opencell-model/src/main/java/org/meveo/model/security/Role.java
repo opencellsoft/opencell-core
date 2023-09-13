@@ -73,7 +73,8 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
     /**
      * Role description
      */
-    @Transient
+    @Column(name = "role_description", nullable = false, length = 255)
+    @Size(max = 255)
     private String description;
 
     /**

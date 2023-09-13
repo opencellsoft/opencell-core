@@ -168,8 +168,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         if (createPermissions) {
             try {
-                roleService.create( new Role(cet.getModifyPermission(), null, true, new Role(paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"), null, true, null)));
-                roleService.create( new Role(cet.getReadPermission(), null, true, new Role(paramBean.getProperty("role.readAllCE", "ReadAllCE"), null, true, null)));
+                roleService.create( new Role(cet.getModifyPermission(), cet.getModifyPermission(), true, new Role(paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"), null, true, null)));
+                roleService.create( new Role(cet.getReadPermission(), cet.getReadPermission(), true, new Role(paramBean.getProperty("role.readAllCE", "ReadAllCE"), null, true, null)));
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -181,21 +181,16 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     @Override
     public CustomEntityTemplate update(CustomEntityTemplate cet) throws BusinessException {
-        ParamBean paramBean = paramBeanFactory.getInstance();
-        CustomEntityTemplate cetUpdated = super.update(cet);
+    	ParamBean paramBean = paramBeanFactory.getInstance();
+    	CustomEntityTemplate cetUpdated = super.update(cet);
 
-        customFieldsCache.addUpdateCustomEntityTemplate(cet, true);
-
-        try {
-            roleService.create(new Role(cet.getModifyPermission(), null, true, new Role(paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"), null, true, null)));
-            roleService.create(new Role(cet.getReadPermission(), null, true, new Role(paramBean.getProperty("role.readAllCE", "ReadAllCE"), null, true, null)));
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        clusterEventPublisher.publishEvent(cet, CrudActionEnum.update);
-        return cetUpdated;
+    	customFieldsCache.addUpdateCustomEntityTemplate(cet, true);
+    	roleService.findOrCreateRole(cet.getModifyPermission(), new Role(paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"), null, true, null));
+    	roleService.findOrCreateRole(cet.getReadPermission(), new Role(paramBean.getProperty("role.readAllCE", "ReadAllCE"), null, true, null));
+    	
+    	clusterEventPublisher.publishEvent(cet, CrudActionEnum.update);
+    	
+    	return cetUpdated;
     }
 
     @Override
