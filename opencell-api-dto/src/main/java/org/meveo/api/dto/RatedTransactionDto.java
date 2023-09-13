@@ -204,6 +204,12 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
      */
     @Schema(description = "Sorting index")
     private Integer sortIndex;
+    
+    /**
+     * rating_business_key
+     */
+    @Schema(description = "The rating business key")
+    private String businessKey;
 
     /**
      * Instantiates a new rated transaction dto.
@@ -254,6 +260,7 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
         taxClassCode = ratedTransaction.getTaxClass() != null ? ratedTransaction.getTaxClass().getCode() : null;
         this.inputUnitOfMeasure = ratedTransaction.getInputUnitOfMeasure()!=null?ratedTransaction.getInputUnitOfMeasure().getCode():null;
         this.ratingUnitOfMeasure = ratedTransaction.getRatingUnitOfMeasure()!=null?ratedTransaction.getRatingUnitOfMeasure().getCode():null;
+        this.businessKey = ratedTransaction.getBusinessKey();
     }
 
     /**
@@ -826,4 +833,18 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
     }
+
+	/**
+	 * @return the businessKey
+	 */
+	public String getBusinessKey() {
+		return businessKey;
+	}
+
+	/**
+	 * @param businessKey the businessKey to set
+	 */
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}
 }
