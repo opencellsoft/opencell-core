@@ -167,8 +167,8 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setActive(true);
         tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
-        tradingCurrency.setSymbol(getCurrencySymbol(postData.getCode()));
-        tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces());
+        tradingCurrency.setSymbol(StringUtils.isBlank(postData.getSymbol()) ? getCurrencySymbol(postData.getCode()) : postData.getSymbol());
+        tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces() == null ? 2 : postData.getDecimalPlaces());
         if (postData.isDisabled() != null) {
             tradingCurrency.setDisabled(postData.isDisabled());
         }
@@ -228,11 +228,11 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setCurrency(currency);
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setPrCurrencyToThis(postData.getPrCurrencyToThis());
-        tradingCurrency.setSymbol(getCurrencySymbol(postData.getCode()));
+        tradingCurrency.setSymbol(StringUtils.isBlank(postData.getSymbol()) ? getCurrencySymbol(postData.getCode()) : postData.getSymbol());
         tradingCurrency.setDecimalPlaces(postData.getDecimalPlaces() == null ? 2 : postData.getDecimalPlaces());
 
         tradingCurrencyService.update(tradingCurrency);
-        return new CurrencyDto(currency);
+        return new CurrencyDto(tradingCurrency);
     }
 
     public CurrencyDto createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
