@@ -289,8 +289,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param entityToInvoice Entity for which to convert Wallet operations to Rated transactions
      * @param uptoInvoicingDate Up to invoicing date. Convert Wallet operations which invoicingDate is null or less than a specified date
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createRatedTransactions(IBillableEntity entityToInvoice, Date uptoInvoicingDate) {
         List<WalletOperation> walletOps = walletOperationService.listToRate(entityToInvoice, uptoInvoicingDate);
 
