@@ -4174,7 +4174,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="adm_user" columnName="hierarchy_level_id"/>
         <dropColumn tableName="adm_user" columnName="last_login_date"/>
         <dropColumn tableName="adm_user" columnName="crm_address_book_id"/>
-        <dropColumn tableName="adm_role" columnName="role_description"/>
 
     </changeSet>
 
