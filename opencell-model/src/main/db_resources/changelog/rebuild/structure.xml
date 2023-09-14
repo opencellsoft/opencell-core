@@ -1977,6 +1977,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updated" type="datetime" />
             <column name="updater" type="varchar(100)" />
+            <column name="role_description" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-140">
@@ -19101,7 +19102,7 @@
     <changeSet id="INTRD-17307_20230712" author="TarikFA." />
     <changeSet id="#INTRD-17189_20230711" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-17304_20230714" author="AdilElJaouhari" />
-
+    <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
