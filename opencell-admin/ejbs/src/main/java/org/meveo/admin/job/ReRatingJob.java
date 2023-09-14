@@ -57,16 +57,5 @@ public class ReRatingJob extends Job {
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.RATING;
     }
-
-    @Override
-    public Map<String, CustomFieldTemplate> getCustomFields() {
-        Map<String, CustomFieldTemplate> result = new HashMap<>();
-
-        result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1",
-            false, null, null, "JobInstance_ReRatingJob"));
-        result.put(Job.CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
-            "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, "JobInstance_ReRatingJob"));
-
-        return result;
-    }
+    
 }
