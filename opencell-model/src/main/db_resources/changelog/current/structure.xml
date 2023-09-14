@@ -7444,6 +7444,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="lastname" type="varchar(100)" />
 		</addColumn>
 	</changeSet>
+	
+	  <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay">
+		<addColumn tableName="adm_role">
+			<column name="role_description" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+	 
 
     <changeSet id="INTRD-17307_20230712" author="TarikFA.">
         <addColumn tableName="finance_settings">
