@@ -15291,7 +15291,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 	
-	  <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay">
+	  <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" failOnError="false">
 		<addColumn tableName="adm_role">
 			<column name="role_description" type="varchar(255)" />
 		</addColumn>
