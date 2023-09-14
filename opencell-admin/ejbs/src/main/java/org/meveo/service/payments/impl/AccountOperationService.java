@@ -113,14 +113,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         		?LocalDate.ofInstant(accountOperation.getCollectionDate().toInstant(), ZoneId.systemDefault())
         				:LocalDate.now();
 
-        // New date can't be in the past
-        if (paymentLocalDate.isBefore(LocalDate.now())) {
-            throw new BusinessException("The payment date can't be in the past");
-        }
-
-        // New date must predate the current collection_date.
-        if (paymentLocalDate.isAfter(collectionDate)) {
-            throw new BusinessException("The payment date must be before the current collection date '" + collectionDate + "'");
+        if ((paymentLocalDate.toEpochDay() <= collectionDate.toEpochDay())) {
+            throw new BusinessException("the paymentDate should be greated than the current collection date");
         }
 
         int maxDelay = appProvider.getMaximumDelay() == null ? 0 : appProvider.getMaximumDelay();
