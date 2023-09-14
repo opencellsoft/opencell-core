@@ -13801,7 +13801,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="adm_user" columnName="hierarchy_level_id"/>
         <dropColumn tableName="adm_user" columnName="last_login_date"/>
         <dropColumn tableName="adm_user" columnName="crm_address_book_id"/>
-        <dropColumn tableName="adm_role" columnName="role_description"/>
 
     </changeSet>
 
@@ -15291,5 +15290,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="lastname" type="varchar(100)" />
 		</addColumn>
 	</changeSet>
+	
+	  <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" failOnError="false">
+		<addColumn tableName="adm_role">
+			<column name="role_description" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+	 
 
 </databaseChangeLog>
