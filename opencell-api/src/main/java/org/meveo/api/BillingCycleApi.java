@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.ReportConfig;
 import org.meveo.api.exception.*;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
@@ -287,6 +288,45 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         }
 
         entity.setApplicationEl(dto.getApplicationEl());
+        if(dto.getReportConfig() != null) {
+            validateReportBlockSizes(dto.getReportConfig());
+            if (dto.getReportConfig().getPreReportAutoOnCreate() != null) {
+                entity.setReportConfigPreReportAutoOnCreate(dto.getReportConfig().getPreReportAutoOnCreate());
+            }
+            if (dto.getReportConfig().getPreReportAutoOnInvoiceLinesJob() != null) {
+                entity.setReportConfigPreReportAutoOnInvoiceLinesJob(dto.getReportConfig().getPreReportAutoOnInvoiceLinesJob());
+            }
+            if(dto.getReportConfig().getDisplayBillingAccounts() != null) {
+                entity.setReportConfigDisplayBillingAccounts(dto.getReportConfig().getDisplayBillingAccounts());
+            }
+            if (dto.getReportConfig().getDisplaySubscriptions() != null) {
+                entity.setReportConfigDisplaySubscriptions(dto.getReportConfig().getDisplaySubscriptions());
+            }
+            if (dto.getReportConfig().getDisplayArticles() != null) {
+                entity.setReportConfigDisplayArticles(dto.getReportConfig().getDisplayArticles());
+            }
+            if(dto.getReportConfig().getDisplayOffers() != null) {
+                entity.setReportConfigDisplayOffers(dto.getReportConfig().getDisplayOffers());
+            }
+            if (dto.getReportConfig().getDisplayProducts() != null) {
+                entity.setReportConfigDisplayProducts(dto.getReportConfig().getDisplayProducts());
+            }
+            if(dto.getReportConfig().getBlockSizeArticles() != null) {
+                entity.setReportConfigBlockSizeArticles(dto.getReportConfig().getBlockSizeArticles());
+            }
+            if (dto.getReportConfig().getBlockSizeBillingAccounts() != null) {
+                entity.setReportConfigBlockSizeBillingAccounts(dto.getReportConfig().getBlockSizeBillingAccounts());
+            }
+            if (dto.getReportConfig().getBlockSizeSubscriptions() != null) {
+                entity.setReportConfigBlockSizeSubscriptions(dto.getReportConfig().getBlockSizeSubscriptions());
+            }
+            if (dto.getReportConfig().getBlockSizeOffers() != null) {
+                entity.setReportConfigBlockSizeOffers(dto.getReportConfig().getBlockSizeOffers());
+            }
+            if (dto.getReportConfig().getBlockSizeProducts() != null) {
+                entity.setReportConfigBlockSizeProducts(dto.getReportConfig().getBlockSizeProducts());
+            }
+        }
 
        	// populate customFields
         try {
@@ -298,6 +338,29 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
+        }
+    }
+
+    private void validateReportBlockSizes(ReportConfig reportConfig) {
+        if (reportConfig.getBlockSizeArticles() != null
+                && (reportConfig.getBlockSizeArticles() < 1 || reportConfig.getBlockSizeArticles() > 100)) {
+            throw  new BusinessApiException("Articles block size should be between 1 and 100");
+        }
+        if (reportConfig.getBlockSizeOffers() != null
+                && (reportConfig.getBlockSizeOffers() < 1 || reportConfig.getBlockSizeOffers() > 100)) {
+            throw  new BusinessApiException("Offers block size should be between 1 and 100");
+        }
+        if (reportConfig.getBlockSizeProducts() != null
+                && (reportConfig.getBlockSizeProducts() < 1 || reportConfig.getBlockSizeProducts() > 100)) {
+            throw  new BusinessApiException("Products block size should be between 1 and 100");
+        }
+        if (reportConfig.getBlockSizeSubscriptions() != null
+                && (reportConfig.getBlockSizeSubscriptions() < 1 || reportConfig.getBlockSizeSubscriptions() > 100)) {
+            throw  new BusinessApiException("Subscriptions block size should be between 1 and 100");
+        }
+        if (reportConfig.getBlockSizeBillingAccounts() != null
+                && (reportConfig.getBlockSizeBillingAccounts() < 1 || reportConfig.getBlockSizeBillingAccounts() > 100)) {
+            throw  new BusinessApiException("Billing account block size should be between 1 and 100");
         }
     }
 
