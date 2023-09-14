@@ -32,6 +32,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -65,12 +66,17 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
     @Inject
     private InvoiceService invoiceService;
 
+    @Inject
+    private DunningSettingsService dunningSettingsService;
+
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
     private final SimpleDateFormat emailDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @TransactionAttribute(REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         List<DunningPolicy> policies = policyService.getPolicies(true);
+        DunningSettings dunningSettings = dunningSettingsService.findLastOne();
+
         try {
             int numberOFAllInvoicesProcessed = 0;
             for (DunningPolicy policy : policies) {
@@ -78,7 +84,7 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
                 for (DunningPolicyLevel policyLevel : policy.getDunningLevels()) {
                     if (policyLevel.getDunningLevel() != null && policyLevel.getDunningLevel().isReminder()) {
                         List<Invoice> invoices = policyService.findEligibleInvoicesForPolicy(policy);
-                        processInvoices(invoices, policyLevel.getDunningLevel(), policyLevel, dunningCollectionPlan);
+                        processInvoices(invoices, policyLevel.getDunningLevel(), policyLevel, dunningCollectionPlan, dunningSettings, policy);
                         jobExecutionResult.setNbItemsToProcess(jobExecutionResult.getNbItemsToProcess() + invoices.size());
                         numberOFAllInvoicesProcessed += invoices.size();
                     }
@@ -95,15 +101,71 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
         }
     }
 
-    private void processInvoices(List<Invoice> invoices, DunningLevel reminderLevel, DunningPolicyLevel policyLevel, DunningCollectionPlan dunningCollectionPlan) {
+    private void processInvoices(List<Invoice> invoices, DunningLevel reminderLevel, DunningPolicyLevel policyLevel, DunningCollectionPlan dunningCollectionPlan, DunningSettings pDunningSettings, DunningPolicy pDunningPolicy) {
         Date today = new Date();
         reminderLevel = levelService.findById(reminderLevel.getId(), asList("dunningActions"));
-        for (Invoice invoice : invoices) {
-            Date dateToCompare = addDaysToDate(invoice.getDueDate(), reminderLevel.getDaysOverdue());
-            if (simpleDateFormat.format(dateToCompare).equals(simpleDateFormat.format(today)) && !invoice.isReminderLevelTriggered()) {
-                launchActions(reminderLevel.getDunningActions(), invoice, dunningCollectionPlan);
-                markInvoiceAsReminderAlreadySent(invoice);
-                createLevelInstance(policyLevel);
+
+        if(pDunningSettings != null) {
+            if (pDunningSettings.getDunningMode().equals(DunningModeEnum.INVOICE_LEVEL)) {
+                if (pDunningPolicy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
+                    for (Invoice invoice : invoices) {
+                        Date dateToCompare = addDaysToDate(invoice.getDueDate(), reminderLevel.getDaysOverdue());
+                        if (simpleDateFormat.format(dateToCompare).equals(simpleDateFormat.format(today)) && !invoice.isReminderLevelTriggered()) {
+                            launchActions(reminderLevel.getDunningActions(), invoice, dunningCollectionPlan);
+                            markInvoiceAsReminderAlreadySent(invoice);
+                            createLevelInstance(policyLevel);
+                        }
+                    }
+                } else if (pDunningPolicy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE_OR_BALANCE_THRESHOLD)) {
+                    for (Invoice invoice : invoices) {
+                        Date dateToCompare = addDaysToDate(invoice.getDueDate(), reminderLevel.getDaysOverdue());
+                        if ((simpleDateFormat.format(dateToCompare).equals(simpleDateFormat.format(today)) && !invoice.isReminderLevelTriggered()) ||
+                                invoice.getNetToPay().compareTo(reminderLevel.getMinBalance()) > 0) {
+                            launchActions(reminderLevel.getDunningActions(), invoice, dunningCollectionPlan);
+                            markInvoiceAsReminderAlreadySent(invoice);
+                            createLevelInstance(policyLevel);
+                        }
+                    }
+                }
+            } else if (pDunningSettings.getDunningMode().equals(DunningModeEnum.CUSTOMER_LEVEL)) {
+                if (pDunningPolicy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
+                    for(Invoice invoice : invoices) {
+                        boolean launchAction = false;
+                        BillingAccount billingAccount = billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
+                        for(Invoice inv : billingAccount.getInvoices()) {
+                            Date dateToCompare = addDaysToDate(inv.getDueDate(), reminderLevel.getDaysOverdue());
+                            if (simpleDateFormat.format(dateToCompare).equals(simpleDateFormat.format(today)) && !invoice.isReminderLevelTriggered()) {
+                                launchAction = true;
+                            }
+                        }
+
+                        Date dateToCompare = addDaysToDate(invoice.getDueDate(), reminderLevel.getDaysOverdue());
+                        if(simpleDateFormat.format(dateToCompare).equals(simpleDateFormat.format(today)) && !invoice.isReminderLevelTriggered() && launchAction) {
+                            launchActions(reminderLevel.getDunningActions(), invoice, dunningCollectionPlan);
+                            markInvoiceAsReminderAlreadySent(invoice);
+                            createLevelInstance(policyLevel);
+                        }
+                    }
+                } else if (pDunningPolicy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE_OR_BALANCE_THRESHOLD)) {
+                    for(Invoice invoice : invoices) {
+                        BigDecimal invoiceUnpaid = new BigDecimal(0);
+                        BillingAccount billingAccount = billingAccountService.findById(invoice.getBillingAccount().getId(), asList("customerAccount"));
+                        for(Invoice inv : billingAccount.getInvoices()) {
+                            Date dateToCompare = addDaysToDate(inv.getDueDate(), reminderLevel.getDaysOverdue());
+                            if (simpleDateFormat.format(dateToCompare).equals(simpleDateFormat.format(today)) && !invoice.isReminderLevelTriggered()) {
+                                invoiceUnpaid = invoiceUnpaid.add(inv.getNetToPay());
+                            }
+                        }
+
+                        Date dateToCompare = addDaysToDate(invoice.getDueDate(), reminderLevel.getDaysOverdue());
+                        if((simpleDateFormat.format(dateToCompare).equals(simpleDateFormat.format(today)) && !invoice.isReminderLevelTriggered()) ||
+                                invoiceUnpaid.compareTo(reminderLevel.getMinBalance()) > 0) {
+                            launchActions(reminderLevel.getDunningActions(), invoice, dunningCollectionPlan);
+                            markInvoiceAsReminderAlreadySent(invoice);
+                            createLevelInstance(policyLevel);
+                        }
+                    }
+                }
             }
         }
     }
@@ -187,9 +249,9 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
             params.put("customerAccountAddressAddress1",
                     customerAccount.getAddress() != null ? customerAccount.getAddress().getAddress1() : "");
             params.put("customerAccountAddressZipCode",
-                   customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
+                    customerAccount.getAddress() != null ? customerAccount.getAddress().getZipCode() : "");
             params.put("customerAccountAddressCity",
-                   customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
+                    customerAccount.getAddress() != null ? customerAccount.getAddress().getCity() : "");
             params.put("customerAccountDescription", customerAccount.getDescription());
 
             params.put("dayDate", emailDateFormatter.format(new Date()));
