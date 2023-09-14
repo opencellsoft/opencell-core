@@ -234,7 +234,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp,listAoToPayTprocess, ddRequestBuilder, result);
 							log.debug("end createDDRquestLot");
 							if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
-								dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPayTprocess,ddRequestBuilder, result);
+								dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPayTprocess,ddRequestBuilder, result,nbRuns,waitingMillis);
 								log.debug("end addItems");
 								dDRequestLOTService.generateDDRquestLotFile(dDRequestLOTService.findById(ddRequestLOT.getId(),Arrays.asList("ddrequestItems")),
 										ddRequestBuilderInterface, appProvider);

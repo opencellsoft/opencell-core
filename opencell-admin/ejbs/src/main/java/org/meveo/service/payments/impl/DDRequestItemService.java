@@ -53,7 +53,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
      * @return the DD request item
      * @throws BusinessException the business exception
      */
-    public DDRequestItem createDDRequestItem(BigDecimal amountToPay, DDRequestLOT ddRequestLOT, String caFullName, String errorMsg, List<AccountOperation> listAO)
+    public void createDDRequestItem(BigDecimal amountToPay, DDRequestLOT ddRequestLOT, String caFullName, String errorMsg, List<AccountOperation> listAO)
             throws BusinessException {
         DDRequestItem ddDequestItem = new DDRequestItem();
         ddDequestItem.setErrorMsg(errorMsg);
@@ -75,7 +75,6 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         for (AccountOperation ao : listAO) {
             ao.setDdRequestItem(ddDequestItem);
         }
-        log.debug("ddrequestItem: {} amount {} ", ddDequestItem.getId(), amountToPay);
-        return ddDequestItem;
+        log.debug("ddrequestItem: {} amount {} ", ddDequestItem.getId(), amountToPay);       
     }
 }
