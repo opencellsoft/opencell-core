@@ -286,7 +286,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         PaymentMethodTokensDto result = new PaymentMethodTokensDto();
 
         try {
-            result = paymentMethodApi.listGet(new PagingAndFiltering());
+            result = paymentMethodApi.listGet(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
