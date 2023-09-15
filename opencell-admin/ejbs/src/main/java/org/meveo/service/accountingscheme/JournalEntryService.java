@@ -28,11 +28,14 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.accountingScheme.JournalEntry;
 import org.meveo.model.accountingScheme.JournalEntryDirectionEnum;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
@@ -158,7 +161,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
     }
 
     @Transactional
-    public List<JournalEntry> createFromPayment(Payment ao, OCCTemplate occT) {
+    public List<JournalEntry> createFromPayment(AccountOperation ao, OCCTemplate occT) {
         // INTRD-5613
         List<JournalEntry> saved = new ArrayList<>();
 
@@ -372,17 +375,19 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 BigDecimal amoutTax = taxAgr.getAmountTax() == null ? BigDecimal.ZERO : taxAgr.getAmountTax();
                 BigDecimal transactionAmoutTax = taxAgr.getTransactionalAmountTax() == null ? BigDecimal.ZERO : taxAgr.getTransactionalAmountTax();
 
-                if (accountingCodeJournal.get(groupKey) == null) {
-                    JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxACC,
-                            occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
-                            amoutTax,
-                            taxAgr.getTax(), recordedInvoice.getOperationNumber());
-                    taxEntry.setTransactionalAmount(transactionAmoutTax);
-                    accountingCodeJournal.put(groupKey, taxEntry);
-                } else {
-                    JournalEntry entry = accountingCodeJournal.get(groupKey);
-                    entry.setAmount(entry.getAmount().add(amoutTax));
-                    entry.setTransactionalAmount(entry.getTransactionalAmount().add(transactionAmoutTax));
+                if (amoutTax != null && amoutTax.compareTo(BigDecimal.ZERO) != 0) {
+	                if (accountingCodeJournal.get(groupKey) == null) {
+	                    JournalEntry taxEntry = buildJournalEntry(recordedInvoice, taxACC,
+	                            occT.getOccCategory() == OperationCategoryEnum.DEBIT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
+	                            amoutTax,
+	                            taxAgr.getTax(), recordedInvoice.getOperationNumber());
+	                    taxEntry.setTransactionalAmount(transactionAmoutTax);
+	                    accountingCodeJournal.put(groupKey, taxEntry);
+	                } else {
+	                    JournalEntry entry = accountingCodeJournal.get(groupKey);
+	                    entry.setAmount(entry.getAmount().add(amoutTax));
+	                    entry.setTransactionalAmount(entry.getTransactionalAmount().add(transactionAmoutTax));
+	                }
                 }
             });
 
@@ -412,7 +417,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
             Map<String, JournalEntry> accountingCodeJournal = new HashMap<>();
             ivlResults.forEach(invoiceLine -> {
                 // find default accounting code
-                AccountingCode revenuACC = accountingArticleService.getArticleAccountingCode(invoiceLine, invoiceLine.getAccountingArticle());
+                AccountingCode revenuACC = accountingArticleService.getArticleAccountingCode(invoiceLine.getInvoice(), invoiceLine.getAccountingArticle());
 
                 if (revenuACC == null &&  occT != null) {
                     revenuACC = occT.getContraAccountingCode();
@@ -437,6 +442,39 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
                 }
 
             });
+
+            if (recordedInvoice.getInvoice().getDiscountPlan() != null &&
+                    recordedInvoice.getInvoice().getDiscountPlan().getDiscountPlanType() == DiscountPlanTypeEnum.INVOICE) {
+
+                AccountingArticle accountingArticle = null;
+                if (recordedInvoice.getInvoice().getDiscountPlan().getDiscountPlanItems() != null &&
+                        !recordedInvoice.getInvoice().getDiscountPlan().getDiscountPlanItems().isEmpty()) {
+                    DiscountPlanItem discountPlanItem = recordedInvoice.getInvoice().getDiscountPlan().getDiscountPlanItems().get(0);
+                    accountingArticle = discountPlanItem.getAccountingArticle();
+                }
+
+                // find default accounting code
+                AccountingCode revenuACC = accountingArticleService.getArticleAccountingCode(recordedInvoice.getInvoice(), accountingArticle);
+
+                if (revenuACC == null && occT != null) {
+                    revenuACC = occT.getContraAccountingCode();
+                    if (revenuACC == null) {
+                        throw new BusinessException("AccountOperation with id=" + recordedInvoice.getId() + " : " +
+                                REVENUE_MANDATORY_ACCOUNTING_CODE_NOT_FOUND);
+                    }
+                }
+
+                JournalEntry revenuEntry = buildJournalEntry(recordedInvoice, revenuACC, OperationCategoryEnum.CREDIT,
+                        recordedInvoice.getInvoice().getDiscountAmount() == null ? BigDecimal.ZERO : recordedInvoice.getInvoice().getDiscountAmount().negate(),
+                        null, recordedInvoice.getOperationNumber());
+                if (accountingArticle != null) {
+                    revenuEntry.setAnalyticCode1(accountingArticle.getAnalyticCode1());
+                    revenuEntry.setAnalyticCode2(accountingArticle.getAnalyticCode2());
+                    revenuEntry.setAnalyticCode3(accountingArticle.getAnalyticCode3());
+                }
+                revenuEntry.setTransactionalAmount(recordedInvoice.getInvoice().getDiscountAmount().negate());
+                saved.add(revenuEntry);
+            }
 
             saved.addAll(accountingCodeJournal.values());
 

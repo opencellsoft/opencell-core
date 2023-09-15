@@ -216,6 +216,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                 //discountWoId.add(wo.getId());
                 List<WalletOperation> triggeredWo = (List<WalletOperation>) walletOperationService.getEntityManager().createNamedQuery("WalletOperation.findByTriggerdEdr").setParameter("rerateWalletOperationIds", discountWoId).getResultList();
                 discountWos.addAll(triggeredWo);
+	            discountWos.addAll(triggeredWo.stream().flatMap(wl -> walletOperationService.findByDiscountedWo(wl.getId()).stream()).collect(Collectors.toList()));
                 for (WalletOperation wallet : discountWos) {
                     if (!wallet.getStatus().equals(WalletOperationStatusEnum.CANCELED)) {
                         wallet.setStatus(WalletOperationStatusEnum.CANCELED);
@@ -224,10 +225,10 @@ public class MediationsettingService extends PersistenceService<MediationSetting
                             wallet.getEdr().setStatus(EDRStatusEnum.CANCELLED);
                             edrService.update(wallet.getEdr());
                         }
-                        if (wallet.getRatedTransaction() != null && wallet.getRatedTransaction().getStatus() != RatedTransactionStatusEnum.BILLED) {
-                            wallet.getRatedTransaction().setStatus(RatedTransactionStatusEnum.CANCELED);
-                            ratedTransactionService.update(wallet.getRatedTransaction());
-                        }
+                        RatedTransaction ratedTransaction = wallet.getRatedTransaction();
+						if (ratedTransaction != null) {
+							ratedTransactionService.update(ratedTransaction, RatedTransactionStatusEnum.CANCELED);
+						}
                     }
                 }
             }

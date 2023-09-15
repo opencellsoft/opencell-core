@@ -28,7 +28,7 @@ import javax.persistence.NamedQuery;
 @Entity
 @DiscriminatorValue(value = "RF")
 @NamedQueries({
-        @NamedQuery(name = "Refund.countLinkedPayment", query = "SELECT SUM(refund.amount)  from Refund AS refund WHERE refund.refundedPayment.id=:REFUNDED_PAYMENT_UD")
+        @NamedQuery(name = "Refund.countLinkedPayment", query = "SELECT SUM(r.amount) FROM Refund AS r WHERE r.refundedPayment.id=:REFUNDED_PAYMENT_ID")
 })
 public class Refund extends AccountOperation {
 

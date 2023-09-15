@@ -856,10 +856,8 @@ public class CustomTableService extends NativePersistenceService {
      * Convert values to a data type matching field definition
      *
      * @param values A map of values with field name of customFieldTemplate code as a key and field value as a value
-     * @param fields Field definitions with field name or field code as a key and data class as a value
+     * @param cftsMap Custom field definitions with field name as a key
      * @param discardNull If True, null values will be discarded
-     * @param regexpFields
-     * @param classNames
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
@@ -909,12 +907,10 @@ public class CustomTableService extends NativePersistenceService {
      * Convert single record values to a data type matching field definition
      *
      * @param values A map of values with customFieldTemplate code or db field name as a key and field value as a value.
-     * @param fields Field definitions with field name or field code as a key and data class as a value
+     * @param cftsMap Custom field definitions with field name as a key
      * @param discardNull If True, null values will be discarded
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a standard date and time and then date only
      *        patterns will be applied.
-     * @param classNames
-     * @param regexpFields
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */

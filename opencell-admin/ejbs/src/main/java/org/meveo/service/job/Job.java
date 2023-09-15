@@ -147,9 +147,6 @@ public abstract class Job {
     @Resource(lookup = "java:jboss/ee/concurrency/executor/default")
     ManagedExecutorService executor;
 
-    @Inject
-    private AuditOrigin auditOrigin;
-
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -164,8 +161,7 @@ public abstract class Job {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public JobExecutionResultStatusEnum execute(JobInstance jobInstance, JobExecutionResultImpl executionResult, JobLauncherEnum jobLauncher) throws BusinessException {
 
-        auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
-        auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
+        AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.JOB, jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
 
         JobRunningStatusEnum jobRunningStatus = jobExecutionService.markJobAsRunning(jobInstance, jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE,
             executionResult != null ? executionResult.getId() : null, null);
@@ -304,6 +300,7 @@ public abstract class Job {
     /**
      * @return job category enum
      */
+    @SuppressWarnings("rawtypes")
     public abstract JobCategoryEnum getJobCategory();
 
     /**
@@ -351,10 +348,11 @@ public abstract class Job {
      * @param jobInstance Job instance definition
      * @return Entity class
      */
+    @SuppressWarnings("rawtypes")
     public Class getTargetEntityClass(JobInstance jobInstance) {
         return null;
     }
-
+    
     /*
      * those methods will be used later for asynchronous jobs
      * 

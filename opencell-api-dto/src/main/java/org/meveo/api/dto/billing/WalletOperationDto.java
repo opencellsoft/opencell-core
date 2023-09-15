@@ -222,6 +222,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
 
     /** The transactional amount tax. */
     private BigDecimal transactionalAmountTax;
+    
+    /** The WO  business key. */
+    private String businessKey;
 
     /**
      * Instantiates a new wallet operation dto.
@@ -1111,7 +1114,15 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         this.transactionalAmountTax = transactionalAmountTax;
     }
 
-    @Override
+    public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}
+
+	@Override
     public String toString() {
         return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="
                 + walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance + ", chargeInstanceId=" + chargeInstanceId + ", currency=" + currency + ", type="

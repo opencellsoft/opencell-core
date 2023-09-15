@@ -5,13 +5,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.settings.GlobalSettingsInput;
 import org.meveo.apiv2.settings.globalSettings.GlobalSettingsResource;
 import org.meveo.apiv2.settings.globalSettings.service.GlobalSettingsApiService;
 import org.meveo.model.settings.GlobalSettings;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class GlobalSettingsResourceImpl implements GlobalSettingsResource {
 
     @Inject

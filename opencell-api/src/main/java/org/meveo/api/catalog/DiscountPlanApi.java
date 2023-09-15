@@ -114,6 +114,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         discountPlan.setAutomaticApplication(postData.getAutomaticApplication() != null ? postData.getAutomaticApplication() : false);
         discountPlan.setApplicableOnOverriddenPrice(postData.isApplicableOnOverriddenPrice());
         discountPlan.setApplicableOnDiscountedPrice(postData.isApplicableOnDiscountedPrice());
+        if(postData.getApplicableOnContractPrice()!=null) {
+        	discountPlan.setApplicableOnContractPrice(postData.getApplicableOnContractPrice());
+        }
         checkDiscountPlanAutomaticApplication(discountPlan);
         
         // populate customFields
@@ -133,14 +136,14 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
 
     private List<DiscountPlan> getIncompatibleDiscountPlans(List<DiscountPlanDto> incompatibleDiscountPlansDto) {
-        if (incompatibleDiscountPlansDto == null) {
+        if (incompatibleDiscountPlansDto == null || incompatibleDiscountPlansDto.isEmpty()) {
             return null;
         }
         List<DiscountPlan> incompatibleDiscountPlans = new ArrayList<>();
         for (DiscountPlanDto discountPlanDto : incompatibleDiscountPlansDto) {
             DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanDto.getCode());
             if (discountPlan == null) {
-                throw new BusinessException("The discout plan with code " + discountPlanDto.getCode() + " not found");
+                throw new BusinessException("Incompatible discout plan with code " + discountPlanDto.getCode() + " not found");
             }
             incompatibleDiscountPlans.add(discountPlan);
         }
@@ -204,7 +207,13 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             }
             List<DiscountPlan> discountPlans = getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans());
             if (discountPlans != null && !discountPlans.isEmpty()) {
-                discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
+                if(discountPlan.getIncompatibleDiscountPlans() == null) {
+                    discountPlan.setIncompatibleDiscountPlans(new ArrayList<>());
+                }
+                discountPlan.getIncompatibleDiscountPlans().clear();
+                discountPlan.getIncompatibleDiscountPlans().addAll(discountPlans);
+            } else {
+            	discountPlan.getIncompatibleDiscountPlans().clear();
             }
             List<ApplicableEntity> applicableEntities = getApplicableEntities(postData.getApplicableEntities());
             if (applicableEntities != null && !applicableEntities.isEmpty()) {
@@ -214,6 +223,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             discountPlan.setAutomaticApplication(postData.getAutomaticApplication() != null ? postData.getAutomaticApplication() : false);
             discountPlan.setApplicableOnOverriddenPrice(postData.isApplicableOnOverriddenPrice());
             discountPlan.setApplicableOnDiscountedPrice(postData.isApplicableOnDiscountedPrice());
+            if(postData.getApplicableOnContractPrice()!=null) {
+            	discountPlan.setApplicableOnContractPrice(postData.getApplicableOnContractPrice());
+            }
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), discountPlan, false);
@@ -227,7 +239,10 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
 
         //Update Sequence, DurationUnit and defaultDuration
-        updateSequence(postData, discountPlan);
+	    if(postData.getSequence() != discountPlan.getSequence()){
+		    updateSequence(postData, discountPlan);
+		    discountPlan.setSequence(postData.getSequence());
+	    }
         updateDuration(postData, discountPlan);
 
         if(postData.getEndDate() != null)
@@ -257,7 +272,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
                 (DiscountPlanStatusEnum.DRAFT.equals(pDiscountPlan.getStatus()) || DiscountPlanStatusEnum.ACTIVE.equals(pDiscountPlan.getStatus()) ||
                         DiscountPlanStatusEnum.IN_USE.equals(pDiscountPlan.getStatus()))) {
             if(discountPlanService.getDiscountPlanBySequence(pPostData.getSequence()).size() > 0) {
-                throw new BusinessException("The sequence is already used");
+                throw new BusinessException("Sequence number is already used. Sequence number must be unique among all discount plans.");
             } else {
                 pDiscountPlan.setSequence(pPostData.getSequence());
             }

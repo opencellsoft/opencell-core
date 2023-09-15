@@ -24,11 +24,13 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.dto.response.communication.MeveoInstanceResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.communication.MeveoInstanceRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * 
@@ -36,6 +38,7 @@ import javax.inject.Inject;
  * @since Jun 4, 2016 4:08:58 AM
  *
  */
+@Interceptors({ WsRestApiInterceptor.class })
 public class MeveoInstanceRsImpl extends BaseRs implements MeveoInstanceRs {
 
     @Inject

@@ -2,10 +2,12 @@ package org.meveo.apiv2.admin.impl;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.admin.ImmutableSeller;
 import org.meveo.apiv2.admin.Seller;
 import org.meveo.apiv2.admin.SellerApiService;
@@ -19,6 +21,7 @@ import org.meveo.service.admin.impl.SellerService;
 import java.net.URI;
 import java.util.Collections;
 @Stateless
+@Interceptors({ WsRestApiInterceptor.class })
 public class SellerResourceImpl implements SellerResource {
 
 	@Inject

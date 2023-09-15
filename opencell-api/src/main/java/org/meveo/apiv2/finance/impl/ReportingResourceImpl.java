@@ -4,9 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.finance.ImmutableTrialBalancesResult;
 import org.meveo.apiv2.finance.ReportingPeriodEnum;
 import org.meveo.apiv2.finance.TrialBalance;
@@ -16,6 +18,7 @@ import org.meveo.apiv2.finance.service.ReportingApiService;
 import org.meveo.model.report.query.SortOrderEnum;
 import org.meveo.model.shared.DateUtils;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class ReportingResourceImpl implements ReportingResource {
 
 	

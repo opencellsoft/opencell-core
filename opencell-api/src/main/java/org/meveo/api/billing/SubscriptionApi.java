@@ -20,6 +20,7 @@ package org.meveo.api.billing;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -105,7 +106,6 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -119,6 +119,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductInstance;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -158,7 +159,6 @@ import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -311,9 +311,6 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private AttributeInstanceService attributeInstanceService;
-
-    @Inject
-    private AuditableFieldService auditableFieldService;
     
 	@Inject
 	private ContractHierarchyHelper contractHierarchyHelper;
@@ -509,10 +506,6 @@ public class SubscriptionApi extends BaseApi {
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
-        if(postData.isRenewed()) {
-            auditableFieldService.createFieldHistory(subscription, "renewed", AuditChangeTypeEnum.RENEWAL, null, "true" );
-
-        }
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
@@ -935,14 +928,14 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
         }
-            // activate services
+        Map<String, ServiceToActivateDto> serviceToActivateByServiceCode = servicesToActivate.getService()
+                                                                      .stream()
+                                                                      .collect(Collectors.toMap(ServiceToActivateDto::getCode, Function.identity()));
+        // activate services
             for (ServiceInstance serviceInstance : serviceInstances) {
 
                 try {
                     serviceInstance.clearTransientSubscriptionChargeInstance();
-                    if (serviceInstance.getStatus().equals(InstanceStatusEnum.PENDING)) {
-                        serviceInstance.setDeliveryDate(new Date());
-                    }
                     serviceInstanceService.serviceActivation(serviceInstance);
                     
                 } catch (BusinessException e) {
@@ -1243,8 +1236,27 @@ public class SubscriptionApi extends BaseApi {
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION, isVirtual);
 
         	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
-        		osho.getWalletOperations().stream().forEach(wo->ratedTransactionService.createRatedTransaction(wo,false));
+        		osho.getWalletOperations().stream().forEach(wo -> {
+        		    RatedTransaction ratedTransaction = ratedTransactionService.createRatedTransaction(wo, false);
+
+        		    if (postData.getBusinessKey() != null) {
+        		        ratedTransaction.setBusinessKey(postData.getBusinessKey());
+        		    } else {
+        		        String expression = oneShotChargeTemplate.getBusinessKeyEl();
+        		        if (!StringUtils.isBlank(expression)) {
+        		            Map<Object, Object> contextMap = new HashMap<>();
+        		            contextMap.put("op", wo);
+        		            try {
+        		                String value = ratedTransactionService.evaluateEl(expression, contextMap, String.class);
+        		                ratedTransaction.setBusinessKey(value);
+        		            } catch (BusinessException e) {
+        		                log.warn("Error when evaluating EL for chargeTemplate id=" + oneShotChargeTemplate.getId());
+        		            }
+        		        }
+        		    }
+        		});
         	}
+        	 
         	return osho;
         } catch (RatingException e) {
             log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());

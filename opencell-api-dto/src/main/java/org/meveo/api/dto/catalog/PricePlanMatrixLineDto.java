@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -55,8 +56,9 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	@Schema(description = "list of trading price plan matrix line")
 	private List<TradingPricePlanMatrixLineDto> tradingPricePlanMatrixLines = new ArrayList<>();
-	
-	
+
+	@Schema(description = "Price plan matrix custom fields")
+	private CustomFieldsDto customFields;
 
 	public PricePlanMatrixLineDto() {
 	}
@@ -181,5 +183,13 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	public void setTradingPricePlanMatrixLines(List<TradingPricePlanMatrixLineDto> tradingPricePlanMatrixLines) {
 		this.tradingPricePlanMatrixLines = tradingPricePlanMatrixLines;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }

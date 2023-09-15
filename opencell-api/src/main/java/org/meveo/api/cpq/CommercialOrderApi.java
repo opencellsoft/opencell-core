@@ -405,11 +405,13 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		if(!Strings.isEmpty(orderDto.getContractCode())) {
 			order.setContract(contractHierarchyHelper.checkContractHierarchy(order.getBillingAccount(), orderDto.getContractCode()));
 		}
-		if(!Strings.isEmpty(orderDto.getInvoicingPlanCode())) {
+		if (!Strings.isBlank(orderDto.getInvoicingPlanCode())) {
 			final InvoicingPlan billingPlan = invoicingPlanService.findByCode(orderDto.getInvoicingPlanCode());
 			if(billingPlan == null)
 				throw new EntityDoesNotExistsException(InvoicingPlan.class, orderDto.getInvoicingPlanCode());
 			order.setInvoicingPlan(billingPlan);
+		} else if ("".equals(orderDto.getInvoicingPlanCode())) {
+			order.setInvoicingPlan(null);
 		}
 
 		if(!Strings.isEmpty(orderDto.getUserAccountCode())) {
@@ -970,7 +972,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
         }else {
         	orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
         }
-        
+        populateCustomFields(orderOfferDto.getCustomFields(), orderOffer, true);
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
 		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
@@ -1090,6 +1092,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 						orderOffer.getProducts().get(0).getProductVersion().getAttributes(),
 						orderProduct.getOrderAttributes()));
         processOrderAttribute(orderOfferDto,  orderOffer);
+        populateCustomFields(orderOfferDto.getCustomFields(), orderOffer, false);
     	orderOfferService.update(orderOffer);
     	return orderOfferDto;
     }

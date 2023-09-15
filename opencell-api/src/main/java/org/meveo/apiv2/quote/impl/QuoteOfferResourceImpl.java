@@ -1,16 +1,19 @@
 package org.meveo.apiv2.quote.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.apiv2.quote.ImmutableQuoteOffer;
 import org.meveo.apiv2.quote.resource.QuoteOfferResource;
 import org.meveo.apiv2.quote.service.QuoteOfferApiService;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class QuoteOfferResourceImpl implements QuoteOfferResource {
 
 	@Inject

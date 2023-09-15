@@ -2,9 +2,11 @@ package org.meveo.apiv2.media.file.upload;
 
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.api.admin.FilesApi;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.media.MediaFile;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -13,6 +15,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class FileUploadResourceImpl implements FileUploadResource {
 
     @Inject

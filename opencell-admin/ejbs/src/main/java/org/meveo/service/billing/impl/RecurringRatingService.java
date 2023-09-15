@@ -20,9 +20,11 @@ package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
@@ -62,6 +64,8 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+
+import static java.util.Arrays.asList;
 
 @Stateless
 public class RecurringRatingService extends RatingService implements Serializable {
@@ -157,6 +161,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
         Date applyChargeToDate;
 
         boolean prorateFirstPeriod = false;
+        boolean prorateLastPeriod = false;
         Date prorateFirstPeriodFromDate = null;
 
         RatingResult ratingResult = new RatingResult();
@@ -252,6 +257,17 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 applyChargeToDate = prorateLastPeriodToDate;
             }
 
+            if(chargeInstance.isAnticipateEndOfSubscription()) {
+                Date prorateLastPeriodDate = asList(period.getTo(), chargeInstance.getSubscription().getSubscribedTillDate(),
+                        chargeInstance.getServiceInstance().getSubscribedTillDate())
+                        .stream()
+                        .filter(Objects::nonNull).min(Date::compareTo).orElse(null);
+                if(prorateLastPeriodDate != null && prorateLastPeriodDate.compareTo(period.getTo()) != 0) {
+                    applyChargeFromDate = prorateLastPeriodDate;
+                    applyChargeToDate = chargeInstance.getTerminationDate();
+                    prorateLastPeriod = true;
+                }
+            }
             // When charging first time, need to determine if counter is available and prorata ratio if subscription charge proration is enabled
             if (isFirstCharge) {
 
@@ -341,7 +357,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 	throw new IllegalStateException("The given date: " +currentPeriodFromDate +" is not in period [startDate,endDate] of banking Calendar: "+ cal.getCode());
                 }
                 
-                effectiveChargeToDate = currentPeriodToDate;
+                effectiveChargeToDate = currentPeriodToDate.before(applyChargeToDate) ? currentPeriodToDate : applyChargeToDate;
                 if (prorateLastPeriodToDate != null && currentPeriodToDate.after(prorateLastPeriodToDate)) {
                     effectiveChargeToDate = prorateLastPeriodToDate;
 
@@ -375,7 +391,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                     BigDecimal inputQuantity = chargeMode.isReimbursement() ? chargeInstance.getQuantity().negate() : chargeInstance.getQuantity();
 
                     // Apply prorating if needed
-                    if (prorate) {
+                    if (prorate || prorateLastPeriod) {
                         BigDecimal prorata = DateUtils.calculateProrataRatio(effectiveChargeFromDate, effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, false);
                         if (prorata == null) {
                             throw new RatingException("Failed to calculate prorating for charge id=" + chargeInstance.getId() + " : periodFrom=" + currentPeriodFromDate + ", periodTo=" + currentPeriodToDate
@@ -476,6 +492,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 if(forSchedule){
                     wo.changeStatus(WalletOperationStatusEnum.SCHEDULED);
                 }
+	            checkDiscountedWalletOpertion(wo, ratingResult.getWalletOperations());
                 walletOperationService.chargeWalletOperation(wo);
             }
         }

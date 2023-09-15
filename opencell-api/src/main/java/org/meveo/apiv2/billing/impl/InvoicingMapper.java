@@ -35,6 +35,8 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
         billingRun.setFilters(resource.getFilters());
         billingRun.setComputeDatesAtValidation(resource.isComputeDatesAtValidation());
         billingRun.setIncrementalInvoiceLines(resource.isIncrementalInvoiceLines());
+        billingRun.setPreReportAutoOnCreate(resource.isPreReportAutoOnCreate());
+        billingRun.setPreReportAutoOnInvoiceLinesJob(resource.isPreReportAutoOnInvoiceLinesJob());
         return billingRun;
     }
 
@@ -51,6 +53,8 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
         		.isComputeDatesAtValidation(entity.getComputeDatesAtValidation())
                 .isIncrementalInvoiceLines(entity.getIncrementalInvoiceLines())
         		.billingRunTypeEnum(entity.getProcessType())
+                .isPreReportAutoOnCreate(entity.isPreReportAutoOnCreate())
+                .isPreReportAutoOnInvoiceLinesJob(entity.isPreReportAutoOnInvoiceLinesJob())
         		.build();
     }
 }

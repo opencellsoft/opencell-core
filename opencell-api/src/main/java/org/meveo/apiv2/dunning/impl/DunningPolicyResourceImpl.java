@@ -9,12 +9,14 @@ import static org.meveo.apiv2.ordering.common.LinkGenerator.getUriBuilderFromRes
 import java.util.*;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.*;
 import org.meveo.apiv2.dunning.resource.DunningPolicyResource;
 import org.meveo.apiv2.dunning.service.DunningPolicyApiService;
@@ -28,6 +30,7 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
     @Inject

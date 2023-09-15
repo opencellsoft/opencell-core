@@ -108,7 +108,7 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
     /**
      * Payment level - Account operation or Customer account - Job execution parameter
      */
-    private String paymentPerAOorCA = "CA";
+    private String paymentPerAOorCA = "AO";
 
     /**
      * Payment gateway - Job execution parameter
@@ -166,7 +166,7 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
         operationCategory = OperationCategoryEnum.CREDIT;
         paymentMethodType = PaymentMethodEnum.CARD;
         paymentOrRefundEnum = PaymentOrRefundEnum.PAYMENT;
-        paymentPerAOorCA = "CA";
+        paymentPerAOorCA = "AO";
         paymentGateway = null;
         fromDueDate = null;
         toDueDate = null;
@@ -278,6 +278,10 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
 
         } catch (Exception e) {
         	log.error(" Error on createPaymentOrPayout [{}]", e.getMessage());
+        	 this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
+        	 jobExecutionResult.unRegisterSucces();// Reduce success as success is added automatically in main loop of IteratorBasedJobBean
+             jobExecutionResult.registerError(paymentItem.accountOperationId, e.getMessage());
+
         }
     }
 

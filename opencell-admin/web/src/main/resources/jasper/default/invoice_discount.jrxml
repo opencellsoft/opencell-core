@@ -473,7 +473,7 @@
 								<textField>
 									<reportElement x="0" y="0" width="115" height="14" isPrintWhenDetailOverflows="true" uuid="dbcd73c0-1e51-4107-8b9a-1942b35d1868"/>
 									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font fontName="Vista Sans OT Reg" size="10"/>
+										<font fontName="SansSerif" size="10"/>
 									</textElement>
 									<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(Double.valueOf($F{discountAmountWithoutTax}))]]></textFieldExpression>
 								</textField>
@@ -494,7 +494,7 @@
 					<reportElement x="-2" y="-1" width="194" height="21" forecolor="#000000" uuid="7d5c0eb6-5bba-4eb0-a030-9906e068f959"/>
 					<box leftPadding="16"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Vista Sans OT Reg" size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<text><![CDATA[Customer Discount]]></text>
 				</staticText>

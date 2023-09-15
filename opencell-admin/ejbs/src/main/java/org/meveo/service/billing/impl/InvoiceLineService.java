@@ -21,6 +21,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -41,6 +43,7 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
+import org.meveo.admin.job.InvoiceLinesJob;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -117,6 +120,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     private static final String INVOICING_PROCESS_TYPE = "InvoiceLine";
     private static final String INVOICE_MINIMUM_COMPLEMENT_CODE = "MIN-STD";
 
+
     @Inject
     private FilterService filterService;
 
@@ -167,9 +171,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private OpenOrderService openOrderService;
+    
+    @Inject
+    private InvoiceLineService anotherInvoiceLineService;
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+
+    @Inject
+    private UserAccountService userAccountService;
     
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -243,41 +253,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
 		
 		return entity;
-    }
-    
-    public void validateAdjAmount(List<InvoiceLine> invoiceLines, Invoice srcInvoice) {
-        BigDecimal adjAmountWithTax = getAdjustementAmounts(srcInvoice.getId());
-        if (adjAmountWithTax != null) {
-            if (adjAmountWithTax.compareTo(srcInvoice.getAmountWithTax()) >= 0) {
-                throw new BusinessException("One or more adjustments are already linked to the invoice");
-            }
-        } else {
-            adjAmountWithTax = BigDecimal.ZERO;
-        }
-
-        BigDecimal possibleAdjAmount = srcInvoice.getAmountWithTax().subtract(adjAmountWithTax);
-
-        BigDecimal sumInvoiceLines = BigDecimal.ZERO;
-
-        for (InvoiceLine invoiceLine : invoiceLines) {
-            sumInvoiceLines = sumInvoiceLines.add(invoiceLine.getAmountWithTax());
-        }
-
-        if (sumInvoiceLines.compareTo(possibleAdjAmount) > 0) {
-            throw new BusinessException("The selected invoice line amount is greater than the possible remaining amount on invoice : " + new DecimalFormat("0.00").format(possibleAdjAmount));
-        }
-    }
-
-    /**
-     * Used for adding IL in new Invoice : we must validate that the source linkedInvoice amount are not exceeded
-     * @param newInvoice new ADJ Invoice created based on Commercial invoice
-     */
-    public void validateAdjAmount(Invoice newInvoice) {
-        // Check global Invoice Amount
-        LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(newInvoice.getId());
-        if (linkedInvoice != null) {
-            validateAdjAmount(newInvoice.getInvoiceLines(), linkedInvoice.getInvoice());
-        }
     }
 
     private void addDiscountPlanInvoice(DiscountPlan discount, InvoiceLine entity, BillingAccount billingAccount, Invoice invoice, AccountingArticle accountingArticle, Seller seller) {
@@ -710,6 +685,16 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
 
+        if(StringUtils.isNotBlank(resource.getUserAccountCode())) {
+            UserAccount userAccount = userAccountService.findByCode(resource.getUserAccountCode());
+            if(userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, resource.getUserAccountCode());
+            }
+            invoiceLine.setUserAccount(userAccount);
+        } else if (resource.getUserAccountCode() != null) {
+            invoiceLine.setUserAccount(null);
+        }
+
         if (StringUtils.isNotBlank(resource.getTaxCode())) {
             Tax tax = taxService.findByCode(resource.getTaxCode());
             if (tax == null) {
@@ -838,6 +823,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	                    isExonerated, false, invoiceLine.getTax());
 	        invoiceLine.setTax(recalculatedTaxInfo.tax);
 	        invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
+            invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
+                    invoiceLine.getTaxRate(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()).add(invoiceLine.getAmountWithoutTax()));
 		}
         if(!appProvider.isEntreprise()) {
             BigDecimal taxAmount = NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
@@ -1097,8 +1084,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return createInvoiceLines(groupedRTs, configuration, result, null);
     }
     
-    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
-            AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs, AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
     	return createInvoiceLines(groupedRTs, configuration, result, billingRun, new ArrayList<>(), null);
     }
     	
@@ -1120,6 +1108,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             billingRunId = billingRun.getId();
             incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines();
         }
+        int i = 1;
+        EntityManager em = getEntityManager();
         for (Map<String, Object> groupedRT : groupedRTs) {
             if (incrementalInvoiceLines && groupedRT.get("invoice_line_id") != null) {
                 Long invoiceLineId = (Long) groupedRT.get("invoice_line_id");
@@ -1184,6 +1174,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 }
                 invoiceLines.add(invoiceLine);
             }
+            if (i % 100 == 0) {
+                em.flush();
+                em.clear();
+            }
+            i++;
         }
         basicStatistics.setCount(groupedRTs.size());
         return basicStatistics;
@@ -1196,13 +1191,87 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 * @param be billableEntity
 	 * @param basicStatistics
 	 */
-    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
-	    BasicStatistics ilBasicStatistics = createInvoiceLines(
-	            ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate()),
-                aggregationConfiguration, result, billingRun);
+	public void createInvoiceLineInNewTransaction(Map<String, Object> groupedRTsWithAggregation, JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
+    	List<Map<String, Object>> groupedRTs = new ArrayList<Map<String, Object>>();
+    	groupedRTs.add(groupedRTsWithAggregation);
+    	BasicStatistics ilBasicStatistics = createInvoiceLines(groupedRTs,aggregationConfiguration, result, billingRun);
 	    basicStatistics.append(ilBasicStatistics);
+		
+	}
+    
+
+    /**
+     * @param result
+     * @param aggregationConfiguration
+     * @param billingRun
+     * @param be
+     * @param basicStatistics
+     * @param perfConfig
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics, Map<String, Object> perfConfig) {
+	    List<Map<String, Object>> groupedRTsWithAggregation = ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate());
+	    
+	    if((boolean)perfConfig.get(InvoiceLinesJob.ONE_BILLING_ACCOUNT_PER_TRANSACTION)) {
+	    	BasicStatistics ilBasicStatistics = anotherInvoiceLineService.createInvoiceLines(groupedRTsWithAggregation,aggregationConfiguration, result, billingRun);
+		    basicStatistics.append(ilBasicStatistics);
+	    } else {
+	    	assignMapGroup(be, groupedRTsWithAggregation, perfConfig);
+			Map<Integer, List<Map<String, Object>>> groupedItems = groupedRTsWithAggregation.stream().filter(m->m.containsKey("grouppingKey")).collect(Collectors.groupingBy(aggregation -> (Integer)aggregation.get("grouppingKey")));
+		    for(List<Map<String, Object>> group:groupedItems.values()) {
+				BasicStatistics ilBasicStatistics = anotherInvoiceLineService.createInvoiceLines(group,aggregationConfiguration, result, billingRun);
+			    basicStatistics.append(ilBasicStatistics);
+		    }
+            if (billingRun.getIncrementalInvoiceLines() == Boolean.TRUE) {
+                List<Object[]> amounts = sumAmountsPerBR(billingRun.getId());
+                for (Object[] amount : amounts) {
+                    basicStatistics.setSumAmountWithoutTax((BigDecimal) amount[0]);
+                    basicStatistics.setSumAmountTax((BigDecimal) amount[1]);
+                    basicStatistics.setSumAmountWithTax((BigDecimal) amount[2]);
+                }
+            }
+	    }
+	    
+	}
+
+	public void assignMapGroup(IBillableEntity be, List<Map<String, Object>> groupedRTsWithAggregation, Map<String, Object> perfConfig) {
+		groupedRTsWithAggregation.sort(Comparator.comparing(m -> ((Number)m.get("count") ).intValue()));
+	    Collections.reverse(groupedRTsWithAggregation);
+    	boolean massUpdate=false;
+		List<int[]> workingLists = new ArrayList<int[]>();
+		for(Map<String, Object> item : groupedRTsWithAggregation) {
+			massUpdate = !findPlace(item, workingLists, (long)perfConfig.get(InvoiceLinesJob.MAX_RATED_TRANSACTIONS_PER_TRANSACTION),  (long)perfConfig.get(InvoiceLinesJob.MAX_INVOICE_LINES_PER_TRANSACTION), perfConfig)? true : massUpdate;
+		}
+		if(massUpdate) {
+    		billingAccountService.changeMassUpdateProcessing(be.getId(),true);
+    	}
+	}
+    
+	private boolean findPlace(Map<String, Object> item, List<int[]> workingLists, long maxRTsPerList, long maxILsPerList, Map<String, Object> perfConfig) {
+		Integer numberOfRTs = ((Number) item.get("count")).intValue();
+		if (numberOfRTs > (long)perfConfig.get(InvoiceLinesJob.MAX_RATED_TRANSACTIONS_PER_INVOICE_LINE)) {
+			return false;
+		}
+		boolean placed = false;
+		for (int[] entry : workingLists) {
+			if (entry[2] == maxILsPerList) {
+				continue;
+			}
+			if (entry[1] + numberOfRTs < maxRTsPerList) {
+				entry[1] = entry[1] + numberOfRTs;
+				entry[2]++;
+				placed = true;
+				item.put("grouppingKey", entry[0]);
+				break;
+			}
+		}
+		if (!placed) {
+			int index = workingLists.size();
+			workingLists.add(new int[] { index, numberOfRTs, 1 });
+			item.put("grouppingKey", index);
+		}
+		return true;
 	}
 
     public void deleteByBillingRun(long billingRunId) {
@@ -1447,10 +1516,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return getEntityManager().createNamedQuery("InvoiceLine.getMaxIlAmountAdj").setParameter("invoiceId", id).getResultList();
     }
 
-    public BigDecimal getAdjustementAmounts(Long invoiceId) {
-        return (BigDecimal) getEntityManager().createNamedQuery("InvoiceLine.getAdjustmentAmount").setParameter("ID_INVOICE", invoiceId).getSingleResult();
-    }
-
     public List<BillingAccount> findBillingAccountsBy(List<Long> invoiceLinesIds) {
         final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
         if (invoiceLinesIds.size() > maxValue) {
@@ -1467,15 +1532,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .createNamedQuery("InvoiceLine.BillingAccountByILIds")
                 .setParameter("ids", invoiceLinesIds)
                 .getResultList();
-    }
-    
-    public InvoiceLine adjustment(InvoiceLine invoiceLine, Invoice invoice) {
-        InvoiceType defaultAdjustement = invoiceTypeService.getDefaultAdjustement();
-        InvoiceType invoiceTypeOfInvoice = invoiceLine.getInvoice().getInvoiceType();
-        if(invoiceTypeOfInvoice.getId().equals(defaultAdjustement.getId())) {
-            validateAdjAmount(List.of(invoiceLine), invoice);
-        }
-        return invoiceLine;
     }
 
     private BillingAccount getBillingAccount(Invoice invoice, InvoiceLine invoiceLine) {
@@ -1540,5 +1596,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     public void updateInvoiceLine(InvoiceLine invoiceLine, org.meveo.apiv2.billing.InvoiceLine resource, DiscountPlan discountPlan) {
         updateDsicountPlan(invoiceLine, resource, discountPlan);
         update(invoiceLine);
+    }
+
+    /**
+     * Gets the sum of invoice lines amounts per a provided billing run.
+     *
+     * @param billingRunId the billing run id
+     * @return list of array object
+     */
+    public List<Object[]> sumAmountsPerBR(Long billingRunId) {
+        return getEntityManager().createNamedQuery("InvoiceLine.sumAmountsPerBR")
+                .setParameter("billingRunId", billingRunId)
+                .getResultList();
     }
 }

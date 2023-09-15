@@ -34,7 +34,6 @@ import static org.meveo.service.base.ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT
 import static org.meveo.service.base.ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE;
 import static org.meveo.service.base.ValueExpressionWrapper.VAR_INVOICE;
 import static org.meveo.service.base.ValueExpressionWrapper.VAR_INVOICE_SHORT;
-import static org.meveo.service.base.ValueExpressionWrapper.*;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.io.File;
@@ -74,6 +73,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -93,6 +93,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import jakarta.xml.bind.JAXBException;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -204,6 +205,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
@@ -220,6 +222,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -2669,7 +2672,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (useV11Process) {
             MinAmountForAccounts minAmountForAccounts = invoiceLinesService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
             // Create invoice lines from grouped and filtered RT
-            List<RatedTransaction> ratedTransactions = getRatedTransactions(entity, filter, firstTransactionDate, lastTransactionDate, new Date(), isDraft);
+            List<RatedTransaction> ratedTransactions = getRatedTransactions(entity, filter, firstTransactionDate, lastTransactionDate, lastTransactionDate, isDraft);
             List<Long> ratedTransactionIds = ratedTransactions.stream().filter(Objects::nonNull)
                     .map(RatedTransaction::getId)
                     .collect(toList());
@@ -4031,6 +4034,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
 
+        subscription = subscriptionService.refreshOrRetrieve(subscription);
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             addApplicableDiscount(subscriptionApplicableDiscountPlanItems,  subscription.getDiscountPlanInstances(), billingAccount, customerAccount, invoice);
         }
@@ -4134,6 +4138,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
                     discountAggregates.add(discountAggregate);
                     otherDiscount = otherDiscount.add(discountAggregate.getAmountWithoutTax().abs());
+                    if (invoice.getDiscountPlan() != null && invoice.getDiscountPlan().getStatus() != DiscountPlanStatusEnum.IN_USE.IN_USE) {
+                        invoice.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE.IN_USE);
+                    }
                 }
             }
 
@@ -4308,13 +4315,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addInvoiceAggregate(taxAggregate);
         }
 
-        if (isEnterprise) {
-            taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
-            taxAggregate.addTransactionAmountWithoutTax(amountByTax.getValue().getTransactionalAmountWithoutTax());
-        } else {
-            taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
-            taxAggregate.addTransactionAmountWithTax(amountByTax.getValue().getTransactionalAmountWithTax());
-        }
+        taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
+        taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
+        taxAggregate.addAmountTax(amountByTax.getValue().getAmountTax());
+        taxAggregate.addTransactionAmountWithoutTax(amountByTax.getValue().getTransactionalAmountWithoutTax());
+        taxAggregate.addTransactionAmountWithTax(amountByTax.getValue().getTransactionalAmountWithTax());
+        taxAggregate.addTransactionAmountTax(amountByTax.getValue().getTransactionalAmountTax());
+
         return taxAggregate;
     }
 
@@ -4968,6 +4975,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null, null, null, null);
 
         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
+        rt.setBusinessKey(ratedTransactionDto.getBusinessKey());
         // #3355 : setting params 1,2,3
         if (isDetailledInvoiceMode) {
             rt.setParameter1(ratedTransactionDto.getParameter1());
@@ -5562,6 +5570,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setBillingAccount(billingAccount);
         invoice.setOrder(order);
         invoice.setPaymentStatus(InvoicePaymentStatusEnum.NONE);
+        invoice.setPaymentMethod(buildPaymentMethodForInitInvoice(billingAccount));
         invoice.setStartDate(invoiceDate);
         invoice.setAmountWithTax(amountWithTax);
         invoice.setRawAmount(amountWithTax);
@@ -5581,6 +5590,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setAutoMatching(isAutoMatching);
         invoice.setExternalPurchaseOrderNumber(purchaseOrder);
         return invoice;
+    }
+
+    private PaymentMethod buildPaymentMethodForInitInvoice(BillingAccount billingAccount) {
+        if (billingAccount.getPaymentMethod() != null) {
+            return billingAccount.getPaymentMethod();
+        } else if (billingAccount.getCustomerAccount().getPreferredPaymentMethod() != null) {
+            return billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+        } else if (CollectionUtils.isNotEmpty(billingAccount.getCustomerAccount().getPaymentMethods())) {
+            return billingAccount.getCustomerAccount().getPaymentMethods().get(0);
+        }
+        return null;
     }
 
     private InvoiceLine initInvoiceLineForBasicInvoice(BasicInvoice resource, final BigDecimal amountWithTax, Order order, BillingAccount billingAccount, AccountingArticle accountingArticle, Invoice invoice) {
@@ -5658,6 +5678,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             
             if (invoiceProcessTypeEnum == null || invoiceProcessTypeEnum == InvoiceProcessTypeEnum.AUTOMATIC) {
                 AccountingArticle accountingArticle = invoiceLine.getAccountingArticle();
+                accountingArticle = accountingArticleService.refreshOrRetrieve(accountingArticle);
                 if (!StringUtils.isBlank(accountingArticle.getInvoiceTypeEl())) {
                     String invoiceTypeCode = evaluateInvoiceTypeEl(accountingArticle.getInvoiceTypeEl(), invoiceLine);
                     invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
@@ -5677,6 +5698,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             
             paymentMethod = resolvePMethod(billingAccount, billingCycle, defaultPaymentMethod, invoiceLine);
+            invoiceLine.setSubscription(subscriptionService.refreshOrRetrieve(invoiceLine.getSubscription()));
             Seller seller = getSelectedSeller(invoiceLine);
             String invoiceKey = billingAccount.getId() +  (seller!=null ? "_"+seller.getId():null) + "_" + invoiceType.getId() + "_" + paymentMethod.getId() + "_" + invoiceLine.getOpenOrderNumber();
             InvoiceLinesGroup ilGroup = invoiceLinesGroup.get(invoiceKey);
@@ -6304,6 +6326,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         for (InvoiceLine invoiceLine : invoiceLines) {
 
             addFixedDiscount(invoiceLine);
+            invoiceLine.setSubscription(subscriptionService.refreshOrRetrieve(invoiceLine.getSubscription()));
+            invoiceLine.setAccountingArticle(accountingArticleService.refreshOrRetrieve(invoiceLine.getAccountingArticle()));
             InvoiceSubCategory invoiceSubCategory = invoiceLine.getAccountingArticle().getInvoiceSubCategory();
 
             scaKey = invoiceSubCategory.getId().toString();
@@ -6373,12 +6397,31 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             scAggregate.addInvoiceLine(invoiceLine, isEnterprise, true);
-            if(anyILUseSpecificConversion) {
-            	scAggregate.setUseSpecificPriceConversion(true);
-        		scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
-            	scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
-            	scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
-            	scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(), invoiceLine.getTransactionalAmountWithTax(), invoiceLine.getTransactionalAmountTax());
+            if (anyILUseSpecificConversion) {
+                BigDecimal appliedRate = invoice.getBillingAccount().getTradingCurrency().getCurrentRate();
+                scAggregate.setUseSpecificPriceConversion(true);
+                if (invoiceLine.isUseSpecificPriceConversion()) {
+                    scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
+                    scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
+                    scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
+                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(),
+                            invoiceLine.getTransactionalAmountWithTax(),
+                            invoiceLine.getTransactionalAmountTax());
+                } else {
+                    scAggregate.addTransactionAmountWithoutTax(toTransactional(invoiceLine.getAmountWithoutTax(), appliedRate));
+                    scAggregate.addTransactionAmountWithTax(toTransactional(invoiceLine.getAmountWithTax(), appliedRate));
+                    scAggregate.addTransactionAmountTax(toTransactional(invoiceLine.getAmountTax(), appliedRate));
+                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(toTransactional(invoiceLine.getAmountWithoutTax(), appliedRate),
+                            toTransactional(invoiceLine.getAmountWithTax(), appliedRate),
+                            toTransactional(invoiceLine.getAmountTax(), appliedRate));
+                }
+            } else {
+                scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
+                scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
+                scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
+                scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(),
+                        invoiceLine.getTransactionalAmountWithTax(),
+                        invoiceLine.getTransactionalAmountTax());
             }
         }
         if (moreInvoiceLinesExpected) {
@@ -6389,6 +6432,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(invoice.getDiscountAmount().compareTo(BigDecimal.ZERO) == 0) {
             invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax());
         }
+    }
+
+    private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
+        return amount != null ? amount.multiply(rate) : ZERO;
     }
 
     private void addFixedDiscount(InvoiceLine invoiceLine) {
@@ -6749,7 +6796,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 refreshInvoiceLineAndAggregateAmounts(toUpdate);
             }
         }
-        toUpdate.setAutoMatching(invoiceResource.getAutoMatching() != null ? invoiceResource.getAutoMatching() : false);
 
         //if the dueDate == null, it will be calculated at the level of the method invoiceService.calculateInvoice(updateInvoice)
         toUpdate.setDueDate(input.getDueDate());
@@ -6894,7 +6940,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
         if(lastAppliedRate == null) return;
-        toUpdate = refreshOrRetrieve(toUpdate);
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
                         InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
                                 && linkedInvoice.getLinkedInvoiceValue() != null &&
@@ -7015,12 +7060,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+            duplicateInvoiceLine.setLinkedInvoiceLine(invoiceLine); // Add linked adjusted invoiceLine
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
-        }
-
-        if (isAdjustment) {
-            invoiceLinesService.validateAdjAmount(invoiceLines, invoice);
         }
 
         return duplicateInvoice;
@@ -7072,7 +7114,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Long> invoiceLinesIds = invoiceLineRTs.stream().map(InvoiceLineRTs::getInvoiceLineId).collect(toList());
 
         Invoice adjustmentInvoice = duplicateAndUpdateInvoiceLines(invoice, invoiceLineRTs, invoiceLinesIds);
-        populateAdjustmentInvoice(adjustmentInvoice, type);
+        populateAdjustmentInvoice(adjustmentInvoice, type, invoice);
         calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
         addLinkedInvoice(invoice, adjustmentInvoice);
 
@@ -7107,12 +7149,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+            duplicateInvoiceLine.setLinkedInvoiceLine(invoiceLine); // Add linked adjusted invoiceLine
             duplicateInvoiceLine.setRatedTransactions(invoiceLine.getRatedTransactions());
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
-
-        invoiceLinesService.validateAdjAmount(invoiceLines, invoice);
 
         return duplicateInvoice;
     }
@@ -7121,9 +7162,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds, InvoiceType type) {
         Invoice adjustmentInvoice = duplicateByType(invoice, invoiceLinesIds, true);
-        populateAdjustmentInvoice(adjustmentInvoice, type);
-        calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
         addLinkedInvoice(invoice, adjustmentInvoice);
+        populateAdjustmentInvoice(adjustmentInvoice, type, invoice);
+        calculateOrUpdateInvoice(invoiceLinesIds, adjustmentInvoice);
 
         return adjustmentInvoice;
     }
@@ -7160,11 +7201,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
-    private void populateAdjustmentInvoice(Invoice duplicatedInvoice, InvoiceType type) {
+    private void populateAdjustmentInvoice(Invoice duplicatedInvoice, InvoiceType type, Invoice srcInvoice) {
         duplicatedInvoice.setInvoiceDate(new Date());
         duplicatedInvoice.setInvoiceType(type != null ? type : invoiceTypeService.getDefaultAdjustement());
         duplicatedInvoice.setStatus(InvoiceStatusEnum.DRAFT);
         duplicatedInvoice.setOpenOrderNumber(StringUtils.EMPTY);
+        // Update ADJ Invoice PaymentMethod from original Invoice
+        duplicatedInvoice.setPaymentMethod(srcInvoice.getPaymentMethod());
         getEntityManager().flush();
     }
 
@@ -7551,9 +7594,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             // Check if the invoice is not PAID
             if (invoice.getPaymentStatus() != InvoicePaymentStatusEnum.PAID) {
                 LinkedInvoice linkedInvoice = findBySourceInvoiceByAdjId(invoice.getId());
+
                 if (linkedInvoice != null) {
 
-                    AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(linkedInvoice.getInvoice()).get(0);
+                    Invoice originalInvoice = linkedInvoice.getInvoice();
+
+                    AccountOperation aoOriginalInvoice = accountOperationService.listByInvoice(originalInvoice).get(0);
                     if (aoAdjInvoice == null) { // in case of the call is from validate API without generatedAO yet
                         aoAdjInvoice = accountOperationService.listByInvoice(invoice).get(0);
                     }
@@ -7566,6 +7612,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         } catch (Exception e) {
                             log.error("Error on payment callback processing:", e);
                             throw new BusinessException(e.getMessage(), e);
+                        }
+
+                        // Check if the all invoice AO are matched with ADJ AO : if yes, the payment status of Invoice shall be set as ABONDONNED
+                        if (originalInvoice.getRecordedInvoice() != null &&
+                                MatchingStatusEnum.L == originalInvoice.getRecordedInvoice().getMatchingStatus()) {
+                            Set<String> matchedAoCodes = originalInvoice.getRecordedInvoice().getMatchingAmounts().stream()
+                                    .map(MatchingAmount::getAccountOperation)
+                                    .map(AccountOperation::getCode)
+                                    .collect(Collectors.toSet());
+
+                            // remove ADJ code + default INV_STD code
+                            matchedAoCodes.removeAll(Set.of("ADJ_REF", "ADJ_INV", "INV_CRN", "INV_STD"));
+
+                            // if we have other AO except ADJ or default INV one, that mean that Invoice is matched with another kind of AO, and shall not be ABANDONED
+                            // the rule : the ABANDONED is used when Invoice is "TOTALY" Adjusted
+                            if (matchedAoCodes.size() == 0) {
+                                originalInvoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
+                                update(originalInvoice);
+                            }
                         }
                     }
                 }
@@ -7591,5 +7656,92 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		filters = genericRequestMapper.evaluateFilters(filters, entityClass);
 		return new PaginationConfiguration(filters);
 	}
+	/**
+	 * get list of invoices that have ubl reference is false
+	 *
+	 * @param billingRunId
+	 * @param statusList
+	 * @return
+	 */
+	public List<Long> listInvoicesWithoutXml(List<InvoiceStatusEnum> statusList) {
+		return getEntityManager().createNamedQuery("Invoice.xmlWithStatusForUBL", Long.class).setParameter("statusList", statusList).getResultList();
+	}
+	
+	/**
+	 * Produce invoice's XML file and update invoice record in DB.
+	 *
+	 * @param invoice Invoice to produce XML for
+	 * @param draftWalletOperationsId Wallet operations (ids) to include in a draft invoice
+	 * @return Update invoice entity
+	 * @throws BusinessException business exception
+	 */
+	public Invoice produceInvoiceUBLFormat(Invoice invoice) throws BusinessException, JAXBException {
+		invoice.setXmlDate(new Date());
+		invoice.setUblReference(true);
+		InvoiceUblHelper invoiceUblHelper = InvoiceUblHelper.getInstance();
+		var invoiceUbl = invoiceUblHelper.createInvoiceUBL(invoice);
+		// check directory if exist
+		ParamBean paramBean = ParamBean.getInstance();
+		File ublDirectory = new File (paramBean.getChrootDir("") + File.separator + paramBean.getProperty("meveo.ubl.directory", "/ubl"));
+		if (!StorageFactory.existsDirectory(ublDirectory)) {
+			StorageFactory.createDirectory(ublDirectory);
+		}
+		File xmlInvoiceFileName = new File(ublDirectory.getAbsolutePath() + File.separator + "invoice_" + invoice.getInvoiceNumber() + "_" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".xml");
+		try {
+			Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()));
+		} catch (IOException e) {
+			throw new BusinessException(e);
+		}
+		try {
+			invoiceUblHelper.toXml(invoiceUbl, xmlInvoiceFileName);
+		} catch (javax.xml.bind.JAXBException e) {
+			throw new BusinessException(e);
+		}
+		invoice = updateNoCheck(invoice);
+		entityUpdatedEventProducer.fire(invoice);
+		return invoice;
+	}
+
+    public void validateAdjAmount(Invoice newInvoice) {
+        // Check global Invoice Amount
+        LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(newInvoice.getId());
+        if (linkedInvoice != null) {
+            Invoice srcInvoice = linkedInvoice.getInvoice();
+
+            // get sum of validated linked invoice using srcInvoice
+            BigDecimal sumValidatedLinkedInvoice = (BigDecimal) getEntityManager()
+                    .createNamedQuery("Invoice.SUM_VALIDATED_LINKED_INVOICES").setParameter("SRC_INVOICE_ID", srcInvoice.getId()).getSingleResult();
+
+            if (sumValidatedLinkedInvoice == null) {
+                sumValidatedLinkedInvoice = ZERO;
+            }
+
+            if (!ZERO.equals(sumValidatedLinkedInvoice)) {
+                if(newInvoice.getAmountWithTax().add(sumValidatedLinkedInvoice).compareTo(srcInvoice.getAmountWithTax()) > 0) {
+                    throw new BusinessException("Adjustment Amount With Tax '" + newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
+                            + "' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()) + "'");
+                }
+            } else {
+                // check amount with tax
+                if (newInvoice.getAmountWithTax().compareTo(srcInvoice.getAmountWithTax()) > 0) {
+                    throw new BusinessException("Adjustment Amount With Tax '"+ newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
+                            +"' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())+"'");
+                }
+            }
+        }
+
+        // Check invoice line
+        if (CollectionUtils.isNotEmpty(newInvoice.getInvoiceLines())) {
+            newInvoice.getInvoiceLines().forEach(invoiceLine -> {
+                if (invoiceLine.getLinkedInvoiceLine() != null) {
+                    // check amount with tax
+                    if (invoiceLine.getAmountWithTax().compareTo(invoiceLine.getLinkedInvoiceLine().getAmountWithTax()) > 0) {
+                        throw new BusinessException("Adjustment Line Amount With Tax '"+ invoiceLine.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
+                                +"' is greater than Linked Line '" + invoiceLine.getLinkedInvoiceLine().getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())+"'");
+                    }
+                }
+            });
+        }
+    }
 
 }

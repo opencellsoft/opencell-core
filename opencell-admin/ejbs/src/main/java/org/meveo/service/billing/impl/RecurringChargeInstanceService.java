@@ -472,7 +472,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RecurringChargeInstance reimburseRecuringCharges(RecurringChargeInstance chargeInstance, String orderNumber) throws BusinessException, RatingException {
+    public RecurringChargeInstance reimburseRecuringCharges(RecurringChargeInstance chargeInstance, String orderNumber, boolean woCancelled) throws BusinessException, RatingException {
 
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
@@ -491,7 +491,12 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         log.debug("Will apply reimbursment for charge {} for period {} - {}", chargeInstance.getId(), chargeInstance.getChargeToDateOnTermination(), chargeInstance.getChargedToDate());
 
-        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, orderNumber, false, false);
+        ChargeApplicationModeEnum chargeApplicationModeEnum = ChargeApplicationModeEnum.REIMBURSMENT;
+        if((chargeInstance.getSubscription().getSubscribedTillDate() != null
+                && chargeInstance.getTerminationDate().after(chargeInstance.getSubscription().getSubscribedTillDate())) || woCancelled) {
+            chargeApplicationModeEnum = ChargeApplicationModeEnum.AGREEMENT;
+        }
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, chargeApplicationModeEnum, false, null, orderNumber, false, false);
 
         if (chargeWasUpdated || !ratingResult.getWalletOperations().isEmpty()) {
             chargeInstance = updateNoCheck(chargeInstance);

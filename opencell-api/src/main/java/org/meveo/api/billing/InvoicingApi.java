@@ -53,6 +53,7 @@ import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.BillingRunReportService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.util.MeveoParamBean;
@@ -75,6 +76,9 @@ public class InvoicingApi extends BaseApi {
 
     @Inject
     private AccountHierarchyApi accountHierarchyApi;
+
+    @Inject
+    private BillingRunReportService billingRunReportService;
 
     @Inject
     @MeveoParamBean
@@ -104,6 +108,11 @@ public class InvoicingApi extends BaseApi {
         }
         BillingRun billingRun = new BillingRun();
         billingRun.setBillingCycle(billingCycle);
+        billingRun.setAggregateUnitAmounts(billingCycle.isAggregateUnitAmounts());
+        billingRun.setDateAggregation(billingCycle.getDateAggregation());
+        billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
+        billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
+        billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
         billingRun.setProcessType(dto.getBillingRunTypeEnum());
         billingRun.setStartDate(dto.getStartDate());
         billingRun.setEndDate(dto.getEndDate());
@@ -113,6 +122,9 @@ public class InvoicingApi extends BaseApi {
         billingRun.setInvoiceDate(dto.getInvoiceDate());
         billingRun.setLastTransactionDate(dto.getLastTransactionDate());
         billingRun.setSkipValidationScript(dto.getSkipValidationScript());
+        billingRun.setPreReportAutoOnCreate(dto.getPreReportAutoOnCreate());
+        billingRun.setPreReportAutoOnInvoiceLinesJob(dto.getPreReportAutoOnInvoiceLinesJob());
+        billingRun.setApplicationEl(dto.getApplicationEl());
         if(dto.getRejectAutoAction() == null) {
             billingRun.setRejectAutoAction(BillingRunAutomaticActionEnum.MANUAL_ACTION);
         }
@@ -184,6 +196,7 @@ public class InvoicingApi extends BaseApi {
         }
 
         billingRunService.update(billingRun);
+        billingRunReportService.launchBillingRunReportJob(billingRun);
         
         return billingRun.getId();
     }
@@ -191,17 +204,26 @@ public class InvoicingApi extends BaseApi {
     public long updateBillingRun(CreateBillingRunDto dto) throws MeveoApiException, BusinessApiException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
         BillingRun billingRun = billingRunService.findById(dto.getId());
-        if(billingRun == null) {
+        if (billingRun == null) {
             throw new BadRequestException("Billing run Entity with id "+dto.getId()+" not found");
+        }
+        
+        if (billingRun.getStatus() != BillingRunStatusEnum.NEW) {
+        	throw new BusinessApiException("You can not update the billing run with status = " + billingRun.getStatus());
         }
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
-        if(dto.getBillingCycleCode() != null) {
+        if (dto.getBillingCycleCode() != null) {
             billingCycle = billingCycleService.findByCode(dto.getBillingCycleCode());
             if (billingCycle == null) {
                 throw new EntityDoesNotExistsException(BillingCycle.class, dto.getBillingCycleCode());
             }
             billingRun.setBillingCycle(billingCycle);
+            billingRun.setAggregateUnitAmounts(billingCycle.isAggregateUnitAmounts());
+            billingRun.setDateAggregation(billingCycle.getDateAggregation());
+            billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
+            billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
+            billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
 
             if (dto.getIncrementalInvoiceLines() != null) {
                 billingRun.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
@@ -212,7 +234,6 @@ public class InvoicingApi extends BaseApi {
             }
         }
 
-        billingRun.setBillingCycle(billingCycle);
         if (dto.getBillingRunTypeEnum() != null) {
             billingRun.setProcessType(dto.getBillingRunTypeEnum());
         }
@@ -279,8 +300,18 @@ public class InvoicingApi extends BaseApi {
         	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(descriptionsTranslated ,null));
         }
 
+        if(dto.getPreReportAutoOnCreate() != null) {
+            billingRun.setPreReportAutoOnCreate(dto.getPreReportAutoOnCreate());
+        }
+        if(dto.getPreReportAutoOnInvoiceLinesJob() != null) {
+            billingRun.setPreReportAutoOnInvoiceLinesJob(dto.getPreReportAutoOnInvoiceLinesJob());
+        }
+
+        billingRun.setApplicationEl(dto.getApplicationEl());
+
         billingRunService.update(billingRun);
-        
+        billingRunReportService.launchBillingRunReportJob(billingRun);
+
         return billingRun.getId();
     }
 

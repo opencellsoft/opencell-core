@@ -45,7 +45,9 @@ import org.meveo.model.admin.Currency;
 @NamedQueries({ @NamedQuery(name = "TradingCurrency.getByCode", query = "from TradingCurrency tr where tr.currency.currencyCode = :tradingCurrencyCode ", hints = {
         @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 	@NamedQuery(name = "TradingCurrency.getByCodeOrId", query = "from TradingCurrency tr where tr.id = :tradingCurrencyId or tr.currency.currencyCode = :tradingCurrencyCode ", 
-	hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") })  })
+	hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "TradingCurrency.getTradingFromCurrency", query = "SELECT trc FROM TradingCurrency trc where trc.currency.id = :currencyID"),
+})
 public class TradingCurrency extends EnableEntity {
     private static final long serialVersionUID = 1L;
 

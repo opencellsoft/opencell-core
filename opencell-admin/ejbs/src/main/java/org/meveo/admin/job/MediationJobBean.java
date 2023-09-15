@@ -29,6 +29,7 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
@@ -38,6 +39,7 @@ import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.audit.AuditOrigin;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.job.Job;
 import org.meveo.service.mediation.MediationsettingService;
@@ -217,6 +219,7 @@ public class MediationJobBean extends BaseJobBean {
             PrintWriter rejectFileWriterFinal = rejectFileWriter;
 
             List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
+            String auditOriginName = jobInstance.getJobTemplate() + "/" + jobInstance.getCode();
             boolean isDuplicateCheckOn = cdrParserFinal.isDuplicateCheckOn();
 
             String originRecordEL = appProvider.getCdrDeduplicationKeyEL();
@@ -229,6 +232,7 @@ public class MediationJobBean extends BaseJobBean {
                     Thread.currentThread().setName(jobInstance.getCode() + "-" + finalK);
 
                     currentUserProvider.reestablishAuthentication(lastCurrentUser);
+                    AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.JOB, auditOriginName);
 
                     int i = 0;
 

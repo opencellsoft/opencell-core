@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.cpq.OrderAttributeDto;
 import org.meveo.api.dto.cpq.OrderProductDto;
 import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
@@ -62,6 +63,9 @@ public class OrderOfferDto extends BaseEntityDto {
 	
 	@Schema(description = "code of existing contract")
 	private String contractCode;
+	
+	@Schema(description = "custom fields for order offer")
+    private CustomFieldsDto customFields;
 
     public OrderOfferDto() {
 	}
@@ -273,5 +277,12 @@ public class OrderOfferDto extends BaseEntityDto {
 	public void setContractCode(String contractCode) {
 		this.contractCode = contractCode;
 	}
-	
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}	
 }

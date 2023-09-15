@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -35,11 +36,15 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.PaymentException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.billing.ExchangeRate;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedRefund;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -62,6 +67,7 @@ import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.RejectedType;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 
 
@@ -112,6 +118,9 @@ public class PaymentService extends PersistenceService<Payment> {
     /** The refund service. */
     @Inject
     private RefundService refundService;
+
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
 
     @MeveoAudit
@@ -303,11 +312,11 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
      * @throws UnbalanceAmountException balance amount exception.
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     private PaymentResponseDto makeTheRealPayment(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
     		String cardNumber, String ownerName, String cvv, String expiryDate, CreditCardTypeEnum cardType, boolean isPayment, PaymentMethodEnum paymentMethodType,Long aoPaymentId)
-    				throws Exception {
+    				throws Exception,BusinessException {
     	
         PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
         PaymentMethod preferredMethod = null;
@@ -409,7 +418,7 @@ public class PaymentService extends PersistenceService<Payment> {
             }
             
             if(PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.NOT_PROCESSED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()){
-            	throw new BusinessException(doPaymentResponseDto.getErrorCode());
+            	throw new BusinessException(StringUtils.isBlank(doPaymentResponseDto.getErrorMessage())?doPaymentResponseDto.getErrorCode():doPaymentResponseDto.getErrorMessage());
             }
              
 			Refund refund = (!isPayment && aoPaymentId != null) ? refundService.findById(aoPaymentId) : null;
@@ -447,24 +456,20 @@ public class PaymentService extends PersistenceService<Payment> {
     }
     
     
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     private PaymentResponseDto createAO(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
             String cardNumber, String ownerName, String cvv, String expiryDate, CreditCardTypeEnum cardType, boolean isPayment, PaymentMethodEnum paymentMethodType)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
     	 Long aoPaymentId = null;
     	 PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
     	 if (createAO) {
-             try {
-                 if (isPayment) {
-                     aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay);
-                 } else {
-                     aoPaymentId = refundService.createRefundAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay);
-                 }
-                 doPaymentResponseDto.setAoCreated(true);
-             } catch (Exception e) {
-                 log.warn("Cant create Account operation payment :", e);
+
+             if (isPayment) {
+                 aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay);
+             } else {
+                 aoPaymentId = refundService.createRefundAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType, aoIdsToPay);
              }
+             doPaymentResponseDto.setAoCreated(true);
              if (matchingAO ) {
                  try {
                      List<Long> aoIdsToMatch = aoIdsToPay;
@@ -504,7 +509,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws Exception 
      */
     
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public PaymentResponseDto doPayment(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
 			String cardNumber, String ownerName, String cvv, String expiryDate, CreditCardTypeEnum cardType, boolean isPayment, PaymentMethodEnum paymentMethodType)
 			throws Exception {
@@ -517,18 +522,11 @@ public class PaymentService extends PersistenceService<Payment> {
 		Long aoId = doPaymentResponseDto.getAccountOperationId();
 
 		if (!createAO || !StringUtils.isBlank(aoId)) {
-			try {
-				doPaymentResponseDto = makeTheRealPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, cardNumber, ownerName, cvv, expiryDate,
-						cardType, isPayment, paymentMethodType, aoId);
-				if (doPaymentResponseDto.getPaymentStatus() != PaymentStatusEnum.ACCEPTED && doPaymentResponseDto.getPaymentStatus() != PaymentStatusEnum.PENDING) {
-					cancelPayment(doPaymentResponseDto.getAccountOperationId());
-				}else {
-					updatePaymentAO(aoId, doPaymentResponseDto);
-				}
-			} catch (Exception e) {
-				cancelPayment(aoId);
-				throw new Exception(e.getMessage());
-			}
+			doPaymentResponseDto = makeTheRealPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, cardNumber, ownerName, cvv, expiryDate,
+					cardType, isPayment, paymentMethodType, aoId);
+			if (doPaymentResponseDto.getPaymentStatus() == PaymentStatusEnum.ACCEPTED || doPaymentResponseDto.getPaymentStatus() == PaymentStatusEnum.PENDING) {					
+				updatePaymentAO(aoId, doPaymentResponseDto);
+			}			
 		}		
 		return doPaymentResponseDto;
 
@@ -732,10 +730,10 @@ public class PaymentService extends PersistenceService<Payment> {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
         Payment payment = new Payment();
+        calculateAmountsByTransactionCurrency(payment, customerAccount, (new BigDecimal(ctsAmount).divide(new BigDecimal(100))),
+                null, new Date());
+        payment.setJournal(occTemplate.getJournal());
         payment.setPaymentMethod(paymentMethodType);
-        payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
-        payment.setUnMatchingAmount(payment.getAmount());
-        payment.setMatchingAmount(BigDecimal.ZERO);
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());
         payment.setDescription(occTemplate.getDescription());
@@ -744,10 +742,14 @@ public class PaymentService extends PersistenceService<Payment> {
         payment.setAccountCodeClientSide(doPaymentResponseDto.getCodeClientSide());
         payment.setCustomerAccount(customerAccount);
         payment.setReference(doPaymentResponseDto.getPaymentID());
-        payment.setTransactionDate(new Date());
         payment.setMatchingStatus(MatchingStatusEnum.O);
+        payment.setCollectionDate(new Date());
+        payment.setAccountingDate(new Date());
         payment.setBankReference(doPaymentResponseDto.getBankRefenrence());
+        payment.setCollectionDate(new Date());
+        payment.setAccountingDate(new Date());
         setSumAndOrdersNumber(payment, aoIdsToPay);
+        accountOperationService.handleAccountingPeriods(payment);
         create(payment);
         return payment.getId();
 
@@ -774,10 +776,9 @@ public class PaymentService extends PersistenceService<Payment> {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
         Payment payment = new Payment();
+        calculateAmountsByTransactionCurrency(payment, customerAccount, (new BigDecimal(ctsAmount).divide(new BigDecimal(100))),
+                null, new Date());
         payment.setPaymentMethod(paymentMethodType);
-        payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
-        payment.setUnMatchingAmount(payment.getAmount());
-        payment.setMatchingAmount(BigDecimal.ZERO);
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());
         payment.setDescription(occTemplate.getDescription());
@@ -790,6 +791,7 @@ public class PaymentService extends PersistenceService<Payment> {
         payment.setMatchingStatus(MatchingStatusEnum.O);
         payment.setBankReference(doPaymentResponseDto.getBankRefenrence());
         setSumAndOrdersNumber(payment, aoIdsToPay);
+        accountOperationService.handleAccountingPeriods(payment);
         create(payment);
         return payment.getId();
     }
@@ -995,5 +997,61 @@ public class PaymentService extends PersistenceService<Payment> {
     }
     public int updateRefundReference() {
         return getEntityManager().createNamedQuery("Refund.updateReference").executeUpdate();
+    }
+
+    public void calculateAmountsByTransactionCurrency(Payment payment, CustomerAccount customerAccount,
+                                                      BigDecimal amount,
+                                                      String transactionalCurrencyCode, Date transactionDate) {
+        TradingCurrency functionalCurrency = appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode() != null ?
+                tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode()) : null;
+        TradingCurrency transactionalCurrency = customerAccount.getTradingCurrency();
+        BigDecimal lastApliedRate = BigDecimal.ONE;
+        Date transactionDateToUse = transactionDate == null ? new Date() : transactionDate;
+        BigDecimal functionalAmount = amount;
+        BigDecimal transactionalAmount = amount;
+        if (StringUtils.isNotBlank(transactionalCurrencyCode)) {
+            transactionalCurrency = tradingCurrencyService.findByTradingCurrencyCode(transactionalCurrencyCode);
+            checkTransactionalCurrency(transactionalCurrencyCode, transactionalCurrency);
+        }
+        if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency)) {
+            ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, transactionDateToUse);
+            if (!Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
+                functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(),
+                        appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                lastApliedRate = exchangeRate.getExchangeRate();
+            }
+        } else {
+            transactionalAmount = toTransactional(amount, lastApliedRate);
+        }
+        payment.setCustomerAccount(customerAccount);
+        payment.setAmount(functionalAmount);
+        payment.setUnMatchingAmount(functionalAmount);
+        payment.setMatchingAmount(BigDecimal.ZERO);
+        payment.setTransactionalMatchingAmount(BigDecimal.ZERO);
+        payment.setTransactionalAmount(transactionalAmount);
+        payment.setTransactionalAmountWithoutTax(transactionalAmount);
+        payment.setAmountWithoutTax(functionalAmount);
+        payment.setTransactionalUnMatchingAmount(transactionalAmount);
+        payment.setTransactionDate(transactionDateToUse);
+        payment.setTransactionalCurrency(transactionalCurrency != null ? transactionalCurrency : functionalCurrency);
+        payment.setAppliedRate(lastApliedRate);
+    }
+    private void checkTransactionalCurrency(String transactionalcurrency, TradingCurrency tradingCurrency) {
+        if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
+            throw new InvalidParameterException("Currency " + transactionalcurrency +
+                    " is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
+        }
+    }
+    private ExchangeRate getExchangeRate(TradingCurrency tradingCurrency, Date transactionDate) {
+        Date exchangeDate = transactionDate != null ? transactionDate : new Date();
+        ExchangeRate exchangeRate = tradingCurrency.getExchangeRate(exchangeDate);
+        if (exchangeRate == null || exchangeRate.getExchangeRate() == null) {
+            throw new EntityDoesNotExistsException("No valid exchange rate found for currency " + tradingCurrency.getCurrencyCode()
+                    + " on " + exchangeDate);
+        }
+        return exchangeRate;
+    }
+    private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
+        return amount != null ? amount.multiply(rate) : BigDecimal.ZERO;
     }
 }

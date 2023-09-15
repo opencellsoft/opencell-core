@@ -49,8 +49,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IReferenceEntity;
 import org.meveo.model.ObservableEntity;
@@ -59,6 +59,8 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+
+import static javax.persistence.FetchType.LAZY;
 
 /**
  * Billing run
@@ -75,12 +77,12 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
 @NamedQueries({
-        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'INVOICES_GENERATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC') order by br.id asc"),
-        @NamedQuery(name = "BillingRun.getForInvoicingLimitToIds", query = "SELECT br FROM BillingRun br where (br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC')) and br.id in :ids order by br.id asc"),        
+        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'INVOICES_GENERATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC') and br.disabled = false order by br.id asc"),
+        @NamedQuery(name = "BillingRun.getForInvoicingLimitToIds", query = "SELECT br FROM BillingRun br where (br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC')) and br.id in :ids and br.disabled = false order by br.id asc"),        
         @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code "),
         @NamedQuery(name = "BillingRun.nullifyBillingRunXMLExecutionResultIds", query = "update BillingRun br set br.xmlJobExecutionResultId = null where br = :billingRun"),
         @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") })
-public class BillingRun extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
+public class BillingRun extends EnableEntity implements ICustomFieldEntity, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -434,6 +436,46 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
     private Boolean incrementalInvoiceLines = Boolean.FALSE;
+    
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "date_aggregation")
+    private DateAggregationOption dateAggregation = DateAggregationOption.MONTH_OF_USAGE_DATE;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "aggregate_unit_amounts")
+    private boolean aggregateUnitAmounts = false;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "use_accounting_article_label")
+    private boolean useAccountingArticleLabel = false;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_subscriptions")
+    private boolean ignoreSubscriptions = true;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_orders")
+    private boolean ignoreOrders = true;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "pre_report_auto_on_create")
+    private boolean preReportAutoOnCreate = false;
+
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "pre_invoicing_report_id")
+    private BillingRunReport preInvoicingReport;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "pre_report_auto_on_invoice_line_job")
+    private boolean preReportAutoOnInvoiceLinesJob = false;
+
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "billed_rated_transactions_report_id")
+    private BillingRunReport billedRatedTransactionsReport;
+
+    @Column(name = "application_el", length = 2000)
+    @Size(max = 2000)
+    private String applicationEl;
 
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -1020,5 +1062,89 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     public void setIncrementalInvoiceLines(Boolean incrementalInvoiceLines) {
         this.incrementalInvoiceLines = incrementalInvoiceLines;
+    }
+
+	public DateAggregationOption getDateAggregation() {
+		return dateAggregation;
+	}
+
+	public void setDateAggregation(DateAggregationOption dateAggregation) {
+		this.dateAggregation = dateAggregation;
+	}
+
+	public boolean isAggregateUnitAmounts() {
+		return aggregateUnitAmounts;
+	}
+
+	public void setAggregateUnitAmounts(boolean aggregateUnitAmounts) {
+		this.aggregateUnitAmounts = aggregateUnitAmounts;
+	}
+
+	public boolean isUseAccountingArticleLabel() {
+		return useAccountingArticleLabel;
+	}
+
+	public void setUseAccountingArticleLabel(boolean useAccountingArticleLabel) {
+		this.useAccountingArticleLabel = useAccountingArticleLabel;
+	}
+
+	public boolean isIgnoreSubscriptions() {
+		return ignoreSubscriptions;
+	}
+
+	public void setIgnoreSubscriptions(boolean ignoreSubscriptions) {
+		this.ignoreSubscriptions = ignoreSubscriptions;
+	}
+
+	public boolean isIgnoreOrders() {
+		return ignoreOrders;
+	}
+
+	public void setIgnoreOrders(boolean ignoreOrders) {
+		this.ignoreOrders = ignoreOrders;
+	}
+
+    public boolean isPreReportAutoOnCreate() {
+        return preReportAutoOnCreate;
+    }
+
+    public void setPreReportAutoOnCreate(boolean preReportAutoOnCreate) {
+        this.preReportAutoOnCreate = preReportAutoOnCreate;
+    }
+
+    public BillingRunReport getPreInvoicingReport() {
+        return preInvoicingReport;
+    }
+
+    public void setPreInvoicingReport(BillingRunReport preInvoicingReport) {
+        this.preInvoicingReport = preInvoicingReport;
+    }
+
+    public boolean hasPreInvoicingReport() {
+        return preInvoicingReport != null;
+    }
+
+    public boolean isPreReportAutoOnInvoiceLinesJob() {
+        return preReportAutoOnInvoiceLinesJob;
+    }
+
+    public void setPreReportAutoOnInvoiceLinesJob(boolean preReportAutoOnInvoiceLinesJob) {
+        this.preReportAutoOnInvoiceLinesJob = preReportAutoOnInvoiceLinesJob;
+    }
+
+    public BillingRunReport getBilledRatedTransactionsReport() {
+        return billedRatedTransactionsReport;
+    }
+
+    public void setBilledRatedTransactionsReport(BillingRunReport billedRatedTransactionsReport) {
+        this.billedRatedTransactionsReport = billedRatedTransactionsReport;
+    }
+
+    public String getApplicationEl() {
+        return applicationEl;
+    }
+
+    public void setApplicationEl(String applicationEl) {
+        this.applicationEl = applicationEl;
     }
 }

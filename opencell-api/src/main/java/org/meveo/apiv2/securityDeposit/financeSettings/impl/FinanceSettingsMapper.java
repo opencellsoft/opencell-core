@@ -1,5 +1,8 @@
 package org.meveo.apiv2.securityDeposit.financeSettings.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.apiv2.securityDeposit.ImmutableFinanceSettings;
 import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingMapper;
@@ -24,7 +27,9 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                 .activateDunning(entity.isActivateDunning())
                 .enableBillingRedirectionRules(entity.isEnableBillingRedirectionRules())
                 .discountAdvancedMode(entity.isDiscountAdvancedMode())
-                .enablePriceList(entity.isEnablePriceList());
+                .enablePriceList(entity.isEnablePriceList())
+				.articleSelectionMode(entity.getArticleSelectionMode())
+                .billingRunProcessWarning(entity.isBillingRunProcessWarning());
         if(entity.getAuxiliaryAccounting() != null) {
             builder.useAuxiliaryAccounting(entity.getAuxiliaryAccounting().isUseAuxiliaryAccounting())
                     .auxiliaryAccountCodeEl(entity.getAuxiliaryAccounting().getAuxiliaryAccountCodeEl())
@@ -34,6 +39,10 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          if(entity.getOpenOrderSetting() != null) {
             builder.openOrderSetting(openOrderSettingMapper.toResource(entity.getOpenOrderSetting()));
         }
+         
+        // Set the entitiesWithHugeVolume field
+        Map<String, List<String>> entitiesWithHugeVolume = entity.getEntitiesWithHugeVolume();
+        builder.entitiesWithHugeVolume(entitiesWithHugeVolume);
         return builder.build();
     }
 
@@ -65,6 +74,13 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          financeSettings.setEnableBillingRedirectionRules(resource.getEnableBillingRedirectionRules());
          financeSettings.setDiscountAdvancedMode(resource.getDiscountAdvancedMode());
          financeSettings.setEnablePriceList(resource.getEnablePriceList());
+	     if(resource.getArticleSelectionMode() != null) {
+		     financeSettings.setArticleSelectionMode(resource.getArticleSelectionMode());
+	     }
+	     // Set the entitiesWithHugeVolume field
+	     Map<String, List<String>> entitiesWithHugeVolume = resource.getEntitiesWithHugeVolume();
+	     financeSettings.setEntitiesWithHugeVolume(entitiesWithHugeVolume);
+         financeSettings.setBillingRunProcessWarning(resource.getBillingRunProcessWarning());
          return financeSettings;
     }
 }

@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.api.dto.response.catalog.ImportResultResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.catalog.ImportPricePlanVersionsDto;
 import org.meveo.apiv2.catalog.PricePlanMLinesDTO;
 import org.meveo.apiv2.catalog.service.PricePlanMatrixApiService;
@@ -26,6 +28,7 @@ import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 
 
 @Stateless
+@Interceptors({ WsRestApiInterceptor.class })
 public class PricePlanMatrixResourceImpl implements PricePlanMatrixResource {
 
     @Inject
@@ -135,8 +138,10 @@ public class PricePlanMatrixResourceImpl implements PricePlanMatrixResource {
         fields.add("pricePlanMatrixValues");
         fields.add("priceEL");
         fields.add("priority");
+        fields.add("cfValues");
 
-        response.put("data", mapper.readValue(mapper.toJson(fields, PricePlanMatrixLine.class, pricePlanMatrixLines, null), List.class));
+        response.put("data", mapper.readValue(mapper.toJson(fields,
+                PricePlanMatrixLine.class, pricePlanMatrixLines, null), List.class));
         response.put("limit", limit);
         response.put("offset", offset);
         response.put("sortBy", sortBy);

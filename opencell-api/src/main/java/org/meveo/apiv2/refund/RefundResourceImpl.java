@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;
@@ -19,6 +20,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.RefundApi;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -28,6 +30,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class RefundResourceImpl implements RefundResource{
 
     @Inject

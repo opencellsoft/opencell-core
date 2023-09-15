@@ -478,6 +478,15 @@
         <createSequence sequenceName="cat_trading_discount_plan_item_seq" startValue="1" />
         <createSequence sequenceName="cat_price_list_line_seq" startValue="1" />
         <createSequence sequenceName="cpq_trading_contract_item_seq" startValue="1" />
+        <createSequence sequenceName="bill_run_report_seq" startValue="1" />
+        <createSequence sequenceName="bill_account_amount_seq" startValue="1" />
+        <createSequence sequenceName="bill_offer_amount_seq" startValue="1" />
+        <createSequence sequenceName="audit_data_log_seq" startValue="1"  incrementBy="100"/>
+        <createSequence sequenceName="audit_data_log_rec_seq" startValue="1" incrementBy="1000"/>
+        <createSequence sequenceName="audit_data_config_seq" startValue="1" />
+        <createSequence sequenceName="product_amount_seq" startValue="1"/>
+        <createSequence sequenceName="subscription_amount_seq" startValue="1"/>
+        <createSequence sequenceName="accounting_article_amount_seq" startValue="1"/>
     </changeSet>
 
 
@@ -2047,6 +2056,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="cf_values" type="${type.json}" />
+            <column name="email" type="varchar(100)" />
+            <column name="firstname" type="varchar(100)" />
+            <column name="lastname" type="varchar(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-144">
@@ -2700,6 +2712,7 @@
             <column name="icd_id" type="bigint" />
             <column name="exemption_reason" type="varchar(2000)" />
             <column name="price_list_id" type="bigint" />
+            <column name="mass_data" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -2764,6 +2777,19 @@
             	<constraints nullable="false" />
             </column>
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_accounting_article_label" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="date_aggregation" type="varchar(255)" defaultValue="MONTH_OF_USAGE_DATE" />
+			<column name="aggregate_unit_amounts" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
+			<column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+            <column name="pre_report_auto_on_create" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="pre_invoicing_report_id" type="${cast.long}" />
+            <column name="pre_report_auto_on_invoice_line_job" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="billed_rated_transactions_report_id" type="${cast.long}" />
+			<column name="application_el" type="varchar(2000)" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -2974,6 +3000,19 @@
             <column name="ignore_subscriptions" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="incremental_invoice_lines" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="application_el" type="varchar(2000)" />
+            <column name="report_config_pre_report_auto_on_create" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="report_config_pre_report_auto_on_invoice_lines_job" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="report_config_display_billing_accounts" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="report_config_display_subscriptions" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="report_config_display_offers" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="report_config_display_products" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="report_config_display_articles" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="report_config_block_size_billing_accounts" type="int4" defaultValueNumeric="10"/>
+            <column name="report_config_block_size_subscriptions" type="int4" defaultValueNumeric="10"/>
+            <column name="report_config_block_size_offers" type="int4" defaultValueNumeric="10"/>
+            <column name="report_config_block_size_products" type="int4" defaultValueNumeric="10"/>
+            <column name="report_config_block_size_articles" type="int4" defaultValueNumeric="10"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -3156,6 +3195,8 @@
     		<column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="auto_matching" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="external_purchase_order_number" type="varchar(100)" />
+            <column name="ubl_reference" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="sips_batch_archive_name" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -3442,6 +3483,7 @@
             <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
             <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
             <column name="discounted_amount" type="numeric(23,12)" />
+            <column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4061,6 +4103,7 @@
 			<column name="trading_currency_id" type="bigint" />
             <column name="contract_line_id" type="bigint" />
 			<column name="price_list_line_id" type="bigint" />
+			<column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4256,7 +4299,44 @@
             <column name="attribute_calendar_id" type="bigint"/>
             <column name="internal_note" type="${type.longtext}" />
             <column name="anticipate_end_of_subscription" type="${type.boolean}" defaultValueNumeric="0" />
-        </createTable>
+            <column name="parameter1_description" type="VARCHAR(255)" defaultValue="Parameter 1"/>
+        	<column name="parameter2_description" type="VARCHAR(255)" defaultValue="Parameter 2"/>
+        	<column name="parameter3_description" type="VARCHAR(255)" defaultValue="Parameter 3"/>
+        	<column name="parameter_extra_description" type="VARCHAR(255)" defaultValue="Parameter Extra"/>
+	    	<column name="parameter1_format" type="VARCHAR(50)" defaultValue="TEXT"/>
+	    	<column name="parameter2_format" type="VARCHAR(50)" defaultValue="TEXT"/>
+	    	<column name="parameter3_format" type="VARCHAR(50)" defaultValue="TEXT"/>
+	    	<column name="parameter_extra_format" type="VARCHAR(50)" defaultValue="TEXT"/>
+	    	<column name="parameter1_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+		    <column name="parameter1_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="parameter2_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+		    <column name="parameter2_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
+		    <column name="parameter3_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+		    <column name="parameter3_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="parameter_extra_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+	        <column name="parameter_extra_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
+	        <column name="parameter1_translated_description" type="${type.json}"/>
+	        <column name="parameter2_translated_description" type="${type.json}"/>
+	        <column name="parameter3_translated_description" type="${type.json}"/>
+	        <column name="parameter_extra_translated_description" type="${type.json}"/>
+	        <column name="parameter1_translated_long_descriptions" type="${type.json}"/>
+	        <column name="parameter2_translated_long_descriptions" type="${type.json}"/>
+	        <column name="parameter3_translated_long_descriptions" type="${type.json}"/>
+	        <column name="parameter_extra_translated_long_descriptions" type="${type.json}"/>
+	       	<column name="business_key_el" type="varchar(2000)" />
+			<column name="business_key_description" type="VARCHAR(255)" defaultValue="Business key"/>
+			<column name="business_key_translated_descriptions" type="${type.json}" defaultValue='{"FRA":"Clé métier", "ENG":"Business key"}'>
+                <constraints nullable="false" />
+            </column>
+			<column name="business_key_translated_long_descriptions" type="${type.json}" defaultValue='{"FRA":"La clé métier est calculé à la valorisation en utilisant une formule personnalisé enregistrée sur la charge", "ENG":"Business key is computed at rating using a custom expression set on the charge"}'>
+                <constraints nullable="false" />
+            </column>
+            <column name="business_key_format" type="VARCHAR(50)" defaultValue="TEXT">
+	            <constraints nullable="false" />
+            </column>
+			<column name="business_key_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
+			<column name="business_key_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
+	    </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-208">
         <createTable tableName="cat_chrg_edr">
@@ -4377,6 +4457,7 @@
             <column name="allowance_code_id" type="bigint">
             <constraints nullable="false" />
             </column>
+            <column name="applicable_on_contract_price" type="${type.boolean}" defaultValueNumeric="1"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -5987,6 +6068,7 @@
             <column name="event_key" type="varchar(100)" />
             <column name="event_version" type="int4" />
 			<column name="wallet_operation_id" type="bigint"/>
+			<column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -8210,8 +8292,8 @@
             <column name="change_type" type="varchar(255)" />
             <column name="change_origin" type="varchar(255)" />
             <column name="origin_name" type="varchar(255)" />
-            <column name="previous_state" type="varchar(255)" />
-            <column name="current_state" type="varchar(255)" />
+            <column name="previous_state" type="varchar(700)" />
+            <column name="current_state" type="varchar(700)" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -9653,6 +9735,7 @@
             <column name="rate_type" type="varchar(255)"/>
             <column name="separate_discount" type="${type.boolean}" defaultValueNumeric="0"></column>
             <column name="application_el" type="varchar(2000)" />
+            <column name="applicable_on_overridden_price" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
 
@@ -10173,6 +10256,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="ignore_aggregation" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="allowance_code" type="bigint" />
+			<column name="physical" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-467" author="NabilOUACHI">
@@ -10878,7 +10962,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="adjustment_status" type="varchar(50)"/>
             <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="invoice_key" type="varchar(255)" />
+			<column name="linked_invoice_line_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -10999,6 +11083,11 @@
             <column name="value" type="numeric(23, 12)" />
             <column name="accuracy" type="int" defaultValueNumeric="0">
                  <constraints nullable="false" />
+            </column>
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
     </changeSet>
@@ -11948,6 +12037,9 @@
             <column name="enable_billing_redirection_rules" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="discount_advanced_mode" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="enable_price_list" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="article_selection_mode" defaultValue="AFTER_PRICING" type="varchar(30)"/>
+            <column name="entities_with_huge_volume" type="${type.json}"/>
+            <column name="billing_run_process_warning" type="${type.boolean}" defaultValueNumeric="0" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -12462,6 +12554,18 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="INTRD-17487_20230719_build" author="TarikFA.">
+        <createTable tableName="contract_item_articles">
+            <column name="contract_item_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="accounting_article_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+
     <changeSet id="#INTRD-16031_20230508_rebuild" author="zelmeliani">
         <createTable tableName="cat_price_list">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -12616,6 +12720,215 @@
 		</createTable>
 	</changeSet>
 
+    <changeSet id="#INTRD-17632_2023_08_09_rebuild" author="zbariki">
+        <createTable tableName="billing_offer_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_offer_amount_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="offer_id" type="${cast.long}"/>
+            <column name="amount" type="numeric(23, 12)"/>
+            <column name="billing_run_report_id" type="${cast.long}"/>
+        </createTable>
+        <createTable tableName="billing_account_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_account_amount_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="billing_account_id" type="${cast.long}"/>
+            <column name="amount" type="numeric(23, 12)"/>
+            <column name="billing_run_report_id" type="${cast.long}"/>
+        </createTable>
+
+        <createTable tableName="billing_run_report">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_run_report_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="billing_run_id" type="${cast.long}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="billing_accounts_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subscriptions_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rated_transactions_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="one_shot_transactions_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recurring_transactions_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usage_transactions_count" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="one_shot_total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recurring_total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usage_total_amount_without_tax" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    
+    <changeSet id="audit_data_log_rebuild_tbl" author="AndriusKarpavicius">
+        <createTable tableName="audit_data_log_rec">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_data_log_rec_pkey" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="tx_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="ref_table" type="varchar(60)">
+                <constraints nullable="false" />
+            </column>        
+            <column name="ref_id" type="bigint" />
+            <column name="action" type="varchar(6)">
+                <constraints nullable="false" />
+            </column>        
+            <column name="origin" type="varchar(15)">
+                <constraints nullable="false" />
+            </column> 
+            <column name="origin_name" type="varchar(250)"/>
+            <column name="user_name" type="varchar(100)" />
+            <column name="data_old" type="${type.json}" />
+            <column name="data_new" type="${type.json}" />                  
+        </createTable>        
+        <createTable tableName="audit_data_log">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_data_log_pkey" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="entity_class" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>    
+            <column name="entity_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>   
+            <column name="tx_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="action" type="varchar(6)">
+                <constraints nullable="false" />
+            </column>        
+            <column name="origin" type="varchar(15)">
+                <constraints nullable="false" />
+            </column> 
+            <column name="origin_name" type="varchar(250)"/>
+            <column name="user_name" type="varchar(100)" />
+            <column name="data_old" type="${type.json}" />
+            <column name="data_new" type="${type.json}" />                  
+        </createTable>     
+    </changeSet>
+    
+    <changeSet id="audit_data_config_rebuild_tbl" author="AndriusKarpavicius"  >
+        <createTable tableName="audit_data_config">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="audit_data_config_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="entity_class" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>    
+            <column name="entity_fields" type="varchar(2000)" />
+            <column name="actions" type="varchar(2000)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#INTRD-17696_2023_09_11_rebuild_tbl" author="zbariki">
+        <createTable tableName="product_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="product_amount_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="product_id" type="${cast.long}"/>
+            <column name="amount" type="numeric(23, 12)"/>
+            <column name="billing_run_report_id" type="${cast.long}"/>
+        </createTable>
+        <createTable tableName="subscription_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="subscription_amount_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="amount" type="numeric(23, 12)"/>
+            <column name="subscription_id" type="${cast.long}"/>
+            <column name="billing_run_report_id" type="${cast.long}"/>
+        </createTable>
+        <createTable tableName="accounting_article_amount">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="accounting_article_amount_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="amount" type="numeric(23, 12)"/>
+            <column name="accounting_article_id" type="${cast.long}"/>
+            <column name="billing_run_report_id" type="${cast.long}"/>
+        </createTable>
+    </changeSet>
+        
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -17277,26 +17590,91 @@
                 baseColumnNames="price_list_line_id"
                 baseTableName="billing_wallet_operation" />
     </changeSet>
-    
+
      <changeSet id="#INTRD-17149_04072023_fk" author="Mbarek-Ay">
-		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk" 
-								 referencedTableName="cpq_price_plan_version" 
-								 baseColumnNames="price_plan_matrix_version_id" 
-								 baseTableName="cpq_quote_price" 
+		<addForeignKeyConstraint constraintName="price_plan_matrix_version_fk"
+								 referencedTableName="cpq_price_plan_version"
+								 baseColumnNames="price_plan_matrix_version_id"
+								 baseTableName="cpq_quote_price"
 								 referencedColumnNames="id"/>
-		
-		<addForeignKeyConstraint constraintName="price_plan_matrix_line_id_fk" 
-								 referencedTableName="cpq_price_plan_matrix_line" 
-								 baseColumnNames="price_plan_matrix_line_id" 
-								 baseTableName="cpq_quote_price" 
+
+		<addForeignKeyConstraint constraintName="price_plan_matrix_line_id_fk"
+								 referencedTableName="cpq_price_plan_matrix_line"
+								 baseColumnNames="price_plan_matrix_line_id"
+								 baseTableName="cpq_quote_price"
 								 referencedColumnNames="id"/>
-		
-		<addForeignKeyConstraint constraintName="contract_item_fk" 
-								 referencedTableName="cpq_contract_item" 
-								 baseColumnNames="contract_item_id" 
-								 baseTableName="cpq_quote_price" 
+
+		<addForeignKeyConstraint constraintName="contract_item_fk"
+								 referencedTableName="cpq_contract_item"
+								 baseColumnNames="contract_item_id"
+								 baseTableName="cpq_quote_price"
 								 referencedColumnNames="id"/>
+
     </changeSet>
+
+    <changeSet id="INTRD-17487_20230719_fk" author="TarikFA.">
+
+        <addForeignKeyConstraint baseTableName="contract_item_articles" baseColumnNames="contract_item_id"
+                                 constraintName="contract_item_articles_item_id_fk" referencedTableName="cpq_contract_item"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="contract_item_articles" baseColumnNames="accounting_article_id"
+                                 constraintName="contract_item_articles_accounting_article_id_fk" referencedTableName="billing_accounting_article"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="#INTRD-17632_2023_08_09_fk" author="zbariki">
+        <addForeignKeyConstraint baseTableName="billing_offer_amount" baseColumnNames="offer_id"
+                                 constraintName="billing_offer_amount_offer_id_fk"
+                                 referencedTableName="cat_offer_template" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_offer_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="billing_offer_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_account_amount" baseColumnNames="billing_account_id"
+                                 constraintName="billing_account_amount_offer_id_fk"
+                                 referencedTableName="billing_billing_account" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_account_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="billing_account_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_run_report" baseColumnNames="billing_run_id"
+                                 constraintName="billing_run_report_billing_run_id_fk"
+                                 referencedTableName="billing_billing_run" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_billing_run" baseColumnNames="pre_invoicing_report_id"
+                                 constraintName="billing_billing_run_pre_invoicing_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="#INTRD-17637_2023-09-04_FK" author="ZBariki">
+        <addForeignKeyConstraint baseTableName="billing_billing_run"
+                                 baseColumnNames="billed_rated_transactions_report_id"
+                                 constraintName="billing_billing_run_billed_rated_transactions_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-17632_2023_09_11_fk" author="zbariki">
+        <addForeignKeyConstraint baseTableName="product_amount" baseColumnNames="product_id"
+                                 constraintName="product_amount_product_id_fk"
+                                 referencedTableName="cpq_product" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="product_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="product_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="subscription_amount" baseColumnNames="subscription_id"
+                                 constraintName="subscription_amount_subscription_id_fk"
+                                 referencedTableName="billing_subscription" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="subscription_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="subscription_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="accounting_article_amount" baseColumnNames="accounting_article_id"
+                                 constraintName="accounting_article_amount_accounting_article_id_fk"
+                                 referencedTableName="billing_accounting_article" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="accounting_article_amount" baseColumnNames="billing_run_report_id"
+                                 constraintName="accounting_article_amount_br_report_id_fk"
+                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
+    </changeSet>
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17427,6 +17805,7 @@
         <sql>CREATE INDEX billing_wo_disc_wo_index ON ${db.schema.adapted}billing_wallet_operation(discounted_wallet_operation_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
+        <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -17622,6 +18001,20 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="#INTRD-17592-rt-indexes-rebuild" author="a.rouaguebe">
+        <sql>create index idx__billing_billing_account__lower_code on ${db.schema.adapted}billing_billing_account (lower(code))</sql>
+        <sql>create index idx__billing_rating_transaction__id_desc on ${db.schema.adapted}billing_rated_transaction (id desc)</sql>
+        <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-17581-wo-indexes-rebuild" author="a.rouaguebe">
+        <sql>create index idx__billing_wo__charge_instance_id on billing_wallet_operation(charge_instance_id)</sql>
+        <sql>create index idx__billing_wo__billing_account_id on billing_wallet_operation(billing_account_id)</sql>
+        <sql>create index idx__billing_wo__subscription_id on billing_wallet_operation(subscription_id)</sql>
+
+        <sql>create index idx__charge_instance__lower_code on billing_charge_instance(lower(code))</sql>
+        <sql>create index idx__charge_instance__lower_description on billing_charge_instance(lower(description))</sql>
+    </changeSet>
 
     <!-- end index -->
 
@@ -18288,7 +18681,7 @@
                                  referencedTableName="billing_invoice_validation_rule"
                                  referencedColumnNames="id" />
     </changeSet>
-    
+
     <changeSet id="#INTRD-12677_20221229_rebuild" author="AdilElJaouhari">
 		<createTable tableName="crm_provider_order_line_type">
 			<column name="provider_id" type="bigint" />
@@ -18306,8 +18699,8 @@
 			constraintName="crm_provider_order_line_type_uk"
 			tableName="crm_provider_order_line_type" />
 	</changeSet>
-	
-	<changeSet id="#INTRD-10544_20221207-rebuild" author="HatimOUDAD">   
+
+	<changeSet id="#INTRD-10544_20221207-rebuild" author="HatimOUDAD">
         <createSequence sequenceName="iso_icd_seq" startValue="1" />
         <createTable tableName="iso_icd">
             <!-- Generic fields -->
@@ -18325,14 +18718,14 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="iso_icd_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="scheme_name" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
 
         </createTable>
-        
-        
+
+
         <createSequence sequenceName="untdid_1001_invoice_code_type_seq" startValue="1" />
         <createTable tableName="untdid_1001_invoice_code_type">
             <!-- Generic fields -->
@@ -18350,7 +18743,7 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="iso_1001_code_type_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="en16931_interpretation" type="varchar(20)">
                 <constraints nullable="false" />
             </column>
@@ -18359,7 +18752,7 @@
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_2475_vat_payment_option_seq" startValue="1" />
         <createTable tableName="untdid_2475_vat_payment_option">
             <!-- Generic fields -->
@@ -18374,7 +18767,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="code_2005" type="varchar(10)">
                 <constraints nullable="false" />
             </column>
@@ -18389,7 +18782,7 @@
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_4451_invoice_subject_code_seq" startValue="1" />
         <createTable tableName="untdid_4451_invoice_subject_code">
             <!-- Generic fields -->
@@ -18407,13 +18800,13 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="iso_4451_subject_code_unique"/>
             </column>
 
-            <!-- Simple fields --> 
+            <!-- Simple fields -->
             <column name="code_name" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_5305_taxation_category_seq" startValue="1" />
         <createTable tableName="untdid_5305_taxation_category">
             <!-- Generic fields -->
@@ -18431,7 +18824,7 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="iso_5305_taxation_category_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="semantic_model" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
@@ -18462,7 +18855,7 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="untdid_vatex_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="remark" type="varchar(500)">
                 <constraints nullable="true" />
             </column>
@@ -18471,7 +18864,7 @@
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_4461_payment_means_seq" startValue="1" />
         <createTable tableName="untdid_4461_payment_means">
             <!-- Generic fields -->
@@ -18489,7 +18882,7 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="untdid_4461_payment_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="usage_in_en16931" type="varchar(500)">
                 <constraints nullable="true" />
             </column>
@@ -18498,7 +18891,7 @@
             </column>
 
         </createTable>
-        
+
         <createSequence sequenceName="untdid_5189_allowance_code_seq" startValue="1" />
          <createTable tableName="untdid_5189_allowance_code">
             <!-- Generic fields -->
@@ -18516,13 +18909,13 @@
                 <constraints unique="true" nullable="false" uniqueConstraintName="untdid_5189_allowance_code_unique"/>
             </column>
 
-            <!-- Simple fields -->           
+            <!-- Simple fields -->
             <column name="description" type="varchar(500)">
                 <constraints nullable="false" />
             </column>
 
         </createTable>
-        
+
         <addForeignKeyConstraint baseTableName="billing_tax"
                                  baseColumnNames="taxation_category_id"
                                  constraintName="fk_billing_tax_5305_taxation_category"
@@ -18537,7 +18930,7 @@
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-                                 
+
         <addForeignKeyConstraint baseTableName="billing_invoice_type"
                                  baseColumnNames="invoice_code_type_id"
                                  constraintName="fk_billing_invoice_1001_invoice"
@@ -18552,8 +18945,8 @@
                                  referencedColumnNames="id"
                                  deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" />
-        
-        
+
+
     </changeSet>
 
 
@@ -18579,7 +18972,7 @@
             <column name="use_for_billing_accounts" type="${type.boolean}"/>
         </createTable>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-12405_20221226-rebuild" author="HichamHANINE">
 		<addForeignKeyConstraint baseTableName="billing_billing_account"
 								 baseColumnNames="icd_id"
@@ -18608,7 +19001,7 @@
 								 referencedTableName="iso_icd"
 								 referencedColumnNames="id"
 								 deferrable="false" initiallyDeferred="false"
-								 onDelete="NO ACTION" onUpdate="NO ACTION" />							 
+								 onDelete="NO ACTION" onUpdate="NO ACTION" />
 		<addForeignKeyConstraint baseTableName="billing_invoice_type"
 								 baseColumnNames="invoice_subject_code"
 								 constraintName="fk_invoice_type_untdid_4451_invoice_subject"
@@ -18833,6 +19226,169 @@
                 constraintName="fk_refunded_payment_id"
                 referencedTableName="ar_account_operation"
                 referencedColumnNames="id" />
+    </changeSet>
+
+
+    <changeSet author="AndriusKarpavicius"  id="rebuild_pg_audit_functions" dbms="postgresql">
+        <createProcedure>
+            CREATE OR REPLACE FUNCTION jsonb_minus ( arg1 jsonb, arg2 jsonb, preserveField varchar, retainOnlyFields varchar ) RETURNS jsonb
+                AS $$
+                                
+                SELECT 
+                    COALESCE(json_object_agg(key, value), '{}')::jsonb
+                FROM 
+                    jsonb_each(arg1)
+                WHERE 
+                    ((arg1 -> key &lt;&gt; arg2 -> key OR arg2 -> key IS NULL) 
+                    and key NOT IN ('version','created', 'updated', 'creator', 'updater') AND (retainOnlyFields ='' or position(','||key||',' IN ','||retainOnlyFields ||',') >0)) OR (preserveField &lt;&gt; '' and key = preserveField) 
+                
+                $$ LANGUAGE SQL;  
+        </createProcedure>
+        <createProcedure>
+            CREATE OR REPLACE FUNCTION jsonb_removeNull ( arg1 jsonb, preserveField varchar, retainOnlyFields varchar ) RETURNS jsonb
+                AS $$
+                                
+                SELECT 
+                    COALESCE(json_object_agg(key, value), '{}')::jsonb
+                FROM 
+                    jsonb_each(arg1)
+                WHERE 
+                    value &lt;&gt; 'null' and value &lt;&gt; '{}' and key NOT IN ('version','created', 'updated', 'creator', 'updater') AND ((retainOnlyFields ='' or position(','||key||',' IN ','||retainOnlyFields ||',') >0)  OR (preserveField &lt;&gt; '' and key = preserveField))
+              
+                $$ LANGUAGE SQL;   
+        </createProcedure>
+        <createProcedure>
+            CREATE OR REPLACE FUNCTION audit_data_log_trigger_func()
+                RETURNS trigger AS $body$
+            
+                DECLARE
+                    audit_info varchar(400);
+                    audit_info_array text[];
+                    db_user varchar(100);
+                    origin varchar(15);  
+                    origin_name varchar(250);
+                    data_old jsonb;
+                    data_new jsonb;
+                    data_tmp jsonb;
+                    ref_id bigint;
+                    ref_table varchar(60);
+                    save boolean; 
+                BEGIN
+            
+                    save := true;
+                    
+                    audit_info := current_setting('var.opencell_audit_info', true);
+                    if (audit_info IS NOT NULL) then
+					    if (audit_info &lt;&gt; '') then
+                            audit_info_array := string_to_array(audit_info, '~~');
+                            db_user := audit_info_array[1];
+                            origin := audit_info_array[2];
+                            origin_name := audit_info_array[3];
+					    else
+						    origin :='GUI';
+						end if;
+                     else 
+                        select current_user into db_user;
+                        origin :='DB';
+                    end if;
+                    
+                    if (TG_OP = 'INSERT') then
+                        data_new := to_jsonb(NEW);
+                        if (data_new ? 'id') then
+                            ref_id :=NEW.id;
+                        end if;                        
+                        data_new := jsonb_removeNull(data_new, TG_ARGV[0], TG_ARGV[1]);
+                        
+                        save := TG_ARGV[2]::bool or data_new &lt;&gt; '{}';
+                        
+                    elseif (TG_OP = 'UPDATE') then
+                        data_old := to_jsonb(OLD);
+                        data_new := to_jsonb(NEW);
+                        if (data_new ? 'id') then
+                            ref_id :=NEW.id;
+                        end if;
+                        data_tmp := jsonb_minus(data_new, data_old, TG_ARGV[0], TG_ARGV[1]);
+                        data_old := jsonb_minus(data_old, data_new, TG_ARGV[0], TG_ARGV[1]);
+                        data_new := data_tmp;
+                        
+                        save := TG_ARGV[2]::bool or data_new &lt;&gt; '{}';
+            
+                    else 
+                        data_old := to_jsonb(OLD);
+                        if (data_old ? 'id') then
+                            ref_id :=OLD.id;
+                        end if;                        
+                        data_old := jsonb_removeNull(data_old, TG_ARGV[0], TG_ARGV[1]);
+                        
+                        save := TG_ARGV[2]::bool or data_old &lt;&gt; '{}';
+
+                    end if;
+            
+                    if (save) then
+                        INSERT INTO audit_data_log_rec (
+                            id, created, tx_id, ref_table, ref_id, action, origin, origin_name, user_name, data_old, data_new )
+                        VALUES(
+                            nextval('audit_data_log_rec_seq'), statement_timestamp(), txid_current(), TG_TABLE_NAME, ref_id, TG_OP, origin, origin_name, db_user, data_old, data_new );
+                    end if;
+                    
+                    if (TG_OP = 'DELETE') then
+                        RETURN OLD;
+                    else 
+                        RETURN NEW;
+                    end if;
+                END;
+                $body$
+                LANGUAGE plpgsql;
+        </createProcedure>
+        <createProcedure>
+          CREATE OR REPLACE procedure proc_recreate_audit_data_trigger(table_name varchar, fields varchar, actions varchar, preserveField varchar, saveEvenDiffIsEmpty boolean)
+                language plpgsql
+                as $$
+
+                DECLARE
+                    trigger_name varchar(100);
+                    trigger_actions varchar(1000);
+                BEGIN
+            
+            trigger_name :=table_name || '_audit_trigger';
+        
+            
+            IF (actions IS NULL OR LOWER(actions) LIKE '%insert%') THEN
+                trigger_actions := 'INSERT';
+            END IF;
+
+            IF (actions IS NULL OR LOWER(actions) LIKE '%update%') THEN
+                trigger_actions := CASE WHEN trigger_actions IS NULL THEN '' ELSE trigger_actions || ' OR' END || ' UPDATE';
+                if (fields IS NOT NULL) THEN
+                    trigger_actions := trigger_actions || ' of ' || fields;
+                END IF;
+            END IF;
+
+
+            IF (actions IS NULL OR LOWER(actions) LIKE '%delete%') THEN
+                trigger_actions := CASE WHEN trigger_actions IS NULL THEN '' ELSE trigger_actions || ' OR' END || ' DELETE';
+            END IF;
+
+            EXECUTE format ('DROP TRIGGER IF EXISTS %s ON %s', trigger_name, table_name );
+            EXECUTE format ('CREATE TRIGGER %I AFTER %s ON %s FOR EACH ROW EXECUTE FUNCTION audit_data_log_trigger_func(''%s'',''%s'',%I)', trigger_name, trigger_actions, table_name, preserveField, fields, saveEvenDiffIsEmpty::bool );
+
+            END$$;
+        </createProcedure>
+        <createProcedure>
+          CREATE OR REPLACE procedure proc_delete_audit_data_trigger(table_name varchar)
+                language plpgsql
+                as $$
+
+                DECLARE
+                    trigger_name varchar(100);
+                BEGIN
+            
+            trigger_name :=table_name || '_audit_trigger';
+        
+            EXECUTE format ('DROP TRIGGER IF EXISTS %s ON %s', trigger_name, table_name );
+
+            END$$;
+        </createProcedure>
     </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
@@ -20174,6 +20730,24 @@
 	<changeSet author="aelmalki" id="#rebuild-INTRD-16445_20230619-uk">
         <addUniqueConstraint columnNames="provider_id, payment_method" constraintName="uk_prov_manual_refund_methods" tableName="crm_provider_manual_refund_methods" />
     </changeSet>
+    
+    <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi">
+		  <sql>CREATE INDEX idx__billing_rated_transaction__accountingArticle_id ON ${db.schema.adapted}billing_rated_transaction USING btree (accounting_article_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__offer ON ${db.schema.adapted}billing_rated_transaction USING btree (offer_id) WHERE (status= 'OPEN') </sql>
+		  <sql>CREATE INDEX idx__billing_rated_transaction__service_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (service_instance_id) WHERE (status= 'OPEN') </sql>
+	</changeSet>
+	
+	
+    
+
+    <changeSet id="#INTRD-16955_20230816-fk" author="aelmalki">
+        <addForeignKeyConstraint baseColumnNames="linked_invoice_line_id" baseTableName="billing_invoice_line"
+                                 constraintName="fk_linked_invoice_line" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="billing_invoice_line"/>
+    </changeSet>
 
 
    	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA."/>
@@ -20254,7 +20828,36 @@
     <changeSet id="#INTRD-17149_04072023" author="Mbarek-Ay"/>
     <changeSet id="INTRD-15501_20230413" author="ThangNguyen" />
     <changeSet id="INTRD-15775_20230710" author="AdilElJaouhari" />
-    
+    <changeSet id="#INTRD-17189_20230711" author="Mbarek-Ay"/>
+    <changeSet id="#INTRD-17304_20230714" author="AdilElJaouhari" />
+    <changeSet id="INTRD-17307_20230712" author="TarikFA." />
+    <changeSet id="INTRD-17487_20230719" author="TarikFA." />
+    <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
+    <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
+    <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe" />
+	<changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI"/>
+    <changeSet id="#INTRD-17451_20230731" author="ZBariki" />
+    <changeSet id="#INTRD-17280_20230808" author="AdilElJaouhari" />
+    <changeSet id="INTRD-17544_20230817" author="hatimOUDAD"/>
+    <changeSet id="INTRD-17134_20230704" author="TarikFA." />
+	<changeSet id="#INTRD-16955_20230816" author="aelmalki" />
+	<changeSet id="#INTRD-17954_20230818" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-17632_2023_08_09" author="zbariki" />
+	<changeSet id="#INTRD-18008_20230823" author="aelmalki" />
+	<changeSet id="INTRD-17573_20230829" author="hatimOUDAD"/>
+    <changeSet id="#INTRD-17634_2023-09-29" author="ZBariki" />
+    <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD"/>
+    <changeSet id="#INTRD-17637_2023-09-04" author="ZBariki" />
+    <changeSet id="#INTRD-18140_20230904" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-10574_20221013" author="AndriusKarpavicius" />
+    <changeSet id="#INTRD-10574_20221014" author="AndriusKarpavicius"/>
+	<changeSet id="#INTRD-18252_20230908" author="aelmalki" />
+    <changeSet id="#INTRD-17696_2023_09_11" author="zbariki" />
+
+    <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
+	<changeSet id="#INTRD-18276_20230908" author="aelmalki" />
+	<changeSet id="#INTRD-18280_20230911" author="aelmalki" />
+	
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

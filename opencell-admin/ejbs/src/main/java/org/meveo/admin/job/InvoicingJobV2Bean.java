@@ -10,6 +10,7 @@ import static org.meveo.model.billing.BillingRunStatusEnum.DRAFT_INVOICES;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.REJECTED;
@@ -88,7 +89,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 filters.put("status", INVOICE_LINES_CREATED);
             } else {
                 filters.put("inList id", billingRunIds);
+                filters.put("ne status", OPEN);
             }
+            filters.put("disabled", false);
             PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
             paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
             List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
@@ -237,7 +240,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
-        if (nbRuns == -1) {
+        if (nbRuns <= 0) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);

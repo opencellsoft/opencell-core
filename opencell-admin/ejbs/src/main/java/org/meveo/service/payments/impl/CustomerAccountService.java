@@ -631,7 +631,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return super.update(entity);
     }
 
-    private void validatePaymentMethod(PaymentMethod preferredPaymentMethod, List<DDPaymentMethod> ddPaymentMethods) {
+    public void validatePaymentMethod(PaymentMethod preferredPaymentMethod, List<DDPaymentMethod> ddPaymentMethods) {
         if (preferredPaymentMethod == null) {
             throw new BusinessException("CustomerAccount does not have a preferred payment method");
         }

@@ -59,6 +59,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.ELUtils;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
@@ -112,9 +113,13 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListLine;
 import org.meveo.model.pricelist.PriceListStatusEnum;
+import org.meveo.model.pricelist.PriceListTypeEnum;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
+import org.meveo.model.securityDeposit.FinanceSettings;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -131,6 +136,7 @@ import org.meveo.service.mediation.MediationsettingService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScript;
 import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 
@@ -192,9 +198,15 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private MediationsettingService mediationsettingService;
-    
+
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+	
+	@Inject
+	private FinanceSettingsService financeSettingsService;
+	
+	@Inject
+    protected TradingCurrencyService tradingCurrencyService;
     
     /**
      * @param level level enum
@@ -346,6 +358,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         Integer sortIndex = getSortIndex(walletOperation);
         walletOperation.setSortIndex(sortIndex);
         walletOperation.setEdr(edr);
+        walletOperation.setTradingCurrency(walletOperation.getBillingAccount() != null ? walletOperation.getBillingAccount().getTradingCurrency() : null);
 
         RatingResult ratedEDRResult = rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), chargeInstance.getCountry().getId(), chargeInstance.getCurrency(), isVirtual);
         
@@ -475,6 +488,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 newEdr.setParameter4(elUtils.evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
                 newEdr.setQuantity(BigDecimal.valueOf(elUtils.evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
                 newEdr.setWalletOperation(walletOperation);
+                newEdr.setBusinessKey(walletOperation.getBusinessKey());
 
                 Subscription sub = null;
 
@@ -575,10 +589,26 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     public RatingResult rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverridden, Long buyerCountryId, TradingCurrency buyerCurrency,
             boolean isVirtual) throws InvalidELException, PriceELErrorException, NoTaxException, NoPricePlanException, RatingException {
-
+	    FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
         RatingResult ratingResult = new RatingResult();
         WalletOperation discountedWalletOperation=null;
     	ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
+        AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, bareWalletOperation);
+	    if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.BEFORE_PRICING){
+		    bareWalletOperation.setAccountingArticle(accountingArticle);
+	    }
+	    bareWalletOperation.setOverrodePrice( unitPriceWithoutTaxOverridden != null || unitPriceWithTaxOverridden != null);
+	    
+		try {
+			String businessKey = (String) ValueExpressionWrapper.evaluateExpression(
+					bareWalletOperation.getChargeInstance().getChargeTemplate().getBusinessKeyEl(), Map.of("op", bareWalletOperation), String.class);
+			bareWalletOperation.setBusinessKey(businessKey);
+		} catch (Exception e) {
+			throw new InvalidELException(String.format("Error during businessKeyEl evaluation: subscription=%s, product instance=%s,%s, charge=%s, EDR=%s",
+					bareWalletOperation.getSubscription().getCode(), getProductId(bareWalletOperation), getProductCode(bareWalletOperation), 
+					getChargeTemplateCode(bareWalletOperation), (bareWalletOperation.getEdr() == null)? null : bareWalletOperation.getEdr().getId()));
+		}
+	   
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
 
@@ -595,7 +625,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         } else {
             BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
-            
+
             RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
 
             PricePlanMatrix pricePlan = null;
@@ -606,37 +636,46 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             //Get the list of customers (current and parents)
             List<Customer> customers = new ArrayList<>();
             getCustomer(customer, customers);
+            Seller seller=bareWalletOperation.getSeller()!=null?bareWalletOperation.getSeller():customer.getSeller();
+          //Get the list of seller (current and parents)
+            List<Seller> sellers = new ArrayList<>();
+			getSeller(seller, sellers);
+			List<Long> sellerIds = sellers.stream().map(Seller::getId).collect(Collectors.toList());
             List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
-            
             //Get contract by list of customer ids, billing account and customer account
-            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount, bareWalletOperation, null);
-             
-            // Unit price was not overridden
-            if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise()) || (unitPriceWithTaxOverridden == null && !appProvider.isEntreprise())) {
+            List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount,sellerIds, bareWalletOperation, null);
+			
 
-                Contract contract = lookupSuitableContract(customers, contracts);
-                
+            List<Contract> suitableContracts = new ArrayList<>();
+        	Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null && "ACTIVE".equals(bareWalletOperation.getSubscription().getContract().getStatus()) ? bareWalletOperation.getSubscription().getContract() : null : null;
+            if(contractFromSubscription != null) {
+            	suitableContracts.add(contractFromSubscription);
+            }else {
+            	suitableContracts=lookupSuitableContract(customers, sellers,contracts);
+            }
+            if(!suitableContracts.isEmpty()) {
+
+              for(Contract contract:suitableContracts) {
+
                 // Check if unit price was not overridden by a contract
                 // To save the first contract containing Rules by priority (BA->CA->Customer->seller) on WalletOperation.rulesContract
-                Contract contractWithRules = lookupSuitableContract(customers, contracts, true);
+                Contract contractWithRules = lookupSuitableContract(customers, contracts,sellers, true) != null
+                        && !lookupSuitableContract(customers, contracts,sellers, true).isEmpty()
+                        ? lookupSuitableContract(customers, contracts,sellers, true).get(0) : null;
                 bareWalletOperation.setRulesContract(contractWithRules);
 
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
                 ContractItem contractItem = null;
-                if (contract != null && serviceInstance != null) {
+                if ( serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
-                    Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null ? bareWalletOperation.getSubscription().getContract() : null : null;
-                    if(contractFromSubscription != null) {
-                        contract = contractFromSubscription;
-                    }
 
                     if (contract != null && bareWalletOperation.getOperationDate().compareTo(contract.getBeginDate()) >= 0
                             && bareWalletOperation.getOperationDate().compareTo(contract.getEndDate()) < 0) {
                         contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, serviceInstance.getProductVersion() != null ? serviceInstance.getProductVersion().getProduct().getId() : null,
                             chargeTemplate, bareWalletOperation);
                     }
-                    
+
                     // If contract rate type is Fixed - unit rate comes either from 1. hardcoded in contact item or 2. from a price plan specified in a contract
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
 
@@ -652,7 +691,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                         unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
                                         unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
                                     }
-                                    
+
                                     bareWalletOperation.setContract(contract);
                                     bareWalletOperation.setContractLine(contractItem);
                                     bareWalletOperation.setPriceplan(pricePlan);
@@ -671,90 +710,52 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             bareWalletOperation.setContractLine(contractItem);
                         }
                     }
-
                     // Check if price is not overriden by a pricelist in subscription
-                } else {
-                	//Get the PriceList from subscription
-                	PriceList priceList =  bareWalletOperation.getChargeInstance().getServiceInstance().getSubscription().getPriceList();
-                	
-                	//Check the PriceList is not null and status is ACTIVE and compare wallet operation date with applicationStartDate and applicationEndDate of the PriceList
-                	if(priceList != null && priceList.getStatus() != null && PriceListStatusEnum.ACTIVE.equals(priceList.getStatus()) && 
-                				priceList.getApplicationStartDate() != null && bareWalletOperation.getOperationDate().after(priceList.getApplicationStartDate()) && 
-                				priceList.getApplicationEndDate() != null && bareWalletOperation.getOperationDate().before(priceList.getApplicationEndDate())) {
-
-                		//Get Charge Template id, Offer Template id and Product id
-                        Long chargeTemplateId = getChargeTemplateId(bareWalletOperation);
-                        Long offerTemplateId = getOfferTemplateId(bareWalletOperation);
-                        Long productId = getProductId(bareWalletOperation);
-
-                        //Get the applicable PriceListLine by Price List id, Charge Template id, Product id and Offer Template id
-                		PriceListLine priceListLine = priceListLineService.getApplicablePriceListLine(priceList.getId(), chargeTemplateId, productId, offerTemplateId);
-
-                        //Check if the PriceListLine is not null, then get the PricePlan, calculate all prices and update WalletOperation
-                        if (priceListLine != null && priceListLine.getPricePlan() != null) {
-                            Amounts unitPrices = determineUnitPrice(priceListLine.getPricePlan(), bareWalletOperation);
-                            unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
-                            unitPriceWithTax = unitPrices.getAmountWithTax();
-                            bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
-                            bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
-                            Amounts transactionalUnitPrices = determineTransactionalUnitPrice(priceListLine.getPricePlan(), bareWalletOperation).orElse(unitPrices);
-                            bareWalletOperation.setTransactionalUnitAmountWithoutTax(transactionalUnitPrices.getAmountWithoutTax());
-                            bareWalletOperation.setTransactionalUnitAmountWithTax(transactionalUnitPrices.getAmountWithTax());
-
-                            //Update WalletOperation by setting the PriceListLine
-                            bareWalletOperation.setPriceListLine(priceListLine);
-                        }
-            		}
                 }
 
-                // No associated contract found and price not speciffied in subscription price list or contract rate is not fixed - a price discount is applied by contract to a default price 
-                if (unitPriceWithoutTax == null) {
-                    
-                    // Find a default price plan
-                    pricePlan = pricePlanSelectionService.determineDefaultPricePlan(bareWalletOperation, buyerCountryId, buyerCurrency);
-                    bareWalletOperation.setPriceplan(pricePlan);
-                    
-                    log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
+               
 
-                    Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
-                    unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
-                    unitPriceWithTax = unitPrices.getAmountWithTax();
-                    bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
-                    bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
-                    Amounts transationalUnitPrices = determineTransactionalUnitPrice(pricePlan, bareWalletOperation).orElse(unitPrices);
-                    bareWalletOperation.setTransactionalUnitAmountWithoutTax(transationalUnitPrices.getAmountWithoutTax());
-                    bareWalletOperation.setTransactionalUnitAmountWithTax(transationalUnitPrices.getAmountWithTax());
-                    if (pricePlan.getScriptInstance() != null) {
-                        log.debug("start to execute script instance for ratePrice {}", pricePlan);
-                        executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
-                        unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
-                        unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
-                    }
+                // No associated contract found and price not speciffied in subscription price list or contract rate is not fixed - a price discount is applied by contract to a default price
+                if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
+                    	 // Find a default price plan
+                        pricePlan = pricePlanSelectionService.determineDefaultPricePlan(bareWalletOperation, buyerCountryId, buyerCurrency);
+                        bareWalletOperation.setPriceplan(pricePlan);
 
-                    BigDecimal amount= BigDecimal.ZERO;
-                    BigDecimal discountRate=null;
-                    PricePlanMatrixLine pricePlanMatrixLine =null;
-                    
-                    // A price discount is applied to a default price by a contract
-                    if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
+                        log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
+	                    Amounts unitPrices = new Amounts(unitPriceWithoutTax, unitPriceWithTax);
+	                    if(unitPriceWithoutTax == null) {
+		                    unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
+		                    unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
+		                    unitPriceWithTax = unitPrices.getAmountWithTax();
+	                    }
+                        bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
+                        bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+
+                        Amounts transationalUnitPrices = determineTransactionalUnitPrice(pricePlan, bareWalletOperation).orElse(unitPrices);
+                        bareWalletOperation.setTransactionalUnitAmountWithoutTax(transationalUnitPrices.getAmountWithoutTax());
+                        bareWalletOperation.setTransactionalUnitAmountWithTax(transationalUnitPrices.getAmountWithTax());
+
+                        BigDecimal amount= BigDecimal.ZERO;
+                        BigDecimal discountRate=null;
+                        PricePlanMatrixLine pricePlanMatrixLine =null;
                         boolean separateDiscount = contractItem.isSeparateDiscount();
                         bareWalletOperation.setContract(contract);
                         bareWalletOperation.setContractLine(contractItem);
-                        
+
                         // Discount rate is hardcoded in a contract
-                        if (contractItem.getRate() != null && contractItem.getRate() > 0) {
+                        if (contractItem.getRate() != null) {
                             discountRate = BigDecimal.valueOf(contractItem.getRate());
-                            amount = unitPriceWithoutTax.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
+                            amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                             if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !separateDiscount) {
                                 unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
                             }
-                            
+
                             // Discount rate is specified in a price plan associated to a contact
                         } else if (contractItem.getPricePlan() != null) {
                             pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlan(), bareWalletOperation);
                             if (pricePlanMatrixLine != null) {
                                 discountRate = pricePlanMatrixLine.getValue();
-                                if (discountRate != null && discountRate.compareTo(BigDecimal.ZERO) > 0) {
+                                if (discountRate != null) {
                                     amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                                     if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !separateDiscount) {
                                         unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
@@ -771,15 +772,128 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             }
                             discountedWalletOperation = rateDiscountedWalletOperation(bareWalletOperation, unitPriceWithoutTax, amount, discountRate, pricePlanMatrixLine);
                         }
-                    }
+                    
 
                 }
+                if (unitPriceWithoutTax != null) {
+                	break;
+                }
+            
+              }
             } else {
                 if (contracts != null && !contracts.isEmpty()) {
-                    bareWalletOperation.setRulesContract(lookupSuitableContract(customers, contracts, true));
+                    bareWalletOperation.setRulesContract(lookupSuitableContract(customers, contracts,sellers, true).get(0));
                 }
                 bareWalletOperation.setOverrodePrice(true);
             }
+            	
+            	if (unitPriceWithoutTax == null) {
+                 	//Get the PriceList from subscription
+                 	PriceList priceList =  bareWalletOperation.getChargeInstance().getServiceInstance().getSubscription().getPriceList();
+
+                 	//Check the PriceList is not null and status is ACTIVE and compare wallet operation date with applicationStartDate and applicationEndDate of the PriceList
+                 	if(priceList != null && priceList.getStatus() != null && PriceListStatusEnum.ACTIVE.equals(priceList.getStatus()) &&
+                 				priceList.getApplicationStartDate() != null && bareWalletOperation.getOperationDate().after(priceList.getApplicationStartDate()) &&
+                 				priceList.getApplicationEndDate() != null && bareWalletOperation.getOperationDate().before(priceList.getApplicationEndDate())) {
+
+                 		//Get Charge Template id, Offer Template id and Product id
+                         Long chargeTemplateId = getChargeTemplateId(bareWalletOperation);
+                         Long offerTemplateId = getOfferTemplateId(bareWalletOperation);
+                         Long productId = getProductId(bareWalletOperation);
+
+                         //Get the applicable PriceListLine by Price List id, Charge Template id, Product id and Offer Template id
+                 		PriceListLine priceListLine = priceListLineService.getApplicablePriceListLine(priceList.getId(), offerTemplateId, productId, chargeTemplateId);
+
+                         //Check if the PriceListLine is not null, then get the PricePlan, calculate all prices and update WalletOperation
+                         if (priceListLine != null && PriceListTypeEnum.FIXED.equals(priceListLine.getPriceListType())) {
+                             if(priceListLine.getPricePlan() != null) {
+                                 Amounts unitPrices = determineUnitPrice(priceListLine.getPricePlan(), bareWalletOperation);
+                                 unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
+                                 unitPriceWithTax = unitPrices.getAmountWithTax();
+                                 bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
+                                 bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+                                 Amounts transactionalUnitPrices = determineTransactionalUnitPrice(priceListLine.getPricePlan(), bareWalletOperation).orElse(unitPrices);
+                                 bareWalletOperation.setTransactionalUnitAmountWithoutTax(transactionalUnitPrices.getAmountWithoutTax());
+                                 bareWalletOperation.setTransactionalUnitAmountWithTax(transactionalUnitPrices.getAmountWithTax());
+
+                                 //Update WalletOperation by setting the PriceListLine
+                                 bareWalletOperation.setPriceListLine(priceListLine);
+                             } else {
+                                 unitPriceWithoutTax = priceListLine.getAmount();
+                                 bareWalletOperation.setPriceListLine(priceListLine);
+                             }
+                         }
+             		}
+                 }
+            	
+            	if(unitPriceWithoutTax==null) {
+            		BigDecimal amount= BigDecimal.ZERO;
+            		BigDecimal discountRate=null;
+            		PricePlanMatrixLine pricePlanMatrixLine =null;
+                    List<PricePlanMatrix> availablePricePlansForRating = pricePlanSelectionService.determineAvailablePricePlansForRating(bareWalletOperation, buyerCountryId, buyerCurrency);
+                    Amounts unitPrices = null;
+                    for (PricePlanMatrix ppm : availablePricePlansForRating) {
+                        log.debug("Check if price plan {} is applicable for {}", ppm.getId(), bareWalletOperation.getCode());
+
+                        unitPrices = determineUnitPrice(ppm, bareWalletOperation);
+                        if(unitPrices != null) {
+                            pricePlan = ppm;
+                            break;
+                        }
+                    }
+
+                    if(unitPrices == null) {
+                        throw new BusinessException("Couldn't find a price for charge " +  bareWalletOperation.getChargeInstance().getCode() + " : no price version and price plan amount is null");
+                    }
+                    bareWalletOperation.setPriceplan(pricePlan);
+                    unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
+                    unitPriceWithTax = unitPrices.getAmountWithTax();
+                    bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
+                    bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+                    Amounts transationalUnitPrices = determineTransactionalUnitPrice(pricePlan, bareWalletOperation).orElse(unitPrices);
+                    bareWalletOperation.setTransactionalUnitAmountWithoutTax(transationalUnitPrices.getAmountWithoutTax());
+                    bareWalletOperation.setTransactionalUnitAmountWithTax(transationalUnitPrices.getAmountWithTax());
+
+                    PriceList priceList =  bareWalletOperation.getChargeInstance().getServiceInstance().getSubscription().getPriceList();
+
+            		//Check the PriceList is not null and status is ACTIVE and compare wallet operation date with applicationStartDate and applicationEndDate of the PriceList
+            		if(priceList != null && priceList.getStatus() != null && PriceListStatusEnum.ACTIVE.equals(priceList.getStatus()) &&
+            				priceList.getApplicationStartDate() != null && bareWalletOperation.getOperationDate().after(priceList.getApplicationStartDate()) &&
+            				priceList.getApplicationEndDate() != null && bareWalletOperation.getOperationDate().before(priceList.getApplicationEndDate())) {
+
+            			//Get Charge Template id, Offer Template id and Product id
+            			Long chargeTemplateId = getChargeTemplateId(bareWalletOperation);
+            			Long offerTemplateId = getOfferTemplateId(bareWalletOperation);
+            			Long productId = getProductId(bareWalletOperation);
+
+            			//Get the applicable PriceListLine by Price List id, Charge Template id, Product id and Offer Template id
+            			PriceListLine priceListLine = priceListLineService.getApplicablePriceListLine(priceList.getId(), offerTemplateId, productId, chargeTemplateId);
+
+            			//Check if the PriceListLine is not null, then get the PricePlan, calculate all prices and update WalletOperation
+            			if (priceListLine != null && PriceListTypeEnum.PERCENTAGE.equals(priceListLine.getPriceListType())) {
+            				if(priceListLine.getRate() != null && priceListLine.getRate().compareTo(BigDecimal.ZERO) > 0) {
+            					amount = unitPriceWithoutTax.abs().multiply(priceListLine.getRate()).divide(HUNDRED);
+            					if (unitPriceWithoutTax.compareTo(amount) > 0) {
+            						unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
+            					}
+            				} else if (priceListLine.getPricePlan() != null) {
+            					pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(priceListLine.getPricePlan(), bareWalletOperation);
+            					if (pricePlanMatrixLine != null) {
+            						discountRate = pricePlanMatrixLine.getValue();
+            						if (discountRate != null && discountRate.compareTo(BigDecimal.ZERO) > 0) {
+            							amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
+            							if (unitPriceWithoutTax.compareTo(amount) > 0) {
+            								unitPriceWithoutTax = unitPriceWithoutTax.subtract(amount);
+            							}
+            						}
+            					}
+            				}
+            				bareWalletOperation.setPriceListLine(priceListLine);
+            			}
+            		}
+            	}
+            	
+
 
             // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
             if (recurringChargeTemplate != null && recurringChargeTemplate.getShareLevel() != null) {
@@ -794,11 +908,16 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     log.trace("charge is shared {} times, so unit price is {}", sharedQuantity, unitPriceWithoutTax);
                 }
             }
-            
+
             // Override wallet operation parameters using PP EL parameters
             setWalletOperationPropertiesFromAPriceplan(bareWalletOperation, pricePlan);
             calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
             computeTransactionalAmounts(bareWalletOperation);
+
+            if (pricePlan != null && pricePlan.getScriptInstance() != null) {
+                log.debug("start to execute script instance for ratePrice {}", pricePlan);
+                executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
+            }
         }
 
         // Execute a final rating script set on offer template
@@ -806,7 +925,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             log.trace("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
             executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance(), isVirtual);
         }
-        
+	    if(financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING){
+		    bareWalletOperation.setAccountingArticle(accountingArticle);
+	    }
         ratingResult.addWalletOperation(bareWalletOperation);
         if(discountedWalletOperation!=null) {
             ratingResult.addWalletOperation(discountedWalletOperation);
@@ -827,6 +948,21 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
 
         return chargeTemplateId;
+    }
+    
+    /**
+     * Get Charge Template code
+     * @param bareWalletOperation {@link WalletOperation}
+     * @return Charge Template code
+     */
+    private static String getChargeTemplateCode(WalletOperation bareWalletOperation) {
+        String chargeTemplateCode = null;
+
+        if(bareWalletOperation.getChargeInstance() != null && bareWalletOperation.getChargeInstance().getChargeTemplate() != null) {
+            chargeTemplateCode = bareWalletOperation.getChargeInstance().getChargeTemplate().getCode();
+        }
+
+        return chargeTemplateCode;
     }
 
     /**
@@ -861,30 +997,68 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         return productId;
     }
-
-    private Contract lookupSuitableContract(List<Customer> customers, List<Contract> contracts) {
-        return this.lookupSuitableContract(customers, contracts, false);
-    }
-
-    private Contract lookupSuitableContract(List<Customer> customers, List<Contract> contracts, boolean withRules) {
-        Contract contract = null;
-        if(contracts != null && !contracts.isEmpty()) {
-            // Prioritize BA Contract then CA Contract then Customer Hierarchy Contract then Seller Contract
-            Optional<Contract> contractLookup = contracts.stream().filter(c -> c.getBillingAccount() != null && (!withRules || (c.getBillingRules()!=null && !c.getBillingRules().isEmpty()))).findFirst()
-                    .or(() -> contracts.stream().filter(c -> c.getCustomerAccount() != null && (!withRules || (c.getBillingRules()!=null && !c.getBillingRules().isEmpty()))).findFirst());
-            if(contractLookup.isEmpty()) {
-                for (Customer iCustomer : customers) {
-                    contractLookup = contracts.stream().filter(c -> c.getCustomer() != null && c.getCustomer().getId().equals(iCustomer.getId()) && (!withRules || (c.getBillingRules()!=null && !c.getBillingRules().isEmpty()))).findFirst();
-                    if(contractLookup.isPresent()) {
-                        break;
-                    }
-                }
-            }
-            contract = contractLookup.orElseGet(() -> contracts.get(0));
-        }
-        return contract;
-    }
     
+    /**
+     * Get Product code
+     * @param bareWalletOperation {@link WalletOperation}
+     * @return Product code
+     */
+    private static String getProductCode(WalletOperation bareWalletOperation) {
+        String productCode = null;
+
+        if(bareWalletOperation.getServiceInstance() != null && bareWalletOperation.getServiceInstance().getProductVersion() != null
+                && bareWalletOperation.getServiceInstance().getProductVersion().getProduct() != null ) {
+            productCode = bareWalletOperation.getServiceInstance().getProductVersion().getProduct().getCode();
+        }
+
+        return productCode;
+    }
+
+    private List<Contract> lookupSuitableContract(List<Customer> customers,List<Seller> sellers, List<Contract> contracts) {
+		return this.lookupSuitableContract(customers, contracts,sellers, false);
+	}
+
+
+    private List<Contract> lookupSuitableContract(List<Customer> customers, List<Contract> contracts,List<Seller> sellers, boolean withRules) {
+
+    	List<Contract> lookupSuitableContracts = new ArrayList<>();
+
+    	if (contracts != null && !contracts.isEmpty()) {
+    		// Prioritize BA Contract then CA Contract then Customer Hierarchy Contract then Seller Contract
+    		lookupSuitableContracts = contracts.stream()
+    				.filter(c -> c.getBillingAccount() != null && (!withRules || (c.getBillingRules() != null && !c.getBillingRules().isEmpty())))
+    				.collect(Collectors.toList());
+
+    		if (lookupSuitableContracts.isEmpty()) {
+    			lookupSuitableContracts = contracts.stream()
+    					.filter(c -> c.getCustomerAccount() != null && (!withRules || (c.getBillingRules() != null && !c.getBillingRules().isEmpty())))
+    					.collect(Collectors.toList());
+    		}
+    		if (lookupSuitableContracts.isEmpty()) {
+    			for (Customer iCustomer : customers) {
+    				lookupSuitableContracts = contracts.stream()
+    						.filter(c -> c.getCustomer() != null && c.getCustomer().getId().equals(iCustomer.getId()) && (!withRules || (c.getBillingRules() != null && !c.getBillingRules().isEmpty())))
+    						.collect(Collectors.toList());
+    				if (!lookupSuitableContracts.isEmpty()) {
+    					break;
+    				}
+    			}
+    		}
+    		if (lookupSuitableContracts.isEmpty()) {
+    			for (Seller seller : sellers) {
+    				lookupSuitableContracts = contracts.stream()
+    						.filter(c -> c.getSeller() != null && c.getSeller().getId().equals(seller.getId()) && (!withRules || (c.getBillingRules() != null && !c.getBillingRules().isEmpty())))
+    						.collect(Collectors.toList());
+    				if (!lookupSuitableContracts.isEmpty()) {
+    					break;
+    				}
+    			}
+    		}
+    	}
+
+    	return lookupSuitableContracts;
+    }
+
     /**
      * Get the customer and all parent customers
      * @param pCustomer Customer
@@ -899,7 +1073,19 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
         }
     }
-
+    /**
+     * Get the seller and all parent sellers
+     * @param parentSeller Seller
+     * @param parentSellers List of sellers (current seller and all parents)
+     */
+    private void getSeller(Seller parentSeller, List<Seller> parentSellers) {
+    	if(parentSeller != null) {
+    		parentSellers.add(parentSeller);
+    		if(parentSeller.getSeller() != null) {
+    			getSeller(parentSeller.getSeller(), parentSellers);
+    		}
+    	}
+    }
     /**
      * Get Contract by customer level
      * @param pCustomerList List of {@link Customer} 
@@ -981,8 +1167,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         BigDecimal priceWithTax = null;
 
         ServiceInstance serviceInstance = wo.getServiceInstance();
-
-        PricePlanMatrixVersion ppmVersion = pricePlanSelectionService.getPublishedVersionValidForDate(pricePlan.getId(), serviceInstance, wo.getOperationDate());
+        Date ppmvDate = wo.getOperationDate();
+        if(ChargeTemplate.ChargeMainTypeEnum.ONESHOT.equals(wo.getChargeInstance().getChargeTemplate().getChargeMainType())) {
+            ppmvDate = Optional.ofNullable(serviceInstance.getPriceVersionDate()).orElse(wo.getOperationDate());
+        }
+        PricePlanMatrixVersion ppmVersion = pricePlanSelectionService.getPublishedVersionValidForDate(pricePlan.getId(), serviceInstance, ppmvDate);
         if (ppmVersion != null) {
             wo.setPricePlanMatrixVersion(ppmVersion);
             if (!ppmVersion.isMatrix()) {
@@ -1025,7 +1214,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId() + "and charge instance : " + wo.getChargeInstance());
                 }
             }
-        } else {
+        } else if(ListUtils.isEmtyCollection(pricePlan.getVersions())){
             if (appProvider.isEntreprise()) {
                 priceWithoutTax = pricePlan.getAmountWithoutTax();
                 if (pricePlan.getAmountWithoutTaxEL() != null) {
@@ -1045,7 +1234,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
         }
         if(priceWithoutTax == null && priceWithTax == null) {
-            throw new BusinessException("Couldn't find a price for charge " + wo.getChargeInstance().getCode() + " and price plan " + pricePlan.getCode() + ": no price version and price plan amount is null");
+            log.debug("Couldn't find a price for charge " + wo.getChargeInstance().getCode() + " and price plan " + pricePlan.getCode() + ": no price version and price plan amount is null");
+            return null;
         }
         return new Amounts(priceWithoutTax, priceWithTax);
     }
@@ -1141,8 +1331,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         walletOperation.setAmountWithoutTax(amount);
         walletOperation.setAmountWithTax(amount);
-        AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
-        walletOperation.setAccountingArticle(accountingArticle);
         TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
         if (taxInfo == null) {
             throw new BusinessException("No tax found for the chargeInstance " + walletOperation.getChargeInstance().getCode());
@@ -1182,7 +1370,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
     }
 
-    
+
 
     /**
      * Get a rerated copy of a wallet operation. New wallet operation is not persisted nor status of wallet operation to rerate is changed
@@ -1302,7 +1490,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                 applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, operationDate));
                 fixedDiscountPlanItems.addAll(
-                        discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, 
+                        discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan,
                                 walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));
 
                 if( CollectionUtils.isNotEmpty(applicableDiscountPlanItems) || CollectionUtils.isNotEmpty(fixedDiscountPlanItems)) {
@@ -1317,8 +1505,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
             if(!applicableDiscountPlanItems.isEmpty()) {
                 Seller seller = walletOperation.getSeller() != null ? walletOperation.getSeller() : walletOperation.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-                ratingResult.getWalletOperations().addAll(discountPlanService.calculateDiscountplanItems(applicableDiscountPlanItems, seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(), 
-                        walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(), 
+                ratingResult.getWalletOperations().addAll(discountPlanService.calculateDiscountplanItems(applicableDiscountPlanItems, seller, walletOperation.getBillingAccount(), walletOperation.getOperationDate(), walletOperation.getQuantity(),
+                        walletOperation.getUnitAmountWithoutTax(), walletOperation.getCode(), walletOperation.getWallet(), walletOperation.getOfferTemplate(),
                         walletOperation.getServiceInstance(), walletOperation.getSubscription(), walletOperation.getDescription(), isVirtual, chargeInstance, walletOperation, DiscountPlanTypeEnum.PRODUCT,DiscountPlanTypeEnum.OFFER,DiscountPlanTypeEnum.QUOTE));
             }
             if(!fixedDiscountPlanItems.isEmpty()) {
@@ -1389,27 +1577,28 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     }
     
     private WalletOperation rateDiscountedWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal amount,BigDecimal discountValue, PricePlanMatrixLine pricePlanMatrixLine) {
-        
+
         ParamBean paramBean = ParamBean.getInstance();
-        String defaultArticle = paramBean.getProperty("default.article", "ART-STD");
-        AccountingArticle accountingArticle=null;
+        String defaultDiscountArticle = paramBean.getProperty("default.discount.article", "DISC-STD");
         BigDecimal walletOperationDiscountAmount=amount.negate();
         WalletOperation discountWalletOperation = new WalletOperation();
         BigDecimal discountedAmount=unitPriceWithoutTax.subtract(amount);
         BigDecimal taxPercent=bareWalletOperation.getTaxPercent();
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-        BigDecimal quantity=bareWalletOperation.getQuantity();
+        // Unit prices and unit taxes are with higher precision
+        BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());BigDecimal quantity=bareWalletOperation.getQuantity();
         ChargeInstance chargeInstance=bareWalletOperation.getChargeInstance();
 
+        discountWalletOperation.setUuid(bareWalletOperation.getUuid());
         discountWalletOperation.setCode(bareWalletOperation.getCode());
         discountWalletOperation.setDescription(bareWalletOperation.getDescription());
         discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
         discountWalletOperation.setAmountWithTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[1]):BigDecimal.ZERO);
         discountWalletOperation.setAmountTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[2]):BigDecimal.ZERO);
         discountWalletOperation.setTaxPercent(taxPercent);
-        discountWalletOperation.setUnitAmountWithoutTax(amounts[0]);
-        discountWalletOperation.setUnitAmountWithTax(amounts[1]);
-        discountWalletOperation.setUnitAmountTax(amounts[2]);
+        discountWalletOperation.setUnitAmountWithoutTax(unitAmounts[0]);
+        discountWalletOperation.setUnitAmountWithTax(unitAmounts[1]);
+        discountWalletOperation.setUnitAmountTax(unitAmounts[2]);
         discountWalletOperation.setQuantity(quantity);
         discountWalletOperation.setTax(bareWalletOperation.getTax());//
         discountWalletOperation.setCreated(new Date());
@@ -1437,17 +1626,18 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             discountWalletOperation.setPriceplan(pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix());
             discountWalletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
         }
+		
+        bareWalletOperation.setDiscountedAmount(discountedAmount);
         discountWalletOperation.setParameter1(bareWalletOperation.getParameter1());
     	discountWalletOperation.setParameter2(bareWalletOperation.getParameter2());
     	discountWalletOperation.setParameter3(bareWalletOperation.getParameter3());
         discountWalletOperation.setTradingCurrency(bareWalletOperation.getBillingAccount().getTradingCurrency());
+        discountWalletOperation.setBusinessKey(bareWalletOperation.getBusinessKey());
 
-        accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, discountWalletOperation);
-        if(defaultArticle.equalsIgnoreCase(accountingArticle.getCode())) {
-            accountingArticle=bareWalletOperation.getAccountingArticle();
+        AccountingArticle discountArticle=accountingArticleService.findByCode(defaultDiscountArticle);
+        if(discountArticle!=null) {
+        	discountWalletOperation.setAccountingArticle(discountArticle);
         }
-        discountWalletOperation.setAccountingArticle(accountingArticle);
-
         log.info("rateDiscountWalletOperation walletOperation code={},discountValue={},UnitAmountWithoutTax={},UnitAmountWithTax={},UnitAmountTax={}",discountWalletOperation.getCode(),discountedAmount,amounts[0],amounts[1],amounts[2]);
         return discountWalletOperation;
     }
@@ -1460,7 +1650,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @return Optional<Amounts> return computed Amounts or empty if no price plan found
      */
     public Optional<Amounts> determineTransactionalUnitPrice(PricePlanMatrix pricePlan, WalletOperation walletOperation) {
-        final TradingCurrency tradingCurrency = walletOperation.getBillingAccount().getTradingCurrency();
+    	final TradingCurrency tradingCurrency = tradingCurrencyService.refreshOrRetrieve(walletOperation.getBillingAccount().getTradingCurrency());
         final Currency functionalCurrency = appProvider.getCurrency();
         if (functionalCurrency != null && functionalCurrency.getCurrencyCode().equals(tradingCurrency.getCurrencyCode())) {
             return empty();
@@ -1540,8 +1730,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     walletOperation.getTransactionalUnitAmountWithoutTax(),
                     walletOperation.getTransactionalUnitAmountWithTax());
         } else {
-            BigDecimal rate = walletOperation.getTradingCurrency() != null
-                    ? walletOperation.getTradingCurrency().getCurrentRate() : BigDecimal.ONE;
+            BigDecimal rate = Optional.ofNullable(walletOperation.getTradingCurrency()).map(TradingCurrency::getCurrentRate).orElse(BigDecimal.ONE);
             calculateTransactionalAmounts(walletOperation, rate);
         }
     }
@@ -1558,6 +1747,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         walletOperation.setTransactionalAmountWithoutTax(walletOperation.getAmountWithoutTax().multiply(rate));
         walletOperation.setTransactionalUnitAmountWithTax(walletOperation.getUnitAmountWithTax().multiply(rate));
         walletOperation.setTransactionalUnitAmountWithoutTax(walletOperation.getUnitAmountWithoutTax().multiply(rate));
+        walletOperation.setTransactionalUnitAmountTax(walletOperation.getUnitAmountTax().multiply(rate));
     }
 
     /**
@@ -1649,4 +1839,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
         return false;
     }
+	
+	protected void checkDiscountedWalletOpertion(WalletOperation wo, List<WalletOperation> walletOperations) {
+		if(wo.getDiscountedAmount() != null){
+			var discountedWallerOperation = walletOperations.stream().filter(wos -> wos.getId() != null && wo.getUuid().equals(wos.getUuid())).findFirst().map(WalletOperation::getId).orElse(null);
+			wo.setUuid(null);
+			wo.setDiscountedWalletOperation(discountedWallerOperation);
+		}
+	}
+	
 }

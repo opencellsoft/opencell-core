@@ -8,6 +8,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.apiv2.billing.InvoiceValidationRuleDto;
 import org.meveo.api.invoice.InvoiceValidationRulesApiService;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.resource.InvoiceValidationRulesResource;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceType;
@@ -20,6 +21,7 @@ import org.meveo.service.billing.impl.InvoiceValidationRulesService;
 import org.meveo.service.script.ScriptInstanceService;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 
@@ -27,6 +29,7 @@ import java.util.Objects;
 
 import static java.util.Optional.ofNullable;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class InvoiceValidationRulesResourceImpl implements InvoiceValidationRulesResource {
 
     @Inject

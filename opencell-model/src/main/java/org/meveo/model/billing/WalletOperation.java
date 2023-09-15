@@ -172,7 +172,9 @@ import org.meveo.model.tax.TaxClass;
 		@NamedQuery(name = "WalletOperation.discountWalletOperation", query = "SELECT o FROM WalletOperation o WHERE discountedWalletOperation is not null and o.id IN (:woIds)"),
 		@NamedQuery(name = "WalletOperation.findByTriggerdEdr", query = "SELECT o FROM WalletOperation o left join o.edr edr where o.edr in (select e.id FROM EDR e where e.walletOperation.id in :rerateWalletOperationIds)"),
         @NamedQuery(name = "WalletOperation.cancelTriggerEdr", query = "UPDATE WalletOperation o SET o.status='TO_RERATE' where o.id in (ids)"),
-        @NamedQuery(name = "WalletOperation.cancelDisountedWallet", query = "UPDATE WalletOperation o SET o.status='CANCELED' where o.discountedWalletOperation in (:walletOperationIds)")
+        @NamedQuery(name = "WalletOperation.cancelDisountedWallet", query = "UPDATE WalletOperation o SET o.status='CANCELED' where o.discountedWalletOperation in (:walletOperationIds)"),
+        @NamedQuery(name = "WalletOperation.findWalletOperationTradingCurrency", query = "SELECT wo.id, wo.tradingCurrency.id FROM WalletOperation wo WHERE wo.id in (:walletOperationIds)"),
+        @NamedQuery(name = "WalletOperation.findWalletOperationByChargeInstance", query = "SELECT wo.id FROM WalletOperation wo LEFT JOIN wo.ratedTransaction rt WHERE wo.subscription.id = :subscriptionId AND wo.chargeInstance.id = :chargeInstanceId AND wo.status IN ('OPEN', 'TREATED') AND (wo.ratedTransaction.id IN (SELECT rt.id FROM RatedTransaction rt WHERE rt.status = 'OPEN' AND rt.subscription.id = :subscriptionId AND rt.chargeInstance.id = :chargeInstanceId) OR wo.ratedTransaction.id IS NULL)"),
 })
 
 @NamedNativeQueries({
@@ -685,6 +687,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_list_line_id")
     private PriceListLine priceListLine;
+    
+    @Column(name = "business_key")
+    private String businessKey;
     
     /**
      * Constructor
@@ -1899,6 +1904,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	 */
 	public void setPriceListLine(PriceListLine priceListLine) {
 		this.priceListLine = priceListLine;
+	}
+
+	public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
 	}  
     
 }

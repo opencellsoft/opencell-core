@@ -56,6 +56,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
 
@@ -513,7 +514,7 @@ public class QueryBuilder {
         if (value instanceof String) {
             String filterString = (String) value;
             Stream.of(fields)
-                    .forEach(f -> addCriterionWildcard(tableNameAlias + "." + f, filterString, true));
+                    .forEach(f -> addCriterionWildcard(!f.contains(FROM_JSON_FUNCTION) ? tableNameAlias+"."+f : f, filterString, true));
         }
         endOrClause();
     }
@@ -521,8 +522,8 @@ public class QueryBuilder {
     public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value) {
         startOrClause();
         Stream.of(fields).forEach(field -> {
-        	String concatenatedFields = tableNameAlias+"."+field;
-        	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
+        	String concatenatedFields = !field.contains(FROM_JSON_FUNCTION) ? tableNameAlias+"."+field : field;
+            concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
             addSqlCriterion(concatenatedFields + " like :" + param, param, "%" + value + "%");
         });
@@ -534,7 +535,7 @@ public class QueryBuilder {
         String valueStr = "%" + String.valueOf(value).toLowerCase() + "%";
         startOrClause();
         Stream.of(fields).forEach(field -> {
-        	String concatenatedFields = tableNameAlias+"."+field;
+        	String concatenatedFields = !field.contains(FROM_JSON_FUNCTION) ? tableNameAlias+"."+field : field;
         	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
             addSqlCriterion("lower(" + concatenatedFields + ") like :" + param, param, valueStr);
@@ -1044,7 +1045,9 @@ public class QueryBuilder {
 
         Date start = calFrom.getTime();
 
-        String startDateParameterName = "start" + field.replace(".", "");
+        String param = convertFieldToParam(field);
+
+        String startDateParameterName = "start" + param;
 
         if (isFieldValueOptional) {
             return addSqlCriterion("(" + field + " IS NULL or " + field + ">=:" + startDateParameterName + ")", startDateParameterName, start);
@@ -1078,7 +1081,9 @@ public class QueryBuilder {
 
         Date end = calTo.getTime();
 
-        String endDateParameterName = "end" + field.replace(".", "");
+        String param = convertFieldToParam(field);
+
+        String endDateParameterName = "end" + param;
         if (optional) {
             return addSqlCriterion("(" + field + " IS NULL or " + field + "<:" + endDateParameterName + ")", endDateParameterName, end);
         } else {
@@ -1250,7 +1255,10 @@ public class QueryBuilder {
             addCriterion(concatenatedFields, inclusive ? " <= " : " < ", BigDecimal.valueOf((Double) value), true, isFieldValueOptional);
         } else if (value instanceof Number) {
             addCriterion(concatenatedFields, inclusive ? " <= " : " < ", value, true, isFieldValueOptional);
-        } else if (value instanceof Date) {
+        } else if (value instanceof Date || (DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN) instanceof Date)) {
+            if(value instanceof String) {
+                value = DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN);
+            }
             addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
         }
         return this;
@@ -1317,7 +1325,9 @@ public class QueryBuilder {
         String paramName = convertFieldToParam(field);
 
         if (value instanceof String) {
-            addSqlCriterion("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, value);
+            List<String> values = new ArrayList<String>(Arrays.asList(((String) value).toLowerCase().replaceAll("'", "").split(",")));
+            addSqlCriterion("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, values);
+
 
         } else if (value instanceof Collection) {
 
@@ -1362,6 +1372,7 @@ public class QueryBuilder {
     @SuppressWarnings({ "rawtypes" })
     public QueryBuilder addValueIsEqualToField(String concatenatedFields, Object value, boolean isNot, boolean isFieldValueOptional) {
 
+        // extract fieldname to handle joins
         concatenatedFields = createExplicitInnerJoins(concatenatedFields);
 
         // Search by equals/not equals to a string value
@@ -1401,6 +1412,18 @@ public class QueryBuilder {
     }
 
     private String createExplicitInnerJoins(String concatenatedFields) {
+        if(concatenatedFields.contains(FROM_JSON_FUNCTION)) {
+            int beginIndex = concatenatedFields.indexOf(FROM_JSON_FUNCTION) + FROM_JSON_FUNCTION.length() - 2;
+            var extractedField = concatenatedFields.substring(beginIndex, concatenatedFields.indexOf(",", beginIndex));
+            String explicitInnerJoins = calculateExplicitInnerJoins(extractedField);
+            concatenatedFields = concatenatedFields.replace(extractedField, explicitInnerJoins);
+        } else {
+            concatenatedFields = calculateExplicitInnerJoins(concatenatedFields);
+        }
+        return concatenatedFields;
+    }
+
+    private String calculateExplicitInnerJoins(String concatenatedFields) {
         if(concatenatedFields.contains(FROM_JSON_FUNCTION)){
             return concatenatedFields;
         }
@@ -1409,14 +1432,29 @@ public class QueryBuilder {
             concatenatedFields = concatenatedFields.substring(alias.length());
         }
         String[] fields = concatenatedFields.split("\\.");
+
+        var tmpFields = new ArrayList<>(List.of(fields));
+        boolean isFilterById = false;
+        if(tmpFields.size() > 1 && "id".equals(fields[fields.length -1])) {
+            tmpFields.remove(tmpFields.size() - 1);
+            isFilterById = true;
+        }
+
         if(innerJoins.get(concatenatedFields) != null){
             concatenatedFields = innerJoins.get(concatenatedFields).getJoinAlias();
-        }else if(fields.length > 1){
-            JoinWrapper joinWrapper = parse(concatenatedFields);
+        }else if(tmpFields.size() > 1){
+            JoinWrapper joinWrapper = parse(String.join(".", tmpFields));
             innerJoins.put(concatenatedFields, joinWrapper);
             concatenatedFields = joinWrapper.getJoinAlias();
-        } else if(fields.length == 1){
-            return this.alias + "." + concatenatedFields;
+            if(isFilterById) {
+                concatenatedFields = concatenatedFields + ".id";
+            }
+        } else if(tmpFields.size() == 1){
+            String result = this.alias + "." + String.join(".", tmpFields);
+            if(isFilterById) {
+                result = result + ".id";
+            }
+            return result;
         }
         return concatenatedFields;
     }

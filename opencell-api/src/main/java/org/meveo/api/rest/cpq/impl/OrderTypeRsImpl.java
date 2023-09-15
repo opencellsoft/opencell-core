@@ -1,6 +1,7 @@
 package org.meveo.api.rest.cpq.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.OrderTypeApi;
@@ -10,9 +11,11 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetListOrderTypeResponseDto;
 import org.meveo.api.dto.response.cpq.GetOrderTypeDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.OrderTypeRs;
 import org.meveo.api.rest.impl.BaseRs;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class OrderTypeRsImpl extends BaseRs implements OrderTypeRs {
 
 	@Inject private OrderTypeApi orderTypeApi;

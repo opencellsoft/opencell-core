@@ -9,6 +9,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.utilities.FieldsNotImportedStringCollectionDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.api.exception.*;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.export.*;
 import org.meveo.model.IEntity;
 import org.meveo.model.communication.MeveoInstance;
@@ -19,6 +20,7 @@ import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.ApplicationProvider;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -35,6 +37,7 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.api.MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
 import static org.reflections.Reflections.log;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class ImportExportResourceImpl implements ImportExportResource {
     @Inject
     private EntityExportImportService entityExportImportService;

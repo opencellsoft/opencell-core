@@ -53,6 +53,7 @@ public class InvoiceLinesMinimumJobBean extends BaseJobBean {
 		try {
 			Map<String, Object> filters = new HashedMap();
 			filters.put("status", INVOICE_LINES_CREATED);
+			filters.put("disabled", false);
 			List<BillingRun> billingRuns = billingRunService.list(new PaginationConfiguration(filters));
 			if (billingRuns != null && !billingRuns.isEmpty()) {
 				for (BillingRun billingRun : billingRuns) {

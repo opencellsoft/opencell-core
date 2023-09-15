@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import liquibase.pro.packaged.S;
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.CancellationInput;
 import org.meveo.apiv2.billing.DuplicateRTDto;
 import org.meveo.apiv2.billing.RatedTransactionInput;
@@ -20,6 +22,7 @@ import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class RatedTransactionResourceImpl implements RatedTransactionResource {
 
 	@Inject
@@ -41,7 +44,7 @@ public class RatedTransactionResourceImpl implements RatedTransactionResource {
 		final RatedTransaction ratedTransaction = findRatedTransactionEligibleToUpdate(id);
 		ratedTransactionApiService.update(ratedTransaction, input.getDescription(),
 				input.getUnitAmountWithoutTax(), input.getQuantity(), input.getParameter1(),
-				input.getParameter2(), input.getParameter3(), input.getParameterExtra(), input.getUsageDate());
+				input.getParameter2(), input.getParameter3(), input.getParameterExtra(), input.getUsageDate(), input.getBusinessKey());
 
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(RatedTransactionResource.class, id).build())
 				.build();

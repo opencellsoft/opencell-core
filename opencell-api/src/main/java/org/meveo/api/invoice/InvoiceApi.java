@@ -627,11 +627,13 @@ public class InvoiceApi extends BaseApi {
         		securityDepositTemplateService.update(sdt);
         	}
         }
-        
-        if(invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED){
-            updatePaymentStatus(invoice, today, PENDING);
-        }else if(invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
-            updatePaymentStatus(invoice, today, UNPAID);
+
+        if (!invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode())) {
+            if (invoice.getDueDate().after(today) && invoice.getStatus() == VALIDATED) {
+                updatePaymentStatus(invoice, today, PENDING);
+            } else if (invoice.getDueDate().before(today) && invoice.getStatus() == VALIDATED) {
+                updatePaymentStatus(invoice, today, UNPAID);
+            }
         }
 
         if (!brGenerateAO && !generateAO) {
@@ -647,7 +649,13 @@ public class InvoiceApi extends BaseApi {
         return invoice.getInvoiceNumber();
     }
 
-    
+    public void validateAdjAmount(Long id) {
+        Invoice invoice = invoiceService.findById(id);
+        if (invoiceTypeService.getListAdjustementCode().contains(invoice.getInvoiceType().getCode())) {
+            // if ADJ Invoice to validate, check amounts are not exceeded with the source Invoice
+            invoiceService.validateAdjAmount(invoice);
+        }
+    }
 
     private void updatePaymentStatus(Invoice invoice, Date today, InvoicePaymentStatusEnum pending) {
         log.info("[Inv.id : " + invoice.getId() + " - oldPaymentStatus : " + 

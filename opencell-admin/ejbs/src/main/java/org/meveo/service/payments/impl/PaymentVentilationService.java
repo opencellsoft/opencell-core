@@ -134,6 +134,7 @@ public class PaymentVentilationService extends PersistenceService<PaymentVentila
         payment.setPaymentInfo2(originalOTG.getPaymentInfo2());
         // Additional payment information 3 - Account Number
         payment.setPaymentInfo3(originalOTG.getPaymentInfo3());
+        payment.setCollectionDate(new Date());
         payment.setJournal(journalService.findByCode("BAN"));
         accountOperationService.handleAccountingPeriods(payment);
         paymentService.create(payment);

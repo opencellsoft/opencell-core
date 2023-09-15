@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
@@ -452,6 +453,11 @@ public class UsageRatingService extends RatingService implements Serializable {
 
             edr.changeStatus(EDRStatusEnum.RATED);
             edr.setRejectReason(null);
+            
+            WalletOperation walletOperation = ratingResult.getWalletOperations().stream().filter(e -> e.getEdr().equals(edr)).findFirst().orElse(null);
+            if (walletOperation != null) {
+            	edr.setBusinessKey(walletOperation.getBusinessKey());
+            }
 
             // If not virtual, persist triggered EDRs and created Wallet operations
             if (!isVirtual && currentRatingDepth == 0) {
@@ -462,6 +468,7 @@ public class UsageRatingService extends RatingService implements Serializable {
                 }
 
                 for (WalletOperation wo : ratingResult.getWalletOperations()) {
+	                checkDiscountedWalletOpertion(wo, ratingResult.getWalletOperations());
                     walletOperationService.chargeWalletOperation(wo);
                 }
             }

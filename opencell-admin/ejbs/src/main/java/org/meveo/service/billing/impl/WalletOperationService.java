@@ -718,8 +718,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     wallet != null ? wallet.getUserAccount() : null, wallet != null ? wallet.getUserAccount().getBillingAccount() : null);
             }
             Integer sortIndex = RatingService.getSortIndex(wo);
-            wo.setSortIndex(sortIndex);
-            create(wo);
+            wo.setSortIndex(sortIndex);        
+        	wo.setBusinessKey(dto.getBusinessKey());
+
+        	create(wo);
         }
     }
 
@@ -806,6 +808,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         if (!walletOperationIds.isEmpty()) {
             // Cancel related RTS
             int nrRtsCanceled = getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("woIds", walletOperationIds).setParameter("now", new Date()).executeUpdate();
+            getEntityManager().createNamedQuery("InvoiceLine.cancelInvoiceLineByWoIds")
+                    .setParameter("woIds", walletOperationIds)
+                    .setParameter("now", new Date())
+                    .executeUpdate();
+            getEntityManager().createNamedQuery("RatedTransaction.cancelAggregatedRTByInvoiceLine")
+                    .setParameter("woIds", walletOperationIds)
+                    .setParameter("now", new Date())
+                    .executeUpdate();
 
             // Change WO status to Canceled
             nrOfWosUpdated = getEntityManager().createNamedQuery("WalletOperation.setStatusToCanceledById").setParameter("now", new Date()).setParameter("woIds", walletOperationIds).executeUpdate();
@@ -1017,5 +1027,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }else{
             log.warn("can not cancel discounted wallet operation, cause the list is empty");
         }
+    }
+
+    /**
+     * Get wallet operation trading currencies
+     *
+     * @param walletOperationsIds wallet operation ids list
+     * @return wallet operation and their trading currency
+     */
+    public List<Object[]> getWalletOperationsTradingCurrency(List<Long> walletOperationsIds) {
+        return getEntityManager()
+                .createNamedQuery("WalletOperation.findWalletOperationTradingCurrency")
+                .setParameter("walletOperationIds", walletOperationsIds)
+                .getResultList();
     }
 }

@@ -4,6 +4,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.WalletOperationRerate;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
@@ -13,12 +14,15 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class WalletOperationResourceImpl implements WalletOperationResource {
 
     @Inject

@@ -1,6 +1,8 @@
 package org.meveo.api.dto.cpq;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -50,6 +52,12 @@ public class ContractItemDto extends BusinessEntityDto {
 
 	@Schema(description = "Expression language to condition contract line application")
 	private String applicationEl;
+	
+	@Schema(description = "If true then contract discount will apply to price overridden in quote.")
+	private Boolean applicableOnOverriddenPrice;
+	
+	@Schema(description = "defind list of target article that can be applied")
+	private Set<String> targetAccountingArticleCodes = new HashSet<>();
     
     public ContractItemDto() {}
     
@@ -73,6 +81,7 @@ public class ContractItemDto extends BusinessEntityDto {
     	this.contractRateType=c.getContractRateType();
     	this.seperateDiscountLine=c.isSeparateDiscount();
 		this.applicationEl = c.getApplicationEl();
+		this.applicableOnOverriddenPrice = c.isApplicableOnOverriddenPrice();
     }
     
 	/**
@@ -208,5 +217,22 @@ public class ContractItemDto extends BusinessEntityDto {
 
 	public void setApplicationEl(String applicationEl) {
 		this.applicationEl = applicationEl;
+	}
+
+	public Boolean getApplicableOnOverriddenPrice() {
+		return applicableOnOverriddenPrice;
+	}
+
+	public void setApplicableOnOverriddenPrice(Boolean applicableOnOverriddenPrice) {
+		this.applicableOnOverriddenPrice = applicableOnOverriddenPrice;
+	}
+	
+	
+	public Set<String> getTargetAccountingArticleCodes() {
+		return targetAccountingArticleCodes;
+	}
+	
+	public void setTargetAccountingArticleCodes(Set<String> targetAccountingArticleCodes) {
+		this.targetAccountingArticleCodes = targetAccountingArticleCodes;
 	}
 }

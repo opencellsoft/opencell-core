@@ -2,6 +2,7 @@ package org.meveo.apiv2.cpq.impl;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -11,6 +12,7 @@ import org.jboss.resteasy.api.validation.Validation;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.cpq.contracts.BillingRuleDto;
 import org.meveo.apiv2.cpq.resource.CpqContractResource;
 import org.meveo.apiv2.cpq.service.CpqContractApiService;
@@ -19,6 +21,7 @@ import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.cpq.contract.BillingRule;
 
 @Stateless
+@Interceptors({ WsRestApiInterceptor.class })
 public class CpqContractResourceImpl implements CpqContractResource {
 
 	@Inject

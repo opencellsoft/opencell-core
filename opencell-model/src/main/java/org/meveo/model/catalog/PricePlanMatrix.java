@@ -604,11 +604,13 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Override
     public String toString() {
         return String.format(
-            "PricePlanMatrix [%s, eventCode=%s, offerTemplate=%s, startSubscriptionDate=%s, endSubscriptionDate=%s, startRatingDate=%s, endRatingDate=%s, minQuantity=%s, maxQuantity=%s, minSubscriptionAgeInMonth=%s, maxSubscriptionAgeInMonth=%s, criteria1Value=%s, criteria2Value=%s, criteria3Value=%s, criteriaEL=%s, amountWithoutTax=%s, amountWithTax=%s, tradingCurrency=%s, tradingCountry=%s, priority=%s, seller=%s, validityCalendar=%s]",
-            super.toString(), offerTemplate != null ? offerTemplate.getId() : null, startSubscriptionDate, endSubscriptionDate, startRatingDate, endRatingDate,
-            minQuantity, maxQuantity, minSubscriptionAgeInMonth, maxSubscriptionAgeInMonth, criteria1Value, criteria2Value, criteria3Value, criteriaEL, amountWithoutTax,
-            amountWithTax, tradingCurrency != null ? tradingCurrency.getId() : null, tradingCountry != null ? tradingCountry.getId() : null, priority,
-            seller != null ? seller.getId() : null, validityCalendar != null ? validityCalendar.getId() : null);
+                "PricePlanMatrix [%s, offerTemplate=%s, startSubscriptionDate=%s, endSubscriptionDate=%s, startRatingDate=%s, endRatingDate=%s, minQuantity=%s, maxQuantity=%s, " +
+                        "minSubscriptionAgeInMonth=%s, maxSubscriptionAgeInMonth=%s, criteria1Value=%s, criteria2Value=%s, criteria3Value=%s, criteriaEL=%s, amountWithoutTax=%s, " +
+                        "amountWithTax=%s, tradingCurrency=%s, tradingCountry=%s, priority=%s, seller=%s, validityCalendar=%s]",
+                super.toString(), offerTemplate != null ? offerTemplate.getId() : null, startSubscriptionDate, endSubscriptionDate, startRatingDate, endRatingDate,
+                minQuantity, maxQuantity, minSubscriptionAgeInMonth, maxSubscriptionAgeInMonth, criteria1Value, criteria2Value, criteria3Value, criteriaEL, amountWithoutTax,
+                amountWithTax, tradingCurrency != null ? tradingCurrency.getId() : null, tradingCountry != null ? tradingCountry.getId() : null, priority,
+                seller != null ? seller.getId() : null, validityCalendar != null ? validityCalendar.getId() : null);
     }
 
     @Override

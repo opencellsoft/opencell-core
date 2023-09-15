@@ -285,16 +285,39 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     @SuppressWarnings("unchecked")
     public List<AccountOperation> getAOsToPayOrRefund(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, OperationCategoryEnum opCatToProcess, Seller seller) {
         try {
-            String queryName = "AccountOperation.listAoToPayOrRefundWithoutCA";
+            StringBuilder queryName = new StringBuilder("SELECT ao FROM AccountOperation AS ao, PaymentMethod AS pm")
+                    .append(" WHERE ao.transactionCategory=:opCatToProcessIN ")
+                    .append(" AND ao.type IN ('I','OCC') ")
+                    .append(" AND (ao.matchingStatus ='O' OR ao.matchingStatus ='P') ")
+                    .append(" AND ao.customerAccount.excludedFromPayment = FALSE ")
+                    .append(" AND ao.customerAccount.id = pm.customerAccount.id ")
+                    .append(" AND pm.paymentType =:paymentMethodIN ")
+                    .append(" AND pm.preferred IS TRUE ")
+                    .append(" AND ao.dueDate >=:fromDueDateIN ")
+                    .append(" AND ao.dueDate <:toDueDateIN ");
+
             if (seller != null) {
-                queryName = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller";
+                queryName.append(" AND ao.seller =:sellerIN ");
             }
-            Query query = getEntityManager().createNamedQuery(queryName).setParameter("paymentMethodIN", paymentMethodEnum).setParameter("fromDueDateIN", fromDueDate)
-                .setParameter("toDueDateIN", toDueDate).setParameter("opCatToProcessIN", opCatToProcess);
+
+            if (OperationCategoryEnum.CREDIT == opCatToProcess) {
+                queryName.append(" AND ao.code IN (:REFUNDABLE_ADJUSTEMENT_CODES) ");
+            }
+
+            Query query = getEntityManager().createQuery(queryName.toString())
+                    .setParameter("paymentMethodIN", paymentMethodEnum)
+                    .setParameter("fromDueDateIN", fromDueDate)
+                    .setParameter("toDueDateIN", toDueDate)
+                    .setParameter("opCatToProcessIN", opCatToProcess);
 
             if (seller != null) {
                 query.setParameter("sellerIN", seller);
             }
+
+            if (OperationCategoryEnum.CREDIT == opCatToProcess) {
+                query.setParameter("REFUNDABLE_ADJUSTEMENT_CODES", System.getProperty("refundable.adjustement.codes", "ADJ_REF"));
+            }
+
             return (List<AccountOperation>) query.getResultList();
 
         } catch (NoResultException e) {

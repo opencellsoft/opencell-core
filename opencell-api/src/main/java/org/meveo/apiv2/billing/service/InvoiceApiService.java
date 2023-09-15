@@ -250,12 +250,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 			invoice.getInvoiceLines().add(invoiceLine);
 			result.addInvoiceLines(invoiceLineResource);
 		}
-
-		String listAdjustmentCode = paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ, ADJ_INV, ADJ_REF");
-		if (listAdjustmentCode.contains(invoice.getInvoiceType().getCode())) {
-			invoiceLinesService.validateAdjAmount(invoice);
-		}
-
 		invoiceService.calculateInvoice(invoice);
 		invoiceService.updateBillingRunStatistics(invoice);
 		result.skipValidation(invoiceLinesInput.getSkipValidation());
@@ -288,8 +282,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		}
 		// Populate Custom fields
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
-		// for adjustment
-		invoiceLine = invoiceLinesService.adjustment(invoiceLine, invoice);
         // Update Invoice Line
 		invoiceLinesService.updateInvoiceLine(invoiceLine, invoiceLineInput.getInvoiceLine(), discountPlan);
 		invoiceService.getEntityManager().flush();
@@ -421,7 +413,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
         if(true==invoice.isApplyBillingRules()) {
             Date firstTransactionDate = invoice.getFirstTransactionDate() == null ? new Date(0) : invoice.getFirstTransactionDate();
             Date lastTransactionDate = invoice.getLastTransactionDate() == null ? invoice.getInvoicingDate() : invoice.getLastTransactionDate();
-            List<RatedTransaction> rts = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, invoice.getInvoicingDate(), ratedTransactionFilter, null);
+            List<RatedTransaction> rts = ratedTransactionService.listRTsToInvoice(entity, firstTransactionDate, lastTransactionDate, lastTransactionDate, ratedTransactionFilter, null);
 			if (financeSettingsService.isBillingRedirectionRulesEnabled()) {
 				billingAccountsAfter = ratedTransactionService.applyInvoicingRules(rts);
 			}
@@ -442,6 +434,14 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		if (invoices == null || invoices.isEmpty()) {
 			throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
 		}
+		
+		for (Invoice inv : invoices) {
+			if (invoice.getPurchaseOrder() != null) {
+				inv.setExternalPurchaseOrderNumber(invoice.getPurchaseOrder());
+				invoiceService.update(inv);
+			}
+		}
+		
 		List<GenerateInvoiceResult> generateInvoiceResults = new ArrayList<>();
 		InvoiceMapper invoiceMapper = new InvoiceMapper();
 		for (Invoice inv : invoices) {

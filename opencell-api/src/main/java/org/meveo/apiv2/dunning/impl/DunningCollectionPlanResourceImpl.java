@@ -9,10 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.AvailablePoliciesInput;
 import org.meveo.apiv2.dunning.CheckSwitchResult;
 import org.meveo.apiv2.dunning.DunningActionInstanceInput;
@@ -44,6 +46,7 @@ import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningLevelInstance;
 import org.meveo.model.dunning.DunningPolicy;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class DunningCollectionPlanResourceImpl implements DunningCollectionPlanResource {
 
     private final DunningCollectionPlanMapper collectionPlanMapper = new DunningCollectionPlanMapper();

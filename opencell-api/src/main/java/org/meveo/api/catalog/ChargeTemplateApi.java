@@ -20,8 +20,10 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +33,8 @@ import javax.xml.bind.ValidationException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -41,6 +45,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -52,6 +57,7 @@ import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
@@ -90,6 +96,9 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
+    
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
     /**
      * Convert/update DTO object to an entity object
@@ -244,6 +253,104 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         	chargeTemplate.setInternalNote(StringUtils.isBlank(postData.getInternalNote()) ? null : postData.getInternalNote());
         }
 
+        if (postData.getParameter1Description() != null) {
+            chargeTemplate.setParameter1Description(postData.getParameter1Description());
+        }
+        if (postData.getParameter1TranslatedDescriptions() != null && !postData.getParameter1TranslatedDescriptions().isEmpty()) {
+            chargeTemplate.setParameter1TranslatedDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter1TranslatedDescriptions(), null));
+        }
+        if (postData.getParameter1TranslatedLongDescriptions() != null && !postData.getParameter1TranslatedLongDescriptions().isEmpty()) {
+            chargeTemplate.setParameter1TranslatedLongDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter1TranslatedLongDescriptions(), null));
+        }
+        if (postData.getParameter1Format() != null) {
+            chargeTemplate.setParameter1Format(postData.getParameter1Format());
+        }
+        if (postData.getParameter1IsMandatory() != null) {
+            chargeTemplate.setParameter1IsMandatory(postData.getParameter1IsMandatory());
+        }
+        if (postData.getParameter1IsHidden() != null) {
+            chargeTemplate.setParameter1IsHidden(postData.getParameter1IsHidden());
+        }
+        
+        if (postData.getParameter2Description() != null) {
+            chargeTemplate.setParameter2Description(postData.getParameter2Description());
+        }
+        if (postData.getParameter2TranslatedDescriptions() != null && !postData.getParameter2TranslatedDescriptions().isEmpty()) {
+            chargeTemplate.setParameter2TranslatedDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter2TranslatedDescriptions(), null));
+        }
+        if (postData.getParameter2TranslatedLongDescriptions() != null && !postData.getParameter2TranslatedLongDescriptions().isEmpty()) {
+            chargeTemplate.setParameter2TranslatedLongDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter2TranslatedLongDescriptions(), null));
+        }
+        if (postData.getParameter2Format() != null) {
+            chargeTemplate.setParameter2Format(postData.getParameter2Format());
+        }
+        if (postData.getParameter2IsMandatory() != null) {
+            chargeTemplate.setParameter2IsMandatory(postData.getParameter2IsMandatory());
+        }
+        if (postData.getParameter2IsHidden() != null) {
+            chargeTemplate.setParameter2IsHidden(postData.getParameter2IsHidden());
+        }
+        
+        if (postData.getParameter3Description() != null) {
+            chargeTemplate.setParameter3Description(postData.getParameter3Description());
+        }
+        if (postData.getParameter3TranslatedDescriptions() != null && !postData.getParameter3TranslatedDescriptions().isEmpty()) {
+            chargeTemplate.setParameter3TranslatedDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter3TranslatedDescriptions(), null));
+        }
+        if (postData.getParameter3TranslatedLongDescriptions() != null && !postData.getParameter3TranslatedLongDescriptions().isEmpty()) {
+            chargeTemplate.setParameter3TranslatedLongDescriptions(convertMultiLanguageToMapOfValues(postData.getParameter3TranslatedLongDescriptions(), null));
+        }
+        if (postData.getParameter3Format() != null) {
+            chargeTemplate.setParameter3Format(postData.getParameter3Format());
+        }
+        if (postData.getParameter3IsMandatory() != null) {
+            chargeTemplate.setParameter3IsMandatory(postData.getParameter3IsMandatory());
+        }
+        if (postData.getParameter3IsHidden() != null) {
+            chargeTemplate.setParameter3IsHidden(postData.getParameter3IsHidden());
+        }
+        
+        if (postData.getParameterExtraDescription() != null) {
+            chargeTemplate.setParameterExtraDescription(postData.getParameterExtraDescription());
+        }
+        if (postData.getParameterExtraTranslatedDescriptions() != null && !postData.getParameterExtraTranslatedDescriptions().isEmpty()) {
+            chargeTemplate.setParameterExtraTranslatedDescriptions(convertMultiLanguageToMapOfValues(postData.getParameterExtraTranslatedDescriptions(), null));
+        }
+        if (postData.getParameterExtraTranslatedLongDescriptions() != null && !postData.getParameterExtraTranslatedLongDescriptions().isEmpty()) {
+            chargeTemplate.setParameterExtraTranslatedLongDescriptions(convertMultiLanguageToMapOfValues(postData.getParameterExtraTranslatedLongDescriptions(), null));
+        }
+        if (postData.getParameterExtraFormat() != null) {
+            chargeTemplate.setParameterExtraFormat(postData.getParameterExtraFormat());
+        }
+        if (postData.getParameterExtraIsMandatory() != null) {
+            chargeTemplate.setParameterExtraIsMandatory(postData.getParameterExtraIsMandatory());
+        }
+        if (postData.getParameterExtraIsHidden() != null) {
+            chargeTemplate.setParameterExtraIsHidden(postData.getParameterExtraIsHidden());
+        }
+        
+        if (postData.getBusinessKeyEl() != null) {
+            chargeTemplate.setBusinessKeyEl(postData.getBusinessKeyEl());
+        }
+        if (postData.getBusinessKeyDescription() != null) {
+            chargeTemplate.setBusinessKeyDescription(postData.getBusinessKeyDescription());
+        }
+        if (postData.getBusinessKeyTranslatedDescriptions() != null && !postData.getBusinessKeyTranslatedDescriptions().isEmpty()) {
+            chargeTemplate.setBusinessKeyTranslatedDescriptions(convertMultiLanguageToMapOfValues(postData.getBusinessKeyTranslatedDescriptions(), null));
+        }
+        if (postData.getBusinessKeyTranslatedLongDescriptions() != null && !postData.getBusinessKeyTranslatedLongDescriptions().isEmpty()) {
+            chargeTemplate.setBusinessKeyTranslatedLongDescriptions(convertMultiLanguageToMapOfValues(postData.getBusinessKeyTranslatedLongDescriptions(), null));
+        }
+        if (postData.getBusinessKeyFormat() != null) {
+            chargeTemplate.setBusinessKeyFormat(postData.getBusinessKeyFormat());
+        }
+        if (postData.getBusinessKeyIsMandatory() != null) {
+            chargeTemplate.setBusinessKeyIsMandatory(postData.getBusinessKeyIsMandatory());
+        }
+        if (postData.getBusinessKeyIsHidden() != null) {
+            chargeTemplate.setBusinessKeyIsHidden(postData.getBusinessKeyIsHidden());
+        }
+
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, isNew);
@@ -255,7 +362,7 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
             throw e;
         }
     }
-
+    
     protected void checkInternalNote(ChargeTemplate entity, ChargeTemplateDto postData) {
     	// Internal note updatable only for Draft and Active Charge template
 		if (postData.getInternalNote() != null && !postData.getInternalNote().equals(entity.getInternalNote()) && 

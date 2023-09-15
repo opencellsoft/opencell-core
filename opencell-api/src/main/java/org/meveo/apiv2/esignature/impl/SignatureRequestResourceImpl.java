@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.document.sign.YousignEventEnum;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.apiv2.esignature.SigantureRequest;
 import org.meveo.apiv2.esignature.SignatureRequestWebHookPayload;
@@ -13,9 +14,11 @@ import org.meveo.apiv2.esignature.service.SignatureRequestApiService;
 import org.meveo.model.esignature.Operator;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class SignatureRequestResourceImpl extends BaseRs implements SignatureRequestResource {
 	
 	@Inject

@@ -3,17 +3,20 @@ package org.meveo.apiv2.dunning.impl;
 import static java.util.Optional.ofNullable;
 
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.CustomerBalance;
 import org.meveo.apiv2.dunning.resource.CustomerBalanceResource;
 import org.meveo.apiv2.report.ImmutableSuccessResponse;
 import org.meveo.service.payments.impl.CustomerBalanceService;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import java.util.function.Consumer;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class CustomerBalanceResourceImpl implements CustomerBalanceResource {
 
     @Inject

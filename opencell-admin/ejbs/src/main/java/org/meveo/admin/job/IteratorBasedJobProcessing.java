@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.model.IEntity;
+import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -29,6 +30,7 @@ import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.audit.AuditOrigin;
 import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.util.ApplicationProvider;
@@ -123,6 +125,7 @@ public class IteratorBasedJobProcessing implements Serializable {
         int updateJobStatusEveryNr = nbThreads.longValue() > 3 ? jobSpeed.getUpdateNb() * nbThreads.intValue() / 2 : jobSpeed.getUpdateNb();
 
         List<Callable<List<R>>> tasks = new ArrayList<Callable<List<R>>>(nbThreads.intValue());
+        String auditOriginName = jobInstance.getJobTemplate() + "/" + jobInstance.getCode();
 
         for (int k = 0; k < nbThreads; k++) {
 
@@ -134,6 +137,8 @@ public class IteratorBasedJobProcessing implements Serializable {
                 Thread.currentThread().setName(jobInstance.getCode() + "-" + finalK);
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+                AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.JOB, auditOriginName);
 
                 int i = 0;
                 long globalI = 0;
@@ -271,6 +276,7 @@ public class IteratorBasedJobProcessing implements Serializable {
         boolean useMultipleItemProcessing = (processMultipleItemFunction != null && batchSize != null && batchSize > 1) || processSingleItemFunction == null;
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue() > 0 ? nbThreads.intValue() : 0);
+        String auditOriginName = jobInstance.getJobTemplate() + "/" + jobInstance.getCode();
 
         for (int k = 0; k < nbThreads; k++) {
 
@@ -280,6 +286,7 @@ public class IteratorBasedJobProcessing implements Serializable {
                 Thread.currentThread().setName(jobInstance.getCode() + "-" + finalK);
 
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
+                AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.JOB, auditOriginName);
 
                 int i = 0;
                 long globalI = 0;

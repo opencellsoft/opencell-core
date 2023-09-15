@@ -1,6 +1,7 @@
 package org.meveo.apiv2.article.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
@@ -9,12 +10,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.article.ArticleMappingLine;
 import org.meveo.apiv2.article.ImmutableArticleMappingLine;
 import org.meveo.apiv2.article.resource.ArticleMappingLineResource;
 import org.meveo.apiv2.article.service.ArticleMappingLineApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class ArticleMappingLineResourceImpl implements ArticleMappingLineResource {
 
     @Inject

@@ -222,6 +222,7 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
     /**
      * Parent User account
      */
+    @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id", nullable = false)
     @NotNull
@@ -272,6 +273,7 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
     /**
      * Was subscription renewed
      */
+    @AuditTarget(type = AuditChangeTypeEnum.RENEWAL, history = true, notif = true)
     @Type(type = "numeric_boolean")
     @Column(name = "renewed")
     private boolean renewed;

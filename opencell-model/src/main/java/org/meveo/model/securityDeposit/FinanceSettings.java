@@ -1,6 +1,8 @@
 package org.meveo.model.securityDeposit;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
@@ -57,9 +59,21 @@ public class FinanceSettings extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "enable_price_list")
     private boolean enablePriceList = false;
+	
+	@Column(name = "article_selection_mode")
+	@Enumerated(EnumType.STRING)
+	private ArticleSelectionModeEnum articleSelectionMode = ArticleSelectionModeEnum.AFTER_PRICING;
+	
+	@Type(type = "json")
+    @Column(name = "entities_with_huge_volume", columnDefinition = "jsonb")
+    private Map<String, List<String>> entitiesWithHugeVolume;
 
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "billing_run_process_warning")
+    private boolean billingRunProcessWarning;
 
     public FinanceSettings() {
         super();
@@ -152,4 +166,28 @@ public class FinanceSettings extends BusinessEntity {
 	public void setEnablePriceList(boolean enablePriceList) {
 		this.enablePriceList = enablePriceList;
 	}
+	
+	public ArticleSelectionModeEnum getArticleSelectionMode() {
+		return articleSelectionMode;
+	}
+	
+	public void setArticleSelectionMode(ArticleSelectionModeEnum articleSelectionMode) {
+		this.articleSelectionMode = articleSelectionMode;
+	}
+
+	public Map<String, List<String>> getEntitiesWithHugeVolume() {
+		return entitiesWithHugeVolume;
+	}
+
+	public void setEntitiesWithHugeVolume(Map<String, List<String>> entitiesWithHugeVolume) {
+		this.entitiesWithHugeVolume = entitiesWithHugeVolume;
+	}
+
+    public boolean isBillingRunProcessWarning() {
+        return billingRunProcessWarning;
+    }
+
+    public void setBillingRunProcessWarning(boolean billingRunProcessWarning) {
+        this.billingRunProcessWarning = billingRunProcessWarning;
+    }
 }

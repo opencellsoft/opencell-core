@@ -59,15 +59,28 @@ import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.AccountingCodeService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 
 @Stateless
 public class AccountingArticleService extends BusinessService<AccountingArticle> {
 
-	@Inject private ArticleMappingLineService articleMappingLineService;
-	@Inject private AttributeService attributeService;
+	@Inject 
+	private ArticleMappingLineService articleMappingLineService;
+	@Inject 
+	private AttributeService attributeService;
 	@Inject
 	private AccountingCodeService accountingCodeService;
+    @Inject
+    private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
+    
+    @Inject
+    private OfferTemplateService offerTemplateService;
+    
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
 
 	 private String multiValuesAttributeSeparator = ";";
 	    
@@ -281,15 +294,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
             return null;
         }
         ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
-        Map<String, Object> attributes = new HashMap<>();
-        List<AttributeValue> attributeValues = serviceInstance != null ? serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue) ai).collect(toList()) : new ArrayList<>();
-        for (AttributeValue attributeValue : attributeValues) {
-            Attribute attribute = attributeValue.getAttribute();
-            Object value = attribute.getAttributeType().getValue(attributeValue);
-            if (value != null) {
-                attributes.put(attributeValue.getAttribute().getCode(), value);
-            }
-        }
+        Map<String, Object> attributes = extractAttributes(serviceInstance);
         Optional<AccountingArticle> accountingArticle;
 		accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null,
 				chargeInstance.getChargeTemplate(),
@@ -300,6 +305,24 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
         return accountingArticle.isPresent() ? accountingArticle.get() : null;
     }
 	
+	public AccountingArticle getAccountingArticle(ServiceInstance serviceInstance, ChargeTemplate chargeTemplate, OfferTemplate offer, WalletOperation walletOperation) {
+		Optional<AccountingArticle> accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeTemplate, offer, extractAttributes(serviceInstance), walletOperation);
+		return accountingArticle.isPresent() ? accountingArticle.get() : null;
+	}
+
+	private Map<String, Object> extractAttributes(ServiceInstance serviceInstance) {
+		Map<String, Object> attributes = new HashMap<>();
+        List<AttributeValue> attributeValues = serviceInstance != null ? serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue) ai).collect(toList()) : new ArrayList<>();
+        for (AttributeValue attributeValue : attributeValues) {
+            Attribute attribute = attributeValue.getAttribute();
+            Object value = attribute.getAttributeType().getValue(attributeValue);
+            if (value != null) {
+                attributes.put(attributeValue.getAttribute().getCode(), value);
+            }
+        }
+		return attributes;
+	}
+	
 	public List<AccountingArticle> findByTaxClassAndSubCategory(TaxClass taxClass, InvoiceSubCategory invoiceSubCategory) {
 		return getEntityManager().createNamedQuery("AccountingArticle.findByTaxClassAndSubCategory", AccountingArticle.class)
 				.setParameter("taxClass", taxClass)
@@ -307,11 +330,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.getResultList();
 	}
 
-	public AccountingCode getArticleAccountingCode(InvoiceLine invoiceLine, AccountingArticle accountingArticle) {
-		// **1** if accountingCodeEL is filled then return the evaluated accountingCode
+	public AccountingCode getArticleAccountingCode(Invoice invoice, AccountingArticle accountingArticle) {
+		if (invoice == null || accountingArticle == null) {
+			return null;
+		}
+
+		 // **1** if accountingCodeEL is filled then return the evaluated accountingCode
 		if (StringUtils.isNotBlank(accountingArticle.getAccountingCodeEl())) {
 			String resultEl = evaluateAccountingCodeArticleEl(accountingArticle.getAccountingCodeEl(),
-					accountingArticle, invoiceLine.getInvoice(), String.class);
+					accountingArticle, invoice, String.class);
 
 			if (StringUtils.isBlank(resultEl)) {
 				throw new BusinessException("No accounting code found for EL=" + accountingArticle.getAccountingCodeEl());
@@ -332,7 +359,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.setParameter("ACCOUNTING_ARTICLE_ID", accountingArticle.getId()).getResultList();
 
 		if (codeMappings != null && !codeMappings.isEmpty()) {
-			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoiceLine.getInvoice(), accountingArticle);
+			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoice, accountingArticle);
 
 			if (accountingCode != null) {
 				return accountingCode;
@@ -624,5 +651,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
             throw new EntityDoesNotExistsException(AccountingArticle.class, articleCode);
         return accountingArticle;
     }
+
+	public AccountingArticle getAccountingArticle(Long serviceInstanceId, Long chargeTemplateId, Long offerTemplateId) {
+		return getAccountingArticle(serviceInstanceService.findFetchProductById(serviceInstanceId), chargeTemplateId==null?null:chargeTemplateService.findById(chargeTemplateId), offerTemplateId==null?null:offerTemplateService.findById(offerTemplateId), null);
+	}
 
 }

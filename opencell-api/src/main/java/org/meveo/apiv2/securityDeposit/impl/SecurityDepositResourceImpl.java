@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -19,16 +20,19 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.invoice.InvoiceApi;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.securityDeposit.*;
 import org.meveo.apiv2.securityDeposit.resource.SecurityDepositResource;
 import org.meveo.apiv2.securityDeposit.service.SecurityDepositApiService;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.securityDeposit.SecurityDepositOperationEnum;
 import org.meveo.model.securityDeposit.SecurityDepositStatusEnum;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.securityDeposit.impl.SecurityDepositService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class SecurityDepositResourceImpl implements SecurityDepositResource {
 
     @Inject
@@ -47,6 +51,9 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
 
     @Inject
     BillingAccountService billingAccountService;
+    
+    @Inject
+    SellerService sellerService;
 
     @Override
     public Response instantiate(SecurityDepositInput securityDepositInput) {
@@ -159,6 +166,7 @@ public class SecurityDepositResourceImpl implements SecurityDepositResource {
     public Response credit(Long id, SecurityDepositCreditInput securityDepositInput) {
         SecurityDeposit securityDepositToUpdate = securityDepositApiService.credit(id, securityDepositInput);
         securityDepositToUpdate.setBillingAccount(billingAccountService.refreshOrRetrieve(securityDepositToUpdate.getBillingAccount()));
+        securityDepositToUpdate.setSeller(sellerService.refreshOrRetrieve(securityDepositToUpdate.getSeller()));
         return Response.ok().entity(buildResponse(securityDepositMapper.toResource(securityDepositToUpdate))).build();
     }
 

@@ -8268,6 +8268,20 @@
             <column name="uuid" value="RT_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="XMLEInvoiceGenerationJob" />
+            <column name="code" value="EInvoice_job" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="uuid" value="XMLEInvoiceGeneration_Job" />
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'EInvoice_job')"/>
+        </insert>
+        <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-7" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="1" />
@@ -8279,6 +8293,7 @@
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
             <column name="uuid" value="XML_Job" />
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'PDF_Job')"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-8" />
@@ -11961,6 +11976,70 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         </insert>
     </changeSet>
 
+    <changeSet id="#INTRD-17353__14-07-2023" author="Mohammed_ELAZZOUZI">
+	    <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_BillingAccountPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="Process transactions by billing account"/>
+            <column name="field_type" value="BOOLEAN"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="value_required" value="0"/>
+            <column name="default_value" value="1"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:2;fieldGroup:Performances"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_MaxRTsPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="preferred max RTs per transaction"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="1000000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:3;fieldGroup:Performances"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_MaxLinesPerTransaction"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="preferred max lines per transaction"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="10000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:4;fieldGroup:Performances"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="JobInstance_InvoiceLinesJob_MaxRTsPerLine"/>
+            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
+            <column name="description" value="preferred max RTs per line"/>
+            <column name="field_type" value="LONG"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="default_value" valueNumeric="100000"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="gui_position" value="tab:Configuration:5;fieldGroup:Performances"/>
+        </insert>
+
+    </changeSet>
+
 	<changeSet id="INTRD-15458_2023_04_17" author="ZBariki">
 		<insert tableName="generic_sequence">
 			<column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
@@ -12039,6 +12118,113 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="uuid" value="PriceListStatusJob_Job" />
 		</insert>
 	</changeSet>
+
+	<changeSet id="#INTRD-16833-20230830_rebuild" author="ZBariki">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="disabled" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="job_category" value="INVOICING"/>
+			<column name="job_template" value="BillingRunReportJob"/>
+			<column name="code" value="BILLING_RUN_REPORT_JOB"/>
+			<column name="description" value="Billing run report Job"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="uuid" value="BILLING_RUN_REPORT_JOB"/>
+		</insert>
+	</changeSet>
+    
+    <changeSet id="#INTRD-10574_20221013-job" author="AndriusKarpavicius">    
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2022-12-22 15:13:19.913" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="AuditDataLogAggregationJob" />
+            <column name="code" value="AuditDataLogAggregationJob" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="timerentity_id"
+                    valueComputed="(SELECT id from meveo_timer where code = 'Hourly')" />
+            <column name="uuid" value="AuditDataLogAggregationJob_Job" />
+        </insert>
+    </changeSet> 
+
+    <changeSet id="#INTRD-10574_20230213" author="AndriusKarpavicius">
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.Subscription"/>
+            <column name="entity_fields" value="status,userAccount,subscriptionRenewal,renewed"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.ServiceInstance"/>
+            <column name="entity_fields" value="status,serviceRenewal,renewed"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.Invoice"/>
+            <column name="entity_fields" value="status,xmlDate,pdfDate,emailSentDate,paymentStatus"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.order.Order"/>
+            <column name="entity_fields" value="status"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.AccountOperation"/>
+            <column name="entity_fields" value="collectionDate"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.CustomerAccount"/>
+            <column name="entity_fields" value="customer"/>
+        </insert>
+    
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.PaymentScheduleInstance"/>
+            <column name="entity_fields" value="amount"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.PaymentScheduleInstanceItem"/>
+            <column name="entity_fields" value="requestPaymentDate,amount"/>
+        </insert>
+        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst_item','request_pay_date,amount', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst','amount', null, null, true)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_customer_account','customer_id', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_account_operation','collection_date', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ord_order','status', null, null, true)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_invoice','status,xml_date,pdf_date,email_sent_date,payment_status', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_subscription','status,user_account_id,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_service_instance','status,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
+    </changeSet>
 	
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
@@ -12049,7 +12235,11 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-16247_20230605" author="zelmeliani" />
     <changeSet id="#INTRD-16278_20230606" author="anasseh" />
     <changeSet id="INTRD-17129_20230627" author="TarikFA." />
-    	
+	<changeSet id="INTRD-16743_20230720" author="aelmalki" />
+    <changeSet id="INTRD-17135_20230713" author="TarikFA." />
+	<changeSet id="#INTRD-16833-20230830" author="ZBariki" />
+    <changeSet id="#INTRD-10574_20230214" author="AndriusKarpavicius"/>
+
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>

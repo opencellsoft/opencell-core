@@ -216,9 +216,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
-
-    @Inject
-    private JobExecutionResultService jobExecutionResultService;
     
     private static final  int rtPaginationSize = 30000;
 
@@ -226,18 +223,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@Override
 	public void create(BillingRun billingRun) throws BusinessException {
 		setBillingRunType(billingRun);
-		super.create(billingRun);
-	}
+        super.create(billingRun);
+    }
 
-	@MeveoAudit
+    @MeveoAudit
 	@Override
 	public BillingRun update(BillingRun billingRun) throws BusinessException {
 		setBillingRunType(billingRun);
-		return super.update(billingRun);
+        return super.update(billingRun);
 	}
 
 	/**
-	 * Put the BR type to CYCLE if a BC is attached, EXEPTIONAL otherwise
+	 * Put the BR type to CYCLE if a BC is attached, EXCEPTIONAL otherwise
 	 *
 	 * @param billingRun
 	 */
@@ -744,14 +741,21 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
     
-	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
-		Map<String, Object> filters = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
-		if(filters==null && billingRun.getBillingCycle() != null) {
-			filters=new TreeMap<>();
-			filters.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
-		} 
-		if(filters==null){
+    public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
+    	return getBillingAccountsIdsForOpenRTs(billingRun,false);
+    }
+	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun, boolean massData) {
+		Map<String, Object> configuredFilter = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
+		if(configuredFilter==null && billingRun.getBillingCycle() != null) {
+			configuredFilter = new TreeMap<String, Object>();
+			configuredFilter.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
+		}
+		if(configuredFilter==null){
 			throw new BusinessException("No filter found for billingRun "+billingRun.getId());
+		}
+		Map<String, Object> filters = new TreeMap<String, Object>(configuredFilter);
+		if(massData) {
+			filters.put("billingAccount.massData", "true");
 		}
 		filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
 		QueryBuilder queryBuilder = ratedTransactionService.getQueryFromFilters(filters, Arrays.asList("billingAccount.id"), true);
@@ -849,7 +853,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for(BillingRun billingRun : billingRuns) {
             List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun, v11Process );
             for (IBillableEntity be :  billableEntities){
-                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getInvoiceDate(),
+                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), billingRun.getLastTransactionDate(),
                         billingRun.isExceptionalBR() ? createFilter(billingRun, false) : null, rtPaginationSize));
             }
         }
@@ -1031,8 +1035,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
             invoiceLinesService.uninvoiceILs(excludedPrepaidInvoices);//reopen ILs not created from  RTs
             invoiceLinesService.cancelIlForRemoveByInvoices(excludedPrepaidInvoices);//cancell ILs created from RTs
-            invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
+            invoiceService.deleteInvoices(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
                 BillingAccount ba = getEntityManager().getReference(BillingAccount.class, rejectedBillingAccountId);
                 rejectedBillingAccountService.create(ba, getEntityManager().getReference(BillingRun.class, billingRun.getId()), "Billing account did not reach invoicing threshold");

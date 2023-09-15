@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
@@ -34,6 +35,7 @@ import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.InvoiceTypeRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.billing.BasicInvoice;
@@ -69,6 +71,7 @@ import org.meveo.service.billing.impl.InvoiceSubTotalsService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class InvoiceResourceImpl implements InvoiceResource {
 
 	private static final String PPL_CREATION = "PPL_CREATION";

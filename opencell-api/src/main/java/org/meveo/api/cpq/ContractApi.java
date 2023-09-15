@@ -12,9 +12,11 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.ContractDto;
@@ -32,6 +34,7 @@ import org.meveo.apiv2.cpq.mapper.BillingRuleMapper;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -48,9 +51,12 @@ import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -63,6 +69,7 @@ import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.TradingContractItemService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 /**
  * @author Tarik F.
@@ -102,11 +109,19 @@ public class ContractApi extends BaseApi{
 	private TradingContractItemService tradingContractItemService;
     @Inject
     private TradingCurrencyService tradingCurrencyService;
+    @Inject
+    private ResourceBundle resourceMessages;
+	
+	@Inject
+	private AccountingArticleService accountingArticleService;
+	@Inject
+	private FinanceSettingsService financeSettingsService;
 	
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
 	private static final String CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN = "Date end (%s) must be great than date begin (%s)";
 	private static final String CONTRACT_STATUS_CLOSED = "Closed status of contract cannot be edited";
+	private final static String CONTRACT_ACTIVE_CAN_NOT_UPDATE = "status of the contract (%s) is %s, it can not be updated";
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 
@@ -119,7 +134,7 @@ public class ContractApi extends BaseApi{
 
 		checkParams(dto);
 		//check if date end great than date begin
-		if(dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
+		if(dto.getEndDate()!=null && dto.getBeginDate()!=null && dto.getEndDate().compareTo(dto.getBeginDate()) < 0) { 
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			throw new BusinessApiException(String.format(CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN, format.format(dto.getEndDate()), format.format(dto.getBeginDate())));
 		}
@@ -130,11 +145,18 @@ public class ContractApi extends BaseApi{
 		// create new contract
 		contract = new Contract();
 		contract.setCode(dto.getCode());
+		if(dto.isDisabled()!=null) {
+			contract.setDisabled(dto.isDisabled());
+		}
 		contract.setBeginDate(dto.getBeginDate());
 		contract.setEndDate(dto.getEndDate());
 		contract.setContractDate(dto.getContractDate());
-		contract.setRenewal(dto.isRenewal());
-		contract.setContractDuration(dto.getContractDuration());
+		if(dto.getRenewal()!=null) {
+			contract.setRenewal(dto.getRenewal());
+		}
+		if(dto.getContractDuration()!=null) {
+			contract.setContractDuration(dto.getContractDuration());
+		}
 		contract.setDescription(dto.getDescription());
 		contract.setApplicationEl(dto.getApplicationEl());
 		changeAccountLevel(dto, contract);
@@ -189,6 +211,7 @@ public class ContractApi extends BaseApi{
 				contract.setCustomerAccount(cusotmerAccount);
 				break;
 			default:
+				contract.setCustomerAccount(null);
 				break;
 		}
 	}
@@ -198,7 +221,7 @@ public class ContractApi extends BaseApi{
 		checkBillingRulesRedirectionIsEnabled(dto);
 		checkParams(dto);
 		//check if date end great than date begin
-		if(dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
+		if(dto.getEndDate()!=null && dto.getBeginDate()!=null && dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			throw new BusinessApiException(String.format(CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN, format.format(dto.getEndDate()), format.format(dto.getBeginDate())));
 		}
@@ -210,26 +233,40 @@ public class ContractApi extends BaseApi{
 		if (contract == null)
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
 		//check the status of the contract
+		if(contract.getStatus().equalsIgnoreCase(ContractStatusEnum.ACTIVE.toString())) {
+			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_UPDATE, contract.getCode(), contract.getStatus()));
+		}
 		if (ContractStatusEnum.CLOSED.toString().equals(contract.getStatus())) {
 			throw new MeveoApiException(CONTRACT_STATUS_CLOSED);
-		} else if (ContractStatusEnum.ACTIVE.toString().equals(contract.getStatus())) {
-			contract.setEndDate(dto.getEndDate());
-		} else {
+		}
+		if(!StringUtils.isBlank(dto.getStatus())) {
 			checkStatus(dto.getStatus());
 			contract.setStatus(dto.getStatus());
-			contract.setCode(dto.getCode());
+		}
+		if(dto.isDisabled()!=null) {
+			contract.setDisabled(dto.isDisabled());
+		}
+		if(dto.getBeginDate()!=null) {
 			contract.setBeginDate(dto.getBeginDate());
+		}
+		if(dto.getEndDate()!=null) {
 			contract.setEndDate(dto.getEndDate());
+		}
+		if(dto.getContractDate()!=null) {
 			contract.setContractDate(dto.getContractDate());
-			contract.setRenewal(dto.isRenewal());
+		}
+		if(dto.getRenewal()!=null) {
+			contract.setRenewal(dto.getRenewal());
+		}
+		if(dto.getContractDuration()!=null) {
 			contract.setContractDuration(dto.getContractDuration());
+		}
+		if(!StringUtils.isBlank(dto.getDescription())) {
 			contract.setDescription(dto.getDescription());
+		}
+		if(!StringUtils.isBlank(dto.getApplicationEl())) {
 			contract.setApplicationEl(dto.getApplicationEl());
-
-			contract.setBillingAccount(null);
-			contract.setSeller(null);
-			contract.setCustomer(null);
-			contract.setCustomerAccount(null);
+		}
 			changeAccountLevel(dto, contract);
 
 			// update billing rules
@@ -242,7 +279,7 @@ public class ContractApi extends BaseApi{
 					contract.getBillingRules().add(br);
 				}
 			}
-		}
+		
 
 		try {
 			populateCustomFields(dto.getCustomFields(), contract, false);
@@ -296,12 +333,13 @@ public class ContractApi extends BaseApi{
 	}
 
 	private void checkStatus(String contractStatus) {
-		if(StringUtils.isBlank(contractStatus)) throw new MissingParameterException("status");
+		if(!StringUtils.isBlank(contractStatus)) {
 		List<String> allStatus = allStatus(ContractStatusEnum.class, "contract.status", "");
-		if(!allStatus.contains(contractStatus.toLowerCase())) {
+		if(!allStatus.contains(contractStatus.toLowerCase())) 
 			throw new MeveoApiException("Status is invalid, here is the list of available status : " + allStatus);
 		}
 	}
+	
 
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "contracts.contract", 
@@ -387,7 +425,14 @@ public class ContractApi extends BaseApi{
 			throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
 		}
     	item.setApplicationEl(contractItemDto.getApplicationEl());
-
+    	
+    	if (contractItemDto.getApplicableOnOverriddenPrice() != null) {
+			if (contractItemDto.getApplicableOnOverriddenPrice() && ContractRateTypeEnum.FIXED.equals(item.getContractRateType())) {
+				throw new BusinessException(resourceMessages.getString("contract.applicable.on.overridden.price.error"));
+			}
+    		item.setApplicableOnOverriddenPrice(contractItemDto.getApplicableOnOverriddenPrice());
+    	}
+	    item.getTargetAccountingArticles().addAll(getAccountingArticles(contractItemDto.getTargetAccountingArticleCodes()));
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
     		contractItemService.create(item);
@@ -396,7 +441,19 @@ public class ContractApi extends BaseApi{
     		throw new MeveoApiException(e);
     	}
     }
-    
+    private Set<AccountingArticle> getAccountingArticles(Set<String> codes){
+	    final Set<AccountingArticle> accountingArticles = new HashSet<>();
+	    if(CollectionUtils.isNotEmpty(codes)){
+		    codes.forEach(code -> {
+			    AccountingArticle accountingArticle = accountingArticleService.findByCode(code);
+			    if(accountingArticle == null){
+				    throw new EntityDoesNotExistsException(AccountingArticle.class, code);
+			    }
+			    accountingArticles.add(accountingArticle);
+		    });
+	    }
+		return accountingArticles;
+    }
     public void updateContractLine(ContractItemDto contractItemDto) {
 		checkParams(contractItemDto);
     	final ContractItem item = contractItemService.findByCode(contractItemDto.getCode());
@@ -438,6 +495,16 @@ public class ContractApi extends BaseApi{
 			throw new InvalidParameterException("generate separate discount line is valable only for the types 'Global discount' and 'Custom discount grid'");
 		}
 		item.setApplicationEl(contractItemDto.getApplicationEl());
+		
+		if (contractItemDto.getApplicableOnOverriddenPrice() != null) {
+			if (contractItemDto.getApplicableOnOverriddenPrice() && ContractRateTypeEnum.FIXED.equals(item.getContractRateType())) {
+				throw new BusinessException(resourceMessages.getString("contract.applicable.on.overridden.price.error"));
+			}
+    		item.setApplicableOnOverriddenPrice(contractItemDto.getApplicableOnOverriddenPrice());
+    	}
+		item.getTargetAccountingArticles().clear();
+	    item.getTargetAccountingArticles().addAll(getAccountingArticles(contractItemDto.getTargetAccountingArticleCodes()));
+		
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);
     		contractItemService.updateContractItem(item);
@@ -481,9 +548,15 @@ public class ContractApi extends BaseApi{
     		missingParameters.add("contractCode");
     	if(Strings.isEmpty(contractItemDto.getCode()))  {
 			missingParameters.add("code");
-		}
-		if(Strings.isEmpty(contractItemDto.getChargeTemplateCode())) {
-			missingParameters.add("chargeTemplateCode");
+    	}
+		if(CollectionUtils.isEmpty(contractItemDto.getTargetAccountingArticleCodes()) || Strings.isEmpty(contractItemDto.getChargeTemplateCode())) {
+			FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
+			if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.AFTER_PRICING && CollectionUtils.isNotEmpty(contractItemDto.getTargetAccountingArticleCodes())){
+				throw new BusinessApiException("targetAccountignArticles can be set only if articleSelectionMode=BEFORE_PRICING");
+			}else if(financeSettings != null && financeSettings.getArticleSelectionMode() == ArticleSelectionModeEnum.BEFORE_PRICING &&
+						(CollectionUtils.isEmpty(contractItemDto.getTargetAccountingArticleCodes()) && Strings.isEmpty(contractItemDto.getChargeTemplateCode())) ){
+				throw new BusinessApiException("chargeTemplate and targetAccountingArticles cannot both be null/empty");
+			}
 		}
 		checkPricePlanPeriod(contractItemDto);
     	handleMissingParameters();
@@ -493,10 +566,6 @@ public class ContractApi extends BaseApi{
 	private void checkParams(ContractDto dto) {
 		if(Strings.isEmpty(dto.getCode()))
 			missingParameters.add("code");
-		if(dto.getContractAccountLevel() == null)
-			missingParameters.add("contractAccountLevel");
-		if(Strings.isEmpty(dto.getAccountCode()))
-			missingParameters.add("accountCode");
 		if(dto.getBeginDate() == null)
 			missingParameters.add("beginDate");
 		if(dto.getEndDate() == null)

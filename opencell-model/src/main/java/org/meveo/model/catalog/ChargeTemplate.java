@@ -299,6 +299,138 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "internal_note")
     private String internalNote;
     
+    @Type(type = "json")
+    @Column(name = "parameter1_translated_description", columnDefinition = "jsonb")
+    private Map<String, String> parameter1TranslatedDescriptions = initParameterTranslatedDescriptions("1");
+
+    @Type(type = "json")
+    @Column(name = "parameter2_translated_description", columnDefinition = "jsonb")
+    private Map<String, String> parameter2TranslatedDescriptions = initParameterTranslatedDescriptions("2");
+
+    @Type(type = "json")
+    @Column(name = "parameter3_translated_description", columnDefinition = "jsonb")
+    private Map<String, String> parameter3TranslatedDescriptions = initParameterTranslatedDescriptions("3");
+
+    @Type(type = "json")
+    @Column(name = "parameter_extra_translated_description", columnDefinition = "jsonb")
+    private Map<String, String> parameterExtraTranslatedDescriptions = initParameterTranslatedDescriptions("extra");
+    
+    @Column(name = "parameter1_description")
+    private String parameter1Description = "Parameter 1";
+
+    @Column(name = "parameter2_description")
+    private String parameter2Description = "Parameter 2";
+
+    @Column(name = "parameter3_description")
+    private String parameter3Description = "Parameter 3";
+    
+    @Column(name = "parameter_extra_description")
+    private String parameterExtraDescription = "Parameter extra";
+    
+    public enum ParameterFormat {
+        TEXT,
+        INTEGER,
+        DECIMAL,
+        DATE,
+        BOOLEAN
+    }
+    
+    @Column(name = "parameter1_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameter1Format= ParameterFormat.TEXT;
+    
+    @Column(name = "parameter2_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameter2Format= ParameterFormat.TEXT;
+    
+    @Column(name = "parameter3_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameter3Format= ParameterFormat.TEXT;
+    
+    @Column(name = "parameter_extra_format")
+    @Enumerated(EnumType.STRING)
+    private ParameterFormat parameterExtraFormat= ParameterFormat.TEXT;
+        
+    @Column(name = "parameter1_is_mandatory")
+	@Type(type = "numeric_boolean")
+    private boolean parameter1IsMandatory;
+
+    @Column(name = "parameter1_is_hidden")
+	@Type(type = "numeric_boolean")
+    private boolean parameter1IsHidden;
+
+    @Column(name = "parameter2_is_mandatory")
+	@Type(type = "numeric_boolean")
+    private boolean parameter2IsMandatory;
+
+    @Column(name = "parameter2_is_hidden")
+	@Type(type = "numeric_boolean")
+    private boolean parameter2IsHidden;
+
+    @Column(name = "parameter3_is_mandatory")
+	@Type(type = "numeric_boolean")
+    private boolean parameter3IsMandatory;
+
+    @Column(name = "parameter3_is_hidden")
+	@Type(type = "numeric_boolean")    
+    private boolean parameter3IsHidden;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "parameter_extra_is_mandatory")
+    private boolean parameterExtraIsMandatory;
+
+    @Column(name = "parameter_extra_is_hidden")
+	@Type(type = "numeric_boolean")
+    private boolean parameterExtraIsHidden;
+    
+    @Type(type = "json")
+    @Column(name = "parameter1_translated_long_descriptions", columnDefinition = "jsonb")
+    private Map<String, String> parameter1TranslatedLongDescriptions;
+
+    @Type(type = "json")
+    @Column(name = "parameter2_translated_long_descriptions", columnDefinition = "jsonb")
+    private Map<String, String> parameter2TranslatedLongDescriptions;
+
+    @Type(type = "json")
+    @Column(name = "parameter3_translated_long_descriptions", columnDefinition = "jsonb")
+    private Map<String, String> parameter3TranslatedLongDescriptions;
+
+    @Type(type = "json")
+    @Column(name = "parameter_extra_translated_long_descriptions", columnDefinition = "jsonb")
+    private Map<String, String> parameterExtraTranslatedLongDescriptions;
+
+    public enum BusinessKeyFormat {
+        TEXT,
+        INTEGER
+    }
+    
+    @Column(name = "business_key_el", length = 2000)
+    @Size(max = 2000)
+    private String businessKeyEl;
+    
+    @Column(name = "business_key_description")
+    private String businessKeyDescription = "Business key";
+    
+    @Type(type = "json")
+    @Column(name = "business_key_translated_descriptions", columnDefinition = "jsonb")
+    private Map<String, String> businessKeyTranslatedDescriptions = initBusinessKeyTranslatedDescriptions();
+    
+    @Type(type = "json")
+    @Column(name = "business_key_translated_long_descriptions", columnDefinition = "jsonb")
+    private Map<String, String> businessKeyTranslatedLongDescriptions = initBusinessKeyTranslatedLongDescriptions();
+    
+    @Column(name = "business_key_format")
+    @Enumerated(EnumType.STRING)
+    private BusinessKeyFormat businessKeyFormat= BusinessKeyFormat.TEXT;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "business_key_is_mandatory")
+    private boolean businessKeyIsMandatory = false;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "business_key_is_hidden")
+    private boolean businessKeyIsHidden = false;
+    
     public String getInputUnitEL() {
         return inputUnitEL;
     }
@@ -664,4 +796,273 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     public void setPricePlans(Set<PricePlanMatrix> pricePlans) {
         this.pricePlans = pricePlans;
     }
+
+	public String getParameter1Description() {
+		return parameter1Description;
+	}
+
+	public void setParameter1Description(String parameter1Description) {
+		this.parameter1Description = parameter1Description;
+	}
+
+	public String getParameter2Description() {
+		return parameter2Description;
+	}
+
+	public void setParameter2Description(String parameter2Description) {
+		this.parameter2Description = parameter2Description;
+	}
+
+	public String getParameter3Description() {
+		return parameter3Description;
+	}
+
+	public void setParameter3Description(String parameter3Description) {
+		this.parameter3Description = parameter3Description;
+	}
+
+	public String getParameterExtraDescription() {
+		return parameterExtraDescription;
+	}
+
+	public void setParameterExtraDescription(String parameterExtraDescription) {
+		this.parameterExtraDescription = parameterExtraDescription;
+	}
+
+	public ParameterFormat getParameter1Format() {
+		return parameter1Format;
+	}
+
+	public void setParameter1Format(ParameterFormat parameter1Format) {
+		this.parameter1Format = parameter1Format;
+	}
+
+	public ParameterFormat getParameter2Format() {
+		return parameter2Format;
+	}
+
+	public void setParameter2Format(ParameterFormat parameter2Format) {
+		this.parameter2Format = parameter2Format;
+	}
+
+	public ParameterFormat getParameter3Format() {
+		return parameter3Format;
+	}
+
+	public void setParameter3Format(ParameterFormat parameter3Format) {
+		this.parameter3Format = parameter3Format;
+	}
+
+	public ParameterFormat getParameterExtraFormat() {
+		return parameterExtraFormat;
+	}
+
+	public void setParameterExtraFormat(ParameterFormat parameterExtraFormat) {
+		this.parameterExtraFormat = parameterExtraFormat;
+	}
+
+	public boolean isParameter1IsMandatory() {
+		return parameter1IsMandatory;
+	}
+
+	public void setParameter1IsMandatory(boolean parameter1IsMandatory) {
+		this.parameter1IsMandatory = parameter1IsMandatory;
+	}
+
+	public boolean isParameter1IsHidden() {
+		return parameter1IsHidden;
+	}
+
+	public void setParameter1IsHidden(boolean parameter1IsHidden) {
+		this.parameter1IsHidden = parameter1IsHidden;
+	}
+
+	public boolean isParameter2IsMandatory() {
+		return parameter2IsMandatory;
+	}
+
+	public void setParameter2IsMandatory(boolean parameter2IsMandatory) {
+		this.parameter2IsMandatory = parameter2IsMandatory;
+	}
+
+	public boolean isParameter2IsHidden() {
+		return parameter2IsHidden;
+	}
+
+	public void setParameter2IsHidden(boolean parameter2IsHidden) {
+		this.parameter2IsHidden = parameter2IsHidden;
+	}
+
+	public boolean isParameter3IsMandatory() {
+		return parameter3IsMandatory;
+	}
+
+	public void setParameter3IsMandatory(boolean parameter3IsMandatory) {
+		this.parameter3IsMandatory = parameter3IsMandatory;
+	}
+
+	public boolean isParameter3IsHidden() {
+		return parameter3IsHidden;
+	}
+
+	public void setParameter3IsHidden(boolean parameter3IsHidden) {
+		this.parameter3IsHidden = parameter3IsHidden;
+	}
+
+	public boolean isParameterExtraIsHidden() {
+		return parameterExtraIsHidden;
+	}
+
+	public void setParameterExtraIsHidden(boolean parameterExtraIsHidden) {
+		this.parameterExtraIsHidden = parameterExtraIsHidden;
+	}
+
+	public boolean isParameterExtraIsMandatory() {
+		return parameterExtraIsMandatory;
+	}
+
+	public void setParameterExtraIsMandatory(boolean parameterExtraIsMandatory) {
+		this.parameterExtraIsMandatory = parameterExtraIsMandatory;
+	}
+
+	public Map<String, String> getParameter1TranslatedDescriptions() {
+		return parameter1TranslatedDescriptions;
+	}
+
+	public void setParameter1TranslatedDescriptions(Map<String, String> parameter1TranslatedDescriptions) {
+		this.parameter1TranslatedDescriptions = parameter1TranslatedDescriptions;
+	}
+
+	public Map<String, String> getParameter2TranslatedDescriptions() {
+		return parameter2TranslatedDescriptions;
+	}
+
+	public void setParameter2TranslatedDescriptions(Map<String, String> parameter2TranslatedDescriptions) {
+		this.parameter2TranslatedDescriptions = parameter2TranslatedDescriptions;
+	}
+
+	public Map<String, String> getParameter3TranslatedDescriptions() {
+		return parameter3TranslatedDescriptions;
+	}
+
+	public void setParameter3TranslatedDescriptions(Map<String, String> parameter3TranslatedDescriptions) {
+		this.parameter3TranslatedDescriptions = parameter3TranslatedDescriptions;
+	}
+
+	public Map<String, String> getParameterExtraTranslatedDescriptions() {
+		return parameterExtraTranslatedDescriptions;
+	}
+
+	public void setParameterExtraTranslatedDescriptions(Map<String, String> parameterExtraTranslatedDescriptions) {
+		this.parameterExtraTranslatedDescriptions = parameterExtraTranslatedDescriptions;
+	}
+
+	public Map<String, String> getParameter1TranslatedLongDescriptions() {
+		return parameter1TranslatedLongDescriptions;
+	}
+
+	public void setParameter1TranslatedLongDescriptions(Map<String, String> parameter1TranslatedLongDescriptions) {
+		this.parameter1TranslatedLongDescriptions = parameter1TranslatedLongDescriptions;
+	}
+
+	public Map<String, String> getParameter2TranslatedLongDescriptions() {
+		return parameter2TranslatedLongDescriptions;
+	}
+
+	public void setParameter2TranslatedLongDescriptions(Map<String, String> parameter2TranslatedLongDescriptions) {
+		this.parameter2TranslatedLongDescriptions = parameter2TranslatedLongDescriptions;
+	}
+
+	public Map<String, String> getParameter3TranslatedLongDescriptions() {
+		return parameter3TranslatedLongDescriptions;
+	}
+
+	public void setParameter3TranslatedLongDescriptions(Map<String, String> parameter3TranslatedLongDescriptions) {
+		this.parameter3TranslatedLongDescriptions = parameter3TranslatedLongDescriptions;
+	}
+
+	public Map<String, String> getParameterExtraTranslatedLongDescriptions() {
+		return parameterExtraTranslatedLongDescriptions;
+	}
+
+	public void setParameterExtraTranslatedLongDescriptions(Map<String, String> parameterExtraTranslatedLongDescriptions) {
+		this.parameterExtraTranslatedLongDescriptions = parameterExtraTranslatedLongDescriptions;
+	}
+
+	public String getBusinessKeyEl() {
+		return businessKeyEl;
+	}
+
+	public void setBusinessKeyEl(String businessKeyEl) {
+		this.businessKeyEl = businessKeyEl;
+	}
+
+	public String getBusinessKeyDescription() {
+		return businessKeyDescription;
+	}
+
+	public void setBusinessKeyDescription(String businessKeyDescription) {
+		this.businessKeyDescription = businessKeyDescription;
+	}
+
+	public Map<String, String> getBusinessKeyTranslatedDescriptions() {
+		return businessKeyTranslatedDescriptions;
+	}
+
+	public void setBusinessKeyTranslatedDescriptions(Map<String, String> businessKeyTranslatedDescriptions) {
+		this.businessKeyTranslatedDescriptions = businessKeyTranslatedDescriptions;
+	}
+
+	public Map<String, String> getBusinessKeyTranslatedLongDescriptions() {
+		return businessKeyTranslatedLongDescriptions;
+	}
+
+	public void setBusinessKeyTranslatedLongDescriptions(Map<String, String> businessKeyTranslatedLongDescriptions) {
+		this.businessKeyTranslatedLongDescriptions = businessKeyTranslatedLongDescriptions;
+	}
+
+	public BusinessKeyFormat getBusinessKeyFormat() {
+		return businessKeyFormat;
+	}
+
+	public void setBusinessKeyFormat(BusinessKeyFormat businessKeyFormat) {
+		this.businessKeyFormat = businessKeyFormat;
+	}
+
+	public boolean isBusinessKeyIsMandatory() {
+		return businessKeyIsMandatory;
+	}
+
+	public void setBusinessKeyIsMandatory(boolean businessKeyIsMandatory) {
+		this.businessKeyIsMandatory = businessKeyIsMandatory;
+	}
+
+	public boolean isBusinessKeyIsHidden() {
+		return businessKeyIsHidden;
+	}
+
+	public void setBusinessKeyIsHidden(boolean businessKeyIsHidden) {
+		this.businessKeyIsHidden = businessKeyIsHidden;
+	}
+     
+ 	private Map<String, String> initParameterTranslatedDescriptions(String parameterNumber) {
+        Map<String, String> tradingLanguageMap = new HashMap<>();
+        tradingLanguageMap.put("ENG", "Parameter " + parameterNumber);
+        tradingLanguageMap.put("FRA", "Paramètre " + parameterNumber);
+        return tradingLanguageMap;
+	}
+	
+	private Map<String, String> initBusinessKeyTranslatedDescriptions() {
+        Map<String, String> tradingLanguageMap = new HashMap<>();
+        tradingLanguageMap.put("ENG", "Business key");
+        tradingLanguageMap.put("FRA", "Clé métier");
+        return tradingLanguageMap;
+	}
+	
+	private Map<String, String> initBusinessKeyTranslatedLongDescriptions() {
+        Map<String, String> tradingLanguageMap = new HashMap<>();
+        tradingLanguageMap.put("ENG", "Business key is computed at rating using a custom expression set on the charge");
+        tradingLanguageMap.put("FRA", "La clé métier est calculé à la valorisation en utilisant une formule personnalisé enregistrée sur la charge");
+        return tradingLanguageMap;
+	}
 }

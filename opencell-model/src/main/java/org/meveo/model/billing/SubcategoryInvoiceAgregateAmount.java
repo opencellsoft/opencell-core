@@ -91,6 +91,35 @@ public class SubcategoryInvoiceAgregateAmount implements Serializable, Cloneable
         }
     }
 
+    public SubcategoryInvoiceAgregateAmount(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax,
+                                            BigDecimal transactionalAmountWithoutTax, BigDecimal transactionalAmountWithTax, BigDecimal transactionalAmountTax) {
+        super();
+
+        if (amountWithoutTax != null) {
+            this.amountWithoutTax = amountWithoutTax;
+        }
+
+        if (amountWithTax != null) {
+            this.amountWithTax = amountWithTax;
+        }
+
+        if (amountTax != null) {
+            this.amountTax = amountTax;
+        }
+
+        if (transactionalAmountWithoutTax != null) {
+            this.transactionalAmountWithoutTax = transactionalAmountWithoutTax;
+        }
+
+        if (transactionalAmountWithTax != null) {
+            this.transactionalAmountWithTax = transactionalAmountWithTax;
+        }
+
+        if (transactionalAmountTax != null) {
+            this.transactionalAmountTax = transactionalAmountTax;
+        }
+    }
+
     /**
      * @return Amount with tax
      */
@@ -297,7 +326,8 @@ public class SubcategoryInvoiceAgregateAmount implements Serializable, Cloneable
      */
     @Override
     public SubcategoryInvoiceAgregateAmount clone() {
-        return new SubcategoryInvoiceAgregateAmount(amountWithoutTax, amountWithTax, amountTax);
+        return new SubcategoryInvoiceAgregateAmount(amountWithoutTax, amountWithTax, amountTax,
+                transactionalAmountWithoutTax, transactionalAmountWithTax, transactionalAmountTax);
     }
 
     /**

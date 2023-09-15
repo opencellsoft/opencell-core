@@ -92,11 +92,11 @@ public class AccountOperationsGenerationJobBean extends IteratorBasedJobBean<Lon
         List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, isExcludeInvoicesWithoutAmount, Boolean.TRUE);
 
         try {
-            String scriptInstanceCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_script")).getCode();
             Map<String, Object> context = new HashMap<String, Object>();
             if (this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables") != null) {
                 context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables");
             }
+            String scriptInstanceCode = Optional.ofNullable((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_script")).map(EntityReferenceWrapper::getCode).orElse(null);
             if (!StringUtils.isBlank(scriptInstanceCode)) {
                 script = scriptInstanceService.getScriptInstance(scriptInstanceCode);
                 script.init(context);
