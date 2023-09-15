@@ -22,6 +22,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -82,6 +83,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.CalendarBankingService;
 import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
+import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.util.DDRequestBuilderClass;
@@ -156,6 +158,8 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
 	private PaymentMethodService paymentMethodService = (PaymentMethodService) EjbUtils.getServiceInterface(PaymentMethodService.class.getSimpleName());
 	private CalendarBankingService calendarBankingService = (CalendarBankingService) EjbUtils.getServiceInterface(CalendarBankingService.class.getSimpleName());
+	private DDRequestLOTService ddRequestLOTService = (DDRequestLOTService) EjbUtils.getServiceInterface(DDRequestLOTService.class.getSimpleName());
+	
 
 	private Pattern pattern = Pattern.compile(IBAN_PATTERN);
 
@@ -170,6 +174,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
 	@Override
 	public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider, JobExecutionResultImpl result) throws BusinessException {
+		ddRequestLot = ddRequestLOTService.findById(ddRequestLot.getId(), Arrays.asList("ddrequestItems"));
 		if (ddRequestLot.getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.DEBIT) {
 			generateDDRequestLotFileForSSD(ddRequestLot, appProvider);
 		} else {
