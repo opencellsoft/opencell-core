@@ -16,6 +16,8 @@ public class InvoicingItem {
 	private BigDecimal amountWithTax = BigDecimal.ZERO;
 	private List<Long> ilIDs = new ArrayList<>();
 	private String invoiceCategoryId;
+	private String invoiceKey;
+
 	public InvoicingItem(Object[] fields) {
 		int i = 0;
 		this.billingAccountId = (Long) fields[i++];
@@ -27,6 +29,7 @@ public class InvoicingItem {
 		this.amountTax = (BigDecimal) fields[i++];
 		this.count = (Long) fields[i++];
 		this.ilIDs = Pattern.compile(",").splitAsStream((String) fields[i++]).mapToLong(Long::parseLong).boxed().collect(Collectors.toList());
+		this.invoiceKey = (String) fields[i++];
 	}
 	/**
 	 * @param items
@@ -141,5 +144,21 @@ public class InvoicingItem {
 	 */
 	public void setInvoiceCategoryId(String invoiceCategoryId) {
 		this.invoiceCategoryId = invoiceCategoryId;
+	}
+
+	public String getInvoiceKey() {
+		return invoiceKey;
+	}
+
+	public void setInvoiceKey(String invoiceKey) {
+		this.invoiceKey = invoiceKey;
+	}
+
+	@Override
+	public String toString() {
+		return "InvoicingItem [billingAccountId : " + billingAccountId + ", invoiceSubCategoryId : " + invoiceSubCategoryId
+				+ ", userAccountId : " + userAccountId + ", amountWithoutTax : " + amountWithoutTax
+				+ ", amountTax : " + amountTax + ", amountWithTax : " + amountWithTax  + ", invoiceCategoryId : " + invoiceCategoryId
+				+ ", invoiceKey : " + invoiceKey + "]";
 	}
 }
