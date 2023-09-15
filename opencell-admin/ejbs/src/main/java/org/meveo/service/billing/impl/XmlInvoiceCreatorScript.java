@@ -2815,7 +2815,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element transactionalUnitPrice = doc.createElement("transactionalUnitPrice");
         Text transactionalUnitPriceTxt = this.createTextNode(doc, invoiceLine.getTransactionalUnitPrice() != null ? invoiceLine.getTransactionalUnitPrice().toPlainString() : "");
-        unitPrice.appendChild(transactionalUnitPriceTxt);
+	    transactionalUnitPrice.appendChild(transactionalUnitPriceTxt);
 
         line.appendChild(unitPrice);
         line.appendChild(transactionalUnitPrice);
