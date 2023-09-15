@@ -48,7 +48,7 @@ import javax.ws.rs.core.MediaType;
 public interface CurrencyIsoRs extends IBaseRs {
 
     /**
-     * Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created
+     * Creates currency base on currency code. If the currency code does not exists, a currency record is created
      * 
      * @param currencyIsoDto currency iso
      * @return action status.
@@ -56,8 +56,8 @@ public interface CurrencyIsoRs extends IBaseRs {
     @POST
     @Path("/")
 	@Operation(
-			summary=" Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created  ",
-			description=" Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created  ",
+			summary=" Creates currency base on currency code. If the currency code does not exists, a currency record is created  ",
+			description=" Creates currency base on currency code. If the currency code does not exists, a currency record is created  ",
 			operationId="    POST_CurrencyIso_ ",
 			responses= {
 				@ApiResponse(description=" action status. ",
@@ -117,8 +117,7 @@ public interface CurrencyIsoRs extends IBaseRs {
     ActionStatus remove(@PathParam("currencyCode") String currencyCode);
 
     /**
-     * Modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists. The operation fails if the tradingCurrency is
-     * null
+     * Modify a currency. Same input parameter as create. The operation fails if the currency is null
      * 
      * @param currencyIsoDto currency iso
      * @return action status.
@@ -126,8 +125,8 @@ public interface CurrencyIsoRs extends IBaseRs {
     @PUT
     @Path("/")
 	@Operation(
-			summary=" Modify a tradingCurrency",
-			description=" Modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists. The operation fails if the tradingCurrency is null  ",
+			summary=" Modify a currency",
+			description=" Modify a currency. Same input parameter as create. The operation fails if the currency is null  ",
 			operationId="    PUT_CurrencyIso_update",
 			responses= {
 				@ApiResponse(description=" action status. ",
@@ -141,15 +140,15 @@ public interface CurrencyIsoRs extends IBaseRs {
     ActionStatus update(CurrencyIsoDto currencyIsoDto);
 
     /**
-     * Creates or modify a tradingCurrency base on currency code. 
+     * Creates or modify a currency base on currency code. 
      * @param currencyIsoDto currency iso to create or update
      * @return action status.
      */
     @POST
     @Path("/createOrUpdate")
 	@Operation(
-			summary=" Creates or modify a tradingCurrency base on currency code.  ",
-			description=" Creates or modify a tradingCurrency base on currency code.  ",
+			summary=" Creates or modify a currency base on currency code.  ",
+			description=" Creates or modify a currency base on currency code.  ",
 			operationId="    POST_CurrencyIso_createOrUpdate ",
 			responses= {
 				@ApiResponse(description=" action status. ",
