@@ -8405,4 +8405,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="INTRD-14424_20230710" author="ThangNguyen">
+        <addColumn tableName="billing_invoice_line">
+            <column name="invoice_key" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

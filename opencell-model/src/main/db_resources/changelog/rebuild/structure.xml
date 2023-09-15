@@ -10963,6 +10963,7 @@
             <column name="adjustment_status" type="varchar(50)"/>
             <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
 			<column name="linked_invoice_line_id" type="bigint"/>
+            <column name="invoice_key" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
