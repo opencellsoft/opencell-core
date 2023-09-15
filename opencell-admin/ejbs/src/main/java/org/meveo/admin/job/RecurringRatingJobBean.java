@@ -116,7 +116,6 @@ public class RecurringRatingJobBean extends IteratorBasedJobBean<Long> {
         RatingResult ratingResult = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId, rateUntilDate, false, null);
         if (ratingResult.getWalletOperations().isEmpty()) {
             jobExecutionResult.unRegisterSucces(); // Reduce success as success is added automatically in main loop of IteratorBasedJobBean and registerWarning is an alternative to registerSucess
-            jobExecutionResult.registerWarning(chargeInstanceId + " not rated");
         }
     }
 }
