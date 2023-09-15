@@ -19,7 +19,7 @@ public class BillingAccountDetailsItem {
 	private Long paymentMethodId;
 	private PaymentMethodEnum paymentMethodType;
 	private BigDecimal dueBalance = BigDecimal.ZERO;
-	private List<InvoicingItem> invoicingItems;
+	private List<List<InvoicingItem>> invoicingItems;
 	private String discountPlanInstancesSummary;
 	private List<DiscountPlanSummary> discountPlanSummaries;
 	private int totalILs;
@@ -108,11 +108,12 @@ public class BillingAccountDetailsItem {
 	public void setDueBalance(BigDecimal dueBalance) {
 		this.dueBalance = dueBalance;
 	}
-	public List<InvoicingItem> getInvoicingItems() {
+	public List<List<InvoicingItem>> getInvoicingItems() {
 		return invoicingItems;
 	}
-	public void setInvoicingItems(List<InvoicingItem> invoicingItems) {
-		this.totalILs = invoicingItems.stream().mapToInt(InvoicingItem::getCount).sum();
+	public void setInvoicingItems(List<List<InvoicingItem>> invoicingItems) {
+		this.totalILs = (invoicingItems.stream().flatMap(List::stream).collect(Collectors.toList())).stream()
+				.mapToInt(InvoicingItem::getCount).sum();
 		this.invoicingItems = invoicingItems;
 	}
 	public List<DiscountPlanSummary> getdiscountPlanSummaries() {
