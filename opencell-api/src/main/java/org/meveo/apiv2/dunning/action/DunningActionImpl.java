@@ -8,6 +8,7 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.DunningAction;
@@ -39,6 +40,10 @@ public class DunningActionImpl implements DunningActionResource{
     @Override
     public Response createDunningAction(DunningAction dunningAction) {
         globalSettingsVerifier.checkActivateDunning();
+        org.meveo.model.dunning.DunningAction dunningActionEntity = dunningActionService.findByCode(dunningAction.getCode());
+        if(dunningActionEntity != null) {
+            throw new EntityAlreadyExistsException("dunning action with code "+dunningAction.getCode()+" already exist.");
+        }
         org.meveo.model.dunning.DunningAction dunningActionToCreate = dunningAction.toEntity();
         dunningActionService.create(dunningActionToCreate);
         return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"the Dunning Action successfully created\"},\"id\":"+dunningActionToCreate.getId()+"} ").build();
