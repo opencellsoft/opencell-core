@@ -331,6 +331,13 @@ public class BillingCycle extends BusinessCFEntity {
     @Column(name = "application_el", length = 2000)
     @Size(max = 2000)
     private String applicationEl;
+    
+    /**
+     * Billing cycle aggregation setting for user accounts
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_user_accounts")
+    private boolean ignoreUserAccounts = true;
 
     public boolean isThresholdPerEntity() {
         return thresholdPerEntity;
@@ -779,4 +786,13 @@ public class BillingCycle extends BusinessCFEntity {
     public void setReportConfigBlockSizeArticles(int reportConfigBlockSizeArticles) {
         this.reportConfigBlockSizeArticles = reportConfigBlockSizeArticles;
     }
+
+	public boolean isIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
+
+	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+    
 }
