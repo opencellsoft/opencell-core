@@ -151,7 +151,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 					allErrors += (String) futureResult.get("allErrors");
 
 				} catch (InterruptedException e) {
-					// It was cancelled from outside - no interest
+					log.error("", e);
 
 				} catch (ExecutionException e) {
 					Throwable cause = e.getCause();
