@@ -113,6 +113,7 @@ public class InvoicingApi extends BaseApi {
         billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
         billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
         billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+        billingRun.setIgnoreUserAccounts(billingCycle.isIgnoreUserAccounts());
         billingRun.setProcessType(dto.getBillingRunTypeEnum());
         billingRun.setStartDate(dto.getStartDate());
         billingRun.setEndDate(dto.getEndDate());
@@ -224,6 +225,7 @@ public class InvoicingApi extends BaseApi {
             billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
             billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
             billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+            billingRun.setIgnoreUserAccounts(billingCycle.isIgnoreUserAccounts());
 
             if (dto.getIncrementalInvoiceLines() != null) {
                 billingRun.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());

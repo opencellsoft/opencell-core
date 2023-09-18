@@ -476,6 +476,13 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @Column(name = "application_el", length = 2000)
     @Size(max = 2000)
     private String applicationEl;
+    
+    /**
+     * Billing run aggregation setting for user accounts
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_user_accounts")
+    private boolean ignoreUserAccounts = true;
 
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -1147,4 +1154,13 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     public void setApplicationEl(String applicationEl) {
         this.applicationEl = applicationEl;
     }
+
+	public boolean isIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
+
+	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+    
 }

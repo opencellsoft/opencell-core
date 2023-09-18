@@ -282,6 +282,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getIncrementalInvoiceLines() != null) {
             entity.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
         }
+        if (dto.getIgnoreUserAccounts() != null) {
+            entity.setIgnoreUserAccounts(dto.getIgnoreUserAccounts());
+        }
 
         entity.setApplicationEl(dto.getApplicationEl());
 
