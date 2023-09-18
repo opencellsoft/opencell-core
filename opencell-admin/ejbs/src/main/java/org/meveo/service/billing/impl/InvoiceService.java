@@ -7718,14 +7718,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (!ZERO.equals(sumValidatedLinkedInvoice)) {
                 if(newInvoice.getAmountWithTax().add(sumValidatedLinkedInvoice).compareTo(srcInvoice.getAmountWithTax()) > 0) {
-                    throw new BusinessException("Adjustment Amount With Tax '" + newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
-                            + "' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()) + "'");
+                    throw new BusinessException("The adjustment amount exceeds the remaining invoice amount.");
                 }
             } else {
                 // check amount with tax
                 if (newInvoice.getAmountWithTax().compareTo(srcInvoice.getAmountWithTax()) > 0) {
-                    throw new BusinessException("Adjustment Amount With Tax '"+ newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
-                            +"' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())+"'");
+                    throw new BusinessException("The adjustment amount exceeds the remaining invoice amount.");
                 }
             }
         }
