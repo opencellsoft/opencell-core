@@ -21496,4 +21496,22 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </insert>
     </changeSet>
 
+    <changeSet id="#INTRD-18352_20230915_data" author="TarikFA.">
+        <insert tableName="electronic_invoice_settings">
+            <column name="id" valueSequenceNext="electronic_invoice_settings_seq"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+
+            <column name="force_xml_generation" valueNumeric="0" />
+            <column name="force_pdf_generation" valueNumeric="0" />
+            <column name="force_ubl_generation" valueNumeric="0" />
+            <column name="invoicing_job" value="InvoicingJob"/>
+            <column name="xml_generation_job" value="XMLGenrationJob"/>
+            <column name="pdf_generation_job" value="PDFGenrationJob"/>
+            <column name="ubl_generation_job" value="UBLGenerationJob"/>
+        </insert>
+    </changeSet>
+
+
 </databaseChangeLog>
