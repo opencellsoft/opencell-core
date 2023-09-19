@@ -50,6 +50,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -7688,7 +7691,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		File xmlInvoiceFileName = new File(ublDirectory.getAbsolutePath() + File.separator + "invoice_" + invoice.getInvoiceNumber() + "_" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".xml");
 		try {
-			Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()));
+			Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("r--r--r--");
+			Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()), PosixFilePermissions.asFileAttribute(permissions));
 		} catch (IOException e) {
 			throw new BusinessException(e);
 		}
