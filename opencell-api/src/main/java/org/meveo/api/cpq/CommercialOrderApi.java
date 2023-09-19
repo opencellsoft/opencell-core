@@ -1094,7 +1094,9 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 						orderOffer.getProducts().get(0).getProductVersion().getAttributes(),
 						orderProduct.getOrderAttributes()));
         processOrderAttribute(orderOfferDto,  orderOffer);
-        populateCustomFields(orderOfferDto.getCustomFields(), orderOffer, false);
+        if (orderOfferDto.getCustomFields() != null) {
+        	populateCustomFields(orderOfferDto.getCustomFields(), orderOffer, false);
+        }
     	orderOfferService.update(orderOffer);
     	return orderOfferDto;
     }
