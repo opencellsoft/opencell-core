@@ -935,13 +935,14 @@ public class InvoiceLine extends AuditableCFEntity {
 	@PreUpdate
 	public void prePersistOrUpdate() {
 		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
+		Integer decimalPalces = this.invoice.getTradingCurrency().getDecimalPlaces();
 		if (this.transactionalUnitPrice == null || (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency)) {
-			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
-			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
-			setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
-			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
-			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
-			setTransactionalUnitPrice(toTransactional(unitPrice, appliedRate));
+			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate, decimalPalces));
+			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate, decimalPalces));
+			setTransactionalAmountTax(toTransactional(amountTax, appliedRate, decimalPalces));
+			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate, decimalPalces));
+			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate, decimalPalces));
+			setTransactionalUnitPrice(toTransactional(unitPrice, appliedRate, decimalPalces));
 		} else if (this.useSpecificPriceConversion) {
 			setAmountWithoutTax(toFunctional(transactionalAmountWithoutTax, appliedRate));
 			setAmountWithTax(toFunctional(transactionalAmountWithTax, appliedRate));
@@ -971,8 +972,8 @@ public class InvoiceLine extends AuditableCFEntity {
 		return 961 + ("InvoiceLine" + getId()).hashCode();
 	}
 	
-	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
-		return amount != null ? amount.multiply(rate) : ZERO;
+	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate, Integer decimalPlaces) {
+		return amount != null ? amount.multiply(rate).setScale(decimalPlaces, RoundingMode.HALF_UP) : ZERO;
 	}
 
 	private BigDecimal toFunctional(BigDecimal amount, BigDecimal rate) {
