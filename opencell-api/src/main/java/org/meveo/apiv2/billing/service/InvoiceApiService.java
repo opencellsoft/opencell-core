@@ -278,7 +278,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 			if (invoiceLine != null) {
 				discountPlan = invoiceLine.getDiscountPlan();
 			}
-			invoiceLine = invoiceLinesService.initInvoiceLineFromResource(invoiceLineInput.getInvoiceLine(), invoiceLine, invoice);
+			invoiceLine = invoiceLinesService.initInvoiceLineFromResource(invoiceLineInput.getInvoiceLine(), invoiceLine);
 		}
 		// Populate Custom fields
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);

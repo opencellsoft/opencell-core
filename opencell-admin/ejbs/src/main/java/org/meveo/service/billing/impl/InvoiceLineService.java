@@ -39,6 +39,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
@@ -637,7 +638,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource) {
 		InvoiceLine invoiceLine = new InvoiceLine();
 		invoiceLine.setInvoice(invoice);
-		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine, invoice);
+		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		create(invoiceLine);
 		getEntityManager().flush();
 		return invoiceLine;
@@ -652,7 +653,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     public InvoiceLine getInvoiceLine(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource) {
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setInvoice(invoice);
-        invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine, invoice);
+        invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
         return invoiceLine;
     }
 
@@ -667,7 +668,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         return invoiceLine;
     }
 
-	public InvoiceLine initInvoiceLineFromResource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine, Invoice invoice) {
+	public InvoiceLine initInvoiceLineFromResource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
 		if(invoiceLine == null) {
 			invoiceLine = new InvoiceLine();
 		}
@@ -690,11 +691,21 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             if(userAccount == null) {
                 throw new EntityDoesNotExistsException(UserAccount.class, resource.getUserAccountCode());
             }
-            if(invoice.getBillingAccount().getId() != userAccount.getBillingAccount().getId()) {
+            Invoice invoice = invoiceLine.getInvoice();
+            
+            if(invoice == null) {
+            	if(StringUtils.isNotBlank(resource.getInvoiceId())){
+	            	invoice = invoiceService.findById(resource.getInvoiceId());
+	            	if(invoice == null) {
+	            		throw new NotFoundException("Invoice with id"+resource.getInvoiceId()+" does not exist.");
+	            	}
+            	}
+            }
+            if(!invoice.getBillingAccount().getId().equals(userAccount.getBillingAccount().getId())) {
             	throw new BusinessException("You cannot assign the user account with " + userAccount.getBillingAccount() + " to the invoice line, as it differs from the invoice's " + invoice.getBillingAccount());
             }
             invoiceLine.setUserAccount(userAccount);
-        } else if (resource.getUserAccountCode() != null && resource.getUserAccountCode().trim().isEmpty()) {
+        } else if (resource.getUserAccountCode() != null) {
             invoiceLine.setUserAccount(null);
         }
 
@@ -932,7 +943,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 	 */
 	public void updateInvoiceLineByInvoice(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine, invoice);
+		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		update(invoiceLine);
 	}
 
