@@ -8419,6 +8419,70 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="ignore_user_accounts" type="${type.boolean}" defaultValueNumeric="1" />
 		</addColumn>
 	</changeSet>
+    
+    <changeSet id="#INTRD-18393_20230920" author="TarikFA.">
+        <createSequence sequenceName="pdp_status_seq" startValue="1"/>
+        <createTable tableName="pdp_status">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pdp_status_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+
+            <column name="pdp_status" type="varchar(30)">
+                <constraints nullable="false" />
+            </column>
+            <column name="event_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="origin" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="pdp_status_history_seq" startValue="1"/>
+        <createTable tableName="pdp_status_history">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pdp_status_history_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+
+            <column name="transmitted_format" type="varchar(15)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="origin" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="return_code" type="int4" />
+            <column name="label" type="varchar(255)" />
+            <column name="invoice_identifier" type="varchar(50)" />
+            <column name="invoice_number" type="varchar(50)" />
+            <column name="invoice_id" type="bigint" />
+            <column name="status" type="varchar(30)" />
+            <column name="deposit_date" type="datetime" />
+            <column name="pdp_status_histories_id" type="bigint" />
+        </createTable>
+
+
+        <addForeignKeyConstraint baseTableName="pdp_status_history" baseColumnNames="invoice_id"
+                                 constraintName="fk_status_history_invoice" referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="pdp_status_history" baseColumnNames="pdp_status_histories_id"
+                                 constraintName="fk_status_history_id" referencedTableName="pdp_status_history"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
     <changeSet id="#INTRD-14904_20230915" author="TarikFA.">
         <createSequence sequenceName="electronic_invoice_settings_seq" startValue="1"/>
