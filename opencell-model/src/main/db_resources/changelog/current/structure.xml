@@ -8404,6 +8404,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  constraintName="accounting_article_amount_br_report_id_fk"
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-18386_20230915" author="AdilElJaouhari">
+    	<addColumn tableName="billing_cycle">
+			<column name="ignore_user_accounts" type="${type.boolean}" defaultValueNumeric="1" />
+		</addColumn>
+		<addColumn tableName="billing_billing_run">
+			<column name="ignore_user_accounts" type="${type.boolean}" defaultValueNumeric="1" />
+		</addColumn>
+	</changeSet>
 
     <changeSet id="#INTRD-14904_20230915" author="TarikFA.">
         <createSequence sequenceName="electronic_invoice_settings_seq" startValue="1"/>

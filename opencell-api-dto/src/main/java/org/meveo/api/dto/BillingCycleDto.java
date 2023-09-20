@@ -206,6 +206,8 @@ public class BillingCycleDto extends BusinessEntityDto {
     private Boolean ignoreSubscriptions;
     
     private Boolean ignoreOrders;
+    
+    private Boolean ignoreUserAccounts;
 
     /**
      * To decide to use incremental invoice lines or not.
@@ -298,6 +300,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             aggregateUnitAmounts = billingCycleEntity.isAggregateUnitAmounts();
             ignoreSubscriptions = billingCycleEntity.isIgnoreSubscriptions();
             ignoreOrders = billingCycleEntity.isIgnoreOrders();
+            ignoreUserAccounts = billingCycleEntity.isIgnoreUserAccounts();
         }
     }
 
@@ -792,4 +795,13 @@ public class BillingCycleDto extends BusinessEntityDto {
     public void setApplicationEl(String applicationEl) {
         this.applicationEl = applicationEl;
     }
+
+	public Boolean getIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
+
+	public void setIgnoreUserAccounts(Boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+
 }

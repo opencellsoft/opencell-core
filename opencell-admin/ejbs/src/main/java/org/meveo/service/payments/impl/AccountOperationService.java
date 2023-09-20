@@ -112,12 +112,14 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         LocalDate collectionDate = accountOperation.getCollectionDate() != null
         		?LocalDate.ofInstant(accountOperation.getCollectionDate().toInstant(), ZoneId.systemDefault())
         				:LocalDate.now();
-        
+
         if ((paymentLocalDate.toEpochDay() <= collectionDate.toEpochDay())) {
             throw new BusinessException("the paymentDate should be greated than the current collection date");
         }
-        if((paymentLocalDate.toEpochDay() - collectionDate.toEpochDay()) > appProvider.getMaximumDelay()) {
-            throw new BusinessException("the paymentDate should not exceed the current collection date by more than " + appProvider.getMaximumDelay());
+
+        int maxDelay = appProvider.getMaximumDelay() == null ? 0 : appProvider.getMaximumDelay();
+        if ((paymentLocalDate.toEpochDay() - collectionDate.toEpochDay()) > maxDelay) {
+            throw new BusinessException("the paymentDate should not exceed the current collection date by more than " + maxDelay);
         }
         
         if(appProvider.getMaximumDeferralPerInvoice() != null && accountOperation.getPaymentDeferralCount() != null) {
