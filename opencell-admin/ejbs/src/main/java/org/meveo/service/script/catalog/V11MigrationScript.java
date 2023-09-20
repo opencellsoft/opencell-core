@@ -10,6 +10,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMapping;
 import org.meveo.model.article.ArticleMappingLine;
@@ -29,6 +30,7 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -41,6 +43,7 @@ import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.script.Script;
 import org.meveo.service.tax.TaxClassService;
 
@@ -71,6 +74,9 @@ public class V11MigrationScript extends Script {
 			ChargeTemplateService.class.getSimpleName());
 	private PricePlanMatrixService pricePlanMatrixService = (PricePlanMatrixService) getServiceInterface(
 			PricePlanMatrixService.class.getSimpleName());
+
+    private CustomFieldTemplateService cftService = (CustomFieldTemplateService) getServiceInterface(
+            CustomFieldTemplateService.class.getSimpleName());
 
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
@@ -193,6 +199,7 @@ public class V11MigrationScript extends Script {
 			product.setAuditable(serviceTemplate.getAuditable());
 			List<ProductChargeTemplateMapping> productCharges = getProductCharges(product,serviceTemplate);
 			product.setProductCharges(productCharges);
+            copyCFTemplates(serviceTemplate, product);
 			product.setCfValues(serviceTemplate.getCfValues());
 			product.setCfAccumulatedValues(serviceTemplate.getCfAccumulatedValues());
 			product.setDisabled(serviceTemplate.isDisabled());
@@ -209,8 +216,24 @@ public class V11MigrationScript extends Script {
 		
 		return product;
 	}
+    private void copyCFTemplates(ICustomFieldEntity source, ICustomFieldEntity target) {
+        try {
+            String appliesToSource = CustomFieldTemplateService.calculateAppliesToValue(source);
+            String appliesToTarget = CustomFieldTemplateService.calculateAppliesToValue(target);
 
-	private ProductVersion createProductVersion(Product product) {
+            Map<String, CustomFieldTemplate> byAppliesTo = cftService.findByAppliesToNoCache(appliesToSource);
+            if (byAppliesTo == null || byAppliesTo.isEmpty()) {
+                return;
+            }
+            for (CustomFieldTemplate cft : byAppliesTo.values()) {
+                cftService.copyCustomFieldTemplate(cft, appliesToTarget);
+            }
+        } catch (Exception e) {
+            log.error("Can't copy CFs Templates between entities {} and {}.Error: {}", source, target, e.getMessage());
+        }
+    }
+
+    private ProductVersion createProductVersion(Product product) {
 		ProductVersion productVersion = new ProductVersion();
 		productVersion.setProduct(product);
 		productVersion.setShortDescription(product.getDescription());
