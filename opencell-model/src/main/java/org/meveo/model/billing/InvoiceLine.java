@@ -8,6 +8,7 @@ import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 import static org.meveo.model.billing.AdjustmentStatusEnum.NOT_ADJUSTED;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -943,12 +944,13 @@ public class InvoiceLine extends AuditableCFEntity {
 	public void prePersistOrUpdate() {
 		if (this.transactionalUnitPrice == null || (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency)) {
 			BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
-			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate));
-			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate));
-			setTransactionalAmountTax(toTransactional(amountTax, appliedRate));
-			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate));
-			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate));
-			setTransactionalUnitPrice(toTransactional(unitPrice, appliedRate));
+			Integer decimalPalces = this.invoice != null ? this.invoice.getTradingCurrency().getDecimalPlaces() : BaseEntity.NB_DECIMALS;
+			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate, decimalPalces));
+			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate, decimalPalces));
+			setTransactionalAmountTax(toTransactional(amountTax, appliedRate, decimalPalces));
+			setTransactionalDiscountAmount(toTransactional(discountAmount, appliedRate, decimalPalces));
+			setTransactionalRawAmount(toTransactional(rawAmount, appliedRate, decimalPalces));
+			setTransactionalUnitPrice(toTransactional(unitPrice, appliedRate, decimalPalces));
 		}
 	}
 
@@ -1035,7 +1037,7 @@ public class InvoiceLine extends AuditableCFEntity {
 		this.conversionFromBillingCurrency = conversionFromBillingCurrency;
 	}
     
-	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
-		return amount != null ? amount.multiply(rate) : ZERO;
+	private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate, Integer decimalPlaces) {
+		return amount != null ? amount.multiply(rate).setScale(decimalPlaces, RoundingMode.HALF_UP) : ZERO;
 	}
 }
