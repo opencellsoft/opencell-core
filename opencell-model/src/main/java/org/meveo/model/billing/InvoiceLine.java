@@ -935,7 +935,7 @@ public class InvoiceLine extends AuditableCFEntity {
 	@PreUpdate
 	public void prePersistOrUpdate() {
 		BigDecimal appliedRate = this.invoice != null ? this.invoice.getAppliedRate() : ONE;
-		Integer decimalPalces = this.invoice.getTradingCurrency().getDecimalPlaces();
+		Integer decimalPalces = this.invoice != null ? this.invoice.getTradingCurrency().getDecimalPlaces() : BaseEntity.NB_DECIMALS;
 		if (this.transactionalUnitPrice == null || (!this.useSpecificPriceConversion && !this.conversionFromBillingCurrency)) {
 			setTransactionalAmountWithoutTax(toTransactional(amountWithoutTax, appliedRate, decimalPalces));
 			setTransactionalAmountWithTax(toTransactional(amountWithTax, appliedRate, decimalPalces));
