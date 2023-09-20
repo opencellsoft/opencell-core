@@ -7697,6 +7697,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
         <!--  Existing BC should be NO_AGGREGATION -->
         <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' </sql>
+        <sql>UPDATE ${db.schema.adapted}billing_cycle set date_aggregation = 'NO_DATE_AGGREGATION' where date_aggregation is null</sql>
         
         <sql dbms="postgresql">update ${db.schema.adapted}billing_billing_run set discount_aggregation = bc.discount_aggregation, disable_aggregation = bc.disable_aggregation, use_accounting_article_label = bc.use_accounting_article_label,
             date_aggregation = bc.date_aggregation, aggregate_unit_amounts = bc.aggregate_unit_amounts, ignore_subscriptions = bc.ignore_subscriptions, ignore_orders = bc.ignore_orders, incremental_invoice_lines = bc.incremental_invoice_lines
