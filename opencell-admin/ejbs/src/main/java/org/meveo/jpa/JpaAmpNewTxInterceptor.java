@@ -60,6 +60,7 @@ public class JpaAmpNewTxInterceptor implements Serializable {
         boolean allowNesting = false;
         try {
 
+            /*
             if (emWrapper.isAmp()) {
                 allowNesting = emWrapper.isNestingAllowed();
                 if (allowNesting) {
@@ -67,6 +68,7 @@ public class JpaAmpNewTxInterceptor implements Serializable {
                     emWrapper.newEntityManager(entityManagerProvider.getEntityManager().getEntityManager());
                 }
             }
+            */
 
             obj = invocationContext.proceed();
 
