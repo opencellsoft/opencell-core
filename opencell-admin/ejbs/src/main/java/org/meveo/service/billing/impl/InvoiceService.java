@@ -5553,7 +5553,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (defaultPaymentMethod == null && billingAccount != null) {
             defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
         }
-        EntityManager em = getEntityManager();
         for (InvoiceLine invoiceLine : invoiceLines) {
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
         	if ((entityToInvoice instanceof CommercialOrder || entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote || entityToInvoice instanceof BillingAccount ) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
@@ -5600,14 +5599,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             ilGroup.getInvoiceLines().add(invoiceLine);
 
-            em.detach(invoiceLine);
         }
 
         List<InvoiceLinesGroup> convertedIlGroups = new ArrayList<>();
         for (InvoiceLinesGroup linesGroup : invoiceLinesGroup.values()) {
 
             if (linesGroup.getBillingCycle().getScriptInstance() != null) {
-                convertedIlGroups.addAll(executeBCScriptWithInvoiceLines(billingRun, linesGroup.getInvoiceType(), linesGroup.getInvoiceLines(), entityToInvoice, linesGroup.getBillingCycle().getScriptInstance().getCode(),
+                convertedIlGroups.addAll(executeBCScriptWithInvoiceLines(billingRun, linesGroup, linesGroup.getInvoiceType(), linesGroup.getInvoiceLines(), entityToInvoice, linesGroup.getBillingCycle().getScriptInstance().getCode(),
                     linesGroup.getPaymentMethod()));
             } else {
                 convertedIlGroups.add(linesGroup);
@@ -6140,13 +6138,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     @SuppressWarnings("unchecked")
-    private List<InvoiceLinesGroup> executeBCScriptWithInvoiceLines(BillingRun billingRun, InvoiceType invoiceType, List<InvoiceLine> invoiceLines, IBillableEntity entity, String scriptInstanceCode,
-            PaymentMethod paymentMethod) throws BusinessException {
+    private List<InvoiceLinesGroup> executeBCScriptWithInvoiceLines(BillingRun billingRun, InvoiceLinesGroup linesGroup, InvoiceType invoiceType, List<InvoiceLine> invoiceLines, IBillableEntity entity, String scriptInstanceCode,
+                                                                    PaymentMethod paymentMethod) throws BusinessException {
+        // May be only keep passing invoiceLinesGroup to the script
+        // since others params could be deducted from it
         HashMap<String, Object> context = new HashMap<>();
         context.put(Script.CONTEXT_ENTITY, entity);
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
         context.put("br", billingRun);
+        context.put("invoiceLinesGroup", linesGroup);
         context.put("invoiceType", invoiceType);
         context.put("invoiceLines", invoiceLines);
         context.put("paymentMethod", paymentMethod);
