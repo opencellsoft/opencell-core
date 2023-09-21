@@ -203,13 +203,12 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				}else {
 					subscription.setUserAccount(offer.getUserAccount());
 				}
+				subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
 				CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(Subscription.class.getName());
 				if(customGenericEntityCode != null) {
 					String newCode = serviceSingleton.getGenericCode(customGenericEntityCode);
 					if(StringUtils.isNotBlank(newCode)){
 						subscription.setCode(newCode);
-					}else{
-						subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
 					}
 				}
 				
