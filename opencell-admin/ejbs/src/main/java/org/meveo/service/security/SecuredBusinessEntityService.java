@@ -182,7 +182,7 @@ public class SecuredBusinessEntityService extends PersistenceService<SecuredEnti
      * @return A list of secured entities for a current user
      */
     public List<org.meveo.security.SecuredEntity> getSecuredEntitiesForCurentUser() {
-    	User user=userService.findByUsername(currentUser.getUserName(), false);
+    	User user=userService.getUserFromDatabase(currentUser.getUserName());
     	if(user!=null) {
     		List<String> userRoles = user.getUserRoles().stream()
     				.map(role -> role.getName())
