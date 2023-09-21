@@ -138,6 +138,7 @@
         </p:selectOneMenu>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
+        <h:outputText value="#{field.booleanValue != null and field.booleanValue ? messages['commons.yes'] : messages['commons.no']}" styleClass="field-value" rendered="#{!edit or disabled}" />
         <p:selectBooleanButton rendered="#{edit and !disabled}" value="#{field.booleanValue}" onLabel="#{messages['commons.yes']}" offLabel="#{messages['commons.no']}" />
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.CHECKBOX_LIST}">
