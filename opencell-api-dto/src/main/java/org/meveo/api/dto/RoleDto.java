@@ -75,7 +75,13 @@ public class RoleDto extends BaseEntityDto {
 
     @Schema(description = "custom field associated to the role")
     protected CustomFieldsDto customFields;
+    
+	@Schema(description = "create in KC")
+	private Boolean createInKC=Boolean.TRUE;
 
+	
+	@Schema(description = "update in KC")
+	private Boolean updateInKC=Boolean.TRUE;
     /**
      * Instantiates a new role dto.
      */
@@ -210,4 +216,14 @@ public class RoleDto extends BaseEntityDto {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
+
+	public Boolean getCreateInKC() {
+		return createInKC;
+	}
+
+	public void setCreateInKC(Boolean createInKC) {
+		this.createInKC = createInKC;
+	}
+    
+    
 }
