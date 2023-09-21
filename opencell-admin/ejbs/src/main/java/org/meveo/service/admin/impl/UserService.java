@@ -123,7 +123,7 @@ public class UserService extends PersistenceService<User> {
         return lUser;
     }
 
-    private User getUserFromDatabase(String pUserName) {
+    public User getUserFromDatabase(String pUserName) {
         User lUser = null;
         try {
             lUser = getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", pUserName.toLowerCase()).getSingleResult();
