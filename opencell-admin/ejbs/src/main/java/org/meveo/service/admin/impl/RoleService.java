@@ -30,6 +30,8 @@ import org.meveo.model.security.Role;
 import org.meveo.security.client.KeycloakAdminClientService;
 import org.meveo.service.base.PersistenceService;
 
+import liquibase.repackaged.org.apache.commons.lang3.BooleanUtils;
+
 /**
  * User Role service implementation.
  */
@@ -121,19 +123,41 @@ public class RoleService extends PersistenceService<Role> {
     }
 
     /**
+     * Create a role in Keycloak and then in Opencell
+     */
+    
+    public void create(Role role,Boolean createInKC) throws BusinessException {
+    	if(BooleanUtils.isTrue(createInKC)) {
+    		if (role.getParentRole() == null) {
+    			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
+
+    		} else {
+    			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole(), role.getParentRole().getName(), role.getParentRole().getDescription(), role.getParentRole().isClientRole());
+    		}
+    	}
+    	super.create(role);
+    }
+    
+    /**
      * Create a role in Keycloak and then in Opencell. An attempt to create a role again will be ignored and will act as assignment only to a parent role.
      */
     @Override
     public void create(Role role) throws BusinessException {
+    	create(role,Boolean.TRUE);
+    }
+    
+    
+    /**
+     * Update a role in Keycloak and then in Opencell
+     */
+     
+    public Role update(Role role,Boolean updateInKC) throws BusinessException {
     	
-        if (role.getParentRole() == null) {
-            keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
-
-        } else {
-            keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole(), role.getParentRole().getName(), role.getParentRole().getDescription(), role.getParentRole().isClientRole());
-        }
-
-        super.create(role);
+    	if(BooleanUtils.isTrue(updateInKC)) {
+    		keycloakAdminClientService.updateRole(role.getName(), role.getDescription(), role.isClientRole());
+    	}
+    	role = super.update(role);
+    	return role;
     }
 
     /**
@@ -141,11 +165,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     @Override
     public Role update(Role role) throws BusinessException {
-
-        keycloakAdminClientService.updateRole(role.getName(), role.getDescription(), role.isClientRole());
-
-        role = super.update(role);
-        return role;
+    	return update(role,Boolean.TRUE);
     }
 
     /**
