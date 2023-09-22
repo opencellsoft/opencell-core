@@ -132,8 +132,8 @@ public class RoleService extends PersistenceService<Role> {
      * Create a role in Keycloak and then in Opencell
      */
     
-    public void create(Role role,Boolean createInKC) throws BusinessException {
-    	if(BooleanUtils.isTrue(createInKC)) {
+    public void create(Role role,Boolean replicateInKc) throws BusinessException {
+    	if(BooleanUtils.isTrue(replicateInKc)) {
     		if (role.getParentRole() == null) {
     			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
 
@@ -149,7 +149,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     @Override
     public void create(Role role) throws BusinessException {
-    	create(role,role.getCreateInKC());
+    	create(role,role.getReplicateInKc());
     }
     
     
@@ -157,9 +157,9 @@ public class RoleService extends PersistenceService<Role> {
      * Update a role in Keycloak and then in Opencell
      */
      
-    public Role update(Role role,Boolean updateInKC) throws BusinessException {
+    public Role update(Role role,Boolean replicateInKc) throws BusinessException {
     	
-    	if(BooleanUtils.isTrue(updateInKC)) {
+    	if(BooleanUtils.isTrue(replicateInKc)) {
     		keycloakAdminClientService.updateRole(role.getName(), role.getDescription(), role.isClientRole());
     	}
     	role = super.update(role);
@@ -171,7 +171,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     @Override
     public Role update(Role role) throws BusinessException {
-    	return update(role,role.getUpdateInKC());
+    	return update(role,role.getReplicateInKc());
     }
 
     /**
