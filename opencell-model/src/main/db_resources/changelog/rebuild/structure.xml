@@ -19491,16 +19491,6 @@
     <changeSet id="#INTRD-16636_20230610" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16881_20230816" author="Mohammed_ElAzzouzi"/>
-    <changeSet id="#INTRD-17969_20230818-1" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-17969_20230818-2" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-17969_20230818-3" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-17969_20230818-4" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-17969_20230818-5" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-17969_20230818-6" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-17969_20230818-7" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-17969_20230818-8" author="AndriusKarpavicius"/> 
-    <changeSet id="#INTRD-17969_20230818-9" author="AndriusKarpavicius" dbms="postgresql"/>
-    <changeSet id="#INTRD-17969_20230818-9" author="AndriusKarpavicius" dbms="oracle"/>
     <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

@@ -35,8 +35,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -61,7 +59,7 @@ import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UnitOfMeasure;
-import org.meveo.model.cpq.commercial.OrderInfoRT;
+import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
@@ -82,8 +80,7 @@ import org.meveo.model.tax.TaxClass;
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "RatedTransaction")
-@Table(name = "billing_rt")
-@SecondaryTable(name = "billing_rt_detail", pkJoinColumns ={@PrimaryKeyJoinColumn(name = "id")})
+@Table(name = "billing_rated_transaction")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), @Parameter(name = "increment_size", value = "5000") })
 @NamedQueries({ @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and r.status<>'OPEN' order by usageDate desc "),
 
@@ -133,32 +130,32 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "RatedTransaction.sumInvoiceableForCustomerWithMinAmountBySubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.billingAccount.customerAccount.customer.id, r.seller.id FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate) and r.subscription=:subscription and r.billingAccount.customerAccount.customer.minimumAmountEl is not null GROUP BY r.seller.id, r.billingAccount.customerAccount.customer.id"),
 
-        @NamedQuery(name = "RatedTransaction.cancelByWOIds", query = "UPDATE RatedTransaction r SET r.status='CANCELED', r.updated = :now  WHERE id IN (SELECT wo.ratedTransaction.id FROM WalletOperation wo WHERE wo.id IN :woIds)"),
+        @NamedQuery(name = "RatedTransaction.cancelByWOIds", query = "UPDATE RatedTransaction r SET r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.updated = :now  WHERE id IN (SELECT wo.ratedTransaction.id FROM WalletOperation wo WHERE wo.id IN :woIds)"),
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "select r from RatedTransaction r where r.invoiceLine.invoice=:invoice and r.invoiceSubCategory=:invoiceSubCategory "),
 
-        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "update RatedTransaction r set r.status=:NEW_STATUS, r.updated = :now, r.billingRun= null, r.invoiceLine=null, r.invoice=null, r.invoiceAgregateF=null where r.status='BILLED' and r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice=:invoice)"),
-        @NamedQuery(name = "RatedTransaction.unInvoiceByBR", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoiceLine=null, r.invoice=null, r.invoiceAgregateF=null where r.status='BILLED' and r.billingRun=:billingRun \r\n"
-        		+ "AND r.invoiceLine.id in (select il.id from InvoiceLine il left join il.invoice i where il.billingRun=:billingRun and (i.id is null or i.status <> 'VALIDATED'))"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "update RatedTransaction r set r.status=:NEW_STATUS, r.updated = :now, r.billingRun= null, r.invoiceLine=null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice=:invoice)"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByBR", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoiceLine=null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun \r\n"
+                + "AND r.invoiceLine.id in (select il.id from InvoiceLine il left join il.invoice i where il.billingRun=:billingRun and (i.id is null or i.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED))"),
 
-        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoice", query = "DELETE from RatedTransaction r WHERE r.type = 'MINIMUM' and r.status='BILLED' and r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice=:invoice)"),
-        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByBR", query = "DELETE from RatedTransaction r WHERE r.type = 'MINIMUM' and r.status='BILLED' and r.billingRun=:billingRun AND r.invoiceLine.id in (select il.id from InvoiceLine il " +
-                "left join il.invoice i where il.billingRun=:billingRun and (i.id is null or i.status <> 'VALIDATED'))"),
+        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoice", query = "DELETE from RatedTransaction r WHERE r.type = 'MINIMUM' and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice=:invoice)"),
+        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByBR", query = "DELETE from RatedTransaction r WHERE r.type = 'MINIMUM' and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun AND r.invoiceLine.id in (select il.id from InvoiceLine il " +
+                "left join il.invoice i where il.billingRun=:billingRun and (i.id is null or i.status <> org.meveo.model.billing.InvoiceStatusEnum.VALIDATED))"),
         @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByBA", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and (r.invoicingDate is NULL or r.invoicingDate<:invoiceUpToDate) "),
 
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> 'BILLED' AND r.billingAccount=:billingAccount"),
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> 'BILLED' AND r.userAccount=:userAccount"),
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> 'BILLED' AND r.billingAccount.customerAccount=:customerAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount=:billingAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.userAccount=:userAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount.customerAccount=:customerAccount"),
 
         @NamedQuery(name = "RatedTransaction.countNotBilledRTBySubscription", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status='OPEN' AND r.subscription=:subscription"),
         @NamedQuery(name = "RatedTransaction.moveNotBilledRTToUA", query = "UPDATE RatedTransaction r SET r.wallet=:newWallet, r.userAccount=:newUserAccount, r.billingAccount=:newBillingAccount WHERE r.status='OPEN' AND r.subscription=:subscription"),
         @NamedQuery(name = "RatedTransaction.moveAndRerateNotBilledRTToUA", query = "UPDATE RatedTransaction r SET r.status='RERATED', r.wallet=:newWallet, r.userAccount=:newUserAccount, r.billingAccount=:newBillingAccount WHERE r.id IN (SELECT o.ratedTransaction.id FROM WalletOperation o WHERE o.status='TO_RERATE' AND o.subscription=:subscription) OR (r.status='OPEN' AND r.subscription=:subscription)"),
 
-        @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransaction r set r.status='CANCELED', r.updated = :now, r.invoice=null where r.id IN :rtIds and r.status in ('OPEN', 'REJECTED')"),
+        @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.updated = :now, r.invoice=null where r.id IN :rtIds and r.status in ('OPEN', 'REJECTED')"),
         @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT wo.ratedTransaction FROM WalletOperation wo WHERE wo.id=:walletOperationId"),
         @NamedQuery(name = "RatedTransaction.findByEDRId", query = "SELECT rt FROM RatedTransaction rt WHERE rt.edr.id=:EDR_ID"),
 
-        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction r set r.status='BILLED', r.updated = :now , r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.status='OPEN' and r.id in :ids"),
-        @NamedQuery(name = "RatedTransaction.updateWithInvoiceInfo", query = "UPDATE RatedTransaction r set r.status='BILLED', r.updated = :now, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice, r.unitAmountWithoutTax=:unitAmountWithoutTax, r.unitAmountWithTax=:unitAmountWithTax, r.unitAmountTax=:unitAmountTax, r.amountWithoutTax=:amountWithoutTax, r.amountWithTax=:amountWithTax, r.amountTax=:amountTax, r.tax=:tax, r.taxPercent=:taxPercent where r.status='OPEN' and r.id=:id"),
+        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.updated = :now , r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.status='OPEN' and r.id in :ids"),
+        @NamedQuery(name = "RatedTransaction.updateWithInvoiceInfo", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.updated = :now, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice, r.unitAmountWithoutTax=:unitAmountWithoutTax, r.unitAmountWithTax=:unitAmountWithTax, r.unitAmountTax=:unitAmountTax, r.amountWithoutTax=:amountWithoutTax, r.amountWithTax=:amountWithTax, r.amountTax=:amountTax, r.tax=:tax, r.taxPercent=:taxPercent where r.status='OPEN' and r.id=:id"),
 
         @NamedQuery(name = "RatedTransaction.listNotOpenedBetweenTwoDates", query = "SELECT r FROM RatedTransaction r where r.status!='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.id>:lastId order by r.id "),
         @NamedQuery(name = "RatedTransaction.listBetweenTwoDatesByStatus", query = "SELECT r FROM RatedTransaction r where r.status in (:status) AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate AND r.id>:lastId order by r.id "),
@@ -178,7 +175,7 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query = "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.subscription.id, r.infoOrder.order.id,  r.invoiceLine.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
                 + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.subscription.id, r.infoOrder.order.id, r.invoiceLine.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
-        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoiceLine=null, r.invoiceAgregateF=null where r.status='BILLED' and r.invoiceLine.id IN (select il.id from InvoiceLine il where il.invoice.id IN (:invoiceIds))"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoiceLine=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoiceLine.id IN (select il.id from InvoiceLine il where il.invoice.id IN (:invoiceIds))"),
         @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoiceIds", query = "DELETE from RatedTransaction r WHERE r.type='MINIMUM' and r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice.id IN (:invoicesIds))"),
         @NamedQuery(name = "RatedTransaction.detachRTsFromSubscription", query = "UPDATE RatedTransaction set serviceInstance = null where serviceInstance.id IN (SELECT id from ServiceInstance where subscription=:subscription)"),
         @NamedQuery(name = "RatedTransaction.detachRTsFromInvoice", query = "UPDATE RatedTransaction set invoice = null, invoiceAgregateF = null where invoiceAgregateF.id IN (SELECT id from SubCategoryInvoiceAgregate where invoice=:invoice)"),
@@ -202,14 +199,14 @@ import org.meveo.model.tax.TaxClass;
 
 @NamedNativeQueries({
         @NamedNativeQuery(name = "RatedTransaction.linkRTWithInvoiceLine", query = "UPDATE {h-schema}billing_rt set status='BILLED', invoice_line_id = :il, billing_run_id = :billingRunId, updated=now() WHERE status='OPEN' and id in :ids"),
-    
-        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithDiscountedRT", query = "update {h-schema}billing_rt rt set discounted_ratedtransaction_id=discountedWO.rated_transaction_id , updated=now() from {h-schema}billing_wallet_operation discountWO, {h-schema}billing_wallet_operation discountedWO where discountWO.rated_transaction_id=rt.id and discountWO.discounted_wallet_operation_id=discountedWO.id and rt.status='OPEN' and rt.discounted_ratedtransaction_id is null and discountWO.id>=:minId and discountWO.id<=:maxId"),
-        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithDiscountedRTOracle", query = "UPDATE (SELECT rt.discounted_ratedtransaction_id, rt.updated FROM {h-schema}billing_rt rt, {h-schema}billing_wallet_operation discountWO, {h-schema}billing_wallet_operation discountedWO where discountWO.rated_transaction_id=rt.id and discountWO.discounted_wallet_operation_id=discountedWO.id and rt.status='OPEN' and rt.discounted_ratedtransaction_id is null and discountWO.id>=:minId and discountWO.id<=:maxId) SET rt.discounted_ratedtransaction_id=discountedWO.rated_transaction_id , updated=now()"),
 
-        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable", query = "update {h-schema}billing_rt rt set status='BILLED', updated=now(), aggregate_id_f=pending.aggregate_id_f, billing_run_id=pending.billing_run_id, invoice_id=pending.invoice_id from {h-schema}billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
-        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTableOracle", query = "UPDATE (SELECT rt.status, rt.updated, rt.aggregate_id_f rt_aggregate_id_f, rt.billing_run_id rt_billing_run_id, rt.invoice_id rt_invoice_id, pending.aggregate_id_f pending_aggregate_id_f, pending.billing_run_id pending_billing_run_id, pending.invoice_id pending_invoice_id FROM {h-schema}billing_rt rt, {h-schema}billing_rated_transaction_pending pending WHERE rt.status = 'OPEN' AND rt.id = pending.id) SET status = 'BILLED', updated = now (), rt_aggregate_id_f = pending_aggregate_id_f, rt_billing_run_id = pending_billing_run_id, rt_invoice_id = pending_invoice_id"),
-        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceLineInfoFromPendingTable", query = "update {h-schema}billing_rt rt set status='BILLED', updated=now(), invoice_line_id=pending.invoice_line_id, billing_run_id=pending.billing_run_id from {h-schema}billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
-        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceLineInfoFromPendingTableOracle", query = "UPDATE (SELECT rt.status, rt.updated, rt.invoice_line_id rt_invoice_line_id, rt.billing_run_id rt_billing_run_id, pending.invoice_line_id pending_invoice_line_id, pending.billing_run_id pending_billing_run_id FROM {h-schema}billing_rt rt, {h-schema}billing_rated_transaction_pending pending WHERE rt.status = 'OPEN' AND rt.id = pending.id) SET status = 'BILLED', updated = now (), rt_billing_run_id = pending_billing_run_id, rt_invoice_line_id = pending_invoice_line_id"),
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithDiscountedRT", query = "update {h-schema}billing_rated_transaction rt set discounted_ratedtransaction_id=discountedWO.rated_transaction_id , updated=now() from {h-schema}billing_wallet_operation discountWO, {h-schema}billing_wallet_operation discountedWO where discountWO.rated_transaction_id=rt.id and discountWO.discounted_wallet_operation_id=discountedWO.id and rt.status='OPEN' and rt.discounted_ratedtransaction_id is null and discountWO.id>=:minId and discountWO.id<=:maxId"),
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithDiscountedRTOracle", query = "UPDATE (SELECT rt.discounted_ratedtransaction_id, rt.updated FROM {h-schema}billing_rated_transaction rt, {h-schema}billing_wallet_operation discountWO, {h-schema}billing_wallet_operation discountedWO where discountWO.rated_transaction_id=rt.id and discountWO.discounted_wallet_operation_id=discountedWO.id and rt.status='OPEN' and rt.discounted_ratedtransaction_id is null and discountWO.id>=:minId and discountWO.id<=:maxId) SET rt.discounted_ratedtransaction_id=discountedWO.rated_transaction_id , updated=now()"),
+
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable", query = "update {h-schema}billing_rated_transaction rt set status='BILLED', updated=now(), aggregate_id_f=pending.aggregate_id_f, billing_run_id=pending.billing_run_id, invoice_id=pending.invoice_id from {h-schema}billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTableOracle", query = "UPDATE (SELECT rt.status, rt.updated, rt.aggregate_id_f rt_aggregate_id_f, rt.billing_run_id rt_billing_run_id, rt.invoice_id rt_invoice_id, pending.aggregate_id_f pending_aggregate_id_f, pending.billing_run_id pending_billing_run_id, pending.invoice_id pending_invoice_id FROM {h-schema}billing_rated_transaction rt, {h-schema}billing_rated_transaction_pending pending WHERE rt.status = 'OPEN' AND rt.id = pending.id) SET status = 'BILLED', updated = now (), rt_aggregate_id_f = pending_aggregate_id_f, rt_billing_run_id = pending_billing_run_id, rt_invoice_id = pending_invoice_id"),
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceLineInfoFromPendingTable", query = "update {h-schema}billing_rated_transaction rt set status='BILLED', updated=now(), invoice_line_id=pending.invoice_line_id, billing_run_id=pending.billing_run_id from {h-schema}billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceLineInfoFromPendingTableOracle", query = "UPDATE (SELECT rt.status, rt.updated, rt.invoice_line_id rt_invoice_line_id, rt.billing_run_id rt_billing_run_id, pending.invoice_line_id pending_invoice_line_id, pending.billing_run_id pending_billing_run_id FROM {h-schema}billing_rated_transaction rt, {h-schema}billing_rated_transaction_pending pending WHERE rt.status = 'OPEN' AND rt.id = pending.id) SET status = 'BILLED', updated = now (), rt_billing_run_id = pending_billing_run_id, rt_invoice_line_id = pending_invoice_line_id"),
         @NamedNativeQuery(name = "RatedTransaction.deletePendingTable", query = "delete from {h-schema}billing_rated_transaction_pending") })
 
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity, IInvoiceable {
@@ -217,21 +214,21 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     private static final long serialVersionUID = 1L;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created", table = "billing_rt_detail")
+    @Column(name = "created")
     private Date created;
 
     /**
      * Wallet instance associated to rated transaction
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wallet_id", table = "billing_rt_detail")
+    @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
     /**
      * Billing account associated to rated transaction
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "billing_account__id", nullable = false, table = "billing_rt_detail")
+    @JoinColumn(name = "billing_account__id", nullable = false)
     @NotNull
     private BillingAccount billingAccount;
     
@@ -239,21 +236,21 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      * Origin Billing account associated to rated transaction
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "origin_billing_account", table = "billing_rt_detail")
+    @JoinColumn(name = "origin_billing_account")
     private BillingAccount originBillingAccount;
     
     /**
      * User account associated to rated transaction
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_account_id", table = "billing_rt_detail")
+    @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
     /**
      * Seller associated to operation
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id", nullable = false, table = "billing_rt_detail")
+    @JoinColumn(name = "seller_id", nullable = false)
     @NotNull
     private Seller seller;
 
@@ -261,28 +258,20 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      * Operation date
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "usage_date", table = "billing_rt_detail")
+    @Column(name = "usage_date")
     private Date usageDate;
-    
-
-    /**
-     * Operation date copy - should contain same value as usageDate - just a copy to be able to partition primary table by date in addition to status
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "usage_date_cp")
-    private Date usageDateCopy;
 
     /**
      * Associated Invoice subcategory
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invoice_sub_category_id", table = "billing_rt_detail")
+    @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
 
     /**
      * Operation code - corresponds in majority of cases to charge code
      */
-    @Column(name = "code", length = 255, table = "billing_rt_detail")
+    @Column(name = "code", length = 255)
     @Size(max = 255)
     private String code;
 
@@ -297,90 +286,90 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      * Description - corresponds in majority of cases to charge description
      */
     @Size(max = 4000)
-    @Column(name = "description", table = "billing_rt_detail")
+    @Column(name = "description")
     private String description;
 
     /**
      * Input unit description
      */
-    @Column(name = "unity_description", length = 20, table = "billing_rt_detail")
+    @Column(name = "unity_description", length = 20)
     @Size(max = 20)
     private String unityDescription;
 
     /**
      * Rating unit description
      */
-    @Column(name = "rating_unit_description", length = 20, table = "billing_rt_detail")
+    @Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
     private String ratingUnitDescription;
 
     /**
      * Unit price without tax
      */
-    @Column(name = "unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS, table = "billing_rt_detail")
+    @Column(name = "unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountWithoutTax;
 
     /**
      * Unit price with tax
      */
-    @Column(name = "unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS, table = "billing_rt_detail")
+    @Column(name = "unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountWithTax;
 
     /**
      * Unit price tax amount
      */
-    @Column(name = "unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS, table = "billing_rt_detail")
+    @Column(name = "unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal unitAmountTax;
 
     /**
      * Quantity
      */
-    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, table = "billing_rt_detail")
+    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal quantity;
 
     /**
      * Total amount without tax
      */
-    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS, table = "billing_rt_detail")
+    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTax;
 
     /**
      * Total amount with tax
      */
-    @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS, table = "billing_rt_detail")
+    @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithTax;
 
     /**
      * Total tax amount
      */
-    @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS, table = "billing_rt_detail")
+    @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountTax;
 
     /**
      * Do not trigger invoicing
      */
     @Type(type = "numeric_boolean")
-    @Column(name = "do_not_trigger_invoicing", table = "billing_rt_detail")
+    @Column(name = "do_not_trigger_invoicing")
     private boolean doNotTriggerInvoicing = false;
 
     /**
      * Additional parameter used in rating
      */
-    @Column(name = "parameter_1", length = 255, table = "billing_rt_detail")
+    @Column(name = "parameter_1", length = 255)
     @Size(max = 255)
     private String parameter1;
 
     /**
      * Additional parameter used in rating
      */
-    @Column(name = "parameter_2", length = 255, table = "billing_rt_detail")
+    @Column(name = "parameter_2", length = 255)
     @Size(max = 255)
     private String parameter2;
 
     /**
      * Additional parameter used in rating
      */
-    @Column(name = "parameter_3", length = 255, table = "billing_rt_detail")
+    @Column(name = "parameter_3", length = 255)
     @Size(max = 255)
     private String parameter3;
 
@@ -388,27 +377,27 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      * Operation start date. Used in cases when operation corresponds to a period.
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "start_date", table = "billing_rt_detail")
+    @Column(name = "start_date")
     private Date startDate;
 
     /**
      * Operation end date. Used in cases when operation corresponds to a period.
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "end_date", table = "billing_rt_detail")
+    @Column(name = "end_date")
     private Date endDate;
 
     /**
      * Additional parameter used in rating
      */
     @Size(max = 4000)
-    @Column(name = "parameter_extra", table = "billing_rt_detail")
+    @Column(name = "parameter_extra")
     private String parameterExtra;
 
     /**
      * Order number in cases when operation was originated from an order
      */
-    @Column(name = "order_number", length = 100, table = "billing_rt_detail")
+    @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 
@@ -416,49 +405,49 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      * Price plan applied during rating
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "priceplan_id", table = "billing_rt_detail")
+    @JoinColumn(name = "priceplan_id")
     private PricePlanMatrix priceplan;
 
     /**
      * EDR that produced this operation
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "edr_id", table = "billing_rt_detail")
+    @JoinColumn(name = "edr_id")
     private EDR edr;
 
     /**
      * Adjusted rated transaction
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "adjusted_rated_tx", table = "billing_rt_detail")
+    @JoinColumn(name = "adjusted_rated_tx")
     private RatedTransaction adjustedRatedTx;
 
     /**
      * Associated Subscription when operation is tied to subscription.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subscription_id", table = "billing_rt_detail")
+    @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
     /**
      * Associated Charge instance when operation is tied to charge instance
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "charge_instance_id", table = "billing_rt_detail")
+    @JoinColumn(name = "charge_instance_id")
     private ChargeInstance chargeInstance;
 
     /**
      * Tax applied
      */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tax_id", nullable = false, table = "billing_rt_detail")
+    @JoinColumn(name = "tax_id", nullable = false)
     @NotNull
     private Tax tax;
 
     /**
      * Tax percent applied
      */
-    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false, table = "billing_rt_detail")
+    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     @NotNull
     private BigDecimal taxPercent;
 
@@ -466,14 +455,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      * Offer template
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "offer_id", table = "billing_rt_detail")
+    @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
     /**
      * Service instance that Wallet operation is applied to
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_instance_id", table = "billing_rt_detail")
+    @JoinColumn(name = "service_instance_id")
     private ServiceInstance serviceInstance;
 
     /**
@@ -515,20 +504,20 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Input quantity
      */
-    @Column(name = "input_quantity", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS, table = "billing_rt_detail")
+    @Column(name = "input_quantity", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
     private BigDecimal inputQuantity;
 
     /**
      * Raw rating amount without tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
      */
-    @Column(name = "raw_amount_without_tax", precision = 23, scale = 12, table = "billing_rt_detail")
+    @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithoutTax;
 
     /**
      * Raw rating amount with tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
      */
-    @Column(name = "raw_amount_with_tax", precision = 23, scale = 12, table = "billing_rt_detail")
+    @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithTax;
 
@@ -536,7 +525,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      * Charge tax class
      **/
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tax_class_id", nullable = false, table = "billing_rt_detail")
+    @JoinColumn(name = "tax_class_id", nullable = false)
     private TaxClass taxClass;
 
     /**
@@ -549,45 +538,45 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      * input_unit_unitOfMeasure
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "input_unitofmeasure", table = "billing_rt_detail")
+    @JoinColumn(name = "input_unitofmeasure")
     private UnitOfMeasure inputUnitOfMeasure;
 
     /**
      * rating_unit_unitOfMeasure
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rating_unitofmeasure", table = "billing_rt_detail")
+    @JoinColumn(name = "rating_unitofmeasure")
     private UnitOfMeasure ratingUnitOfMeasure;
 
     /**
      * Sorting index
      */
-    @Column(name = "sort_index", table = "billing_rt_detail")
+    @Column(name = "sort_index")
     private Integer sortIndex;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", table = "billing_rt_detail")
+    @Column(name = "type")
     private RatedTransactionTypeEnum type;
 
     /**
      * Accounting code
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accounting_code_id", table = "billing_rt_detail")
+    @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
     /**
      * Date past which a charge can be included in the invoice. Allows to exclude charges from the current billing cycle by specifying a future date.
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "invoicing_date", table = "billing_rt_detail")
+    @Column(name = "invoicing_date")
     private Date invoicingDate;
 
     /**
      * Custom field values in JSON format
      */
     @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "jsonb", table = "billing_rt_detail")
+    @Column(name = "cf_values", columnDefinition = "jsonb")
     private CustomFieldValues cfValues;
 
     /**
@@ -601,24 +590,24 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * Unique identifier - UUID
      */
-    @Column(name = "uuid", nullable = false, updatable = false, length = 60, table = "billing_rt_detail")
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accounting_article_id", table = "billing_rt_detail")
+    @JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
 
     @Embedded
-    private OrderInfoRT infoOrder;
+    private OrderInfo infoOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_line_id")
     private InvoiceLine invoiceLine;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "discount_plan_id", table = "billing_rt_detail")
+    @JoinColumn(name = "discount_plan_id")
     private DiscountPlan discountPlan;    
     
     /**
@@ -626,35 +615,35 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
      */
     @Column(name = "discounted_ratedtransaction_id")
     private Long discountedRatedTransaction;
-    
-    @Column(name = "discount_value", table = "billing_rt_detail")
+
+    @Column(name = "discount_value")
 	private BigDecimal discountValue;
     
     @Enumerated(EnumType.STRING)
-	@Column(name = "discount_plan_type", length = 50, table = "billing_rt_detail")
+    @Column(name = "discount_plan_type", length = 50)
 	private DiscountPlanItemTypeEnum discountPlanType;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "discount_plan_item_id", table = "billing_rt_detail")
+    @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
 
     /**The amount after discount**/
-    @Column(name = "discounted_amount", table = "billing_rt_detail")
+    @Column(name = "discounted_amount")
     private BigDecimal discountedAmount;
     
     @ManyToOne
-    @JoinColumn(name = "rules_contract_id", table = "billing_rt_detail")
+    @JoinColumn(name = "rules_contract_id")
     private Contract rulesContract;
     
     @ManyToOne
-    @JoinColumn(name = "origin_ratedtransaction_id", table = "billing_rt_detail")
+    @JoinColumn(name = "origin_ratedtransaction_id")
     private RatedTransaction originRatedTransaction;
     
     /**
   	 * 
   	 *filled only for price lines related to applied discounts, and contains the application sequence composed by the concatenation of the DP sequence and DPI sequence
   	 */
-  	@Column(name = "sequence", table = "billing_rt_detail")
+    @Column(name = "sequence")
   	private Integer sequence;
     
     public RatedTransaction() {
@@ -714,7 +703,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.type = type;
         this.description = description;
         this.usageDate = usageDate;
-        this.usageDateCopy = usageDate;
         this.unitAmountWithoutTax = unitAmountWithoutTax;
         this.unitAmountWithTax = unitAmountWithTax;
         this.unitAmountTax = unitAmountTax;
@@ -767,7 +755,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.description = walletOperation.getDescription();
         this.chargeInstance = walletOperation.getChargeInstance();
         this.usageDate = walletOperation.getOperationDate();
-        this.usageDateCopy = this.usageDate;
         this.unitAmountWithoutTax = walletOperation.getUnitAmountWithoutTax();
         this.unitAmountWithTax = walletOperation.getUnitAmountWithTax();
         this.unitAmountTax = walletOperation.getUnitAmountTax();
@@ -804,9 +791,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.ratingUnitOfMeasure = walletOperation.getRatingUnitOfMeasure();
         this.accountingCode = walletOperation.getAccountingCode();
         this.accountingArticle = walletOperation.getAccountingArticle();
-        if (walletOperation.getOrderInfo() != null) {
-            this.infoOrder = new OrderInfoRT(walletOperation.getOrderInfo());
-        }
+        this.infoOrder = walletOperation.getOrderInfo();
         this.invoicingDate = walletOperation.getInvoicingDate();
         this.unityDescription = walletOperation.getInputUnitDescription();
         this.ratingUnitDescription = walletOperation.getRatingUnitDescription();
@@ -829,7 +814,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.description = rateTransactionToDuplicate.getDescription();
         this.chargeInstance = rateTransactionToDuplicate.getChargeInstance();
         this.usageDate = rateTransactionToDuplicate.getUsageDate();
-        this.usageDateCopy = this.usageDate;
         this.unitAmountWithoutTax = rateTransactionToDuplicate.getUnitAmountWithoutTax();
         this.unitAmountWithTax = rateTransactionToDuplicate.getUnitAmountWithTax();
         this.unitAmountTax = rateTransactionToDuplicate.getUnitAmountTax();
@@ -897,10 +881,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 
     public void setUsageDate(Date usageDate) {
         this.usageDate = usageDate;
-        // Just a copy of usageDate field value - set on first field population
-        if (id == null) {
-            this.usageDateCopy = usageDate;
-        }
     }
 
     public InvoiceSubCategory getInvoiceSubCategory() {
@@ -1604,14 +1584,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     /**
      * @return the infoOrder
      */
-    public OrderInfoRT getOrderInfo() {
+    public OrderInfo getOrderInfo() {
         return infoOrder;
     }
 
     /**
      * @param infoOrder the infoOrder to set
      */
-    public void setOrderInfoRT(OrderInfoRT infoOrder) {
+    public void setOrderInfoRT(OrderInfo infoOrder) {
         this.infoOrder = infoOrder;
     }
 
@@ -1671,11 +1651,11 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountedAmount = discountedAmount;
     }
 
-	public OrderInfoRT getInfoOrder() {
+	public OrderInfo getInfoOrder() {
 		return infoOrder;
 	}
 	   
-	public void setInfoOrder(OrderInfoRT infoOrder) {
+	public void setInfoOrder(OrderInfo infoOrder) {
 		this.infoOrder = infoOrder;
 	}
 

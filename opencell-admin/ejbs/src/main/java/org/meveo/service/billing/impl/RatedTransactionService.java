@@ -112,7 +112,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.OrderInfoRT;
+import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -436,7 +436,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
 
             if (walletOperation.getOrderId() != null || walletOperation.getProductVersionId() != null || walletOperation.getOrderLotId() != null) {
-                OrderInfoRT orderInfo = new OrderInfoRT();
+                OrderInfo orderInfo = new OrderInfo();
 
                 if (walletOperation.getOrderId() != null) {
                     orderInfo.setOrder(em.getReference(CommercialOrder.class, walletOperation.getOrderId()));

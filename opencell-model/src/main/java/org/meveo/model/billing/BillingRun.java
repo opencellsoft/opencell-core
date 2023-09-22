@@ -332,7 +332,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * The next BillingRun where rejected/suspect invoices may be moved.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "next_billing_run_id")
     private BillingRun nextBillingRun;
 
