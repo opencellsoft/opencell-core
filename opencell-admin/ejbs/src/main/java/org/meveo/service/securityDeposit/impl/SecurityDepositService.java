@@ -35,6 +35,8 @@ import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
 import static org.meveo.model.payments.PaymentMethodEnum.CARD;
 import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
 
@@ -528,10 +530,19 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
 
     private OtherCreditAndCharge buildAccountOperationOCC(BigDecimal amount, CustomerAccount customerAccount, OCCTemplate occTemplate) {
         OtherCreditAndCharge newAccountOperation = new OtherCreditAndCharge();
-        newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
+        newAccountOperation.setMatchingAmount(ZERO);
         newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
         newAccountOperation.setUnMatchingAmount(amount);
         newAccountOperation.setAmount(amount);
+        newAccountOperation.setAmountWithoutTax(amount);
+        newAccountOperation.setTaxAmount(ZERO);
+        BigDecimal rate = customerAccount.getTradingCurrency() != null ? customerAccount.getTradingCurrency().getCurrentRate() : ONE;
+        newAccountOperation.setTransactionalAmount(toTransactional(newAccountOperation.getAmount(), rate));
+        newAccountOperation.setTransactionalMatchingAmount(toTransactional(newAccountOperation.getMatchingAmount(), rate));
+        newAccountOperation.setTransactionalAmountWithoutTax(toTransactional(newAccountOperation.getAmountWithoutTax(), rate));
+        newAccountOperation.setTransactionalTaxAmount(toTransactional(newAccountOperation.getTaxAmount(), rate));
+        newAccountOperation.setTransactionalUnMatchingAmount(toTransactional(newAccountOperation.getUnMatchingAmount(), rate));
+        newAccountOperation.setTransactionalCurrency(customerAccount.getTradingCurrency() != null ? customerAccount.getTradingCurrency() : null);
         newAccountOperation.setCustomerAccount(customerAccount);
         newAccountOperation.setAccountingCode(occTemplate.getAccountingCode());
         newAccountOperation.setCode(occTemplate.getCode());
@@ -541,6 +552,10 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         newAccountOperation.setTransactionDate(new Date());
         newAccountOperation.setDueDate(new Date());
         return newAccountOperation;
+    }
+
+    private BigDecimal toTransactional(BigDecimal amount, BigDecimal rate) {
+        return amount != null ? amount.multiply(rate) : ZERO;
     }
 
 }
