@@ -22,10 +22,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.*;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
+import javax.persistence.QueryHint;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -39,6 +54,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.ReferenceIdentifierCode;
 import org.meveo.model.ReferenceIdentifierDescription;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 
 /**
@@ -92,6 +108,15 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
      */
     @Transient
     private Set<String> roles = new HashSet<String>();
+    
+    
+    /**
+     * Roles held by the user
+     */
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "adm_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> userRoles = new HashSet<>();
 
     /**
      * User group
@@ -339,4 +364,16 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     public void setDescription(String description) {
 
     }
+
+	public Set<Role> getUserRoles() {
+		return userRoles;
+	}
+
+	public void setUserRoles(Set<Role> userRoles) {
+		this.userRoles = userRoles;
+	}
+
+    
+    
+    
 }

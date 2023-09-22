@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -30,18 +31,15 @@ import javax.persistence.NonUniqueResultException;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.IAuditable;
-import org.meveo.model.IEnable;
-import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.User;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +56,9 @@ public class SecuredBusinessEntityService extends PersistenceService<SecuredEnti
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
+    
+    @Inject
+    private UserService userService;
 
     public BusinessEntity getEntityByCode(Class<? extends BusinessEntity> entityClass, String code) {
         if (entityClass == null) {
@@ -181,11 +182,21 @@ public class SecuredBusinessEntityService extends PersistenceService<SecuredEnti
      * @return A list of secured entities for a current user
      */
     public List<org.meveo.security.SecuredEntity> getSecuredEntitiesForCurentUser() {
-
-        return getEntityManager().createNamedQuery("SecuredEntity.listForCurrentUser", org.meveo.security.SecuredEntity.class).setParameter("userName", currentUser.getUserName().toLowerCase())
-            .setParameter("roleNames", currentUser.getRoles()).getResultList();
+    	User user=userService.getUserFromDatabase(currentUser.getUserName());
+    	if(user!=null) {
+    		List<String> userRoles = user.getUserRoles().stream()
+    				.map(role -> role.getName())
+    				.collect(Collectors.toList());
+    		if(!userRoles.isEmpty()) {
+    			currentUser.getRoles().addAll(userRoles);
+    		}
+    	}
+    	return getEntityManager().createNamedQuery("SecuredEntity.listForCurrentUser", org.meveo.security.SecuredEntity.class).setParameter("userName", currentUser.getUserName().toLowerCase())
+    			.setParameter("roleNames", currentUser.getRoles()).getResultList();
     }
 
+    
+    
     /**
      * Get a list of secured entities applied to a given user.
      * 
