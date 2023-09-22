@@ -399,7 +399,7 @@ public class UserApi extends BaseApi {
         if(user == null){
             throw new EntityDoesNotExistsException(User.class, idUser);
         }
-        user.getRoles().clear();
+        user.getUserRoles().clear();
         userService.update(user);
     }
 
@@ -413,7 +413,7 @@ public class UserApi extends BaseApi {
                 .filter(r -> r.getId().equals(roleId))
                 .findFirst();
         if(role.isPresent()){
-            user.getRoles().remove(role.get());
+            user.getUserRoles().remove(role.get());
             userService.update(user);
         }
     }
