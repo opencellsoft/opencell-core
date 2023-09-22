@@ -72,6 +72,8 @@ public class PaginationConfiguration implements Serializable {
     
     private JoinType joinType;
 
+    private Boolean forceCount = false;
+
 
     private Integer limit;
 
@@ -137,16 +139,17 @@ public class PaginationConfiguration implements Serializable {
         }
     }
 
-    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Object... sortFieldsAndOrder) {
-    	this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, sortFieldsAndOrder);
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Boolean distinct, Boolean forceCount, Object... sortFieldsAndOrder) {
+    	this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, joinType, distinct, sortFieldsAndOrder);
     	this.joinType=joinType;
+        this.forceCount = forceCount;
     }
 
     public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Boolean distinct, Object... sortFieldsAndOrder) {
         this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, joinType, sortFieldsAndOrder);
         this.distinctQuery = distinct;
     }
-    
+
     /**
      * Constructor
      *
@@ -325,7 +328,15 @@ public class PaginationConfiguration implements Serializable {
         return String.format("PaginationConfiguration [firstRow=%s, numberOfRows=%s, fullTextFilter=%s, filters=%s, fetchFields=%s, ordering=%s]", firstRow, numberOfRows, fullTextFilter, filters, fetchFields, ordering);
     }
 
-	public JoinType getJoinType() {
+    public Boolean getForceCount() {
+        return forceCount;
+    }
+
+    public void setForceCount(Boolean forceCount) {
+        this.forceCount = forceCount;
+    }
+
+    public JoinType getJoinType() {
 		return joinType;
 	}
 
