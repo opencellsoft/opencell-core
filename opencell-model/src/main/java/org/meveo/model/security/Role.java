@@ -94,7 +94,22 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
      */
     @Transient
     private Set<Role> roles = new HashSet<>();
+    
+    
+    /**
+     * Create In KC
+     */
+    @Transient
+    private Boolean createInKC=Boolean.TRUE;
+    
+    
+    /**
+     * Update In KC
+     */
+    @Transient
+    private Boolean updateInKC=Boolean.TRUE;
 
+    
     public Role() {
         // TODO Auto-generated constructor stub
     }
@@ -230,4 +245,22 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
     public void setParentRole(Role parentRole) {
         this.parentRole = parentRole;
     }
+
+	public Boolean getCreateInKC() {
+		return createInKC;
+	}
+
+	public void setCreateInKC(Boolean createInKC) {
+		this.createInKC = createInKC;
+	}
+
+	public Boolean getUpdateInKC() {
+		return updateInKC;
+	}
+
+	public void setUpdateInKC(Boolean updateInKC) {
+		this.updateInKC = updateInKC;
+	}
+    
+    
 }

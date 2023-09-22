@@ -224,6 +224,16 @@ public class RoleDto extends BaseEntityDto {
 	public void setCreateInKC(Boolean createInKC) {
 		this.createInKC = createInKC;
 	}
+
+	public Boolean getUpdateInKC() {
+		return updateInKC;
+	}
+
+	public void setUpdateInKC(Boolean updateInKC) {
+		this.updateInKC = updateInKC;
+	}
+	
+	
     
     
 }

@@ -23,9 +23,11 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.security.Role;
 import org.meveo.security.client.KeycloakAdminClientService;
 import org.meveo.service.base.PersistenceService;
@@ -143,7 +145,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     @Override
     public void create(Role role) throws BusinessException {
-    	create(role,Boolean.TRUE);
+    	create(role,role.getCreateInKC());
     }
     
     
@@ -165,7 +167,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     @Override
     public Role update(Role role) throws BusinessException {
-    	return update(role,Boolean.TRUE);
+    	return update(role,role.getUpdateInKC());
     }
 
     /**
@@ -175,5 +177,17 @@ public class RoleService extends PersistenceService<Role> {
     public void remove(Role role) throws BusinessException {
         keycloakAdminClientService.deleteRole(role.getName(), role.isClientRole());
         super.remove(role);
+    }
+    
+    public Role findByName(String role) {
+        QueryBuilder qb = new QueryBuilder(Role.class, "r", null);
+
+        try {
+            qb.addCriterion("name", "=", role, true);
+            return (Role) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException | NonUniqueResultException e) {
+            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
+            return null;
+        }
     }
 }
