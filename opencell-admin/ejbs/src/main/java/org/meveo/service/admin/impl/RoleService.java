@@ -49,7 +49,11 @@ public class RoleService extends PersistenceService<Role> {
      */
     @Override
     public List<Role> list(PaginationConfiguration paginationConfig) {
-        return keycloakAdminClientService.listRoles(paginationConfig);
+    	String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
+    	if(lUserManagementSource.equalsIgnoreCase("OC")) {
+    	return super.list(paginationConfig);
+    	}
+    	return keycloakAdminClientService.listRoles(paginationConfig);
     }
 
     /**
