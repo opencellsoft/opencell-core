@@ -208,12 +208,23 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 				}
 				subscription.setEndAgreementDate(null);
-				subscription.setRenewed(true);
+				subscription.setRenewed(false);
 				subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
 				subscription.setOrder(order);
 				subscription.setOrderOffer(offer);
-				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
+				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal().copy() : null);
 				subscription.setSalesPersonName(order.getSalesPersonName());
+				if(offer.getTerminationDate() != null) {
+					subscription.setTerminationDate(offer.getTerminationDate());
+					subscription.setSubscribedTillDate(offer.getTerminationDate());
+					if(offer.getTerminationReason() != null && subscription.getSubscriptionRenewal() != null) {
+						SubscriptionRenewal renewal =  subscription.getSubscriptionRenewal();
+						renewal.setTerminationReason(offer.getTerminationReason());
+						renewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
+						renewal.setAutoRenew(false);
+						renewal.setEndOfTermAction(SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
+					}
+				}
 				subscriptionService.create(subscription);
 				if(offer.getDiscountPlan()!=null) {
 					discountPlans.add(offer.getDiscountPlan());
