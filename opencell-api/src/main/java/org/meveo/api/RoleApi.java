@@ -80,12 +80,11 @@ public class RoleApi extends BaseApi {
 
         handleMissingParameters();
         
-        if(BooleanUtils.isFalse(postData.getCreateInKC())) {
+        if(BooleanUtils.isFalse(postData.getReplicateInKc())) {
         	if(roleService.findByName(name)!=null){
         		throw new EntityAlreadyExistsException(Role.class, name, "role name");
         	}
-        }
-        if (BooleanUtils.isTrue(postData.getCreateInKC())) {
+        }else {
         	if(roleService.findByName(name, false, false) != null) {
         		throw new EntityAlreadyExistsException(Role.class, name, "role name");
         	}
@@ -94,9 +93,7 @@ public class RoleApi extends BaseApi {
         Role role = new Role();
         role.setName(name);
         role.setDescription(postData.getDescription());
-        if(postData.getCreateInKC()!=null){
-        role.setCreateInKC(postData.getCreateInKC());
-        }
+        role.setReplicateInKc(postData.getReplicateInKc());
         
 
 //        // Create/Update and add child roles
@@ -148,7 +145,7 @@ public class RoleApi extends BaseApi {
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
             throw new ActionForbiddenException("User has no permission to manage roles");
         }
-        if(BooleanUtils.isFalse(postData.getUpdateInKC())){
+        if(BooleanUtils.isFalse(postData.getReplicateInKc())){
         	role = roleService.findByName(name);	
         }else {
         	role = roleService.findByName(name, false, false);
@@ -162,9 +159,7 @@ public class RoleApi extends BaseApi {
             role.setDescription(postData.getDescription());
         }
         
-        if(postData.getUpdateInKC()!=null){
-        	role.setUpdateInKC(postData.getUpdateInKC());
-        }
+        	role.setReplicateInKc(postData.getReplicateInKc());
 
 //        // Create/Update and add child roles
 //        if (postData.getRoles() != null && !postData.getRoles().isEmpty()) {
@@ -271,7 +266,7 @@ public class RoleApi extends BaseApi {
 
         handleMissingParameters();
 
-        if(BooleanUtils.isFalse(postData.getUpdateInKC())){
+        if(BooleanUtils.isFalse(postData.getReplicateInKc())){
         	role = roleService.findByName(name);	
         }else {
         	role = roleService.findByName(name, false, false);

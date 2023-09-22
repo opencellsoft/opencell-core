@@ -100,16 +100,8 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
      * Create In KC
      */
     @Transient
-    private Boolean createInKC=Boolean.TRUE;
-    
-    
-    /**
-     * Update In KC
-     */
-    @Transient
-    private Boolean updateInKC=Boolean.TRUE;
-
-    
+    private Boolean replicateInKc=Boolean.TRUE;
+   
     public Role() {
         // TODO Auto-generated constructor stub
     }
@@ -246,21 +238,14 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
         this.parentRole = parentRole;
     }
 
-	public Boolean getCreateInKC() {
-		return createInKC;
+	public Boolean getReplicateInKc() {
+		return replicateInKc;
 	}
 
-	public void setCreateInKC(Boolean createInKC) {
-		this.createInKC = createInKC;
+	public void setReplicateInKc(Boolean replicateInKc) {
+		this.replicateInKc = replicateInKc;
 	}
 
-	public Boolean getUpdateInKC() {
-		return updateInKC;
-	}
-
-	public void setUpdateInKC(Boolean updateInKC) {
-		this.updateInKC = updateInKC;
-	}
     
     
 }
