@@ -38,8 +38,8 @@ public interface GenericPagingAndFiltering {
     @Value.Default default Long getOffset(){
         return 0L;
     }
-    @Value.Default default String getSortBy(){ return "id";}
-    @Value.Default default String getSortOrder(){ return PagingAndFiltering.SortOrder.ASCENDING.name();}
+    @Nullable String getSortBy();
+    @Nullable String getSortOrder();
     @Nullable
     @Value.Default default Set<String> getExcluding(){ return Collections.emptySet();}
     @Nullable
@@ -55,4 +55,7 @@ public interface GenericPagingAndFiltering {
     
     @Nullable
     JoinType getJoinType();
+
+    @Nullable
+    @Value.Default default Boolean getForceCount(){ return false; }
 }

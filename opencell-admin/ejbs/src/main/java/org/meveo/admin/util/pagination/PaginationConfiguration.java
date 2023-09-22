@@ -77,6 +77,8 @@ public class PaginationConfiguration implements Serializable {
     
     private JoinType joinType;
 
+    private Boolean forceCount = false;
+
     /**
      * Shall query results be cached - see Hibernate query cache behavior
      */
@@ -134,9 +136,10 @@ public class PaginationConfiguration implements Serializable {
         }
     }
 
-    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Object... sortFieldsAndOrder) {
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Boolean forceCount, Object... sortFieldsAndOrder) {
     	this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, sortFieldsAndOrder);
     	this.joinType=joinType;
+        this.forceCount = forceCount;
     }
     
     /**
@@ -248,7 +251,7 @@ public class PaginationConfiguration implements Serializable {
     }
     
     /**
-     * @param Sort field and sort order
+     * @param ordering field and sort order
      */
     public void setOrderings(Object[] ordering) {
         this.ordering = ordering;
@@ -311,7 +314,15 @@ public class PaginationConfiguration implements Serializable {
         return String.format("PaginationConfiguration [firstRow=%s, numberOfRows=%s, fullTextFilter=%s, filters=%s, fetchFields=%s, ordering=%s]", firstRow, numberOfRows, fullTextFilter, filters, fetchFields, ordering);
     }
 
-	public JoinType getJoinType() {
+    public Boolean getForceCount() {
+        return forceCount;
+    }
+
+    public void setForceCount(Boolean forceCount) {
+        this.forceCount = forceCount;
+    }
+
+    public JoinType getJoinType() {
 		return joinType;
 	}
 

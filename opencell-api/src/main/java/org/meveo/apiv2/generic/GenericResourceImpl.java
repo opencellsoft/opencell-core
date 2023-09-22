@@ -25,6 +25,8 @@ import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.util.Inflector;
 
 @Stateless
@@ -34,6 +36,8 @@ public class GenericResourceImpl implements GenericResource {
 
     @Inject
     private GenericApiAlteringService genericApiAlteringService;
+
+    private static final List<Class<?>> HUGE_ENTITIES = List.of(WalletOperation.class, RatedTransaction.class);
 
     @Override
     public Response getAll(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
@@ -46,7 +50,8 @@ public class GenericResourceImpl implements GenericResource {
             excludedFields = searchConfig.getExcluding();
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
-        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+        boolean isHugeVolume = HUGE_ENTITIES.contains(entityClass);
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService(),!isHugeVolume);
         return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), null, excludedFields))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }

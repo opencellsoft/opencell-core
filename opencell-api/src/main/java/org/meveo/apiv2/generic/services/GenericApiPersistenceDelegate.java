@@ -4,6 +4,7 @@ import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersi
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -11,6 +12,8 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.security.interceptor.SecuredBusinessEntityCheckInterceptor;
 import org.meveo.model.IEntity;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.WalletOperation;
 
 
 /**
@@ -25,6 +28,8 @@ import org.meveo.model.IEntity;
 @Interceptors({ SecuredBusinessEntityCheckInterceptor.class})
 public class GenericApiPersistenceDelegate {
 
+    private static final List<Class<?>> HUGE_ENTITIES = List.of(WalletOperation.class, RatedTransaction.class);
+
     /**
      * Search and list entities
      *
@@ -33,20 +38,22 @@ public class GenericApiPersistenceDelegate {
      * @return list of entities wrapped in {@link SearchResult} object
      */
     public SearchResult list(Class entityClass, PaginationConfiguration searchConfig) {
-
-        long count = this.count(entityClass, searchConfig);
+        Long count = null;
+        if(!HUGE_ENTITIES.contains(entityClass) || searchConfig.getForceCount()) {
+            count = this.count(entityClass, searchConfig);
+        }
 
         List entityList = null;
-        if (count > 0) {
+        if (count == null || count > 0) {
             entityList = getPersistenceService(entityClass, searchConfig).list(searchConfig);
         } else {
             entityList = new ArrayList<>();
         }
-        SearchResult searchResult = new SearchResult(entityList, count);
+        SearchResult searchResult = new SearchResult(entityList, Optional.ofNullable(count).orElse(-1L));
         return searchResult;
     }
 
-	/**
+	/**œ
      * Get total count of entities
      *
      * @param entityClass entity class to count
