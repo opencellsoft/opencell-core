@@ -14,7 +14,7 @@ public class SearchResult {
 
     private List<? extends IEntity> entityList;
 
-    private long count;
+    private Long count;
 
     /**
      * default constructor
@@ -22,7 +22,7 @@ public class SearchResult {
     public SearchResult(){}
 
 
-    public SearchResult(List<? extends IEntity> entityList, long count) {
+    public SearchResult(List<? extends IEntity> entityList, Long count) {
         this.entityList = entityList;
         this.count = count;
     }
@@ -41,11 +41,11 @@ public class SearchResult {
     /**
      * @return The total count of the searched entity
      */
-    public long getCount() {
+    public Long getCount() {
         return count;
     }
 
-    public void setCount(long count) {
+    public void setCount(Long count) {
         this.count = count;
     }
 }
