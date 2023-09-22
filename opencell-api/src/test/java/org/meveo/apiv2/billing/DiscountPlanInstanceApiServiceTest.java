@@ -100,7 +100,7 @@ public class DiscountPlanInstanceApiServiceTest {
                     discountPlanInstances.add(getDiscountPlanForSubscription(DiscountPlanInstanceStatusEnum.ACTIVE, false));
                     discountPlanInstances.add(getDiscountPlanForSubscription(DiscountPlanInstanceStatusEnum.IN_USE, true));
                 }
-                SearchResult result = new SearchResult(discountPlanInstances, discountPlanInstances.size());
+                SearchResult result = new SearchResult(discountPlanInstances, (long) discountPlanInstances.size());
                 return result;
             }
         });

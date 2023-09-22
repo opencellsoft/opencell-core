@@ -83,7 +83,7 @@ public class DiscountPlanApiServiceTest {
                 discountPlans.add(getDiscountPlan(1, DiscountPlanTypeEnum.OFFER, DiscountPlanStatusEnum.DRAFT, false));
                 discountPlans.add(getDiscountPlan(2, DiscountPlanTypeEnum.PROMO_CODE, DiscountPlanStatusEnum.ACTIVE, false));
                 discountPlans.add(getDiscountPlan(3, null, DiscountPlanStatusEnum.IN_USE, true));
-                SearchResult result = new SearchResult(discountPlans, discountPlans.size());
+                SearchResult result = new SearchResult(discountPlans, (long) discountPlans.size());
                 return result;
             }
         });
