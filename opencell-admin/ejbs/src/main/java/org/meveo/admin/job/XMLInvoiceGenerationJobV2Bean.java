@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
@@ -70,6 +72,11 @@ public class XMLInvoiceGenerationJobV2Bean extends IteratorBasedJobBean<Long> {
         if (billingRunId != null) {
             BillingRun billingRun = billingRunService.findById(billingRunId);
             if (billingRun != null) {
+                if (!BillinRunApplicationElFilterUtils.isToProcessBR(billingRun, jobInstance)) {
+                    log.warn("BillingRun applicationEl='{}' is evaluate to 'false', abort current process.", billingRun.getApplicationEl());
+                    return of(new SynchronizedIterator<>(Collections.emptyList()));
+                }
+
                 billingRunExtensionService.updateBillingRunWithXMLPDFExecutionResult(billingRunId,
                         jobExecutionResult.getId(), null);
                 billingRunService.updateBillingRunJobExecution(billingRun.getId(), jobExecutionResult);

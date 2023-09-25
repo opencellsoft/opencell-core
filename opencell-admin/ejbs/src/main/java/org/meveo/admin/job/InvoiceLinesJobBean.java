@@ -29,6 +29,7 @@ import org.hibernate.StatelessSession;
 import org.meveo.admin.async.SynchronizedIteratorGrouped;
 import org.meveo.admin.async.SynchronizedMultiItemIterator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.commons.utils.ParamBean;
@@ -113,9 +114,8 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
     private Optional<Iterator<List<Map<String, Object>>>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
-
-        // Get a list of Billing runs to process - either from job parameters or Billing runs with NEW and OPEN status
-        List<BillingRun> billingRuns = getBillingRunsToProcess(jobInstance, jobExecutionResult);
+        
+        List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL( getBillingRunsToProcess(jobInstance, jobExecutionResult), jobInstance);
         if (billingRuns == null || billingRuns.isEmpty()) {
             return Optional.empty();
         }
@@ -150,7 +150,6 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             if (((List<Long>) jobInstance.getParamValue(BR_PROCESSED)).contains(billingRun.getId())) {
                 continue;
             }
-            filters.put("disabled", false);
 
             currentBillingRun = billingRun;
 
@@ -378,6 +377,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         } else {
             filters.put("inList id", billingRunIds);
         }
+        filters.put("disabled", false);
         PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, Arrays.asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
 
         List<BillingRun> billingRuns = billingRunService.list(pagination);

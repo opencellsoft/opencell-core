@@ -483,6 +483,14 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @Column(name = "discount_aggregation", nullable = false)
     private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
 
+    /**
+     * An expression to decide if a billing run will be processed or ignored by the jobs.
+     */
+    @Column(name = "application_el", length = 2000)
+    @Size(max = 2000)
+    private String applicationEl;
+
+    
     public BillingRun getNextBillingRun() {
         return nextBillingRun;
     }
@@ -1162,5 +1170,13 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
      */
     public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
         this.discountAggregation = discountAggregation;
+    }
+    
+    public String getApplicationEl() {
+        return applicationEl;
+    }
+
+    public void setApplicationEl(String applicationEl) {
+        this.applicationEl = applicationEl;
     }
 }

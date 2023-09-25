@@ -16,6 +16,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.article.AccountingArticle;
@@ -54,7 +55,9 @@ public class InvoiceLinesMinimumJobBean extends BaseJobBean {
 			Map<String, Object> filters = new HashedMap();
 			filters.put("status", INVOICE_LINES_CREATED);
 			filters.put("disabled", false);
-			List<BillingRun> billingRuns = billingRunService.list(new PaginationConfiguration(filters));
+			List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(
+					billingRunService.list(new PaginationConfiguration(filters)), jobInstance);
+
 			if (billingRuns != null && !billingRuns.isEmpty()) {
 				for (BillingRun billingRun : billingRuns) {
 					createMinimumsForBillingRunLevelByLevel(billingRun, result, jobInstance);
