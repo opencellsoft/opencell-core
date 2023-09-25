@@ -457,18 +457,30 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @Column(name = "ignore_orders")
     private boolean ignoreOrders = true;
 
+    /**
+     * To decide if billing run report will be generated during billing run creation
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "pre_report_auto_on_create")
     private boolean preReportAutoOnCreate = false;
 
+    /**
+     * Billing run report generate during billing run creation.
+     */
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "pre_invoicing_report_id")
     private BillingRunReport preInvoicingReport;
 
+    /**
+     * To decide if billing run report will be generated during invoice line job
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "pre_report_auto_on_invoice_line_job")
     private boolean preReportAutoOnInvoiceLinesJob = false;
 
+    /**
+     * Billing run report generated after invoice line job
+     */
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "billed_rated_transactions_report_id")
     private BillingRunReport billedRatedTransactionsReport;
@@ -479,6 +491,13 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @Column(name = "application_el", length = 2000)
     @Size(max = 2000)
     private String applicationEl;
+    
+    /**
+     * Billing run aggregation setting for user accounts
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_user_accounts")
+    private boolean ignoreUserAccounts = true;
 
 	public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -1150,4 +1169,13 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     public void setApplicationEl(String applicationEl) {
         this.applicationEl = applicationEl;
     }
+
+	public boolean isIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
+
+	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+    
 }

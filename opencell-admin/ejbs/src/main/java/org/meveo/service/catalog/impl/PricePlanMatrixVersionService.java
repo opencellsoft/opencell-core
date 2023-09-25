@@ -95,6 +95,8 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     
     private static final String COLUMN_SEPARATOR = "\\|";
 
+    private static final String SEPARATOR = "\"";
+
     @Inject
     private PricePlanMatrixColumnService pricePlanMatrixColumnService;
 
@@ -665,7 +667,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
             return null;
         }
 
-        private Set<LinkedHashMap<String, Object>> toCSVLineGridRecords(PricePlanMatrixVersion ppv) {
+        private Set<LinkedHashMap<String, Object>> toCSVLineGridRecords(PricePlanMatrixVersion ppv, boolean isCsv) {
             Set<LinkedHashMap<String, Object>> CSVLineRecords = new HashSet<>();
             ppv.getLines().stream().forEach(line -> {
                 Map<String, Object> CSVLineRecord = new HashMap<>();
@@ -674,6 +676,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                 line.getPricePlanMatrixValues().iterator().forEachRemaining(ppmv -> {
 
                     String value = resolveValue(ppmv, ppmv.getPricePlanMatrixColumn().getType());
+                    value = value != null ? isCsv ? SEPARATOR.concat(value).concat(SEPARATOR) : value : "";
                     String type = resolveAttributeType(ppmv.getPricePlanMatrixColumn().getAttribute().getAttributeType(), ppmv.getPricePlanMatrixColumn().getType(), (value == null ? "" : value).contains("|"));
                     CSVLineRecord.put(ppmv.getPricePlanMatrixColumn().getCode() + "[" + (ColumnTypeEnum.String.equals(type) ? "text" : type) + ']', value);
 
@@ -689,27 +692,29 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
                     }
                     String keyLine = "unitPrice-" + codeCurrency;
                     String valueLine = cppmv.getTradingValue() + "|" + codeCurrency + "|" + cppmv.getRate() + "|" + cppmv.isUseForBillingAccounts();
-                    CSVLineRecord.put(keyLine, valueLine);
+                    CSVLineRecord.put(keyLine, isCsv ? SEPARATOR.concat(valueLine).concat(SEPARATOR) : valueLine);
                     int sizePosition = CSVLineRecordPosition.size();
                     CSVLineRecordPosition.put(keyLine, sizePosition);
                 });
 
                 //Check if any of line contains an EL value, then add new column
                 if(!StringUtils.isBlank(line.getValueEL())) {
-                    CSVLineRecord.put("description[text]", line.getDescription());
+                    CSVLineRecord.put("description[text]", isCsv ? SEPARATOR.concat(line.getDescription()).concat(SEPARATOR) : line.getDescription());
                     CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 2);
-                    CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+                    CSVLineRecord.put("priceWithoutTax[number]", isCsv ? SEPARATOR.concat(String.valueOf(line.getPriceWithoutTax())).concat(SEPARATOR) : line.getPriceWithoutTax());
                     CSVLineRecordPosition.put("priceWithoutTax[number]", Integer.MAX_VALUE - 1);
-                    CSVLineRecord.put("unitPriceEL[text]", line.getValueEL());
+                    CSVLineRecord.put("unitPriceEL[text]", isCsv ? SEPARATOR.concat(line.getValueEL()).concat(SEPARATOR) : line.getValueEL());
                     CSVLineRecordPosition.put("unitPriceEL[text]", Integer.MAX_VALUE);
                 } else {
-                    CSVLineRecord.put("description[text]", line.getDescription());
+                    CSVLineRecord.put("description[text]", isCsv ? SEPARATOR.concat(line.getDescription()).concat(SEPARATOR) : line.getDescription());
                     CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
-                    CSVLineRecord.put("priceWithoutTax[number]", line.getPriceWithoutTax());
+                    CSVLineRecord.put("priceWithoutTax[number]", isCsv ? SEPARATOR.concat(String.valueOf(line.getPriceWithoutTax())).concat(SEPARATOR) : line.getPriceWithoutTax());
                     CSVLineRecordPosition.put("priceWithoutTax[number]", Integer.MAX_VALUE);
                 }
+
                 CSVLineRecords.add(copyToSortedMap(CSVLineRecord, CSVLineRecordPosition));
             });
+
             return CSVLineRecords;
         }
 
@@ -897,7 +902,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
          * @return
          */
         private Path saveAsRecord(String fileName, PricePlanMatrixVersion ppv, String fileType, List<Map<String, Object>> ppmvMaps) {
-            Set<LinkedHashMap<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv) : Collections.singleton(toCSVLineRecords(ppv, ppmvMaps));
+            Set<LinkedHashMap<String, Object>> records = ppv.isMatrix() ? toCSVLineGridRecords(ppv, fileType.equals("CSV")) : Collections.singleton(toCSVLineRecords(ppv, ppmvMaps));
             String extensionFile = ".csv";
             try {
                 if(fileType.equals("CSV")) {

@@ -50,6 +50,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -4975,6 +4978,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null, null, null, null);
 
         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
+        rt.setBusinessKey(ratedTransactionDto.getBusinessKey());
         // #3355 : setting params 1,2,3
         if (isDetailledInvoiceMode) {
             rt.setParameter1(ratedTransactionDto.getParameter1());
@@ -7687,7 +7691,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		File xmlInvoiceFileName = new File(ublDirectory.getAbsolutePath() + File.separator + "invoice_" + invoice.getInvoiceNumber() + "_" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".xml");
 		try {
-			Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()));
+			Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("r--r--r--");
+			Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()), PosixFilePermissions.asFileAttribute(permissions));
 		} catch (IOException e) {
 			throw new BusinessException(e);
 		}
@@ -7717,14 +7722,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (!ZERO.equals(sumValidatedLinkedInvoice)) {
                 if(newInvoice.getAmountWithTax().add(sumValidatedLinkedInvoice).compareTo(srcInvoice.getAmountWithTax()) > 0) {
-                    throw new BusinessException("Adjustment Amount With Tax '" + newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
-                            + "' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()) + "'");
+                    throw new BusinessException("The adjustment amount exceeds the remaining invoice amount.");
                 }
             } else {
                 // check amount with tax
                 if (newInvoice.getAmountWithTax().compareTo(srcInvoice.getAmountWithTax()) > 0) {
-                    throw new BusinessException("Adjustment Amount With Tax '"+ newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
-                            +"' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())+"'");
+                    throw new BusinessException("The adjustment amount exceeds the remaining invoice amount.");
                 }
             }
         }

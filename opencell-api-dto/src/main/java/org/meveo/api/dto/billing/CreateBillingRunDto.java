@@ -136,10 +136,10 @@ public class CreateBillingRunDto extends BaseEntityDto {
     private Boolean incrementalInvoiceLines;
 
     @Schema(description = "Decide if Report job will be launched automatically at billing run creation")
-    private Boolean preReportAutoOnCreate = false;
+    private Boolean preReportAutoOnCreate;
 
     @Schema(description = "Decide if Report job will be launched automatically during invoice line job")
-    private Boolean preReportAutoOnInvoiceLinesJob = false;
+    private Boolean preReportAutoOnInvoiceLinesJob;
 
     @Size(max = 2000)
     private String applicationEl;

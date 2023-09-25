@@ -1229,31 +1229,20 @@ public class SubscriptionApi extends BaseApi {
         }
         try {
             ServiceInstance serviceInstance = buildServiceInstanceForOSO(postData, subscription);
-
+            
         	OneShotChargeInstance osho = oneShotChargeInstanceService
                     .instantiateAndApplyOneShotCharge(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION, isVirtual);
-
+        	
+        	if(StringUtils.isNotBlank(postData.getBusinessKey())) {
+        		osho.getWalletOperations().stream().forEach(wo -> {wo.setBusinessKey(postData.getBusinessKey());});
+        	}
+        	
         	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
         		osho.getWalletOperations().stream().forEach(wo -> {
         		    RatedTransaction ratedTransaction = ratedTransactionService.createRatedTransaction(wo, false);
-
-        		    if (postData.getBusinessKey() != null) {
-        		        ratedTransaction.setBusinessKey(postData.getBusinessKey());
-        		    } else {
-        		        String expression = oneShotChargeTemplate.getBusinessKeyEl();
-        		        if (!StringUtils.isBlank(expression)) {
-        		            Map<Object, Object> contextMap = new HashMap<>();
-        		            contextMap.put("op", wo);
-        		            try {
-        		                String value = ratedTransactionService.evaluateEl(expression, contextMap, String.class);
-        		                ratedTransaction.setBusinessKey(value);
-        		            } catch (BusinessException e) {
-        		                log.warn("Error when evaluating EL for chargeTemplate id=" + oneShotChargeTemplate.getId());
-        		            }
-        		        }
-        		    }
+        		    ratedTransaction.setBusinessKey(wo.getBusinessKey());
         		});
         	}
         	 

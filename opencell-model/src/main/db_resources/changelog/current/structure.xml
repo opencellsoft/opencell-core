@@ -8404,5 +8404,37 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  constraintName="accounting_article_amount_br_report_id_fk"
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-18386_20230915" author="AdilElJaouhari">
+    	<addColumn tableName="billing_cycle">
+			<column name="ignore_user_accounts" type="${type.boolean}" defaultValueNumeric="1" />
+		</addColumn>
+		<addColumn tableName="billing_billing_run">
+			<column name="ignore_user_accounts" type="${type.boolean}" defaultValueNumeric="1" />
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="#INTRD-14904_20230915" author="TarikFA.">
+        <createSequence sequenceName="electronic_invoice_settings_seq" startValue="1"/>
+        <createTable tableName="electronic_invoice_settings">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_electr_invoice_settings" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name= "force_xml_generation" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name= "force_pdf_generation" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name= "force_ubl_generation" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name= "invoicing_job" type="varchar(50)" />
+            <column name= "xml_generation_job" type="varchar(50)" />
+            <column name= "pdf_generation_job" type="varchar(50)" />
+            <column name= "ubl_generation_job" type="varchar(50)" />
+        </createTable>
+    </changeSet>
 
 </databaseChangeLog>

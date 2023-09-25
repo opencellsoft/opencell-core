@@ -382,7 +382,6 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 }
             }
         }
-
         entity = saveOrUpdate(entity);
 
         if (killConversation) {
