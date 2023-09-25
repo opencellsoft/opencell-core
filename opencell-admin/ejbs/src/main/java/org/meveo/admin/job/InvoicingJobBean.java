@@ -37,6 +37,7 @@ import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -108,7 +109,8 @@ public class InvoicingJobBean extends BaseJobBean {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public JobExecutionResultImpl execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
 
-        List<BillingRun> billingRuns = getBillingRuns(this.getParamOrCFValue(jobInstance, "billingRuns"));
+        List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(
+                getBillingRuns(this.getParamOrCFValue(jobInstance, "billingRuns")), jobInstance);
 
         log.info("BillingRuns to process={}", billingRuns.size());
 

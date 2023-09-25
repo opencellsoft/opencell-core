@@ -485,6 +485,9 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @JoinColumn(name = "billed_rated_transactions_report_id")
     private BillingRunReport billedRatedTransactionsReport;
 
+    /**
+     * An expression to decide if a billing run will be processed or ignored by the jobs.
+     */
     @Column(name = "application_el", length = 2000)
     @Size(max = 2000)
     private String applicationEl;

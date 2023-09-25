@@ -129,6 +129,11 @@ public class InvoicingApi extends BaseApi {
         billingRun.setPreReportAutoOnInvoiceLinesJob(ofNullable(dto.getPreReportAutoOnInvoiceLinesJob())
                 .orElse(billingRun.getBillingCycle().getReportConfigPreReportAutoOnInvoiceLinesJob()));
         billingRun.setApplicationEl(dto.getApplicationEl());
+        if (dto.getApplicationEl() != null) { // PO expected that the value shall be different from null, if it is empty, then we store the empty value (see Business rules INTRD-17689)
+            billingRun.setApplicationEl(dto.getApplicationEl());
+        } else {
+            billingRun.setApplicationEl(billingCycle.getApplicationEl());
+        }
         if(dto.getRejectAutoAction() == null) {
             billingRun.setRejectAutoAction(BillingRunAutomaticActionEnum.MANUAL_ACTION);
         }
@@ -317,7 +322,9 @@ public class InvoicingApi extends BaseApi {
                     .getBillingCycle().getReportConfigPreReportAutoOnInvoiceLinesJob());
         }
 
-        billingRun.setApplicationEl(dto.getApplicationEl());
+        if (dto.getApplicationEl() != null) { // On update, if applicationEL is null then don’t update the field.
+            billingRun.setApplicationEl(dto.getApplicationEl());
+        }
 
         billingRunService.update(billingRun);
         billingRunReportService.generateBillingRunReport(billingRun);

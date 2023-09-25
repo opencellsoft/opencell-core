@@ -35,6 +35,7 @@ import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.IteratorBasedJobProcessing;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -79,7 +80,8 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 	public JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 		log.debug("Running InvoicingV3Job with parameter={}", jobInstance.getParametres());
 		try {
-			List<BillingRun> billingRuns = readValidBillingRunsToProcess(jobInstance);
+			List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(
+					readValidBillingRunsToProcess(jobInstance), jobInstance);
 			if (billingRuns.isEmpty()) {
 				List<String> errors = List.of("No valid billing run with status=INVOICE_LINES_CREATED found");
 				result.setErrors(errors);
