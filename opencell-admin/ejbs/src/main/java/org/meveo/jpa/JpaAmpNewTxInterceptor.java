@@ -55,32 +55,6 @@ public class JpaAmpNewTxInterceptor implements Serializable {
      */
     @AroundInvoke
     public Object createNewTx(InvocationContext invocationContext) throws Exception {
-
-        Object obj = null;
-        boolean allowNesting = false;
-        try {
-
-            /*
-            if (emWrapper.isAmp()) {
-                allowNesting = emWrapper.isNestingAllowed();
-                if (allowNesting) {
-                    // log.error("AKK will create a new EM for new TX");
-                    emWrapper.newEntityManager(entityManagerProvider.getEntityManager().getEntityManager());
-                }
-            }
-            */
-
-            obj = invocationContext.proceed();
-
-            // Original comment: Re #INTRD-1692 RT job performance improvements
-            // emWrapper.getEntityManager().flush();
-            // emWrapper.getEntityManager().clear();
-            return obj;
-
-        } finally {
-            if (allowNesting) {
-                emWrapper.popEntityManager();
-            }
-        }
+        return invocationContext.proceed();
     }
 }
