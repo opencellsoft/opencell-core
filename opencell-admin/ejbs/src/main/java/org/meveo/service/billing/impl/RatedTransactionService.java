@@ -1937,9 +1937,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             // The next runs of BR (status has already changed to 'OPEN' at that moment) will apply the appending mode on existing invoice lines
             boolean incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines() && billingRun.getStatus() == BillingRunStatusEnum.OPEN;
             List<String> fieldToFetch = buildFieldList(usageDateAggregation, unitAmountField,
-            		aggregationConfiguration.isIgnoreSubscriptions(), aggregationConfiguration.isIgnoreOrders(),
-                    true, aggregationConfiguration.isUseAccountingArticleLabel(),
-                    aggregationConfiguration.getType(), incrementalInvoiceLines);
+            		aggregationConfiguration.isIgnoreSubscriptions(), aggregationConfiguration.isIgnoreOrders(), aggregationConfiguration.isIgnoreUserAccounts(),
+                    true, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType(), incrementalInvoiceLines);
 
             Map<String, String> mapToInvoiceLineTable = buildMapToInvoiceLineTable(aggregationConfiguration);
             String query = buildFetchQuery(new PaginationConfiguration(filter, fieldToFetch, mapToInvoiceLineTable.keySet()),
@@ -1981,7 +1980,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     private List<String> buildFieldList(String usageDateAggregation,
                                         String unitAmountField, boolean ignoreSubscription,
-                                        boolean ignoreOrder, boolean withAggregation,
+                                        boolean ignoreOrder, boolean ignoreUserAccounts, boolean withAggregation,
                                         boolean useAccountingArticleLabel, BillingEntityTypeEnum type,
                                         boolean incrementalInvoiceLines) {
         List<String> fieldToFetch;
@@ -2035,6 +2034,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             fieldToFetch.add("infoOrder.order.id as commercial_order_id");
             fieldToFetch.add("orderNumber as order_number");
             fieldToFetch.add("infoOrder.order.id as order_id");
+        }
+        if(!ignoreUserAccounts) {
+            fieldToFetch.add("userAccount.id as user_account_id");
         }
         if(!useAccountingArticleLabel) {
             fieldToFetch.add("description as label");
@@ -2145,6 +2147,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             mapToInvoiceLineTable.put("infoOrder.order.id", "commercialOrder.id");
             mapToInvoiceLineTable.put("orderNumber", "orderNumber");
         }
+        
+        if (! aggregationConfiguration.isIgnoreUserAccounts()) {
+            mapToInvoiceLineTable.put("userAccount.id", "userAccount.id");
+        }
 
         if (! aggregationConfiguration.isAggregationPerUnitAmount()) {
             if (appProvider.isEntreprise()) {
@@ -2177,9 +2183,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                                                      Map<String, Object> billingCycleFilters,
                                                                      AggregationConfiguration aggregationConfiguration) {
         List<String> fieldToFetch = buildFieldList(null, null,
-                aggregationConfiguration.isIgnoreSubscriptions(), aggregationConfiguration.isIgnoreOrders(),
-                false, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType(),
-                billingRun.getIncrementalInvoiceLines());
+                aggregationConfiguration.isIgnoreSubscriptions(), aggregationConfiguration.isIgnoreOrders(), aggregationConfiguration.isIgnoreUserAccounts(),
+                false, aggregationConfiguration.isUseAccountingArticleLabel(), aggregationConfiguration.getType(), billingRun.getIncrementalInvoiceLines());
         String query = buildFetchQuery(new PaginationConfiguration(billingCycleFilters, fieldToFetch, null),
                 getEntityCondition(be), lastTransactionDate, billingRun.getIncrementalInvoiceLines(), null,
                 billingRun.getId());

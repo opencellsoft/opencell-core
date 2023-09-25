@@ -21,6 +21,8 @@ public class AggregationConfiguration {
     private boolean ignoreSubscriptions = true;
     
     private boolean ignoreOrders = true;
+    
+    private boolean ignoreUserAccounts = true;
 
 	private BillingEntityTypeEnum type = BillingEntityTypeEnum.BILLINGACCOUNT;
 
@@ -48,6 +50,14 @@ public class AggregationConfiguration {
 		this.ignoreOrders = ignoreOrders;
 	}
 
+	public boolean isIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
+
+	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+
 	public AggregationConfiguration(boolean enterprise) {
 		this.enterprise = enterprise;
 	}
@@ -64,6 +74,7 @@ public class AggregationConfiguration {
 		this.useAccountingArticleLabel = billingCycle.isUseAccountingArticleLabel() ;
 		this.ignoreSubscriptions = billingCycle.isIgnoreSubscriptions();
 		this.ignoreOrders = billingCycle.isIgnoreOrders();
+		this.ignoreUserAccounts = billingCycle.isIgnoreUserAccounts();
 		this.type=billingCycle.getType();
 	}
 	
@@ -73,6 +84,7 @@ public class AggregationConfiguration {
 		this.useAccountingArticleLabel = billingRun.isUseAccountingArticleLabel() ;
 		this.ignoreSubscriptions = billingRun.isIgnoreSubscriptions();
 		this.ignoreOrders = billingRun.isIgnoreOrders();
+		this.ignoreUserAccounts = billingRun.isIgnoreUserAccounts();
 		this.type=billingRun.getBillingCycle().getType();
 	}
 
