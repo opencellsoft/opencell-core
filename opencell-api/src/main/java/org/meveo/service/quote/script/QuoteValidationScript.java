@@ -204,6 +204,7 @@ public class QuoteValidationScript extends ModuleScript {
 		offer.setOrderLineType(OfferLineTypeEnum.CREATE);
 		offer.setSubscription(quoteOffer.getSubscription());
 		offer.setContract(quoteOffer.getContract());
+		offer.setTerminationDate(quoteOffer.getQuoteVersion().getEndDate());
 		orderOfferService.create(offer);
 		LOGGER.info("quoteOffer.getQuoteAttributes() size{}",quoteOffer.getQuoteAttributes().size());
 		quoteOffer.getQuoteAttributes().forEach(quoteAttribute -> {
