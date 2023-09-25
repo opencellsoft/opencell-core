@@ -3,7 +3,6 @@ package org.meveo.service.billing.impl;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.billing.ElectronicInvoiceSetting;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.settings.GlobalSettings;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.job.JobInstanceService;
 

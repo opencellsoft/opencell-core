@@ -25,9 +25,9 @@ public class EinvoiceMapper extends ResourceMapper<EinvoiceSetting, ElectronicIn
 	@Override
 	protected ElectronicInvoiceSetting toEntity(EinvoiceSetting resource) {
 		ElectronicInvoiceSetting einvoice = new ElectronicInvoiceSetting();
-		einvoice.setForceXmlGeneration(resource.getForceXmlGeneration() != null ? resource.getForceXmlGeneration() : false);
-		einvoice.setForcePDFGeneration(resource.getForcePDFGeneration() != null ? resource.getForcePDFGeneration() : false);
-		einvoice.setForceUBLGeneration(resource.getForceUBLGeneration() != null ? resource.getForceUBLGeneration() : false);
+		einvoice.setForceXmlGeneration(resource.getForceXmlGeneration() || Boolean.FALSE);
+		einvoice.setForcePDFGeneration(resource.getForcePDFGeneration() || Boolean.FALSE);
+		einvoice.setForceUBLGeneration(resource.getForceUBLGeneration() || Boolean.FALSE);
 		einvoice.setInvoicingJob(resource.getInvoicingJob());
 		einvoice.setXmlGenerationJob(resource.getXmlGenerationJob());
 		einvoice.setPdfGenerationJob(resource.getPdfGenerationJob());

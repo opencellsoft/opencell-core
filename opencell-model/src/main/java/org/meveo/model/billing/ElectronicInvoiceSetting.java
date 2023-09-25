@@ -8,6 +8,7 @@ import org.meveo.model.AuditableEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "electronic_invoice_settings")
@@ -38,8 +39,6 @@ public class ElectronicInvoiceSetting  extends AuditableEntity {
 	
 	@Column(name = "xml_generation_job")
 	private String xmlGenerationJob;
-	
-	public ElectronicInvoiceSetting(){}
 	
 	public boolean isForceXmlGeneration() {
 		return forceXmlGeneration;
@@ -95,5 +94,19 @@ public class ElectronicInvoiceSetting  extends AuditableEntity {
 	
 	public void setXmlGenerationJob(String xmlGenerationJob) {
 		this.xmlGenerationJob = xmlGenerationJob;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof ElectronicInvoiceSetting)) return false;
+		if (!super.equals(o)) return false;
+		ElectronicInvoiceSetting that = (ElectronicInvoiceSetting) o;
+		return isForceXmlGeneration() == that.isForceXmlGeneration() && isForcePDFGeneration() == that.isForcePDFGeneration() && isForceUBLGeneration() == that.isForceUBLGeneration() && Objects.equals(getInvoicingJob(), that.getInvoicingJob()) && Objects.equals(getPdfGenerationJob(), that.getPdfGenerationJob()) && Objects.equals(getUblGenerationJob(), that.getUblGenerationJob()) && Objects.equals(getXmlGenerationJob(), that.getXmlGenerationJob());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), isForceXmlGeneration(), isForcePDFGeneration(), isForceUBLGeneration(), getInvoicingJob(), getPdfGenerationJob(), getUblGenerationJob(), getXmlGenerationJob());
 	}
 }

@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.billing.EinvoiceSetting;
-import org.meveo.apiv2.models.ApiException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
