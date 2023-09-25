@@ -32,6 +32,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -102,7 +103,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
             }
             filters.put("disabled", false);
             PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, Arrays.asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
-            List<BillingRun> billingRuns = billingRunService.list(pagination);
+            List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(billingRunService.list(pagination), jobInstance);
+
             if(billingRuns != null && !billingRuns.isEmpty()) {
                 long excludedBRCount = validateBRList(billingRuns, result);
                 result.setNbItemsProcessedWithError(excludedBRCount);

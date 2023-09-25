@@ -35,6 +35,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.BillingProcessTypesEnum;
@@ -94,7 +95,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             filters.put("disabled", false);
             PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
             paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
-            List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
+            List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(
+                    billingRunService.list(paginationConfiguration), jobInstance);
             if (billingRuns.isEmpty()) {
                 List<String> errors = List.of("No valid billing run with status=INVOICE_LINES_CREATED found");
                 result.setErrors(errors);
