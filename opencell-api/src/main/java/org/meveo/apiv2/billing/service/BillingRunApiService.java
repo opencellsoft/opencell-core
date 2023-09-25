@@ -87,7 +87,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
     @Override
     public BillingRun create(BillingRun billingRun) {
         billingRunService.create(billingRun);
-        billingRunReportService.launchBillingRunReportJob(billingRun);
+        billingRunReportService.generateBillingRunReport(billingRun);
         return billingRun;
     }
 

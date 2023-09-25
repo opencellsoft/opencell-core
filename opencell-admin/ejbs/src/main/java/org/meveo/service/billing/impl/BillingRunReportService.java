@@ -2,9 +2,8 @@ package org.meveo.service.billing.impl;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.BigDecimal.valueOf;
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.meveo.model.jobs.JobLauncherEnum.API;
+import static org.meveo.model.billing.BillingRunReportTypeEnum.OPEN_RATED_TRANSACTIONS;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccountAmount;
@@ -13,19 +12,14 @@ import org.meveo.model.billing.BillingRunReport;
 import org.meveo.model.billing.BillingRunReportTypeEnum;
 import org.meveo.model.billing.OfferAmount;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.job.JobInstanceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,10 +42,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
     private OfferAmountService offerAmountService;
 
     @Inject
-    private JobInstanceService jobInstanceService;
-
-    @Inject
-    private JobExecutionService jobExecutionService;
+    private BillingRunReportService billingRunReportService;
 
     @Inject
     private BillingRunService billingRunService;
@@ -153,21 +144,15 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
     }
 
     /**
-     * Launch billing run report job
+     * generate billing run report
      * @param billingRun
      */
-    public void launchBillingRunReportJob(BillingRun billingRun) {
+    public void generateBillingRunReport(BillingRun billingRun) {
         if (billingRun.isPreReportAutoOnCreate() && !billingRun.hasPreInvoicingReport()) {
             try {
-                Map<String, Object> jobParams = new HashMap<>();
-                jobParams.put(BILLING_RUN_REPORT_JOB_PARAMETERS,
-                        asList(new EntityReferenceWrapper(BillingRun.class.getName(),
-                                null, billingRun.getReferenceCode())));
-                JobInstance jobInstance = jobInstanceService.findByCode(BILLING_RUN_REPORT_JOB_CODE);
-                jobInstance.setRunTimeValues(jobParams);
-                jobExecutionService.executeJob(jobInstance, jobParams, API);
+                billingRunReportService.createBillingRunReport(billingRun, null, OPEN_RATED_TRANSACTIONS);
             } catch (Exception exception) {
-                throw new BusinessException("Exception occurred during job execution : "
+                throw new BusinessException("Exception occurred during during report generation : "
                         + exception.getMessage(), exception.getCause());
             }
         }
