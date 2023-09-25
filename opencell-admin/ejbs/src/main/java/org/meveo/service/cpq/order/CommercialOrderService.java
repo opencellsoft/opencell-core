@@ -28,6 +28,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.RatingResult;
+import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -53,6 +54,7 @@ import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -92,6 +94,11 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 	@Inject
 	private ProductService productService;
+	@Inject
+	private OrderProductService orderProductService;
+	@Inject
+	private CustomGenericEntityCodeService customGenericEntityCodeService;
+	
 	
 	public CommercialOrder findByOrderNumer(String orderNumber) throws  BusinessException{
 		QueryBuilder queryBuilder = new QueryBuilder(CommercialOrder.class, "co");
@@ -190,7 +197,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				}else {
 					subscription.setUserAccount(offer.getUserAccount());
 				}
+				CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(Subscription.class.getName());
 				subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
+				if(customGenericEntityCode != null) {
+					String newCode = serviceSingleton.getGenericCode(customGenericEntityCode);
+					if(StringUtils.isNotBlank(newCode)){
+						subscription.setCode(newCode);
+					}
+				}
+				
 				subscription.setOffer(offer.getOfferTemplate());
 				subscription.setSubscriptionDate(getSubscriptionDeliveryDate(order, offer));
 				if (subscription.getSubscriptionDate().after(new Date())) {
