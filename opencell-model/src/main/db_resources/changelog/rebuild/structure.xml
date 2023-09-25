@@ -487,6 +487,7 @@
         <createSequence sequenceName="product_amount_seq" startValue="1"/>
         <createSequence sequenceName="subscription_amount_seq" startValue="1"/>
         <createSequence sequenceName="accounting_article_amount_seq" startValue="1"/>
+        <createSequence sequenceName="electronic_invoice_settings_seq" startValue="1"/>
     </changeSet>
 
 
@@ -12999,7 +13000,27 @@
             <column name="price_plan_matrix_line_id" type="bigint" />
        </createTable>
     </changeSet>
-
+    <changeSet id="#INTRD-14904_20230915_build" author="TarikFA.">
+        <createTable tableName="electronic_invoice_settings">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_electr_invoice_settings" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name= "force_xml_generation" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name= "force_pdf_generation" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name= "force_ubl_generation" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name= "invoicing_job" type="varchar(50)" />
+            <column name= "xml_generation_job" type="varchar(50)" />
+            <column name= "pdf_generation_job" type="varchar(50)" />
+            <column name= "ubl_generation_job" type="varchar(50)" />
+        </createTable>
+    </changeSet>
     <!-- start uk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-422">
@@ -20861,7 +20882,8 @@
 	<changeSet id="#INTRD-18280_20230911" author="aelmalki" />
 	<changeSet id="#INTRD-17184_20230829" author="aelmalki" />
 	<changeSet id="#INTRD-18386_20230915" author="AdilElJaouhari" />
-	
+    <changeSet id="#INTRD-14904_20230915" author="TarikFA." />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
