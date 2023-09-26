@@ -24,7 +24,7 @@ public class BillingRunReportJob extends Job {
 
     @Override
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        billingRunReportJobBean.execute(result);
+        billingRunReportJobBean.execute(result, jobInstance);
         return result;
     }
 
