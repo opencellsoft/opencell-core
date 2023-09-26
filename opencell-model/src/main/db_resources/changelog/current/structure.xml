@@ -4174,7 +4174,6 @@ order by date_trunc('month', i.invoice_date) DESC
         <dropColumn tableName="adm_user" columnName="hierarchy_level_id"/>
         <dropColumn tableName="adm_user" columnName="last_login_date"/>
         <dropColumn tableName="adm_user" columnName="crm_address_book_id"/>
-        <dropColumn tableName="adm_role" columnName="role_description"/>
 
     </changeSet>
 
@@ -7710,5 +7709,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
               br.aggregate_unit_amounts = bc.aggregate_unit_amounts, br.ignore_subscriptions = bc.ignore_subscriptions, br.ignore_orders = bc.ignore_orders, br.incremental_invoice_lines = bc.incremental_invoice_lines"),
          </sql>
     </changeSet>
+    
+     <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" failOnError="false">
+		<addColumn tableName="adm_role">
+			<column name="role_description" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
