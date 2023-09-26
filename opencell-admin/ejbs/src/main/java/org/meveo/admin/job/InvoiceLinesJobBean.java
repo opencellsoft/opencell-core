@@ -2,18 +2,20 @@ package org.meveo.admin.job;
 
 import static java.lang.Long.valueOf;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.ListUtils.partition;
 import static org.meveo.commons.utils.ParamBean.getInstance;
-import static org.meveo.model.billing.BillingRunReportTypeEnum.BILLED_RATED_TRANSACTIONS;
 import static org.meveo.model.billing.BillingRunStatusEnum.CREATING_INVOICE_LINES;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 import static org.meveo.model.billing.RatedTransactionStatusEnum.BILLED;
+import static org.meveo.model.jobs.JobLauncherEnum.TRIGGER;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,17 +49,18 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.BasicStatistics;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
-import org.meveo.service.billing.impl.BillingRunReportService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobInstanceService;
 
 @Stateless
 public class InvoiceLinesJobBean extends BaseJobBean {
 
     @Inject
     private BillingRunService billingRunService;
-    
+
     @Inject
     private BillingAccountService billingAccountService;
 
@@ -66,18 +69,22 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 
     @Inject
     private InvoiceLineService invoiceLinesService;
-    
+
     @Inject
     private IteratorBasedJobProcessing iteratorBasedJobProcessing;
 
     @Inject
-    private BillingRunReportService billingRunReportService;
-    
-    public static final String FIELD_PRIORITY_SORT = "billingCycle.priority, auditable.created";
-    
-    @Inject
     private BillingRunExtensionService billingRunExtensionService;
-    
+
+    @Inject
+    private JobExecutionService jobExecutionService;
+
+    @Inject
+    private JobInstanceService jobInstanceService;
+
+    private static final String FIELD_PRIORITY_SORT = "billingCycle.priority, auditable.created";
+    private static final String BILLING_RUN_REPORT_JOB_CODE = "BILLING_RUN_REPORT_JOB";
+
     @TransactionAttribute(TransactionAttributeType.NEVER)
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -94,7 +101,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                     .map(br -> valueOf(br.getCode().split("/")[0]))
                     .collect(toList()) : emptyList();
             // look for billing runs with status NEW or OPEN (case of incrementalInvoiceLines)
-            List<BillingRunStatusEnum> billingRunStatus = Arrays.asList(NEW, OPEN);
+            List<BillingRunStatusEnum> billingRunStatus = asList(NEW, OPEN);
             Map<String, Object> filters = new HashedMap();
             if (billingRunIds.isEmpty()) {
                 filters.put("inList status", billingRunStatus);
@@ -102,9 +109,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 filters.put("inList id", billingRunIds);
             }
             filters.put("disabled", false);
-            PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, Arrays.asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
+            PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
             List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(billingRunService.list(pagination), jobInstance);
-
             if(billingRuns != null && !billingRuns.isEmpty()) {
                 long excludedBRCount = validateBRList(billingRuns, result);
                 result.setNbItemsProcessedWithError(excludedBRCount);
@@ -161,7 +167,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                     }
                 }
             }
-            createBillingRunReports();
+            runBillingRunReports();
         } catch(BusinessException exception) {
             result.registerError(exception.getMessage());
             log.error(format("Failed to run invoice lines job: %s", exception));
@@ -172,9 +178,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 			AggregationConfiguration aggregationConfiguration, BillingRun billingRun, Long nbRuns, Long waitingMillis,
 			BasicStatistics basicStatistics, List<Long> billingAccountsIDs) {
 		List billableEntitiesList = billingAccountService.findByIds(billingAccountsIDs);
-		
+
 		Map<String, Object> perfConfig = initPerfConfig(jobInstance);
-		
+
 		BiConsumer<BillingAccount, JobExecutionResultImpl> task = (billableEntity, jobResult) ->
                 invoiceLinesService.createInvoiceLines(result, aggregationConfiguration, billingRun, billableEntity, basicStatistics, perfConfig);
 		iteratorBasedJobProcessing.processItems(result,
@@ -191,7 +197,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
 		perfConfig.put(InvoiceLinesJob.MAX_RATED_TRANSACTIONS_PER_TRANSACTION, (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.MAX_RATED_TRANSACTIONS_PER_TRANSACTION, 1000000L));
 		return perfConfig;
 	}
-	
+
 	private void processMassRTsInvoiceLinesGeneration(JobExecutionResultImpl result, JobInstance jobInstance,
 			AggregationConfiguration aggregationConfiguration, BillingRun billingRun, Long nbRuns, Long waitingMillis,
 			BasicStatistics basicStatistics, List<Long> billingAccountsIDs) {
@@ -214,16 +220,30 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     }
 
     @Asynchronous
-    private void createBillingRunReports() {
+    private void runBillingRunReports() {
+        List<BillingRun> billingRuns = listBillingRunToProcess();
+        Map<String, Object> jobParams = new HashMap<>();
+        jobParams.put("billingRun", billingRuns.stream()
+                .map(billingRun -> valueOf(billingRun.getId()))
+                .collect(joining("/")));
         Map<String, Object> filters = new HashMap<>();
-        filters.put("not-inList status", Arrays.asList(NEW, OPEN, CREATING_INVOICE_LINES));
-        filters.put("preInvoicingReport", "IS_NULL");
-        List<BillingRun> billingRuns = billingRunService.list(new PaginationConfiguration(filters));
-        filters.clear();
         filters.put("status", BILLED.toString());
-        for (BillingRun billingRun : billingRuns) {
-            filters.put("billingRun", billingRun);
-            billingRunReportService.createBillingRunReport(billingRun, filters, BILLED_RATED_TRANSACTIONS);
+        jobParams.put("filters", filters);
+        try {
+            JobInstance jobInstance = jobInstanceService.findByCode(BILLING_RUN_REPORT_JOB_CODE);
+            jobInstance.setRunTimeValues(jobParams);
+            jobExecutionService.executeJob(jobInstance, jobParams, TRIGGER);
+        } catch (Exception exception) {
+            throw new BusinessException("Exception occurred during billing run report job execution : "
+                    + exception.getMessage(), exception.getCause());
         }
+    }
+
+    private List<BillingRun> listBillingRunToProcess() {
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("not-inList status", asList(NEW, OPEN, CREATING_INVOICE_LINES));
+        filters.put("preInvoicingReport", "IS_NULL");
+        filters.put("preReportAutoOnInvoiceLinesJob", true);
+        return billingRunService.list(new PaginationConfiguration(filters));
     }
 }
