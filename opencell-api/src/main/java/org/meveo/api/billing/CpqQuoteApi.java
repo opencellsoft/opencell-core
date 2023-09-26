@@ -1214,8 +1214,12 @@ public class CpqQuoteApi extends BaseApi {
                 throw new EntityDoesNotExistsException("can not find Quote version with qoute code : " + quoteOfferDTO.getQuoteCode() + " and version : " + quoteOfferDTO.getQuoteVersion());
             quoteOffer.setQuoteVersion(quoteVersion);
         }
-        if(StringUtils.isNotBlank(quoteOfferDTO.getDiscountPlanCode())) {
-        	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDTO.getDiscountPlanCode()));
+        if(quoteOfferDTO.getDiscountPlanCode() !=null ) {
+	        if(StringUtils.isNotBlank(quoteOfferDTO.getDiscountPlanCode())) {
+		        quoteOffer.setDiscountPlan(loadEntityByCode(discountPlanService, quoteOfferDTO.getDiscountPlanCode(), DiscountPlan.class));
+	        }else{
+		        quoteOffer.setDiscountPlan(null);
+	        }
         }
         if(!StringUtils.isBlank(quoteOfferDTO.getUserAccountCode())) {
             UserAccount userAccount = userAccountService.findByCode(quoteOfferDTO.getUserAccountCode());
