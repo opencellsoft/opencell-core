@@ -392,9 +392,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
 
         offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        offerTemplate.setDescription(postData.getDescription());
-        offerTemplate.setName(postData.getName());
-        offerTemplate.setLongDescription(postData.getLongDescription());
+        if(postData.getDescription() != null)
+        	offerTemplate.setDescription(postData.getDescription());
+        if(postData.getName() != null)
+        	offerTemplate.setName(postData.getName());
+        if(postData.getLongDescription() != null) 
+        	offerTemplate.setLongDescription(postData.getLongDescription());
         
         if(!LifeCycleStatusEnum.RETIRED.equals(offerTemplate.getLifeCycleStatus())) {
             offerTemplate.setSequence(postData.getSequence());
