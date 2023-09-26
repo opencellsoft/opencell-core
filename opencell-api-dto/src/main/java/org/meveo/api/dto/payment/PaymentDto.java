@@ -558,11 +558,11 @@ public class PaymentDto extends BaseEntityDto {
         this.collectionDate = collectionDate;
     }
 
-    public String getTransactionalcurrency() {
+    public String getTransactionalCurrency() {
         return transactionalCurrency;
     }
 
-    public void setTransactionalcurrency(String transactionalCurrency) {
+    public void setTransactionalCurrency(String transactionalCurrency) {
         this.transactionalCurrency = transactionalCurrency;
     }
 }
