@@ -236,6 +236,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				});
 
 		try {
+			// First AO is Credit, and shall be add with DEBIT to do unitary matching
 			Long creditAoId = aos.stream().filter(ao -> OperationCategoryEnum.CREDIT == ao.getTransactionCategory()).findFirst()
 					.orElseThrow(() -> new BusinessApiException("No credit AO passed for matching")).getId();
 
