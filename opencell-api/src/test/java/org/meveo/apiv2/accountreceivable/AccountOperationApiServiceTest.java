@@ -113,6 +113,7 @@ public class AccountOperationApiServiceTest {
         aoP1.setTransactionalCurrency(eTradingCurrency1);
         aoP2.setTransactionalCurrency(eTradingCurrency2);
         aoInvoice.setTransactionalCurrency(eTradingCurrency1);
+        aoInvoice.setTransactionCategory(OperationCategoryEnum.CREDIT);
         List<Long> aoIds = List.of(2L, 3L, 4L);
         List<AccountOperation> accountOperations = List.of(aoInvoice, aoP1, aoP2);
 
