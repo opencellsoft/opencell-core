@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -182,17 +181,7 @@ public class GenericOpencellRestful extends Application {
             resources.asIterator().forEachRemaining(url -> {
                 try {
                     Object obj = parser.parse(new String(url.openStream().readAllBytes()));
-                    JSONObject jsonObject = (JSONObject) obj;
-
-                    Map<String, String> versionInfo = new HashedMap();
-                    versionInfo.put("name", (String) jsonObject.get("name"));
-                    versionInfo.put("version", (String) jsonObject.get("version"));
-                    versionInfo.put("commit", (String) jsonObject.get("commit"));
-                    if(jsonObject.get("commitDate") != null) {
-                        versionInfo.put("commitDate", (String) jsonObject.get("commitDate"));
-                    }
-
-                    VERSION_INFO.add(versionInfo);
+                    VERSION_INFO.add((JSONObject)obj);
                 } catch (ParseException | IOException e) {
                     log.warn(e.toString());
                     log.error("error = {}", e.getMessage(), e);
