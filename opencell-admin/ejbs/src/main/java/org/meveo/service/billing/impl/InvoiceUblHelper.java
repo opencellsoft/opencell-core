@@ -21,6 +21,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.Part
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PartyTaxScheme;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PaymentMeans;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PaymentTermsType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PeriodType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PersonType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PriceType;
@@ -78,6 +79,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -126,6 +128,7 @@ public class InvoiceUblHelper {
 					.collect(Collectors.toList());
 			setTaxTotal(taxInvoiceAgregates, invoice.getAmountTax(), invoiceXml, invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getCurrencyCode() : null);
 		}
+		setPaymentTerms(invoiceXml, invoice.getInvoiceType());
 		setAccountingSupplierParty(invoice.getSeller(), invoiceXml);
 		setAccountingCustomerParty(invoice.getBillingAccount(), invoiceXml);
 		setInvoiceLine(invoice.getInvoiceLines(), invoiceXml);
@@ -143,6 +146,17 @@ public class InvoiceUblHelper {
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2");
 		marshaller.marshal(invoiceXml, absoluteFileName);
+	}
+	
+	private void setPaymentTerms(Invoice target, InvoiceType invoiceType) {
+		if(invoiceType != null && invoiceType.getUntdidInvoiceCodeType() != null && invoiceType.getUntdidInvoiceCodeType().getCode().equals("380")) {
+			PaymentTermsType paymentTermsType = objectFactoryCommonAggrement.createPaymentTermsType();
+			Note note = objectFactorycommonBasic.createNote();
+			note.setValue("No early payment discount. Any amounts owned that are not paid will due shall bear interest, from the time the payment was due until the time paid, " +
+					"at a rate of 10% per annum compounded annually");
+			paymentTermsType.getNotes().add(note);
+			target.getPaymentTerms().add(paymentTermsType);
+		}
 	}
 	
 	private void setUblExtension(Invoice target){
@@ -655,5 +669,6 @@ public class InvoiceUblHelper {
 			throw new RuntimeException(e);
 		}
 	}
+	
 	
 }
