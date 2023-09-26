@@ -158,7 +158,7 @@ public class PaymentApi extends BaseApi {
 
         Payment payment = new Payment();
 		paymentService.calculateAmountsByTransactionCurrency(payment, customerAccount,
-				paymentDto.getAmount(), paymentDto.getTransactionalcurrency(), payment.getTransactionDate());
+				paymentDto.getAmount(), paymentDto.getTransactionalCurrency(), payment.getTransactionDate());
 
 		payment.setJournal(occTemplate.getJournal());
         payment.setPaymentMethod(paymentDto.getPaymentMethod());
@@ -261,7 +261,7 @@ public class PaymentApi extends BaseApi {
 			aosToPaid.add(ao);
 		}
 		 Collections.sort(aosToPaid, Comparator.comparing(AccountOperation::getDueDate));
-		if(checkAccountOperationCurrency(aosToPaid, paymentDto.getTransactionalcurrency())) {
+		if(checkAccountOperationCurrency(aosToPaid, paymentDto.getTransactionalCurrency())) {
 			throw new BusinessApiException("Transaction currency is different from account operation currency");
 		}
 		for(AccountOperation ao :aosToPaid ) {
