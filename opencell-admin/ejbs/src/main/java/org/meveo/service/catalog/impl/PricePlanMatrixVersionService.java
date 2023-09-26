@@ -699,16 +699,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
                 //Check if any of line contains an EL value, then add new column
                 if(!StringUtils.isBlank(line.getValueEL())) {
-                    CSVLineRecord.put("description[text]", isCsv ? SEPARATOR.concat(line.getDescription()).concat(SEPARATOR) : line.getDescription());
+                    CSVLineRecord.put("description[text]", isCsv && line.getDescription() != null ? SEPARATOR.concat(line.getDescription()).concat(SEPARATOR) : line.getDescription());
                     CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 2);
-                    CSVLineRecord.put("priceWithoutTax[number]", isCsv ? SEPARATOR.concat(String.valueOf(line.getPriceWithoutTax())).concat(SEPARATOR) : line.getPriceWithoutTax());
+                    CSVLineRecord.put("priceWithoutTax[number]", isCsv && line.getPriceWithoutTax() != null ? SEPARATOR.concat(String.valueOf(line.getPriceWithoutTax())).concat(SEPARATOR) : line.getPriceWithoutTax());
                     CSVLineRecordPosition.put("priceWithoutTax[number]", Integer.MAX_VALUE - 1);
-                    CSVLineRecord.put("unitPriceEL[text]", isCsv ? SEPARATOR.concat(line.getValueEL()).concat(SEPARATOR) : line.getValueEL());
+                    CSVLineRecord.put("unitPriceEL[text]", isCsv && line.getValueEL() != null ? SEPARATOR.concat(line.getValueEL()).concat(SEPARATOR) : line.getValueEL());
                     CSVLineRecordPosition.put("unitPriceEL[text]", Integer.MAX_VALUE);
                 } else {
-                    CSVLineRecord.put("description[text]", isCsv ? SEPARATOR.concat(line.getDescription()).concat(SEPARATOR) : line.getDescription());
+                    CSVLineRecord.put("description[text]", isCsv && line.getDescription() != null ? SEPARATOR.concat(line.getDescription()).concat(SEPARATOR) : line.getDescription());
                     CSVLineRecordPosition.put("description[text]", Integer.MAX_VALUE - 1);
-                    CSVLineRecord.put("priceWithoutTax[number]", isCsv ? SEPARATOR.concat(String.valueOf(line.getPriceWithoutTax())).concat(SEPARATOR) : line.getPriceWithoutTax());
+                    CSVLineRecord.put("priceWithoutTax[number]", isCsv && line.getPriceWithoutTax() != null ? SEPARATOR.concat(String.valueOf(line.getPriceWithoutTax())).concat(SEPARATOR) : line.getPriceWithoutTax());
                     CSVLineRecordPosition.put("priceWithoutTax[number]", Integer.MAX_VALUE);
                 }
 
