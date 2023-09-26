@@ -440,7 +440,6 @@ public class InvoiceUblHelper {
 		RegistrationName registrationName = objectFactorycommonBasic.createRegistrationName();
 		registrationName.setValue(seller.getDescription());
 		partyLegalEntity.setRegistrationName(registrationName);
-		partyType.getPartyLegalEntities().add(partyLegalEntity);
 		// AccountingSupplierParty/Party/PartyLegalEntity/RegistrationAddress/StreetName
 		if(seller.getAddress() != null) {
 			Address address = seller.getAddress();
