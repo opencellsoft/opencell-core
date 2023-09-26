@@ -476,9 +476,11 @@ public class InvoiceUblHelper {
 			// AccountingSupplierParty/Party/PartyTaxScheme/CompanyID
 			PartyTaxScheme taxScheme = objectFactoryCommonAggrement.createPartyTaxScheme();
 			CompanyID companyID = objectFactorycommonBasic.createCompanyID();
-			companyID.setValue(seller.getVatNo());
+			String countryCode = seller.getAddress() != null && seller.getAddress().getCountry() != null ? seller.getAddress().getCountry().getCountryCode() : null;
+			companyID.setSchemeID(countryCode);
+			companyID.setSchemeAgencyID("ZZZ");
+			companyID.setValue(countryCode + seller.getVatNo());
 			taxScheme.setCompanyID(companyID);
-			taxScheme.setTaxScheme(getTaxSheme());
 			partyType.getPartyTaxSchemes().add(taxScheme);
 		}
 		
