@@ -4,6 +4,7 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.BigDecimal.valueOf;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.model.billing.BillingRunReportTypeEnum.OPEN_RATED_TRANSACTIONS;
+import static org.meveo.model.jobs.JobLauncherEnum.API;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccountAmount;
@@ -12,14 +13,18 @@ import org.meveo.model.billing.BillingRunReport;
 import org.meveo.model.billing.BillingRunReportTypeEnum;
 import org.meveo.model.billing.OfferAmount;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobInstanceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,14 +47,15 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
     private OfferAmountService offerAmountService;
 
     @Inject
-    private BillingRunReportService billingRunReportService;
-
-    @Inject
     private BillingRunService billingRunService;
 
-    private static final String BILLING_RUN_REPORT_JOB_CODE = "BILLING_RUN_REPORT_JOB";
-    private static final String BILLING_RUN_REPORT_JOB_PARAMETERS = "BillingRunReportJob_billingRun";
+    @Inject
+    private JobInstanceService jobInstanceService;
 
+    @Inject
+    private JobExecutionService jobExecutionService;
+
+    private static final String BILLING_RUN_REPORT_JOB_CODE = "BILLING_RUN_REPORT_JOB";
 
     /**
      * Create billing run reports from billing run
@@ -59,7 +65,8 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
      * @param reportType report type
      * @return Billing run report
      */
-    public BillingRunReport createBillingRunReport(BillingRun billingRun, Map<String, Object> filters, BillingRunReportTypeEnum reportType) {
+    public BillingRunReport createBillingRunReport(BillingRun billingRun,
+                                                   Map<String, Object> filters, BillingRunReportTypeEnum reportType) {
         List<RatedTransaction> ratedTransactions = ratedTransactionService.getReportRatedTransactions(billingRun, filters);
         BillingRunReport billingRunReport = new BillingRunReport();
         if (!ratedTransactions.isEmpty()) {
@@ -71,7 +78,11 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         }
         billingRunReport.setBillingRun(billingRun);
         create(billingRunReport);
-        billingRun.setPreInvoicingReport(billingRunReport);
+        if(OPEN_RATED_TRANSACTIONS.equals(reportType)) {
+            billingRun.setPreInvoicingReport(billingRunReport);
+        } else {
+            billingRun.setBilledRatedTransactionsReport(billingRunReport);
+        }
         billingRunService.update(billingRun);
         return billingRunReport;
     }
@@ -150,7 +161,11 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
     public void generateBillingRunReport(BillingRun billingRun) {
         if (billingRun.isPreReportAutoOnCreate() && !billingRun.hasPreInvoicingReport()) {
             try {
-                billingRunReportService.createBillingRunReport(billingRun, null, OPEN_RATED_TRANSACTIONS);
+                Map<String, Object> jobParams = new HashMap<>();
+                jobParams.put("billingRun", billingRun.getId().toString());
+                JobInstance jobInstance = jobInstanceService.findByCode(BILLING_RUN_REPORT_JOB_CODE);
+                jobInstance.setRunTimeValues(jobParams);
+                jobExecutionService.executeJob(jobInstance, jobParams, API);
             } catch (Exception exception) {
                 throw new BusinessException("Exception occurred during during report generation : "
                         + exception.getMessage(), exception.getCause());
