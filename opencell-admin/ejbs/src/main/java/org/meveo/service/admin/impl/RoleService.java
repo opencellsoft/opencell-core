@@ -147,4 +147,14 @@ public class RoleService extends PersistenceService<Role> {
         keycloakAdminClientService.deleteRole(role.getName(), role.isClientRole());
         super.remove(role);
     }
+    
+    public Role findOrCreateRole(String name,Role parentRole) {
+    	Role role=null;
+        try {
+        	 role = getEntityManager().createNamedQuery("Role.getByName", Role.class).setParameter("name", name.toLowerCase()).getSingleResult();
+        } catch (NoResultException ex) {
+          super.create(new Role(name, name, true, parentRole));
+        }
+        return role;
+    }
 }

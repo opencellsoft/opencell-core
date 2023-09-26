@@ -1999,6 +1999,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updated" type="datetime" />
             <column name="updater" type="varchar(100)" />
+            <column name="role_description" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-140">
@@ -20531,6 +20532,7 @@
     <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe" />
     <changeSet id="#INTRD-16636_20230610" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
+    <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
