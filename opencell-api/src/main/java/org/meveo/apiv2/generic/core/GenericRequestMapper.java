@@ -69,7 +69,7 @@ public class GenericRequestMapper {
         }
 
         List<String> sortByFetchList = Stream.of(genericPagingAndFiltering.getSortBy().split(","))
-                .filter(s -> !s.isBlank() && s.contains("."))
+                .filter(s -> !s.isBlank() && s.contains(".") && !s.contains("cfValues"))
                 .map(s -> getFetchList(s))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
