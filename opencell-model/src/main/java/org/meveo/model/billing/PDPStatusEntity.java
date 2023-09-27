@@ -10,11 +10,12 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "pdp_status")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "pdp_status_seq"), })
-public class PDPStatus  extends AuditableEntity {
+public class PDPStatusEntity extends AuditableEntity {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "pdp_status", nullable = false)
@@ -48,5 +49,19 @@ public class PDPStatus  extends AuditableEntity {
 	
 	public void setOrigin(String origin) {
 		this.origin = origin;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof PDPStatusEntity)) return false;
+		if (!super.equals(o)) return false;
+		PDPStatusEntity pdpStatusEntity1 = (PDPStatusEntity) o;
+		return getPdpStatus() == pdpStatusEntity1.getPdpStatus() && Objects.equals(getEventDate(), pdpStatusEntity1.getEventDate()) && Objects.equals(getOrigin(), pdpStatusEntity1.getOrigin());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), getPdpStatus(), getEventDate(), getOrigin());
 	}
 }

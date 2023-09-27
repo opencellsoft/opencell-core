@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "pdp_status_history")
@@ -135,5 +136,19 @@ public class PDPStatusHistory extends AuditableEntity {
 	
 	public void setPdpStatusHistories(List<PDPStatusHistory> pdpStatusHistories) {
 		this.pdpStatusHistories = pdpStatusHistories;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof PDPStatusHistory)) return false;
+		if (!super.equals(o)) return false;
+		PDPStatusHistory that = (PDPStatusHistory) o;
+		return getTransmittedFormatEnum() == that.getTransmittedFormatEnum() && Objects.equals(getOrigin(), that.getOrigin()) && Objects.equals(getReturnCode(), that.getReturnCode()) && Objects.equals(getLabel(), that.getLabel()) && Objects.equals(getInvoiceIdentifier(), that.getInvoiceIdentifier()) && Objects.equals(getInvoiceNumber(), that.getInvoiceNumber()) && Objects.equals(getInvoice(), that.getInvoice()) && getStatus() == that.getStatus() && Objects.equals(getDepositDate(), that.getDepositDate());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), getTransmittedFormatEnum(), getOrigin(), getReturnCode(), getLabel(), getInvoiceIdentifier(), getInvoiceNumber(), getInvoice(), getStatus(), getDepositDate());
 	}
 }
