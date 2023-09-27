@@ -12029,6 +12029,13 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         <sql>call proc_recreate_audit_data_trigger('billing_service_instance','status,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
     </changeSet>
 	
+	<changeSet id="INTRD-18673-20230927" author="aelmalki">
+		<update tableName="billing_accounting_article">
+			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code WHERE code='95')" />
+			<where>code IN ('DISC-STD', 'PROD-STD')</where>
+		</update>
+	</changeSet>
+	
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
 	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />

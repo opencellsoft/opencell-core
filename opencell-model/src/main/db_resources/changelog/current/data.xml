@@ -21362,5 +21362,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="default_advanced_payment_article_id" valueComputed="(SELECT id FROM billing_accounting_article WHERE code = 'ADV-STD')" />
 		</update>
     </changeSet>
+	
+	<changeSet id="INTRD-18673-20230927" author="aelmalki">
+		<update tableName="billing_accounting_article">
+			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code WHERE code='95')" />
+			<where>code IN ('DISC-STD', 'PROD-STD')</where>
+		</update>
+	</changeSet>
 	        
 </databaseChangeLog>
