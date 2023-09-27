@@ -1,12 +1,16 @@
 package org.meveo.apiv2;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -107,6 +111,7 @@ import org.meveo.apiv2.settings.globalSettings.impl.GlobalSettingsResourceImpl;
 import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingResourceImpl;
 import org.meveo.apiv2.standardReport.impl.StandardReportResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 
 @ApplicationPath("/api/rest/v2")
@@ -175,20 +180,23 @@ public class GenericOpencellRestful extends Application {
     }
 
     private void loadVersionInformation() {
-        try {
-            Enumeration<URL> resources = getClass().getClassLoader().getResources("version.json");
-            JSONParser parser = new JSONParser();
-            resources.asIterator().forEachRemaining(url -> {
-                try {
-                    Object obj = parser.parse(new String(url.openStream().readAllBytes()));
-                    VERSION_INFO.add((JSONObject)obj);
-                } catch (ParseException | IOException e) {
-                    log.warn(e.toString());
-                    log.error("error = {}", e.getMessage(), e);
-                }
-            });
-        } catch (IOException e) {
-            log.error("There was a problem loading version information", e);
+        JSONParser parser = new JSONParser();
+        String[] versionFiles = { "version.json", "overlay-version.json" };
+        for (String versionFile : versionFiles) {
+        	try {
+	            Enumeration<URL> resources = getClass().getClassLoader().getResources(versionFile);
+	            resources.asIterator().forEachRemaining(url -> {
+	                try {
+	                    Object obj = parser.parse(new String(url.openStream().readAllBytes()));
+	                    VERSION_INFO.add((JSONObject)obj);
+	                } catch (ParseException | IOException e) {
+	                    log.warn(e.toString());
+	                    log.error("error = {}", e.getMessage(), e);
+	                }
+	            });
+        	} catch (IOException e) {
+                log.error("There was a problem loading version information", e);
+            }
         }
     }
 
