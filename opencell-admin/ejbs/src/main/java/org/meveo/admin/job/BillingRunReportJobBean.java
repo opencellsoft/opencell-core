@@ -49,6 +49,9 @@ public class BillingRunReportJobBean extends BaseJobBean {
     }
 
     private List<Long> extractBRIds(String billingRunIds) {
+        if(billingRunIds == null || billingRunIds.isBlank()) {
+            return emptyList();
+        }
         return stream(billingRunIds.split("/"))
                 .map(Long::valueOf)
                 .collect(toList());
