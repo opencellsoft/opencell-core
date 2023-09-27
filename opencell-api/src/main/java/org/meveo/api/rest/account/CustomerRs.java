@@ -465,6 +465,18 @@ public interface CustomerRs extends IBaseRs {
     @Operation(summary = "Anonymization of a specific customer", deprecated = true,
             tags = { "Deprecated" })
     ActionStatus anonymizeGdpr(@Parameter(description = "The customer code") @QueryParam("customerCode") String customerCode);
+    
+    /**
+     * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.
+	 * Upon request, they can require their data to be erased.
+	 * In such case, mandatory information (accounting, invoicing, payments) must be preserved but the data tables including the customer's data must be anonymize (firstname/name/emails/phones/addresses/etc) so if this person register back it will be treated as a new customer without history.
+     * @param customerCode The code of the customer
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/anonymizeGdpr")
+    @Operation(summary = "Anonymization of a specific customer", tags = { "Customer management" })
+    ActionStatus updateAnonymizeGdpr(@Parameter(description = "The customer code") @QueryParam("customerCode") String customerCode);
 
     /**
      * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.
