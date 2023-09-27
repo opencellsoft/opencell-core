@@ -75,9 +75,11 @@ import oasis.names.specification.ubl.schema.xsd.invoice_2.Invoice;
 import oasis.names.specification.ubl.schema.xsd.invoice_2.ObjectFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
@@ -106,9 +108,12 @@ public class InvoiceUblHelper {
 	private final static oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.ObjectFactory objectFactorycommonBasic;
 	private final static oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ObjectFactory objectFactoryCommonAggrement;
 	
+	private final static InvoiceAgregateService invoiceAgregateService;
+	
 	static {
 		objectFactorycommonBasic = new oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.ObjectFactory();
 		objectFactoryCommonAggrement = new oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ObjectFactory();
+		invoiceAgregateService = (InvoiceAgregateService) EjbUtils.getServiceInterface(InvoiceAgregateService.class.getSimpleName());
 	}
 	
 	private InvoiceUblHelper(){}
@@ -121,7 +126,7 @@ public class InvoiceUblHelper {
 		setGeneralInfo(invoice, invoiceXml);
 		setBillingReference(invoice, invoiceXml);
 		setOrderReference(invoice, invoiceXml);
-		setAllowanceCharge(invoice.getSubCategoryInvoiceAgregate(), invoiceXml);
+		setAllowanceCharge(invoice, invoiceXml);
 		if(CollectionUtils.isNotEmpty(invoice.getInvoiceAgregates())){
 			List<TaxInvoiceAgregate> taxInvoiceAgregates = invoice.getInvoiceAgregates().stream().filter(invAgg -> "T".equals(invAgg.getDescriminatorValue()))
 					.map(invAgg -> (TaxInvoiceAgregate) invAgg)
@@ -588,7 +593,8 @@ public class InvoiceUblHelper {
 			target.getTaxTotals().add(taxTotalType);
 		}
 	}
-	private void setAllowanceCharge(Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates, Invoice target){
+	private void setAllowanceCharge(org.meveo.model.billing.Invoice invoice, Invoice target){
+		List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = (List<SubCategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "F");
 		if(CollectionUtils.isNotEmpty(subCategoryInvoiceAgregates)){
 			subCategoryInvoiceAgregates.forEach(subCategoryInvoiceAgregate -> {
 				AllowanceChargeType allowanceCharge = objectFactoryCommonAggrement.createAllowanceChargeType();
@@ -605,7 +611,7 @@ public class InvoiceUblHelper {
 					allowanceCharge.getAllowanceChargeReasons().add(allowanceChargeReason);
 				}
 				Amount amount = objectFactorycommonBasic.createAmount();
-				amount.setValue(subCategoryInvoiceAgregate.getAmount());
+				amount.setValue(subCategoryInvoiceAgregate.getAmountTax());
 				allowanceCharge.setAmount(amount);
 				target.getAllowanceCharges().add(allowanceCharge);
 			});
