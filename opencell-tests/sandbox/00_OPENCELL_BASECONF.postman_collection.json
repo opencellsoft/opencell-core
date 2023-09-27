@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "e90151fb-bb7d-4070-b60e-eeac36bfc9c6",
-		"name": "00_OPENCELL_V14.2.X",
+		"name": "00_OPENCELL_V15.X",
 		"description": "# Introduction\r\n\r\nThis configuration file is designed to be a basis for all configurations provided by Opencell.\r\nIt merely contains most common general settings and a catalog of services implementing various rating models.\r\n\r\n# Configuring Opencell\r\n\r\nThere are 2 main ways for configuring ***Opencell***:\r\n* GUI (*Administration GUI* and *Marketing Manager*)\r\n* API (all Opencell configuration and operations can be performed using our extensive API library)\r\n\r\nThe most flexible way is using APIs which currently are available as **Rest** and **Soap**.\r\nThe **Soap** API are deprecated, so will won't mention them anymore.\r\n\r\n## Tools\r\n\r\nAny tools able to send HTTP requests will do.\r\nOne could even just script *curl* calls using shell script.\r\nBut of course, a more user friendly tool will make things easier.\r\n\r\nHere at ***Opencell***, we prefer **Postman** (https://getpostman.com):\r\n* it has a modern, friendly interface\r\n* Sets of API request can be organized into collections, themselves structured into a folder tree.\r\n* Collections can be exported as _JSON_ files or shared with other team members using collaboration features (payed version)\r\n* it allows to uses variables at different levels (collection, environement, global) and to execute *Javascript* scripts before and after executing API calls which allows great flexibility and API response testing.\r\n\r\n\r\n\r\n# Configuration documentation guidelines\r\n\r\nIn order to document our configuration, we make full used of the internal documentation capabilities of the Markdown fields on Postman Objects\r\n\r\n## Default template for *Collection* documentation\r\n\r\n## Default template for *Folder* documentation\r\n\r\n## Default template for *Request* documentation\r\n\r\n\r\n\r\n# Tips & guidelines\r\n\r\nHere follow a few tips for understanding this collection.\r\n\r\n## Collection pre-request script\r\n\r\n```javascript\r\npm.globals.set(\"timestamp.iso\", (new Date()).toISOString());\r\npm.globals.set(\"request.label\", pm.info.requestName);\r\n\r\nvar parts = pm.info.requestName.split(\"|\");\r\n\r\nfor(let i=0; i<parts.length; i++) {\r\n    pm.globals.set(\"request.label.\"+i, parts[i]);\r\n}\r\n```\r\n\r\n## Configuration guidelines\r\n\r\n## Entities\r\n\r\n<entity>_<project_code>_XXX\r\n\r\n### Custom Fields\r\n\r\nCF_<entity>_<project_code>_ XXX\r\n\r\n<entity> will be discarded for inherited\r\n\r\n#### Custom field visibility\r\n\r\nSE_<entity>_<project_code>_<markers>_XXX\r\n\r\n<markers> are used in CFT.applicableOnEl to show CFT on entities\r\n\r\n\r\n## Entity abbreviation\r\n\r\n| code  | entity                        |\r\n|:-----:|:------------------------------|\r\n|   P   | Provider                      |\r\n|   S   | Seller                        |\r\n|   C   | Customer                      |\r\n|  CA   | Customer Account              |\r\n|  BA   | Billing Account               |\r\n|  UA   | User Account                  |\r\n|  SU   | Subscription                  |\r\n|  AP   | Access Point                  |\r\n|  OF   | Offer Template                |\r\n|  SE   | Service Template and Instance |\r\n|  CH   | Charge Template               |\r\n|  PP   | Price Plan                    |\r\n|  CN   | Counter                       |\r\n| ICAT  | Invoice Category              |\r\n| ISCAT | Invoice SubCategory           |\r\n|  CAL  | Calendar                      |\r\n|  BC   | Billing Cycle                 |\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "2006058"
@@ -2174,6 +2174,34 @@
 									"response": []
 								},
 								{
+									"name": "title|code=CIE-SANDBOX|desc=Company",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"isCompany\": \"false\"\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/account/title/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"account",
+												"title",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
 									"name": "custCat|code=CLIENT|taxCat=REGULAR",
 									"request": {
 										"method": "POST",
@@ -2554,7 +2582,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n  \"code\": \"{{code}}\",\r\n  \"description\": \"{{desc}}\",\r\n  \"occTemplateCode\": \"INV_STD\",\r\n  \"occTemplateNegativeCode\": null,\r\n  \"billingTemplateName\": \"OPENCELL_DEMO\",\r\n  \"sequenceDto\": {\r\n    \"prefixEL\": \"INV_\",\r\n    \"sequenceSize\": 4,\r\n    \"currentInvoiceNb\":null\r\n  },\r\n  \"xmlFilenameEL\": \"XML_INV_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"pdfFilenameEL\": \"PDF_INV_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"sellerSequence\": null,\r\n  \"appliesTo\": [\r\n    \"COM\",\r\n    \"ADJ\"\r\n  ],\r\n  \"matchingAuto\": false,\r\n  \"useSelfSequence\": true\r\n}\r\n",
+													"raw": "{\r\n  \"code\": \"{{code}}\",\r\n  \"description\": \"{{desc}}\",\r\n  \"occTemplateCode\": \"INV_STD\",\r\n  \"occTemplateNegativeCode\": null,\r\n  \"billingTemplateName\": \"\",\r\n  \"sequenceDto\": {\r\n    \"prefixEL\": \"INV_\",\r\n    \"sequenceSize\": 4,\r\n    \"currentInvoiceNb\":null\r\n  },\r\n  \"xmlFilenameEL\": \"XML_INV_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"pdfFilenameEL\": \"PDF_INV_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"sellerSequence\": null,\r\n  \"appliesTo\": [\r\n    \"COM\",\r\n    \"ADJ\"\r\n  ],\r\n  \"matchingAuto\": false,\r\n  \"useSelfSequence\": true\r\n}\r\n",
 													"options": {
 														"raw": {
 															"language": "json"
@@ -2588,7 +2616,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"{{desc}}\",\r\n    \"occTemplateCode\": \"CRD_TRS\",\r\n    \"occTemplateNegativeCode\": null,\r\n    \"billingTemplateNameEL\": \"OPENCELL_DEMO\",\r\n    \"matchingAuto\": false,\r\n    \"sequenceDto\": {\r\n        \"prefixEL\": \"DEPOT_\",\r\n        \"sequenceSize\": 4,\r\n        \"currentInvoiceNb\": null\r\n    },\r\n    \"xmlFilenameEL\": \"XML_DEPOT_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n    \"pdfFilenameEL\": \"PDF_DEPOT_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n    \"sellerSequence\": null,\r\n    \r\n    \"excludeFromAgedTrialBalance\": false,\r\n    \"appliesTo\": [\r\n        \"COM\",\r\n        \"ADJ\"\r\n    ],\r\n    \"useSelfSequence\": true\r\n}",
+													"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"{{desc}}\",\r\n    \"occTemplateCode\": \"CRD_TRS\",\r\n    \"occTemplateNegativeCode\": null,\r\n    \"billingTemplateNameEL\": \"\",\r\n    \"matchingAuto\": false,\r\n    \"sequenceDto\": {\r\n        \"prefixEL\": \"DEPOT_\",\r\n        \"sequenceSize\": 4,\r\n        \"currentInvoiceNb\": null\r\n    },\r\n    \"xmlFilenameEL\": \"XML_DEPOT_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n    \"pdfFilenameEL\": \"PDF_DEPOT_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n    \"sellerSequence\": null,\r\n    \r\n    \"excludeFromAgedTrialBalance\": false,\r\n    \"appliesTo\": [\r\n        \"COM\",\r\n        \"ADJ\"\r\n    ],\r\n    \"useSelfSequence\": true\r\n}",
 													"options": {
 														"raw": {
 															"language": "json"
@@ -2622,7 +2650,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n  \"code\": \"{{code}}\",\r\n  \"description\": \"{{desc}}\",\r\n  \"occTemplateCode\": \"INV_REB\",\r\n  \"occTemplateNegativeCode\": null,\r\n  \"billingTemplateName\": \"OPENCELL_DEMO\",\r\n  \"sequenceDto\": {\r\n    \"prefixEL\": \"REB_\",\r\n    \"sequenceSize\": 4,\r\n    \"currentInvoiceNb\":null\r\n  },\r\n  \"xmlFilenameEL\": \"XML_REB_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"pdfFilenameEL\": \"PDF_REB_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"sellerSequence\": null,\r\n  \"appliesTo\": [\r\n    \"COM\",\r\n    \"ADJ\"\r\n  ],\r\n  \"matchingAuto\": false,\r\n  \"useSelfSequence\": true\r\n}\r\n",
+													"raw": "{\r\n  \"code\": \"{{code}}\",\r\n  \"description\": \"{{desc}}\",\r\n  \"occTemplateCode\": \"INV_REB\",\r\n  \"occTemplateNegativeCode\": null,\r\n  \"billingTemplateName\": \"\",\r\n  \"sequenceDto\": {\r\n    \"prefixEL\": \"REB_\",\r\n    \"sequenceSize\": 4,\r\n    \"currentInvoiceNb\":null\r\n  },\r\n  \"xmlFilenameEL\": \"XML_REB_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"pdfFilenameEL\": \"PDF_REB_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"sellerSequence\": null,\r\n  \"appliesTo\": [\r\n    \"COM\",\r\n    \"ADJ\"\r\n  ],\r\n  \"matchingAuto\": false,\r\n  \"useSelfSequence\": true\r\n}\r\n",
 													"options": {
 														"raw": {
 															"language": "json"
@@ -2656,7 +2684,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n  \"code\": \"{{code}}\",\r\n  \"description\": \"{{desc}}\",\r\n  \"occTemplateCode\": \"INV_CRN\",\r\n  \"occTemplateNegativeCode\": null,\r\n  \"billingTemplateName\": \"OPENCELL_DEMO\",\r\n  \"sequenceDto\": {\r\n    \"prefixEL\": \"ADJ_\",\r\n    \"sequenceSize\": 4,\r\n    \"currentInvoiceNb\":null\r\n  },\r\n  \"xmlFilenameEL\": \"XML_ADJ_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"pdfFilenameEL\": \"PDF_ADJ_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"sellerSequence\": null,\r\n  \"appliesTo\": [\r\n    \"COM\"\r\n  ],\r\n  \"matchingAuto\": false,\r\n  \"useSelfSequence\": true\r\n}\r\n",
+													"raw": "{\r\n  \"code\": \"{{code}}\",\r\n  \"description\": \"{{desc}}\",\r\n  \"occTemplateCode\": \"INV_CRN\",\r\n  \"occTemplateNegativeCode\": null,\r\n  \"billingTemplateName\": \"\",\r\n  \"sequenceDto\": {\r\n    \"prefixEL\": \"ADJ_\",\r\n    \"sequenceSize\": 4,\r\n    \"currentInvoiceNb\":null\r\n  },\r\n  \"xmlFilenameEL\": \"XML_ADJ_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"pdfFilenameEL\": \"PDF_ADJ_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMM') }/#{ invoice.invoiceNumber }_#{ mv:formatDate(invoice.getInvoiceDate(),'yyyyMMdd') }\",\r\n  \"sellerSequence\": null,\r\n  \"appliesTo\": [\r\n    \"COM\"\r\n  ],\r\n  \"matchingAuto\": false,\r\n  \"useSelfSequence\": true\r\n}\r\n",
 													"options": {
 														"raw": {
 															"language": "json"
@@ -3281,7 +3309,7 @@
 									"name": "Loop create CT_STRING records Copy",
 									"item": [
 										{
-											"name": "INIT|56",
+											"name": "INIT|55",
 											"event": [
 												{
 													"listen": "test",
@@ -16904,7 +16932,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Company\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue du passage des clous\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue du passage des clous\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -17314,7 +17342,7 @@
 									"response": []
 								},
 								{
-									"name": "Validate Commercial Order 2",
+									"name": "Validate Commercial Order User000",
 									"event": [
 										{
 											"listen": "test",
@@ -17339,6 +17367,55 @@
 												"commercialOrders",
 												"{{orderid}}",
 												"orderValidation"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get subscription ID user 00",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set(\"subscription.code.user000\",pm.response.json().data[0].code);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"genericFields\": [\r\n        \"code\",\r\n        \"status\",\r\n        \"subscriptionDate\",\r\n        \"endAgreementDate\",\r\n        \"description\",\r\n        \"validity.from\",\r\n        \"validity.to\",\r\n        \"versionNumber\",\r\n        \"id\"\r\n    ],\r\n    \"nestedEntities\": [],\r\n    \"filters\": {\r\n        \"userAccount.billingAccount.code\": \"OPENSOFT-00\"\r\n    },\r\n    \"limit\": 1,\r\n    \"offset\": 0,\r\n    \"sortBy\": \"id\",\r\n    \"sortOrder\": \"ASCENDING\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/v2/generic/all/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"v2",
+												"generic",
+												"all",
+												"subscription"
 											]
 										}
 									},
@@ -17411,7 +17488,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue Guerdou\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue Guerdou\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -17694,7 +17771,7 @@
 									"response": []
 								},
 								{
-									"name": "Validate Commercial Order 2",
+									"name": "Validate Commercial Order User001",
 									"event": [
 										{
 											"listen": "test",
@@ -17749,6 +17826,55 @@
 												"orderManagement",
 												"commercialOrders",
 												"{{orderTwoNumber}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get subscription ID user 001",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set(\"subscription.code.user001\",pm.response.json().data[0].code);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"genericFields\": [\r\n        \"code\",\r\n        \"status\",\r\n        \"subscriptionDate\",\r\n        \"endAgreementDate\",\r\n        \"description\",\r\n        \"validity.from\",\r\n        \"validity.to\",\r\n        \"versionNumber\",\r\n        \"id\"\r\n    ],\r\n    \"nestedEntities\": [],\r\n    \"filters\": {\r\n        \"userAccount.billingAccount.code\": \"OPENSOFT-01\"\r\n    },\r\n    \"limit\": 1,\r\n    \"offset\": 0,\r\n    \"sortBy\": \"id\",\r\n    \"sortOrder\": \"ASCENDING\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/v2/generic/all/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"v2",
+												"generic",
+												"all",
+												"subscription"
 											]
 										}
 									},
@@ -17824,7 +17950,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue nuage\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+													"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue nuage\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 												},
 												"url": {
 													"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -18121,7 +18247,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"quoteCode\": \"{{quote.code}}\",\r\n    \"quoteVersion\": 1,\r\n    \"offerCode\": \"{{offer2.cpq.code}}\",\r\n    \"products\": [\r\n        {\r\n            \"quoteCode\": \"{{quote.code}}\",\r\n            \"productCode\": \"{{product5.cpq.code}}\",\r\n            \"quoteVersion\": 0,\r\n            \"productVersion\": 1,\r\n            \"quantity\": 1.000000000000,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"VEHICLE_CATEGORY\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"CATA\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"CHILD_SEAT\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"true\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"UNLIMITED_KM\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"true\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"CHILD_SEAT_FEE\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"doubleValue\": 29.0\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"INSURANCE\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"true\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"VEHICLE_DELIVERY\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"FORMULE_1\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"PREMIUM_BOOKING\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"true\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"USER_CONTRACT_CODE\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"OPENSOFT_OPENSOFT-01_2\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"FUEL_REFILL\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"false\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"FROM_ZONE_EL\",\r\n                    \"stringValue\": \"#{op.edr.parameter1}\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"TO_ZONE_EL\",\r\n                    \"stringValue\": \"#{op.edr.parameter3}\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"DISTANCE_EL\",\r\n                    \"stringValue\": \"0\"\r\n                }\r\n            ],\r\n            \"accountingArticlePrices\": []\r\n        }\r\n    ],\r\n    \"offerAttributes\": [],\r\n    \"prices\": []\r\n}",
+											"raw": "{\r\n    \"quoteCode\": \"{{quote.code}}\",\r\n    \"quoteVersion\": 1,\r\n    \"offerCode\": \"{{offer2.cpq.code}}\",\r\n    \"products\": [\r\n        {\r\n            \"quoteCode\": \"{{quote.code}}\",\r\n            \"productCode\": \"{{product5.cpq.code}}\",\r\n            \"quoteVersion\": 0,\r\n            \"productVersion\": 1,\r\n            \"quantity\": 1.000000000000,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"VEHICLE_CATEGORY\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"CATA\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"CHILD_SEAT\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"true\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"UNLIMITED_KM\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"true\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"CHILD_SEAT_FEE\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"doubleValue\": 29.0\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"INSURANCE\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"true\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"VEHICLE_DELIVERY\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"FORMULE_1\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"PREMIUM_BOOKING\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"true\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"USER_CONTRACT_CODE\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"{{subscription.code.user001}}\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"FUEL_REFILL\",\r\n                    \"linkedQuoteAttribute\": [],\r\n                    \"stringValue\": \"false\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"FROM_ZONE_EL\",\r\n                    \"stringValue\": \"#{op.edr.parameter1}\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"TO_ZONE_EL\",\r\n                    \"stringValue\": \"#{op.edr.parameter3}\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"DISTANCE_EL\",\r\n                    \"stringValue\": \"0\"\r\n                }\r\n            ],\r\n            \"accountingArticlePrices\": []\r\n        }\r\n    ],\r\n    \"offerAttributes\": [],\r\n    \"prices\": []\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -18282,7 +18408,7 @@
 									"response": []
 								},
 								{
-									"name": "Validate Commercial Order 2",
+									"name": "Validate Commercial Order User002",
 									"event": [
 										{
 											"listen": "test",
@@ -18307,6 +18433,55 @@
 												"commercialOrders",
 												"{{orderid}}",
 												"orderValidation"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get subscription ID user 002",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set(\"subscription.code.user002\",pm.response.json().data[0].code);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"genericFields\": [\r\n        \"code\",\r\n        \"status\",\r\n        \"subscriptionDate\",\r\n        \"endAgreementDate\",\r\n        \"description\",\r\n        \"validity.from\",\r\n        \"validity.to\",\r\n        \"versionNumber\",\r\n        \"id\"\r\n    ],\r\n    \"nestedEntities\": [],\r\n    \"filters\": {\r\n        \"userAccount.billingAccount.code\": \"OPENSOFT-02\"\r\n    },\r\n    \"limit\": 1,\r\n    \"offset\": 0,\r\n    \"sortBy\": \"id\",\r\n    \"sortOrder\": \"ASCENDING\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/v2/generic/all/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"v2",
+												"generic",
+												"all",
+												"subscription"
 											]
 										}
 									},
@@ -18379,7 +18554,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue Jean \",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue Jean \",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -18770,6 +18945,55 @@
 										}
 									},
 									"response": []
+								},
+								{
+									"name": "Get subscription ID user 003",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.environment.set(\"subscription.code.user003\",pm.response.json().data[0].code);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"genericFields\": [\r\n        \"code\",\r\n        \"status\",\r\n        \"subscriptionDate\",\r\n        \"endAgreementDate\",\r\n        \"description\",\r\n        \"validity.from\",\r\n        \"validity.to\",\r\n        \"versionNumber\",\r\n        \"id\"\r\n    ],\r\n    \"nestedEntities\": [],\r\n    \"filters\": {\r\n        \"userAccount.billingAccount.code\": \"OPENSOFT-03\"\r\n    },\r\n    \"limit\": 1,\r\n    \"offset\": 0,\r\n    \"sortBy\": \"id\",\r\n    \"sortOrder\": \"ASCENDING\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/v2/generic/all/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"v2",
+												"generic",
+												"all",
+												"subscription"
+											]
+										}
+									},
+									"response": []
 								}
 							]
 						},
@@ -18838,7 +19062,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des version\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des version\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -19039,7 +19263,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des version\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des version\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -19240,7 +19464,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des version\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des version\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -19481,7 +19705,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des Signature\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des Signature\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -19685,7 +19909,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des Signature\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+													"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des Signature\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 												},
 												"url": {
 													"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -19958,7 +20182,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des Signature\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue des Signature\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -20162,7 +20386,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_US\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"558 Broadway\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"10012-3912\",\r\n        \"city\": \"New York\",\r\n        \"state\": \"NY\",\r\n        \"country\": \"US\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"USD\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_US\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"558 Broadway\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"10012-3912\",\r\n        \"city\": \"New York\",\r\n        \"state\": \"NY\",\r\n        \"country\": \"US\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"USD\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -20361,7 +20585,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_US\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"613 Great N Rd\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"2046\",\r\n        \"city\": \"Abbotsford\",\r\n        \"state\": \"NSW\",\r\n        \"country\": \"AU\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"AUD\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"AU\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_US\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"613 Great N Rd\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"2046\",\r\n        \"city\": \"Abbotsford\",\r\n        \"state\": \"NSW\",\r\n        \"country\": \"AU\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"AUD\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"AU\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -20533,7 +20757,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_US\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"110 Notre-Dame St W\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"2046\",\r\n        \"city\": \"Montreal\",\r\n        \"state\": \"QUEBEC\",\r\n        \"country\": \"CA\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"CAD\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"CA\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_US\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"110 Notre-Dame St W\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"2046\",\r\n        \"city\": \"Montreal\",\r\n        \"state\": \"QUEBEC\",\r\n        \"country\": \"CA\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"CAD\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"CA\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -20706,7 +20930,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_AU\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"558 Broadway\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"10012-3912\",\r\n        \"city\": \"New York\",\r\n        \"state\": \"NY\",\r\n        \"country\": \"US\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"USD\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_AU\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"558 Broadway\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"10012-3912\",\r\n        \"city\": \"New York\",\r\n        \"state\": \"NY\",\r\n        \"country\": \"US\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"USD\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -20906,7 +21130,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_CA\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"613 Great N Rd\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"2046\",\r\n        \"city\": \"Abbotsford\",\r\n        \"state\": \"NSW\",\r\n        \"country\": \"AU\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"AUD\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_CA\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"613 Great N Rd\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"2046\",\r\n        \"city\": \"Abbotsford\",\r\n        \"state\": \"NSW\",\r\n        \"country\": \"AU\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"AUD\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -21106,7 +21330,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_CA\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"21 Rue de Charonne\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"state\": \"\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{seller.code}}_CA\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"21 Rue de Charonne\",\r\n        \"address2\": \"\",\r\n        \"address3\": \"\",\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"state\": \"\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -21303,7 +21527,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -21381,7 +21605,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -21459,7 +21683,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -21537,7 +21761,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -21615,7 +21839,163 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"Cie\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"account",
+												"accountHierarchy",
+												"createOrUpdateCRMAccountHierarchy"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "FREE006|Free User 006|Cie",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var parts = pm.variables.get(\"request.label\").split(\"|\");",
+													"var index = pm.globals.get(\"index\");",
+													"",
+													"if (typeof index === 'undefined') {",
+													"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
+													"    pm.globals.set(\"index\", \"00\");",
+													"    index = \"00\";",
+													"}",
+													"",
+													"var prefix = pm.variables.get(\"seller.code\") + \"-\";",
+													"var suffix = \" \" + prefix + index;",
+													"",
+													"switch (parts.length) {",
+													"    case 1:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[0] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 2:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 3:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[1]);",
+													"        pm.globals.set(\"account.lastname\", parts[2]);",
+													"        break;",
+													"    case 4:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[2]);",
+													"        pm.globals.set(\"account.lastname\", parts[3]);",
+													"        break;",
+													"}",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+										},
+										"url": {
+											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"account",
+												"accountHierarchy",
+												"createOrUpdateCRMAccountHierarchy"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "FREE007|Free User 007|Cie",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var parts = pm.variables.get(\"request.label\").split(\"|\");",
+													"var index = pm.globals.get(\"index\");",
+													"",
+													"if (typeof index === 'undefined') {",
+													"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
+													"    pm.globals.set(\"index\", \"00\");",
+													"    index = \"00\";",
+													"}",
+													"",
+													"var prefix = pm.variables.get(\"seller.code\") + \"-\";",
+													"var suffix = \" \" + prefix + index;",
+													"",
+													"switch (parts.length) {",
+													"    case 1:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[0] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 2:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", \"\");",
+													"        pm.globals.set(\"account.lastname\", \"\");",
+													"        break;",
+													"    case 3:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[1]);",
+													"        pm.globals.set(\"account.lastname\", parts[2]);",
+													"        break;",
+													"    case 4:",
+													"        pm.globals.set(\"account.code\", prefix + parts[0]);",
+													"        pm.globals.set(\"account.description\", parts[1] + suffix);",
+													"        pm.globals.set(\"account.firstname\", parts[2]);",
+													"        pm.globals.set(\"account.lastname\", parts[3]);",
+													"        break;",
+													"}",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"{{seller.code}}\",\r\n    \"code\": \"{{account.code}}\",\r\n    \"description\": \"{{request.label.1}}\",\r\n    \"isCompany\": true,\r\n    \"legalEntityType\": {\r\n        \"code\": \"CIE\"\r\n    },\r\n    \"name\": {\r\n        \"title\": \"CIE-SANDBOX\",\r\n        \"firstName\": \"{{account.firstname}}\",\r\n        \"lastName\": \"{{account.lastname}}\"\r\n    },\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"{{seller.code}}@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"paymentMethod\": \"CHECK\",\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -21650,7 +22030,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"mode\": \"PROCESS_ALL\",\n    \"cdrs\": [\n        \"2022-10-05T01:00:00.000Z;1;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;2;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;3;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;4;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;5;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;6;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;7;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;8;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;9;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;10;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;11;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;12;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;13;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;14;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;15;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;16;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;17;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;18;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;19;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;20;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;21;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;22;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;23;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;24;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;25;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;26;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;27;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;28;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;\"\n    ]\n}"
+									"raw": "{\n    \"mode\": \"PROCESS_ALL\",\n    \"cdrs\": [\n        \"2022-10-05T01:00:00.000Z;1;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;2;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;3;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;4;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;5;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;6;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;7;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;8;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;9;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;10;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;11;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;12;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;13;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;14;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;15;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;16;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;17;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;18;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;19;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;20;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;21;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;22;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;23;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;24;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;25;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;26;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;27;{{subscription.code.user000}};PS;AA;KEY0002;;;\",\n        \"2022-10-05T01:00:00.000Z;28;{{subscription.code.user000}};PS;AA;KEY0002;;;\"\n    ]\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/v2/mediation/cdrs/registerCdrList",
@@ -21685,7 +22065,7 @@
 							"response": []
 						},
 						{
-							"name": "chargeCDR CLIENT000",
+							"name": "v2/mediation/cdrs/chargeCdrList",
 							"event": [
 								{
 									"listen": "test",
@@ -21715,35 +22095,18 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "2023-02-05T01:00:00.000Z;1;OPENSOFT_OPENSOFT-00_1;PS;AA;KEY0002;;;"
+									"raw": "{\r\n    \"cdrs\": [\r\n        \"2023-02-07T01:00:00.000Z;3;{{subscription.code.user000}};PS;AA;KEY0002;;;\"\r\n    ],\r\n    \"isRateTriggeredEdr\": \"true\",\r\n    \"maxDepth\": \"2\",\r\n    \"mode\": \"ROLLBACK_ON_ERROR\"\r\n}"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/billing/mediation/chargeCdr?returnWalletOperations=false&isVirtual=false&rateTriggeredEdr=true&maxDepth=0",
+									"raw": "{{opencell.url}}/v2/mediation/cdrs/chargeCdrList",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
-										"billing",
+										"v2",
 										"mediation",
-										"chargeCdr"
-									],
-									"query": [
-										{
-											"key": "returnWalletOperations",
-											"value": "false"
-										},
-										{
-											"key": "isVirtual",
-											"value": "false"
-										},
-										{
-											"key": "rateTriggeredEdr",
-											"value": "true"
-										},
-										{
-											"key": "maxDepth",
-											"value": "0"
-										}
+										"cdrs",
+										"chargeCdrList"
 									]
 								}
 							},
@@ -21761,7 +22124,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"mode\": \"PROCESS_ALL\",\n    \n    \"cdrs\": [\n        \"2022-09-09T00:00:00.000Z;1;OPENSOFT_OPENSOFT-02_3;FRA;189;;;;\",\n        \"2022-09-09T00:00:00.000Z;1;OPENSOFT_OPENSOFT-02_3;BEL;29;;;;\",\n        \"2022-09-09T00:00:00.000Z;1;OPENSOFT_OPENSOFT-02_3;FRA;159;;;;\"\n    ]\n}"
+									"raw": "{\n    \"mode\": \"PROCESS_ALL\",\n    \n    \"cdrs\": [\n        \"2022-09-09T00:00:00.000Z;1;{{subscription.code.user002}};FRA;189;;;;\",\n        \"2022-09-09T00:00:00.000Z;1;{{subscription.code.user002}};BEL;29;;;;\",\n        \"2022-09-09T00:00:00.000Z;1;{{subscription.code.user002}};FRA;159;;;;\"\n    ]\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/v2/mediation/cdrs/registerCdrList",
@@ -22287,6 +22650,30 @@
 								}
 							],
 							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.superadmin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.superadmin",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
 								"method": "POST",
 								"header": [
 									{
@@ -22296,7 +22683,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"billingCycleCode\": \"{{billingCycle}}\",\n    \"billingRunTypeEnum\": \"FULL_AUTOMATIC\",\n    \"skipValidationScript\": false,\n    \"rejectAutoAction\": \"MOVE\",\n    \"suspectAutoAction\": \"MOVE\",\n    \"referenceDate\": \"NEXT_INVOICE_DATE\"\n}"
+									"raw": "{\n    \"billingRunTypeEnum\": \"AUTOMATIC\",\n    \"lastTransactionDate\": \"2022-05-02\",\n    \"invoiceDate\": \"2022-05-05\",\n    \"referenceDate\": \"NEXT_INVOICE_DATE\",\n    \"generateAO\": true,\n    \"billingCycleCode\": \"{{billingCycle}}\"\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/billing/invoicing/createBillingRun",
@@ -22313,6 +22700,73 @@
 							"response": []
 						},
 						{
+							"name": "Advance status for BR",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.superadmin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "opencell.superadmin",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{opencell.url}}/v2/billing/invoicing/{{billingRun.id}}/advanceStatus?executeInvoicingJob=true",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"v2",
+										"billing",
+										"invoicing",
+										"{{billingRun.id}}",
+										"advanceStatus"
+									],
+									"query": [
+										{
+											"key": "executeInvoicingJob",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "billingRun|billingCycle=BC_PARTNER_RETRIIBUTION|BC_PARTNER_RETRIIBUTION",
 							"event": [
 								{
@@ -22323,6 +22777,11 @@
 											"    var jsonData = JSON.parse(responseBody);",
 											"    pm.globals.set(\"billingRun.id\", jsonData.message);",
 											"}",
+											"",
+											"",
+											"  setTimeout(function(){",
+											"          console.log(\"Sleeping for 1 seconds before next request.\");",
+											"  }, 1000);",
 											""
 										],
 										"type": "text/javascript"
@@ -22692,7 +23151,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n  \"subscription\": \"OPENSOFT_OPENSOFT-00_1\",\r\n  \"oneShotCharge\": \"CH_OS_OTHER\",\r\n  \"amountWithoutTax\": {{$randomInt}},\r\n  \"operationDate\": \"{{$timestamp}}000\",\r\n  \"description\": \"OSO {{$guid}}\",\r\n  \"criteria1\": \"P1\",\r\n  \"criteria2\": \"ADJ-SOL\",\r\n  \"criteria3\": \"TEST_PARAM3\"\r\n}\r\n"
+											"raw": "{\r\n  \"subscription\": \"{{subscription.code.user000}}\",\r\n  \"oneShotCharge\": \"CH_OS_OTHER\",\r\n  \"amountWithoutTax\": {{$randomInt}},\r\n  \"operationDate\": \"{{$timestamp}}000\",\r\n  \"description\": \"OSO {{$guid}}\",\r\n  \"criteria1\": \"P1\",\r\n  \"criteria2\": \"ADJ-SOL\",\r\n  \"criteria3\": \"TEST_PARAM3\"\r\n}\r\n"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/billing/subscription/applyOneShotChargeInstance",
@@ -22946,7 +23405,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"invoiceType\": \"COM\",\r\n    \"description\": \"Amount\",\r\n    \"priority\": 1,\r\n    \"validFrom\": 1672581840000,\r\n    \"validTo\": 1735653840000,\r\n    \"failStatus\": \"REJECTED\",\r\n    \"type\": \"SCRIPT\",\r\n    \"validationScript\": \"org.meveo.service.script.CompareInvoiceAmountScript\",\r\n    \"ruleValues\": {\r\n        \"withOrWithoutTax\": \"without tax\",\r\n        \"operator\": \">\",\r\n        \"value\": 1000\r\n    },\r\n    \"code\": \"Amount\"\r\n}",
+											"raw": "{\r\n    \"invoiceType\": \"COM\",\r\n    \"description\": \"Amount\",\r\n    \"priority\": 1,\r\n    \"validFrom\": 1672581840000,\r\n    \"validTo\": 1735653840000,\r\n    \"evaluationMode\": \"VALIDATION\",\r\n    \"failStatus\": \"REJECTED\",\r\n    \"type\": \"SCRIPT\",\r\n    \"validationScript\": \"org.meveo.service.script.CompareInvoiceAmountScript\",\r\n    \"ruleValues\": {\r\n        \"withOrWithoutTax\": \"without tax\",\r\n        \"operator\": \">\",\r\n        \"value\": 1000\r\n    },\r\n    \"code\": \"Amount\"\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -23036,7 +23495,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "2022-09-10T00:00:00.000Z;600;OPENSOFT_OPENSOFT-00_1;PS;;;;;"
+											"raw": "2022-09-10T00:00:00.000Z;600;{{subscription.code.user000}};PS;;;;;"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/billing/mediation/chargeCdr?returnWalletOperations=false&isVirtual=false&rateTriggeredEdr=true&maxDepth=0",
@@ -23082,7 +23541,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"mode\": \"PROCESS_ALL\",\n    \n    \"cdrs\": [\n        \"2022-09-10T00:00:00.000Z;1;OPENSOFT_OPENSOFT-02_3;FRA;199;;;;\",\n        \"2022-09-10T00:00:00.000Z;1;OPENSOFT_OPENSOFT-02_3;BEL;59;;;;\",\n        \"2022-09-10T00:00:00.000Z;1;OPENSOFT_OPENSOFT-02_3;FRA;119;;;;\"\n    ]\n}"
+											"raw": "{\n    \"mode\": \"PROCESS_ALL\",\n    \n    \"cdrs\": [\n        \"2022-09-10T00:00:00.000Z;1;{{subscription.code.user002}};FRA;199;;;;\",\n        \"2022-09-10T00:00:00.000Z;1;{{subscription.code.user002}};BEL;59;;;;\",\n        \"2022-09-10T00:00:00.000Z;1;{{subscription.code.user002}};FRA;119;;;;\"\n    ]\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/v2/mediation/cdrs/registerCdrList",
@@ -23873,7 +24332,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "<ScriptInstance>\r\n        <code>org.meveo.service.script.{{request.label.1}}</code>\r\n        <description>{{request.label.2}} {{$timestamp}}</description>\r\n        <type>JAVA</type>\r\n        <script><![CDATA[\r\npackage org.meveo.service.script;\r\n\r\nimport org.meveo.admin.exception.BusinessException;\r\nimport org.meveo.model.crm.Customer;\r\nimport org.meveo.service.crm.impl.CustomerService;\r\n\r\nimport javax.inject.Inject;\r\nimport javax.persistence.EntityManager;\r\nimport java.util.List;\r\nimport java.util.Map;\r\nimport java.util.UUID;\r\n\r\npublic class AnonymizeScript extends Script {\r\n\r\n    @Inject\r\n    private CustomerService customerService = getServiceInterface(\"CustomerService\");\r\n\r\n    @Override\r\n    public void execute(Map<String, Object> context) throws BusinessException {\r\n        EntityManager em = customerService.getEntityManager();\r\n\r\n        // Get list ids of all customers\r\n        List<Long> ids = em.createQuery(\"select c.id from Customer c\", Long.class)\r\n                .getResultList();\r\n\r\n        String randomCode;\r\n        for (int i = 0; i < ids.size(); i++) {\r\n            Long id = ids.get(i);\r\n            randomCode = UUID.randomUUID().toString();\r\n            Customer aCustomer = customerService.findById(id);\r\n            aCustomer.anonymize(randomCode);\r\n\r\n            if (i > 0 && i % 500 == 0) {\r\n                // flush a batch of updates and release memory\r\n                em.flush();\r\n                em.clear();\r\n            }\r\n        }\r\n\r\n    }\r\n}\r\n\r\n]]></script>\r\n</ScriptInstance>"
+											"raw": "<ScriptInstance>\r\n        <code>org.meveo.service.script.{{request.label.1}}</code>\r\n        <description>{{request.label.2}} {{$timestamp}}</description>\r\n        <type>JAVA</type>\r\n        <script><![CDATA[\r\npackage org.meveo.service.script;\r\n\r\nimport org.meveo.admin.exception.BusinessException;\r\nimport org.meveo.model.billing.BillingAccount;\r\nimport org.meveo.model.crm.Customer;\r\nimport org.meveo.model.payments.CustomerAccount;\r\nimport org.meveo.service.crm.impl.CustomerService;\r\nimport org.meveo.service.dwh.GdprService;\r\n\r\nimport javax.inject.Inject;\r\nimport javax.persistence.EntityManager;\r\nimport java.util.List;\r\nimport java.util.Map;\r\nimport java.util.UUID;\r\n\r\npublic class AnonymizeScript extends Script {\r\n\r\n    @Inject\r\n    private CustomerService customerService = (CustomerService) getServiceInterface(\"CustomerService\");\r\n\r\n    @Inject\r\n    private GdprService gdprService = (GdprService) getServiceInterface(\"GdprService\");\r\n\r\n    @Override\r\n    public void execute(Map<String, Object> context) throws BusinessException {\r\n        EntityManager em = customerService.getEntityManager();\r\n\r\n        // Get list ids of all customers\r\n        List<Long> ids = em.createQuery(\"select c.id from Customer c\", Long.class)\r\n                .getResultList();\r\n\r\n        String randomCode;\r\n        for (int i = 0; i < ids.size(); i++) {\r\n            Long id = ids.get(i);\r\n            randomCode = UUID.randomUUID().toString();\r\n\r\n            Customer aCustomer = customerService.findById(id);\r\n            gdprService.anonymize(aCustomer);\r\n\r\n            // Anonymize field 'description' C -> CA -> BA and field 'registrationNo' and field 'vat_no'\r\n            aCustomer.setDescription(randomCode);\r\n            aCustomer.setRegistrationNo(randomCode);\r\n            aCustomer.setVatNo(randomCode);\r\n            for (CustomerAccount aCustomerAccount : aCustomer.getCustomerAccounts()) {\r\n                aCustomerAccount.setDescription(randomCode);\r\n                aCustomerAccount.setRegistrationNo(randomCode);\r\n                aCustomerAccount.setVatNo(randomCode);\r\n                for (BillingAccount aBillingAccount : aCustomerAccount.getBillingAccounts()) {\r\n                    aBillingAccount.setDescription(randomCode);\r\n                    aBillingAccount.setRegistrationNo(randomCode);\r\n                    aBillingAccount.setVatNo(randomCode);\r\n                }\r\n            }\r\n\r\n            if (i > 0 && i % 500 == 0) {\r\n                // flush a batch of updates and release memory\r\n                em.flush();\r\n                em.clear();\r\n            }\r\n        }\r\n\r\n    }\r\n}\r\n]]></script>\r\n</ScriptInstance>"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/scriptInstance/createOrUpdate",
