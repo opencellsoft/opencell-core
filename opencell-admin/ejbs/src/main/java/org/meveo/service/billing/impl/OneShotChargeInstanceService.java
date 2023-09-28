@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -248,7 +249,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
 
         if (DateUtils.setTimeToZero(chargeDate).before(DateUtils.setTimeToZero(subscription.getSubscriptionDate()))) {
-            throw new ValidationException("Operation date is before subscription date for subscription: " + subscription.getCode());
+            throw new ValidationException("Operation date should be after subscription date (" + new SimpleDateFormat("yyyy-MM-dd").format(subscription.getSubscriptionDate()) + ")");
         }
 
         if (quantity == null) {
