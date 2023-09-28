@@ -1523,16 +1523,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		try {
 			invoice.setRejectReason(null);
 			Object validationResult = evaluateExpression(validationRule.getValidationEL(), Map.of("invoice", invoice), Boolean.class);
-			if (validationResult != null && !((Boolean) validationResult)) {
+			if (validationResult == null || !((Boolean) validationResult)) {
 		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
 		            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
 		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationResult == null? "Technical error while evaluating expression" :  validationRule.getDescription());
 		        }
 		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
 		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
 		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationResult == null? "Technical error while evaluating expression" : validationRule.getDescription());
 		        }
 		        noValidationError = false;
 		    }
