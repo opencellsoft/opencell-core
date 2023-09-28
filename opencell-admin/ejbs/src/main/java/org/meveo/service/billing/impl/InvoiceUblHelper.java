@@ -628,8 +628,10 @@ public class InvoiceUblHelper {
 		if(source.getCommercialOrder() != null && StringUtils.isNotBlank(source.getCommercialOrder().getOrderNumber())){
 			OrderReference orderReference = objectFactoryCommonAggrement.createOrderReference();
 			SalesOrderID salesOrderID = orderReference.getSalesOrderID();
-			salesOrderID.setValue(source.getCommercialOrder().getOrderNumber());
-			orderReference.setSalesOrderID(salesOrderID);
+			if (salesOrderID != null) {
+				salesOrderID.setValue(source.getCommercialOrder() != null ? source.getCommercialOrder().getOrderNumber() : StringUtils.EMPTY);
+				orderReference.setSalesOrderID(salesOrderID);
+			}
 			orderReference.setIssueDate(getIssueDate(source.getInvoiceDate()));
 			target.setOrderReference(orderReference);
 		}
