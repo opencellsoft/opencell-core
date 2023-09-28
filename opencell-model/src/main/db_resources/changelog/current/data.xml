@@ -12095,7 +12095,10 @@ public class ImportJobNotification extends Script {
             String category = (String) methodContext.get("category");
             JobExecutionResultImpl jobExecutionResult = (JobExecutionResultImpl) methodContext.get("entityOrEvent");
             JobResultStatusEnum jobStatus = getJobResultStatus(jobExecutionResult);
-            String userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+            String userName = null;
+            if (jobExecutionResult.getJobInstance().getCfValues() != null && jobExecutionResult.getJobInstance().getCfValues().getValues() != null) {
+                userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+            }
 
             if (category == null || !category.equals("customer") || userName == null) return;
             executeNextJob(jobExecutionResult);
@@ -12172,7 +12175,11 @@ public class ImportJobNotification extends Script {
         CustomFieldsDto customFields = new CustomFieldsDto();
         CustomFieldDto customFieldDto = new CustomFieldDto();
         customFieldDto.setCode(USER_CODE);
-        customFieldDto.setStringValue((String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE));
+        String userName = null;
+            if (jobExecutionResult.getJobInstance().getCfValues() != null && jobExecutionResult.getJobInstance().getCfValues().getValues() != null) {
+                userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+            }
+        customFieldDto.setStringValue(userName);
         customFields.setCustomField(List.of(customFieldDto));
         jobInstanceInfoDto.setCustomFields(customFields);
 
@@ -16195,7 +16202,10 @@ public class ImportJobNotification extends Script {
             String category = (String) methodContext.get("category");
             JobExecutionResultImpl jobExecutionResult = (JobExecutionResultImpl) methodContext.get("entityOrEvent");
             JobResultStatusEnum jobStatus = getJobResultStatus(jobExecutionResult);
-            String userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+            String userName = null;
+            if (jobExecutionResult.getJobInstance().getCfValues() != null && jobExecutionResult.getJobInstance().getCfValues().getValues() != null) {
+                userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+            }
 
             if (category == null || !category.equals("customer") || userName == null) return;
             executeNextJob(jobExecutionResult);
@@ -16272,7 +16282,11 @@ public class ImportJobNotification extends Script {
         CustomFieldsDto customFields = new CustomFieldsDto();
         CustomFieldDto customFieldDto = new CustomFieldDto();
         customFieldDto.setCode(USER_CODE);
-        customFieldDto.setStringValue((String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE));
+        String userName = null;
+            if (jobExecutionResult.getJobInstance().getCfValues() != null && jobExecutionResult.getJobInstance().getCfValues().getValues() != null) {
+                userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+            }
+        customFieldDto.setStringValue(userName);
         customFields.setCustomField(List.of(customFieldDto));
         jobInstanceInfoDto.setCustomFields(customFields);
 
