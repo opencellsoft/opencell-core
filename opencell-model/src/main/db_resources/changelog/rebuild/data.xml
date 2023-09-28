@@ -12276,13 +12276,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</sql>
     </changeSet>
 	
-	<changeSet id="INTRD-18673-20230927" author="aelmalki">
-		<update tableName="billing_accounting_article">
-			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code WHERE code='95')" />
-			<where>code IN ('DISC-STD', 'PROD-STD')</where>
-		</update>
-	</changeSet>
-	
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
 	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
