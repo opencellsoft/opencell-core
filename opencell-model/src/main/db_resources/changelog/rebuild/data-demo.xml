@@ -6384,6 +6384,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_accounting_article-DISC-STD" />
+			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code WHERE code='95')" />
         </insert>
         <insert tableName="billing_accounting_article">
             <column name="id" value='-3'/>
@@ -6420,6 +6421,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="63ef9cee-f498-4908-PROD-STD" />
+			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code WHERE code='95')" />
         </insert>
         <insert tableName="billing_accounting_article">
             <column name="id" value='-11'/>
@@ -6449,13 +6451,6 @@
 			<column name="default_advanced_payment_article_id" valueComputed="(SELECT id FROM billing_accounting_article WHERE code = 'ADV-STD')" />
 		</update>
     </changeSet>
-	
-	<changeSet id="INTRD-18673-20230927" author="aelmalki">
-		<update tableName="billing_accounting_article">
-			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code WHERE code='95')" />
-			<where>code IN ('DISC-STD', 'PROD-STD')</where>
-		</update>
-	</changeSet>
     
     <changeSet id="#INTRD-16859_20230626" author="aeljaouhari" />
 
