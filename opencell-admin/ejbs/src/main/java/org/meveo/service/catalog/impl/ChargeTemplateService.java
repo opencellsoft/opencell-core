@@ -381,4 +381,10 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
         }
         return chargeTemplates;
     }
+	public boolean checkCreatedCharg(String code) {
+		List<ChargeTemplate> results = getEntityManager().createQuery("from ChargeTemplate ct where lower(ct.code)=:code", ChargeTemplate.class)
+				.setParameter("code", code.toLowerCase())
+				.getResultList();
+		return CollectionUtil.isNullOrEmpty(results) ? false : true;
+	}
 }

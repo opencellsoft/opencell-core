@@ -73,9 +73,9 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
         checkOneChargeTemplateDto(oneShotChargeTemplateDto);
 
         // check if code already exists
-        if (oneShotChargeTemplateService.findByCode(oneShotChargeTemplateDto.getCode()) != null) {
-            throw new EntityAlreadyExistsException(OneShotChargeTemplate.class, oneShotChargeTemplateDto.getCode());
-        }
+	    if (oneShotChargeTemplateService.checkCreatedCharg(oneShotChargeTemplateDto.getCode())) {
+		    throw new EntityAlreadyExistsException("code field(s) must be unique. A record with value(s) '"+oneShotChargeTemplateDto.getCode()+"' already exists");
+	    }
 
         OneShotChargeTemplate chargeTemplate = dtoToEntity(oneShotChargeTemplateDto, null);
 
