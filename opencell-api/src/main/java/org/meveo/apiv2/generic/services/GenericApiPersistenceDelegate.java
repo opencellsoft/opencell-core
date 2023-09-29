@@ -60,7 +60,7 @@ public class GenericApiPersistenceDelegate {
         } else {
             entityList = new ArrayList<>();
         }
-        SearchResult searchResult = new SearchResult(entityList, Optional.ofNullable(count).orElse(-1L));
+        SearchResult searchResult = new SearchResult(entityList, count);
         return searchResult;
     }
 
