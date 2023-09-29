@@ -53,6 +53,10 @@ public class GenericApiLoadService {
     @Inject
     private GenericFileExportManager genericExportManager;
 
+    public Long count(Class entityClass, PaginationConfiguration searchConfig) {
+        return persistenceDelegate.count(entityClass, searchConfig);
+    }
+
     public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
         if(genericFields != null && isAggregationQueries(genericFields)){
             searchConfig.setFetchFields(new ArrayList<>(genericFields));
