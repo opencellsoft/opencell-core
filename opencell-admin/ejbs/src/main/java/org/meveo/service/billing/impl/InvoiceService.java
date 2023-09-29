@@ -7691,9 +7691,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			StorageFactory.createDirectory(ublDirectory);
 		}
 		File xmlInvoiceFileName = new File(ublDirectory.getAbsolutePath() + File.separator + "invoice_" + invoice.getInvoiceNumber() + "_" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".xml");
+		Path pathCreatedFile = null;
 		try {
-			Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("r--r--r--");
-			Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()), PosixFilePermissions.asFileAttribute(permissions));
+			pathCreatedFile = Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()));
 		} catch (IOException e) {
 			throw new BusinessException(e);
 		}
@@ -7704,6 +7704,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		invoice = updateNoCheck(invoice);
 		entityUpdatedEventProducer.fire(invoice);
+		if(pathCreatedFile != null)
+			pathCreatedFile.toFile().setReadOnly();
 		return invoice;
 	}
 
