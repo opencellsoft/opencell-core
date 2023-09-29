@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface PaginatedResource<T> {
+    @Nullable
     Long getTotal();
     Long getLimit();
     Long getOffset();
