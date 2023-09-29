@@ -98,8 +98,6 @@ public class GenericApiLoadService {
             .collect(toList());
             Map<String, Object> results = new LinkedHashMap<String, Object>();
             results.put("total", searchResult.getCount());
-            if(searchResult.getCount() != null && searchResult.getCount() == -1L) {
-            }
             results.put("limit", genericPagingAndFilteringUtils.getLimit(searchConfig.getLimit()));
             results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
             results.put("data", mapResult);
@@ -112,8 +110,6 @@ public class GenericApiLoadService {
                                                                                                  .offset(Long.valueOf(searchConfig.getFirstRow()))
                                                                                                  .filters(searchConfig.getFilters());
             builder.total(searchResult.getCount());
-            if(searchResult.getCount() != null && searchResult.getCount() != -1L) {
-            }
             ImmutableGenericPaginatedResource genericPaginatedResource = builder.build();
             return JsonGenericMapper.Builder.getBuilder()
                     .withExtractList(Objects.nonNull(extractList) ? extractList : genericOpencellRestful.shouldExtractList())
