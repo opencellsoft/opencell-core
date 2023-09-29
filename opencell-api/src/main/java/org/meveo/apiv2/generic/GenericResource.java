@@ -15,6 +15,20 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public interface GenericResource {
+
+    @POST
+    @Path("/count/{entityName}")
+    @Operation(summary = "Generic single endpoint to count records of an entity",
+            tags = { "Generic" },
+            description ="specify the entity name, and as body, the configuration of the research.",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "Counting results successfully retrieved"),
+                    @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
+            })
+    Response count(@Parameter(description = "extractList flag to return or not nested List") @QueryParam("extractList") Boolean extractList,
+                    @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
+                    @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
+
     @POST
     @Path("/all/{entityName}")
     @Operation(summary = "Generic single endpoint to retrieve paginated records of an entity",
