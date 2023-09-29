@@ -63,7 +63,6 @@ public class GenericApiLoadService {
     private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     public Long count(Class entityClass, PaginationConfiguration searchConfig) {
-        searchConfig.setForceCount(true);
         return persistenceDelegate.count(entityClass, searchConfig);
     }
 

@@ -44,7 +44,7 @@ public class GenericResourceImpl implements GenericResource {
     @Override
     public Response count(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
         Class entityClass = GenericHelper.getEntityClass(entityName);
-        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService(), false);
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
         return Response.ok().entity(String.format("{\"total\": %d}", loadService.count(entityClass, genericRequestMapper.mapTo(searchConfig))))
                        .build();
     }
