@@ -6384,6 +6384,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_accounting_article-DISC-STD" />
+			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code WHERE code='95')" />
         </insert>
         <insert tableName="billing_accounting_article">
             <column name="id" value='-3'/>
@@ -6420,6 +6421,7 @@
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="63ef9cee-f498-4908-PROD-STD" />
+			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code WHERE code='95')" />
         </insert>
         <insert tableName="billing_accounting_article">
             <column name="id" value='-11'/>
