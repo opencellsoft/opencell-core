@@ -48,6 +48,8 @@ import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.report.query.QueryScheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class JobInstance.
@@ -347,22 +349,27 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @return True if either current cluster node is unknown (non-clustered mode), runOnNodes is not specified or current cluster node matches any node in a list of nodes
      */
     public boolean isRunnableOnNode(String currentNode) {
-
+        Logger log = LoggerFactory.getLogger(getClass());
+        log.info("isRunnableOnNode.JobInstance.code=<" + this.getCode() + ">");
         String runOnNodesValue = (String) this.getParamValue("runOnNodes");
+        log.info("isRunnableOnNode.runOnNodesValue1=<" + runOnNodesValue + ">");
         if (runOnNodesValue == null) {
             runOnNodesValue = runOnNodes;
         }
-
+        log.info("isRunnableOnNode.runOnNodesValue2=<" + runOnNodesValue + ">");
+        log.info("isRunnableOnNode.currentNode1=<" + currentNode + ">");
         if (currentNode == null || runOnNodesValue == null) {
             return true;
         }
         String[] nodes = runOnNodesValue.split(",");
         for (String node : nodes) {
+            log.info("isRunnableOnNode.node=<" + node + ">");
             if (node.trim().equals(currentNode)) {
+                log.info("isRunnableOnNode.currentNode2=<" + currentNode + ">");
                 return true;
             }
         }
-
+        log.info("isRunnableOnNode return false");
         return false;
     }
 

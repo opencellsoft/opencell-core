@@ -248,7 +248,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * @return True if job is running on any node
      */
     public boolean isJobRunning(JobInstance jobInstance) {
+        log.info("JobInstanceBean.isJobRunning.jobInstance.getCode=<" + jobInstance.getCode() + ">");
+        log.info("JobInstanceBean.isJobRunning.jobInstance.getId=<" + jobInstance.getId() + ">");
         JobRunningStatusEnum status = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        log.info("JobInstanceBean.isJobRunning.status=<" + status + ">");
         return status != JobRunningStatusEnum.NOT_RUNNING;
     }
 
@@ -259,7 +262,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * @return True if job was requested to stop
      */
     public boolean isJobPausing(JobInstance jobInstance) {
+        log.info("JobInstanceBean.isJobPausing.jobInstance.getCode=<" + jobInstance.getCode() + ">");
+        log.info("JobInstanceBean.isJobPausing.jobInstance.getId=<" + jobInstance.getId() + ">");
         JobRunningStatusEnum status = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        log.info("JobInstanceBean.isJobPausing.status=<" + status + ">");
         return status == JobRunningStatusEnum.REQUEST_TO_STOP;
     }
 

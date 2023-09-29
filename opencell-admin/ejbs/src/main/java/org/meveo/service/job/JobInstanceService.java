@@ -275,6 +275,10 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         String currentNode = EjbUtils.getCurrentClusterNode();
 
+        log.info("scheduleJob.currentNode=<" + currentNode + ">");
+        log.info("scheduleJob.JobInstance.code=<" + jobInstance.getCode() + ">");
+        log.info("scheduleJob.JobInstance.id=<" + jobInstance.getId() + ">");
+        log.info("scheduleJob.JobInstance.getTimerEntity=<" + jobInstance.getTimerEntity() + ">");
         if (jobInstance.isActive() && jobInstance.getTimerEntity() != null && jobInstance.isRunnableOnNode(currentNode)) {
             if (job == null) {
                 job = getJobByName(jobInstance.getJobTemplate());
@@ -297,6 +301,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
                 jobInstance.getJobTemplate(), currentNode);
         }
 
+        log.info("scheduleJob return false");
         return false;
     }
 

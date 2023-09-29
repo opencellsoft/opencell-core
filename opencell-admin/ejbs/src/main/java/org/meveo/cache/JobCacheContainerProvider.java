@@ -130,10 +130,12 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     // @Lock(LockType.READ)
     public JobRunningStatusEnum isJobRunning(Long jobInstanceId) {
+        log.info("JobCacheContainerProvider.isJobRunning.jobInstanceId=<" + jobInstanceId + ">");
         if (jobInstanceId == null) {
             return JobRunningStatusEnum.NOT_RUNNING;
         }
 
+        log.info("JobCacheContainerProvider get job from cache");
         JobExecutionStatus jobExecutionStatus = runningJobsCache.get(new CacheKeyLong(CurrentUserProvider.getCurrentTenant(), jobInstanceId));
 
         return getJobRunningStatus(jobExecutionStatus);
@@ -147,35 +149,48 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     private JobRunningStatusEnum getJobRunningStatus(JobExecutionStatus jobExecutionStatus) {
 
+        log.info("JobCacheContainerProvider.getJobRunningStatus start");
         if (jobExecutionStatus == null) {
+            log.info("JobCacheContainerProvider.getJobRunningStatus Status = NOT_RUNNING");
             return JobRunningStatusEnum.NOT_RUNNING;
 
         } else if (jobExecutionStatus.isRequestedToStop()) {
+            log.info("JobCacheContainerProvider.getJobRunningStatus Status = REQUEST_TO_STOP");
             return JobRunningStatusEnum.REQUEST_TO_STOP;
 
         } else if (jobExecutionStatus.getLockForNode() != null) {
             String nodeToCheck = EjbUtils.getCurrentClusterNode();
 
+            log.info("JobCacheContainerProvider.getJobRunningStatus.nodeToCheck=<" + nodeToCheck + ">");
+
             if (jobExecutionStatus.getLockForNode().equals(nodeToCheck)) {
+                log.info("JobCacheContainerProvider.getJobRunningStatus Status = LOCKED_THIS");
                 return JobRunningStatusEnum.LOCKED_THIS;
             } else {
+                log.info("JobCacheContainerProvider.getJobRunningStatus Status = LOCKED_OTHER");
                 return JobRunningStatusEnum.LOCKED_OTHER;
             }
 
         } else if (!jobExecutionStatus.isRunning()) {
+            log.info("JobCacheContainerProvider.getJobRunningStatus Status = NOT_RUNNING");
             return JobRunningStatusEnum.NOT_RUNNING;
 
         } else if (!EjbUtils.isRunningInClusterMode()) {
+            log.info("JobCacheContainerProvider.getJobRunningStatus Status = RUNNING_THIS");
             return JobRunningStatusEnum.RUNNING_THIS;
 
         } else {
 
             String nodeToCheck = EjbUtils.getCurrentClusterNode();
 
+            log.info("JobCacheContainerProvider.getJobRunningStatus.nodeToCheck=<" + nodeToCheck + ">");
+
             if (jobExecutionStatus.isRunning(nodeToCheck)) {
+                log.info("JobCacheContainerProvider.getJobRunningStatus Status = RUNNING_THIS");
                 return JobRunningStatusEnum.RUNNING_THIS;
 
             } else {
+                log.info("JobCacheContainerProvider.getJobRunningStatus Status = RUNNING_OTHER");
                 return JobRunningStatusEnum.RUNNING_OTHER;
             }
         }
