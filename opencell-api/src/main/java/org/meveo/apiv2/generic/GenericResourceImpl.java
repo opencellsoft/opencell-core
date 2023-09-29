@@ -42,6 +42,14 @@ public class GenericResourceImpl implements GenericResource {
     private GenericApiAlteringService genericApiAlteringService;
 
     @Override
+    public Response count(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
+        Class entityClass = GenericHelper.getEntityClass(entityName);
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService(), false);
+        return Response.ok().entity(String.format("{\"total\": %d}", loadService.count(entityClass, genericRequestMapper.mapTo(searchConfig))))
+                       .build();
+    }
+
+    @Override
     public Response getAll(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
         Set<String> genericFields = null;
         Set<String> nestedEntities = null;
