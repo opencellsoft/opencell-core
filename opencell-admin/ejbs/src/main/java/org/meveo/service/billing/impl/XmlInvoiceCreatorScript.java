@@ -794,19 +794,18 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     }
 
     /**
-     * Build Currencies tag, wich include Provider functional and CA trading currencies
+     * Build Currencies tag, wich include Provider functional and BA trading currencies
      * @param doc current doc
-     * @param customerAccount customer account
-     * @return
-     *
+     * @param billingAccount billing account
+     * @return pretty XML tag
      */
-    protected Element createCACurrenciesSection(Document doc, CustomerAccount customerAccount) {
+    protected Element createBACurrenciesSection(Document doc, BillingAccount billingAccount) {
 
         // Functional currency
         Currency functionalCurrency = appProvider.getCurrency();
 
         // Trading currency
-        TradingCurrency tradingCurrency = customerAccount.getTradingCurrency();
+        TradingCurrency tradingCurrency = billingAccount.getTradingCurrency();
 
         Element currenciesTag = doc.createElement("currencies");
         Element functionalCurrencyTag = doc.createElement("functional");
@@ -1797,6 +1796,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (taxationCategorySection != null) {
             billingAccountTag.appendChild(taxationCategorySection);
         }
+        Element currenciesTag = createBACurrenciesSection(doc, billingAccount);
+        if (currenciesTag != null) {
+            billingAccountTag.appendChild(currenciesTag);
+        }
         return billingAccountTag;
     }
 
@@ -1841,11 +1844,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element contactTag = createProviderContactSection(doc, customerAccount);
         if (contactTag != null) {
             customerAccountTag.appendChild(contactTag);
-        }
-
-        Element currenciesTag = createCACurrenciesSection(doc, customerAccount);
-        if (currenciesTag != null) {
-            customerAccountTag.appendChild(currenciesTag);
         }
 
         return customerAccountTag;
