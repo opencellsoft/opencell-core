@@ -6896,6 +6896,7 @@
             </column>
 		    <column name="invoice_subject_code" type="bigint" />
 			<column name="description_i18n" type="${type.json}"></column>
+			<column name="custom_ubl_script_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
@@ -19477,6 +19478,13 @@
             END$$;
         </createProcedure>
     </changeSet>
+    
+    <changeSet author="AdilElJaouhari" id="#rebuild-fk-INTRD-18527_20231002">
+		<addForeignKeyConstraint baseColumnNames="custom_ubl_script_id" baseTableName="billing_invoice_type	"
+                                 constraintName="fk_custom_ubl_script_id_meveo_script_instance" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -20949,6 +20957,7 @@
     <changeSet id="#INTRD-14904_20230915" author="TarikFA." />
     <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" />
     <changeSet id="#INTRD-18393_20230920" author="TarikFA." />
+    <changeSet id="#INTRD-18527_20231002" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
