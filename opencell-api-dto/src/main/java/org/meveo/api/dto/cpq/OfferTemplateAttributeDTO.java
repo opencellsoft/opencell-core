@@ -23,8 +23,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author Tarik FAKHOURI
- *
+ * @deprecated  since 14.x (INTRD-17743)
  */
+@Deprecated
 public class OfferTemplateAttributeDTO {
 	
 	@Schema(description = "attribute id")

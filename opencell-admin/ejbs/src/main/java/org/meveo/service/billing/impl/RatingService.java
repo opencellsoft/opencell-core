@@ -614,9 +614,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
             if (unitPriceWithoutTaxOverridden != null) {
                 bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTaxOverridden);
+                bareWalletOperation.setOverrodePrice(true);
             }
             if (unitPriceWithTaxOverridden != null) {
                 bareWalletOperation.setUnitAmountWithTax(unitPriceWithTaxOverridden);
+                bareWalletOperation.setOverrodePrice(true);
             }
 
             executeRatingScript(bareWalletOperation, chargeInstance.getChargeTemplate().getRatingScript(), isVirtual);
@@ -1165,6 +1167,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
         BigDecimal priceWithoutTax = null;
         BigDecimal priceWithTax = null;
+
+        // Reported from 14.X : https://opencellsoft.atlassian.net/browse/INTRD-17743
+        if(wo.isOverrodePrice()) {
+            priceWithoutTax=wo.getUnitAmountWithoutTax();
+        }
 
         ServiceInstance serviceInstance = wo.getServiceInstance();
         Date ppmvDate = wo.getOperationDate();
