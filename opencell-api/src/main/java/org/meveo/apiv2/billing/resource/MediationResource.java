@@ -15,6 +15,7 @@ import org.meveo.apiv2.billing.CdrDtoResponse;
 import org.meveo.apiv2.billing.CdrListDtoDeletedInput;
 import org.meveo.apiv2.billing.CdrListDtoInput;
 import org.meveo.apiv2.billing.CdrListInput;
+import org.meveo.apiv2.billing.CdrStatusListDtoInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
 import org.meveo.apiv2.billing.ProcessCdrListResult;
 
@@ -66,6 +67,12 @@ public interface MediationResource {
     @Operation(summary = "update multiple for an existing CDRs", description = "update multiple for an existing CDRs", operationId = "POST_Mediation_processCdrList", responses = {
             @ApiResponse(description = " status of the operation ", content = @Content(schema = @Schema(implementation = CdrDtoResponse.class))) })
     CdrDtoResponse updateCDRs(CdrListDtoInput cdrs);
+    
+    @PUT
+    @Path("/status")
+    @Operation(summary = "update multiple status for an existing CDRs", description = "update multiple status for an existing CDRs", operationId = "PUT_Mediation_processCdrList", responses = {
+            @ApiResponse(description = " status of the operation ", content = @Content(schema = @Schema(implementation = CdrDtoResponse.class))) })
+    CdrDtoResponse updateStatusCDRs(CdrStatusListDtoInput cdrs);
     
     @DELETE
     @Path("/{id}")
