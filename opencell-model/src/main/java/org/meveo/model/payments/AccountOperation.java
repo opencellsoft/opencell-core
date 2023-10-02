@@ -108,7 +108,7 @@ import org.meveo.model.finance.AccountingEntry;
     	@NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
                 + ".customerAccount=:customerAccount"),
         @NamedQuery(name = "AccountOperation.listByCustomerAccount", query = "select ao from AccountOperation ao inner join ao.customerAccount ca where ca=:customerAccount"),
-        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao where :invoice MEMBER OF ao.invoices"),
+        @NamedQuery(name = "AccountOperation.listByInvoice", query = "select ao from AccountOperation ao inner join ao.invoices inv where inv = :invoice"),
         @NamedQuery(name = "AccountOperation.findAoClosedSubPeriodByStatus", query = "SELECT ao FROM AccountOperation ao" +
                 " INNER JOIN SubAccountingPeriod sap ON sap.allUsersSubPeriodStatus = 'CLOSED' AND sap.startDate <= ao.accountingDate AND sap.endDate >= ao.accountingDate" +
                 " AND ao.status IN (:AO_STATUS)"),
