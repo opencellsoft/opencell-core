@@ -1087,12 +1087,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     private void addInvoiceAmounts(Map<Long, Map<Long, Amounts>> entityAmounts, Amounts amounts, Long invoiceId, Long entityId) {
-        if (entityAmounts.get(entityId) == null) {
-            Map<Long, Amounts> thresholdAmounts = new TreeMap<>();
-            thresholdAmounts.put(invoiceId, amounts.clone());
-            entityAmounts.put(entityId, thresholdAmounts);
-        } else {
-            entityAmounts.get(entityId).put(invoiceId, amounts.clone());
+        if (entityId != null && invoiceId != null) {
+            Map<Long, Amounts> thresholdAmounts = entityAmounts.get(entityId);
+            if (thresholdAmounts == null) {
+                thresholdAmounts = new TreeMap<>();
+                thresholdAmounts.put(invoiceId, amounts.clone());
+                entityAmounts.put(entityId, thresholdAmounts);
+            } else {
+                thresholdAmounts.put(invoiceId, amounts.clone());
+            }
         }
     }
 
