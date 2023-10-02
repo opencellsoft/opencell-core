@@ -170,6 +170,10 @@ public class InvoiceType extends BusinessCFEntity {
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;  
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "custom_ubl_script_id")
+    private ScriptInstance customUblScript;
 
     public UntdidInvoiceSubjectCode getInvoiceSubjectCode() {
         return invoiceSubjectCode;
@@ -429,6 +433,14 @@ public class InvoiceType extends BusinessCFEntity {
 
 	public void setDescriptionI18n(Map<String, String> descriptionI18n) {
 		this.descriptionI18n = descriptionI18n;
+	}
+
+	public ScriptInstance getCustomUblScript() {
+		return customUblScript;
+	}
+
+	public void setCustomUblScript(ScriptInstance customUblScript) {
+		this.customUblScript = customUblScript;
 	}
 	
 }
