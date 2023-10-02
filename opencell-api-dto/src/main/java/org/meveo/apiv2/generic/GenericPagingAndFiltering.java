@@ -55,4 +55,7 @@ public interface GenericPagingAndFiltering {
     
     @Nullable
     JoinType getJoinType();
+
+    @Nullable
+    @Value.Default default Boolean getForceCount(){ return false; }
 }

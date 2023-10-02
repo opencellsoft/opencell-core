@@ -981,19 +981,18 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         walletOperation.setAmountWithoutTax(amount);
         walletOperation.setAmountWithTax(amount);
         AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
-        walletOperation.setAccountingArticle(accountingArticle);
-        // Determine and set tax if it was not set before.
-        // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
-        if (walletOperation.getTax() == null || (accountingArticle != null && accountingArticle.getTaxClass() != null &&
-                !accountingArticle.getTaxClass().equals(walletOperation.getTaxClass()))) {
-            TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
-            if(taxInfo==null) {
-                throw new BusinessException("No tax found for the chargeInstance "+ walletOperation.getChargeInstance().getCode());
-            }
-            walletOperation.setTaxClass(taxInfo.taxClass);
-            walletOperation.setTax(taxInfo.tax);
-            walletOperation.setTaxPercent(taxInfo.tax.getPercent());
+        if (accountingArticle == null) {
+            throw new RatingException("Unable to match an accounting article for a charge " + walletOperation.getChargeInstance().getId() + "/" + walletOperation.getChargeInstance().getCode());
         }
+        walletOperation.setAccountingArticle(accountingArticle);
+
+        TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
+        if(taxInfo==null) {
+            throw new BusinessException("No tax found for the chargeInstance "+ walletOperation.getChargeInstance().getCode());
+        }
+        walletOperation.setTaxClass(taxInfo.taxClass);
+        walletOperation.setTax(taxInfo.tax);
+        walletOperation.setTaxPercent(taxInfo.tax.getPercent());
 
         // Unit prices and unit taxes are with higher precision
         BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitPrice, unitPrice, walletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
@@ -1224,8 +1223,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	WalletOperation discountWalletOperation = new WalletOperation();
     	BigDecimal discountedAmount=unitPriceWithoutTax.subtract(amount);
     	BigDecimal taxPercent=bareWalletOperation.getTaxPercent();
-    	BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP); 
-    	BigDecimal quantity=bareWalletOperation.getQuantity();
+
+        // Unit prices and unit taxes are with higher precision
+        BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, bareWalletOperation.getTaxPercent(), appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        BigDecimal quantity=bareWalletOperation.getQuantity();
     	ChargeInstance chargeInstance=bareWalletOperation.getChargeInstance();
     
     	discountWalletOperation.setCode(bareWalletOperation.getCode());
@@ -1234,9 +1236,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	discountWalletOperation.setAmountWithTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[1]):BigDecimal.ZERO);
     	discountWalletOperation.setAmountTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[2]):BigDecimal.ZERO);
     	discountWalletOperation.setTaxPercent(taxPercent);
-    	discountWalletOperation.setUnitAmountWithoutTax(amounts[0]);
-    	discountWalletOperation.setUnitAmountWithTax(amounts[1]);
-    	discountWalletOperation.setUnitAmountTax(amounts[2]);
+    	discountWalletOperation.setUnitAmountWithoutTax(unitAmounts[0]);
+    	discountWalletOperation.setUnitAmountWithTax(unitAmounts[1]);
+    	discountWalletOperation.setUnitAmountTax(unitAmounts[2]);
     	discountWalletOperation.setQuantity(quantity);
     	discountWalletOperation.setTax(bareWalletOperation.getTax());//
     	discountWalletOperation.setCreated(new Date()); 

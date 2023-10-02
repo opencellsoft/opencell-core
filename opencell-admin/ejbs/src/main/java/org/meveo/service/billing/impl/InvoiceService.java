@@ -229,6 +229,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.InvoiceLineService.InvoiceLineCreationStatistics;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
@@ -2640,9 +2641,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (!ratedTransactionIds.isEmpty()) {
                 List<Map<String, Object>> groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
                 AggregationConfiguration configuration = new AggregationConfiguration(appProvider.isEntreprise());
-                List<InvoiceLine> invoiceLines = new ArrayList<>();
-                invoiceLinesService.createInvoiceLines(groupedRTs, configuration,
-                        null, null, invoiceLines, generateInvoiceRequestDto.getOpenOrderCode());
+                
+                InvoiceLineCreationStatistics stats = invoiceLinesService.createInvoiceLines(groupedRTs, configuration,
+                        generateInvoiceRequestDto.getOpenOrderCode());
+                
+                List<InvoiceLine> invoiceLines =stats.getInvoiceLines();
+                
                 invoices = createAggregatesAndInvoiceUsingIL(entity, null, filter, null, invoiceDate,
                         firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft,
                         !generateInvoiceRequestDto.getSkipValidation(), false, invoiceLines,
@@ -3313,7 +3317,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 || (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation())) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
         }
-        if (billingRun.getSkipValidationScript() != null && !billingRun.isSkipValidationScript()) {
+        if (!billingRun.isSkipValidationScript()) {
             applyAutomaticInvoiceCheck(invoice, true);
         }
         if (invoice.getStatus().equals(InvoiceStatusEnum.REJECTED)) {
@@ -5570,6 +5574,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             
             if (invoiceProcessTypeEnum == null || invoiceProcessTypeEnum == InvoiceProcessTypeEnum.AUTOMATIC) {
                 AccountingArticle accountingArticle = invoiceLine.getAccountingArticle();
+                accountingArticle = accountingArticleService.refreshOrRetrieve(accountingArticle);
                 if (!isBlank(accountingArticle.getInvoiceTypeEl())) {
                     String invoiceTypeCode = evaluateInvoiceTypeEl(accountingArticle.getInvoiceTypeEl(), invoiceLine);
                     invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
@@ -5589,6 +5594,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             
             paymentMethod = resolvePMethod(billingAccount, billingCycle, defaultPaymentMethod, invoiceLine);
+            invoiceLine.setSubscription(subscriptionService.refreshOrRetrieve(invoiceLine.getSubscription()));
             Seller seller = getSelectedSeller(invoiceLine);
             String invoiceKey = billingAccount.getId() +  (seller!=null ? "_"+seller.getId():null) + "_" + invoiceType.getId() + "_" + paymentMethod.getId() + "_" + invoiceLine.getOpenOrderNumber();
             InvoiceLinesGroup ilGroup = invoiceLinesGroup.get(invoiceKey);
@@ -6193,6 +6199,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         for (InvoiceLine invoiceLine : invoiceLines) {
 
             addFixedDiscount(invoiceLine);
+            invoiceLine.setSubscription(subscriptionService.refreshOrRetrieve(invoiceLine.getSubscription()));
+            invoiceLine.setAccountingArticle(accountingArticleService.refreshOrRetrieve(invoiceLine.getAccountingArticle()));
             InvoiceSubCategory invoiceSubCategory = invoiceLine.getAccountingArticle().getInvoiceSubCategory();
 
             scaKey = invoiceSubCategory.getId().toString();
@@ -6725,7 +6733,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
            }
             
         }
-
         return update(toUpdate);
     }
 
@@ -6742,7 +6749,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
-        toUpdate = refreshOrRetrieve(toUpdate);
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
                 InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
                 && linkedInvoice.getLinkedInvoiceValue() != null &&

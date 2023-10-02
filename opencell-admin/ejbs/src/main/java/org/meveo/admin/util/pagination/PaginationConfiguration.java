@@ -51,6 +51,11 @@ public class PaginationConfiguration implements Serializable {
     private boolean doFetch = true;
     
     /**
+     * Fields to return as query results (regular comma separated field list). If not provided, a full entity will be retrieved
+     */
+    private String selectFields;
+
+    /**
      * Fields that needs to be fetched when selecting (like lists or other entities).
      */
     private List<String> fetchFields;
@@ -71,6 +76,8 @@ public class PaginationConfiguration implements Serializable {
     private Object[] ordering;
     
     private JoinType joinType;
+
+    private Boolean forceCount = false;
 
     /**
      * Shall query results be cached - see Hibernate query cache behavior
@@ -129,9 +136,10 @@ public class PaginationConfiguration implements Serializable {
         }
     }
 
-    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Object... sortFieldsAndOrder) {
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Boolean forceCount, Object... sortFieldsAndOrder) {
     	this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, sortFieldsAndOrder);
     	this.joinType=joinType;
+        this.forceCount = forceCount;
     }
     
     /**
@@ -160,12 +168,6 @@ public class PaginationConfiguration implements Serializable {
         this.filters = filters;
     }
 
-    public PaginationConfiguration(Map<String, Object> filters, List<String> fetchFields, Set<String> groupBy) {
-        this.filters = filters;
-        this.setGroupBy(groupBy);
-        this.setFetchFields(fetchFields);
-    }
-
     /**
      * Constructor
      * 
@@ -180,6 +182,16 @@ public class PaginationConfiguration implements Serializable {
         } else if (sortField != null) {
             ordering = new Object[] { sortField, SortOrder.ASCENDING };
         }
+    }
+
+    public PaginationConfiguration(Map<String, Object> filters, String sortField, SortOrder sortOrder, int numberOfRows) {
+        this.filters = filters;
+        if (sortField != null && sortOrder != null) {
+            ordering = new Object[] { sortField, sortOrder };
+        } else if (sortField != null) {
+            ordering = new Object[] { sortField, SortOrder.ASCENDING };
+        }
+        this.numberOfRows = numberOfRows;
     }
 
     /**
@@ -302,7 +314,15 @@ public class PaginationConfiguration implements Serializable {
         return String.format("PaginationConfiguration [firstRow=%s, numberOfRows=%s, fullTextFilter=%s, filters=%s, fetchFields=%s, ordering=%s]", firstRow, numberOfRows, fullTextFilter, filters, fetchFields, ordering);
     }
 
-	public JoinType getJoinType() {
+    public Boolean getForceCount() {
+        return forceCount;
+    }
+
+    public void setForceCount(Boolean forceCount) {
+        this.forceCount = forceCount;
+    }
+
+    public JoinType getJoinType() {
 		return joinType;
 	}
 
@@ -330,5 +350,19 @@ public class PaginationConfiguration implements Serializable {
      */
     public boolean isCacheable() {
         return cacheable;
-    }	
+    }
+
+    /**
+     * @return Fields to return as query results (regular comma separated field list). If not provided, a full entity will be retrieved
+     */
+    public String getSelectFields() {
+        return selectFields;
+    }
+
+    /**
+     * @param selectFields Fields to return as query results (regular comma separated field list). If not provided, a full entity will be retrieved
+     */
+    public void setSelectFields(String selectFields) {
+        this.selectFields = selectFields;
+    }
 }

@@ -193,7 +193,7 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 		}
 		billingRunService.update(billingRun);
 		billingRunService.updateBillingRunStatistics(billingRun);
-		billingRunService.updateBillingRunJobExecution(billingRun, result);
+		billingRunService.updateBillingRunJobExecution(billingRun.getId(), result);
 	}
 
 	private void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis,

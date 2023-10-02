@@ -211,6 +211,7 @@ public class MediationsettingService extends PersistenceService<MediationSetting
 				//discountWoId.add(wo.getId());
 				List<WalletOperation> triggeredWo = (List<WalletOperation>) walletOperationService.getEntityManager().createNamedQuery("WalletOperation.findByTriggerdEdr").setParameter("rerateWalletOperationIds", discountWoId).getResultList();
 				discountWos.addAll(triggeredWo);
+				discountWos.addAll(triggeredWo.stream().flatMap(wl -> walletOperationService.findByDiscountedWo(wl.getId()).stream()).collect(Collectors.toList()));
 				for (WalletOperation wallet : discountWos) {
 					if (!wallet.getStatus().equals(WalletOperationStatusEnum.CANCELED)) {
 						wallet.setStatus(WalletOperationStatusEnum.CANCELED);

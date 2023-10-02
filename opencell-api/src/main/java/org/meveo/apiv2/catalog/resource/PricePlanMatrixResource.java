@@ -58,4 +58,15 @@ public interface PricePlanMatrixResource {
                     @ApiResponse(responseCode = "409", description = "A line having similar values already exists!")
             })
     Response exportPricePlanMatrixVersions(@Parameter(description = "input data", required = true) Map<String, Object> payload);
+
+    @POST
+    @Path("/search")
+    @Operation(
+            summary = "search price plan using attributes information",
+            description = "search price plan using attributes information",
+            responses = {
+                    @ApiResponse(description = "list of price plan and meta data information"
+                    )}
+    )
+    Response search(Map<String, Object> searchInfo);
 }

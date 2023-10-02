@@ -17,7 +17,10 @@ import static org.meveo.model.shared.DateUtils.addDaysToDate;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -29,21 +32,26 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.DatePeriod;
@@ -115,6 +123,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     private static final String INVOICING_PROCESS_TYPE = "InvoiceLine";
     private static final String INVOICE_MINIMUM_COMPLEMENT_CODE = "MIN-STD";
 
+    /**
+     * A number of Rated transaction, from which a pending table will be used to update Rated transaction status
+     */
+    private static int minNrOfRtsToUsePendingTable = -1;
+
     @Inject
     private FilterService filterService;
 
@@ -165,6 +178,17 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private OpenOrderService openOrderService;
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
+    @PostConstruct
+    private void init() {
+        // Load configuration only once
+        if (minNrOfRtsToUsePendingTable == -1) {
+            minNrOfRtsToUsePendingTable = paramBeanFactory.getInstance().getPropertyAsInteger("invoicing.minNrOfRtsToUsePendingTable", 1000);
+        }
+    }
 
     public List<InvoiceLine> findByQuote(CpqQuote quote) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByQuote", InvoiceLine.class)
@@ -225,9 +249,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
         BillingAccount billingAccount = getBillingAccount(invoice, entity);
         Seller seller = getSeller(invoice, entity, billingAccount);
-        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         if (accountingArticle != null && entity.getTax() == null) {
-             seller = sellerService.refreshOrRetrieve(seller);
              setApplicableTax(accountingArticle, date, seller, billingAccount, entity);
          }
         super.create(entity);
@@ -255,9 +277,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	InvoiceLine discountInvoice = new InvoiceLine(invoiceLine, invoice);
             discountInvoice.setAccountingArticle(discountPlanItem.getAccountingArticle());
         	discountInvoice.setStatus(invoiceLine.getStatus());
-            if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
-                invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountPlanItem.getDiscountValue());
-            } else {
+          
                 BigDecimal taxPercent = invoiceLine.getTaxRate();
                 if(invoiceLine.getAccountingArticle() != null) {
                 	TaxInfo taxInfo = taxMappingService.determineTax(invoiceLine.getAccountingArticle().getTaxClass(), seller, billingAccount, null, invoice!=null?invoice.getInvoiceDate():null, false, false);
@@ -280,7 +300,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 discountInvoice.setRawAmount(invoiceLineDiscountAmount);
             	super.create(discountInvoice);
             }
-        }
+        
         return invoiceLineDiscountAmount;
     }
      
@@ -372,21 +392,21 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             return emptyList();
         }
     }
-    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot,OfferTemplate offerTemplate,OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-       return  createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, null);
-    }	
-    
-    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle,
-                                         ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
-                                         OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
-                                         BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate, Long discountedInvoiceLineId) {
-    	return createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate, discountedInvoiceLineId, BigDecimal.ONE);
+
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate, OrderOffer orderOffer,
+            BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+        return createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate,
+            null);
     }
-    
-    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle,
-                    ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate,
-                    OrderOffer orderOffer, BigDecimal amountWithoutTaxToBeInvoiced,
-                    BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate, Long discountedInvoiceLineId, BigDecimal quantity) {
+
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate, OrderOffer orderOffer,
+            BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate, Long discountedInvoiceLineId) {
+        return createInvoiceLine(entityToInvoice, accountingArticle, productVersion, orderLot, offerTemplate, orderOffer, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate,
+            discountedInvoiceLineId, BigDecimal.ONE);
+    }
+
+    public InvoiceLine createInvoiceLine(IBillableEntity entityToInvoice, AccountingArticle accountingArticle, ProductVersion productVersion, OrderLot orderLot, OfferTemplate offerTemplate, OrderOffer orderOffer,
+            BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate, Long discountedInvoiceLineId, BigDecimal quantity) {
         BillingAccount billingAccount = null;
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setAccountingArticle(accountingArticle);
@@ -1005,7 +1025,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      * Return : QueryBuilder
      */
     public QueryBuilder fromFilters(Map<String, Object> filters) {
-    	return getQueryFromFilters(filters, null, false);
+    	return getQueryFromFilters(filters, null, null, false);
     }
     	
     	
@@ -1029,24 +1049,20 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                     .getResultList();
         }
     }
-    
-    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
-            AggregationConfiguration configuration, JobExecutionResultImpl result) throws BusinessException {
-        return createInvoiceLines(groupedRTs, configuration, result, null);
-    }
-    
-    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
-            AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun) throws BusinessException {
-    	return createInvoiceLines(groupedRTs, configuration, result, billingRun, new ArrayList<>(), null);
+
+    public InvoiceLineCreationStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs, AggregationConfiguration configuration, String openOrderNumber) throws BusinessException {
+        return createInvoiceLines(groupedRTs, configuration, null, null, openOrderNumber);
     }
 
-    public BasicStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs,
-                AggregationConfiguration configuration, JobExecutionResultImpl result,
-                                              BillingRun billingRun, List<InvoiceLine> invoiceLines,
-                                              String openOrderNumber) throws BusinessException {
+    @SuppressWarnings("unchecked")
+    public InvoiceLineCreationStatistics createInvoiceLines(List<Map<String, Object>> groupedRTs, AggregationConfiguration configuration, JobExecutionResultImpl result, BillingRun billingRun, String openOrderNumber)
+            throws BusinessException {
+
         InvoiceLinesFactory linesFactory = new InvoiceLinesFactory();
         Map<Long, Long> iLIdsRtIdsCorrespondence = new HashMap<>();
-        BasicStatistics basicStatistics = new BasicStatistics();
+
+        InvoiceLineCreationStatistics statistics = new InvoiceLineCreationStatistics();
+
         OpenOrderSetting openOrderSetting = openOrderSettingService.findLastOne();
         boolean useOpenOrder = ofNullable(openOrderSetting).map(OpenOrderSetting::getUseOpenOrders).orElse(false);
         InvoiceLine invoiceLine;
@@ -1058,62 +1074,64 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             billingRunId = billingRun.getId();
             incrementalInvoiceLines = billingRun.getIncrementalInvoiceLines();
         }
+
+        Object[][] rtIlBrIds = new Object[groupedRTs.size()][3];
+        int numberOrRts = 0;
+        
+        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
+
+        int i = 0;
         for (Map<String, Object> groupedRT : groupedRTs) {
+            Long invoiceLineId = null;
+            associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
+
             if (incrementalInvoiceLines && groupedRT.get("invoice_line_id") != null) {
-                Long invoiceLineId = (Long) groupedRT.get("invoice_line_id");
-                BigDecimal amountWithoutTax = ofNullable(((BigDecimal) groupedRT.get("amount_without_tax"))).orElse(ZERO)
-                        .add((BigDecimal) groupedRT.get("sum_without_tax"));
-                BigDecimal amountWithTax = ofNullable(((BigDecimal) groupedRT.get("amount_with_tax"))).orElse(ZERO)
-                        .add((BigDecimal) groupedRT.get("sum_with_tax"));
-                BigDecimal taxPercent = ofNullable((BigDecimal) groupedRT.get("tax_rate"))
-                        .orElse((BigDecimal) groupedRT.get("tax_percent"));
+                invoiceLineId = ((Number) groupedRT.get("invoice_line_id")).longValue();
+                BigDecimal amountWithoutTax = ofNullable(((BigDecimal) groupedRT.get("amount_without_tax"))).orElse(ZERO).add((BigDecimal) groupedRT.get("sum_without_tax"));
+                BigDecimal amountWithTax = ofNullable(((BigDecimal) groupedRT.get("amount_with_tax"))).orElse(ZERO).add((BigDecimal) groupedRT.get("sum_with_tax"));
+                BigDecimal taxPercent = ofNullable((BigDecimal) groupedRT.get("tax_rate")).orElse((BigDecimal) groupedRT.get("tax_percent"));
                 BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, appProvider.isEntreprise(), appProvider.getRounding(),
-                        appProvider.getRoundingMode().getRoundingMode());
+                    appProvider.getRoundingMode().getRoundingMode());
                 BigDecimal deltaAmountWithoutTax = (BigDecimal) groupedRT.get("sum_without_tax");
                 BigDecimal deltaAmountWithTax = (BigDecimal) groupedRT.get("sum_with_tax");
                 BigDecimal deltaAmountTax = deltaAmountWithTax.subtract(deltaAmountWithoutTax);
-                BigDecimal[] deltaAmounts = new BigDecimal[] {deltaAmountWithoutTax, deltaAmountWithTax, deltaAmountTax};
+                BigDecimal[] deltaAmounts = new BigDecimal[] { deltaAmountWithoutTax, deltaAmountWithTax, deltaAmountTax };
 
                 BigDecimal deltaQuantity = (BigDecimal) groupedRT.get("quantity");
                 BigDecimal quantity = ((BigDecimal) groupedRT.get("accumulated_quantity")).add((BigDecimal) groupedRT.get("quantity"));
                 Date beginDate = (Date) groupedRT.get("begin_date");
-                Date endDate = (Date) groupedRT.get("end_date");
+                if (groupedRT.get("start_date") != null && (beginDate == null || ((Date) groupedRT.get("start_date")).before(beginDate))) {
+                    beginDate = (Date) groupedRT.get("start_date");
+                }
+                Date finishDate = (Date) groupedRT.get("finish_date");
+                if (groupedRT.get("end_date") != null && (finishDate == null || ((Date) groupedRT.get("end_date")).after(finishDate))) {
+                    finishDate = (Date) groupedRT.get("end_date");
+                }
 
                 BigDecimal unitPrice = (BigDecimal) groupedRT.get("unit_price");
-                if (billingRun.getBillingCycle() != null && !billingRun.getBillingCycle().isDisableAggregation()
-                        && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
+                if (billingRun.getBillingCycle() != null && !billingRun.getBillingCycle().isDisableAggregation() && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
                     MathContext mc = new MathContext(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
                     unitPrice = quantity.compareTo(ZERO) == 0 ? amountWithoutTax : amountWithoutTax.divide(quantity, mc);
                 }
 
-                linesFactory.update(invoiceLineId, deltaAmounts, deltaQuantity, beginDate, endDate, unitPrice);
-                basicStatistics.addToAmountWithoutTax(amounts[0]);
-                basicStatistics.addToAmountWithTax(amounts[1]);
-                basicStatistics.addToAmountTax(amounts[2]);
-                commit();
-                associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
-                basicStatistics.setCount(associatedRtIds.size());
-                ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLineId, billingRunId);
-            }
-            else {
-                invoiceLine = linesFactory.create(groupedRT, iLIdsRtIdsCorrespondence,
-                        configuration, result, appProvider, billingRun, openOrderNumber);
-                basicStatistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
-                basicStatistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
-                basicStatistics.addToAmountTax(invoiceLine.getAmountTax());
+                linesFactory.update(invoiceLineId, deltaAmounts, deltaQuantity, beginDate, finishDate, unitPrice);
+                statistics.addToAmountWithoutTax(amounts[0]);
+                statistics.addToAmountWithTax(amounts[1]);
+                statistics.addToAmountTax(amounts[2]);
+
+            } else {
+                invoiceLine = linesFactory.create(groupedRT, iLIdsRtIdsCorrespondence, configuration, result, appProvider, billingRun, openOrderNumber);
+                statistics.addToAmountWithTax(invoiceLine.getAmountWithTax());
+                statistics.addToAmountWithoutTax(invoiceLine.getAmountWithoutTax());
+                statistics.addToAmountTax(invoiceLine.getAmountTax());
                 create(invoiceLine);
-                commit();
-                associatedRtIds = stream(((String) groupedRT.get("rated_transaction_ids")).split(",")).map(Long::parseLong).collect(toList());
-                basicStatistics.setCount(associatedRtIds.size());
-                ratedTransactionService.linkRTsToIL(associatedRtIds, invoiceLine.getId(), billingRunId);
-                if(groupedRT.get("rated_transaction_ids") != null) {
-                    var ratedTransIds = ((String) groupedRT.get("rated_transaction_ids")).split(",");
-                    for(String id: ratedTransIds) {
-                        iLIdsRtIdsCorrespondence.put(Long.valueOf(id),invoiceLine.getId() );
-                    }
+                invoiceLineId = invoiceLine.getId();
+
+                for (Long id : associatedRtIds) {
+                    iLIdsRtIdsCorrespondence.put(id, invoiceLine.getId());
                 }
 
-                if(useOpenOrder) {
+                if (useOpenOrder) {
                     OpenOrder openOrder = openOrderService.findOpenOrderCompatibleForIL(invoiceLine, configuration);
                     if (openOrder != null) {
                         invoiceLine.setOpenOrderNumber(openOrder.getOpenOrderNumber());
@@ -1122,29 +1140,79 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 }
                 invoiceLines.add(invoiceLine);
             }
-        }
-        basicStatistics.setCount(groupedRTs.size());
-        return basicStatistics;
-    }
 
-	/**
-	 * @param result
-	 * @param aggregationConfiguration
-	 * @param billingRun
-	 * @param be billableEntity
-	 * @param basicStatistics
-	 * @param pageSize 
-	 * @return 
-	 * @return
-	 */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createInvoiceLines(JobExecutionResultImpl result, AggregationConfiguration aggregationConfiguration, BillingRun billingRun, IBillableEntity be, BasicStatistics basicStatistics) {
-	    BasicStatistics ilBasicStatistics = createInvoiceLines(
-	            ratedTransactionService.getGroupedRTsWithAggregation(aggregationConfiguration, billingRun, be, billingRun.getLastTransactionDate()),
-                aggregationConfiguration, result, billingRun);
-	    basicStatistics.append(ilBasicStatistics);
-	}
+            rtIlBrIds[i][0] = associatedRtIds;
+            rtIlBrIds[i][1] = invoiceLineId;
+            rtIlBrIds[i][2] = billingRunId;
+            numberOrRts = numberOrRts + associatedRtIds.size();
+            i++;
+        }
+
+        // Link Rated transactions with invoice lines
+        // Mass update RT status and info
+        String providerCode = currentUser.getProviderCode();
+        final String schemaPrefix = providerCode != null ? EntityManagerProvider.convertToSchemaName(providerCode) + "." : "";
+
+        // Choose a way of updating RT status - directly by a RT table update with a list of IDs as parameters
+        // or via a pending table for a large number of RTs
+
+        EntityManager em = getEntityManager();
+
+        if (numberOrRts < minNrOfRtsToUsePendingTable) {
+
+            // Need to flush, so RTs can be updated in mass
+            em.flush();
+
+            for (Object[] rtIlBrId : rtIlBrIds) {
+                ratedTransactionService.linkRTsToIL((List<Long>) rtIlBrId[0], (Long) rtIlBrId[1], (Long) rtIlBrId[2]);
+            }
+
+        } else {
+
+            Session hibernateSession = em.unwrap(Session.class);
+            hibernateSession.doWork(connection -> {
+                try (PreparedStatement preparedStatement = connection.prepareStatement("insert into " + schemaPrefix + "billing_rated_transaction_pending (id, invoice_line_id, billing_run_id) values (?,?,?)")) {
+
+                    int bi = 0;
+                    for (Object[] rtIlBrId : rtIlBrIds) {
+                        for (Long rtId : (List<Long>) rtIlBrId[0]) {
+
+                            preparedStatement.setLong(1, rtId);
+                            preparedStatement.setLong(2, (Long) rtIlBrId[1]);
+                            preparedStatement.setLong(3, (Long) rtIlBrId[2]);
+
+                            preparedStatement.addBatch();
+
+                            // Flush every 1M records
+                            if (bi > 0 && bi % 1000000 == 0) {
+                                preparedStatement.executeBatch();
+                            }
+                            bi++;
+                        }
+                    }
+
+                    preparedStatement.executeBatch();
+
+                } catch (SQLException e) {
+                    log.error("Failed to insert into billing_rated_transaction_pending", e);
+                    throw e;
+                }
+            });
+
+            // Need to flush, so RTs can be updated in mass
+            em.flush();
+
+            // Mass update RT with status and IL info
+            em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceLineInfoFromPendingTable" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).executeUpdate();
+            em.createNamedQuery("RatedTransaction.deletePendingTable").executeUpdate();
+
+        }
+
+        statistics.setCount(groupedRTs.size());
+        statistics.setInvoiceLines(invoiceLines);
+
+        return statistics;
+    }
 
     public void deleteByBillingRun(long billingRunId) {
         List<Long> invoiceLinesIds = loadInvoiceLinesIdByBillingRun(billingRunId);
@@ -1463,5 +1531,41 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     public void updateInvoiceLine(InvoiceLine invoiceLine, org.meveo.apiv2.billing.InvoiceLine resource, DiscountPlan discountPlan) {
         updateDsicountPlan(invoiceLine, resource, discountPlan);
         update(invoiceLine);
+    }
+
+    /**
+     * Statistics for Invoice line creation process
+     */
+    public class InvoiceLineCreationStatistics extends BasicStatistics {
+
+        List<InvoiceLine> invoiceLines;
+
+        /**
+         * @return Invoice lines created
+         */
+        public List<InvoiceLine> getInvoiceLines() {
+            return invoiceLines;
+        }
+
+        /**
+         * @param invoiceLines Invoice lines
+         */
+        public void setInvoiceLines(List<InvoiceLine> invoiceLines) {
+            this.invoiceLines = invoiceLines;
+        }
+    }
+
+    /**
+     * Bridge Invoice lines that correspond to discount type rated transactions with invoices lines that they discount<BR/>
+     * Note: Each discount type Rated Transaction correspond to a single Invoice line
+     * 
+     * @param billingRunId Billing run Id
+     * @param minId Minimum Rated transaction Id
+     * @param maxId Maximum Rated transaction Id
+     */
+    public void bridgeDiscountILs(Long billingRunId, Long minId, Long maxId) {
+
+        getEntityManager().createNamedQuery("InvoiceLine.massUpdateWithDiscountedIL" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")).setParameter("brId", billingRunId).setParameter("minId", minId)
+            .setParameter("maxId", maxId).executeUpdate();
     }
 }
