@@ -1,8 +1,5 @@
 package org.meveo.apiv2.billing;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
