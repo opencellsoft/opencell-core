@@ -3203,6 +3203,7 @@
             <column name="external_purchase_order_number" type="varchar(100)" />
             <column name="ubl_reference" type="${type.boolean}" defaultValueNumeric="0" />
 			<column name="sips_batch_archive_name" type="varchar(255)" />
+            <column name="pdp_status_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -12936,7 +12937,7 @@
     </changeSet>
 
     <changeSet id="#INTRD-18393_20230920_rebuild" author="TarikFA.">
-        <createTable tableName="pdp_status">
+        <createTable tableName="pdp_status_history">
             <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pdp_status_pkey"/>
             </column>
@@ -12959,7 +12960,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="pdp_status_history">
+        <createTable tableName="pdp_status">
             <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pdp_status_history_pkey"/>
             </column>
@@ -12984,7 +12985,6 @@
             <column name="invoice_id" type="bigint" />
             <column name="status" type="varchar(30)" />
             <column name="deposit_date" type="datetime" />
-            <column name="pdp_status_histories_id" type="bigint" />
         </createTable>
 
     </changeSet>
@@ -13077,6 +13077,12 @@
             <column name= "pdf_generation_job" type="varchar(50)" />
             <column name= "ubl_generation_job" type="varchar(50)" />
         </createTable>
+
+        <createTable tableName="pdp_status_and_history">
+            <column name="pdpstatus_id" type="bigint" />
+            <column name="history_id" type="bigint" />
+        </createTable>
+
     </changeSet>
     <!-- start uk -->
 
@@ -17753,11 +17759,18 @@
         <addForeignKeyConstraint baseTableName="accounting_article_amount" baseColumnNames="billing_run_report_id"
                                  constraintName="accounting_article_amount_br_report_id_fk"
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="pdp_status_history" baseColumnNames="invoice_id"
-                                 constraintName="fk_status_history_invoice" referencedTableName="billing_invoice"
+        <addForeignKeyConstraint baseTableName="pdp_status" baseColumnNames="invoice_id"
+                                 constraintName="fk_pdp_status_invoice" referencedTableName="billing_invoice"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="pdp_status_history" baseColumnNames="pdp_status_histories_id"
-                                 constraintName="fk_status_history_id" referencedTableName="pdp_status_history"
+        <addForeignKeyConstraint baseTableName="billing_invoice" baseColumnNames="pdp_status_id"
+                                 constraintName="fk_invoice_pdp_status_id" referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="pdp_status_and_history" baseColumnNames="pdpstatus_id"
+                                 constraintName="fk_pdp_status_its_history_id" referencedTableName="pdp_status"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="pdp_status_and_history" baseColumnNames="history_id"
+                                 constraintName="fk_pdp_status_history_id" referencedTableName="pdp_status_history"
                                  referencedColumnNames="id"/>
     </changeSet>
 
@@ -20949,6 +20962,7 @@
     <changeSet id="#INTRD-14904_20230915" author="TarikFA." />
     <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" />
     <changeSet id="#INTRD-18393_20230920" author="TarikFA." />
+    <changeSet id="#INTRD-18394_20231002" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
