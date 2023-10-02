@@ -19478,13 +19478,6 @@
             END$$;
         </createProcedure>
     </changeSet>
-    
-    <changeSet author="AdilElJaouhari" id="#rebuild-fk-INTRD-18527_20231002">
-		<addForeignKeyConstraint baseColumnNames="custom_ubl_script_id" baseTableName="billing_invoice_type	"
-                                 constraintName="fk_custom_ubl_script_id_meveo_script_instance" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -20844,7 +20837,13 @@
                                  referencedTableName="billing_invoice_line"/>
     </changeSet>
 
-
+    <changeSet author="AdilElJaouhari" id="#INTRD-18527_20231002_fk">
+		<addForeignKeyConstraint baseColumnNames="custom_ubl_script_id" baseTableName="billing_invoice_type	"
+                                 constraintName="fk_custom_ubl_script_id_meveo_script_instance" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+    
    	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA."/>
    	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA."/>
     <changeSet id="#INTRD-13326_20230227" author="zelmeliani" />
