@@ -90,6 +90,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     private static final String INVOICE_TYPE_SECURITY_DEPOSIT = "SECURITY_DEPOSIT";
     private static final String XCH_LOSS = "XCH_LOSS";
     private static final String XCH_GAIN = "XCH_GAIN";
+    private static final String CAN_SD = "CAN_SD";
 
     @Inject
     private CustomerAccountService customerAccountService;
@@ -579,7 +580,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			SecurityDeposit securityDeposit = osd.get();
 			SecurityDepositTemplate securityDepositTemplate = osd.map(SecurityDeposit::getTemplate).get();
 			// Check that max Amount is not reached
-            // For existing sd without currentBalance : avoir NPE
+            // For existing sd without currentBalance : avoid NPE
             if (securityDeposit.getCurrentBalance() == null) {
                 securityDeposit.setCurrentBalance(ZERO);
             }
@@ -597,9 +598,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 					securityDeposit.setStatus(SecurityDepositStatusEnum.HOLD);
 				}
 			}
-			// Create SD Transaction
-            securityDepositAOPs.forEach(sdAop ->
-                    securityDepositService.createSecurityDepositTransaction(securityDeposit, amountToMatch, SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, sdAop));
+			// Create SD Transaction if SecurityDeposit is not Canceled
+            securityDepositAOPs.forEach(sdAop -> {
+                        if (!sdAop.getCode().equalsIgnoreCase(CAN_SD)) {
+                            securityDepositService.createSecurityDepositTransaction(securityDeposit, amountToMatch,
+                                    SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, sdAop);
+                        }
+                    }
+            );
 
 		}
 	}
