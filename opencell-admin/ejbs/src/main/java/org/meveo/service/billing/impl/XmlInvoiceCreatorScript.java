@@ -32,6 +32,7 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -790,6 +791,80 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
 
         return addressTag;
+    }
+
+    /**
+     * Build Currencies tag, wich include Provider functional and BA trading currencies
+     * @param doc current doc
+     * @param billingAccount billing account
+     * @return pretty XML tag
+     */
+    protected Element createBACurrenciesSection(Document doc, BillingAccount billingAccount) {
+
+        // Functional currency
+        Currency functionalCurrency = appProvider.getCurrency();
+
+        // Trading currency
+        TradingCurrency tradingCurrency = billingAccount.getTradingCurrency();
+
+        Element currenciesTag = doc.createElement("currencies");
+        Element functionalCurrencyTag = doc.createElement("functional");
+        Element tradingCurrencyTag = doc.createElement("trading");
+
+        currenciesTag.appendChild(functionalCurrencyTag);
+        currenciesTag.appendChild(tradingCurrencyTag);
+
+        if (functionalCurrency != null) {
+            Element code = doc.createElement("code");
+            Text codeTxt = this.createTextNode(doc, functionalCurrency.getCurrencyCode());
+            code.appendChild(codeTxt);
+
+            Element symbol = doc.createElement("symbol");
+            Text symbolTxt = this.createTextNode(doc, functionalCurrency.getSymbol());
+            symbol.appendChild(symbolTxt);
+
+            Element description = doc.createElement("description");
+            Text descriptionTxt = this.createTextNode(doc, functionalCurrency.getDescription());
+            description.appendChild(descriptionTxt);
+
+            functionalCurrencyTag.appendChild(code);
+            functionalCurrencyTag.appendChild(symbol);
+            functionalCurrencyTag.appendChild(description);
+
+        }
+
+        if (tradingCurrency != null) {
+            Element code = doc.createElement("code");
+            Text codeTxt = this.createTextNode(doc, tradingCurrency.getCurrencyCode());
+            code.appendChild(codeTxt);
+
+            Element symbol = doc.createElement("symbol");
+            Text symbolTxt = this.createTextNode(doc, tradingCurrency.getSymbol());
+            symbol.appendChild(symbolTxt);
+
+            Element description = doc.createElement("description");
+            Text descriptionTxt = this.createTextNode(doc, tradingCurrency.getPrDescription());
+            description.appendChild(descriptionTxt);
+
+            Element rate = doc.createElement("rate");
+            Text rateTxt = this.createTextNode(doc, new DecimalFormat("0.00").format(tradingCurrency.getCurrentRate()));
+            rate.appendChild(rateTxt);
+
+            Element decimalRounding = doc.createElement("decimalRounding");
+            Text decimalRoundingTxt = this.createTextNode(doc, tradingCurrency.getDecimalPlaces() != null
+                    ? String.valueOf(tradingCurrency.getDecimalPlaces())
+                    : "0");
+            decimalRounding.appendChild(decimalRoundingTxt);
+
+            tradingCurrencyTag.appendChild(code);
+            tradingCurrencyTag.appendChild(symbol);
+            tradingCurrencyTag.appendChild(description);
+            tradingCurrencyTag.appendChild(rate);
+            tradingCurrencyTag.appendChild(decimalRounding);
+
+        }
+
+        return currenciesTag;
     }
 
     protected Element createBATaxationCategorySection(Document doc, BillingAccount billingAccount) {
@@ -1721,6 +1796,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (taxationCategorySection != null) {
             billingAccountTag.appendChild(taxationCategorySection);
         }
+        Element currenciesTag = createBACurrenciesSection(doc, billingAccount);
+        if (currenciesTag != null) {
+            billingAccountTag.appendChild(currenciesTag);
+        }
         return billingAccountTag;
     }
 
@@ -1745,13 +1824,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         customerAccountTag.setAttribute("description", customerAccount.getDescription());
         customerAccountTag.setAttribute("externalRef1", getDefaultIfNull(customerAccount.getExternalRef1(), ""));
         customerAccountTag.setAttribute("externalRef2", getDefaultIfNull(customerAccount.getExternalRef2(), ""));
-//        customerAccountTag.setAttribute("currency", getDefaultIfNull(invoice.getBillingAccount().getTradingCurrency().getCurrencyCode(), ""));
-//        customerAccountTag.setAttribute("currencySymbol", getDefaultIfNull(invoice.getBillingAccount().getTradingCurrency().getSymbol(), ""));
-//        customerAccountTag.setAttribute("currencyLabel", getDefaultIfNull(invoice.getBillingAccount().getTradingCurrency().getPrDescription(), ""));
         customerAccountTag.setAttribute("language", getDefaultIfNull(languageDescription, ""));
         customerAccountTag.setAttribute("jobTitle", getDefaultIfNull(customerAccount.getJobTitle(), ""));
-//        customerAccountTag.setAttribute("registrationNo", getDefaultIfNull(customerAccount.getRegistrationNo(), ""));
-//        customerAccountTag.setAttribute("vatNo", getDefaultIfNull(customerAccount.getVatNo(), ""));
         addCustomFields(customerAccount, doc, customerAccountTag);
         customerAccountTag.appendChild(toContactTag(doc, customerAccount.getContactInformation()));
         customerAccountTag.setAttribute("accountTerminated", customerAccount.getStatus().equals(CustomerAccountStatusEnum.CLOSE) + "");
@@ -1771,6 +1845,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (contactTag != null) {
             customerAccountTag.appendChild(contactTag);
         }
+
         return customerAccountTag;
     }
 
