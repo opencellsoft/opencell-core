@@ -847,7 +847,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             description.appendChild(descriptionTxt);
 
             Element rate = doc.createElement("rate");
-            Text rateTxt = this.createTextNode(doc, new DecimalFormat("0.00").format(tradingCurrency.getCurrentRate()));
+            Text rateTxt = this.createTextNode(doc, tradingCurrency.getCurrentRate() != null
+                    ? new DecimalFormat("0.00").format(tradingCurrency.getCurrentRate())
+                    : "0");
             rate.appendChild(rateTxt);
 
             Element decimalRounding = doc.createElement("decimalRounding");
