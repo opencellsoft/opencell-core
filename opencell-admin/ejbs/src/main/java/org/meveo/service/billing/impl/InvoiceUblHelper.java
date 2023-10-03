@@ -310,9 +310,9 @@ public class InvoiceUblHelper {
 		CustomerPartyType customerPartyType = objectFactoryCommonAggrement.createCustomerPartyType();
 		PartyType partyType = objectFactoryCommonAggrement.createPartyType();
 		
+		Address address = billingAccount.getAddress();
 		if(billingAccount.getAddress() != null) {
 			AddressType postalAddress = objectFactoryCommonAggrement.createAddressType();
-			Address address = billingAccount.getAddress();
 			// AccountingCustomerParty/Party/PostalAddress/CityName
 			if(StringUtils.isNotBlank(address.getCity())){
 				CityName cityName = objectFactorycommonBasic.createCityName();
@@ -346,6 +346,8 @@ public class InvoiceUblHelper {
 			// AccountingSupplierParty/Party/PartyTaxScheme/CompanyID
 			PartyTaxScheme partyTaxScheme = objectFactoryCommonAggrement.createPartyTaxScheme();
 			CompanyID companyID = objectFactorycommonBasic.createCompanyID();
+			companyID.setSchemeAgencyID("ZZZ");
+			companyID.setSchemeID(address.getCountry() != null ? address.getCountry().getCountryCode() : null );
 			companyID.setValue(billingAccount.getVatNo());
 			partyTaxScheme.setCompanyID(companyID);
 			partyTaxScheme.setTaxScheme(getTaxSheme());
