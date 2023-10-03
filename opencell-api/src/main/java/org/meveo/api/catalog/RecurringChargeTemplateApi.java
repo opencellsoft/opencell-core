@@ -74,9 +74,9 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         handleMissingParametersAndValidate(postData);
 
         // check if code already exists
-        if (recurringChargeTemplateService.findByCode(postData.getCode()) != null) {
-            throw new EntityAlreadyExistsException(RecurringChargeTemplate.class, postData.getCode());
-        }
+	    if (recurringChargeTemplateService.checkCreatedCharg(postData.getCode())) {
+		    throw new EntityAlreadyExistsException("code field(s) must be unique. A record with value(s) '"+postData.getCode()+"' already exists");
+	    }
 
         RecurringChargeTemplate chargeTemplate = dtoToEntity(postData, null);
 
