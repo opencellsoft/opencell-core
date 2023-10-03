@@ -29,6 +29,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidELException;
@@ -386,6 +387,6 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 		List<ChargeTemplate> results = getEntityManager().createQuery("from ChargeTemplate ct where lower(ct.code)=:code", ChargeTemplate.class)
 				.setParameter("code", code.toLowerCase())
 				.getResultList();
-		return CollectionUtil.isNullOrEmpty(results);
+		return CollectionUtils.isNotEmpty(results);
 	}
 }
