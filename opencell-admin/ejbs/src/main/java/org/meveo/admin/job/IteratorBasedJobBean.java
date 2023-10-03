@@ -93,6 +93,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
     private static final long serialVersionUID = 649152055662228506L;
 
+    private static final String REMOTE_MQ_HOST = "REMOTE_MQ_HOST";
+
     @Inject
     private MethodCallingUtils methodCallingUtils;
 
@@ -737,7 +739,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         try {
 
-            String mqHost = System.getenv("opencell.mq.host");
+            String mqHost = System.getenv(REMOTE_MQ_HOST);
             if (StringUtils.isBlank(mqHost)) {
                 mqHost = "localhost";
             }
@@ -764,7 +766,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      */
     private boolean areAllMessagesConsumed(JobInstance jobInstance) {
 
-        String mqHost = System.getenv("opencell.mq.host");
+        String mqHost = System.getenv(REMOTE_MQ_HOST);
         if (StringUtils.isBlank(mqHost)) {
             mqHost = "localhost";
         }
