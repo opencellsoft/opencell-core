@@ -13,19 +13,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides a one at a time access to iterator.getNext() function. Groups items into a list of items by some grouping criteria.
+ * Provides a one at a time access to iterator.getNext() function. Collects items into a list of items by some decision making criteria. Will return at least one item, irrelevant was decision was re
  * 
  * @author Andrius Karpavicius
  *
  * @param <T> Element class
  */
-public abstract class SynchronizedIteratorGrouped<T> implements Iterator<List<T>> {
+public abstract class SynchronizedMultiItemIterator<T> implements Iterator<List<T>> {
 
     /**
      * A number of total items
      */
     private int size;
-    
+
     /**
      * Are multiple columns returned in a resultset. Used to construct an array of values as next() result.
      */
@@ -45,7 +45,7 @@ public abstract class SynchronizedIteratorGrouped<T> implements Iterator<List<T>
 
     private T lastUnprocessedItem;
 
-    public SynchronizedIteratorGrouped() {
+    public SynchronizedMultiItemIterator() {
     }
 
     /**
@@ -53,7 +53,7 @@ public abstract class SynchronizedIteratorGrouped<T> implements Iterator<List<T>
      * 
      * @param dataList Data to iterate over
      */
-    public SynchronizedIteratorGrouped(Collection<T> dataList) {
+    public SynchronizedMultiItemIterator(Collection<T> dataList) {
         iterator = dataList.iterator();
         size = dataList.size();
     }
@@ -64,10 +64,10 @@ public abstract class SynchronizedIteratorGrouped<T> implements Iterator<List<T>
      * @param scrollableResults Scrollable results
      * @param size A total number of records
      */
-    public SynchronizedIteratorGrouped(ScrollableResults scrollableResults, int size) {
+    public SynchronizedMultiItemIterator(ScrollableResults scrollableResults, int size) {
         this(scrollableResults, size, false, null);
     }
-    
+
     /**
      * Constructor
      * 
@@ -76,7 +76,7 @@ public abstract class SynchronizedIteratorGrouped<T> implements Iterator<List<T>
      * @param isMultipleColumns Read multiple columns
      * @param fieldNames List of field names corresponding to the order of resultset columns
      */
-    public SynchronizedIteratorGrouped(ScrollableResults scrollableResults, int size, boolean isMultipleColumns, List<String> fieldNames) {
+    public SynchronizedMultiItemIterator(ScrollableResults scrollableResults, int size, boolean isMultipleColumns, List<String> fieldNames) {
         this.scrollableResults = scrollableResults;
         this.size = size;
         this.isMultipleColumns = isMultipleColumns;
@@ -92,30 +92,33 @@ public abstract class SynchronizedIteratorGrouped<T> implements Iterator<List<T>
     public synchronized List<T> next() {
 
         List<T> items = new ArrayList<T>();
-        Object groupBy = null;
 
         T item = lastUnprocessedItem != null ? lastUnprocessedItem : nextSingle();
         if (item == null) {
             return null;
         }
         items.add(item);
-        groupBy = getGroupByValue(item);
+        initializeDecisionMaking(item);
 
-        while (true) {
+        boolean includeNextItem = true;
+
+        while (includeNextItem) {
             // no more items, so quit
             lastUnprocessedItem = nextSingle();
             if (lastUnprocessedItem == null) {
                 return items;
             }
             // "Group by" value match, so continue
-            Object groupByNext = getGroupByValue(lastUnprocessedItem);
-            if ((groupBy == null && groupByNext == null) || (groupBy != null && groupBy.equals(groupByNext))) {
+            includeNextItem = isIncludeItem(lastUnprocessedItem);
+            if (includeNextItem) {
                 items.add(lastUnprocessedItem);
                 lastUnprocessedItem = null;
             } else {
-                return items;
+                break;
             }
         }
+
+        return items;
     }
 
     private T nextSingle() {
@@ -177,10 +180,17 @@ public abstract class SynchronizedIteratorGrouped<T> implements Iterator<List<T>
     }
 
     /**
-     * A function to return a value to group items by
+     * A method to initialize any decision making variables at the start of iterator.Next() method
      * 
-     * @param item Item to group
-     * @return A value to group by
+     * @param item First item to be included
      */
-    public abstract Object getGroupByValue(T item);
+    public abstract void initializeDecisionMaking(T item);
+
+    /**
+     * A function to determine if item should be included.
+     * 
+     * @param item Item to include
+     * @return True if item should be included in a current collection
+     */
+    public abstract boolean isIncludeItem(T item);
 }

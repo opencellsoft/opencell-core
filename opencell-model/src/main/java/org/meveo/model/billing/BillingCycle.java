@@ -211,11 +211,14 @@ public class BillingCycle extends BusinessCFEntity {
     private Map<String, Object> filters;
     
     /**
-     *  Higher priority macth with lowest priority value
+     * Higher priority match with lowest priority value
      */
     @Column(name = "priority")
     private int priority = 0;
     
+    /**
+     * Do not aggregate RTs to ILs at all
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "disable_aggregation")
     private boolean disableAggregation = false;
@@ -245,7 +248,7 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
-    private boolean incrementalInvoiceLines = FALSE;
+    private boolean incrementalInvoiceLines = false;
 
     /**
      * Default configuration for billingRun.preReportAutoOnCreate
@@ -331,6 +334,10 @@ public class BillingCycle extends BusinessCFEntity {
     @Column(name = "application_el", length = 2000)
     @Size(max = 2000)
     private String applicationEl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "discount_aggregation", nullable = false)
+    private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
     
     /**
      * Billing cycle aggregation setting for user accounts
@@ -401,7 +408,7 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     /**
-     * @param invoiceDateProductionDelay Expression to calculate the number of days to add to a billing run date to compute the invoice date
+     * @param invoiceDateProductionDelayEL Expression to calculate the number of days to add to a billing run date to compute the invoice date
      */
     public void setInvoiceDateProductionDelayEL(String invoiceDateProductionDelayEL) {
         this.invoiceDateProductionDelayEL = invoiceDateProductionDelayEL;
@@ -675,7 +682,7 @@ public class BillingCycle extends BusinessCFEntity {
         this.ignoreOrders = ignoreOrders;
     }
 
-    public Boolean getIncrementalInvoiceLines() {
+    public boolean isIncrementalInvoiceLines() {
         return incrementalInvoiceLines;
     }
 
@@ -685,6 +692,10 @@ public class BillingCycle extends BusinessCFEntity {
 
     public String getApplicationEl() {
         return applicationEl;
+    }
+    
+    public DiscountAggregationModeEnum getDiscountAggregation() {
+        return discountAggregation;
     }
 
     public void setApplicationEl(String applicationEl) {
@@ -786,6 +797,11 @@ public class BillingCycle extends BusinessCFEntity {
     public void setReportConfigBlockSizeArticles(int reportConfigBlockSizeArticles) {
         this.reportConfigBlockSizeArticles = reportConfigBlockSizeArticles;
     }
+
+    public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
+        this.discountAggregation = discountAggregation;
+    }
+
 
 	public boolean isIgnoreUserAccounts() {
 		return ignoreUserAccounts;

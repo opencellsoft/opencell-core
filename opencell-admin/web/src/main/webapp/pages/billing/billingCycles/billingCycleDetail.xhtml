@@ -74,6 +74,19 @@
                     <hftl:formField label="#{messages['billingCycle.collectionDateDelayEl']}" field="collectionDateDelayEl" textArea="true" rows="1" maxlength="2000"
                                     componentWidth="30"/>
                     <hftl:formField label="#{messages['billingCycle.computeDatesAtValidation']}" field="computeDatesAtValidation"/>
+                    
+                    
+                    
+                    <p:fieldset legend="#{messages['billingCycle.rtToILAggregation']}" styleClass="clearLeft">
+                    	<hftl:formField label="#{messages['billingCycle.disableAggregation']}" field="disableAggregation"/>
+                    	<hftl:formField label="#{messages['billingCycle.dateAggregation']}" field="dateAggregation"/>
+                    	<hftl:formField label="#{messages['billingCycle.aggregateUnitAmounts']}" field="aggregateUnitAmounts"/>
+                    	<hftl:formField label="#{messages['billingCycle.useAccountingArticleLabel']}" field="useAccountingArticleLabel"/>
+                    	<hftl:formField label="#{messages['billingCycle.ignoreSubscriptions']}" field="ignoreSubscriptions"/>
+                    	<hftl:formField label="#{messages['billingCycle.ignoreOrders']}" field="ignoreOrders"/>
+                    	<hftl:formField label="#{messages['billingCycle.discountAggregation']}" field="discountAggregation"/>
+                    	<hftl:formField label="#{messages['billingCycle.incrementalInvoiceLines']}" field="incrementalInvoiceLines"/>
+                    </p:fieldset>
                 </p:tab>
                 <hftl:customFields backingBean="#{billingCycleBean}" messagesId=":formBillingCycle:messages" />
             </p:tabView>

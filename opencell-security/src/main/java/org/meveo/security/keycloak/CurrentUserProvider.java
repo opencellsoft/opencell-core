@@ -31,7 +31,6 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.core.Response;
@@ -341,7 +340,11 @@ public class CurrentUserProvider {
 
         } catch (AuthorizationDeniedException e) {
             if (log.isErrorEnabled()) {
-                log.error("No permissions granted for any of the urls {}", (Object) urls);
+                log.error("No permissions granted in scope {} for any of the urls {}", scope, (Object) urls);
+            }
+        } catch (Exception e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to determine permissions in scope {} for any of the urls {}", scope, (Object) urls, e);
             }
         }
 

@@ -58,7 +58,7 @@ public class BillingRunReportJobBean extends BaseJobBean {
     }
 
     private List<BillingRun> initJobAndGetDataToProcess() {
-        if (billingRunIds != null && !billingRunIds.isEmpty()) {
+        if(billingRunIds != null && !billingRunIds.isEmpty()) {
             return billingRunIds.stream()
                     .map(id -> billingRunService.findById(id))
                     .collect(toList());
@@ -74,8 +74,7 @@ public class BillingRunReportJobBean extends BaseJobBean {
                 filters.put("billingRun", billingRun);
             }
             billingRunReportService.createBillingRunReport(billingRun, filters, reportType);
-            billingRun.addJobExecutions(jobExecutionResult);
-            billingRunService.update(billingRun);
+            billingRunService.updateBillingRunJobExecution(billingRun.getId(), jobExecutionResult);
             countOfReportCreated++;
         }
         return countOfReportCreated;

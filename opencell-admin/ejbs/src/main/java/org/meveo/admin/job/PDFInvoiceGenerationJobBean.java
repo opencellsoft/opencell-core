@@ -92,7 +92,7 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
                     return of(new SynchronizedIterator<>(Collections.emptyList()));
                 }
                 billingRunExtensionService.updateBillingRunWithXMLPDFExecutionResult(billingRunId, null, jobExecutionResult.getId());
-                billingRunService.updateBillingRunJobExecution(billingRun, jobExecutionResult);
+                billingRunService.updateBillingRunJobExecution(billingRun.getId(), jobExecutionResult);
                 billingRunService.refreshOrRetrieve(billingRun);
             }
 

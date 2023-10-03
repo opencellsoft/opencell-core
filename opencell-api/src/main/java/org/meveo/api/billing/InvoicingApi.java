@@ -172,12 +172,61 @@ public class InvoicingApi extends BaseApi {
         }
         billingRun.setGenerateAO(ofNullable(dto.getGenerateAO()).orElse(false));
 
+        // If value is not provided in the API call, then use value of billingCycle as default value
+
+        if (dto.getDisableAggregation() != null) {
+            billingRun.setDisableAggregation(dto.getDisableAggregation());
+        } else {
+            billingRun.setDisableAggregation(billingCycle.isDisableAggregation());
+        }
+
+        if (dto.getUseAccountingArticleLabel() != null) {
+            billingRun.setUseAccountingArticleLabel(dto.getUseAccountingArticleLabel());
+        } else {
+            billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
+        }
+
         if (dto.getIncrementalInvoiceLines() != null) {
             billingRun.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
+        } else {
+            billingRun.setIncrementalInvoiceLines(billingCycle.isIncrementalInvoiceLines());
         }
-        else {
-            // if incrementalInvoiceLines is not provided in the API call, then use incrementalInvoiceLines of billingCycle as default value
-            billingRun.setIncrementalInvoiceLines(billingCycle.getIncrementalInvoiceLines());
+        
+        
+        if (dto.getIncrementalInvoiceLines() != null) {
+            billingRun.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
+        } else {
+            billingRun.setIncrementalInvoiceLines(billingCycle.isIncrementalInvoiceLines());
+        }
+
+        if (dto.getAggregateUnitAmounts() != null) {
+            billingRun.setAggregateUnitAmounts(dto.getAggregateUnitAmounts());
+        } else {
+            billingRun.setAggregateUnitAmounts(billingCycle.isAggregateUnitAmounts());
+        }
+
+        if (dto.getDateAggregation() != null) {
+            billingRun.setDateAggregation(dto.getDateAggregation());
+        } else {
+            billingRun.setDateAggregation(billingCycle.getDateAggregation());
+        }
+
+        if (dto.getDiscountAggregation() != null) {
+            billingRun.setDiscountAggregation(dto.getDiscountAggregation());
+        } else {
+            billingRun.setDiscountAggregation(billingCycle.getDiscountAggregation());
+        }
+
+        if (dto.getIgnoreOrders() != null) {
+            billingRun.setIgnoreOrders(dto.getIgnoreOrders());
+        } else {
+            billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
+        }
+
+        if (dto.getIgnoreSubscriptions() != null) {
+            billingRun.setIgnoreSubscriptions(dto.getIgnoreSubscriptions());
+        } else {
+            billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
         }
 
         billingRunService.create(billingRun);
@@ -235,12 +284,30 @@ public class InvoicingApi extends BaseApi {
             billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
             billingRun.setIgnoreUserAccounts(billingCycle.isIgnoreUserAccounts());
 
-            if (dto.getIncrementalInvoiceLines() != null) {
-                billingRun.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
+            // If Billing cycle change, and no explicit values are provided, use values from the new Billing Cycle 
+            if (dto.getIncrementalInvoiceLines() == null) {
+                billingRun.setIncrementalInvoiceLines(billingCycle.isIncrementalInvoiceLines());
             }
-            else {
-                // if incrementalInvoiceLines is not provided in the API call, then use incrementalInvoiceLines of billingCycle as default value
-                billingRun.setIncrementalInvoiceLines(billingCycle.getIncrementalInvoiceLines());
+            if (dto.getAggregateUnitAmounts() == null) {
+                billingRun.setAggregateUnitAmounts(billingCycle.isAggregateUnitAmounts());
+            }
+            if (dto.getDateAggregation() == null) {
+                billingRun.setDateAggregation(billingCycle.getDateAggregation());
+        }
+            if (dto.getDiscountAggregation() == null) {
+                billingRun.setDiscountAggregation(billingCycle.getDiscountAggregation());
+            }
+            if (dto.getIgnoreOrders() == null) {
+                billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
+            }
+            if (dto.getIgnoreSubscriptions() == null) {
+                billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+            }
+            if (dto.getDisableAggregation() == null) {
+                billingRun.setDisableAggregation(billingCycle.isDisableAggregation());
+            }
+            if (dto.getUseAccountingArticleLabel() == null) {
+                billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
             }
         }
 
@@ -278,6 +345,38 @@ public class InvoicingApi extends BaseApi {
         
         if (dto.isComputeDatesAtValidation() != null) {
             billingRun.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
+        }
+
+        if (dto.getIncrementalInvoiceLines() != null) {
+            billingRun.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
+        }
+
+        if (dto.getAggregateUnitAmounts() != null) {
+            billingRun.setAggregateUnitAmounts(dto.getAggregateUnitAmounts());
+        }
+
+        if (dto.getDateAggregation() != null) {
+            billingRun.setDateAggregation(dto.getDateAggregation());
+        }
+
+        if (dto.getDiscountAggregation() != null) {
+            billingRun.setDiscountAggregation(dto.getDiscountAggregation());
+        }
+
+        if (dto.getIgnoreOrders() != null) {
+            billingRun.setIgnoreOrders(dto.getIgnoreOrders());
+        }
+
+        if (dto.getIgnoreSubscriptions() != null) {
+            billingRun.setIgnoreSubscriptions(dto.getIgnoreSubscriptions());
+        }
+        
+        if (dto.getDisableAggregation() != null) {
+            billingRun.setDisableAggregation(dto.getDisableAggregation());
+        }
+
+        if (dto.getUseAccountingArticleLabel() != null) {
+            billingRun.setUseAccountingArticleLabel(dto.getUseAccountingArticleLabel());
         }
 
         // populate customFields

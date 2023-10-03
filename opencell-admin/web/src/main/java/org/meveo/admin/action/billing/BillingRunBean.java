@@ -163,6 +163,15 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
             } else {
                 entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(), 1));
             }
+            entity.setDisableAggregation(billingCycle.isDisableAggregation());
+            entity.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
+            entity.setIncrementalInvoiceLines(billingCycle.isIncrementalInvoiceLines());
+            entity.setAggregateUnitAmounts(billingCycle.isAggregateUnitAmounts());
+            entity.setDateAggregation(billingCycle.getDateAggregation());
+            entity.setDiscountAggregation(billingCycle.getDiscountAggregation());
+            entity.setIgnoreOrders(billingCycle.isIgnoreOrders());
+            entity.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+
             log.debug("after setBillingCycle invoicedate={}, lastTransactionDate={}", entity.getInvoiceDate(), entity.getLastTransactionDate());
         }
     }

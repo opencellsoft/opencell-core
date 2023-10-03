@@ -286,6 +286,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getIgnoreUserAccounts() != null) {
             entity.setIgnoreUserAccounts(dto.getIgnoreUserAccounts());
         }
+        if (dto.getDiscountAggregation() != null) {
+            entity.setDiscountAggregation(dto.getDiscountAggregation());
+        }
 
         entity.setApplicationEl(dto.getApplicationEl());
         if(dto.getReportConfig() != null) {
