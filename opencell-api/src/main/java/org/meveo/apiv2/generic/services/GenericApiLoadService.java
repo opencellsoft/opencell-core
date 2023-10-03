@@ -105,13 +105,13 @@ public class GenericApiLoadService {
             return serializeResults(results);
         }else{
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
-            ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
-                    .data(searchResult.getEntityList())
-                    .limit(genericPagingAndFilteringUtils.getLimit(searchConfig.getLimit()))
-                    .offset(Long.valueOf(searchConfig.getFirstRow()))
-                    .total(searchResult.getCount())
-                    .filters(searchConfig.getFilters())
-                    .build();
+            ImmutableGenericPaginatedResource.Builder builder = ImmutableGenericPaginatedResource.builder()
+                                                                                                 .data(searchResult.getEntityList())
+                                                                                                 .limit(genericPagingAndFilteringUtils.getLimit(searchConfig.getLimit()))
+                                                                                                 .offset(Long.valueOf(searchConfig.getFirstRow()))
+                                                                                                 .filters(searchConfig.getFilters());
+            builder.total(searchResult.getCount());
+            ImmutableGenericPaginatedResource genericPaginatedResource = builder.build();
             return JsonGenericMapper.Builder.getBuilder()
                     .withExtractList(Objects.nonNull(extractList) ? extractList : genericOpencellRestful.shouldExtractList())
                     .withNestedEntities(fetchFields)

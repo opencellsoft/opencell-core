@@ -8506,6 +8506,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name= "ubl_generation_job" type="varchar(50)" />
         </createTable>
     </changeSet>
+    
+  	<changeSet id="#INTRD-18527_20231002" author="AdilElJaouhari">
+		<addColumn tableName="billing_invoice_type">
+			<column name="custom_ubl_script_id" type="bigint" />
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="custom_ubl_script_id" baseTableName="billing_invoice_type	"
+                                 constraintName="fk_custom_ubl_script_id_meveo_script_instance" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+	</changeSet>
 
 
     <changeSet id="#INTRD-18394_20231002" author="TarikFA.">
