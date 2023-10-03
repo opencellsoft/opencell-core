@@ -7748,5 +7748,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             });
         }
     }
+	
+	public List<Invoice> findByInvoicesNumber(String invoiceNumber) {
+			return (List<Invoice>) getEntityManager().createQuery("SELECT inv FROM Invoice inv WHERE inv.invoiceNumber = :invoiceNumber")
+					.setParameter("invoiceNumber", invoiceNumber).setMaxResults(1)
+					.getResultList();
+	}
 
 }

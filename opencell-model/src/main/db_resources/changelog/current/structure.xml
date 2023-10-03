@@ -8517,4 +8517,94 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
 
+
+    <changeSet id="#INTRD-18394_20231002" author="TarikFA.">
+
+        <dropTable tableName="pdp_status" />
+        <dropTable tableName="pdp_status_history" />
+        <dropSequence sequenceName="pdp_status_seq" />
+        <dropSequence sequenceName="pdp_status_history_seq" />
+
+
+        <createSequence sequenceName="pdp_status_history_seq" startValue="1"/>
+        <createTable tableName="pdp_status_history">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pdp_status_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+
+            <column name="pdp_status" type="varchar(30)">
+                <constraints nullable="false" />
+            </column>
+            <column name="event_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="origin" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="pdp_status_seq" startValue="1"/>
+        <createTable tableName="pdp_status">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pdp_status_history_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+
+            <column name="transmitted_format" type="varchar(15)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="origin" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="return_code" type="int4" />
+            <column name="label" type="varchar(255)" />
+            <column name="invoice_identifier" type="varchar(50)" />
+            <column name="invoice_number" type="varchar(50)" />
+            <column name="invoice_id" type="bigint" />
+            <column name="status" type="varchar(30)" />
+            <column name="deposit_date" type="datetime" />
+        </createTable>
+
+
+        <addForeignKeyConstraint baseTableName="pdp_status" baseColumnNames="invoice_id"
+                                 constraintName="fk_pdp_status_invoice" referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+
+
+        <addColumn tableName="billing_invoice">
+            <column name="pdp_status_id" type="bigint" />
+        </addColumn>
+
+
+        <addForeignKeyConstraint baseTableName="billing_invoice" baseColumnNames="pdp_status_id"
+                                 constraintName="fk_invoice_pdp_status_id" referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+
+        <createTable tableName="pdp_status_and_history">
+            <column name="pdpstatus_id" type="bigint" />
+            <column name="history_id" type="bigint" />
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="pdp_status_and_history" baseColumnNames="pdpstatus_id"
+                                 constraintName="fk_pdp_status_its_history_id" referencedTableName="pdp_status"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="pdp_status_and_history" baseColumnNames="history_id"
+                                 constraintName="fk_pdp_status_history_id" referencedTableName="pdp_status_history"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
 </databaseChangeLog>
