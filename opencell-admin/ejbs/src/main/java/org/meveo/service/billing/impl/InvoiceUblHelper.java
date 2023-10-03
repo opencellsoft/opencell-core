@@ -472,10 +472,6 @@ public class InvoiceUblHelper {
 				additionalStreetName.setValue(address.getAddress2());
 				addressType.setAdditionalStreetName(additionalStreetName);
 			}
-			// AccountingSupplierParty/Party/PartyLegalEntity/RegistrationAddress/CityName
-			CityName cityName = objectFactorycommonBasic.createCityName();
-			cityName.setValue(address.getCity());
-			addressType.setCityName(cityName);
 			// AccountingSupplierParty/Party/PartyLegalEntity/RegistrationAddress/PostalZone
 			PostalZone postalZone = objectFactorycommonBasic.createPostalZone();
 			postalZone.setValue(address.getZipCode());
