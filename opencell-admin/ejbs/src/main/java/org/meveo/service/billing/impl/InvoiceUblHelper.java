@@ -65,6 +65,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.StreetNa
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxCurrencyCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxExemptionReason;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxExemptionReasonCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxTypeCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxableAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Telephone;
@@ -689,8 +690,12 @@ public class InvoiceUblHelper {
 			TaxExemptionReason taxExemptionReason = objectFactorycommonBasic.createTaxExemptionReason();
 			taxExemptionReason.setValue(untdidTaxationCategory.getSemanticModel());
 			taxCategoryType.getTaxExemptionReasons().add(taxExemptionReason);
-			if(untdidTaxationCategory.getCode().equalsIgnoreCase("")) {
-			
+			if(!untdidTaxationCategory.getCode().equalsIgnoreCase("S")) {
+				TaxExemptionReasonCode taxExemptionReasonCode = objectFactorycommonBasic.createTaxExemptionReasonCode();
+				taxExemptionReasonCode.setListID("CEF VATEX");
+				taxExemptionReasonCode.setListAgencyID("ZZZ");
+				taxExemptionReasonCode.setValue("VATEX-EU-O");
+				taxCategoryType.setTaxExemptionReasonCode(taxExemptionReasonCode);
 			}
 		}
 		
