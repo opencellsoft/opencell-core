@@ -64,13 +64,11 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.StartDat
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.StreetName;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxCurrencyCode;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxExemptionReason;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxTypeCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxableAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Telephone;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.UBLVersionID;
-import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.ExtensionVersionID;
-import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.UBLExtension;
-import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_2.UBLExtensions;
 import oasis.names.specification.ubl.schema.xsd.invoice_2.Invoice;
 import oasis.names.specification.ubl.schema.xsd.invoice_2.ObjectFactory;
 import org.apache.commons.collections4.CollectionUtils;
@@ -79,17 +77,19 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.UntdidTaxationCategory;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 
+import javax.inject.Inject;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -98,7 +98,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class InvoiceUblHelper {
@@ -562,12 +561,7 @@ public class InvoiceUblHelper {
 				TaxSubtotal taxSubtotal = objectFactoryCommonAggrement.createTaxSubtotal();
 				if(taxInvoiceAgregate.getTax() != null) {
 					//TaxTotal/ TaxSubtotal / TaxCategory/ TaxScheme/ TaxTypeCode
-					TaxCategoryType taxCategoryType = objectFactoryCommonAggrement.createTaxCategoryType();
-					TaxScheme taxScheme = objectFactoryCommonAggrement.createTaxScheme();
-					TaxTypeCode taxTypeCode = objectFactorycommonBasic.createTaxTypeCode();
-					taxTypeCode.setValue(taxInvoiceAgregate.getTax().getCode());
-					taxScheme.setTaxTypeCode(taxTypeCode);
-					taxCategoryType.setTaxScheme(taxScheme);
+					TaxCategoryType taxCategoryType = setTaxCategory(taxInvoiceAgregate);
 					taxSubtotal.setTaxCategory(taxCategoryType);
 					
 				}
@@ -677,4 +671,34 @@ public class InvoiceUblHelper {
 	}
 	
 	
+	private TaxCategoryType setTaxCategory(TaxInvoiceAgregate taxInvoiceAgregate) {
+		TaxCategoryType taxCategoryType = objectFactoryCommonAggrement.createTaxCategoryType();
+		ID id = objectFactorycommonBasic.createID();
+		id.setSchemeID("UN/ECE 5305");
+		id.setSchemeAgencyID("6");
+		id.setValue("E");
+		taxCategoryType.setID(id);
+		
+		Percent percent = objectFactorycommonBasic.createPercent();
+		percent.setValue(taxInvoiceAgregate.getTaxPercent());
+		taxCategoryType.setPercent(percent);
+		
+		Tax tax = taxInvoiceAgregate.getTax();
+		if(tax.getUntdidTaxationCategory() != null) {
+			UntdidTaxationCategory untdidTaxationCategory = tax.getUntdidTaxationCategory();
+			TaxExemptionReason taxExemptionReason = objectFactorycommonBasic.createTaxExemptionReason();
+			taxExemptionReason.setValue(untdidTaxationCategory.getSemanticModel());
+			taxCategoryType.getTaxExemptionReasons().add(taxExemptionReason);
+			if(untdidTaxationCategory.getCode().equalsIgnoreCase("")) {
+			
+			}
+		}
+		
+		TaxScheme taxScheme = objectFactoryCommonAggrement.createTaxScheme();
+		TaxTypeCode taxTypeCode = objectFactorycommonBasic.createTaxTypeCode();
+		taxTypeCode.setValue(taxInvoiceAgregate.getTax().getCode());
+		taxScheme.setTaxTypeCode(taxTypeCode);
+		taxCategoryType.setTaxScheme(taxScheme);
+		return taxCategoryType;
+	}
 }
