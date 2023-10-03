@@ -12041,6 +12041,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="INTRD-17135_20230713" author="TarikFA." />
 	<changeSet id="INTRD-16743_20230720" author="aelmalki" />
     <changeSet id="#INTRD-10574_20230214" author="AndriusKarpavicius"/>
+	<changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
     	
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
