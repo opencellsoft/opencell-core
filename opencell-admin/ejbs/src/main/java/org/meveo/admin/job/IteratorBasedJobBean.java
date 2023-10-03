@@ -34,6 +34,8 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.QueueBasedIterator;
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.async.SynchronizedIteratorGrouped;
+import org.meveo.admin.async.SynchronizedMultiItemIterator;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.MethodCallingUtils;
@@ -134,8 +136,9 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction
      * @param processMultipleItemFunction A function to process multiple items. Will be executed in its own transaction.
      * @param hasMoreFunction A function to determine if the are more data to process even though this job run has completed. Optional.
-     * @param finalizeInitFunction A function to close any resources opened during initFunction call. Optional. Run once job is finished, independently if it was canceled or completed.
-     * @param finalizeFunction A function to finalize data to process. Optional. Run once job is finished, independently if it was canceled or completed. Consult job execution result status if needed.
+     * @param finalizeInitFunction A function to close any resources opened during initFunction call. Optional. Run once job is finished, independently if it no data was found to process, if it was canceled or completed.
+     * @param finalizeFunction A function to finalize data to process. Optional. Run once job is finished, independently if it was canceled or completed. Not run if no data were foudn to process. Consult job execution
+     *        result status if needed.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
@@ -161,6 +164,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             Optional<Iterator<T>> iteratorOpt = initFunction.apply(jobExecutionResult);
 
             if (!iteratorOpt.isPresent()) {
+                // When running as a primary job manager, Close data initialization
+                if (finalizeInitFunction != null) {
+                    finalizeInitFunction.accept(jobExecutionResult);
+                }
                 return;
             }
 
@@ -168,10 +175,24 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             if (iterator instanceof SynchronizedIterator) {
                 jobExecutionResult.setNbItemsToProcess(((SynchronizedIterator) iterator).getSize());
+
+            } else if (iterator instanceof SynchronizedIteratorGrouped) {
+                jobExecutionResult.setNbItemsToProcess(((SynchronizedIteratorGrouped) iterator).getSize());
+
+            } else if (iterator instanceof SynchronizedMultiItemIterator) {
+                jobExecutionResult.setNbItemsToProcess(((SynchronizedMultiItemIterator) iterator).getSize());
             }
 
             if (jobExecutionResult.getNbItemsToProcess() == 0) {
                 log.info("{}/{} will skip as nothing to process", jobInstance.getJobTemplate(), jobInstance.getCode());
+
+                // When running as a primary job manager, Close data initialization
+                if (finalizeInitFunction != null) {
+                    finalizeInitFunction.accept(jobExecutionResult);
+                }
+                if (finalizeFunction != null) {
+                    finalizeFunction.accept(jobExecutionResult);
+                }
                 return;
             }
             if (!jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
@@ -312,13 +333,17 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * Process a single item
      * 
      * @param itemToProcess Item to process
-     * @param isNewTx Shall a new trasaction be initiated. If false, its expected that transaction handling will be provided by the function itself
+     * @param isNewTx Shall a new transaction be initiated. If false, its expected that transaction handling will be provided by the function itself
      * @param processSingleItemFunction A function to process a single item
      * @param jobExecutionResult Job execution results
      * @return A total number of processed items, successful or failed
      */
     private long processItem(T itemToProcess, boolean isNewTx, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, JobExecutionResultImpl jobExecutionResult) {
 
+        int itemCount = 1;
+        if (itemToProcess instanceof List && isCountIndividualListItemForProgress()) {
+            itemCount = ((List) itemToProcess).size();
+        }
         try {
             if (isNewTx) {
                 methodCallingUtils.callMethodInNewTx(() -> processSingleItemFunction.accept(itemToProcess, jobExecutionResult));
@@ -326,7 +351,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 processSingleItemFunction.accept(itemToProcess, jobExecutionResult);
             }
 
-            return jobExecutionResult.registerSucces();
+            return jobExecutionResult.registerSucces(itemCount);
 
             // Register errors
         } catch (Exception e) {
@@ -345,7 +370,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             } else {
                 log.error("Failed to process item", e);
-                return jobExecutionResult.registerError(e.getMessage());
+                return jobExecutionResult.registerError(e.getMessage(), itemCount);
             }
         }
     }
@@ -366,6 +391,16 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      */
     protected boolean isProcessMultipleItemFunctionUpdateProgress() {
         return false;
+    }
+
+    /**
+     * When a single item being processed is a list of items e.g. SynchronizedIteratorGrouped or SynchronizedMultiItemIterator, shall each item in a list be counted individually for success and error progress. <br/>
+     * Note, that in this is not related to batch processing, as items in batch are still processed as individual items
+     * 
+     * @return True if A list of 10 items will count as 10 success/failure. False if a list of 10 items should count as 1 sucess/failure
+     */
+    protected boolean isCountIndividualListItemForProgress() {
+        return true;
     }
 
     private Runnable getDataPublishingToQueueTask(String jobInstanceCode, MeveoUser lastCurrentUser, Iterator<T> iterator, int checkJobStatusEveryNr, JMSProducer jmsProducer, Destination jobQueue,
@@ -521,7 +556,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                             }
 
                         } else {
-                            globalI = jobExecutionResult.registerError(e.getMessage());
+                            globalI = jobExecutionResult.registerError(e.getMessage(), nrOfItemsInBatch);
                         }
                     }
 

@@ -229,6 +229,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.InvoiceLineService.InvoiceLineCreationStatistics;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
@@ -2640,9 +2641,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (!ratedTransactionIds.isEmpty()) {
                 List<Map<String, Object>> groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
                 AggregationConfiguration configuration = new AggregationConfiguration(appProvider.isEntreprise());
-                List<InvoiceLine> invoiceLines = new ArrayList<>();
-                invoiceLinesService.createInvoiceLines(groupedRTs, configuration,
-                        null, null, invoiceLines, generateInvoiceRequestDto.getOpenOrderCode());
+                
+                InvoiceLineCreationStatistics stats = invoiceLinesService.createInvoiceLines(groupedRTs, configuration,
+                        generateInvoiceRequestDto.getOpenOrderCode());
+                
+                List<InvoiceLine> invoiceLines =stats.getInvoiceLines();
+                
                 invoices = createAggregatesAndInvoiceUsingIL(entity, null, filter, null, invoiceDate,
                         firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft,
                         !generateInvoiceRequestDto.getSkipValidation(), false, invoiceLines,

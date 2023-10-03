@@ -76,7 +76,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
 @NamedQueries({
         @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'INVOICES_GENERATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC') order by br.id asc"),
-        @NamedQuery(name = "BillingRun.getForInvoicingLimitToIds", query = "SELECT br FROM BillingRun br where (br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC')) and br.id in :ids order by br.id asc"),
+        @NamedQuery(name = "BillingRun.getForInvoicingLimitToIds", query = "SELECT br FROM BillingRun br where (br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC')) and br.id in :ids order by br.id asc"),        
         @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code "),
         @NamedQuery(name = "BillingRun.nullifyBillingRunXMLExecutionResultIds", query = "update BillingRun br set br.xmlJobExecutionResultId = null where br = :billingRun"),
         @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") })
@@ -315,7 +315,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Type(type = "numeric_boolean")
     @Column(name = "skip_validation_script")
-    private Boolean skipValidationScript = Boolean.FALSE;
+    private boolean skipValidationScript = false;
 
     /**
      * EL to compute invoice.initialCollectionDate delay.
@@ -476,7 +476,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
     private Boolean incrementalInvoiceLines = Boolean.FALSE;
-
+    
     /**
      * Discount aggregation type
      */
@@ -484,15 +484,15 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Column(name = "discount_aggregation", nullable = false)
     private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
 
-    public BillingRun getNextBillingRun() {
-        return nextBillingRun;
-    }
+	public BillingRun getNextBillingRun() {
+		return nextBillingRun;
+	}
 
-    public void setNextBillingRun(BillingRun nextBillingRun) {
-        this.nextBillingRun = nextBillingRun;
-    }
+	public void setNextBillingRun(BillingRun nextBillingRun) {
+		this.nextBillingRun = nextBillingRun;
+	}
 
-    public Date getProcessDate() {
+	public Date getProcessDate() {
         return processDate;
     }
 
@@ -832,10 +832,10 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     }
 
-    public String getReferenceCode() {
-        final String bcCode = billingCycle == null ? "" : "/" + billingCycle.getCode();
-        return id + bcCode;
-    }
+	public String getReferenceCode() {
+		final String bcCode = billingCycle == null ? "" : "/" + billingCycle.getCode();
+		return id + bcCode;
+	}
 
     public void setReferenceCode(Object value) {
         String id = null;
@@ -874,86 +874,86 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     }
 
     public BillingRunAutomaticActionEnum getRejectAutoAction() {
-        return rejectAutoAction;
-    }
+		return rejectAutoAction;
+	}
 
-    public void setRejectAutoAction(BillingRunAutomaticActionEnum autoRejectAction) {
-        this.rejectAutoAction = autoRejectAction;
-    }
+	public void setRejectAutoAction(BillingRunAutomaticActionEnum autoRejectAction) {
+		this.rejectAutoAction = autoRejectAction;
+	}
 
-    public BillingRunAutomaticActionEnum getSuspectAutoAction() {
-        return suspectAutoAction;
-    }
+	public BillingRunAutomaticActionEnum getSuspectAutoAction() {
+		return suspectAutoAction;
+	}
 
-    public void setSuspectAutoAction(BillingRunAutomaticActionEnum autoSuspectAction) {
-        this.suspectAutoAction = autoSuspectAction;
-    }
+	public void setSuspectAutoAction(BillingRunAutomaticActionEnum autoSuspectAction) {
+		this.suspectAutoAction = autoSuspectAction;
+	}
 
     public boolean isSkipValidationScript() {
-        return skipValidationScript;
-    }
-
+		return skipValidationScript;
+	}
+	
     public void setSkipValidationScript(boolean skipValidationScript) {
-        this.skipValidationScript = skipValidationScript;
-    }
+		this.skipValidationScript = skipValidationScript;
+	}
+	
+	public Date getCollectionDate() {
+		return collectionDate;
+	}
 
-    public Date getCollectionDate() {
-        return collectionDate;
-    }
+	public void setCollectionDate(Date collectionDate) {
+		this.collectionDate = collectionDate;
+	}
 
-    public void setCollectionDate(Date collectionDate) {
-        this.collectionDate = collectionDate;
-    }
+	public Boolean getComputeDatesAtValidation() {
+		return computeDatesAtValidation;
+	}
 
-    public Boolean getComputeDatesAtValidation() {
-        return computeDatesAtValidation;
-    }
+	public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+		this.computeDatesAtValidation = computeDatesAtValidation;
+	}
 
-    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
-        this.computeDatesAtValidation = computeDatesAtValidation;
-    }
+	/**
+	 * @return the minimumApplied
+	 */
+	public Boolean getMinimumApplied() {
+		return minimumApplied;
+	}
 
-    /**
-     * @return the minimumApplied
-     */
-    public Boolean getMinimumApplied() {
-        return minimumApplied;
-    }
+	/**
+	 * @param minimumApplied the minimumApplied to set
+	 */
+	public void setMinimumApplied(Boolean minimumApplied) {
+		this.minimumApplied = minimumApplied;
+	}
 
-    /**
-     * @param minimumApplied the minimumApplied to set
-     */
-    public void setMinimumApplied(Boolean minimumApplied) {
-        this.minimumApplied = minimumApplied;
-    }
+	/**
+	 * @return the thresholdChecked
+	 */
+	public Boolean getThresholdChecked() {
+		return thresholdChecked;
+	}
 
-    /**
-     * @return the thresholdChecked
-     */
-    public Boolean getThresholdChecked() {
-        return thresholdChecked;
-    }
+	/**
+	 * @param thresholdChecked the thresholdChecked to set
+	 */
+	public void setThresholdChecked(Boolean thresholdChecked) {
+		this.thresholdChecked = thresholdChecked;
+	}
 
-    /**
-     * @param thresholdChecked the thresholdChecked to set
-     */
-    public void setThresholdChecked(Boolean thresholdChecked) {
-        this.thresholdChecked = thresholdChecked;
-    }
+	/**
+	 * @return the discountApplied
+	 */
+	public Boolean getDiscountApplied() {
+		return discountApplied;
+	}
 
-    /**
-     * @return the discountApplied
-     */
-    public Boolean getDiscountApplied() {
-        return discountApplied;
-    }
-
-    /**
-     * @param discountApplied the discountApplied to set
-     */
-    public void setDiscountApplied(Boolean discountApplied) {
-        this.discountApplied = discountApplied;
-    }
+	/**
+	 * @param discountApplied the discountApplied to set
+	 */
+	public void setDiscountApplied(Boolean discountApplied) {
+		this.discountApplied = discountApplied;
+	}
 
     public Map<String, Object> getFilters() {
         return filters;
@@ -970,9 +970,9 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     public void setExceptionalRTIds(List<Long> exceptionalRTIds) {
         this.exceptionalRTIds = exceptionalRTIds;
     }
-
+    
     public boolean isExceptionalBR() {
-        return (this.filters != null && !this.filters.isEmpty());
+	    return (this.filters !=null && !this.filters.isEmpty());
     }
 
     public List<Long> getExceptionalILIds() {
@@ -983,21 +983,21 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
         this.exceptionalILIds = exceptionalILIds;
     }
 
-    public InvoiceType getInvoiceType() {
-        return invoiceType;
-    }
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
+	}
 
-    public void setInvoiceType(InvoiceType invoiceType) {
-        this.invoiceType = invoiceType;
-    }
+	public void setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
+	}
 
-    public BillingRunTypeEnum getRunType() {
-        return runType;
-    }
+	public BillingRunTypeEnum getRunType() {
+		return runType;
+	}
 
-    public void setRunType(BillingRunTypeEnum runType) {
-        this.runType = runType;
-    }
+	public void setRunType(BillingRunTypeEnum runType) {
+		this.runType = runType;
+	}
 
     public Long getXmlJobExecutionResultId() {
         return xmlJobExecutionResultId;
@@ -1015,29 +1015,29 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
         this.pdfJobExecutionResultId = pdfJobExecutionResultId;
     }
 
-    public Map<String, String> getDescriptionI18n() {
-        return descriptionI18n;
-    }
+	public Map<String, String> getDescriptionI18n() {
+		return descriptionI18n;
+	}
 
-    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
-        this.descriptionI18n = descriptionI18n;
-    }
+	public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+		this.descriptionI18n = descriptionI18n;
+	}
 
-    public Boolean getIsQuarantine() {
-        return isQuarantine;
-    }
+	public Boolean getIsQuarantine() {
+		return isQuarantine;
+	}
 
-    public void setIsQuarantine(Boolean isQuarantine) {
-        this.isQuarantine = isQuarantine;
-    }
+	public void setIsQuarantine(Boolean isQuarantine) {
+		this.isQuarantine = isQuarantine;
+	}
 
-    public BillingRun getOriginBillingRun() {
-        return originBillingRun;
-    }
+	public BillingRun getOriginBillingRun() {
+		return originBillingRun;
+	}
 
-    public void setOriginBillingRun(BillingRun originBillingRun) {
-        this.originBillingRun = originBillingRun;
-    }
+	public void setOriginBillingRun(BillingRun originBillingRun) {
+		this.originBillingRun = originBillingRun;
+	}
 
     public List<JobExecutionResultImpl> getJobExecutions() {
         return jobExecutions;
@@ -1051,13 +1051,13 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
         this.jobExecutions.add(jobExecution);
     }
 
-    public Boolean getGenerateAO() {
-        return generateAO;
-    }
+	public Boolean getGenerateAO() {
+		return generateAO;
+	}
 
-    public void setGenerateAO(Boolean generateAO) {
-        this.generateAO = generateAO;
-    }
+	public void setGenerateAO(Boolean generateAO) {
+		this.generateAO = generateAO;
+	}
 
     public boolean isDisableAggregation() {
         return disableAggregation;
@@ -1156,7 +1156,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     public DiscountAggregationModeEnum getDiscountAggregation() {
         return discountAggregation;
-    }
+}
 
     /**
      * @param discountAggregation Discount aggregation type

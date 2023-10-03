@@ -15767,12 +15767,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
     	<addColumn tableName="billing_rated_transaction">
     		<column name="origin_ratedtransaction_id" type="bigint" />
     	</addColumn>
-        <addForeignKeyConstraint baseTableName="billing_rated_transaction" baseColumnNames="origin_ratedtransaction_id,status"
-                                 constraintName="fk_origin_ratedtransaction_id"
-                                 referencedTableName="billing_rated_transaction"
-                                 referencedColumnNames="id,status"
-                                 deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
 
     <changeSet id="#INTRD-15691_20230421" author="AbdellatifBARI">
@@ -15848,18 +15842,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
     
-     <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi">
-		  <sql>CREATE INDEX idx__billing_rated_transaction__accountingArticle_id ON ${db.schema.adapted}billing_rated_transaction USING btree (accounting_article_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__offer ON ${db.schema.adapted}billing_rated_transaction USING btree (offer_id) WHERE (status= 'OPEN') </sql>
-		  <sql>CREATE INDEX idx__billing_rated_transaction__service_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (service_instance_id) WHERE (status= 'OPEN') </sql>
-	</changeSet>
-	
-    <changeSet id="#INTRD-17353_S_14-07-2023" author="Mohammed_ELAZZOUZI">
-        <addColumn tableName="billing_billing_account">
-            <column name="mass_data" type="${type.boolean}" defaultValueNumeric="0"/>
+    <changeSet id="#INTRD-16636_20230610" author="AndriusKarpavicius">
+        <addColumn tableName="billing_rated_transaction_pending">
+            <column name="invoice_line_id" type="bigint" />
         </addColumn>
-    </changeSet>
+        <alterSequence sequenceName="billing_invoice_line_seq" incrementBy="5000"/>
+    </changeSet>    
 
     <changeSet id="INTRD-16780_20230614_pg" author="a.rouaguebe" dbms="postgres">
         <dropView viewName="billing_wallet_operation_period" />
@@ -15888,22 +15876,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </changeSet>
 
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe">
-        <sql>create index idx__billing_billing_account__lower_code on ${db.schema.adapted}billing_billing_account (lower(code))</sql>
         <sql>create index idx__billing_rating_transaction__id_desc on ${db.schema.adapted}billing_rated_transaction (id desc)</sql>
         <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
     </changeSet>
 	
-	<changeSet id="#INTRD-14263_20200304" author="TarikFA.">
+	<changeSet id="#INTRD-14263_20200304" author="TarikFA." failOnError="false">
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_origin_ratedtransaction_id" />
     </changeSet>
 
     <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe">
-        <sql>create index idx__billing_wo__charge_instance_id on billing_wallet_operation(charge_instance_id)</sql>
-        <sql>create index idx__billing_wo__billing_account_id on billing_wallet_operation(billing_account_id)</sql>
-        <sql>create index idx__billing_wo__subscription_id on billing_wallet_operation(subscription_id)</sql>
+        <sql>create index idx__billing_wo__billing_account_id on ${db.schema.adapted}billing_wallet_operation(billing_account_id)</sql>
 
-        <sql>create index idx__charge_instance__lower_code on billing_charge_instance(lower(code))</sql>
-        <sql>create index idx__charge_instance__lower_description on billing_charge_instance(lower(description))</sql>
+        <sql>create index idx__charge_instance__lower_description on ${db.schema.adapted}billing_charge_instance(lower(description))</sql>
     </changeSet>
 
     <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe">
@@ -15955,5 +15939,55 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="entities_with_huge_volume" type="${type.json}"/>
         </addColumn>
     </changeSet>
+
+
+    <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius">
+        <sql>CREATE INDEX idx__billing_invoice_line_il_job ON ${db.schema.adapted}billing_invoice_line USING btree (billing_run_id, billing_account_id, offer_template_id, accounting_article_id, tax_id) where status='OPEN'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ArticleMappingJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ArticleMappingJob'</sql>
+
+
+        
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__billing_account_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__offer_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__tax_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__infoOrder_productVersion_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__accountingArticle_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__discountedRatedTransaction</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__subscription_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__order_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__order_number</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__description</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__tax_percent</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__charge_instance</sql>
+        
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__billing_account_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__billing_run</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__status</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__accounting_article</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__offer_template_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__tax_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__product_version_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__discounted_invoice_line</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__subscription_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__service_instance_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__commercial_order_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__order_number</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__label</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__taxRate</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_subscription__order_id</sql>
+
+        <sql>DROP INDEX IF EXISTS idx__billing_billing_account__lower_code</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_wo__charge_instance_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__billing_wo__subscription_id</sql>
+        <sql>DROP INDEX IF EXISTS idx__charge_instance__lower_code</sql>
+
+    </changeSet>
+    
+    <changeSet id="#INTRD-16881_20230816" author="Mohammed_ElAzzouzi">
+		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE status= 'OPEN' and accounting_article_id is null </sql>
+	</changeSet>
 
 </databaseChangeLog>
