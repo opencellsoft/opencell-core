@@ -2,6 +2,7 @@ package org.meveo.api.billing;
 
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.billing.PdpStatusDto;
+import org.meveo.model.billing.PDPStatusEntity;
 import org.meveo.service.billing.impl.EinvoiceService;
 
 import javax.ejb.Stateless;
@@ -15,8 +16,18 @@ public class EinvoiceApi extends BaseApi {
 	
 	
 	public void assignPdpStatus(PdpStatusDto pdpStatusDto) {
-		einvoiceService.assagnPdpStatus(pdpStatusDto.getTransmittedFormat(), pdpStatusDto.getOrigin(), pdpStatusDto.getReturnCode(),
-				pdpStatusDto.getLabel(), pdpStatusDto.getInvoiceIdentifier(), pdpStatusDto.getInvoiceNumber(), pdpStatusDto.getStatus(), pdpStatusDto.getDepositDate());
+		
+		PDPStatusEntity pdpStatusEntity = new PDPStatusEntity();
+		
+		pdpStatusEntity.setTransmittedFormatEnum(pdpStatusDto.getTransmittedFormat());
+		pdpStatusEntity.setStatus(pdpStatusDto.getStatus());
+		pdpStatusEntity.setOrigin(pdpStatusDto.getOrigin());
+		pdpStatusEntity.setReturnCode(pdpStatusDto.getReturnCode());
+		pdpStatusEntity.setInvoiceNumber(pdpStatusDto.getInvoiceNumber());
+		pdpStatusEntity.setInvoiceIdentifier(pdpStatusDto.getInvoiceIdentifier());
+		pdpStatusEntity.setLabel(pdpStatusDto.getLabel());
+		pdpStatusEntity.setDepositDate(pdpStatusDto.getDepositDate());
+		einvoiceService.assagnPdpStatus(pdpStatusEntity);
 	}
 	
 	
