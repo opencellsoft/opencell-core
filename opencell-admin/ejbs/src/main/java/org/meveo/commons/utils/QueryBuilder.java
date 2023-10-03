@@ -1759,7 +1759,7 @@ public class QueryBuilder {
             			field =field.substring(field.lastIndexOf(".")+1);
             		}
             	}
-				addOrderCriterion(((currentAlias != null) ? (currentAlias + ".") : "") + field, ascending);
+				addOrderCriterion(((currentAlias != null && !field.contains(FROM_JSON_FUNCTION)) ? (currentAlias + ".") : "") + field, ascending);
             }
         }
         joinAlias=new TreeSet<String>();

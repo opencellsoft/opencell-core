@@ -18,11 +18,12 @@
 
 package org.meveo.api.billing;
 
+import static java.util.Optional.ofNullable;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -113,6 +114,7 @@ public class InvoicingApi extends BaseApi {
         billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
         billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
         billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+        billingRun.setIgnoreUserAccounts(billingCycle.isIgnoreUserAccounts());
         billingRun.setProcessType(dto.getBillingRunTypeEnum());
         billingRun.setStartDate(dto.getStartDate());
         billingRun.setEndDate(dto.getEndDate());
@@ -122,9 +124,16 @@ public class InvoicingApi extends BaseApi {
         billingRun.setInvoiceDate(dto.getInvoiceDate());
         billingRun.setLastTransactionDate(dto.getLastTransactionDate());
         billingRun.setSkipValidationScript(dto.getSkipValidationScript());
-        billingRun.setPreReportAutoOnCreate(dto.getPreReportAutoOnCreate());
-        billingRun.setPreReportAutoOnInvoiceLinesJob(dto.getPreReportAutoOnInvoiceLinesJob());
+        billingRun.setPreReportAutoOnCreate(ofNullable(dto.getPreReportAutoOnCreate())
+                .orElse(billingRun.getBillingCycle().getReportConfigPreReportAutoOnCreate()));
+        billingRun.setPreReportAutoOnInvoiceLinesJob(ofNullable(dto.getPreReportAutoOnInvoiceLinesJob())
+                .orElse(billingRun.getBillingCycle().getReportConfigPreReportAutoOnInvoiceLinesJob()));
         billingRun.setApplicationEl(dto.getApplicationEl());
+        if (dto.getApplicationEl() != null) { // PO expected that the value shall be different from null, if it is empty, then we store the empty value (see Business rules INTRD-17689)
+            billingRun.setApplicationEl(dto.getApplicationEl());
+        } else {
+            billingRun.setApplicationEl(billingCycle.getApplicationEl());
+        }
         if(dto.getRejectAutoAction() == null) {
             billingRun.setRejectAutoAction(BillingRunAutomaticActionEnum.MANUAL_ACTION);
         }
@@ -161,7 +170,7 @@ public class InvoicingApi extends BaseApi {
         if(dto.getDescriptionsTranslated() != null && !dto.getDescriptionsTranslated().isEmpty()){
         	billingRun.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionsTranslated() ,null));
         }
-        billingRun.setGenerateAO(Optional.ofNullable(dto.getGenerateAO()).orElse(false));
+        billingRun.setGenerateAO(ofNullable(dto.getGenerateAO()).orElse(false));
 
         // If value is not provided in the API call, then use value of billingCycle as default value
 
@@ -245,7 +254,7 @@ public class InvoicingApi extends BaseApi {
         }
 
         billingRunService.update(billingRun);
-        billingRunReportService.launchBillingRunReportJob(billingRun);
+        billingRunReportService.generateBillingRunReport(billingRun);
         
         return billingRun.getId();
     }
@@ -273,6 +282,7 @@ public class InvoicingApi extends BaseApi {
             billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
             billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
             billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+            billingRun.setIgnoreUserAccounts(billingCycle.isIgnoreUserAccounts());
 
             // If Billing cycle change, and no explicit values are provided, use values from the new Billing Cycle 
             if (dto.getIncrementalInvoiceLines() == null) {
@@ -401,15 +411,22 @@ public class InvoicingApi extends BaseApi {
 
         if(dto.getPreReportAutoOnCreate() != null) {
             billingRun.setPreReportAutoOnCreate(dto.getPreReportAutoOnCreate());
+        } else {
+            billingRun.setPreReportAutoOnCreate(billingRun.getBillingCycle().getReportConfigPreReportAutoOnCreate());
         }
         if(dto.getPreReportAutoOnInvoiceLinesJob() != null) {
             billingRun.setPreReportAutoOnInvoiceLinesJob(dto.getPreReportAutoOnInvoiceLinesJob());
+        } else {
+            billingRun.setPreReportAutoOnInvoiceLinesJob(billingRun
+                    .getBillingCycle().getReportConfigPreReportAutoOnInvoiceLinesJob());
         }
 
-        billingRun.setApplicationEl(dto.getApplicationEl());
+        if (dto.getApplicationEl() != null) { // On update, if applicationEL is null then don’t update the field.
+            billingRun.setApplicationEl(dto.getApplicationEl());
+        }
 
         billingRunService.update(billingRun);
-        billingRunReportService.launchBillingRunReportJob(billingRun);
+        billingRunReportService.generateBillingRunReport(billingRun);
 
         return billingRun.getId();
     }

@@ -18,10 +18,7 @@
 
 package org.meveo.admin.job;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -29,6 +26,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -36,6 +34,8 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.InvoiceService;
+
+import static java.util.Optional.of;
 
 /**
  * Job definition to generate PDF for all valid invoices that don't have it.
@@ -87,6 +87,10 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
         if (billingRunId != null) {
             BillingRun billingRun = billingRunService.findById(billingRunId);
             if (billingRun != null) {
+                if (!BillinRunApplicationElFilterUtils.isToProcessBR(billingRun, jobInstance)) {
+                    log.warn("BillingRun applicationEl='{}' is evaluate to 'false', abort current process.", billingRun.getApplicationEl());
+                    return of(new SynchronizedIterator<>(Collections.emptyList()));
+                }
                 billingRunExtensionService.updateBillingRunWithXMLPDFExecutionResult(billingRunId, null, jobExecutionResult.getId());
                 billingRunService.updateBillingRunJobExecution(billingRun.getId(), jobExecutionResult);
                 billingRunService.refreshOrRetrieve(billingRun);

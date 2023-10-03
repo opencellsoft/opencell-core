@@ -972,7 +972,9 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
         }else {
         	orderOffer.setOrderLineType(OfferLineTypeEnum.CREATE);
         }
-        populateCustomFields(orderOfferDto.getCustomFields(), orderOffer, true);
+        if (orderOfferDto.getCustomFields() != null) {
+        	populateCustomFields(orderOfferDto.getCustomFields(), orderOffer, true);
+        }
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
 		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
@@ -1092,7 +1094,9 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 						orderOffer.getProducts().get(0).getProductVersion().getAttributes(),
 						orderProduct.getOrderAttributes()));
         processOrderAttribute(orderOfferDto,  orderOffer);
-        populateCustomFields(orderOfferDto.getCustomFields(), orderOffer, false);
+        if (orderOfferDto.getCustomFields() != null) {
+        	populateCustomFields(orderOfferDto.getCustomFields(), orderOffer, false);
+        }
     	orderOfferService.update(orderOffer);
     	return orderOfferDto;
     }

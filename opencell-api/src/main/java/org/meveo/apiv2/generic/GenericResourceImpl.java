@@ -49,6 +49,14 @@ public class GenericResourceImpl implements GenericResource {
     private FinanceSettingsService financeSettingsService;
 
     @Override
+    public Response count(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
+        Class entityClass = GenericHelper.getEntityClass(entityName);
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService(), false);
+        return Response.ok().entity(String.format("{\"total\": %d}", loadService.count(entityClass, genericRequestMapper.mapTo(searchConfig))))
+                       .build();
+    }
+
+    @Override
     public Response getAll(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
         Set<String> genericFields = null;
         Set<String> nestedEntities = null;
@@ -69,7 +77,7 @@ public class GenericResourceImpl implements GenericResource {
                                            .stream()
                                            .anyMatch(e -> e.equalsIgnoreCase(entityName));
         }
-        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService(), !isHugeVolume);
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService(), isHugeVolume);
         return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth(), null, excludedFields))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }

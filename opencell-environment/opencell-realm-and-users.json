@@ -9769,6 +9769,9 @@
             "scopes": [
               {
                 "name": "GET"
+              },
+              {
+                "name": "PUT"
               }
             ]
           },

@@ -50,6 +50,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -4241,9 +4244,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .reduce(BigDecimal::add)
                     .orElse(BigDecimal.ZERO);
             amountDiscount = amountDiscount.add(otherDiscount);
+            // Always set AmountWithoutTaxBeforeDiscount = AmountWithoutTax before calculate discount : to manager case where amountDiscount == 0
+            invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax());
             if(!amountDiscount.equals(BigDecimal.ZERO)) {
                 invoice.setDiscountAmount(amountDiscount);
-                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
+                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount.abs()));
             }
             if(amountDiscount.equals(BigDecimal.ZERO) && invoice.getDiscountPlan() != null
                     && invoice.getDiscountPlan().getDiscountPlanType() == DiscountPlanTypeEnum.INVOICE && discountAggregates != null) {
@@ -4253,7 +4258,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         .reduce(BigDecimal::add)
                         .orElse(BigDecimal.ZERO);
                 invoice.setDiscountAmount(amountDiscount);
-                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
+                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount.abs()));
             }
         }
         
@@ -4979,6 +4984,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null, null, null, null);
 
         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
+        rt.setBusinessKey(ratedTransactionDto.getBusinessKey());
         // #3355 : setting params 1,2,3
         if (isDetailledInvoiceMode) {
             rt.setParameter1(ratedTransactionDto.getParameter1());
@@ -6446,7 +6452,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         	List<DiscountPlanItem> discountPlanItems = discountPlanItemService.getFixedDiscountPlanItemsByDP(invoiceLine.getDiscountPlan().getId());
             for(DiscountPlanItem discountPlanItem : discountPlanItems) {
             if(discountPlanItem != null && discountPlanItemService.isDiscountPlanItemApplicable(invoiceLine.getBillingAccount(),discountPlanItem,invoiceLine.getAccountingArticle(),invoiceLine.getSubscription(),null) ) {
-                invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(discountPlanItem.getDiscountValue()));
                 invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(invoiceLine.getAmountTax()));
                 invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount().add(discountPlanItem.getDiscountValue()));
             }
@@ -7690,8 +7695,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			StorageFactory.createDirectory(ublDirectory);
 		}
 		File xmlInvoiceFileName = new File(ublDirectory.getAbsolutePath() + File.separator + "invoice_" + invoice.getInvoiceNumber() + "_" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".xml");
+		Path pathCreatedFile = null;
 		try {
-			Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()));
+			pathCreatedFile = Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()));
 		} catch (IOException e) {
 			throw new BusinessException(e);
 		}
@@ -7702,6 +7708,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		invoice = updateNoCheck(invoice);
 		entityUpdatedEventProducer.fire(invoice);
+		if(pathCreatedFile != null)
+			pathCreatedFile.toFile().setReadOnly();
 		return invoice;
 	}
 
@@ -7721,14 +7729,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (!ZERO.equals(sumValidatedLinkedInvoice)) {
                 if(newInvoice.getAmountWithTax().add(sumValidatedLinkedInvoice).compareTo(srcInvoice.getAmountWithTax()) > 0) {
-                    throw new BusinessException("Adjustment Amount With Tax '" + newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
-                            + "' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()) + "'");
+                    throw new BusinessException("The adjustment amount exceeds the remaining invoice amount.");
                 }
             } else {
                 // check amount with tax
                 if (newInvoice.getAmountWithTax().compareTo(srcInvoice.getAmountWithTax()) > 0) {
-                    throw new BusinessException("Adjustment Amount With Tax '"+ newInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
-                            +"' is greater than linked invoice '" + srcInvoice.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())+"'");
+                    throw new BusinessException("The adjustment amount exceeds the remaining invoice amount.");
                 }
             }
         }
@@ -7746,5 +7752,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             });
         }
     }
+	
+	public List<Invoice> findByInvoicesNumber(String invoiceNumber) {
+			return (List<Invoice>) getEntityManager().createQuery("SELECT inv FROM Invoice inv WHERE inv.invoiceNumber = :invoiceNumber")
+					.setParameter("invoiceNumber", invoiceNumber).setMaxResults(1)
+					.getResultList();
+	}
 
 }

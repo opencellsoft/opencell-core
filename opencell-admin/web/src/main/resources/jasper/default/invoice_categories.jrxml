@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Disc-Emmaneul"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyInvoiceIssue"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -221,6 +221,24 @@
 			<initialValueExpression><![CDATA[$F{discountAmountWithoutTax}]]></initialValueExpression>
 		</variable>
 	</subDataset>
+	<subDataset name="categoryDataset" uuid="caf372ed-b5fb-4515-871b-63c01682a70b">
+		<queryString language="xPath">
+			<![CDATA[/invoice/header/categories/category]]>
+		</queryString>
+		<field name="categoryCode" class="java.lang.String">
+			<fieldDescription><![CDATA[@code]]></fieldDescription>
+		</field>
+		<field name="categoryLabel" class="java.lang.String">
+			<fieldDescription><![CDATA[@label]]></fieldDescription>
+		</field>
+		<field name="categoryAmountWithTax" class="java.lang.String">
+			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+		</field>
+		<field name="country" class="java.lang.String">
+			<fieldDescription><![CDATA[/invoice/@country]]></fieldDescription>
+		</field>
+		<sortField name="categoryCode"/>
+	</subDataset>
 	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
 	</parameter>
@@ -275,55 +293,41 @@
 		<groupHeader>
 			<band height="44">
 				<textField>
-					<reportElement positionType="Float" x="-1" y="-15" width="220" height="20" uuid="0b054d42-0923-4816-9737-6b946e4ff863"/>
-					<box leftPadding="10"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{catLabel}]]></textFieldExpression>
-				</textField>
-				<line>
-					<reportElement x="0" y="5" width="350" height="1" forecolor="#999999" uuid="0958cfc5-2a2e-43aa-a471-b7ed2cb5f8c2">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-					<graphicElement>
-						<pen lineWidth="0.5" lineColor="#CCCCCC"/>
-					</graphicElement>
-				</line>
-				<textField evaluationTime="Group" evaluationGroup="1" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="219" y="-14" width="131" height="20" uuid="4915e701-b4f7-4af3-956d-bbcc019ee2da">
-						<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					</reportElement>
-					<box rightPadding="2"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="10"/>
-						<paragraph rightIndent="5"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{catAmountWithoutTax}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="6" y="25" width="350" height="19" forecolor="#878787" uuid="5d7f0c02-8094-464f-a79f-bea5b34c4549"/>
+					<reportElement x="3" y="13" width="350" height="19" forecolor="#878787" uuid="5d7f0c02-8094-464f-a79f-bea5b34c4549"/>
 					<box bottomPadding="2"/>
 					<textElement textAlignment="Left" verticalAlignment="Bottom">
 						<font fontName="SansSerif" size="9" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($F{currencyRate}!=null && !String.valueOf($F{currencyRate}).isEmpty() && !String.valueOf($F{currencyRate}).equals("null") && new Double($F{currencyRate}.replace(",", ".")) > 1d) ? "Rate applied against EUR : " + (($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{currencyRate}.replace(",", ".")))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{currencyRate}.replace(",", "."))))) + " " + $F{currencySymbol} : "")]]></textFieldExpression>
 				</textField>
-			</band>
-			<band height="7">
-				<printWhenExpression><![CDATA[$F{discountAmountWithoutTax}!=null]]></printWhenExpression>
 				<staticText>
-					<reportElement x="0" y="-38" width="220" height="21" forecolor="#000000" uuid="7d5c0eb6-5bba-4eb0-a030-9906e068f959">
+					<reportElement x="0" y="-7" width="220" height="20" forecolor="#000000" uuid="7d5c0eb6-5bba-4eb0-a030-9906e068f959">
 						<printWhenExpression><![CDATA[$F{discountAmountWithoutTax}!=null && $F{discountAmountWithoutTax} > 0]]></printWhenExpression>
 					</reportElement>
-					<box leftPadding="10"/>
+					<box leftPadding="0"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="10"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
-					<text><![CDATA[Discounts]]></text>
+					<text><![CDATA[  Discounts]]></text>
 				</staticText>
+				<textField evaluationTime="Group" evaluationGroup="1" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="220" y="-7" width="130" height="20" uuid="4915e701-b4f7-4af3-956d-bbcc019ee2da">
+						<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<printWhenExpression><![CDATA[$F{discountAmountWithoutTax}!=null && $F{discountAmountWithoutTax} > 0]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="11"/>
+						<paragraph rightIndent="0"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{discountAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{discountAmountWithoutTax})))]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="21">
+				<printWhenExpression><![CDATA[$F{discountAmountWithoutTax}!=null]]></printWhenExpression>
 				<line>
-					<reportElement x="0" y="-19" width="350" height="1" forecolor="#999999" uuid="0958cfc5-2a2e-43aa-a471-b7ed2cb5f8c2">
+					<reportElement x="0" y="-30" width="350" height="1" forecolor="#999999" uuid="0958cfc5-2a2e-43aa-a471-b7ed2cb5f8c2">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<printWhenExpression><![CDATA[$F{discountAmountWithoutTax}!=null && $F{discountAmountWithoutTax} > 0]]></printWhenExpression>
 					</reportElement>
@@ -331,18 +335,6 @@
 						<pen lineWidth="0.5" lineColor="#CCCCCC"/>
 					</graphicElement>
 				</line>
-				<textField evaluationTime="Group" evaluationGroup="1" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="219" y="-38" width="131" height="20" uuid="4915e701-b4f7-4af3-956d-bbcc019ee2da">
-						<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-						<printWhenExpression><![CDATA[$F{discountAmountWithoutTax}!=null && $F{discountAmountWithoutTax} > 0]]></printWhenExpression>
-					</reportElement>
-					<box rightPadding="2"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="10"/>
-						<paragraph rightIndent="5"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{discountAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{discountAmountWithoutTax})))]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupHeader>
 	</group>
@@ -352,7 +344,7 @@
 		</groupHeader>
 	</group>
 	<columnHeader>
-		<band height="39">
+		<band height="55">
 			<textField>
 				<reportElement mode="Opaque" x="0" y="2" width="350" height="23" forecolor="#030303" backcolor="#F2F4F5" uuid="2e8b6884-3f93-416d-86a0-0230e50671bc">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -379,6 +371,50 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Price w/o tax ("+$F{currencySymbol}+")"]]></textFieldExpression>
 			</textField>
+			<componentElement>
+				<reportElement key="" positionType="Float" stretchType="ElementGroupHeight" isPrintRepeatedValues="false" x="0" y="25" width="350" height="25" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="a38f6a7f-8f3c-44b7-9015-b82312e77752"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
+					<datasetRun subDataset="categoryDataset" uuid="a2fa51fa-35e6-4d8c-810b-a1404c5f82ad">
+						<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}.dataSource("/invoice/header/categories/category")]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="250" uuid="c59facdb-0d21-4e72-805c-2c09dc0942db">
+						<jr:detailCell height="15" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<leftPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+								<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="250" height="15" uuid="c0ec5bf7-40b5-43c7-bee1-a37933621f35"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA["  " + $F{categoryLabel}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="100" uuid="f0dd554f-0e45-48b8-9ec1-12ad3778b4fa">
+						<jr:detailCell height="15" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<leftPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+								<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="100" height="15" uuid="1e3f7582-2725-4993-b847-5fc108a1764f"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{categoryAmountWithTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{categoryAmountWithTax})))]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
 		</band>
 	</columnHeader>
 	<columnFooter>

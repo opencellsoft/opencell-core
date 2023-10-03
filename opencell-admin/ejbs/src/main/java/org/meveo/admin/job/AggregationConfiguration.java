@@ -42,6 +42,8 @@ public class AggregationConfiguration {
      */
     private boolean ignoreOrders = true;
 
+    private boolean ignoreUserAccounts = true;
+
     /**
      * Aggregation mode of Discount type Rated Transactions
      */
@@ -98,6 +100,14 @@ public class AggregationConfiguration {
         this.ignoreOrders = ignoreOrders;
     }
 
+	public boolean isIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
+
+	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+
     /**
      * @return Aggregation mode of Discount type Rated Transactions
      */
@@ -121,6 +131,7 @@ public class AggregationConfiguration {
         this.useAccountingArticleLabel = billingRun.isUseAccountingArticleLabel();
         this.ignoreSubscriptions = billingRun.isIgnoreSubscriptions();
         this.ignoreOrders = billingRun.isIgnoreOrders();
+        this.ignoreUserAccounts = billingRun.isIgnoreUserAccounts();
         this.discountAggregation = billingRun.getDiscountAggregation();
         this.disableAggregation = billingRun.isDisableAggregation();
         this.type = billingRun.getBillingCycle().getType();

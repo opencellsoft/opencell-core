@@ -21,6 +21,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.Part
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PartyTaxScheme;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PaymentMeans;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PaymentTermsType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PeriodType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PersonType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PriceType;
@@ -74,10 +75,13 @@ import oasis.names.specification.ubl.schema.xsd.invoice_2.Invoice;
 import oasis.names.specification.ubl.schema.xsd.invoice_2.ObjectFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -104,9 +108,12 @@ public class InvoiceUblHelper {
 	private final static oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.ObjectFactory objectFactorycommonBasic;
 	private final static oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ObjectFactory objectFactoryCommonAggrement;
 	
+	private final static InvoiceAgregateService invoiceAgregateService;
+	
 	static {
 		objectFactorycommonBasic = new oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.ObjectFactory();
 		objectFactoryCommonAggrement = new oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ObjectFactory();
+		invoiceAgregateService = (InvoiceAgregateService) EjbUtils.getServiceInterface(InvoiceAgregateService.class.getSimpleName());
 	}
 	
 	private InvoiceUblHelper(){}
@@ -119,13 +126,14 @@ public class InvoiceUblHelper {
 		setGeneralInfo(invoice, invoiceXml);
 		setBillingReference(invoice, invoiceXml);
 		setOrderReference(invoice, invoiceXml);
-		setAllowanceCharge(invoice.getSubCategoryInvoiceAgregate(), invoiceXml);
+		setAllowanceCharge(invoice, invoiceXml);
 		if(CollectionUtils.isNotEmpty(invoice.getInvoiceAgregates())){
 			List<TaxInvoiceAgregate> taxInvoiceAgregates = invoice.getInvoiceAgregates().stream().filter(invAgg -> "T".equals(invAgg.getDescriminatorValue()))
 					.map(invAgg -> (TaxInvoiceAgregate) invAgg)
 					.collect(Collectors.toList());
 			setTaxTotal(taxInvoiceAgregates, invoice.getAmountTax(), invoiceXml, invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getCurrencyCode() : null);
 		}
+		setPaymentTerms(invoiceXml, invoice.getInvoiceType());
 		setAccountingSupplierParty(invoice.getSeller(), invoiceXml);
 		setAccountingCustomerParty(invoice.getBillingAccount(), invoiceXml);
 		setInvoiceLine(invoice.getInvoiceLines(), invoiceXml);
@@ -143,6 +151,17 @@ public class InvoiceUblHelper {
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2");
 		marshaller.marshal(invoiceXml, absoluteFileName);
+	}
+	
+	private void setPaymentTerms(Invoice target, InvoiceType invoiceType) {
+		if(invoiceType != null && invoiceType.getUntdidInvoiceCodeType() != null && invoiceType.getUntdidInvoiceCodeType().getCode().equals("380")) {
+			PaymentTermsType paymentTermsType = objectFactoryCommonAggrement.createPaymentTermsType();
+			Note note = objectFactorycommonBasic.createNote();
+			note.setValue("No early payment discount. Any amounts owned that are not paid will due shall bear interest, from the time the payment was due until the time paid, " +
+					"at a rate of 10% per annum compounded annually");
+			paymentTermsType.getNotes().add(note);
+			target.getPaymentTerms().add(paymentTermsType);
+		}
 	}
 	
 	private void setUblExtension(Invoice target){
@@ -440,7 +459,6 @@ public class InvoiceUblHelper {
 		RegistrationName registrationName = objectFactorycommonBasic.createRegistrationName();
 		registrationName.setValue(seller.getDescription());
 		partyLegalEntity.setRegistrationName(registrationName);
-		partyType.getPartyLegalEntities().add(partyLegalEntity);
 		// AccountingSupplierParty/Party/PartyLegalEntity/RegistrationAddress/StreetName
 		if(seller.getAddress() != null) {
 			Address address = seller.getAddress();
@@ -477,9 +495,11 @@ public class InvoiceUblHelper {
 			// AccountingSupplierParty/Party/PartyTaxScheme/CompanyID
 			PartyTaxScheme taxScheme = objectFactoryCommonAggrement.createPartyTaxScheme();
 			CompanyID companyID = objectFactorycommonBasic.createCompanyID();
-			companyID.setValue(seller.getVatNo());
+			String countryCode = seller.getAddress() != null && seller.getAddress().getCountry() != null ? seller.getAddress().getCountry().getCountryCode() : null;
+			companyID.setSchemeID(countryCode);
+			companyID.setSchemeAgencyID("ZZZ");
+			companyID.setValue(countryCode + seller.getVatNo());
 			taxScheme.setCompanyID(companyID);
-			taxScheme.setTaxScheme(getTaxSheme());
 			partyType.getPartyTaxSchemes().add(taxScheme);
 		}
 		
@@ -573,7 +593,8 @@ public class InvoiceUblHelper {
 			target.getTaxTotals().add(taxTotalType);
 		}
 	}
-	private void setAllowanceCharge(Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates, Invoice target){
+	private void setAllowanceCharge(org.meveo.model.billing.Invoice invoice, Invoice target){
+		List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = (List<SubCategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "F");
 		if(CollectionUtils.isNotEmpty(subCategoryInvoiceAgregates)){
 			subCategoryInvoiceAgregates.forEach(subCategoryInvoiceAgregate -> {
 				AllowanceChargeType allowanceCharge = objectFactoryCommonAggrement.createAllowanceChargeType();
@@ -590,7 +611,7 @@ public class InvoiceUblHelper {
 					allowanceCharge.getAllowanceChargeReasons().add(allowanceChargeReason);
 				}
 				Amount amount = objectFactorycommonBasic.createAmount();
-				amount.setValue(subCategoryInvoiceAgregate.getAmount());
+				amount.setValue(subCategoryInvoiceAgregate.getAmountTax());
 				allowanceCharge.setAmount(amount);
 				target.getAllowanceCharges().add(allowanceCharge);
 			});
@@ -607,8 +628,10 @@ public class InvoiceUblHelper {
 		if(source.getCommercialOrder() != null && StringUtils.isNotBlank(source.getCommercialOrder().getOrderNumber())){
 			OrderReference orderReference = objectFactoryCommonAggrement.createOrderReference();
 			SalesOrderID salesOrderID = orderReference.getSalesOrderID();
-			salesOrderID.setValue(source.getCommercialOrder().getOrderNumber());
-			orderReference.setSalesOrderID(salesOrderID);
+			if (salesOrderID != null) {
+				salesOrderID.setValue(source.getCommercialOrder() != null ? source.getCommercialOrder().getOrderNumber() : StringUtils.EMPTY);
+				orderReference.setSalesOrderID(salesOrderID);
+			}
 			orderReference.setIssueDate(getIssueDate(source.getInvoiceDate()));
 			target.setOrderReference(orderReference);
 		}
@@ -654,5 +677,6 @@ public class InvoiceUblHelper {
 			throw new RuntimeException(e);
 		}
 	}
+	
 	
 }

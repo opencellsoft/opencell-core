@@ -62,6 +62,11 @@ public class GenericApiLoadService {
     @Inject
     private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
+    public Long count(Class entityClass, PaginationConfiguration searchConfig) {
+        searchConfig.setForceCount(true);
+        return persistenceDelegate.count(entityClass, searchConfig);
+    }
+
     public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
 
         if(genericFields != null && isAggregationQueries(genericFields)){
@@ -100,13 +105,13 @@ public class GenericApiLoadService {
             return serializeResults(results);
         }else{
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
-            ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
-                    .data(searchResult.getEntityList())
-                    .limit(genericPagingAndFilteringUtils.getLimit(searchConfig.getLimit()))
-                    .offset(Long.valueOf(searchConfig.getFirstRow()))
-                    .total(searchResult.getCount())
-                    .filters(searchConfig.getFilters())
-                    .build();
+            ImmutableGenericPaginatedResource.Builder builder = ImmutableGenericPaginatedResource.builder()
+                                                                                                 .data(searchResult.getEntityList())
+                                                                                                 .limit(genericPagingAndFilteringUtils.getLimit(searchConfig.getLimit()))
+                                                                                                 .offset(Long.valueOf(searchConfig.getFirstRow()))
+                                                                                                 .filters(searchConfig.getFilters());
+            builder.total(searchResult.getCount());
+            ImmutableGenericPaginatedResource genericPaginatedResource = builder.build();
             return JsonGenericMapper.Builder.getBuilder()
                     .withExtractList(Objects.nonNull(extractList) ? extractList : genericOpencellRestful.shouldExtractList())
                     .withNestedEntities(fetchFields)

@@ -339,6 +339,13 @@ public class BillingCycle extends BusinessCFEntity {
     @Column(name = "discount_aggregation", nullable = false)
     private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
     
+    /**
+     * Billing cycle aggregation setting for user accounts
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_user_accounts")
+    private boolean ignoreUserAccounts = true;
+
     public boolean isThresholdPerEntity() {
         return thresholdPerEntity;
     }
@@ -794,4 +801,14 @@ public class BillingCycle extends BusinessCFEntity {
     public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
         this.discountAggregation = discountAggregation;
     }
+
+
+	public boolean isIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
+
+	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+    
 }

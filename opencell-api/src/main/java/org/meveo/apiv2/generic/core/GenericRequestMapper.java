@@ -61,7 +61,7 @@ public class GenericRequestMapper {
         return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
                 computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getGroupBy(), genericPagingAndFiltering.getHaving(), genericPagingAndFiltering.getJoinType(),
-                genericPagingAndFiltering.getIsFilter(), !defaultSort ? genericPagingAndFiltering.getSortBy() : "id", !defaultSort ? Optional.ofNullable(genericPagingAndFiltering.getSortOrder()).map(PagingAndFiltering.SortOrder::valueOf).orElse(null) : PagingAndFiltering.SortOrder.ASCENDING);
+                genericPagingAndFiltering.getIsFilter(), genericPagingAndFiltering.getForceCount(), !defaultSort ? genericPagingAndFiltering.getSortBy() : "id", !defaultSort ? Optional.ofNullable(genericPagingAndFiltering.getSortOrder()).map(PagingAndFiltering.SortOrder::valueOf).orElse(null) : PagingAndFiltering.SortOrder.ASCENDING);
     }
     private List<String> computeFetchFields(GenericPagingAndFiltering genericPagingAndFiltering) {
         if(genericPagingAndFiltering.getSortBy() == null) {
@@ -69,7 +69,7 @@ public class GenericRequestMapper {
         }
 
         List<String> sortByFetchList = Stream.of(genericPagingAndFiltering.getSortBy().split(","))
-                .filter(s -> !s.isBlank() && s.contains("."))
+                .filter(s -> !s.isBlank() && s.contains(".") && !s.contains("cfValues"))
                 .map(s -> getFetchList(s))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());

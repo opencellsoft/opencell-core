@@ -208,6 +208,8 @@ public class BillingCycleDto extends BusinessEntityDto {
     
     private Boolean ignoreOrders;
 
+    private Boolean ignoreUserAccounts;
+
     /**
      * Discount type Rated transaction aggregation mode
      */
@@ -222,6 +224,12 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     @Size(max = 2000)
     private String applicationEl;
+
+    /**
+     * Billing cycle report config
+     */
+    @Schema(description = "Billing cycle report config", nullable = true)
+    private ReportConfig reportConfig = new ReportConfig();
 
     public String getLastTransactionDateDelayEL() {
 		return lastTransactionDateDelayEL;
@@ -306,6 +314,14 @@ public class BillingCycleDto extends BusinessEntityDto {
             ignoreSubscriptions = billingCycleEntity.isIgnoreSubscriptions();
             ignoreOrders = billingCycleEntity.isIgnoreOrders();
             discountAggregation = billingCycleEntity.getDiscountAggregation();
+            ignoreUserAccounts = billingCycleEntity.isIgnoreUserAccounts();
+            this.reportConfig = new ReportConfig(billingCycleEntity.getReportConfigPreReportAutoOnCreate(),
+                    billingCycleEntity.getReportConfigPreReportAutoOnInvoiceLinesJob(),
+                    billingCycleEntity.getReportConfigDisplayBillingAccounts(), billingCycleEntity.getReportConfigDisplaySubscriptions(),
+                    billingCycleEntity.getReportConfigDisplayOffers(), billingCycleEntity.getReportConfigDisplayProducts(),
+                    billingCycleEntity.getReportConfigDisplayArticles(), billingCycleEntity.getReportConfigBlockSizeBillingAccounts(),
+                    billingCycleEntity.getReportConfigBlockSizeSubscriptions(), billingCycleEntity.getReportConfigBlockSizeOffers(),
+                    billingCycleEntity.getReportConfigBlockSizeProducts(), billingCycleEntity.getReportConfigBlockSizeArticles());
         }
     }
 
@@ -816,5 +832,22 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
         this.discountAggregation = discountAggregation;
+    }
+
+
+	public Boolean getIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
+
+	public void setIgnoreUserAccounts(Boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+
+    public ReportConfig getReportConfig() {
+        return reportConfig;
+    }
+
+    public void setReportConfig(ReportConfig reportConfig) {
+        this.reportConfig = reportConfig;
     }
 }

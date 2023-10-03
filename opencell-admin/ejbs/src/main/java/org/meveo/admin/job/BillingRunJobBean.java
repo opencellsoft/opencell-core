@@ -125,6 +125,7 @@ public class BillingRunJobBean extends BaseJobBean {
                 billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
                 billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
                 billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+                billingRun.setIgnoreUserAccounts(billingCycle.isIgnoreUserAccounts());
                 billingRun.setProcessDate(new Date());
                 billingRun.setProcessType(billingCycleType);
                 billingRun.setStatus(BillingRunStatusEnum.NEW);

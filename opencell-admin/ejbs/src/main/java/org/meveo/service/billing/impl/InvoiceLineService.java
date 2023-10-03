@@ -41,6 +41,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.NotFoundException;
 
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
@@ -703,6 +704,19 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             UserAccount userAccount = userAccountService.findByCode(resource.getUserAccountCode());
             if(userAccount == null) {
                 throw new EntityDoesNotExistsException(UserAccount.class, resource.getUserAccountCode());
+            }
+            Invoice invoice = invoiceLine.getInvoice();
+            
+            if(invoice == null) {
+            	if(StringUtils.isNotBlank(resource.getInvoiceId())){
+	            	invoice = invoiceService.findById(resource.getInvoiceId());
+	            	if(invoice == null) {
+	            		throw new NotFoundException("Invoice with id"+resource.getInvoiceId()+" does not exist.");
+	            	}
+            	}
+            }
+            if(!invoice.getBillingAccount().getId().equals(userAccount.getBillingAccount().getId())) {
+            	throw new BusinessException("You cannot assign the user account with " + userAccount.getBillingAccount() + " to the invoice line, as it differs from the invoice's " + invoice.getBillingAccount());
             }
             invoiceLine.setUserAccount(userAccount);
         } else if (resource.getUserAccountCode() != null) {

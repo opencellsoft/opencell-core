@@ -785,6 +785,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	@Column(name = "ubl_reference")
 	@Type(type = "numeric_boolean")
 	private boolean ublReference;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "pdp_status_id")
+	private PDPStatusEntity pdpStatus;
     
     public Invoice() {
 	}
@@ -2081,5 +2085,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	
 	public void setUblReference(boolean ublReference) {
 		this.ublReference = ublReference;
+	}
+	
+	public PDPStatusEntity getPdpStatus() {
+		return pdpStatus;
+	}
+	
+	public void setPdpStatus(PDPStatusEntity pdpStatus) {
+		this.pdpStatus = pdpStatus;
 	}
 }

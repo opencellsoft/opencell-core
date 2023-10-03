@@ -385,6 +385,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     public ActionStatus anonymizeGdprV2(String customerCode) {
         return anonymizeGdpr(customerCode);
     }
+    
+    @Override
+    public ActionStatus updateAnonymizeGdpr(String customerCode) {
+        return anonymizeGdpr(customerCode);
+    }
 
     @Override
     public ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData) {

@@ -12043,6 +12043,56 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         <sql>call proc_recreate_audit_data_trigger('billing_subscription','status,user_account_id,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
         <sql>call proc_recreate_audit_data_trigger('billing_service_instance','status,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
     </changeSet>
+
+
+    <changeSet id="#INTRD-18352_20230915_data_build" author="TarikFA.">
+        <insert tableName="electronic_invoice_settings">
+            <column name="id" valueSequenceNext="electronic_invoice_settings_seq"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+
+            <column name="force_xml_generation" valueNumeric="0" />
+            <column name="force_pdf_generation" valueNumeric="0" />
+            <column name="force_ubl_generation" valueNumeric="0" />
+            <column name="invoicing_job" value="InvoicingJob"/>
+            <column name="xml_generation_job" value="XMLGenrationJob"/>
+            <column name="pdf_generation_job" value="PDFGenrationJob"/>
+            <column name="ubl_generation_job" value="UBLGenerationJob"/>
+        </insert>
+    </changeSet>
+	
+	<changeSet id="#INTRD-18587_20230925" author="aelmalki">
+		<sql>
+		<![CDATA[
+			INSERT INTO ${db.schema.adapted}iso_icd(id,version,created,updated,creator,updater,code,scheme_name) VALUES
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0214', 'Tradeplace TradePI Standard'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0215', 'Net service ID'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0216', 'OVTcode'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0217', 'The Netherlands Chamber of Commerce and Industry establishment number'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0218', 'Unified registration number (Latvia)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0219', 'Taxpayer registration code (Latvia)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0220', 'The Register of Natural Persons (Latvia)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0221', 'The registered number of the qualified invoice issuer'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0222', 'Metadata Registry Support'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0223', 'EU based company'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0224', 'FTCTC CODE ROUTAGE'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0225', 'FRCTC ELECTRONIC ADDRESS'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0226', 'FRCTC Particulier'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0227', 'NON - EU based company'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0228', 'Répertoire des Entreprises et des Etablissements (RIDET)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0229', 'T.A.H.I.T.I (traitement automatique hiérarchisé des institutions de Tahiti et des îles)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0230', 'National e-Invoicing Framework');
+			
+			
+			INSERT INTO ${db.schema.adapted}untdid_1001_invoice_code_type(id,version,created,updated,creator,updater,code,en16931_interpretation,name) VALUES
+				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '105', 'Purchase order', 'Purchase order'),
+				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '220', 'Order', 'Order'),
+				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '310', 'Offer/quotation', 'Offer/quotation');
+			
+		]]>
+		</sql>
+    </changeSet>
 	
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
@@ -12057,6 +12107,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="INTRD-17135_20230713" author="TarikFA." />
 	<changeSet id="#INTRD-16833-20230830" author="ZBariki" />
     <changeSet id="#INTRD-10574_20230214" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-18352_20230915_data" author="TarikFA." />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

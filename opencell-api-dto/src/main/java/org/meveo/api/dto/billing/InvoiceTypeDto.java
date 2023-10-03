@@ -130,6 +130,8 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     private String vatPaymentOption;
     
     private List<LanguageDescriptionDto> languageDescriptions;
+    
+    private String customUblScript;
 
     /**
      * Instantiates a new invoice type dto.
@@ -173,6 +175,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
             this.untdidInvoiceSubjectCode = invoiceType.getUntdidInvoiceCodeType().getCode();
         }
         languageDescriptions = convertMultiLanguageFromMapOfValues(invoiceType.getDescriptionI18n());
+        customUblScript = invoiceType.getCustomUblScript() != null ? invoiceType.getCustomUblScript().getCode() : null;
     }
 
     /**
@@ -525,5 +528,13 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
         this.languageDescriptions = languageDescriptions;
     }
+
+	public String getCustomUblScript() {
+		return customUblScript;
+	}
+
+	public void setCustomUblScript(String customUblScript) {
+		this.customUblScript = customUblScript;
+	}
 	
 }

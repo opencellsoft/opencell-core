@@ -59,7 +59,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
             return null;
         }
 
-        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where lower(code)=:code", entityClass)
+        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where lower(be.code)=:code", entityClass)
             .setParameter("code", code.toLowerCase()).setMaxResults(1);
         if (cacheQueryResults) {
             query.setHint("org.hibernate.cacheable", "TRUE");

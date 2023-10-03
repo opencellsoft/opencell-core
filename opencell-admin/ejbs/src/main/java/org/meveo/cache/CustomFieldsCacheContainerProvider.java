@@ -509,7 +509,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
             return getCustomFieldTemplate(code, CustomFieldTemplateService.calculateAppliesToValue(entity));
 
         } catch (CustomFieldException e) {
-            log.error("Can not determine applicable CFT type for entity of {} class.", entity.getClass().getSimpleName());
+            log.error("Can not determine applicable CFT type for entity of {} class.", entity.getClass().getSimpleName(), e);
         }
         return null;
     }

@@ -487,6 +487,9 @@
         <createSequence sequenceName="product_amount_seq" startValue="1"/>
         <createSequence sequenceName="subscription_amount_seq" startValue="1"/>
         <createSequence sequenceName="accounting_article_amount_seq" startValue="1"/>
+        <createSequence sequenceName="electronic_invoice_settings_seq" startValue="1"/>
+        <createSequence sequenceName="pdp_status_seq" startValue="1"/>
+        <createSequence sequenceName="pdp_status_history_seq" startValue="1"/>
     </changeSet>
 
 
@@ -2005,6 +2008,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updated" type="datetime" />
             <column name="updater" type="varchar(100)" />
+            <column name="role_description" type="varchar(255)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-140">
@@ -2808,6 +2812,7 @@
             <column name="pre_report_auto_on_invoice_line_job" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="billed_rated_transactions_report_id" type="${cast.long}" />
 			<column name="application_el" type="varchar(2000)" />
+			<column name="ignore_user_accounts" type="${type.boolean}" defaultValueNumeric="1" />
 		</createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
@@ -3048,6 +3053,7 @@
             <column name="report_config_block_size_offers" type="int4" defaultValueNumeric="10"/>
             <column name="report_config_block_size_products" type="int4" defaultValueNumeric="10"/>
             <column name="report_config_block_size_articles" type="int4" defaultValueNumeric="10"/>
+            <column name="ignore_user_accounts" type="${type.boolean}" defaultValueNumeric="1" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -3232,6 +3238,7 @@
             <column name="external_purchase_order_number" type="varchar(100)" />
             <column name="ubl_reference" type="${type.boolean}" defaultValueNumeric="0" />
 			<column name="sips_batch_archive_name" type="varchar(255)" />
+            <column name="pdp_status_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -6925,6 +6932,7 @@
             </column>
 		    <column name="invoice_subject_code" type="bigint" />
 			<column name="description_i18n" type="${type.json}"></column>
+			<column name="custom_ubl_script_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-318">
@@ -12964,7 +12972,60 @@
             <column name="billing_run_report_id" type="${cast.long}"/>
         </createTable>
     </changeSet>
-        
+
+    <changeSet id="#INTRD-18393_20230920_rebuild" author="TarikFA.">
+        <createTable tableName="pdp_status_history">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pdp_status_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+
+            <column name="pdp_status" type="varchar(30)">
+                <constraints nullable="false" />
+            </column>
+            <column name="event_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="origin" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable tableName="pdp_status">
+            <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pdp_status_history_pkey"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+
+            <column name="transmitted_format" type="varchar(15)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="origin" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="return_code" type="int4" />
+            <column name="label" type="varchar(255)" />
+            <column name="invoice_identifier" type="varchar(50)" />
+            <column name="invoice_number" type="varchar(50)" />
+            <column name="invoice_id" type="bigint" />
+            <column name="status" type="varchar(30)" />
+            <column name="deposit_date" type="datetime" />
+        </createTable>
+
+    </changeSet>
+
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1">
@@ -13033,7 +13094,33 @@
             <column name="price_plan_matrix_line_id" type="bigint" />
        </createTable>
     </changeSet>
+    <changeSet id="#INTRD-14904_20230915_build" author="TarikFA.">
+        <createTable tableName="electronic_invoice_settings">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_electr_invoice_settings" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name= "force_xml_generation" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name= "force_pdf_generation" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name= "force_ubl_generation" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name= "invoicing_job" type="varchar(50)" />
+            <column name= "xml_generation_job" type="varchar(50)" />
+            <column name= "pdf_generation_job" type="varchar(50)" />
+            <column name= "ubl_generation_job" type="varchar(50)" />
+        </createTable>
 
+        <createTable tableName="pdp_status_and_history">
+            <column name="pdpstatus_id" type="bigint" />
+            <column name="history_id" type="bigint" />
+        </createTable>
+
+    </changeSet>
     <!-- start uk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-422">
@@ -17709,7 +17796,21 @@
         <addForeignKeyConstraint baseTableName="accounting_article_amount" baseColumnNames="billing_run_report_id"
                                  constraintName="accounting_article_amount_br_report_id_fk"
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="pdp_status" baseColumnNames="invoice_id"
+                                 constraintName="fk_pdp_status_invoice" referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_invoice" baseColumnNames="pdp_status_id"
+                                 constraintName="fk_invoice_pdp_status_id" referencedTableName="billing_invoice"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="pdp_status_and_history" baseColumnNames="pdpstatus_id"
+                                 constraintName="fk_pdp_status_its_history_id" referencedTableName="pdp_status"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="pdp_status_and_history" baseColumnNames="history_id"
+                                 constraintName="fk_pdp_status_history_id" referencedTableName="pdp_status_history"
+                                 referencedColumnNames="id"/>
     </changeSet>
+
 
     <!-- end fk -->
 
@@ -20773,6 +20874,12 @@
                                  referencedTableName="billing_invoice_line"/>
     </changeSet>
 
+    <changeSet author="AdilElJaouhari" id="#INTRD-18527_20231002_fk">
+		<addForeignKeyConstraint baseColumnNames="custom_ubl_script_id" baseTableName="billing_invoice_type	"
+                                 constraintName="fk_custom_ubl_script_id_meveo_script_instance" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
 
    	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA."/>
    	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA."/>
@@ -20884,7 +20991,14 @@
     <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-18276_20230908" author="aelmalki" />
 	<changeSet id="#INTRD-18280_20230911" author="aelmalki" />
-	
+	<changeSet id="#INTRD-17184_20230829" author="aelmalki" />
+	<changeSet id="#INTRD-18386_20230915" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-14904_20230915" author="TarikFA." />
+    <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" />
+    <changeSet id="#INTRD-18393_20230920" author="TarikFA." />
+    <changeSet id="#INTRD-18394_20231002" author="TarikFA." />
+    <changeSet id="#INTRD-18527_20231002" author="AdilElJaouhari" />
+
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

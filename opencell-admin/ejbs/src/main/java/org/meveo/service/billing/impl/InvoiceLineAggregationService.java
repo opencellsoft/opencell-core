@@ -204,7 +204,7 @@ public class InvoiceLineAggregationService implements Serializable {
                     "amountWithoutTax as sum_without_tax", "amountWithTax as sum_with_tax", "offerTemplate.id as offer_id", "serviceInstance.id as service_instance_id", "usageDate as usage_date",
                     "startDate as start_date", "endDate as end_date", "orderNumber as order_number", "infoOrder.order.id as commercial_order_id", "infoOrder.order.id as order_id", "taxPercent as tax_percent",
                     "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id", "infoOrder.orderLot.id as order_lot_id", "chargeInstance.id as charge_instance_id", "accountingArticle.id as article_id",
-                    "discountedRatedTransaction as discounted_ratedtransaction_id", "discountPlanType as discount_plan_type", "discountValue as discount_value", "subscription.id as subscription_id"));
+                    "discountedRatedTransaction as discounted_ratedtransaction_id", "discountPlanType as discount_plan_type", "discountValue as discount_value", "subscription.id as subscription_id", "userAccount.id as user_account_id"));
 
         } else {
             fieldToFetch = new ArrayList<>(
@@ -223,6 +223,11 @@ public class InvoiceLineAggregationService implements Serializable {
                 fieldToFetch.add("orderNumber as order_number");
                 fieldToFetch.add("infoOrder.order.id as order_id");
             }
+            
+            if(!aggregationConfiguration.isIgnoreUserAccounts()) {
+                fieldToFetch.add("userAccount.id as user_account_id");
+            }
+            
             if (aggregationConfiguration.isUseAccountingArticleLabel()) {
                 fieldToFetch.add("accountingArticle.description as label");
             } else {
@@ -369,6 +374,8 @@ public class InvoiceLineAggregationService implements Serializable {
         mapToInvoiceLineTable.put("service_instance_id", "((agr.service_instance_id is null and ivl.service_instance_id is null) or agr.service_instance_id = ivl.service_instance_id)");
         mapToInvoiceLineTable.put("order_id", "((agr.order_id is null and ivl.commercial_order_id is null) or agr.order_id =  ivl.commercial_order_id)");
         mapToInvoiceLineTable.put("order_number", "((agr.order_number is null and ivl.order_number is null) or agr.order_number = ivl.order_number)");
+        mapToInvoiceLineTable.put("user_account_id", "((agr.user_account_id is null and  ivl.user_account_id is null) or agr.user_account_id = ivl.user_account_id)");
+        
         if (appProvider.isEntreprise()) {
             mapToInvoiceLineTable.put("unit_amount_without_tax", "((agr.unit_amount_without_tax is null or ivl.unit_price is null) or agr.unit_amount_without_tax = ivl.unit_price)");
         } else {

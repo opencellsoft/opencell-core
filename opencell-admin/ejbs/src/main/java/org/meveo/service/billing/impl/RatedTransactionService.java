@@ -115,7 +115,6 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
@@ -285,8 +284,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param entityToInvoice Entity for which to convert Wallet operations to Rated transactions
      * @param uptoInvoicingDate Up to invoicing date. Convert Wallet operations which invoicingDate is null or less than a specified date
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createRatedTransactions(IBillableEntity entityToInvoice, Date uptoInvoicingDate) {
         List<WalletOperation> walletOps = walletOperationService.listToRate(entityToInvoice, uptoInvoicingDate);
 
@@ -1504,6 +1501,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             ratedTransaction.setStartDate(dto.getStartDate());
             ratedTransaction.setEndDate(dto.getEndDate());
             ratedTransaction.setTaxPercent(dto.getTaxPercent());
+            ratedTransaction.setBusinessKey(dto.getBusinessKey());
             create(ratedTransaction);
         }
     }
@@ -2303,50 +2301,103 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } else {
             return getEntityManager()
                     .createNamedQuery("RatedTransaction.findBillingRunReportDetails")
-                    .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-                    .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
                     .setParameter("ids", ratedTransactionIds)
                     .getResultList();
         }
     }
 
-    public List<Object[]> getBillingAccountStatisticsDetails(BillingRun billingRun,
-                                                             List<Long> ratedTransactionIds, Map<String, Object> filters) {
+    public List<Object[]> getBillingAccountStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds,
+                                                             Map<String, Object> filters, int blockSize) {
         if(filters != null && !filters.isEmpty()) {
             return getEntityManager()
                     .createNamedQuery("RatedTransaction.findAmountsPerBillingAccountBilledDetails")
                     .setParameter("billingRun", billingRun)
                     .setParameter("ids", ratedTransactionIds)
-                    .setMaxResults(10)
+                    .setMaxResults(blockSize)
                     .getResultList();
         } else {
             return getEntityManager()
                     .createNamedQuery("RatedTransaction.findAmountsPerBillingAccount")
-                    .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-                    .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
                     .setParameter("ids", ratedTransactionIds)
-                    .setMaxResults(10)
+                    .setMaxResults(blockSize)
                     .getResultList();
         }
     }
 
-    public List<Object[]> getOfferStatisticsDetails(BillingRun billingRun,
-                                                    List<Long> ratedTransactionIds, Map<String, Object> filters) {
+    public List<Object[]> getOfferStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds,
+                                                    Map<String, Object> filters, int offerBlockSize) {
         if(filters != null && !filters.isEmpty()) {
             return getEntityManager()
                     .createNamedQuery("RatedTransaction.findAmountsPerOfferBilledDetails")
                     .setParameter("billingRun", billingRun)
                     .setParameter("ids", ratedTransactionIds)
-                    .setMaxResults(10)
+                    .setMaxResults(offerBlockSize)
                     .getResultList();
         } else {
             return getEntityManager()
                     .createNamedQuery("RatedTransaction.findAmountsPerOffer")
-                    .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-                    .setParameter("invoiceUpToDate", billingRun.getInvoiceDate())
                     .setParameter("ids", ratedTransactionIds)
-                    .setMaxResults(10)
+                    .setMaxResults(offerBlockSize)
+                    .getResultList();
+        }
+    }
+
+    public String evaluateEl(String expression, Map<Object, Object> contextMap, Class<String> class1) {
+		return evaluateExpression(expression, contextMap, String.class);
+}
+
+    public List<Object[]> getSubscriptionStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds,
+                                                    Map<String, Object> filters, int subscriptionBlockSize) {
+        if(filters != null && !filters.isEmpty()) {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findAmountsPerSubscriptionBilledDetails")
+                    .setParameter("billingRun", billingRun)
+                    .setParameter("ids", ratedTransactionIds)
+                    .setMaxResults(subscriptionBlockSize)
+                    .getResultList();
+        } else {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findAmountsPerSubscription")
+                    .setParameter("ids", ratedTransactionIds)
+                    .setMaxResults(subscriptionBlockSize)
+                    .getResultList();
+        }
+    }
+
+    public List<Object[]> getArticleStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds,
+                                                           Map<String, Object> filters, int subscriptionBlockSize) {
+        if(filters != null && !filters.isEmpty()) {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findAmountsPerArticleBilledDetails")
+                    .setParameter("billingRun", billingRun)
+                    .setParameter("ids", ratedTransactionIds)
+                    .setMaxResults(subscriptionBlockSize)
+                    .getResultList();
+        } else {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findAmountsPerArticle")
+                    .setParameter("ids", ratedTransactionIds)
+                    .setMaxResults(subscriptionBlockSize)
+                    .getResultList();
+        }
+    }
+
+    public List<Object[]> getProductStatisticsDetails(BillingRun billingRun, List<Long> ratedTransactionIds,
+                                                           Map<String, Object> filters, int subscriptionBlockSize) {
+        if(filters != null && !filters.isEmpty()) {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findAmountsPerProductBilledDetails")
+                    .setParameter("billingRun", billingRun)
+                    .setParameter("ids", ratedTransactionIds)
+                    .setMaxResults(subscriptionBlockSize)
+                    .getResultList();
+        } else {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findAmountsPerProduct")
+                    .setParameter("ids", ratedTransactionIds)
+                    .setMaxResults(subscriptionBlockSize)
                     .getResultList();
         }
     }
 }
+
