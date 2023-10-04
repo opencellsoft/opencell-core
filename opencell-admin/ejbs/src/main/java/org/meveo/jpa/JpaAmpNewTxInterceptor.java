@@ -18,12 +18,10 @@
 
 package org.meveo.jpa;
 
-import java.io.Serializable;
-
-import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import java.io.Serializable;
 
 /**
  * Interceptor that in case of application managed persistence context, a new EM will be instantiated for the period of a method call
@@ -35,16 +33,6 @@ import javax.interceptor.InvocationContext;
 public class JpaAmpNewTxInterceptor implements Serializable {
 
     private static final long serialVersionUID = -7397037942696135998L;
-
-    @Inject
-    @MeveoJpa
-    private EntityManagerWrapper emWrapper;
-
-    @Inject
-    private EntityManagerProvider entityManagerProvider;
-
-//    @Inject
-//    private Logger log;
 
     /**
      * Instantiate a new EM if EM is application managed persistence context
