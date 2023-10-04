@@ -19103,6 +19103,33 @@ public class ValidateBRScript extends ValidateBR {
             <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
         </update>
     </changeSet>
+    
+    <changeSet id="INTRD-18792_INSERT_DEFAULT_CONFIGURATION" author="Mohammed_ElAzzouzi">
+	    <insert tableName="cat_price_plan_matrix_configuration">
+	        <column name="id" valueNumeric="1"/>
+	        <column name="version" valueNumeric="1"/>
+	        <column name="created" valueDate="${db.current.time}"/>
+	        <column name="creator" value="applicationInitializer"/>
+	        <column name="use_event_code" valueNumeric="1"/>
+	        <column name="use_seller_id" valueNumeric="0"/>
+	        <column name="use_offer_id" valueNumeric="0"/>
+	        <column name="use_trading_country_id" valueNumeric="0"/>
+	        <column name="use_trading_currency_id" valueNumeric="0"/>
+	        <column name="use_criteria_1" valueNumeric="0"/>
+	        <column name="use_criteria_2" valueNumeric="0"/>
+	        <column name="use_criteria_3" valueNumeric="0"/>
+	        <column name="use_start_subscription_date" valueNumeric="0"/>
+	        <column name="use_end_subscription_date" valueNumeric="0"/>
+	        <column name="use_min_subscr_age" valueNumeric="0"/>
+	        <column name="use_max_subscr_age" valueNumeric="0"/>
+	        <column name="use_start_rating_date" valueNumeric="0"/>
+	        <column name="use_end_rating_date" valueNumeric="0"/>
+	        <column name="use_validity_from" valueNumeric="0"/>
+	        <column name="use_validity_date" valueNumeric="0"/>
+	        <column name="use_max_quantity" valueNumeric="0"/>
+	        <column name="use_min_quantity" valueNumeric="0"/>
+	    </insert>
+	</changeSet>
 
 
 </databaseChangeLog>
