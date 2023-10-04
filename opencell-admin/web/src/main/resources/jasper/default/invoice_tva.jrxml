@@ -4,7 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ExemptionReason2"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="yassine-bankcoordinate"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
@@ -293,11 +293,17 @@
 		<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/header/seller/paymentGateway/bankName"/>
 		<fieldDescription><![CDATA[/invoice/header/seller/paymentGateway/bankName]]></fieldDescription>
 	</field>
+	<field name="providerIban" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/provider/bankCoordinates/iban]]></fieldDescription>
+	</field>
+	<field name="providerBic" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/provider/bankCoordinates/bic]]></fieldDescription>
+	</field>
 	<group name="subCategory"/>
 	<group name="1"/>
 	<group name="2">
 		<groupHeader>
-			<band height="354">
+			<band height="355">
 				<rectangle radius="10">
 					<reportElement x="254" y="196" width="327" height="43" forecolor="#F2F4F5" backcolor="#F2F4F5" uuid="cea08215-b38e-46aa-bd62-e0051c5b3821">
 						<property name="com.jaspersoft.studio.element.name" value="coordonnees_container"/>
@@ -416,7 +422,7 @@
 					</graphicElement>
 				</line>
 				<rectangle>
-					<reportElement x="16" y="270" width="564" height="60" backcolor="#F2F2F2" uuid="5891029e-09c5-4a9e-b520-da38f1595c7e"/>
+					<reportElement x="16" y="274" width="564" height="76" backcolor="#F2F2F2" uuid="5891029e-09c5-4a9e-b520-da38f1595c7e"/>
 				</rectangle>
 				<staticText>
 					<reportElement x="18" y="274" width="532" height="20" uuid="c9aaec53-65b2-40b7-8e9e-63dbea0515aa"/>
@@ -437,7 +443,7 @@
 					<textElement>
 						<font fontName="SansSerif" size="10" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Any amounts owned that are not paid will due shall bear interest, from the time the payment was due until the time paid,          at a rate of 10% per annum compounded annually.]]></text>
+					<text><![CDATA[Any amounts owned that are not paid will due shall bear interest, from the time the payment was due until the time paid,          at a rate of 10% per annum compounded annually. The payment can be done by transfer to the following Bank Account:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="28" y="39" width="72" height="20" uuid="e6ff4f08-4119-40fe-a94b-0e8c5e45629e">
@@ -728,6 +734,50 @@
 						</jr:column>
 					</jr:table>
 				</componentElement>
+				<staticText>
+					<reportElement x="17" y="330" width="34" height="20" uuid="8cd10030-912c-417b-a1ff-f44c9d859022">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box padding="1"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="SansSerif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[IBAN:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="49" y="330" width="170" height="20" uuid="96a1842f-e1f7-48e9-8a7a-5e0d23f54220"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{providerIban}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="224" y="330" width="34" height="20" uuid="2cc8c8c1-e9ad-4d74-b71d-0f29aeeae9c1">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box padding="1"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="SansSerif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[BIC:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="250" y="330" width="96" height="20" uuid="b2e54e22-210f-4d33-93f9-00d3efe5a4a1"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{providerBic}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="19" y="320" width="350" height="16" uuid="65d93a88-51a7-4c6e-bc15-c5c21b9a410c">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box padding="1"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[------------------------------------------------------------------------------------------------]]></text>
+				</staticText>
 			</band>
 			<band/>
 		</groupHeader>
