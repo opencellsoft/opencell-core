@@ -2,14 +2,15 @@ package org.meveo.admin.job;
 
 import static java.lang.Long.valueOf;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.DiscountAggregationModeEnum;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
@@ -50,6 +52,7 @@ import org.meveo.service.billing.impl.InvoiceLineAggregationService.RTtoILAggreg
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceLineService.InvoiceLineCreationStatistics;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobInstanceService;
 
 @Stateless
 public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, Object>>> {
@@ -76,6 +79,9 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
+    @Inject
+    private JobInstanceService jobInstanceService;
+
     private AggregationConfiguration aggregationConfiguration;
     private boolean incrementalInvoiceLines;
 
@@ -91,6 +97,9 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
      * Job process one billing run at a time. A current billing run being processed
      */
     private BillingRun currentBillingRun;
+
+    private static final String BILLING_RUN_REPORT_JOB_CODE = "BILLING_RUN_REPORT_JOB";
+
 
     /**
      * Execution statistics
@@ -334,6 +343,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             }
 
             billingRunService.updateBillingRunJobExecution(currentBillingRun.getId(), jobExecutionResult);
+            runBillingRunReports(asList(currentBillingRun.getId()));
         }
     }
 
@@ -370,14 +380,14 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
         List<EntityReferenceWrapper> billingRunWrappers = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun");
         List<Long> billingRunIds = billingRunWrappers != null ? billingRunWrappers.stream().map(br -> valueOf(br.getCode().split("/")[0])).collect(toList()) : emptyList();
-        List<BillingRunStatusEnum> billingRunStatus = Arrays.asList(BillingRunStatusEnum.NEW, BillingRunStatusEnum.OPEN);
+        List<BillingRunStatusEnum> billingRunStatus = asList(BillingRunStatusEnum.NEW, BillingRunStatusEnum.OPEN);
         Map<String, Object> filters = new HashMap<>();
         if (billingRunIds.isEmpty()) {
             filters.put("inList status", billingRunStatus);
         } else {
             filters.put("inList id", billingRunIds);
         }
-        PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, Arrays.asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
+        PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
 
         List<BillingRun> billingRuns = billingRunService.list(pagination);
 
@@ -447,5 +457,23 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 //        // @NamedQuery(name="RatedTransaction.getDistinctBaAndBr",query="SELECT k.baId, :brId from (SELECT rt.billingAccount.id as baId from RatedTransaction rt where rt.status='OPEN' and
 //        // rt.billingAccount.billingCycle.id in :bcIds and rt.id<=:maxId) k")
 //    }
+
+    private void runBillingRunReports(List<Long> billingRuns) {
+        Map<String, Object> jobParams = new HashMap<>();
+        jobParams.put("billingRun", billingRuns.stream()
+                .map(String::valueOf)
+                .collect(joining("/")));
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("status", RatedTransactionStatusEnum.BILLED.toString());
+        jobParams.put("filters", filters);
+        try {
+            JobInstance jobInstance = jobInstanceService.findByCode(BILLING_RUN_REPORT_JOB_CODE);
+            jobInstance.setRunTimeValues(jobParams);
+            jobExecutionService.executeJob(jobInstance, jobParams, JobLauncherEnum.TRIGGER);
+        } catch (Exception exception) {
+            throw new BusinessException("Exception occurred during billing run report job execution : "
+                    + exception.getMessage(), exception.getCause());
+        }
+    }
 
 }

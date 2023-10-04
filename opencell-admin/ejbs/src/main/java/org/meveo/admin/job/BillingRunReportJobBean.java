@@ -9,6 +9,7 @@ import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunReport;
 import org.meveo.model.billing.BillingRunReportTypeEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -73,8 +74,16 @@ public class BillingRunReportJobBean extends BaseJobBean {
             if (filters != null && !filters.isEmpty()) {
                 filters.put("billingRun", billingRun);
             }
-            billingRunReportService.createBillingRunReport(billingRun, filters, reportType);
-            billingRunService.updateBillingRunJobExecution(billingRun.getId(), jobExecutionResult);
+            BillingRunReport billingRunReport =
+                    billingRunReportService.createBillingRunReport(billingRun, filters, reportType);
+            billingRun = billingRunService.refreshOrRetrieve(billingRun);
+            if(OPEN_RATED_TRANSACTIONS.equals(reportType)) {
+                billingRun.setPreInvoicingReport(billingRunReport);
+            } else {
+                billingRun.setBilledRatedTransactionsReport(billingRunReport);
+            }
+            billingRun.addJobExecutions(jobExecutionResult);
+            billingRunService.update(billingRun);
             countOfReportCreated++;
         }
         return countOfReportCreated;
