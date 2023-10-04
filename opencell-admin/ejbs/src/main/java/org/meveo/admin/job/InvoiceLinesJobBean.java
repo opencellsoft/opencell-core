@@ -282,25 +282,27 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
     private void dropView() {
 
-        EntityManager em = emWrapper.getEntityManager();
-        Session hibernateSession = em.unwrap(Session.class);
-
-        String viewName = InvoiceLineAggregationService.getMaterializedAggregationViewName(currentBillingRun.getId());
-        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
-
-            @Override
-            public void execute(Connection connection) throws SQLException {
-
-                try (Statement statement = connection.createStatement()) {
-                    log.info("Dropping materialized view {}", viewName);
-                    statement.execute("drop materialized view if exists " + viewName);
-
-                } catch (Exception e) {
-                    log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
-                    throw new BusinessException(e);
-                }
-            }
-        });
+    	if(currentBillingRun!=null) {
+	        EntityManager em = emWrapper.getEntityManager();
+	        Session hibernateSession = em.unwrap(Session.class);
+	
+	        String viewName = InvoiceLineAggregationService.getMaterializedAggregationViewName(currentBillingRun.getId());
+	        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+	
+	            @Override
+	            public void execute(Connection connection) throws SQLException {
+	
+	                try (Statement statement = connection.createStatement()) {
+	                    log.info("Dropping materialized view {}", viewName);
+	                    statement.execute("drop materialized view if exists " + viewName);
+	
+	                } catch (Exception e) {
+	                    log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
+	                    throw new BusinessException(e);
+	                }
+	            }
+	        });
+    	}
     }
 
     /**
