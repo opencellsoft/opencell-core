@@ -307,6 +307,9 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
     public Map<String, Object> execute(String scriptCode, Map<String, Object> context) throws InvalidPermissionException, ElementNotFoundException, BusinessException {
 
         ScriptInstance scriptInstance = findByCode(scriptCode, true);
+        if(scriptInstance == null) {
+            throw new BusinessException("Script instance not found code : " + scriptCode);
+        }
         // Check access to the script
         isUserHasExecutionRole(scriptInstance);
 
