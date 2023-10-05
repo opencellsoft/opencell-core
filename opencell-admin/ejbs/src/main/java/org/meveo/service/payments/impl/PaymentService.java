@@ -1006,7 +1006,7 @@ public class PaymentService extends PersistenceService<Payment> {
                                                       String transactionalCurrencyCode, Date transactionDate) {
         TradingCurrency functionalCurrency = appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode() != null ?
                 tradingCurrencyService.findByTradingCurrencyCode(appProvider.getCurrency().getCurrencyCode()) : null;
-        TradingCurrency transactionalCurrency = customerAccount.getTradingCurrency();
+        TradingCurrency transactionalCurrency = customerAccount != null ? customerAccount.getTradingCurrency() : null;
 
         BigDecimal lastApliedRate = BigDecimal.ONE;
         Date transactionDateToUse = transactionDate == null ? new Date() : transactionDate;
@@ -1018,7 +1018,7 @@ public class PaymentService extends PersistenceService<Payment> {
             checkTransactionalCurrency(transactionalCurrencyCode, transactionalCurrency);
         }
 
-        if (functionalCurrency != null && !functionalCurrency.equals(transactionalCurrency)) {
+        if (functionalCurrency != null && transactionalCurrency != null && !functionalCurrency.equals(transactionalCurrency)) {
             ExchangeRate exchangeRate = getExchangeRate(transactionalCurrency, transactionDateToUse);
             if (!Objects.equals(exchangeRate.getExchangeRate(), BigDecimal.ZERO)) {
                 functionalAmount = transactionalAmount.divide(exchangeRate.getExchangeRate(),
