@@ -420,7 +420,7 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
         	if (customUblScript == null) {
                 throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getCustomUblScript());
             } else if (customUblScript.getScriptInstanceCategory() == null || !"UBL_GENERATION".equals(customUblScript.getScriptInstanceCategory().getCode())) {
-            	throw new MeveoApiException("the script must have the category code : UBL_GENERATION");
+            	throw new MeveoApiException("Custom UBL script must have category UBL_GENERATION");
             }
         	entity.setCustomUblScript(customUblScript);
         } else if ("".equals(dto.getCustomUblScript())) {
