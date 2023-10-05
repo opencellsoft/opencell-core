@@ -235,6 +235,7 @@ public class PricePlanSelectionService implements Serializable {
         }
 
         try {
+        	query.setHint("org.hibernate.cacheable", true);
             PricePlanMatrix pricePlan = query.getSingleResult();
             return pricePlan;
         } catch (NoResultException e) {
