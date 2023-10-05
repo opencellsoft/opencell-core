@@ -455,7 +455,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         TradingCountry buyersCountry = billingAccount.getTradingCountry();
 
         List<TaxMapping> taxMappings = getEntityManager().createNamedQuery("TaxMapping.findApplicableTax", TaxMapping.class).setParameter("taxCategory", taxCategory).setParameter("taxClass", taxClass)
-            .setParameter("sellerCountry", sellersCountry).setParameter("buyerCountry", buyersCountry).setParameter("applicationDate", applicationDate).setFlushMode(FlushModeType.COMMIT).getResultList();
+            .setParameter("sellerCountry", sellersCountry).setParameter("buyerCountry", buyersCountry).setParameter("applicationDate", applicationDate).getResultList();
 
         for (TaxMapping taxMapping : taxMappings) {
             if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate)) {
