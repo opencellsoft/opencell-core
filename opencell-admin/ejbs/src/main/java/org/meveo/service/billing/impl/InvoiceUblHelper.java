@@ -171,11 +171,12 @@ public class InvoiceUblHelper {
 	}
 	
 	private static void setGeneralInfo(org.meveo.model.billing.Invoice source, Invoice target){
-		if(source.getInvoiceType() != null) {
+		if(source.getInvoiceType() != null && source.getInvoiceType().getUntdidInvoiceCodeType() != null) {
+			InvoiceType invoiceType = source.getInvoiceType();
 			InvoiceTypeCode invoiceTypeCode = objectFactorycommonBasic.createInvoiceTypeCode();
-			invoiceTypeCode.setListID("UN/ECE 1001 Subset");
+			invoiceTypeCode.setListID(invoiceType.getUntdidInvoiceCodeType().getCode());
 			invoiceTypeCode.setListAgencyID("6");
-			invoiceTypeCode.setValue(source.getInvoiceType().getCode());
+			invoiceTypeCode.setValue(invoiceType.getCode());
 			target.setInvoiceTypeCode(invoiceTypeCode);
 		}
 		ID id = objectFactorycommonBasic.createID();
@@ -607,6 +608,7 @@ public class InvoiceUblHelper {
 				amount.setValue(subCategoryInvoiceAgregate.getAmountTax());
 				allowanceCharge.setAmount(amount);
 				target.getAllowanceCharges().add(allowanceCharge);
+				
 			});
 		}
 		
