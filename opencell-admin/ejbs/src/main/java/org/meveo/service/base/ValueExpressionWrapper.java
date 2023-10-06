@@ -976,6 +976,7 @@ public class ValueExpressionWrapper {
         if(el.contains(VAR_INVOICE_LINE) && !contextMap.containsKey(VAR_INVOICE_LINE) && invoiceLine != null) {
             contextMap.put(VAR_INVOICE_LINE, invoiceLine);
         }
+        
 
         if(el.contains(VAR_CONTRACT) && !contextMap.containsKey(VAR_CONTRACT) && contract != null) {
         	contextMap.put(VAR_CONTRACT, contract);
