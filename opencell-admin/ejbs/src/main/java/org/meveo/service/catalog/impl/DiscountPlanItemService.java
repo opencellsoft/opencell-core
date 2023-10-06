@@ -312,7 +312,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
         				continue;
         		}
-        		if(discountPlanItem.isApplyByArticle()) {
+        		if(discountPlanItem.isApplyByArticle() && discountPlanItemType!=null) {
         			//this DP item will be handled as a percentage dp, so a discount WO/IL will be created on the product level and linked to the discounted WO/IL
         			isFixedDpItemIncluded=DiscountPlanItemTypeEnum.PERCENTAGE.equals(discountPlanItemType);
         			if(!isFixedDpItemIncluded) {
