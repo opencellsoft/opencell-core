@@ -31,35 +31,15 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.TaxService;
-import org.meveo.service.cpq.ProductVersionService;
-import org.meveo.service.cpq.order.CommercialOrderService;
-import org.meveo.service.cpq.order.OrderLotService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InvoiceLinesFactory {
 
     private BillingAccountService billingAccountService = (BillingAccountService) getServiceInterface(BillingAccountService.class.getSimpleName());
-    private BillingRunService billingRunService = (BillingRunService) getServiceInterface(BillingRunService.class.getSimpleName());
-    private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
-    private OfferTemplateService offerTemplateService = (OfferTemplateService) getServiceInterface(OfferTemplateService.class.getSimpleName());
-    private ServiceInstanceService instanceService = (ServiceInstanceService) getServiceInterface(ServiceInstanceService.class.getSimpleName());
-    private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName());
-    private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
-    private ProductVersionService productVersionService = (ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
-    private OrderLotService orderLotService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
     private RatedTransactionService ratedTransactionService = (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
-    private UserAccountService userAccountService = (UserAccountService) getServiceInterface(UserAccountService.class.getSimpleName());
-    private TaxService taxService = (TaxService) getServiceInterface(TaxService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
     private InvoiceLineService invoiceLineService =
             (InvoiceLineService) getServiceInterface(InvoiceLineService.class.getSimpleName());
@@ -142,9 +122,8 @@ public class InvoiceLinesFactory {
 
         boolean isEnterprise = configuration.isEnterprise();
         if(billingRun != null
-                && billingRun.getBillingCycle() != null
-                && !billingRun.getBillingCycle().isDisableAggregation()
-                && billingRun.getBillingCycle().isAggregateUnitAmounts()) {
+                && billingRun.isDisableAggregation()
+                && billingRun.isAggregateUnitAmounts()) {
             BigDecimal unitAmount = (BigDecimal) data.getOrDefault("sum_without_tax", ZERO);
             BigDecimal quantity = (BigDecimal) data.getOrDefault("quantity", ZERO);
             BigDecimal unitPrice = quantity.compareTo(ZERO) == 0 ? unitAmount : unitAmount.divide(quantity,
@@ -182,8 +161,7 @@ public class InvoiceLinesFactory {
             }
         }
         invoiceLine.setValidity(validity);
-        if(billingRun != null && billingRun.getBillingCycle() != null
-                && billingRun.getBillingCycle().isUseAccountingArticleLabel()
+        if(billingRun != null && billingRun.isUseAccountingArticleLabel()
                 && invoiceLine.getAccountingArticle() != null) {
             String languageCode = getLanguageCode(invoiceLine.getBillingAccount(), appProvider);
             Map<String, String> descriptionsI18N = invoiceLine.getAccountingArticle().getDescriptionI18nNotNull();
