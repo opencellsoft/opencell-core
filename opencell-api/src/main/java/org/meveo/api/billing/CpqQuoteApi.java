@@ -1752,9 +1752,11 @@ public class CpqQuoteApi extends BaseApi {
 		    	quotePrice.setContractItem(accountingArticlePrice.getContractItem());
 		    	quotePrice.setPricePlanMatrixVersion(accountingArticlePrice.getPricePlanMatrixVersion());
 		    	quotePrice.setPricePlanMatrixLine(accountingArticlePrice.getPricePlanMatrixLine());
+                quotePrice.setQuoteArticleLine(accountingArticlePrice.getQuoteArticleLine());
 		    }
-            if(!PriceLevelEnum.OFFER.equals(level)) {
+            if(PriceLevelEnum.QUOTE.equals(level)) {
                 quotePriceService.create(quotePrice);
+                quotePriceService.getEntityManager().flush();
             }
             log.debug("reducePrices1 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
             return Optional.of(quotePrice);
@@ -1784,6 +1786,7 @@ public class CpqQuoteApi extends BaseApi {
 		    	quotePrice.setContractItem(a.getContractItem());
 		    	quotePrice.setPricePlanMatrixVersion(a.getPricePlanMatrixVersion());
 		    	quotePrice.setPricePlanMatrixLine(a.getPricePlanMatrixLine());
+                quotePrice.setQuoteArticleLine(a.getQuoteArticleLine());
 		    }
        	 if(b.getDiscountedQuotePrice()==null)
             	quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax()));
