@@ -361,21 +361,30 @@ public class InvoiceLineAggregationService implements Serializable {
         mapToInvoiceLineTable.put("tax_id", "agr.tax_id = ivl.tax_id");
         mapToInvoiceLineTable.put("tax_percent", "agr.tax_percent =  tax_rate");
         mapToInvoiceLineTable.put("product_version_id", "((agr.product_version_id is null and ivl.product_version_id is null) or agr.product_version_id = ivl.product_version_id)");
-
-        String usageDateAggregation = getUsageDateAggregationFunction(aggregationConfiguration.getDateAggregationOption(), "value_date", "ivl");
-        mapToInvoiceLineTable.put("usage_date", "((agr.usage_date is null and ivl.value_date is null) or  agr.usage_date =" + usageDateAggregation + ")");
-
-        mapToInvoiceLineTable.put("subscription_id", "((agr.subscription_id is null and  ivl.subscription_id is null) or agr.subscription_id = ivl.subscription_id)");
-        mapToInvoiceLineTable.put("service_instance_id", "((agr.service_instance_id is null and ivl.service_instance_id is null) or agr.service_instance_id = ivl.service_instance_id)");
-        mapToInvoiceLineTable.put("order_id", "((agr.order_id is null and ivl.commercial_order_id is null) or agr.order_id =  ivl.commercial_order_id)");
-        mapToInvoiceLineTable.put("order_number", "((agr.order_number is null and ivl.order_number is null) or agr.order_number = ivl.order_number)");
-        if (appProvider.isEntreprise()) {
-            mapToInvoiceLineTable.put("unit_amount_without_tax", "((agr.unit_amount_without_tax is null or ivl.unit_price is null) or agr.unit_amount_without_tax = ivl.unit_price)");
-        } else {
-            mapToInvoiceLineTable.put("unit_amount_with_tax", "((agr.unit_amount_with_tax is null or ivl.unit_price is null) or agr.unit_amount_with_tax = ivl.unit_price)");
+        if(!aggregationConfiguration.isDisableAggregation()) {
+            String usageDateAggregation = getUsageDateAggregationFunction(aggregationConfiguration.getDateAggregationOption(), "value_date", "ivl");
+            mapToInvoiceLineTable.put("usage_date", "((agr.usage_date is null and ivl.value_date is null) or  agr.usage_date =" + usageDateAggregation + ")");
         }
-        mapToInvoiceLineTable.put("label", "((agr.label is null and ivl.label is null) or agr.label = ivl.label)");
 
+		if(aggregationConfiguration.isDisableAggregation() || !aggregationConfiguration.isIgnoreSubscriptions()) {
+		    mapToInvoiceLineTable.put("subscription_id", "((agr.subscription_id is null and  ivl.subscription_id is null) or agr.subscription_id = ivl.subscription_id)");
+		    mapToInvoiceLineTable.put("service_instance_id", "((agr.service_instance_id is null and ivl.service_instance_id is null) or agr.service_instance_id = ivl.service_instance_id)");
+		}
+		if(aggregationConfiguration.isDisableAggregation() || !aggregationConfiguration.isIgnoreOrders()) {
+	        mapToInvoiceLineTable.put("order_id", "((agr.order_id is null and ivl.commercial_order_id is null) or agr.order_id =  ivl.commercial_order_id)");
+	        mapToInvoiceLineTable.put("order_number", "((agr.order_number is null and ivl.order_number is null) or agr.order_number = ivl.order_number)");
+		}
+		if(aggregationConfiguration.isDisableAggregation() || !aggregationConfiguration.isAggregationPerUnitAmount()) {
+			if (appProvider.isEntreprise()) {
+	            mapToInvoiceLineTable.put("unit_amount_without_tax", "((agr.unit_amount_without_tax is null or ivl.unit_price is null) or agr.unit_amount_without_tax = ivl.unit_price)");
+	        } else {
+	            mapToInvoiceLineTable.put("unit_amount_with_tax", "((agr.unit_amount_with_tax is null or ivl.unit_price is null) or agr.unit_amount_with_tax = ivl.unit_price)");
+	        }
+		}
+        if(aggregationConfiguration.isDisableAggregation() || !aggregationConfiguration.isUseAccountingArticleLabel()) {
+        	mapToInvoiceLineTable.put("label", "((agr.label is null and ivl.label is null) or agr.label = ivl.label)");
+        }
+        
         return mapToInvoiceLineTable;
     }
 
