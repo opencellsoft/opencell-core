@@ -21688,5 +21688,13 @@ public class ImportJobNotification extends Script {
             <where>code='org.meveo.service.script.ImportJobNotification'</where>
         </update>
     </changeSet>
+    <changeSet id="#INTRD-18858_202301006" author="TARIKFA.">
+        <sql dbms="postgresql">
+            update electronic_invoice_settings set invoicing_job =(select code from meveo_job_instance where job_template = 'InvoicingJobV2' LIMIT 1)
+        </sql>
+        <sql dbms="oracle">
+            update electronic_invoice_settings set invoicing_job =(select code from meveo_job_instance where job_template = 'InvoicingJobV2' and ROWNUM = 1)
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>
