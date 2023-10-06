@@ -1698,10 +1698,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
     			//discountPlan=discountPlanInstance.getDiscountPlan();
 
-    			applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, operationDate));
+    			applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan,DiscountPlanItemTypeEnum.PERCENTAGE, operationDate, walletOperation.getSubscription(), walletOperation, accountingArticle));
     			fixedDiscountPlanItems.addAll(
-    					discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, 
-    							walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));
+    					discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate(), 
+    							walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle()));
     			
     			if( CollectionUtils.isNotEmpty(applicableDiscountPlanItems) || CollectionUtils.isNotEmpty(fixedDiscountPlanItems)) {
     				discountPlanInstance.setApplicationCount( discountPlanInstance.getApplicationCount() == null ? 1 : discountPlanInstance.getApplicationCount() + 1);
