@@ -268,32 +268,32 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         for (DiscountPlanItem discountPlanItem : discountItems) {
         	InvoiceLine discountInvoice = new InvoiceLine(invoiceLine, invoice);
         	discountInvoice.setStatus(invoiceLine.getStatus());
-        	 BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(invoiceLine.getUnitPrice(), discountPlanItem,null,invoice,invoiceLine, Collections.emptyList());
-             if(discountAmount != null) {
-             	invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountAmount);
-     	  	
+            if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
+                invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountPlanItem.getDiscountValue());
+            } else {
                 //invoiceLineDiscountAmount = invoiceLineDiscountAmount.add((discountPlanItem.getDiscountValue().divide(hundred)).multiply(entity.getAmountWithoutTax()));
                 BigDecimal taxPercent = invoiceLine.getTaxRate();
                 if(invoiceLine.getAccountingArticle() != null) {
                 	TaxInfo taxInfo = taxMappingService.determineTax(invoiceLine.getAccountingArticle().getTaxClass(), seller, billingAccount, null, invoice.getInvoiceDate(),  false, false);
                         taxPercent = taxInfo.tax.getPercent();
                 }
-               
-                BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, taxPercent, appProvider.isEntreprise(),  rounding,
+                BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(invoiceLine.getUnitPrice(), discountPlanItem,null,invoice,invoiceLine, Collections.emptyList());
+                if(discountAmount != null) {
+                	invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountAmount);
+        	  	}
+                BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceLineDiscountAmount, invoiceLineDiscountAmount, taxPercent, appProvider.isEntreprise(),  rounding,
                         roundingMode.getRoundingMode());
                 var quantity = invoiceLine.getQuantity();
-                discountInvoice.setUnitPrice(discountAmount);
+                discountInvoice.setUnitPrice(invoiceLineDiscountAmount);
                 discountInvoice.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
                 discountInvoice.setAmountWithTax(quantity.multiply(amounts[1]));
-                discountInvoice.setDiscountPlan(discountPlanItem.getDiscountPlan());
-                discountInvoice.setDiscountPlanItem(discountPlanItem);
+                discountInvoice.setDiscountPlan(null);
                 discountInvoice.setDiscountedInvoiceLine(invoiceLine);
                 discountInvoice.setAmountTax(quantity.multiply(amounts[2]));
                 discountInvoice.setTaxRate(taxPercent);
-                discountInvoice.setRawAmount(discountAmount);
+                discountInvoice.setRawAmount(invoiceLineDiscountAmount);
             	super.create(discountInvoice);
-            
-          }
+            }
         }
         return invoiceLineDiscountAmount;
     }
