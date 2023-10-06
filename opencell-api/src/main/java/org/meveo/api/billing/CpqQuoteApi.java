@@ -1394,6 +1394,7 @@ public class CpqQuoteApi extends BaseApi {
         q.setQuoteOffer(quoteOffer);
         q.setQuoteVersion(quoteOffer.getQuoteVersion());
         q.setDiscountPlan(discountPlan);
+        q.setQuote(quoteOffer.getQuoteVersion().getQuote());
         if(q.getDiscountPlan() == null){
             resolveProductDPIfExist(quoteOffer, q);
         }
