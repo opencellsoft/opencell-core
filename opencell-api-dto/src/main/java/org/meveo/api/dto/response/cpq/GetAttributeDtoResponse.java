@@ -8,9 +8,11 @@ import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
+import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.api.dto.cpq.MediaDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeBaseEntity;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,7 +34,7 @@ import java.util.stream.Collectors;
 @XmlRootElement(name = "GetAttributeDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes","tagCodes","assignedAttributeCodes","mediaCodes"})
-public class GetAttributeDtoResponse extends AttributeDTO{
+public class GetAttributeDtoResponse extends ProductVersionAttributeDTO {
  
 	@XmlElementWrapper(name = "chargeTemplates")
     @XmlElement(name = "chargeTemplates")
@@ -83,7 +85,7 @@ public class GetAttributeDtoResponse extends AttributeDTO{
     }
     
     public GetAttributeDtoResponse(Attribute attribute, Set<ChargeTemplateDto> chargeTemplates, List<TagDto> tags,List<AttributeDTO> assignedAttributes,boolean loadMedias) {
- 		super(attribute);
+		super(attribute,null);
  		this.chargeTemplates = chargeTemplates;
  		this.tags=tags;
  		this.assignedAttributes=assignedAttributes;
@@ -184,6 +186,16 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 	}
 
 	public void setGroupedAttributes(List<GroupedAttributeDto> groupedAttributes) {
+		this.groupedAttributes = groupedAttributes;
+	}
+
+	public GetAttributeDtoResponse(AttributeBaseEntity attributeBaseEntity, Set<ChargeTemplateDto> chargeTemplates, List<TagDto> tags,
+								   List<AttributeDTO> assignedAttributes, List<MediaDto> medias, List<GroupedAttributeDto> groupedAttributes) {
+		super(attributeBaseEntity,false);
+		this.chargeTemplates = chargeTemplates;
+		this.tags = tags;
+		this.assignedAttributes = assignedAttributes;
+		this.medias = medias;
 		this.groupedAttributes = groupedAttributes;
 	}
 }

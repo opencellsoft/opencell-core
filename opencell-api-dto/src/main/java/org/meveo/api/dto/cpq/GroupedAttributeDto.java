@@ -56,6 +56,7 @@ public class GroupedAttributeDto {
 			this.disabled=groupedService.isDisabled();
 			this.id = groupedService.getId();
 			this.sequence = groupedService.getSequence();
+			this.mandatory=groupedService.getMandatory();
 		}
 	}
 	
