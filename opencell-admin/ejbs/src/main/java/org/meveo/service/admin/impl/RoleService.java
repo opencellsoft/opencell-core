@@ -23,9 +23,12 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.security.Role;
 import org.meveo.security.client.KeycloakAdminClientService;
 import org.meveo.service.base.PersistenceService;
@@ -110,21 +113,55 @@ public class RoleService extends PersistenceService<Role> {
         return role;
 
     }
+    
+    public Role findByName(String role) {
+        QueryBuilder qb = new QueryBuilder(Role.class, "r", null);
 
+        try {
+            qb.addCriterion("name", "=", role, true);
+            return (Role) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException | NonUniqueResultException e) {
+            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
+            return null;
+        }
+    }
+
+    /**
+     * Create a role in Keycloak and then in Opencell
+     */
+    
+    public void create(Role role,Boolean replicateInKc) throws BusinessException {
+    	if(BooleanUtils.isTrue(replicateInKc)) {
+    		if (role.getParentRole() == null) {
+    			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
+
+    		} else {
+    			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole(), role.getParentRole().getName(), role.getParentRole().getDescription(), role.getParentRole().isClientRole());
+    		}
+    	}
+    	super.create(role);
+    }
+    
     /**
      * Create a role in Keycloak and then in Opencell. An attempt to create a role again will be ignored and will act as assignment only to a parent role.
      */
     @Override
     public void create(Role role) throws BusinessException {
-
-        if (role.getParentRole() == null) {
-            keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
-
-        } else {
-            keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole(), role.getParentRole().getName(), role.getParentRole().getDescription(), role.getParentRole().isClientRole());
-        }
-
-        super.create(role);
+    	create(role,role.getReplicateInKc());
+    }
+    
+    
+    /**
+     * Update a role in Keycloak and then in Opencell
+     */
+     
+    public Role update(Role role,Boolean replicateInKc) throws BusinessException {
+    	
+    	if(BooleanUtils.isTrue(replicateInKc)) {
+    		keycloakAdminClientService.updateRole(role.getName(), role.getDescription(), role.isClientRole());
+    	}
+    	role = super.update(role);
+    	return role;
     }
 
     /**
@@ -132,11 +169,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     @Override
     public Role update(Role role) throws BusinessException {
-
-        keycloakAdminClientService.updateRole(role.getName(), role.getDescription(), role.isClientRole());
-
-        role = super.update(role);
-        return role;
+    	return update(role,role.getReplicateInKc());
     }
 
     /**
