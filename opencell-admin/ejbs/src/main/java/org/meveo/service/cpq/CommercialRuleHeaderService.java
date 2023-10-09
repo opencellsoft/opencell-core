@@ -662,7 +662,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
             case LIST_MULTIPLE_TEXT:
             case LIST_TEXT:
             case EXPRESSION_LANGUAGE:
-            case BOOLEAN:	
             case TEXT:
                 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
                 break;
@@ -673,6 +672,11 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
                     log.error("can not override quote value of type date, date parsing error: commercial rule: " + commercialRuleCode, e);
                 }
                 break;
+            case BOOLEAN:
+				if(org.meveo.commons.utils.StringUtils.isBoolean(sourceAttributeValue) ) {
+					quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
+					quoteAttributeToUpdate.setBooleanValue(Boolean.valueOf(sourceAttributeValue));
+				}break;
             default:
             	 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
                  break;
@@ -681,10 +685,49 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
     
     private void updateQuoteAttribute(QuoteAttribute attributeToReplace, Optional<QuoteAttribute> sourceOfferAttribute) {
         attributeToReplace.setStringValue(sourceOfferAttribute.get().getStringValue());
-        attributeToReplace.setDoubleValue(sourceOfferAttribute.get().getDoubleValue());
-        attributeToReplace.setDateValue(sourceOfferAttribute.get().getDateValue());
+        populateQuoteAttribute(attributeToReplace,sourceOfferAttribute);
         quoteAttributeService.update(attributeToReplace);
     } 
+    
+    private void populateQuoteAttribute(QuoteAttribute quoteAttributeToUpdate,Optional<QuoteAttribute> sourceOfferAttribute) { 
+    	Attribute  attribute =quoteAttributeToUpdate.getAttribute();
+    	String sourceAttributeValue=null; 
+    	if(attribute == null)
+    		throw new EntityDoesNotExistsException("Attribute does not exists linked to quoteAttributeId: "+quoteAttributeToUpdate.getId());
+    	if( sourceOfferAttribute.isPresent()) {
+    		sourceAttributeValue=sourceOfferAttribute.get().getStringValue();
+    	}
+    	if(attribute.getAttributeType()!=null && sourceAttributeValue!=null) {
+
+    		switch (attribute.getAttributeType()) {	
+    			case TOTAL :
+    			case COUNT :
+    			case NUMERIC :
+    			case INTEGER:
+    			case LIST_MULTIPLE_NUMERIC:
+    			case LIST_NUMERIC:
+    				if(org.apache.commons.lang3.math.NumberUtils.isCreatable(sourceAttributeValue.trim())) {
+    					quoteAttributeToUpdate.setDoubleValue(Double.valueOf(sourceAttributeValue));
+    				}
+    				break;
+    			case BOOLEAN:
+    				if(org.meveo.commons.utils.StringUtils.isBoolean(sourceAttributeValue) ) {
+    					quoteAttributeToUpdate.setBooleanValue(Boolean.valueOf(sourceAttributeValue));
+    				}
+    				break;
+    			case DATE:
+    				try {
+    					quoteAttributeToUpdate.setDateValue(new SimpleDateFormat("yyyy-MM-dd").parse(sourceAttributeValue));
+    				} catch (ParseException e) {
+    					log.error("can not override quote value of type date, date parsing error: attribute: " + attribute.getCode(), e);
+    				}
+    				break;	
+
+    			default:
+    				break;  
+    		}
+    	}
+    }
 
     private Map<String, Object> replaceProductAttribute(List<ProductContextDTO> selectedProducts, Attribute sourceAttribute, String sourceAttributeValue, String sourceCode) {
         Map<String, Object> overriddenAttributes = new HashMap<>();
