@@ -2,6 +2,7 @@ package org.meveo.service.billing.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.PDPStatusEntity;
@@ -29,12 +30,15 @@ public class EinvoiceService extends PersistenceService<PDPStatusEntity> {
 		List<Invoice> invoices = invoiceService.findByInvoicesNumber(pdpStatusEntity.getInvoiceNumber());
 		
 		
+		
 		if(CollectionUtils.isNotEmpty(invoices)) {
 			Invoice invoice = invoices.get(0);
 			
 			PDPStatusEntity entity = setPdpStatus(pdpStatusEntity, invoice);
 			invoice.setPdpStatus(entity);
 			invoiceService.update(invoice);
+		}else{
+			throw new EntityDoesNotExistsException(Invoice.class, pdpStatusEntity.getInvoiceNumber());
 		}
 	}
 	
