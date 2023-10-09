@@ -7684,32 +7684,33 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @throws BusinessException business exception
 	 */
 	public Invoice produceInvoiceUBLFormat(Invoice invoice) throws BusinessException, JAXBException {
+		InvoiceUblHelper invoiceUblHelper = InvoiceUblHelper.getInstance();
+		Path pathCreatedFile = null;
+		
+		ScriptInstance customUblScript = invoice.getInvoiceType().getCustomUblScript();
+        if (customUblScript != null) {
+            ScriptInterface script = scriptInstanceService.getScriptInstance(customUblScript.getCode());
+            Map<String, Object> methodContext = new HashMap<>();
+            methodContext.put(Script.CONTEXT_ENTITY, invoice);
+            methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+            methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+            methodContext.put("InvoiceUblHelper", invoiceUblHelper);
+            if (script != null) {
+                script.execute(methodContext);
+            }
+            pathCreatedFile = (Path) methodContext.get(Script.RESULT_VALUE);
+        } else {
+        	pathCreatedFile = invoiceUblHelper.createInvoiceUBL(invoice);
+        }
+        
 		invoice.setXmlDate(new Date());
 		invoice.setUblReference(true);
-		InvoiceUblHelper invoiceUblHelper = InvoiceUblHelper.getInstance();
-		var invoiceUbl = invoiceUblHelper.createInvoiceUBL(invoice);
-		// check directory if exist
-		ParamBean paramBean = ParamBean.getInstance();
-		File ublDirectory = new File (paramBean.getChrootDir("") + File.separator + paramBean.getProperty("meveo.ubl.directory", "/ubl"));
-		if (!StorageFactory.existsDirectory(ublDirectory)) {
-			StorageFactory.createDirectory(ublDirectory);
-		}
-		File xmlInvoiceFileName = new File(ublDirectory.getAbsolutePath() + File.separator + "invoice_" + invoice.getInvoiceNumber() + "_" + new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".xml");
-		Path pathCreatedFile = null;
-		try {
-			pathCreatedFile = Files.createFile(Paths.get(xmlInvoiceFileName.getAbsolutePath()));
-		} catch (IOException e) {
-			throw new BusinessException(e);
-		}
-		try {
-			invoiceUblHelper.toXml(invoiceUbl, xmlInvoiceFileName);
-		} catch (javax.xml.bind.JAXBException e) {
-			throw new BusinessException(e);
-		}
 		invoice = updateNoCheck(invoice);
 		entityUpdatedEventProducer.fire(invoice);
-		if(pathCreatedFile != null)
+		
+		if (pathCreatedFile != null)
 			pathCreatedFile.toFile().setReadOnly();
+		
 		return invoice;
 	}
 
