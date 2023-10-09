@@ -376,4 +376,8 @@ public class StringUtils {
         }  
         return strOut;
     }
+    public static boolean isBoolean(String value) {
+    	return value != null && Arrays.stream(new String[]{"true", "false", "1", "0"})
+    			.anyMatch(b -> b.equalsIgnoreCase(value));
+    }
 }
