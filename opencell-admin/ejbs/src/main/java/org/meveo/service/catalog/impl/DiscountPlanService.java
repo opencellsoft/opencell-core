@@ -224,7 +224,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 
 				TaxInfo taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(), seller, billingAccount, null, operationDate, discountWalletOperation, false, false, null);
     			taxPercent = taxInfo.tax.getPercent();
-    			if ((BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || appProvider.isActivateCascadingDiscounts())
+			    if ((BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || appProvider.isActivateCascadingDiscounts())
     					&& walletOperation!=null 
     					&& walletOperation.getDiscountedAmount()!=null 
     					&& walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0) {
@@ -264,7 +264,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			if(!isVirtual) {
     				discountWalletOperation.setSubscription(subscription);
     				discountWalletOperation.setUserAccount(subscription.getUserAccount());
-    				if(walletOperation != null ) {
+    				if(walletOperation != null && walletOperation.getId() != null) {
     					discountWalletOperation.setDiscountedWalletOperation(walletOperation.getId());
 						discountWalletOperation.setDiscountedWO(walletOperation);
 					    discountWalletOperation.setUuid(null);
@@ -304,5 +304,5 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 				.getResultList();
 		return discountPlans;
 	}
-	   
+	
 }
