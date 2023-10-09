@@ -1820,7 +1820,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return false;
         }
 
-        List<Object[]> billingRules = getEntityManager().createNamedQuery("BillingRule.findByContractIdForRating").setParameter("contractId", ratedTransaction.getRulesContract().getId()).getResultList();
+        List<Object[]> billingRules = getEntityManager().createNamedQuery("BillingRule.findByContractIdForRating").setParameter("contractId", ratedTransaction.getRulesContract().getId()).setHint("org.hibernate.cacheable", true).getResultList();
 
         for (Object[] billingRule : billingRules) {
             Long brId = (Long) billingRule[0];
@@ -1844,7 +1844,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             ratedTransaction.setRejectReason("Error evaluating invoicedBillingAccountCodeEL [id=" + brId + ", invoicedBillingAccountCodeEL = " + invoiceBACodeEl + "]");
 
                         } else {
-                            BillingAccount billingAccountByCode = billingAccountService.findByCode(eInvoicedBACodeEL, true);
+                            BillingAccount billingAccountByCode = billingAccountService.findByCode(eInvoicedBACodeEL, true, false);
                             if (billingAccountByCode != null) {
                                 ratedTransaction.setOriginBillingAccount(ratedTransaction.getBillingAccount());
                                 ratedTransaction.setBillingAccount(billingAccountByCode);
