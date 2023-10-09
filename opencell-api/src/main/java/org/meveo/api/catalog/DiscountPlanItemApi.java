@@ -126,7 +126,7 @@ public class DiscountPlanItemApi extends BaseApi {
         }
         
         discountPlanItemService.create(discountPlanItem);
-        discountPlanItem.setCode(discountPlanItem.getId().toString());
+        discountPlanItem.setCode(!StringUtils.isBlank(postData.getCode())?postData.getCode():discountPlanItem.getId().toString());
         if(postData.getSequence() == null) {
         	discountPlanItemService.setDisountPlanItemSequence(discountPlanItem);
         }
