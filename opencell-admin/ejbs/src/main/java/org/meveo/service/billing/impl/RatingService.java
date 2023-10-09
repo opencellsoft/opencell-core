@@ -654,9 +654,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                        } else {
                            unitPriceWithoutTax = contractItem.getAmountWithoutTax();
-                           bareWalletOperation.setContract(contract);
-                           bareWalletOperation.setContractLine(contractItem);
                        }
+                       bareWalletOperation.setContract(contract);
+                       bareWalletOperation.setContractLine(contractItem);
                    }
 
                     // Check if price is not overriden by a pricelist in subscription
