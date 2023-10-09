@@ -55,20 +55,34 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
      */
     public P findByCode(String code, boolean cacheQueryResults) {
   
+        return findByCode(code, cacheQueryResults, true);
+    }
+    
+    /**
+     * Find entity by code Optionally cache query results, and optionally ignore code case.
+     * 
+     * @param code Code to match
+     * @param cacheQueryResults Should query results be cached
+     * @param caseInsensitive Should query results be cached
+     * @return A single entity matching code
+     */
+    public P findByCode(String code, boolean cacheQueryResults, boolean caseInsensitive) {
+  
         if (code == null) {
             return null;
         }
+        String codeCase=caseInsensitive?"lower(code)":"code";
 
-        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where lower(code)=:code", entityClass)
-            .setParameter("code", code.toLowerCase()).setMaxResults(1);
+        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where "+codeCase+"=:code", entityClass)
+            .setParameter("code", caseInsensitive?code.toLowerCase():code).setMaxResults(1);
         if (cacheQueryResults) {
-            query.setHint("org.hibernate.cacheable", "TRUE");
+            query.setHint("org.hibernate.cacheable", true);
         }
 
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {
-            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
+            log.debug("No {} of code {} found with caseInsensitive={}", getEntityClass().getSimpleName(), code, caseInsensitive);
             return null;
         }
     }
