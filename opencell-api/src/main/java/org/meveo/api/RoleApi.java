@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -78,14 +79,20 @@ public class RoleApi extends BaseApi {
 
         handleMissingParameters();
 
-        if (roleService.findByName(name, false, false) != null) {
-            throw new EntityAlreadyExistsException(Role.class, name, "role name");
+        if(BooleanUtils.isFalse(postData.getReplicateInKc())) {
+        	if(roleService.findByName(name)!=null){
+        		throw new EntityAlreadyExistsException(Role.class, name, "role name");
+        	}
+        }else {
+        	if(roleService.findByName(name, false, false) != null) {
+        		throw new EntityAlreadyExistsException(Role.class, name, "role name");
+        	}
         }
-
+        
         Role role = new Role();
         role.setName(name);
         role.setDescription(postData.getDescription());
-
+        role.setReplicateInKc(postData.getReplicateInKc());
 //        // Create/Update and add child roles
 //        if (postData.getRoles() != null && !postData.getRoles().isEmpty()) {
 //            for (RoleDto roleDto : postData.getRoles()) {
@@ -124,7 +131,7 @@ public class RoleApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public Role update(RoleDto postData) throws MeveoApiException, BusinessException {
-
+        Role role=null;
         String name = postData.getName();
         if (StringUtils.isBlank(name)) {
             missingParameters.add("name");
@@ -136,7 +143,11 @@ public class RoleApi extends BaseApi {
             throw new ActionForbiddenException("User has no permission to manage roles");
         }
 
-        Role role = roleService.findByName(name, false, false);
+        if(BooleanUtils.isFalse(postData.getReplicateInKc())){
+        	role = roleService.findByName(name);	
+        }else {
+        	role = roleService.findByName(name, false, false);
+        }
 
         if (role == null) {
             throw new EntityDoesNotExistsException(Role.class, name, "name");
@@ -145,6 +156,7 @@ public class RoleApi extends BaseApi {
         if (postData.getDescription() != null) {
             role.setDescription(postData.getDescription());
         }
+        role.setReplicateInKc(postData.getReplicateInKc());
 
 //        // Create/Update and add child roles
 //        if (postData.getRoles() != null && !postData.getRoles().isEmpty()) {
@@ -243,7 +255,7 @@ public class RoleApi extends BaseApi {
     }
 
     public void createOrUpdate(RoleDto postData) throws MeveoApiException, BusinessException {
-
+    	Role role=null;
         String name = postData.getName();
         if (name == null) {
             missingParameters.add("name");
@@ -251,7 +263,11 @@ public class RoleApi extends BaseApi {
 
         handleMissingParameters();
 
-        Role role = roleService.findByName(postData.getName(), false, false);
+        if(BooleanUtils.isFalse(postData.getReplicateInKc())){
+        	role = roleService.findByName(name);	
+        }else {
+        	role = roleService.findByName(name, false, false);
+        }
         if (role == null) {
             create(postData);
         } else {
