@@ -548,12 +548,8 @@ public class CpqQuoteApi extends BaseApi {
                 quoteAttribute.setAttribute(attribute);
                 quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
                 quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
-                if(quoteAttribute.getDoubleValue()==null && quoteAttribute.getStringValue()!=null ) {
-                	if(org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
-                		quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
-        			}
-                }
                 quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
+                quoteAttributeService.PopulateAttributeValue(quoteAttribute);
                 quoteAttribute.updateAudit(currentUser);
                 quoteAttribute.setQuoteOffer(quoteOffer);
 
@@ -1454,11 +1450,7 @@ public class CpqQuoteApi extends BaseApi {
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
         quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
-        if (quoteAttribute.getDoubleValue() == null && quoteAttribute.getStringValue() != null) {
-            if (org.apache.commons.lang3.math.NumberUtils.isCreatable(quoteAttribute.getStringValue().trim())) {
-                quoteAttribute.setDoubleValue(Double.valueOf(quoteAttribute.getStringValue()));
-            }
-        }
+        quoteAttributeService.PopulateAttributeValue(quoteAttribute);
         if(quoteOffer!=null){
         	quoteAttribute.setQuoteOffer(quoteOffer);
         }

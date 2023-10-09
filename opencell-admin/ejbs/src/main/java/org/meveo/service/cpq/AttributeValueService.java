@@ -5,13 +5,14 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValidationType;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
@@ -140,5 +141,36 @@ public abstract class AttributeValueService<T extends AttributeValue> extends Pe
 
     private boolean shouldEvaluateNumericValueAsString(AttributeValue attributeValue) {
         return attributeValue.getStringValue().contains("serviceInstance.code");
+    }
+    
+    public void PopulateAttributeValue(AttributeValue attributeValue) { 
+    	Attribute  attribute =attributeValue.getAttribute();
+    	if(attribute == null)
+    		throw new EntityDoesNotExistsException(Attribute.class, attributeValue.getId());
+
+     
+    	if(attribute.getAttributeType()!=null) {
+    		switch (attribute.getAttributeType()) {
+			case TOTAL :
+			case COUNT :
+			case NUMERIC :
+			case INTEGER:
+				if(attributeValue.getDoubleValue()==null && attributeValue.getStringValue()!=null ) {
+					if(org.apache.commons.lang3.math.NumberUtils.isCreatable(attributeValue.getStringValue().trim())) {
+						attributeValue.setDoubleValue(Double.valueOf(attributeValue.getStringValue()));
+					}
+				}
+				break;
+			case BOOLEAN:
+				if(attributeValue.getBooleanValue()==null && attributeValue.getStringValue()!=null ) {
+					if(StringUtils.isBoolean(attributeValue.getStringValue()) ) {
+						attributeValue.setBooleanValue(Boolean.valueOf(attributeValue.getStringValue()));
+					}
+				}
+				break;
+			default:
+				break;  
+			}
+    		}
     }
 }
