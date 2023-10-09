@@ -149,6 +149,12 @@ public class JobExecutionResultImpl extends BaseEntity {
     private String report;
 
     /**
+     * A name of node that job ran on
+     */
+    @Column(name = "node")
+    private String nodeName;
+
+    /**
      * Indicates that job has not completed fully - there might be more data to process
      */
     @Transient
@@ -181,11 +187,12 @@ public class JobExecutionResultImpl extends BaseEntity {
      * 
      * @param jobInstance Job instance
      */
-    public JobExecutionResultImpl(JobInstance jobInstance, JobLauncherEnum jobLauncher) {
+    public JobExecutionResultImpl(JobInstance jobInstance, JobLauncherEnum jobLauncher, String nodeName) {
         this.jobInstance = jobInstance;
         this.status = JobExecutionResultStatusEnum.RUNNING;
         this.startDate = new Date();
         this.jobLauncherEnum = jobLauncher;
+        this.nodeName = nodeName;
     }
 
     /**
@@ -552,6 +559,20 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     public void setJobLauncherEnum(JobLauncherEnum jobLauncherEnum) {
         this.jobLauncherEnum = jobLauncherEnum;
+    }
+
+    /**
+     * @return A name of node that job run on
+     */
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    /**
+     * @param nodeName A name of node that job run on
+     */
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
     }
 
     /**

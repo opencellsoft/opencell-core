@@ -78,7 +78,7 @@ public class ClusterEventMonitor implements MessageListener {
 
     @Inject
     private JobExecutionService jobExecutionService;
-    
+
     @Inject
     @Named
     private NativePersistenceService nativePersistenceService;
@@ -132,6 +132,9 @@ public class ClusterEventMonitor implements MessageListener {
                 jobExecutionService.executeJob(jobInstanceService.findById(eventDto.getId()), eventDto.getAdditionalInfo(), jobLauncher, false);
 
             } else if (eventDto.getAction() == CrudActionEnum.stop) {
+                jobExecutionService.stopJob(jobInstanceService.findById(eventDto.getId()), false);
+
+            } else if (eventDto.getAction() == CrudActionEnum.stopByForce) {
                 jobExecutionService.stopJobByForce(jobInstanceService.findById(eventDto.getId()), false);
 
             } else if (eventDto.getAction() == CrudActionEnum.lastJobDataMessageReceived) {
@@ -149,7 +152,7 @@ public class ClusterEventMonitor implements MessageListener {
             if (cft.getAppliesTo().startsWith(CustomEntityTemplate.CFT_PREFIX) && (eventDto.getAction() == CrudActionEnum.create || eventDto.getAction() == CrudActionEnum.update)) {
                 nativePersistenceService.refreshTableFieldMapping(CustomEntityTemplate.getCodeFromAppliesTo(cft.getAppliesTo()));
             }
-            
+
         } else if (eventDto.getClazz().equals(CustomEntityTemplate.class.getSimpleName())) {
 
             if (eventDto.getAction() == CrudActionEnum.create || eventDto.getAction() == CrudActionEnum.enable) {

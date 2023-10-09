@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.JobRunningStatusEnum;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Started;
 import org.meveo.model.audit.ChangeOriginEnum;
@@ -177,7 +178,7 @@ public abstract class Job {
                 Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());
 
             if (executionResult == null) {
-                executionResult = new JobExecutionResultImpl(jobInstance, jobLauncher != null ? jobLauncher : JobLauncherEnum.TRIGGER);
+                executionResult = new JobExecutionResultImpl(jobInstance, jobLauncher != null ? jobLauncher : JobLauncherEnum.TRIGGER, EjbUtils.getCurrentClusterNode());
                 jobExecutionResultService.persistResult(executionResult);
             }
 
@@ -304,6 +305,7 @@ public abstract class Job {
     /**
      * @return job category enum
      */
+    @SuppressWarnings("rawtypes")
     public abstract JobCategoryEnum getJobCategory();
 
     /**
@@ -351,6 +353,7 @@ public abstract class Job {
      * @param jobInstance Job instance definition
      * @return Entity class
      */
+    @SuppressWarnings("rawtypes")
     public Class getTargetEntityClass(JobInstance jobInstance) {
         return null;
     }
