@@ -1844,7 +1844,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             ratedTransaction.setRejectReason("Error evaluating invoicedBillingAccountCodeEL [id=" + brId + ", invoicedBillingAccountCodeEL = " + invoiceBACodeEl + "]");
 
                         } else {
-                            BillingAccount billingAccountByCode = billingAccountService.findByCode(eInvoicedBACodeEL, true, false);
+                            BillingAccount billingAccountByCode =  (BillingAccount) getEntityManager().createNamedQuery("BillingAccount.fetchByCode").setParameter("code", eInvoicedBACodeEL).getSingleResult();
                             if (billingAccountByCode != null) {
                                 ratedTransaction.setOriginBillingAccount(ratedTransaction.getBillingAccount());
                                 ratedTransaction.setBillingAccount(billingAccountByCode);
