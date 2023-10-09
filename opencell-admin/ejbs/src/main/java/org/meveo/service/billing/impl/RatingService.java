@@ -646,38 +646,18 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     
                     // If contract rate type is Fixed - unit rate comes either from 1. hardcoded in contact item or 2. from a price plan specified in a contract
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
+                   	  pricePlan = contractItem.getPricePlan();
+                       if (pricePlan != null) {
+                           Amounts unitPrices = determineUnitPrice(pricePlan, bareWalletOperation);
+		                    unitPriceWithoutTax = unitPrices.getAmountWithoutTax();
+		                    unitPriceWithTax = unitPrices.getAmountWithTax();
 
-                        if (contractItem.getPricePlan() != null) {
-                            pricePlan = contractItem.getPricePlan();
-                            PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(pricePlan, bareWalletOperation);
-                            if (pricePlanMatrixLine != null) {
-                                try {
-                                    unitPriceWithoutTax = pricePlanMatrixLine.getValue();
-                                    if (pricePlan.getScriptInstance() != null) {
-                                        log.debug("start to execute script instance for ratePrice {}", pricePlan);
-                                        executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
-                                        unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
-                                        unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
-                                    }
-                                    
-                                    bareWalletOperation.setContract(contract);
-                                    bareWalletOperation.setContractLine(contractItem);
-                                    bareWalletOperation.setPriceplan(pricePlan);
-                                    bareWalletOperation.setPricePlanMatrixVersion(pricePlanMatrixLine.getPricePlanMatrixVersion());
-                                    bareWalletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
-                                }catch(NoPricePlanException e) {
-                                    log.warn("Price not found for contract : " + contract.getCode(), e);
-                                } catch (Exception e) {
-                                    log.warn("Error on contract code " + contract.getCode(), e);
-                                }
-                            }
-
-                        } else {
-                            unitPriceWithoutTax = contractItem.getAmountWithoutTax();
-                            bareWalletOperation.setContract(contract);
-                            bareWalletOperation.setContractLine(contractItem);
-                        }
-                    }
+                       } else {
+                           unitPriceWithoutTax = contractItem.getAmountWithoutTax();
+                       }
+                       bareWalletOperation.setContract(contract);
+                       bareWalletOperation.setContractLine(contractItem);
+                   }
 
                     // Check if price is not overriden by a pricelist in subscription
                 }
