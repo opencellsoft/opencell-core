@@ -34,6 +34,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Addition
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.AllowanceChargeReason;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.AllowanceChargeReasonCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Amount;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.BaseAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.BaseQuantity;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.ChargeIndicator;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.CityName;
@@ -74,6 +75,7 @@ import oasis.names.specification.ubl.schema.xsd.invoice_2.Invoice;
 import oasis.names.specification.ubl.schema.xsd.invoice_2.ObjectFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -83,6 +85,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.UntdidAllowanceCode;
 import org.meveo.model.billing.UntdidTaxationCategory;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
@@ -108,12 +111,14 @@ public class InvoiceUblHelper {
 	private final static oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.ObjectFactory objectFactorycommonBasic;
 	private final static oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ObjectFactory objectFactoryCommonAggrement;
 	
+	private final static UntdidAllowanceCodeService untdidAllowanceCodeService;
 	private final static InvoiceAgregateService invoiceAgregateService;
 	
 	static {
 		objectFactorycommonBasic = new oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.ObjectFactory();
 		objectFactoryCommonAggrement = new oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ObjectFactory();
 		invoiceAgregateService = (InvoiceAgregateService) EjbUtils.getServiceInterface(InvoiceAgregateService.class.getSimpleName());
+		untdidAllowanceCodeService = (UntdidAllowanceCodeService) EjbUtils.getServiceInterface(UntdidAllowanceCodeService.class.getSimpleName());
 	}
 	
 	private InvoiceUblHelper(){}
@@ -593,20 +598,35 @@ public class InvoiceUblHelper {
 			subCategoryInvoiceAgregates.forEach(subCategoryInvoiceAgregate -> {
 				AllowanceChargeType allowanceCharge = objectFactoryCommonAggrement.createAllowanceChargeType();
 				ChargeIndicator chargeIndicator = objectFactorycommonBasic.createChargeIndicator();
-				chargeIndicator.setValue(false);
+				chargeIndicator.setValue(subCategoryInvoiceAgregate.getDiscountPlanItem() == null);
 				allowanceCharge.setChargeIndicator(chargeIndicator);
+				AllowanceChargeReasonCode allowanceChargeReasonCode = objectFactorycommonBasic.createAllowanceChargeReasonCode();
+				AllowanceChargeReason allowanceChargeReason = objectFactorycommonBasic.createAllowanceChargeReason();
 				if(subCategoryInvoiceAgregate.getDiscountPlanItem() != null) {
-					AllowanceChargeReasonCode allowanceChargeReasonCode = objectFactorycommonBasic.createAllowanceChargeReasonCode();
 					allowanceChargeReasonCode.setValue(subCategoryInvoiceAgregate.getDiscountPlanItem().getCode());
 					allowanceCharge.setAllowanceChargeReasonCode(allowanceChargeReasonCode);
 					
-					AllowanceChargeReason allowanceChargeReason = objectFactorycommonBasic.createAllowanceChargeReason();
 					allowanceChargeReason.setValue(subCategoryInvoiceAgregate.getDiscountPlanItem().getDescription());
+					allowanceCharge.getAllowanceChargeReasons().add(allowanceChargeReason);
+				}else{
+					UntdidAllowanceCode allowanceCode = untdidAllowanceCodeService.getByCode("104");
+					if(allowanceCode == null) {
+						throw new EntityDoesNotExistsException(UntdidAllowanceCode.class, "104");
+					}
+					allowanceChargeReasonCode.setValue(allowanceCode.getCode());
+					allowanceCharge.setAllowanceChargeReasonCode(allowanceChargeReasonCode);
+					
+					allowanceChargeReason.setValue(allowanceCode.getDescription());
 					allowanceCharge.getAllowanceChargeReasons().add(allowanceChargeReason);
 				}
 				Amount amount = objectFactorycommonBasic.createAmount();
-				amount.setValue(subCategoryInvoiceAgregate.getAmountTax());
+				amount.setValue(subCategoryInvoiceAgregate.getAmountWithTax());
 				allowanceCharge.setAmount(amount);
+				
+				BaseAmount baseAmount = objectFactorycommonBasic.createBaseAmount();
+				baseAmount.setCurrencyID(invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getCurrencyCode() : null);
+				baseAmount.setValue(subCategoryInvoiceAgregate.getAmountWithoutTax());
+				allowanceCharge.setBaseAmount(baseAmount);
 				target.getAllowanceCharges().add(allowanceCharge);
 				
 			});
