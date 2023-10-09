@@ -55,7 +55,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
-@NamedQueries({ @NamedQuery(name = "WalletOperationNative.listConvertToRTs", query = "SELECT o FROM WalletOperationNative o WHERE o.status='OPEN' and o.id<=:maxId") })
+@NamedQueries({ @NamedQuery(name = "WalletOperationNative.listConvertToRTs", query = "SELECT o FROM WalletOperationNative o WHERE o.status='OPEN' and o.processed = false and o.id<=:maxId") })
 public class WalletOperationNative extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -459,6 +459,10 @@ public class WalletOperationNative extends BaseEntity {
 
     @Column(name = "rules_contract_id")
     private Long rulesContractId;
+
+    @Column(name = "processed")
+    @Type(type = "numeric_boolean")
+    private boolean processed;
 
 //    @Column(name = "price_plan_matrix_version_id")
 //    private Long pricePlanMatrixVersionId;
@@ -1112,5 +1116,13 @@ public class WalletOperationNative extends BaseEntity {
 
     public void setRulesContractId(Long rulesContractId) {
         this.rulesContractId = rulesContractId;
+    }
+
+    public boolean isProcessed() {
+        return processed;
+    }
+
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
     }
 }

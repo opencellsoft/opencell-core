@@ -644,6 +644,11 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
   	 */
   	@Column(name = "sequence")
   	private Integer sequence;
+
+
+    /*@Type(type = "numeric_boolean")
+    @Column(name = "processed")*/
+    @Transient private boolean processed = false;
     
     public RatedTransaction() {
         super();
@@ -1694,5 +1699,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setOriginRatedTransaction(RatedTransaction originRatedTransaction) {
 		this.originRatedTransaction = originRatedTransaction;
 	}
-	
+
+    public boolean isProcessed() {
+        return processed;
+    }
+
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
 }
