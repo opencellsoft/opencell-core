@@ -1862,8 +1862,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 	protected void checkDiscountedWalletOpertion(WalletOperation wo, List<WalletOperation> walletOperations) {
 		if(wo.getDiscountedAmount() != null){
 			var discountedWallerOperation = walletOperations.stream().filter(wos -> wos.getId() != null && wo.getUuid().equals(wos.getUuid())).findFirst().map(WalletOperation::getId).orElse(null);
-			wo.setUuid(null);
-			wo.setDiscountedWalletOperation(discountedWallerOperation);
+            if (discountedWallerOperation!=null) {
+                wo.setUuid(null);
+                wo.setDiscountedWalletOperation(discountedWallerOperation);
+            }
 		}
 	}
 	
