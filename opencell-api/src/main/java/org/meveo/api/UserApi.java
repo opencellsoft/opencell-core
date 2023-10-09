@@ -23,9 +23,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -43,11 +47,14 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
@@ -73,6 +80,9 @@ public class UserApi extends BaseApi {
 
     @Inject
     private SecuredBusinessEntityService securedBusinessEntityService;
+    
+    @Inject
+    private RoleService roleService;
 
     public void create(UserDto postData) throws MeveoApiException, BusinessException {
         create(postData, false);
@@ -381,4 +391,61 @@ public class UserApi extends BaseApi {
 
         return dto;
     }
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void cleanRoles(Long idUser){
+        User user = userService.findById(idUser);
+        if(user == null){
+            throw new EntityDoesNotExistsException(User.class, idUser);
+        }
+        user.getUserRoles().clear();
+        userService.update(user);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void removeRole(Long userId, Long roleId){
+        User user = userService.findById(userId);
+        if(user == null)
+            throw new EntityDoesNotExistsException(User.class, userId);
+        Optional<Role> role = user.getUserRoles().stream()
+                .filter(r -> r.getId().equals(roleId))
+                .findFirst();
+        if(role.isPresent()){
+            user.getUserRoles().remove(role.get());
+            userService.update(user);
+        }
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addRole(Long userId, Long roleId){
+        User user = userService.findById(userId);
+        if(user == null)
+            throw new EntityDoesNotExistsException(User.class, userId);
+        Role role = roleService.findById(roleId);
+        if(role == null)
+            throw new EntityDoesNotExistsException(Role.class, roleId);
+        user.getUserRoles().add(role);
+        userService.update(user);
+    }
+
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addRoles(Long userId, List<Long> rolesId){
+        User user = userService.findById(userId);
+        if(user == null)
+            throw new EntityDoesNotExistsException(User.class, userId);
+        Set<Role> roles = rolesId.stream()
+                .map(roleId -> {
+                    Role role = roleService.findById(roleId);
+                    if (role == null)
+                        throw new EntityDoesNotExistsException(Role.class, roleId);
+                    return role;
+                }).collect(Collectors.toSet());
+        user.getUserRoles().addAll(roles);
+        userService.update(user);
+    }
+
 }
