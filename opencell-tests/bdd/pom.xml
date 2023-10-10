@@ -5,7 +5,7 @@
 		<artifactId>opencell</artifactId>
 		<groupId>com.opencellsoft</groupId>
 		<relativePath>../../pom.xml</relativePath>
-		<version>14.0.10-SNAPSHOT</version>
+		<version>14.0.10-540-bea466b</version>
 	</parent>
 	<groupId>bdd.opencell.tests</groupId>
 	<artifactId>opencell-bdd</artifactId>
