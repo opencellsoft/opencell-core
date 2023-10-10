@@ -273,7 +273,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	}
         	InvoiceLine discountInvoice = new InvoiceLine(invoiceLine, invoice);
         	discountInvoice.setStatus(invoiceLine.getStatus());
-            if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.FIXED) {
                 //invoiceLineDiscountAmount = invoiceLineDiscountAmount.add((discountPlanItem.getDiscountValue().divide(hundred)).multiply(entity.getAmountWithoutTax()));
                 BigDecimal taxPercent = invoiceLine.getTaxRate();
                 if(accountingArticle != null) {
@@ -297,7 +296,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 discountInvoice.setRawAmount(discountAmount);
                 discountInvoice.setAccountingArticle(accountingArticle);
             	super.create(discountInvoice);
-            }
+            
         }
         return invoiceLineDiscountAmount;
     }
