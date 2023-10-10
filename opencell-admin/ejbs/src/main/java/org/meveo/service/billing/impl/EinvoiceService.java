@@ -48,11 +48,20 @@ public class EinvoiceService extends PersistenceService<PDPStatusEntity> {
 	}
 	
 	private PDPStatusEntity setPdpStatus(PDPStatusEntity pdpStatusEntity, Invoice invoice){
-		pdpStatusEntity = invoice.getPdpStatus() != null ? invoice.getPdpStatus() : pdpStatusEntity;
 		pdpStatusEntity.getPdpStatusHistories().add(createHistory(pdpStatusEntity.getOrigin(), pdpStatusEntity.getStatus()));
 		if(invoice.getPdpStatus() != null) {
-			pdpStatusEntity.setId(invoice.getPdpStatus().getId());
+			PDPStatusEntity currentPdpStatus = invoice.getPdpStatus();
+			currentPdpStatus.setTransmittedFormatEnum(pdpStatusEntity.getTransmittedFormatEnum());
+			currentPdpStatus.setStatus(pdpStatusEntity.getStatus());
+			currentPdpStatus.setOrigin(pdpStatusEntity.getOrigin());
+			currentPdpStatus.setReturnCode(pdpStatusEntity.getReturnCode());
+			currentPdpStatus.setInvoiceNumber(pdpStatusEntity.getInvoiceNumber());
+			currentPdpStatus.setInvoiceIdentifier(pdpStatusEntity.getInvoiceIdentifier());
+			currentPdpStatus.setLabel(pdpStatusEntity.getLabel());
+			currentPdpStatus.setDepositDate(pdpStatusEntity.getDepositDate());
+			currentPdpStatus.getPdpStatusHistories().addAll(pdpStatusEntity.getPdpStatusHistories());
 			super.update(pdpStatusEntity);
+			return currentPdpStatus;
 		}else{
 			super.create(pdpStatusEntity);
 		}
