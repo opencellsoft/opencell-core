@@ -22,7 +22,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "pdp_status")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "pdp_status_seq"), })
-public class PDPStatusEntity extends AuditableEntity {
+public class PDPStatusEntity extends AuditableEntity{
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "transmitted_format", nullable = false)
@@ -154,4 +154,5 @@ public class PDPStatusEntity extends AuditableEntity {
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), getTransmittedFormatEnum(), getOrigin(), getReturnCode(), getLabel(), getInvoiceIdentifier(), getInvoiceNumber(), getInvoice(), getStatus(), getDepositDate());
 	}
+	
 }
