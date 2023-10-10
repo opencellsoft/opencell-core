@@ -1238,22 +1238,25 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 try (PreparedStatement preparedStatement = connection.prepareStatement("insert into " + schemaPrefix + "billing_rated_transaction_pending (id, invoice_line_id, billing_run_id) values (?,?,?)")) {
 
                     int bi = 0;
-                    for (Object[] rtIlBrId : rtIlBrIds) {
-                        for (Long rtId : (List<Long>) rtIlBrId[0]) {
+					for (Object[] rtIlBrId : rtIlBrIds) {
+						for (Long rtId : (List<Long>) rtIlBrId[0]) {
+							preparedStatement.setLong(1, rtId);
+							preparedStatement.setLong(2, (Long) rtIlBrId[1]);
+							if (rtIlBrId[2] != null) {
+								preparedStatement.setLong(3, (Long) rtIlBrId[2]);
+							} else {
+								preparedStatement.setNull(3, java.sql.Types.NULL);
+							}
 
-                            preparedStatement.setLong(1, rtId);
-                            preparedStatement.setLong(2, (Long) rtIlBrId[1]);
-                            preparedStatement.setLong(3, (Long) rtIlBrId[2]);
+							preparedStatement.addBatch();
 
-                            preparedStatement.addBatch();
-
-                            // Flush every 1M records
-                            if (bi > 0 && bi % 1000000 == 0) {
-                                preparedStatement.executeBatch();
-        }
-                            bi++;
-    }
-                    }
+							// Flush every 1M records
+							if (bi > 0 && bi % 1000000 == 0) {
+								preparedStatement.executeBatch();
+							}
+							bi++;
+						}
+					}
 
                     preparedStatement.executeBatch();
 
