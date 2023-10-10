@@ -75,8 +75,10 @@ import oasis.names.specification.ubl.schema.xsd.invoice_2.Invoice;
 import oasis.names.specification.ubl.schema.xsd.invoice_2.ObjectFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.storage.StorageFactory;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -98,7 +100,12 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -125,14 +132,14 @@ public class InvoiceUblHelper {
 	
 	public static InvoiceUblHelper getInstance(){ return  INSTANCE; }
 	
-	public Invoice createInvoiceUBL(org.meveo.model.billing.Invoice invoice){
+	public Path createInvoiceUBL(org.meveo.model.billing.Invoice invoice){
 		Invoice invoiceXml = new ObjectFactory().createInvoice();
 		setUblExtension(invoiceXml);
 		setGeneralInfo(invoice, invoiceXml);
 		setBillingReference(invoice, invoiceXml);
 		setOrderReference(invoice, invoiceXml);
 		setAllowanceCharge(invoice, invoiceXml);
-		if(CollectionUtils.isNotEmpty(invoice.getInvoiceAgregates())){
+		if (CollectionUtils.isNotEmpty(invoice.getInvoiceAgregates())) {
 			List<TaxInvoiceAgregate> taxInvoiceAgregates = invoice.getInvoiceAgregates().stream().filter(invAgg -> "T".equals(invAgg.getDescriminatorValue()))
 					.map(invAgg -> (TaxInvoiceAgregate) invAgg)
 					.collect(Collectors.toList());
@@ -143,11 +150,28 @@ public class InvoiceUblHelper {
 		setAccountingCustomerParty(invoice.getBillingAccount(), invoiceXml);
 		setInvoiceLine(invoice.getInvoiceLines(), invoiceXml);
 		setPaymentMeans(invoice.getPaymentMethod(), invoiceXml);
-		return invoiceXml;
+
+		// check directory if exist
+		ParamBean paramBean = ParamBean.getInstance();
+		File ublDirectory = new File(paramBean.getChrootDir("") + File.separator + paramBean.getProperty("meveo.ubl.directory", "/ubl"));
+		if (!StorageFactory.existsDirectory(ublDirectory)) {
+			StorageFactory.createDirectory(ublDirectory);
+		}
+		File ublInvoiceFileName = new File(	ublDirectory.getAbsolutePath() + File.separator + "invoice_" + invoice.getInvoiceNumber() + "_"	+ new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".xml");
+		Path pathCreatedFile = null;
+
+		try {
+			pathCreatedFile = Files.createFile(Paths.get(ublInvoiceFileName.getAbsolutePath()));
+			toXml(invoiceXml, ublInvoiceFileName);
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
+
+		return pathCreatedFile;
 	}
 	
 	
-	public  void toXml(Invoice invoiceXml, File absoluteFileName) throws JAXBException, javax.xml.bind.JAXBException {
+	public void toXml(Invoice invoiceXml, File absoluteFileName) throws JAXBException, javax.xml.bind.JAXBException {
 		if(absoluteFileName == null || !absoluteFileName.isFile()) {
 			throw new BusinessException("The file doesn't exist");
 		}
