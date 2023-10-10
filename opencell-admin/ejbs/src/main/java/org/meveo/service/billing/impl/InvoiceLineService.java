@@ -261,7 +261,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
 
         super.create(entity);
-        invoice.getInvoiceLines().add(entity);
+        if(invoice != null && invoice.getInvoiceLines() != null) {
+            invoice.getInvoiceLines().add(entity);
+        }
         if(!isDuplicated && entity.getDiscountPlan() != null && entity.getAmountWithoutTax().compareTo(BigDecimal.ZERO)>0 ) {
         	addDiscountPlanInvoice(entity.getDiscountPlan(), entity, billingAccount,invoice, accountingArticle, seller);
         }
