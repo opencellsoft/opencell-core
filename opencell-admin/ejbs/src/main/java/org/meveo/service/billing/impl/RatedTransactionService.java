@@ -2399,5 +2399,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .getResultList();
         }
     }
+
+    public List<Object[]> getReportInitialDetails(BillingRun billingRun,
+                                                     List<Long> ratedTransactionIds, Map<String, Object> filters) {
+        if(filters != null && !filters.isEmpty()) {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findReportInitialDataDetails")
+                    .setParameter("ids", ratedTransactionIds)
+                    .setParameter("billingRun", billingRun)
+                    .setParameter("status", RatedTransactionStatusEnum.valueOf((String) filters.get("status")))
+                    .getResultList();
+        } else {
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.findReportInitialData")
+                    .setParameter("ids", ratedTransactionIds)
+                    .getResultList();
+        }
+    }
 }
 

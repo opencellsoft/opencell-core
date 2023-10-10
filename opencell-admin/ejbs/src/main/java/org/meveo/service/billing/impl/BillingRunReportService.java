@@ -9,7 +9,6 @@ import static org.meveo.model.billing.BillingRunReportTypeEnum.OPEN_RATED_TRANSA
 import static org.meveo.model.jobs.JobLauncherEnum.API;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AccountingArticleAmount;
 import org.meveo.model.billing.BillingAccountAmount;
 import org.meveo.model.billing.BillingCycle;
@@ -38,7 +37,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Stateless
 public class BillingRunReportService extends PersistenceService<BillingRunReport> {
@@ -108,7 +106,8 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         if (!ratedTransactions.isEmpty()) {
             List<Long> rtIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
             List<Object[]> reportDetails = ratedTransactionService.getReportStatisticsDetails(billingRun, rtIds, filters);
-            billingRunReport = prepareBillingRunReport(reportDetails, reportType);
+            List<Object[]> initialDetails = ratedTransactionService.getReportInitialDetails(billingRun, rtIds, filters);
+            billingRunReport = prepareBillingRunReport(reportDetails, reportType, initialDetails);
             createBillingAccountAmounts(billingRun, rtIds, billingRunReport, filters);
             createOfferAmounts(billingRun, rtIds, billingRunReport, filters);
             createSubscriptionAmounts(billingRun, rtIds, billingRunReport, filters);
@@ -126,14 +125,12 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         return billingRunReport;
     }
 
-    private BillingRunReport prepareBillingRunReport(List<Object[]> reportDetails, BillingRunReportTypeEnum type) {
+    private BillingRunReport prepareBillingRunReport(List<Object[]> reportDetails,
+                                                     BillingRunReportTypeEnum type, List<Object[]> initialData) {
         BillingRunReport billingRunReport = new BillingRunReport();
         billingRunReport.setCreationDate(new Date());
         billingRunReport.setType(type);
         BigDecimal totalAmountWithoutTax = ZERO;
-        BigDecimal subscriptionCount = ZERO;
-        BigDecimal billingAccountCount = ZERO;
-        BigDecimal ratedTransactionCount = ZERO;
         for (Object[] line : reportDetails) {
             if ("R".equalsIgnoreCase((String) line[5])) {
                 billingRunReport.setRecurringTransactionsCount(valueOf((Long) line[3]));
@@ -148,14 +145,14 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                 billingRunReport.setUsageTotalAmountWithoutTax((BigDecimal) line[4]);
             }
             totalAmountWithoutTax = totalAmountWithoutTax.add((BigDecimal) line[4]);
-            ratedTransactionCount = ratedTransactionCount.add(valueOf((Long) line[0]));
-            subscriptionCount = subscriptionCount.add(valueOf((Long) line[2]));
-            billingAccountCount = billingAccountCount.add(valueOf((Long) line[1]));
         }
         billingRunReport.setTotalAmountWithoutTax(totalAmountWithoutTax);
-        billingRunReport.setRatedTransactionsCount(ratedTransactionCount);
-        billingRunReport.setBillingAccountsCount(billingAccountCount);
-        billingRunReport.setSubscriptionsCount(subscriptionCount);
+        if (initialData != null) {
+            Object[] result = initialData.get(0);
+            billingRunReport.setRatedTransactionsCount(BigDecimal.valueOf((Long) result[0]));
+            billingRunReport.setBillingAccountsCount(BigDecimal.valueOf((Long) result[1]));
+            billingRunReport.setSubscriptionsCount(BigDecimal.valueOf((Long) result[2]));
+        }
         return billingRunReport;
     }
 
