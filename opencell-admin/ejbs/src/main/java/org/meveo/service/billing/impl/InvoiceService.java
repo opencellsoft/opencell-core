@@ -50,9 +50,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.PosixFileAttributes;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -76,7 +73,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -90,13 +86,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import jakarta.xml.bind.JAXBException;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -4106,9 +4102,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), invoice.getInvoiceDate())) {
-            List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), null,
-                    invoice != null ? invoice.getInvoiceDate() : null);
+        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(),invoice.getInvoiceDate())) {
+            List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), 
+                    null,invoice.getInvoiceDate(),invoice);
             
             subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
@@ -4494,8 +4490,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 continue;
             }
             if (dpi.getDiscountPlan().isActive()) {
-                applicableDiscountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, dpi.getDiscountPlan(), null, null, null, null, invoice.getInvoiceDate());
-                dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
+            	 applicableDiscountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, dpi.getDiscountPlan(), null,invoice.getInvoiceDate(),invoice);
+                 dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
 
                 if (dpi.getDiscountPlan().getApplicationLimit() != 0 && dpi.getApplicationCount() >= dpi.getDiscountPlan().getApplicationLimit()) {
                     dpi.setStatusDate(new Date());
@@ -6450,10 +6446,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void addFixedDiscount(InvoiceLine invoiceLine) {
-        if(invoiceLine.getDiscountPlan() != null && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()) {
+        if(invoiceLine.getDiscountPlan() != null && !DiscountPlanTypeEnum.INVOICE_LINE.equals(invoiceLine.getDiscountPlan().getDiscountPlanType()) && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()) {
         	List<DiscountPlanItem> discountPlanItems = discountPlanItemService.getFixedDiscountPlanItemsByDP(invoiceLine.getDiscountPlan().getId());
             for(DiscountPlanItem discountPlanItem : discountPlanItems) {
-            if(discountPlanItem != null && discountPlanItemService.isDiscountPlanItemApplicable(invoiceLine.getBillingAccount(),discountPlanItem,invoiceLine.getAccountingArticle(),invoiceLine.getSubscription(),null) ) {
+            if(discountPlanItem != null && discountPlanItemService.isDiscountPlanItemApplicable(invoiceLine.getBillingAccount(),discountPlanItem,invoiceLine,invoiceLine.getAccountingArticle(),invoiceLine.getSubscription()) ) {
+                invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(discountPlanItem.getDiscountValue()));
                 invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(invoiceLine.getAmountTax()));
                 invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount().add(discountPlanItem.getDiscountValue()));
             }
