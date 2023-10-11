@@ -18,24 +18,25 @@
 
 package org.meveo.admin.job;
 
-import jakarta.xml.bind.JAXBException;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
+
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.InvoiceService;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Job implementation to generate invoice XML for all valid invoices that don't have it
