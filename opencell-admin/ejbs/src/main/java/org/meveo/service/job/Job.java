@@ -71,7 +71,7 @@ public abstract class Job {
     public static final String CFT_PREFIX = "JobInstance";
 
     /**
-     * Custom field for a Number of simultaneous threads that job executes
+     * Custom field for a Number of simultaneous data processing threads that job executes
      */
     public static final String CF_NB_RUNS = "nbRuns";
 
@@ -84,7 +84,7 @@ public abstract class Job {
      * Custom field for a number of items to process simultaneously in one transaction as a batch. If batch fails, items will be processed one by one.
      */
     public static final String CF_BATCH_SIZE = "batchSize";
-    
+
     /**
      * Custom field for a applyBilingRules.
      */
@@ -94,7 +94,7 @@ public abstract class Job {
      * Custom field for a sorting option
      */
     public static final String CF_SORTING_OPTION = "sortingOption";
-    
+
     /**
      * What initiated/launched Job
      */

@@ -154,7 +154,8 @@ public class JobInstance extends EnableBusinessCFEntity {
     /**
      * How often (in seconds) the job progress should be stored to DB
      */
-    @Column(name = "status_report_freq")
+    @Column(name = "status_report_freq", nullable = false)
+    @NotNull
     private int jobStatusReportFrequency = 60;
 
     /** Code of provider, that job belongs to. */

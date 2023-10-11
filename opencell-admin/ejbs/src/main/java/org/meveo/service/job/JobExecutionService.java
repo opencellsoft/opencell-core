@@ -30,6 +30,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.MapUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.IteratorBasedJobBean;
@@ -391,5 +392,40 @@ public class JobExecutionService extends BaseService {
             return jobStatus.isRequestedToStop();
         }
         return false;
+    }
+
+    /**
+     * Restart any unfinished jobs that were not completed
+     */
+    @SuppressWarnings("unchecked")
+    public void restartUnfinishedJobsUpponNodeRestart() {
+
+        String nodeName = EjbUtils.getCurrentClusterNode();
+
+        List<JobExecutionResultImpl> unfinishedJobResults = jobExecutionResultService.listUnfinishedJobsAndMarkThemCanceled(nodeName);
+
+        for (JobExecutionResultImpl jobExecutionResult : unfinishedJobResults) {
+
+            JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
+            if (!jobInstance.isRunnableOnNode(nodeName)) {
+                continue;
+            }
+
+            // A job that was running on a cluster and still has data to be processed in a queue, will be launched as a worker node
+            if (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && !IteratorBasedJobBean.areAllMessagesDelivered(jobInstance)) {
+
+                Map<String, Object> jobParams = MapUtils.putAll(new HashMap<String, Object>(), new Object[] { Job.JOB_PARAM_HISTORY_PARENT_ID, jobExecutionResult.getId() });
+                jobExecutionService.executeJob(jobInstance, jobParams, JobLauncherEnum.WORKER, false);
+
+                // For jobs that run in parallel - launch it as regular job
+            } else if (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.RUN_IN_PARALLEL) {
+                jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.INCOMPLETE, false);
+
+                // For jobs that run one at a time - check if job that was running on the same node and launch it as a regular job
+            } else if (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && nodeName.equals(jobExecutionResult.getNodeName())) {
+                jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.INCOMPLETE, false);
+            }
+        }
     }
 }
