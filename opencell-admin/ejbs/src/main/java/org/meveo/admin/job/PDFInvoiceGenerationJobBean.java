@@ -19,6 +19,7 @@
 package org.meveo.admin.job;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -90,14 +91,17 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
 			List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
 
 			result.setNbItemsToProcess(invoiceIds.size());
-			log.debug("PDFInvoiceGenerationJob number of invoices to process=" + invoiceIds.size());
+			log.info("PDFInvoiceGenerationJob number of invoices to process=" + invoiceIds.size());
 
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 			SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
 			MeveoUser lastCurrentUser = currentUser.unProxy();
-			while (subListCreator.isHasNext()) {
-				futures.add(invoicingAsync.generatePdfAsync((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
 
+			while (subListCreator.isHasNext()) {
+				List<Long> nextWorkSet = subListCreator.getNextWorkSet();
+				nextWorkSet.parallelStream().forEach(invoiceId -> {
+					futures.add(invoicingAsync.generatePdfAsync(Arrays.asList(invoiceId), result, lastCurrentUser));
+				});
 				if (subListCreator.isHasNext()) {
 					try {
 						Thread.sleep(waitingMillis.longValue());
