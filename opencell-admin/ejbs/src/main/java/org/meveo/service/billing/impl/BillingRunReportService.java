@@ -25,7 +25,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.cpq.ProductService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 
@@ -73,9 +72,6 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
 
     @Inject
     private ProductAmountService productAmountService;
-
-    @Inject
-    private ProductService productService;
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -132,15 +128,17 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         billingRunReport.setType(type);
         BigDecimal totalAmountWithoutTax = ZERO;
         for (Object[] line : reportDetails) {
-            if ("R".equalsIgnoreCase((String) line[5])) {
+            final String chargeType = (String) line[5];
+            if ("R".equalsIgnoreCase(chargeType)) {
                 billingRunReport.setRecurringTransactionsCount(valueOf((Long) line[3]));
                 billingRunReport.setRecurringTotalAmountWithoutTax((BigDecimal) line[4]);
             }
-            if ("O".equalsIgnoreCase((String) line[5])) {
+            if ("O".equalsIgnoreCase(chargeType)
+                    || "S".equalsIgnoreCase(chargeType) || "T".equalsIgnoreCase(chargeType)) {
                 billingRunReport.setOneShotTransactionsCount(valueOf((Long) line[3]));
                 billingRunReport.setOneShotTotalAmountWithoutTax((BigDecimal) line[4]);
             }
-            if ("U".equalsIgnoreCase((String) line[5])) {
+            if ("U".equalsIgnoreCase(chargeType)) {
                 billingRunReport.setUsageTransactionsCount(valueOf((Long) line[3]));
                 billingRunReport.setUsageTotalAmountWithoutTax((BigDecimal) line[4]);
             }
