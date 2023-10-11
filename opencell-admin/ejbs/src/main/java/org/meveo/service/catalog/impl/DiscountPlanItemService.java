@@ -39,9 +39,11 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
@@ -150,13 +152,13 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
      * @param discountPlanItem Discount configuration
      * @return A discount percent (0-100)
      */
-    public BigDecimal getDiscountAmountOrPercent(Invoice invoice, SubCategoryInvoiceAgregate scAggregate, BigDecimal amount, DiscountPlanItem discountPlanItem,Product product, Set<AttributeValue> attributeValues) {
+    public BigDecimal getDiscountAmountOrPercent(Invoice invoice, InvoiceLine invoiceLine,SubCategoryInvoiceAgregate scAggregate, BigDecimal amount, DiscountPlanItem discountPlanItem,Product product, Set<AttributeValue> attributeValues) {
         BigDecimal computedDiscount = discountPlanItem.getDiscountValue();
 
         final String dpValueEL = discountPlanItem.getDiscountValueEL();
         if (isNotBlank(dpValueEL)) {
             final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate == null ? null : scAggregate.getBillingAccount(), 
-            																					scAggregate == null ? null : scAggregate.getWallet(), invoice, amount);
+            																					scAggregate == null ? null : scAggregate.getWallet(), invoice, invoiceLine,amount);
             log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), computedDiscount, amount);
             if (evalDiscountValue != null) {
                 computedDiscount = evalDiscountValue;
@@ -186,7 +188,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
      * @return amount
      * @throws BusinessException business exception
      */
-    private BigDecimal evaluateDiscountPercentExpression(String expression, BillingAccount billingAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal) throws BusinessException {
+    private BigDecimal evaluateDiscountPercentExpression(String expression, BillingAccount billingAccount, WalletInstance wallet, Invoice invoice,InvoiceLine invoiceLine, BigDecimal subCatTotal) throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
@@ -196,6 +198,8 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         userMap.put("iv", invoice);
         userMap.put("invoice", invoice);
+        userMap.put("il", invoiceLine);
+        userMap.put("invoiceLine", invoiceLine);
         userMap.put("wa", wallet);
         userMap.put("amount", subCatTotal);
 
@@ -203,12 +207,11 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         return result;
     }
 
-    public BigDecimal getDiscountAmount(BigDecimal amountToApplyDiscountOn, DiscountPlanItem discountPlanItem, Product product, List<AttributeValue> attributeValues)
+    public BigDecimal getDiscountAmount(BigDecimal amountToApplyDiscountOn, DiscountPlanItem discountPlanItem, Product product,Invoice invoice, InvoiceLine invoiceLine, List<AttributeValue> attributeValues)
             throws BusinessException {
 
 
-        BigDecimal discountValue = getDiscountAmountOrPercent(null, null, amountToApplyDiscountOn, discountPlanItem,product,Set.copyOf(attributeValues));
-
+    	BigDecimal discountValue = getDiscountAmountOrPercent(invoice,invoiceLine, null, amountToApplyDiscountOn, discountPlanItem,product,Set.copyOf(attributeValues));
         if (BigDecimal.ZERO.compareTo(discountValue) == 0) {
             return BigDecimal.ZERO;
         }
@@ -243,8 +246,27 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
     }
     
-    public List<DiscountPlanItem>  getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,Subscription subscription,WalletOperation walletOperation,AccountingArticle accountingArticle,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate)
+    public List<DiscountPlanItem>  getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan,DiscountPlanItemTypeEnum discountPlanItemType,Date applicationDate,BaseEntity...entities)
             throws BusinessException {
+    	
+    	Subscription subscription=null;
+    	WalletOperation walletOperation=null;
+    	AccountingArticle accountingArticle=null;
+    	
+    	  for (Object parameter : entities) {
+              if (parameter == null) {
+                  continue;
+              }
+              if(parameter instanceof AccountingArticle) {
+              	accountingArticle=(AccountingArticle)parameter;
+              }
+              if(parameter instanceof Subscription) {
+            	  subscription=(Subscription)parameter;
+                }
+              if(parameter instanceof WalletOperation) {
+            	  walletOperation=(WalletOperation)parameter;
+                }
+          }
     	List<DiscountPlanItem>  applicableDiscountPlanItems = new ArrayList<DiscountPlanItem>();
     	
     	if(discountPlan.getSequence()==null){
@@ -256,7 +278,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         }
         
         ChargeTemplate chargeTemplate = null;
-        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,walletOperation,subscription);
+        boolean isDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan,applicationDate,entities);
         if (walletOperation != null) {
             chargeTemplate = walletOperation.getChargeInstance().getChargeTemplate();
             
@@ -285,7 +307,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         			if(!discountPlanItem.isApplyByArticle() && ((OneShotChargeTemplate)chargeTemplate).getOneShotChargeTemplateType()!=OneShotChargeTemplateTypeEnum.OTHER)
         				continue;
         		}
-        		if(discountPlanItem.isApplyByArticle()) {
+        		if(discountPlanItem.isApplyByArticle() && discountPlanItemType!=null) {
         			//this DP item will be handled as a percentage dp, so a discount WO/IL will be created on the product level and linked to the discounted WO/IL
                     isFixedDpItemIncluded=discountPlanItemType != null ? DiscountPlanItemTypeEnum.PERCENTAGE == discountPlanItemType : DiscountPlanItemTypeEnum.PERCENTAGE == discountPlanItem.getDiscountPlanItemType();
         			if(!isFixedDpItemIncluded) {
@@ -294,7 +316,9 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         		}
 
         		if(isFixedDpItemIncluded || discountPlanItemType==null || (discountPlanItemType!=null && discountPlanItemType.equals(discountPlanItem.getDiscountPlanItemType()))) {
-        			if (isDiscountPlanItemApplicable(billingAccount, discountPlanItem, accountingArticle,subscription,walletOperation)) {
+        			if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) &&
+					        isDiscountPlanItemApplicable(billingAccount, discountPlanItem, entities)) {
+				        lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
 
         				if(discountPlanItem.getSequence()==null) {
         					setDisountPlanItemSequence(discountPlanItem);
@@ -352,13 +376,24 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     }
 
 
-    public boolean isDiscountPlanItemApplicable(BillingAccount billingAccount,DiscountPlanItem discountPlanItem,AccountingArticle accountingArticle,Subscription subscription,WalletOperation walletOperation)
+    public boolean isDiscountPlanItemApplicable(BillingAccount billingAccount,DiscountPlanItem discountPlanItem,BaseEntity...entities)
             throws BusinessException {
         boolean isApplicable = false;
+        AccountingArticle accountingArticle=null;
+        
+        for (Object parameter : entities) {
+            if (parameter == null) {
+                continue;
+            }
+            if(parameter instanceof AccountingArticle) {
+            	accountingArticle=(AccountingArticle)parameter;
+            	break;
+            }
+        }    
         if (discountPlanItem.isActive()
 						&& (discountPlanItem.getTargetAccountingArticle().isEmpty() || accountingArticle == null
-						                        || (discountPlanItem.getTargetAccountingArticle().stream().anyMatch(o -> accountingArticle.getId().equals(o.getId()))))
-						&& discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount, walletOperation, subscription, accountingArticle)) {
+						                        || (discountPlanItem.getTargetAccountingArticle().contains(accountingArticle)))
+						&& discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount,entities)) {
 
         	isApplicable = true;
         }
