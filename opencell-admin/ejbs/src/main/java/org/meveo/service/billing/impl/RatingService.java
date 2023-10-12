@@ -824,8 +824,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             } else {
                 if (contracts != null && !contracts.isEmpty()) {
                     bareWalletOperation.setRulesContract(lookupSuitableContract(customers, contracts, true));
+	                bareWalletOperation.setOverrodePrice(true);
                 }
-                bareWalletOperation.setOverrodePrice(true);
             }
 
             // if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of shared charges
