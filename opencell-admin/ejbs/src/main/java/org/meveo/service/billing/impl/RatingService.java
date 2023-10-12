@@ -785,8 +785,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             } else {
                 if (contracts != null && !contracts.isEmpty()) {
                     bareWalletOperation.setRulesContract(lookupSuitableContract(customers, contracts,sellers, true).get(0));
+	                bareWalletOperation.setOverrodePrice(true);
                 }
-                bareWalletOperation.setOverrodePrice(true);
             }
             	
             	if (unitPriceWithoutTax == null) {
