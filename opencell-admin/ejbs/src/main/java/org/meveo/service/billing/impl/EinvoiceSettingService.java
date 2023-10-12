@@ -1,6 +1,5 @@
 package org.meveo.service.billing.impl;
 
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Channel;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.billing.ElectronicInvoiceSetting;
 import org.meveo.model.jobs.JobInstance;
@@ -13,8 +12,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Stack;
 
 @Stateless
 public class EinvoiceSettingService extends PersistenceService<ElectronicInvoiceSetting> {
