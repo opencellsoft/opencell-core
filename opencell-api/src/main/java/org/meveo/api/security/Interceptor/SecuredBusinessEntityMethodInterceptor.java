@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
+import javax.persistence.NoResultException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
