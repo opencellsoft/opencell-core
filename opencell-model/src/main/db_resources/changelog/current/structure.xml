@@ -8667,5 +8667,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
               br.aggregate_unit_amounts = bc.aggregate_unit_amounts, br.ignore_subscriptions = bc.ignore_subscriptions, br.ignore_orders = bc.ignore_orders, br.incremental_invoice_lines = bc.incremental_invoice_lines"),
          </sql>
     </changeSet>
+    
+    <changeSet id="INTRD-18839_20231012" author="AkadidAbdelmounaim">
+        <modifyDataType tableName="cpq_price_plan_version" columnName="price_el" newDataType="varchar(2000)"/>
+    </changeSet>
 
 </databaseChangeLog>
