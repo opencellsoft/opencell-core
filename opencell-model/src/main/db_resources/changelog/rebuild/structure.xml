@@ -9740,7 +9740,7 @@
             <column name="valid_from" type="datetime" />
             <column name="valid_to" type="datetime" />
             <column name="price" type="numeric(23, 12)" />
-            <column name="price_el" type="varchar(255)" />
+            <column name="price_el" type="varchar(2000)" />
             <column name="is_matrix" type="${type.boolean}"/>
             <column name="priority" type="int4" defaultValueNumeric="0"/>
             <column name="price_version_type" type="varchar(255)" defaultValue="FIXED">
@@ -20533,6 +20533,7 @@
     <changeSet id="#INTRD-16636_20230610" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" />
+    <changeSet id="INTRD-18839_20231012" author="AkadidAbdelmounaim" />
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

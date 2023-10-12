@@ -7715,5 +7715,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="role_description" type="varchar(255)" />
 		</addColumn>
 	</changeSet>
+	
+	 <changeSet id="INTRD-18839_20231012" author="AkadidAbdelmounaim">
+        <modifyDataType tableName="cpq_price_plan_version" columnName="price_el" newDataType="varchar(2000)"/>
+    </changeSet>
 
 </databaseChangeLog>
