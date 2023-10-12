@@ -71,6 +71,7 @@ public class BillingRunReportJobBean extends BaseJobBean {
                                        Map<String, Object> filters, BillingRunReportTypeEnum reportType) {
         int countOfReportCreated = 0;
         for (BillingRun billingRun : billingRuns) {
+            billingRunService.updateBillingRunJobExecution(billingRun.getId(), jobExecutionResult);
             if (filters != null && !filters.isEmpty()) {
                 filters.put("billingRun", billingRun);
             }
