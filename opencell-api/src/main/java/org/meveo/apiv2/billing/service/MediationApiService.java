@@ -1,42 +1,5 @@
 package org.meveo.apiv2.billing.service;
 
-import static org.meveo.apiv2.billing.ProcessCdrListModeEnum.PROCESS_ALL;
-import static org.meveo.apiv2.billing.ProcessCdrListModeEnum.ROLLBACK_ON_ERROR;
-import static org.meveo.apiv2.billing.ProcessCdrListModeEnum.STOP_ON_FIRST_FAIL;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.Stateless;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.concurrent.ManagedExecutorService;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.ws.rs.BadRequestException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.SynchronizedIterator;
@@ -64,6 +27,7 @@ import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.RatingResult;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.WalletOperation;
@@ -94,6 +58,42 @@ import org.meveo.service.medina.impl.ICdrReader;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.Stateless;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.ws.rs.BadRequestException;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+import static org.meveo.apiv2.billing.ProcessCdrListModeEnum.PROCESS_ALL;
+import static org.meveo.apiv2.billing.ProcessCdrListModeEnum.ROLLBACK_ON_ERROR;
+import static org.meveo.apiv2.billing.ProcessCdrListModeEnum.STOP_ON_FIRST_FAIL;
 
 @Stateless
 public class MediationApiService {
@@ -521,10 +521,16 @@ public class MediationApiService {
 
             // Generate automatically RTs
             if (generateRTs && !walletOperations.isEmpty()) {
+	            Collections.sort(walletOperations, (wo1, wo2) -> wo2.getAmountWithoutTax().compareTo(wo1.getAmountWithoutTax()));
+	            Map<Long, RatedTransaction> discountedRated = new HashMap<>();
                 for (WalletOperation walletOperation : walletOperations) {
                     //cdrParsingService.getEntityManager().persist(walletOperation.getEdr());
                 	if(walletOperation.getId() == null || walletOperation.getStatus() != WalletOperationStatusEnum.OPEN) continue;
-                    ratedTransactionService.createRatedTransaction(walletOperation, false);
+	                RatedTransaction ratedTransaction = ratedTransactionService.createRatedTransaction(walletOperation, false);
+	                if(walletOperation.getDiscountPlan() != null && discountedRated.get(walletOperation.getDiscountedWalletOperation()) != null) {
+		                ratedTransaction.setDiscountedRatedTransaction(discountedRated.get(walletOperation.getDiscountedWalletOperation()).getId());
+	                }
+	                discountedRated.put(walletOperation.getId(), ratedTransaction);
                 }
             }
             cdrProcessingResult.setAmountWithTax(BigDecimal.ZERO);

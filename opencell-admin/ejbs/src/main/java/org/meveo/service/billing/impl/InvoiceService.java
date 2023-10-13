@@ -4131,7 +4131,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Update net to pay amount
         final BigDecimal amountWithTax = invoice.getAmountWithTax() != null ? invoice.getAmountWithTax() : BigDecimal.ZERO;
         invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
-
+	    if(CollectionUtils.isEmpty(invoice.getInvoiceLines()) && CollectionUtils.isNotEmpty(subCategoryAggregates)){
+		    invoice.setInvoiceLines(subCategoryAggregates.stream().flatMap(sub -> sub.getInvoiceLinesToAssociate().stream()).collect(toList()));
+	    }
         if(invoice.getInvoiceLines() != null && !invoice.getInvoiceLines().isEmpty()) {
             BigDecimal amountDiscount = invoice.getInvoiceLines()
                     .stream()
@@ -4139,6 +4141,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .reduce(BigDecimal::add)
                     .orElse(BigDecimal.ZERO);
             amountDiscount = amountDiscount.add(otherDiscount);
+	        invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax());
             if(!amountDiscount.equals(BigDecimal.ZERO)) {
                 invoice.setDiscountAmount(amountDiscount);
                 invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
