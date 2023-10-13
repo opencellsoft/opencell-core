@@ -18,8 +18,10 @@ import org.meveo.service.billing.impl.BillingRunService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Stateless
 public class BillingRunReportJobBean extends BaseJobBean {
@@ -75,17 +77,17 @@ public class BillingRunReportJobBean extends BaseJobBean {
             if (filters != null && !filters.isEmpty()) {
                 filters.put("billingRun", billingRun);
             }
-            BillingRunReport billingRunReport =
-                    billingRunReportService.createBillingRunReport(billingRun, filters, reportType);
-            billingRun = billingRunService.refreshOrRetrieve(billingRun);
-            if(OPEN_RATED_TRANSACTIONS.equals(reportType)) {
+            if(billingRun.getPreInvoicingReport() == null ||
+                    (billingRun.getPreInvoicingReport() != null
+                            && billingRun.getPreInvoicingReport().getType() != BILLED_RATED_TRANSACTIONS)) {
+                BillingRunReport billingRunReport =
+                        billingRunReportService.createBillingRunReport(billingRun, filters, reportType);
+                billingRun = billingRunService.refreshOrRetrieve(billingRun);
                 billingRun.setPreInvoicingReport(billingRunReport);
-            } else {
-                billingRun.setBilledRatedTransactionsReport(billingRunReport);
+                billingRun.addJobExecutions(jobExecutionResult);
+                billingRunService.update(billingRun);
+                countOfReportCreated++;
             }
-            billingRun.addJobExecutions(jobExecutionResult);
-            billingRunService.update(billingRun);
-            countOfReportCreated++;
         }
         return countOfReportCreated;
     }

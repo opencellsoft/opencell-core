@@ -112,12 +112,6 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         }
         billingRunReport.setBillingRun(billingRun);
         create(billingRunReport);
-        if(OPEN_RATED_TRANSACTIONS.equals(reportType)) {
-            billingRun.setPreInvoicingReport(billingRunReport);
-        } else {
-            billingRun.setBilledRatedTransactionsReport(billingRunReport);
-        }
-        billingRunService.update(billingRun);
         return billingRunReport;
     }
 

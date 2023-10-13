@@ -2810,7 +2810,6 @@
             <column name="pre_report_auto_on_create" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="pre_invoicing_report_id" type="${cast.long}" />
             <column name="pre_report_auto_on_invoice_line_job" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="billed_rated_transactions_report_id" type="${cast.long}" />
 			<column name="application_el" type="varchar(2000)" />
 			<column name="ignore_user_accounts" type="${type.boolean}" defaultValueNumeric="1" />
 		</createTable>
@@ -17770,12 +17769,6 @@
                                  constraintName="billing_billing_run_pre_invoicing_report_id_fk"
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
     </changeSet>
-    <changeSet id="#INTRD-17637_2023-09-04_FK" author="ZBariki">
-        <addForeignKeyConstraint baseTableName="billing_billing_run"
-                                 baseColumnNames="billed_rated_transactions_report_id"
-                                 constraintName="billing_billing_run_billed_rated_transactions_report_id_fk"
-                                 referencedTableName="billing_run_report" referencedColumnNames="id"/>
-    </changeSet>
 
     <changeSet id="#INTRD-17632_2023_09_11_fk" author="zbariki">
         <addForeignKeyConstraint baseTableName="product_amount" baseColumnNames="product_id"
@@ -21001,6 +20994,7 @@
 	<changeSet id="#INTRD-16636_20230610" author="AndriusKarpavicius" />
 	<changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
 	<changeSet id="INTRD-18839_20231012" author="AkadidAbdelmounaim" />
+    <changeSet id="INTRD-18726_20231012" author="khalidHORRI" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

@@ -507,13 +507,6 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     private boolean preReportAutoOnInvoiceLinesJob = false;
 
     /**
-     * Billing run report generated after invoice line job
-     */
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "billed_rated_transactions_report_id")
-    private BillingRunReport billedRatedTransactionsReport;
-
-    /**
      * An expression to decide if a billing run will be processed or ignored by the jobs.
      */
     @Column(name = "application_el", length = 2000)
@@ -1234,14 +1227,6 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
 
     public void setPreReportAutoOnInvoiceLinesJob(boolean preReportAutoOnInvoiceLinesJob) {
         this.preReportAutoOnInvoiceLinesJob = preReportAutoOnInvoiceLinesJob;
-    }
-
-    public BillingRunReport getBilledRatedTransactionsReport() {
-        return billedRatedTransactionsReport;
-    }
-
-    public void setBilledRatedTransactionsReport(BillingRunReport billedRatedTransactionsReport) {
-        this.billedRatedTransactionsReport = billedRatedTransactionsReport;
     }
 
     public String getApplicationEl() {
