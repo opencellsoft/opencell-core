@@ -59,8 +59,4 @@ public interface GenericPagingAndFiltering {
     @Nullable
     @Value.Default default Boolean getForceCount(){ return false; }
 
-    @Value.Default
-    default boolean getIsFilter(){
-        return false;
-    }
 }
