@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,6 +63,7 @@ import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.RatingResult;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.WalletOperation;
@@ -560,12 +562,18 @@ public class MediationApiService {
 
             // Generate automatically RTs
             if (generateRTs && !walletOperations.isEmpty()) {
+	            Collections.sort(walletOperations, (wo1, wo2) -> wo2.getAmountWithoutTax().compareTo(wo1.getAmountWithoutTax()));
+				Map<Long, RatedTransaction> discountedRated = new HashMap<>();
                 for (WalletOperation walletOperation : walletOperations) {
                     // cdrParsingService.getEntityManager().persist(walletOperation.getEdr());
                     if (walletOperation.getId() == null || walletOperation.getStatus() != WalletOperationStatusEnum.OPEN) {
                         continue;
                     }
-                    ratedTransactionService.createRatedTransaction(walletOperation, false);
+                    RatedTransaction ratedTransaction = ratedTransactionService.createRatedTransaction(walletOperation, false);
+					if(walletOperation.getDiscountPlan() != null && discountedRated.get(walletOperation.getDiscountedWalletOperation()) != null) {
+						ratedTransaction.setDiscountedRatedTransaction(discountedRated.get(walletOperation.getDiscountedWalletOperation()).getId());
+					}
+					discountedRated.put(walletOperation.getId(), ratedTransaction);
                 }
             }
         }

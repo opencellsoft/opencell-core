@@ -237,26 +237,25 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			 
 			    walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,product,null,null,serviceInstance!=null?new ArrayList<>(serviceInstance.getAttributeInstances()):Collections.emptyList());
     			discountValue=discountPlanItemService.getDiscountAmountOrPercent(null,null, null, unitAmountWithoutTax, discountPlanItem,product, serviceInstance!=null?new HashSet<>(serviceInstance.getAttributeInstances()):Collections.emptySet());
-    			BigDecimal amount = walletOperation.getQuantity().multiply(walletOperationDiscountAmount);
 
 				// Unit prices and unit taxes are with higher precision
 				unitAmounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
 				amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-    			discountedAmount=discountedAmount!=null?discountedAmount.add(walletOperationDiscountAmount):null;
+    			discountedAmount=discountedAmount!=null?discountedAmount.add(walletOperationDiscountAmount).multiply(walletOperation.getQuantity()):null;
     			
     		     log.info("calculateDiscountplanItems walletOperationDiscountAmount{},unitAmountWithoutTax{} ,discountValue{} ,discountedAmount{} ",walletOperationDiscountAmount,unitAmountWithoutTax,discountValue,discountedAmount);
     			
     		    discountWalletOperation.setUnitAmountTax(walletOperationDiscountAmount);
-     			discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?amounts[0]:BigDecimal.ZERO);
-     			discountWalletOperation.setAmountWithTax(amounts[1]);
-     			discountWalletOperation.setAmountTax(amounts[2]);
+     			discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?amounts[0].multiply(walletOperation.getQuantity()):BigDecimal.ZERO);
+     			discountWalletOperation.setAmountWithTax(amounts[1].multiply(walletOperation.getQuantity()));
+     			discountWalletOperation.setAmountTax(amounts[2].multiply(walletOperation.getQuantity()));
      			discountWalletOperation.setTaxPercent(taxPercent);
      			discountWalletOperation.setUnitAmountWithoutTax(unitAmounts[0]);
      			discountWalletOperation.setUnitAmountWithTax(unitAmounts[1]);
      			discountWalletOperation.setUnitAmountTax(unitAmounts[2]);
 				discountWalletOperation.setTax(taxInfo.tax);
 				discountWalletOperation.setTaxClass(taxInfo.taxClass);
-    			discountWalletOperation.setDiscountValue(discountValue);
+    			discountWalletOperation.setDiscountValue(discountValue.multiply(walletOperation.getQuantity()));
     			discountWalletOperation.setDiscountedAmount(discountedAmount);
 				discountWalletOperation.setOrderNumber(walletOperation != null ? walletOperation.getOrderNumber() : null);
 			    discountWalletOperation.setUuid(walletOperation.getUuid());
