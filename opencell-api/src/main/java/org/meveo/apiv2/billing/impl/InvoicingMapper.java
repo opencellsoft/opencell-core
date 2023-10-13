@@ -43,6 +43,7 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
         billingRun.setDisableAggregation(resource.isDisableAggregation());
         billingRun.setUseAccountingArticleLabel(resource.isUseAccountingArticleLabel());
 
+        billingRun.setApplicationEl(resource.getApplicationEl());
         return billingRun;
     }
 

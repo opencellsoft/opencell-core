@@ -132,4 +132,7 @@ public interface ExceptionalBillingRun extends Resource {
     default Boolean isIncrementalInvoiceLines() {
         return FALSE;
     }
+    
+    @Nullable
+    String getApplicationEl();
 }
