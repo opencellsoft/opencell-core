@@ -18161,38 +18161,36 @@
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
-        <changeSet id="#INTRD-18792_cat_price_plan_matrix_configuration" author="Mohammed_ElAzzouzi">
-        <createTable tableName="cat_price_plan_matrix_configuration">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-            	<constraints nullable="false" primaryKey="true" primaryKeyName="cat_price_plan_matrix_configuration_pkey" />
+    
+    
+    
+     <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi">
+     	<createSequence sequenceName="advanced_settings_seq" startValue="1" />
+    	<createTable tableName="advanced_settings">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="advanced_settings_pk" />
             </column>
             <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="created" type="datetime">
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="use_event_code" type="${type.boolean}"/>
-            <column name="use_seller_id" type="${type.boolean}"/>
-            <column name="use_offer_id" type="${type.boolean}"/>
-            <column name="use_trading_country_id" type="${type.boolean}"/>
-            <column name="use_trading_currency_id" type="${type.boolean}"/>
-            <column name="use_criteria_1" type="${type.boolean}"/>
-            <column name="use_criteria_2" type="${type.boolean}"/>
-            <column name="use_criteria_3" type="${type.boolean}"/>
-            <column name="use_start_subscription_date" type="${type.boolean}"/>
-            <column name="use_end_subscription_date" type="${type.boolean}"/>
-            <column name="use_min_subscr_age" type="${type.boolean}"/>
-            <column name="use_max_subscr_age" type="${type.boolean}"/>
-            <column name="use_start_rating_date" type="${type.boolean}"/>
-            <column name="use_end_rating_date" type="${type.boolean}"/>
-            <column name="use_validity_from" type="${type.boolean}"/>
-            <column name="use_validity_date" type="${type.boolean}"/>
-            <column name="use_max_quantity" type="${type.boolean}"/>
-            <column name="use_min_quantity" type="${type.boolean}"/>
-        </createTable>
-    </changeSet>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="unique_advanced_settings_code" />
+            </column>
+            <column name="description" type="varchar(255)" />
+	        <column name="origin" type="varchar(100)"/>
+	        <column name="category" type="varchar(100)"/>
+	        <column name="property_group" type="varchar(100)"/>
+	        <column name="property_value" type="VARCHAR(255)"/>
+	        <column name="property_type" type="VARCHAR(255)"/>
+	    </createTable>
+	</changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
