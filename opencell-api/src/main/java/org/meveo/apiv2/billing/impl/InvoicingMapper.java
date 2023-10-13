@@ -44,6 +44,7 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
         billingRun.setUseAccountingArticleLabel(resource.isUseAccountingArticleLabel());
         billingRun.setPreReportAutoOnCreate(resource.isPreReportAutoOnCreate());
         billingRun.setPreReportAutoOnInvoiceLinesJob(resource.isPreReportAutoOnInvoiceLinesJob());
+        billingRun.setApplicationEl(resource.getApplicationEl());
         return billingRun;
     }
 
