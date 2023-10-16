@@ -92,7 +92,7 @@ public class PaginationConfiguration implements Serializable {
      */
     private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
 
-    private boolean distinctQuery = Boolean.FALSE;
+    private boolean distinctQuery = Boolean.TRUE;
 
     private boolean queryReportQuery = Boolean.FALSE;
 
@@ -144,16 +144,10 @@ public class PaginationConfiguration implements Serializable {
         }
     }
 
-    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Boolean distinct, Boolean forceCount, Object... sortFieldsAndOrder) {
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Boolean forceCount, Object... sortFieldsAndOrder) {
     	this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, sortFieldsAndOrder);
     	this.joinType=joinType;
         this.forceCount = forceCount;
-        this.distinctQuery = distinct;
-    }
-
-    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Boolean distinct, Object... sortFieldsAndOrder) {
-        this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, joinType, sortFieldsAndOrder);
-        this.distinctQuery = distinct;
     }
 
     /**
