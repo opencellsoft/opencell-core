@@ -19481,6 +19481,8 @@
     <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe" />
     
     <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD"/>
+    <changeSet id="#INTRD-14264_20230222" author="TarikFA." />
+    
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
