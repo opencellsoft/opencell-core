@@ -12055,7 +12055,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="force_xml_generation" valueNumeric="0" />
             <column name="force_pdf_generation" valueNumeric="0" />
             <column name="force_ubl_generation" valueNumeric="0" />
-            <column name="invoicing_job" value="InvoicingJob"/>
+            <column name="invoicing_job" valueComputed="(select code from meveo_job_instance where job_template = 'InvoicingJobV2' LIMIT 1)"/>
             <column name="xml_generation_job" value="XMLGenrationJob"/>
             <column name="pdf_generation_job" value="PDFGenrationJob"/>
             <column name="ubl_generation_job" value="UBLGenerationJob"/>
