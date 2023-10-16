@@ -146,4 +146,7 @@ public interface ExceptionalBillingRun extends Resource {
     default Boolean isPreReportAutoOnInvoiceLinesJob() {
         return FALSE;
     }
+    
+    @Nullable
+    String getApplicationEl();
 }
