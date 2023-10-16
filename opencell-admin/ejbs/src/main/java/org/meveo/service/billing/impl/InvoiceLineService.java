@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +44,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration;
@@ -286,6 +288,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         int rounding = appProvider.getRounding();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
         AccountingArticle accountingArticle=null;
+	    discountItems.sort(Comparator.comparing(DiscountPlanItem::getFinalSequence));
         for (DiscountPlanItem discountPlanItem : discountItems) {
         	accountingArticle=discountPlanItem.getAccountingArticle();
         	if(accountingArticle==null) {
@@ -305,17 +308,25 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         	  	}
                 BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, taxPercent, appProvider.isEntreprise(),  rounding,
                         roundingMode.getRoundingMode());
+	            BigDecimal discountValue=discountPlanItemService.getDiscountAmountOrPercent(invoice,invoiceLine, null, invoiceLine.getUnitPrice(), discountPlanItem,null,Collections.emptySet());
                 var quantity = invoiceLine.getQuantity();
                 discountInvoice.setUnitPrice(discountAmount);
                 discountInvoice.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
                 discountInvoice.setAmountWithTax(quantity.multiply(amounts[1]));
-                discountInvoice.setDiscountPlan(null);
                 discountInvoice.setDiscountedInvoiceLine(invoiceLine);
                 discountInvoice.setAmountTax(quantity.multiply(amounts[2]));
                 discountInvoice.setTaxRate(taxPercent);
                 discountInvoice.setRawAmount(discountAmount);
                 discountInvoice.setAccountingArticle(accountingArticle);
+		        discountInvoice.setDiscountPlan(discountPlanItem.getDiscountPlan());
+		        discountInvoice.setDiscountPlanItem(discountPlanItem);
+		        discountInvoice.setSequence(discountPlanItem.getSequence());
+		        discountInvoice.setDiscountPlanType(discountPlanItem.getDiscountPlanItemType());
+		        discountInvoice.setDiscountValue(discountValue);
             	super.create(discountInvoice);
+		        if(BooleanUtils.isTrue(discountPlanItem.getLastDiscount())){
+			        break;
+		        }
             
         }
         return invoiceLineDiscountAmount;
