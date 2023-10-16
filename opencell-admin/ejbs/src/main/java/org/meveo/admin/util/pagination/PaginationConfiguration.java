@@ -17,6 +17,7 @@
  */
 package org.meveo.admin.util.pagination;
 
+import org.apache.commons.collections.MapUtils;
 import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 import java.io.Serializable;
@@ -92,7 +93,7 @@ public class PaginationConfiguration implements Serializable {
      */
     private FilterOperatorEnum filterOperator = FilterOperatorEnum.AND;
 
-    private boolean distinctQuery = Boolean.TRUE;
+    private boolean distinctQuery = Boolean.FALSE;
 
     private boolean queryReportQuery = Boolean.FALSE;
 
@@ -124,6 +125,7 @@ public class PaginationConfiguration implements Serializable {
         this.firstRow = firstRow;
         this.numberOfRows = numberOfRows;
         this.filters = filters;
+        this.distinctQuery = MapUtils.isNotEmpty(this.filters);
         this.fullTextFilter = fullTextFilter;
         this.doFetch = doFetch;
         this.fetchFields = fetchFields;
@@ -179,6 +181,7 @@ public class PaginationConfiguration implements Serializable {
      */
     public PaginationConfiguration(Map<String, Object> filters) {
         this.filters = filters;
+        this.distinctQuery = MapUtils.isNotEmpty(this.filters);
     }
 
     /**
@@ -190,6 +193,7 @@ public class PaginationConfiguration implements Serializable {
      */
     public PaginationConfiguration(Map<String, Object> filters, String sortField, SortOrder sortOrder) {
         this.filters = filters;
+        this.distinctQuery = MapUtils.isNotEmpty(this.filters);
         if (sortField != null && sortOrder != null) {
             ordering = new Object[] { sortField, sortOrder };
         } else if (sortField != null) {
@@ -199,6 +203,7 @@ public class PaginationConfiguration implements Serializable {
 
     public PaginationConfiguration(Map<String, Object> filters, String sortField, SortOrder sortOrder, int numberOfRows) {
         this.filters = filters;
+        this.distinctQuery = !this.filters.isEmpty();
         if (sortField != null && sortOrder != null) {
             ordering = new Object[] { sortField, sortOrder };
         } else if (sortField != null) {
@@ -261,6 +266,7 @@ public class PaginationConfiguration implements Serializable {
      */
     public void setFilters(Map<String, Object> filters) {
         this.filters = filters;
+        this.distinctQuery = MapUtils.isNotEmpty(this.filters);
     }
     
     /**
