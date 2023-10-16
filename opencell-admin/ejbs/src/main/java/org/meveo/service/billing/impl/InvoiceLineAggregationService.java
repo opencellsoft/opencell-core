@@ -331,6 +331,10 @@ public class InvoiceLineAggregationService implements Serializable {
             groupBy.add("infoOrder.order.id");
             groupBy.add("orderNumber");
         }
+        
+        if (!aggregationConfiguration.isIgnoreUserAccounts()) {
+            groupBy.add("userAccount.id");
+        }
 
         if (!aggregationConfiguration.isAggregationPerUnitAmount()) {
             if (appProvider.isEntreprise()) {
@@ -378,6 +382,9 @@ public class InvoiceLineAggregationService implements Serializable {
 		if(aggregationConfiguration.isDisableAggregation() || !aggregationConfiguration.isIgnoreOrders()) {
 	        mapToInvoiceLineTable.put("order_id", "((agr.order_id is null and ivl.commercial_order_id is null) or agr.order_id =  ivl.commercial_order_id)");
 	        mapToInvoiceLineTable.put("order_number", "((agr.order_number is null and ivl.order_number is null) or agr.order_number = ivl.order_number)");
+		}
+		if(aggregationConfiguration.isDisableAggregation() || !aggregationConfiguration.isIgnoreUserAccounts()) {
+	        mapToInvoiceLineTable.put("user_account_id", "((agr.user_account_id is null and ivl.user_account is null) or agr.user_account_id =  ivl.user_account_id)");
 		}
 		if(aggregationConfiguration.isDisableAggregation() || !aggregationConfiguration.isAggregationPerUnitAmount()) {
 			if (appProvider.isEntreprise()) {
