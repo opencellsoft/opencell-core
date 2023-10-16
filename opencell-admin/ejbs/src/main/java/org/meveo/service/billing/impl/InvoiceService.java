@@ -6222,20 +6222,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
             }
-
-
-
-
-
-
-
-
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
             applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice, automaticInvoiceCheck);
             postCreate(invoiceAggregateProcessingInfo.invoice);
         }
         applyExchangeRateToInvoiceLineAndAggregate(invoiceList);
-        return invoiceList;
+        return refreshOrRetrieve(invoiceList);
 
     }
 
