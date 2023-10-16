@@ -2576,6 +2576,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     drafWalletOperationIds = new ArrayList<>();
                     invoice.setStatus(InvoiceStatusEnum.VALIDATED);
                     update(invoice);
+                    getEntityManager().flush();
+
                 }
                 produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft, drafWalletOperationIds);
             } catch (Exception e) {
@@ -6085,20 +6087,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
             }
-
-
-
-
-
-
-
-
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
             applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice, automaticInvoiceCheck);
             postCreate(invoiceAggregateProcessingInfo.invoice);
         }
         applyExchangeRateToInvoiceLineAndAggregate(invoiceList);
-        return invoiceList;
+        return refreshOrRetrieve(invoiceList);
 
     }
 
