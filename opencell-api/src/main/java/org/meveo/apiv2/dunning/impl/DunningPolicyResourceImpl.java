@@ -78,7 +78,7 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
         // Check the maximum number of dunning levels per dunning policy
         Integer maxNumberOfDunningLevelsByDunningPolicy = dunningSettingsService.getMaxNumberOfDunningLevels();
-        if(dunningPolicy.getDunningPolicyLevels().size() > maxNumberOfDunningLevelsByDunningPolicy) {
+        if(maxNumberOfDunningLevelsByDunningPolicy != null && dunningPolicy.getDunningPolicyLevels().size() > maxNumberOfDunningLevelsByDunningPolicy) {
             throw new NotFoundException("The maximum number of dunning levels per policy is exceeded - The maximum number is " + maxNumberOfDunningLevelsByDunningPolicy);
         }
 

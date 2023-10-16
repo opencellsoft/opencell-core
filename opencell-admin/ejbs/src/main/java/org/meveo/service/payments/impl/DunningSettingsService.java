@@ -44,6 +44,11 @@ public class DunningSettingsService extends BusinessService<DunningSettings> {
 	 * @return Max number of dunning level
 	 */
 	public Integer getMaxNumberOfDunningLevels() {
-		return findLastOne().getMaxDunningLevels();
+		DunningSettings dunningSettings = findLastOne();
+		if(dunningSettings != null) {
+			return findLastOne().getMaxDunningLevels();
+		} else {
+			return null;
+		}
 	}
 }
