@@ -153,12 +153,18 @@ public class NumberUtils {
 
         if (isEnterprise) {
             amountWithoutTax = amountWithoutTax.setScale(rounding, roundingMode);
-            amountWithTax = amountWithoutTax.add(amountWithoutTax.multiply(taxPercent).divide(new BigDecimal(100), rounding, roundingMode));
+            // the second condition used to avoid discount with negatif value, that case a amountTax == amountWithTax.abs() (after subtract on line 169)
+            amountWithTax = (amountWithTax.compareTo(amountWithoutTax) < 0 || amountWithTax.compareTo(BigDecimal.ZERO) == 0)
+                    ? amountWithoutTax.add(amountWithoutTax.multiply(taxPercent).divide(new BigDecimal(100), rounding, roundingMode))
+                    : amountWithTax;
 
         } else {
             amountWithTax = amountWithTax.setScale(rounding, roundingMode);
             BigDecimal percentPlusOne = BigDecimal.ONE.add(taxPercent.divide(NumberUtils.HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-            amountWithoutTax = amountWithTax.divide(percentPlusOne, rounding, roundingMode);
+            // the second condition used to avoid discount with negatif value, that case a amountTax == amountWithTax.abs() (after subtract on line 169)
+            amountWithoutTax = (amountWithoutTax.compareTo(amountWithTax) > 0 || amountWithTax.compareTo(BigDecimal.ZERO) == 0)
+                    ? amountWithTax.divide(percentPlusOne, rounding, roundingMode)
+                    : amountWithoutTax;
         }
 
         BigDecimal amountTax = amountWithTax.subtract(amountWithoutTax);
