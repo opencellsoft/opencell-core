@@ -123,7 +123,7 @@ public class AggregationConfiguration {
         this.ignoreOrders = billingRun.isIgnoreOrders();
         this.discountAggregation = billingRun.getDiscountAggregation();
         this.disableAggregation = billingRun.isDisableAggregation();
-        this.type = billingRun.getBillingCycle().getType();
+        this.type = (billingRun.getBillingCycle() != null) ? billingRun.getBillingCycle().getType() : BillingEntityTypeEnum.BILLINGACCOUNT;
     }
 
     public boolean isEnterprise() {
