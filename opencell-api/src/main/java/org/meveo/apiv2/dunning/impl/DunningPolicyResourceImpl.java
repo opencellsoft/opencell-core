@@ -29,6 +29,7 @@ import org.meveo.model.dunning.DunningPolicyRule;
 import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
+import org.meveo.service.payments.impl.DunningSettingsService;
 
 @Interceptors({ WsRestApiInterceptor.class })
 public class DunningPolicyResourceImpl implements DunningPolicyResource {
@@ -44,6 +45,9 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
 
     @Inject
     private DunningPolicyService dunningPolicyService;
+
+    @Inject
+    private DunningSettingsService dunningSettingsService;
     
     @Inject
     private AuditLogService auditLogService;
@@ -70,6 +74,12 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
         }
         if (dunningPolicy.getDunningPolicyLevels() == null || dunningPolicy.getDunningPolicyLevels().isEmpty()) {
             throw new BadRequestException("Policy levels are missing");
+        }
+
+        // Check the maximum number of dunning levels per dunning policy
+        Integer maxNumberOfDunningLevelsByDunningPolicy = dunningSettingsService.getMaxNumberOfDunningLevels();
+        if(maxNumberOfDunningLevelsByDunningPolicy != null && dunningPolicy.getDunningPolicyLevels().size() > maxNumberOfDunningLevelsByDunningPolicy) {
+            throw new NotFoundException("The maximum number of dunning levels per policy is exceeded - The maximum number is " + maxNumberOfDunningLevelsByDunningPolicy);
         }
 
         org.meveo.model.dunning.DunningPolicy savedEntity = dunningPolicyApiService.create(mapper.toEntity(dunningPolicy));
@@ -126,6 +136,12 @@ public class DunningPolicyResourceImpl implements DunningPolicyResource {
                 dunningPolicyService.findById(dunningPolicyId, asList("dunningLevels", "minBalanceTriggerCurrency"));
         if (dunningPolicyEntity == null) {
             throw new NotFoundException("Dunning policy with id " + dunningPolicyId + " does not exits");
+        }
+
+        // Check the maximum number of dunning levels per dunning policy
+        Integer maxNumberOfDunningLevelsByDunningPolicy = dunningSettingsService.getMaxNumberOfDunningLevels();
+        if(dunningPolicyInput.getDunningPolicyLevels().size() > maxNumberOfDunningLevelsByDunningPolicy) {
+            throw new NotFoundException("The maximum number of dunning levels per policy is exceeded - The maximum number is " + maxNumberOfDunningLevelsByDunningPolicy);
         }
 
         List<String> updatedFields = new ArrayList<>();
