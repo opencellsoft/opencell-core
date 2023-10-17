@@ -178,9 +178,7 @@ public class ProviderResourceImpl implements ProviderResource {
             providerByCode.setMaximumDelay(providerUpdateInfos.getMaximumDelay());
         }
 
-        if (provider.getMaximumDeferralPerInvoice() != null) {
-            providerByCode.setMaximumDeferralPerInvoice(providerUpdateInfos.getMaximumDeferralPerInvoice());
-        }
+        providerByCode.setMaximumDeferralPerInvoice(providerUpdateInfos.getMaximumDeferralPerInvoice());
 
         if (provider.getCurrency() != null) {
             checkAndAddCurrency(providerByCode, providerUpdateInfos);
