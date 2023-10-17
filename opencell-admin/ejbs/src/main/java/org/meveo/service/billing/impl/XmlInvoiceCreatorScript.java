@@ -184,7 +184,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     protected Logger log = LoggerFactory.getLogger(getClass());
     @Inject
-    private AccountEntitySearchService accountEntitySearchService;
+    protected AccountEntitySearchService accountEntitySearchService;
 
     /**
      * Create XML invoice and store its content in a file. Note: Just creates a file - does not update invoice with file information
