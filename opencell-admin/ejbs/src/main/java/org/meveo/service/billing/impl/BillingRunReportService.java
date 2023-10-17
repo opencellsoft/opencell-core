@@ -5,7 +5,6 @@ import static java.math.BigDecimal.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static org.meveo.model.billing.BillingRunReportTypeEnum.OPEN_RATED_TRANSACTIONS;
 import static org.meveo.model.jobs.JobLauncherEnum.API;
 
 import org.meveo.admin.exception.BusinessException;
@@ -54,9 +53,6 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
 
     @Inject
     private OfferAmountService offerAmountService;
-
-    @Inject
-    private BillingRunService billingRunService;
 
     @Inject
     private JobInstanceService jobInstanceService;
@@ -257,7 +253,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
     private List<AccountingArticleAmount> createArticleAmounts(BillingRun billingRun, List<Long> rtIds,
                                                      BillingRunReport billingRunReport, Map<String, Object> filters) {
         if(billingRun.getBillingCycle() == null
-                || (billingRun.getBillingCycle() != null && billingRun.getBillingCycle().getReportConfigDisplayProducts())) {
+                || (billingRun.getBillingCycle() != null && billingRun.getBillingCycle().getReportConfigDisplayArticles())) {
             List<AccountingArticleAmount> accountingArticleAmounts = new ArrayList<>();
             final int productsBlockSize = ofNullable(billingRun.getBillingCycle())
                     .map(BillingCycle::getReportConfigBlockSizeProducts)
