@@ -8282,6 +8282,19 @@
             <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'EInvoice_job')"/>
         </insert>
         <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-8" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
+            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="PDFInvoiceGenerationJob" />
+            <column name="code" value="PDF_Job" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="uuid" value="PDF_Job" />
+        </insert>
+        <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-7" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="1" />
@@ -8296,17 +8309,18 @@
             <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'PDF_Job')"/>
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueNumeric="-8" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="job_category" value="INVOICING" />
-            <column name="job_template" value="PDFInvoiceGenerationJob" />
-            <column name="code" value="PDF_Job" />
-
+            <column name="job_template" value="InvoicingJobV2" />
+            <column name="code" value="Invoicing_Job_V2" />
+            <column name="description" value="Invoicing Job V2"/>
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="PDF_Job" />
+            <column name="uuid" value="Invoicing_Job_V2" />
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'XML_Job')"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-14" />
@@ -8418,19 +8432,6 @@
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
             <column name="uuid" value="Invoice_Lines_Job_V2" />
-        </insert>
-        <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="1" />
-            <column name="created" valueDate="2015-03-19 00:04:19.913" />
-            <column name="job_category" value="INVOICING" />
-            <column name="job_template" value="InvoicingJobV2" />
-            <column name="code" value="Invoicing_Job_V2" />
-            <column name="description" value="Invoicing Job V2"/>
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="Invoicing_Job_V2" />
         </insert>
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
@@ -12055,10 +12056,10 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="force_xml_generation" valueNumeric="0" />
             <column name="force_pdf_generation" valueNumeric="0" />
             <column name="force_ubl_generation" valueNumeric="0" />
-            <column name="invoicing_job" valueComputed="(select code from meveo_job_instance where job_template = 'InvoicingJobV2' LIMIT 1)"/>
-            <column name="xml_generation_job" value="XMLGenrationJob"/>
-            <column name="pdf_generation_job" value="PDFGenrationJob"/>
-            <column name="ubl_generation_job" value="UBLGenerationJob"/>
+            <column name="invoicing_job" value="Invoicing_Job_V2"/>
+            <column name="xml_generation_job" value="XML_Job"/>
+            <column name="pdf_generation_job" value="PDF_Job"/>
+            <column name="ubl_generation_job" value="EInvoice_job"/>
         </insert>
     </changeSet>
 	
