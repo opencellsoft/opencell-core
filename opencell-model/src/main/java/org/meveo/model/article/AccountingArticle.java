@@ -232,10 +232,11 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 			return false;
 		AccountingArticle other = (AccountingArticle) obj;
 		if (id == null) {
-			if (other.id != null)
+			if (other.getId() != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (other.getId()!=null && !id.equals(other.getId())) {
 			return false;
+		}
 		return true;
 	}
 
