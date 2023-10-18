@@ -261,7 +261,7 @@ public class InvoiceUblHelper {
 			paymentMeansCode.setListAgencyID("NES");
 			paymentMeansCode.setListAgencyName("Northern European Subset");
 			paymentMeansCode.setListName("Payment Means");
-			paymentMeansCode.setValue(paymentMethod.getPaymentMeans().getCodeName());
+			paymentMeansCode.setValue(paymentMethod.getPaymentMeans().getCode());
 			paymentMeans.setPaymentMeansCode(paymentMeansCode);
 			
 		}
