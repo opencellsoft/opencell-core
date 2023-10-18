@@ -33,7 +33,6 @@ import org.hibernate.Session;
 import org.hibernate.StatelessSession;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
@@ -67,9 +66,6 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
     
     @Inject
-    UpdateStepExecutor updateStepExecutor;
-
-    @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
@@ -85,19 +81,10 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, null);
-        initUpdateStepParams(jobExecutionResult, jobInstance);
-        if(minId!=null && minId!=null) {
-        	updateStepExecutor.execute(jobExecutionResult, jobInstance);
-        }
+		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_MIN_ID, minId);
+        jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_MAX_ID, maxId);
         
     }
-
-	private void initUpdateStepParams(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_MIN_ID, minId);
-        jobExecutionResult.addJobParam(updateStepExecutor.PARAM_MAX_ID, maxId);
-        jobExecutionResult.addJobParam(updateStepExecutor.PARAM_CHUNK_SIZE, (Long) getParamOrCFValue(jobInstance, RatedTransactionsJob.CF_MASS_UPDATE_CHUNK, 100000L));
-        jobExecutionResult.addJobParam(updateStepExecutor.PARAM_NAMED_QUERY, ("RatedTransaction.massUpdateWithDiscountedRT" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")));
-	}
 
     /**
      * Initialize job settings and retrieve data to process

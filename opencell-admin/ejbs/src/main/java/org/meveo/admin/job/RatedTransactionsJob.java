@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -61,6 +62,9 @@ public class RatedTransactionsJob extends Job {
     /** The rated transactions aggregation job bean. */
     @Inject
     private RatedTransactionsAggregatedJobBean ratedTransactionsAggregatedJobBean;
+    
+    @Inject
+    private UpdateStepExecutor updateStepExecutor;
 
     @Inject
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
@@ -77,11 +81,20 @@ public class RatedTransactionsJob extends Job {
 
         if (aggregationSettings == null) {
             ratedTransactionsJobBean.execute(result, jobInstance);
+            initUpdateStepParams(result, jobInstance);
+            if(result.getNbItemsCorrectlyProcessed()>0) {
+            	updateStepExecutor.execute(result, jobInstance);
+            }
         } else {
             ratedTransactionsAggregatedJobBean.execute(result, jobInstance);
         }
         return result;
     }
+    
+	private void initUpdateStepParams(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        jobExecutionResult.addJobParam(updateStepExecutor.PARAM_CHUNK_SIZE, (Long) getParamOrCFValue(jobInstance, RatedTransactionsJob.CF_MASS_UPDATE_CHUNK, 100000L));
+        jobExecutionResult.addJobParam(updateStepExecutor.PARAM_NAMED_QUERY, ("RatedTransaction.massUpdateWithDiscountedRT" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")));
+	}
 
     @Override
     public JobCategoryEnum getJobCategory() {
