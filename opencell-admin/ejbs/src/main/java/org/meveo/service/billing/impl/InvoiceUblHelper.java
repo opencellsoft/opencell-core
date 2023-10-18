@@ -203,9 +203,8 @@ public class InvoiceUblHelper {
 		if(source.getInvoiceType() != null && source.getInvoiceType().getUntdidInvoiceCodeType() != null) {
 			InvoiceType invoiceType = source.getInvoiceType();
 			InvoiceTypeCode invoiceTypeCode = objectFactorycommonBasic.createInvoiceTypeCode();
-			invoiceTypeCode.setListID(invoiceType.getUntdidInvoiceCodeType().getCode());
-			invoiceTypeCode.setListAgencyID("6");
-			invoiceTypeCode.setValue(invoiceType.getCode());
+			invoiceTypeCode.setListID("UNCL 1001");
+			invoiceTypeCode.setValue(invoiceType.getUntdidInvoiceCodeType().getCode());
 			target.setInvoiceTypeCode(invoiceTypeCode);
 		}
 		ID id = objectFactorycommonBasic.createID();
