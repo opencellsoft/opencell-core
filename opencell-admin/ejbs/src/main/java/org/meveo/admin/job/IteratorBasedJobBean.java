@@ -100,9 +100,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
     @Inject
     private MethodCallingUtils methodCallingUtils;
-    
-    @Inject
-    JobContextHolder jobContextHolder;
 
     @Inject
     @JMSConnectionFactory("java:/jms/remoteCF")
@@ -330,7 +327,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             for (int k = 0; k < nbThreads; k++) {
 
                 tasks.add(getDataProcessingTask(jobInstance.getCode(), finalIterator, k, lastCurrentUser, isRunningAsJobManager, spreadOverCluster, jobQueue, batchSize.intValue(), jobExecutionResult, isNewTx,
-                    useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, countDown));
+                    useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, countDown, isSecondaryStep));
             }
 
             // Tracks if job's main thread is still running. Used only to stop job status reporting thread.
@@ -441,9 +438,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param isNewTx Shall a new transaction be initiated. If false, its expected that transaction handling will be provided by the function itself
      * @param processSingleItemFunction A function to process a single item
      * @param jobExecutionResult Job execution results
+     * @param isSecondaryStep is the step in progress a secondary step
      * @return A total number of processed items, successful or failed
      */
-    private long processItem(T itemToProcess, boolean isNewTx, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, JobExecutionResultImpl jobExecutionResult) {
+    private long processItem(T itemToProcess, boolean isNewTx, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, JobExecutionResultImpl jobExecutionResult, boolean isSecondaryStep) {
 
         int itemCount = 1;
         if (itemToProcess instanceof List && isCountIndividualListItemForProgress()) {
@@ -456,7 +454,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 processSingleItemFunction.accept(itemToProcess, jobExecutionResult);
             }
 
-            return jobExecutionResult.registerSucces(itemCount);
+            return jobExecutionResult.registerSucces(isSecondaryStep ? 0 : itemCount);
 
             // Register errors
         } catch (Exception e) {
@@ -661,11 +659,12 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param processSingleItemFunction A function to process single item
      * @param processMultipleItemFunction A function to process multiple items
      * @param countDown A synchronization counter to wait for the last message to process
+     * @param isSecondaryStep is the step in progress a secondary step
      * @return A task definition
      */
     private Runnable getDataProcessingTask(String jobInstanceCode, Iterator<T> dataIterator, int threadNr, MeveoUser lastCurrentUser, boolean isRunningAsJobManager, boolean spreadOverCluster, Destination jobQueue,
             int batchSize, JobExecutionResultImpl jobExecutionResult, boolean isNewTx, boolean useMultipleItemProcessing, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction,
-            BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, CountDownLatch countDown) {
+            BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, CountDownLatch countDown, boolean isSecondaryStep) {
 
         JMSContext jmsContext = spreadOverCluster ? jmsConnectionFactory.createContext(JMSContext.CLIENT_ACKNOWLEDGE) : null;
         final JMSConsumer jmsConsumer = spreadOverCluster ? jmsContext.createConsumer(jobQueue) : null;
@@ -691,7 +690,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 //                for (T item : itemsToProcess) {
 //                    log.error("Will process #" + ((IEntity) item).getId());
 //                }
-                    processItems(itemsToProcess, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult);
+                    processItems(itemsToProcess, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult, isSecondaryStep);
 
                     int nrOfItemsInBatch = itemsToProcess.size();
                     nrOfItemsProcessedByThread = nrOfItemsProcessedByThread + nrOfItemsInBatch;
@@ -743,9 +742,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param processSingleItemFunction A function to process single item
      * @param processMultipleItemFunction A function to process multiple items
      * @param jobExecutionResult Job execution result
+     * @param isSecondaryStep is the step in progress a secondary step
      */
     private void processItems(List<T> itemsToProcess, boolean isNewTx, boolean useMultipleItemProcessing, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction,
-            BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, JobExecutionResultImpl jobExecutionResult) {
+            BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, JobExecutionResultImpl jobExecutionResult, boolean isSecondaryStep) {
 
         int nrOfItemsInBatch = itemsToProcess.size();
         long globalI = 0;
@@ -774,7 +774,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                     log.error("Failed to process items in batch. Items will be processed one by one", e);
                     for (T itemToProcessFromFailedBatch : itemsToProcess) {
-                        globalI = processItem(itemToProcessFromFailedBatch, isNewTx, processSingleItemFunction, jobExecutionResult);
+                        globalI = processItem(itemToProcessFromFailedBatch, isNewTx, processSingleItemFunction, jobExecutionResult, isSecondaryStep);
                     }
 
                 } else {
@@ -787,7 +787,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             // Process each item
         } else {
 
-            globalI = processItem(itemsToProcess.get(0), isNewTx, processSingleItemFunction, jobExecutionResult);
+            globalI = processItem(itemsToProcess.get(0), isNewTx, processSingleItemFunction, jobExecutionResult, isSecondaryStep);
         }
             }
 
@@ -1001,7 +1001,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     msgCount++;
                     itemCount = itemCount + itemsToProcess.size();
 
-                    processItems(itemsToProcess, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult);
+                    processItems(itemsToProcess, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult, false);
 
                     msg.acknowledge();
                 }

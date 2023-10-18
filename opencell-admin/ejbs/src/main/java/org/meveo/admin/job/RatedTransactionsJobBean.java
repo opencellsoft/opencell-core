@@ -88,13 +88,10 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     private Long maxId = null;
     private Long nrOfRecords = null;
 
-	private boolean autoUpdateProgress = false;
-
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::destroyContext);
-        autoUpdateProgress=true;
         initUpdateStepParams(jobExecutionResult, jobInstance);
         if(minId!=null && minId!=null) {
         	updateStepExecutor.execute(jobExecutionResult, jobInstance);
@@ -214,7 +211,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     	}
         TypedQuery<Object[]> query = emWrapper.getEntityManager().createNamedQuery("BillingAccount.listIdByCode", Object[].class);
         List<Object[]> results = query.getResultList();
-        Map<String, List<Long>> data = new HashMap<>(results.stream().collect(Collectors.groupingBy(result -> (String) result[0],Collectors.mapping(result -> (Long)result[1], Collectors.toList()))));
+        Map<String, Long> data = new HashMap<>(results.stream().collect(Collectors.toMap(arr -> (String) arr[0], arr -> (Long) arr[1])));
 		jobContextHolder.putMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY, data);
     }
     
@@ -227,11 +224,6 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         List<Object[]> results = query.getResultList();
         Map<Long, List<Object[]>> data = new HashMap<>(results.stream().collect(Collectors.groupingBy(result -> (Long) result[0],Collectors.mapping(result -> new Object[]{(Long) result[1],(String) result[2], (String) result[3]}, Collectors.toList()))));
 		jobContextHolder.putMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY, data);
-    }
-    
-    @Override
-    protected boolean isProcessMultipleItemFunctionUpdateProgressItself() {
-        return autoUpdateProgress ;
     }
     
 }
