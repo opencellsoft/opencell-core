@@ -101,7 +101,7 @@ public class RatedTransactionsJob extends Job {
             "10000", true, null, null, "JobInstance_RatedTransactionsJob"));
         result.put(CF_MASS_UPDATE_CHUNK, CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK, resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "100000",
                 false, null, null, "JobInstance_RatedTransactionsJob"));
-        result.put(CF_USE_JOB_CONTEXT, CustomFieldTemplateUtils.buildCF(CF_USE_JOB_CONTEXT, resourceMessages.getString("jobExecution.useJobContext"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:4", "10000",
+        result.put(CF_USE_JOB_CONTEXT, CustomFieldTemplateUtils.buildCF(CF_USE_JOB_CONTEXT, resourceMessages.getString("jobExecution.useJobContext"), CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;fieldGroup:Configuration:0;field:4", "true",
                 false, null, null, "JobInstance_RatedTransactionsJob"));
         // aggregations
         result.put("woAggregationSettings",
