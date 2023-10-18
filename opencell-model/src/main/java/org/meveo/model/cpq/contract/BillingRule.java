@@ -54,6 +54,7 @@ import org.meveo.model.EnableEntity;
             + " and (br.contract.customer.id is null or br.contract.customer.id=:customerId) "
             + " and (br.contract.seller.id is null) "
             + " order by br.contract.billingAccount.id, br.contract.customerAccount.id, br.contract.customer.id, br.contract.seller.id, br.priority NULLS LAST"),
+    @NamedQuery(name = "BillingRule.findAllByContractIdForRating", query = "select contract.id, id, criteriaEL, invoicedBACodeEL from BillingRule order by contract.id, priority NULLS LAST"),
     @NamedQuery(name = "BillingRule.findByContractIdForRating", query = "select id, criteriaEL, invoicedBACodeEL from BillingRule where contract.id=:contractId order by priority NULLS LAST", hints = {
             @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
 public class BillingRule extends EnableEntity {

@@ -59,6 +59,8 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoiceLinesFactory;
+import org.meveo.admin.job.JobContextHolder;
+import org.meveo.admin.job.RatedTransactionsJob;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.generics.GenericRequestMapper;
@@ -166,6 +168,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
+    
+    @Inject
+    JobContextHolder jobContextHolder;
 
     @Inject
     private ChargeInstanceService<ChargeInstance> chargeInstanceService;
@@ -1820,8 +1825,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return false;
         }
 
-        List<Object[]> billingRules = getEntityManager().createNamedQuery("BillingRule.findByContractIdForRating").setParameter("contractId", ratedTransaction.getRulesContract().getId()).setHint("org.hibernate.cacheable", true).getResultList();
-
+        List<Object[]> billingRules = findBillingRules(ratedTransaction);
+        
+        if(billingRules==null) {
+        	return false;
+        }
+        
         for (Object[] billingRule : billingRules) {
             Long brId = (Long) billingRule[0];
             String criteriaEl = (String) billingRule[1];
@@ -1834,25 +1843,25 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     continue;
                 }
 
-                String eInvoicedBACodeEL = null;
+                String calculatedCode = null;
                 try {
-                    eInvoicedBACodeEL = evaluateInvoicedBACodeEL(ratedTransaction, invoiceBACodeEl);
+                    calculatedCode = evaluateInvoicedBACodeEL(ratedTransaction, invoiceBACodeEl);
 
-                    if (eInvoicedBACodeEL != null) {
-                        if ("".equals(eInvoicedBACodeEL)) {
+                    if (calculatedCode != null) {
+                        if ("".equals(calculatedCode)) {
                             ratedTransaction.setStatus(RatedTransactionStatusEnum.REJECTED);
                             ratedTransaction.setRejectReason("Error evaluating invoicedBillingAccountCodeEL [id=" + brId + ", invoicedBillingAccountCodeEL = " + invoiceBACodeEl + "]");
 
                         } else {
-                            BillingAccount billingAccountByCode =  (BillingAccount) getEntityManager().createNamedQuery("BillingAccount.fetchByCode").setParameter("code", eInvoicedBACodeEL).getSingleResult();
+                            Long billingAccountByCode = findIdByCode(calculatedCode);
                             if (billingAccountByCode != null) {
                                 ratedTransaction.setOriginBillingAccount(ratedTransaction.getBillingAccount());
-                                ratedTransaction.setBillingAccount(billingAccountByCode);
+                                ratedTransaction.setBillingAccount(getEntityManager().getReference(BillingAccount.class, billingAccountByCode));
 
                             } else {
                                 ratedTransaction.setStatus(RatedTransactionStatusEnum.REJECTED);
                                 ratedTransaction.setRejectReason(
-                                    "Billing redirection rule [id=" + brId + ",  invoicedBillingAccountCodeEL=" + invoiceBACodeEl + "] redirects to unknown billing account [code=" + eInvoicedBACodeEL + "]");
+                                    "Billing redirection rule [id=" + brId + ",  invoicedBillingAccountCodeEL=" + invoiceBACodeEl + "] redirects to unknown billing account [code=" + calculatedCode + "]");
                             }
                         }
                     } else {
@@ -1874,6 +1883,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         return false;
     }
+
+	private Long findIdByCode(String calculatedCode) {
+		if(jobContextHolder.isNotEmpty(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY)) {
+			return jobContextHolder.getValueFromMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY, calculatedCode);
+		}
+		return (Long) getEntityManager().createNamedQuery("BillingAccount.fetchIdByCode").setParameter("code", calculatedCode).getSingleResult();
+	}
+
+	private List<Object[]> findBillingRules(RatedTransaction ratedTransaction) {
+		Long contractId = ratedTransaction.getRulesContract().getId();
+		if(jobContextHolder.isNotEmpty(RatedTransactionsJob.BILLING_RULES_MAP_KEY)) {
+			return jobContextHolder.getValueFromMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY, contractId);
+		}
+		return getEntityManager().createNamedQuery("BillingRule.findByContractIdForRating").setParameter("contractId", contractId).setHint("org.hibernate.cacheable", true).getResultList();//2
+	}
+	
     
     private Boolean checkCriteriaEL(RatedTransaction rt, String expression) throws BusinessException {
         if (StringUtils.isBlank(expression)) {

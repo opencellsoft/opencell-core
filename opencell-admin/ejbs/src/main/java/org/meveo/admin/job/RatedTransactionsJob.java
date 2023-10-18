@@ -49,7 +49,13 @@ import org.meveo.service.job.Job;
 @Stateless
 public class RatedTransactionsJob extends Job {
 
-    /** The rated transactions job bean. */
+    public static final String CF_MASS_UPDATE_CHUNK = "CF_MASS_UPDATE_CHUNK";
+    public static final String CF_USE_JOB_CONTEXT = "CF_USE_JOB_CONTEXT";
+    
+    public static final String BILLING_RULES_MAP_KEY = "BILLING_RULES_MAP_KEY";
+    public static final String BILLING_ACCOUNTS_MAP_KEY = "BILLING_ACCOUNTS_MAP_KEY";
+
+	/** The rated transactions job bean. */
     @Inject
     private RatedTransactionsJobBean ratedTransactionsJobBean;
 
@@ -93,6 +99,10 @@ public class RatedTransactionsJob extends Job {
             "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, "JobInstance_RatedTransactionsJob"));
         result.put(CF_BATCH_SIZE, CustomFieldTemplateUtils.buildCF(CF_BATCH_SIZE, resourceMessages.getString("jobExecution.batchSize"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2",
             "10000", true, null, null, "JobInstance_RatedTransactionsJob"));
+        result.put(CF_MASS_UPDATE_CHUNK, CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK, resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "100000",
+                false, null, null, "JobInstance_RatedTransactionsJob"));
+        result.put(CF_USE_JOB_CONTEXT, CustomFieldTemplateUtils.buildCF(CF_USE_JOB_CONTEXT, resourceMessages.getString("jobExecution.useJobContext"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:4", "10000",
+                false, null, null, "JobInstance_RatedTransactionsJob"));
         // aggregations
         result.put("woAggregationSettings",
             CustomFieldTemplateUtils.buildCF("woAggregationSettings", resourceMessages.getString("jobExecution.woAggregationSettings"), CustomFieldTypeEnum.ENTITY,

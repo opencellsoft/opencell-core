@@ -22,7 +22,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSConnectionFactory;
 import javax.jms.JMSConsumer;
@@ -100,6 +99,9 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
     @Inject
     private MethodCallingUtils methodCallingUtils;
+    
+    @Inject
+    JobContextHolder jobContextHolder;
 
     @Inject
     @JMSConnectionFactory("java:/jms/remoteCF")
@@ -175,6 +177,32 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
     protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
             BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, Predicate<JobInstance> hasMoreFunction,
             Consumer<JobExecutionResultImpl> finalizeInitFunction, Consumer<JobExecutionResultImpl> finalizeFunction) {
+    	execute(jobExecutionResult, jobInstance, initFunction, processSingleItemFunction, processMultipleItemFunction, hasMoreFunction, finalizeFunction, finalizeFunction, false);
+    }
+    
+    /**
+     * Execute a job - retrieve a list of data to process, iterate over the data and process one or multiple items at a time, checking if job is still running and update job progress in DB periodically. <br/>
+     * <p>
+     * 
+     * If processMultipleItemFunction is provided at first an attempt to process multiple items in one transaction will be attempted. If any items fail, each item will be processed one by one in a separate transaction.
+     * <p>
+     * When run in mode where same data set is processed on multiple nodes, initFunction and finalizeInitFunction are called only on a master node that initiated job execution. It will NOT be called on worked nodes.
+     * 
+     * @param jobExecutionResult Job execution result
+     * @param jobInstance Job instance
+     * @param initFunction A function to initialize the data to process
+     * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction
+     * @param processMultipleItemFunction A function to process multiple items. Will be executed in its own transaction.
+     * @param hasMoreFunction A function to determine if the are more data to process even though this job run has completed. Optional.
+     * @param finalizeInitFunction A function to close any resources opened during initFunction call. Optional. Run once job is finished, independently if it no data was found to process, if it was canceled or completed.
+     * @param finalizeFunction A function to finalize data to process. Optional. Run once job is finished, independently if it was canceled or completed. Not run if no data were foudn to process. Consult job execution
+     *        result status if needed.
+     * @param isSecondaryStep A boolean to identify secondary steps of a job, that should not update JobExecutionResult. 
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
+            BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, Predicate<JobInstance> hasMoreFunction,
+            Consumer<JobExecutionResultImpl> finalizeInitFunction, Consumer<JobExecutionResultImpl> finalizeFunction, boolean isSecondaryStep) {
 
         boolean isRunningAsJobManager = jobExecutionResult.getJobLauncherEnum() != JobLauncherEnum.WORKER;
 
@@ -210,17 +238,21 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             iterator = iteratorOpt.get();
 
+            long numberOfItemsToProcess = 0;
+
             if (iterator instanceof SynchronizedIterator) {
-                jobExecutionResult.setNbItemsToProcess(((SynchronizedIterator) iterator).getSize());
-
+                numberOfItemsToProcess = ((SynchronizedIterator) iterator).getSize();
             } else if (iterator instanceof SynchronizedIteratorGrouped) {
-                jobExecutionResult.setNbItemsToProcess(((SynchronizedIteratorGrouped) iterator).getSize());
-
+                numberOfItemsToProcess = ((SynchronizedIteratorGrouped) iterator).getSize();
             } else if (iterator instanceof SynchronizedMultiItemIterator) {
-                jobExecutionResult.setNbItemsToProcess(((SynchronizedMultiItemIterator) iterator).getSize());
+                numberOfItemsToProcess = ((SynchronizedMultiItemIterator) iterator).getSize();
             }
 
-            if (jobExecutionResult.getNbItemsToProcess() == 0) {
+            if(!isSecondaryStep) {
+            	jobExecutionResult.setNbItemsToProcess(numberOfItemsToProcess);
+            }
+
+            if (numberOfItemsToProcess == 0) {
                 log.info("{}/{} will skip as nothing to process", jobInstance.getJobTemplate(), jobInstance.getCode());
 
                 // When running as a primary job manager, Close data initialization
@@ -237,14 +269,16 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 return;
             }
 
-            log.info("{}/{} - {} records to process", jobInstance.getJobTemplate(), jobInstance.getCode(), jobExecutionResult.getNbItemsToProcess());
+            log.info("{}/{} - {} records to process", jobInstance.getJobTemplate(), jobInstance.getCode(), numberOfItemsToProcess);
 
         } else {
 
             log.info("{}/{} running as a worker node", jobInstance.getJobTemplate(), jobInstance.getCode());
         }
 
-        jobExecutionResultService.persistResult(jobExecutionResult);
+        if(!isSecondaryStep) {
+        	jobExecutionResultService.persistResult(jobExecutionResult);
+        }
 
         Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbThreads == -1) {
@@ -260,7 +294,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         boolean isNewTx = isProcessItemInNewTx();
 
         // Multiple item processing will happen only if batch size is greater than one,
-        Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 1L);
+        Long batchSize = isSecondaryStep ? (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SECONDARY_STEP_SIZE, 1L) : (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 1L);
         boolean useMultipleItemProcessing = (processMultipleItemFunction != null && batchSize != null && batchSize > 1) || processSingleItemFunction == null;
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
@@ -301,11 +335,14 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             // Tracks if job's main thread is still running. Used only to stop job status reporting thread.
             boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstance.getId()) };
 
-            // Start job status report task. Not run in future, so it will die when main thread dies
-            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance.getCode(), lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
-                currentUserProvider, log, jobExecutionResultService);
-            Thread jobStatusReportThread = new Thread(jobStatusReportTask);
-            jobStatusReportThread.start();
+            Thread jobStatusReportThread = null;
+            if(!isSecondaryStep) {
+            	// Start job status report task. Not run in future, so it will die when main thread dies
+                Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance.getCode(), lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
+                    currentUserProvider, log, jobExecutionResultService);
+                jobStatusReportThread = new Thread(jobStatusReportTask);
+                jobStatusReportThread.start();
+            }
 
             // Launch main publishing and processing tasks
             int i = 0;
@@ -354,7 +391,9 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             // This will exit the status report task
             isProcessing[0] = false;
-            jobStatusReportThread.interrupt();
+            if(!isSecondaryStep) {
+            	jobStatusReportThread.interrupt();
+            }
 
             // Clean up countDown counter for job thread scheduling purpose
             countDowns.remove(jobInstance.getId());

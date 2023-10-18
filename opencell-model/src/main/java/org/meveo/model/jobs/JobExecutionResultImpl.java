@@ -22,6 +22,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -64,6 +66,19 @@ import org.meveo.model.NotifiableEntity;
 
 public class JobExecutionResultImpl extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
+    
+    
+    @Transient
+    Map<String,Object> jobParams = new TreeMap<String,Object>();
+    
+    public Object getJobParam(String key){
+    	return jobParams.get(key);
+    }
+    
+    
+    public void addJobParam(String key, Object value){
+    	jobParams.put(key,value);
+    }
 
     /**
      * Job instance

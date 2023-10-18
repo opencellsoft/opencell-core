@@ -18,14 +18,18 @@
 
 package org.meveo.admin.job;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.TypedQuery;
 
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -33,15 +37,14 @@ import org.hibernate.Session;
 import org.hibernate.StatelessSession;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationNative;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -66,6 +69,12 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
 
     @Inject
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
+    
+    @Inject
+	private JobContextHolder jobContextHolder;
+    
+    @Inject
+    UpdateStepExecutor updateStepExecutor;
 
     @Inject
     @MeveoJpa
@@ -79,11 +88,26 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     private Long maxId = null;
     private Long nrOfRecords = null;
 
+	private boolean autoUpdateProgress = false;
+
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::bindRTs);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::destroyContext);
+        autoUpdateProgress=true;
+        initUpdateStepParams(jobExecutionResult, jobInstance);
+        if(minId!=null && minId!=null) {
+        	updateStepExecutor.execute(jobExecutionResult, jobInstance);
+        }
+        
     }
+
+	private void initUpdateStepParams(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_MIN_ID, minId);
+        jobExecutionResult.addJobParam(updateStepExecutor.PARAM_MAX_ID, maxId);
+        jobExecutionResult.addJobParam(updateStepExecutor.PARAM_CHUNK_SIZE, (Long) getParamOrCFValue(jobInstance, RatedTransactionsJob.CF_MASS_UPDATE_CHUNK, 100000L));
+        jobExecutionResult.addJobParam(updateStepExecutor.PARAM_NAMED_QUERY, ("RatedTransaction.massUpdateWithDiscountedRT" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")));
+	}
 
     /**
      * Initialize job settings and retrieve data to process
@@ -94,6 +118,11 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     private Optional<Iterator<WalletOperationNative>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
+        if( (boolean)getParamOrCFValue(jobInstance, RatedTransactionsJob.CF_USE_JOB_CONTEXT, true)) {
+        	initBillingAccountsData();
+            initBillingRulesData();
+        }
+        
 
         EntityReferenceWrapper aggregationSettingsWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationSettings", null);
         WalletOperationAggregationSettings aggregationSettings = null;
@@ -167,15 +196,42 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * 
      * @param jobExecutionResult Job execution result
      */
-    private void bindRTs(JobExecutionResultImpl jobExecutionResult) {
-
-        if (jobExecutionResult.getJobLauncherEnum() != JobLauncherEnum.WORKER && jobExecutionResult.getStatus() != JobExecutionResultStatusEnum.CANCELLED && nrOfRecords != null && nrOfRecords.intValue() > 0) {
-            ratedTransactionService.bridgeDiscountRTs(minId, maxId);
-        }
+    private void destroyContext(JobExecutionResultImpl jobExecutionResult) {
+		if(!hasMore) {
+			jobContextHolder.clearMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY);
+			jobContextHolder.clearMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY);
+		}
     }
 
     @Override
     protected boolean isProcessItemInNewTx() {
         return false;
     }
+    
+    public void initBillingAccountsData() {
+    	if(jobContextHolder.isNotEmpty(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY)) {
+    		return;
+    	}
+        TypedQuery<Object[]> query = emWrapper.getEntityManager().createNamedQuery("BillingAccount.listIdByCode", Object[].class);
+        List<Object[]> results = query.getResultList();
+        Map<String, List<Long>> data = new HashMap<>(results.stream().collect(Collectors.groupingBy(result -> (String) result[0],Collectors.mapping(result -> (Long)result[1], Collectors.toList()))));
+		jobContextHolder.putMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY, data);
+    }
+    
+    
+    public void initBillingRulesData() {
+    	if(jobContextHolder.isNotEmpty(RatedTransactionsJob.BILLING_RULES_MAP_KEY)) {
+    		return;
+    	}
+        TypedQuery<Object[]> query = emWrapper.getEntityManager().createNamedQuery("BillingRule.findAllByContractIdForRating", Object[].class);
+        List<Object[]> results = query.getResultList();
+        Map<Long, List<Object[]>> data = new HashMap<>(results.stream().collect(Collectors.groupingBy(result -> (Long) result[0],Collectors.mapping(result -> new Object[]{(Long) result[1],(String) result[2], (String) result[3]}, Collectors.toList()))));
+		jobContextHolder.putMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY, data);
+    }
+    
+    @Override
+    protected boolean isProcessMultipleItemFunctionUpdateProgressItself() {
+        return autoUpdateProgress ;
+    }
+    
 }
