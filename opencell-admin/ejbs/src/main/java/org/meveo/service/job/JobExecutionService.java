@@ -413,7 +413,7 @@ public class JobExecutionService extends BaseService {
             }
 
             // A job that was running on a cluster and still has data to be processed in a queue, will be launched as a worker node
-            if (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && !IteratorBasedJobBean.areAllMessagesDelivered(jobInstance)) {
+            if (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && !IteratorBasedJobBean.areAllMessagesDelivered(jobInstance.getCode())) {
 
                 Map<String, Object> jobParams = MapUtils.putAll(new HashMap<String, Object>(), new Object[] { Job.JOB_PARAM_HISTORY_PARENT_ID, jobExecutionResult.getId() });
                 jobExecutionService.executeJob(jobInstance, jobParams, JobLauncherEnum.WORKER, false);

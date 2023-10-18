@@ -24,6 +24,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.ExceptionListener;
 import javax.jms.JMSConnectionFactory;
 import javax.jms.JMSConsumer;
 import javax.jms.JMSContext;
@@ -96,7 +97,25 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
     private static final long serialVersionUID = 649152055662228506L;
 
+    /**
+     * Remote MQ connection url
+     */
     private static final String REMOTE_MQ_HOST = "REMOTE_MQ_HOST";
+
+    /**
+     * Remote MQ JMX connection port
+     */
+    private static final String REMOTE_MQ_JMX_PORT = "REMOTE_MQ_JMX_PORT";
+
+    /**
+     * Remote MQ connection username
+     */
+    private static final String REMOTE_MQ_ADMIN_USER = "REMOTE_MQ_ADMIN_USER";
+
+    /**
+     * Remote MQ connection password
+     */
+    private static final String REMOTE_MQ_ADMIN_PASSWORD = "REMOTE_MQ_ADMIN_PASSWORD";
 
     @Inject
     private MethodCallingUtils methodCallingUtils;
@@ -666,8 +685,26 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             int batchSize, JobExecutionResultImpl jobExecutionResult, boolean isNewTx, boolean useMultipleItemProcessing, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction,
             BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, CountDownLatch countDown, boolean isSecondaryStep) {
 
-        JMSContext jmsContext = spreadOverCluster ? jmsConnectionFactory.createContext(JMSContext.CLIENT_ACKNOWLEDGE) : null;
-        final JMSConsumer jmsConsumer = spreadOverCluster ? jmsContext.createConsumer(jobQueue) : null;
+        JMSContext jmsContext = null;
+        ItertatorJobMessageListener messageListener = null;
+        if (spreadOverCluster) {
+            jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.CLIENT_ACKNOWLEDGE);
+            JMSConsumer jmsConsumer = jmsContext.createConsumer(jobQueue);
+            messageListener = new ItertatorJobMessageListener(countDown, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult);
+            jmsConsumer.setMessageListener(messageListener);
+            jmsContext.setExceptionListener(new ExceptionListener() {
+
+                @Override
+                public void onException(JMSException e) {
+                    log.error("Exception while consuming Job processing data messages", e);
+
+                }
+            });
+        }
+        final JMSContext jmsContextFinal = jmsContext;
+        final ItertatorJobMessageListener messageListenerFinal = messageListener;
+
+        Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
 
         Runnable task = () -> {
 
@@ -703,9 +740,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             // Continue processing messages from a message queue if applicable
             if (spreadOverCluster) {
-                ItertatorJobMessageListener messageListener = new ItertatorJobMessageListener(countDown, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult);
-                jmsConsumer.setMessageListener(messageListener);
-                jmsContext.start();
+
+                jmsContextFinal.start();
                 try {
                     countDown.await();
 
@@ -713,16 +749,16 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     // Polling is done
                     do {
                         Thread.sleep(2000);
-                    } while (!areAllMessagesConsumed(jobExecutionResult.getJobInstance()));
+                    } while (!isJobRequestedToStop(jobInstanceId) && !areAllMessagesConsumed(jobInstanceCode));
 
                 } catch (InterruptedException e) {
                     log.error("Job message listener was interrupted");
                 }
 
-                nrOfItemsQueue = messageListener.getItemCount();
-                nrofMessages = messageListener.getMsgCount();
+                nrOfItemsQueue = messageListenerFinal.getItemCount();
+                nrofMessages = messageListenerFinal.getMsgCount();
                 nrOfItemsProcessedByThread = nrOfItemsProcessedByThread + nrOfItemsQueue;
-                jmsContext.close();
+                jmsContextFinal.close();
             }
 
             log.debug("Thread {} processed {} items: {} from db and {} from {} messages", Thread.currentThread().getName(), nrOfItemsProcessedByThread, nrOfItemsDb, nrOfItemsQueue, nrofMessages);
@@ -840,7 +876,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         }
 
         // Check if job is not stopped yet
-        if (Boolean.TRUE.equals(requestToStopJobs.get(jobInstanceId))) {
+        if (isJobRequestedToStop(jobInstanceId)) {
             return new ArrayList<T>();
         }
 
@@ -854,15 +890,21 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      */
     private void clearPendingWorkLoad(JobInstance jobInstance) {
 
-        try {
+        String mqHost = System.getenv(REMOTE_MQ_HOST);
+        if (StringUtils.isBlank(mqHost)) {
+            mqHost = "localhost";
+        }
 
-            String mqHost = System.getenv(REMOTE_MQ_HOST);
-            if (StringUtils.isBlank(mqHost)) {
-                mqHost = "localhost";
-            }
+        String jmxPort = System.getenv(REMOTE_MQ_JMX_PORT);
+        if (StringUtils.isBlank(jmxPort)) {
+            jmxPort = "1099";
+        }
 
-            JMXServiceURL target = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":1099/jmxrmi");
-            JMXConnector connector = JMXConnectorFactory.connect(target);
+        HashMap<String, Object> environment = new HashMap<String, Object>();
+        String[] credentials = new String[] { System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD) };
+        environment.put(JMXConnector.CREDENTIALS, credentials);
+
+        try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
             MBeanServerConnection remote = connector.getMBeanServerConnection();
 
             String queueName = "JOB_" + jobInstance.getCode().replace(' ', '_');
@@ -881,17 +923,26 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * 
      * @param jobInstance Job instance to clear
      */
-    private boolean areAllMessagesConsumed(JobInstance jobInstance) {
+    private boolean areAllMessagesConsumed(String jobInstanceCode) {
 
         String mqHost = System.getenv(REMOTE_MQ_HOST);
         if (StringUtils.isBlank(mqHost)) {
             mqHost = "localhost";
         }
 
-        try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":1099/jmxrmi"))) {
+        String jmxPort = System.getenv(REMOTE_MQ_JMX_PORT);
+        if (StringUtils.isBlank(jmxPort)) {
+            jmxPort = "1099";
+        }
+
+        HashMap<String, Object> environment = new HashMap<String, Object>();
+        String[] credentials = new String[] { System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD) };
+        environment.put(JMXConnector.CREDENTIALS, credentials);
+
+        try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
             MBeanServerConnection remote = connector.getMBeanServerConnection();
 
-            String queueName = "JOB_" + jobInstance.getCode().replace(' ', '_');
+            String queueName = "JOB_" + jobInstanceCode.replace(' ', '_');
             ObjectName bean = new ObjectName("org.apache.activemq.artemis:broker=\"0.0.0.0\",component=addresses,address=\"" + queueName + "\",subcomponent=queues,routing-type=\"anycast\",queue=\"" + queueName + "\"");
 
             long nrMessagesNotDelivered = (long) remote.invoke(bean, "countMessages", null, null);
@@ -907,7 +958,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             }
 
         } catch (Exception e) {
-            log.error("Failed to check for pending job data messages for job {}", jobInstance.getCode(), e);
+            log.error("Failed to check for pending job data messages for job {}", jobInstanceCode, e);
         }
         return false;
     }
@@ -917,17 +968,26 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * 
      * @param jobInstance Job instance to clear
      */
-    public static boolean areAllMessagesDelivered(JobInstance jobInstance) {
+    public static boolean areAllMessagesDelivered(String jobInstanceCode) {
 
         String mqHost = System.getenv(REMOTE_MQ_HOST);
         if (StringUtils.isBlank(mqHost)) {
             mqHost = "localhost";
         }
 
-        try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":1099/jmxrmi"))) {
+        String jmxPort = System.getenv(REMOTE_MQ_JMX_PORT);
+        if (StringUtils.isBlank(jmxPort)) {
+            jmxPort = "1099";
+        }
+
+        HashMap<String, Object> environment = new HashMap<String, Object>();
+        String[] credentials = new String[] { System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD) };
+        environment.put(JMXConnector.CREDENTIALS, credentials);
+
+        try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
             MBeanServerConnection remote = connector.getMBeanServerConnection();
 
-            String queueName = "JOB_" + jobInstance.getCode().replace(' ', '_');
+            String queueName = "JOB_" + jobInstanceCode.replace(' ', '_');
             ObjectName bean = new ObjectName("org.apache.activemq.artemis:broker=\"0.0.0.0\",component=addresses,address=\"" + queueName + "\",subcomponent=queues,routing-type=\"anycast\",queue=\"" + queueName + "\"");
 
             long nrMessagesNotDelivered = (long) remote.invoke(bean, "countMessages", null, null);
@@ -937,7 +997,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         } catch (Exception e) {
             Logger log = LoggerFactory.getLogger(IteratorBasedJobBean.class);
-            log.error("Failed to check for pending job data messages for job {}", jobInstance.getCode(), e);
+            log.error("Failed to check for pending job data messages for job {}", jobInstanceCode, e);
         }
         return false;
     }
