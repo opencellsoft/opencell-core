@@ -776,6 +776,22 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
         return recurringChargeTemplate;
     }
+    
+    /**
+     * Get Product id
+     * @param bareWalletOperation {@link WalletOperation}
+     * @return Product id
+     */
+    private static Long getProductId(WalletOperation bareWalletOperation) {
+        Long productId = null;
+
+        if(bareWalletOperation.getServiceInstance() != null && bareWalletOperation.getServiceInstance().getProductVersion() != null
+                && bareWalletOperation.getServiceInstance().getProductVersion().getProduct() != null ) {
+            productId = bareWalletOperation.getServiceInstance().getProductVersion().getProduct().getId();
+        }
+
+        return productId;
+    }
 
     private static String getChargeTemplateCode(WalletOperation bareWalletOperation) {
         String chargeTemplateCode = null;
