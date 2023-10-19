@@ -19487,6 +19487,7 @@
     <changeSet id="#INTRD-14264_20230222" author="TarikFA." />
     <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe" />
     
+    <changeSet id="#INTRD-18140_20230904" author="AdilElJaouhari" />
     <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
