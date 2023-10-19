@@ -54,6 +54,15 @@ public class BatchEntityResourceImpl implements BatchEntityResource {
                 .orElseThrow(NotFoundException::new);
     }
 
+    @Override
+    public Response cancel(Long id) {
+        if (service.isEligibleToUpdate(id)) {
+            service.cancel(id);
+        }
+        return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(BatchEntityResource.class, id).build())
+                .build();
+    }
+
     private org.meveo.apiv2.billing.BatchEntity toResourceBatchEntityWithLink(org.meveo.apiv2.billing.BatchEntity batchEntity) {
         return ImmutableBatchEntity.copyOf(batchEntity)
                 .withLinks(new LinkGenerator.SelfLinkGenerator(BatchEntityResource.class).withId(batchEntity.getId())

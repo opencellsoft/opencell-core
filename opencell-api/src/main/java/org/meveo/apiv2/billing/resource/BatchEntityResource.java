@@ -61,4 +61,14 @@ public interface BatchEntityResource {
                     @ApiResponse(responseCode = "400", description = "bad request when batch entity is not found")
             })
     Response delete(@Parameter(description = "batch entity code", required = true) @PathParam("id") Long id, @Context Request request);
+
+    @PUT
+    @Path("/{id}/cancel")
+    @Operation(summary = "This endpoint allows to cancel an existing batch entity resource", tags = {
+            "BatchEntity"}, description = "cancel an existing batch entity", responses = {
+            @ApiResponse(responseCode = "200", description = "the batch entity successfully canceled"),
+            @ApiResponse(responseCode = "403", description = "bad request, batch entity is not eligible for update"),
+            @ApiResponse(responseCode = "404", description = "bad request, batch entity is not found")})
+    Response cancel(
+            @Parameter(description = " batch entity id", required = true) @PathParam("id") Long id);
 }
