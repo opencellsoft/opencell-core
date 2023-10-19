@@ -2276,18 +2276,29 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     public List<RatedTransaction> getReportRatedTransactions(BillingRun billingRun, Map<String, Object> filters) {
+        List<RatedTransaction> ratedTransactions;
         if(filters != null && !filters.isEmpty()) {
-            return (List<RatedTransaction>) getQueryFromFilters(filters, null, emptyList(), true).getQuery(getEntityManager()).getResultList();
+            ratedTransactions =
+                    (List<RatedTransaction>) getQueryFromFilters(filters, null, emptyList(), true)
+                    .getQuery(getEntityManager())
+                    .getResultList();
         } else {
-            Map<String, Object> billingRunFilters = billingRun.getBillingCycle() != null
-                    ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
-            if (billingRunFilters == null && billingRun.getBillingCycle() != null) {
-                billingRunFilters = new HashMap<>();
-                billingRunFilters.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
-            }
-            billingRunFilters.put("status", RatedTransactionStatusEnum.OPEN.toString());
-            return (List<RatedTransaction>) getQueryFromFilters(billingRunFilters, null, emptyList(), true).getQuery(getEntityManager()).getResultList();
+            ratedTransactions = getRatedTransactionsFromBCFilters(billingRun);
         }
+        return ratedTransactions;
+    }
+
+    private List<RatedTransaction> getRatedTransactionsFromBCFilters(BillingRun billingRun) {
+        Map<String, Object> billingRunFilters = billingRun.getBillingCycle() != null
+                ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
+        if (billingRunFilters == null && billingRun.getBillingCycle() != null) {
+            billingRunFilters = new HashMap<>();
+            billingRunFilters.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
+        }
+        billingRunFilters.put("status", RatedTransactionStatusEnum.OPEN.toString());
+        return (List<RatedTransaction>) getQueryFromFilters(billingRunFilters, null, emptyList(), true)
+                        .getQuery(getEntityManager())
+                        .getResultList();
     }
 
     public List<Object[]> getReportStatisticsDetails(BillingRun billingRun,

@@ -14,6 +14,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -27,6 +29,9 @@ import java.util.List;
 @Table(name = "billing_run_report")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = {@Parameter(name = "sequence_name", value = "bill_run_report_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "BillingRunReport.findAssociatedReportToBillingRun", query = "select report from BillingRunReport report where report.billingRun.id=:billingRunId ORDER BY report.id ASC")
+})
 public class BillingRunReport extends AuditableEntity {
 
     @OneToOne(fetch = LAZY)
