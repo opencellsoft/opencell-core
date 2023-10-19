@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -39,6 +38,7 @@ import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
@@ -106,25 +106,29 @@ public class MeasurableQuantityAggregationJob extends Job {
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq) throws BusinessException {
+        int i = 0;
 
-        Long jobInstanceId = result.getJobInstance().getId();
+
+        int checkJobStatusEveryNr = result.getJobInstance().getJobSpeed().getCheckNb();
         
         for (MeasurableQuantity measurableQuantity : mq) {
-            if (BaseJobBean.isJobRequestedToStop(jobInstanceId)) {
+            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             aggregateMeasuredValues(result, report, measurableQuantity);
+            i++;
         }
     }
 
     public BigDecimal getMeasuredValueListValueSum(List<MeasuredValue> mvList, Long jobInstanceId) {
         BigDecimal mvTotal = BigDecimal.ZERO;
-
+        int i = 0;
         for (MeasuredValue mv : mvList) {
-            if (BaseJobBean.isJobRequestedToStop(jobInstanceId)) {
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                 break;
             }
             mvTotal = mvTotal.add(mv.getValue());
+            i++;
         }
         return mvTotal;
     }

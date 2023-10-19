@@ -61,7 +61,7 @@
 								<f:selectItems value="#{jobInstanceBean.getFollowingJobList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
 							</p:selectOneMenu>
 						</hftl:decorateFormField>
-						<hftl:formField label="#{messages['jobInstance.jobStatusReportFrequency']}" field="jobStatusReportFrequency" />
+						<hftl:formField label="#{messages['jobInstance.jobSpeed']}" field="jobSpeed" />
 
 						<hftl:formField label="#{messages['jobInstance.clusterBehavior']}" field="clusterBehavior" newLine="true" />
 						<hftl:formField label="#{messages['jobInstance.runOnNodes']}" field="runOnNodes" />
@@ -156,8 +156,7 @@
 							<p:column sortBy="#{entity.status}" headerText="#{messages['jobExecution.status']}" width="10%">
 								<h:outputText value="#{messages[node.type eq 'child'?entity.status.label:entity.cumulativeStatus.label]}" />
 							</p:column>
-							<hftl:column label="#{messages['jobExecution.node']}" field="nodeName" show="#{node.type eq 'child' or entity.getWorkerJobExecutionResults().isEmpty()}" width="10%" />
-						
+							
 							<hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" show="#{node.type eq 'child' or entity.getWorkerJobExecutionResults().isEmpty()}" />
 						</p:treeTable>
 					</h:form>

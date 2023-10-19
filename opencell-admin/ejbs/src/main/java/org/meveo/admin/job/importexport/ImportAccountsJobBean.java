@@ -31,7 +31,6 @@ import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.ExceptionUtils;
 import org.meveo.commons.utils.FileUtils;
@@ -44,6 +43,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.AccountImportHisto;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.BillingAccount;
 import org.meveo.model.jaxb.account.BillingAccounts;
 import org.meveo.model.jaxb.account.ErrorBillingAccount;
@@ -53,12 +53,17 @@ import org.meveo.model.jaxb.account.WarningBillingAccount;
 import org.meveo.model.jaxb.account.WarningUserAccount;
 import org.meveo.model.jaxb.account.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.service.admin.impl.AccountImportHistoService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.AccountImportService;
 import org.meveo.service.crm.impl.ImportWarningException;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
@@ -66,9 +71,10 @@ import org.meveo.service.crm.impl.ImportWarningException;
  * 
  */
 @Stateless
-public class ImportAccountsJobBean extends BaseJobBean{
+public class ImportAccountsJobBean {
 
-    private static final long serialVersionUID = -718795806777424131L;
+    @Inject
+    private Logger log;
 
     @Inject
     private AccountImportHistoService accountImportHistoService;
@@ -84,6 +90,13 @@ public class ImportAccountsJobBean extends BaseJobBean{
 
     @Inject
     private SellerService sellerService;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     private BillingAccounts billingAccountsWarning;
     private BillingAccounts billingAccountsError;
@@ -130,7 +143,7 @@ public class ImportAccountsJobBean extends BaseJobBean{
         log.info("InputFiles job " + numberOfFiles + " to import");
 
         for (File file : files) {
-            if (isJobRequestedToStop(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             File currentFile = null;
@@ -138,7 +151,7 @@ public class ImportAccountsJobBean extends BaseJobBean{
                 log.info("InputFiles job " + file.getName() + " in progres");
                 currentFile = FileUtils.addExtension(file, ".processing");
 
-                importFile(currentFile, file.getName(), result.getJobInstance().getId());
+                importFile(currentFile, file.getName(), result.getJobInstance());
 
                 FileUtils.moveFile(dirOK, currentFile, file.getName());
                 log.info("InputFiles job " + file.getName() + " done");
@@ -176,7 +189,7 @@ public class ImportAccountsJobBean extends BaseJobBean{
         return files;
     }
 
-    private void importFile(File file, String fileName, Long jobInstanceId) throws JAXBException, Exception {
+    private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, Exception {
 
         log.info("start import file : {}", fileName);
 
@@ -228,8 +241,9 @@ public class ImportAccountsJobBean extends BaseJobBean{
             nbUserAccounts += billAccount.getUserAccounts().getUserAccount().size();
         }
 
+        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
         for (org.meveo.model.jaxb.account.BillingAccount billingAccountDto : billingAccounts.getBillingAccount()) {
-            if (isJobRequestedToStop(jobInstanceId)) {
+            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                 break;
             }
 
@@ -240,6 +254,7 @@ public class ImportAccountsJobBean extends BaseJobBean{
             }
 
             createBillingAccount(seller, billingAccountDto, fileName, i);
+            i++;
         }
 
         generateReport(fileName);

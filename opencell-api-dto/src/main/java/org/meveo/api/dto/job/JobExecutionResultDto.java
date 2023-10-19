@@ -79,11 +79,6 @@ public class JobExecutionResultDto extends BaseEntityDto implements IEntityDto {
     private long nbItemsProcessedWithError;
 
     /**
-     * A name of node that job run on
-     */
-    private String nodeName;
-
-    /**
      * Is job execution done - if False, job should be repeated again to finish processing. Deprecated in 7.4. Use status field instead
      */
     @Deprecated
@@ -127,7 +122,6 @@ public class JobExecutionResultDto extends BaseEntityDto implements IEntityDto {
         this.report = jobExecutionResult.getReport();
         this.status = jobExecutionResult.getStatus();
         this.jobInstanceCode = jobExecutionResult.getJobInstance().getCode();
-        this.nodeName = jobExecutionResult.getNodeName();
     }
 
     /**
@@ -236,20 +230,6 @@ public class JobExecutionResultDto extends BaseEntityDto implements IEntityDto {
      */
     public void setNbItemsProcessedWithError(long nbItemsProcessedWithError) {
         this.nbItemsProcessedWithError = nbItemsProcessedWithError;
-    }
-
-    /**
-     * @return A name of node that job run on
-     */
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    /**
-     * @param nodeName A name of node that job run on
-     */
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
     }
 
     /**
