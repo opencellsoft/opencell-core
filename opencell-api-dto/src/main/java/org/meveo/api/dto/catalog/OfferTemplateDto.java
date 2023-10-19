@@ -110,7 +110,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
 
     @Schema(description = "indicat if offer change is restricted")
-    private Boolean isOfferChangeRestricted;
+    private Boolean isOfferChangeRestricted = Boolean.FALSE;
 
     @Schema(description = "list of allowed offer change")
     private List<String> allowedOfferChange;
