@@ -56,6 +56,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.JobTitle
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.LineExtensionAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Note;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PayableAmount;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PaymentMeansCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Percent;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PostalZone;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PriceAmount;
@@ -203,9 +204,8 @@ public class InvoiceUblHelper {
 		if(source.getInvoiceType() != null && source.getInvoiceType().getUntdidInvoiceCodeType() != null) {
 			InvoiceType invoiceType = source.getInvoiceType();
 			InvoiceTypeCode invoiceTypeCode = objectFactorycommonBasic.createInvoiceTypeCode();
-			invoiceTypeCode.setListID(invoiceType.getUntdidInvoiceCodeType().getCode());
-			invoiceTypeCode.setListAgencyID("6");
-			invoiceTypeCode.setValue(invoiceType.getCode());
+			invoiceTypeCode.setListID("UNCL 1001");
+			invoiceTypeCode.setValue(invoiceType.getUntdidInvoiceCodeType().getCode());
 			target.setInvoiceTypeCode(invoiceTypeCode);
 		}
 		ID id = objectFactorycommonBasic.createID();
@@ -254,8 +254,19 @@ public class InvoiceUblHelper {
 	}
 	
 	private void setPaymentMeans(PaymentMethod paymentMethod, Invoice target){
+		PaymentMeans paymentMeans = objectFactoryCommonAggrement.createPaymentMeans();
+		if(paymentMethod != null && paymentMethod.getPaymentMeans() != null) {
+			PaymentMeansCode paymentMeansCode = objectFactorycommonBasic.createPaymentMeansCode();
+			paymentMeansCode.setListID("UN/ECE 4461");
+			paymentMeansCode.setListAgencyID("NES");
+			paymentMeansCode.setListAgencyName("Northern European Subset");
+			paymentMeansCode.setListName("Payment Means");
+			paymentMeansCode.setValue(paymentMethod.getPaymentMeans().getCode());
+			paymentMeans.setPaymentMeansCode(paymentMeansCode);
+			
+		}
+		
 		if(paymentMethod instanceof DDPaymentMethod) {
-			PaymentMeans paymentMeans = objectFactoryCommonAggrement.createPaymentMeans();
 			FinancialAccountType financialAccountType = objectFactoryCommonAggrement.createFinancialAccountType();
 			DDPaymentMethod bank = (DDPaymentMethod)  paymentMethod;
 			ID id = null;
@@ -276,6 +287,9 @@ public class InvoiceUblHelper {
 				financialAccountType.setFinancialInstitutionBranch(branchType);
 			}
 			paymentMeans.setPayeeFinancialAccount(financialAccountType);
+		}
+		if(paymentMeans.getPaymentMeansCode() != null || paymentMeans.getPayeeFinancialAccount() != null){
+			target.getPaymentMeans().add(paymentMeans);
 		}
 	}
 	private void setInvoiceLine(List<InvoiceLine> invoiceLines, Invoice target){
