@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.Entity;
 import javax.persistence.criteria.JoinType;
 import javax.validation.constraints.NotNull;
@@ -47,6 +48,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +69,10 @@ public class GenericApiAlteringService {
     @Inject
     @MeveoJpa
     private EntityManagerWrapper entityManagerWrapper;
+
+    @Inject
+    @Named
+    private NativePersistenceService nativePersistenceService;
 
     public String update(String entityName, Long id, String jsonDto) {
         checkId(id).checkDto(jsonDto);
@@ -109,30 +115,6 @@ public class GenericApiAlteringService {
             if (!forbiddenFieldsToUpdate.contains(key))
                 FetchOrSetField(key, readValueMap, parsedEntity, fetchedEntity);
         });
-    }
-
-    public int massUpdate(String updatedEntityName, String filteredEntityName, Map<String, Object> updatedFields, Map<String, Object> filters) {
-        Class<?> updatedEntityClass = GenericHelper.getEntityClass(updatedEntityName);
-        Class<?> filteredEntityClass = GenericHelper.getEntityClass(filteredEntityName);
-
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration("id", PagingAndFiltering.SortOrder.ASCENDING);
-        paginationConfiguration.setFilters(filters);
-        paginationConfiguration.setFetchFields(new ArrayList<>());
-        paginationConfiguration.getFetchFields().add("id");
-        // Prepare filter filterQuery
-        paginationConfiguration.setJoinType(JoinType.LEFT);
-        String filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsString(filteredEntityClass, " a.ratedTransaction rt ", paginationConfiguration);
-
-        // Build update filterQuery
-        StringBuilder updateQuery = new StringBuilder("UPDATE ").append(updatedEntityClass.getName()).append(" a SET");
-        updatedFields.forEach((s, o) ->
-            updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
-        );
-        updateQuery.setLength(updateQuery.length() - 1);
-        updateQuery.append(" WHERE a.id in (").append(filterQuery).append(")");
-
-        return entityManagerWrapper.getEntityManager().createQuery(updateQuery.toString()).executeUpdate();
-
     }
 
     private void FetchOrSetField(String fieldName, Map<String, Object> readValueMap, Object parsedEntity, Object fetchedEntity) {
