@@ -31,6 +31,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -41,6 +42,7 @@ import org.meveo.admin.job.AggregationConfiguration;
 import org.meveo.admin.job.InvoiceLinesFactory;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -68,6 +70,7 @@ import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.MinAmountsResult;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCurrency;
@@ -1369,4 +1372,13 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		return getEntityManager().createNamedQuery("InvoiceLine.sumAmountsDiscountByBillingAccount")
 				.setParameter("billingRunId", billingRun.getId()).getResultList();
 	}
+    
+    public void passInvoiceLinesToBilled(Invoice invoice) {
+    	if(invoice==null) {
+    		throw new MissingParameterException("invoice");
+    	}
+    	getEntityManager().createNamedQuery("InvoiceLine.passInvoiceLinesToBilled")
+         .setParameter("invoiceId", invoice.getId())
+         .setParameter("now", new Date());
+    }
 }
