@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
@@ -49,12 +48,13 @@ import org.meveo.model.RatingResult;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
@@ -64,8 +64,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
-
-import static java.util.Arrays.asList;
 
 @Stateless
 public class RecurringRatingService extends RatingService implements Serializable {
@@ -251,17 +249,6 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 applyChargeToDate = prorateLastPeriodToDate;
             }
 
-            if(chargeInstance.isAnticipateEndOfSubscription()) {
-                Date prorateLastPeriodDate = asList(period.getTo(), chargeInstance.getSubscription().getSubscribedTillDate(),
-                        chargeInstance.getServiceInstance().getSubscribedTillDate())
-                        .stream()
-                        .filter(Objects::nonNull).min(Date::compareTo).orElse(null);
-                if(prorateLastPeriodDate != null && prorateLastPeriodDate.compareTo(period.getTo()) != 0) {
-                    applyChargeFromDate = prorateLastPeriodDate;
-                    applyChargeToDate = chargeInstance.getTerminationDate();
-                    prorateLastPeriod = true;
-                }
-            }
             // When charging first time, need to determine if counter is available and prorata ratio if subscription charge proration is enabled
             if (isFirstCharge) {
 
@@ -384,8 +371,30 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
                     BigDecimal inputQuantity = chargeMode.isReimbursement() ? chargeInstance.getQuantity().negate() : chargeInstance.getQuantity();
 
+                    if (chargeInstance != null && chargeInstance.getSubscription() != null
+                            && chargeInstance.getSubscription().getSubscribedTillDate() != null
+                            && chargeInstance.getRecurringChargeTemplate().getTerminationProrata()) {
+                        prorate = true;
+                        if(chargeInstance.getWalletOperations() != null && !chargeInstance.getWalletOperations().isEmpty()) {
+                            final int lastIndex = chargeInstance.getWalletOperations().size() - 1;
+                            WalletOperation lastWo = chargeInstance.getWalletOperations().get(lastIndex);
+                            boolean alreadyInvoiced = (lastWo.getRatedTransaction() != null
+                                    && lastWo.getRatedTransaction().getStatus().equals(RatedTransactionStatusEnum.BILLED)
+                                    && (lastWo.getRatedTransaction().getInvoiceLine() != null
+                                    && lastWo.getRatedTransaction().getInvoiceLine().getStatus().equals(InvoiceLineStatusEnum.BILLED)));
+                            if(!alreadyInvoiced) {
+                                walletOperationService.cancelWalletOperations(Arrays.asList(lastWo.getId()));
+                                inputQuantity = inputQuantity.abs();
+                                effectiveChargeFromDate = lastWo.getStartDate();
+                                effectiveChargeToDate = chargeInstance.getChargeToDateOnTermination();
+                            } else {
+                                effectiveChargeFromDate = chargeInstance.getChargeToDateOnTermination();
+                                effectiveChargeToDate = chargeInstance.getSubscription().getSubscribedTillDate();
+                            }
+                        }
+                    }
                     // Apply prorating if needed
-                    if (prorate || prorateLastPeriod) {
+                    if (prorate) {
                         BigDecimal prorata = DateUtils.calculateProrataRatio(effectiveChargeFromDate, effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, false);
                         if (prorata == null) {
                             throw new RatingException("Failed to calculate prorating for charge id=" + chargeInstance.getId() + " : periodFrom=" + currentPeriodFromDate + ", periodTo=" + currentPeriodToDate
