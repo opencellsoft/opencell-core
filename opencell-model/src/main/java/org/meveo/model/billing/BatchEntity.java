@@ -49,7 +49,10 @@ import java.util.Map;
         parameters = {@Parameter(name = "sequence_name", value = "batch_entity_seq"),})
 @NamedQueries({
         @NamedQuery(name = "BatchEntity.getOpenedBatchEntity",
-                query = "SELECT b FROM BatchEntity b WHERE b.status=org.meveo.model.billing.BatchEntityStatusEnum.OPEN and b.targetJob=:targetJob")
+                query = "SELECT b FROM BatchEntity b WHERE b.status=org.meveo.model.billing.BatchEntityStatusEnum.OPEN and b.targetJob=:targetJob"),
+        @NamedQuery(name = "BatchEntity.cancelOpenedBatchEntity",
+                query = "UPDATE BatchEntity b set b.status=org.meveo.model.billing.BatchEntityStatusEnum.CANCELED where b.id=:id " +
+                        "and b.status=org.meveo.model.billing.BatchEntityStatusEnum.OPEN")
 })
 public class BatchEntity extends AuditableEntity {
 
