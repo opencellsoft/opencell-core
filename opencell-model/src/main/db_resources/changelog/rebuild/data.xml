@@ -16984,6 +16984,20 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
                     valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
         </insert>
     </changeSet>
+    
+    <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="job_category" value="RATING"/>
+            <column name="job_template" value="MarkWOToRerateJob"/>
+            <column name="code" value="MarkWOToRerateJob"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="uuid" value="MarkWOToRerateJob"/>
+        </insert>
+    </changeSet>
 
 	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-12463_20230119" author="AbdellatifBARI" />

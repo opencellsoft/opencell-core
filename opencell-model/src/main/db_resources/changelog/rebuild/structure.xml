@@ -470,6 +470,7 @@
         <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
         <createSequence sequenceName="meveo_script_parameter_seq"/>
         <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
+        <createSequence sequenceName="batch_entity_seq" startValue="1"/>
     </changeSet>
 
 
@@ -12451,6 +12452,29 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="#INTRD-9066_20231009-rebuild" author="AbdellatifBARI">
+        <createTable tableName="batch_entity">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="batch_entity_pkey"/>
+            </column>
+            <column name="version" type="int4" defaultValueNumeric="0"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="name" type="${type.text}"/>
+            <column name="target_job" type="varchar(255)"/>
+            <column name="target_entity" type="varchar(255)"/>
+            <column name="filters" type="${type.json}"/>
+            <column name="notify" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="status" type="varchar(25)"/>
+            <column name="job_instance_id" type="bigint"/>
+            <column name="job_execution_id" type="bigint"/>
+        </createTable>
+    </changeSet>
     
     <!-- end tables -->
 
@@ -16850,6 +16874,15 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-9066_20231009-rebuild-fk" author="AbdellatifBARI">
+    	<addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_instance" referencedTableName="meveo_job_instance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="job_execution_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_execution" referencedTableName="job_execution"
+                                 referencedColumnNames="id"/>
+    </changeSet>                             
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -19543,6 +19576,7 @@
     <changeSet id="#INTRD-18140_20230904" author="AdilElJaouhari" />
     <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
     <changeSet id="INTRD-17830_20231108" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI" />
 
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

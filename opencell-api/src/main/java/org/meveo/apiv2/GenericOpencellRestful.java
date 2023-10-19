@@ -97,6 +97,7 @@ import org.meveo.apiv2.settings.globalSettings.impl.AdvancedSettingsResourceImpl
 import org.meveo.apiv2.settings.globalSettings.impl.GlobalSettingsResourceImpl;
 import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingResourceImpl;
 import org.meveo.apiv2.standardReport.impl.StandardReportResourceImpl;
+import org.meveo.apiv2.billing.impl.BatchEntityResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
 
@@ -151,7 +152,7 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
                 InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
                 ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class, InvoiceValidationRulesResourceImpl.class, InternationalSettingsResourceImpl.class, 
-                CustomTableResourceImpl.class, AdvancedSettingsResourceImpl.class).collect(Collectors.toSet());
+                CustomTableResourceImpl.class, AdvancedSettingsResourceImpl.class, BatchEntityResourceImpl.class).collect(Collectors.toSet());
         if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
             resources.add(GenericApiLoggingFilter.class);
             log.info(
