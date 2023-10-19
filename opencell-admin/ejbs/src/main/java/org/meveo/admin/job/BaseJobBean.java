@@ -20,9 +20,7 @@ package org.meveo.admin.job;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
@@ -78,11 +76,6 @@ public abstract class BaseJobBean implements Serializable {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * Jobs requested to be stopped. Job identifier is a map key. A value of true indicated that job was requested to be be stopped.
-     */
-    protected static final Map<Long, Boolean> requestToStopJobs = new HashMap<Long, Boolean>();
-
-    /**
      * Gets the parameter CF value if found, otherwise return CF value from job definition
      *
      * @param jobInstance the job instance
@@ -131,24 +124,5 @@ public abstract class BaseJobBean implements Serializable {
             formattedStatus.add(statusEnum);
         }
         return formattedStatus;
-    }
-
-    /**
-     * Mark job, identified by a job instance as "requested to stop"
-     * 
-     * @param jobInstance Job instance (id) to stop
-     */
-    public static void markJobToStop(Long jobInstanceId) {
-        requestToStopJobs.put(jobInstanceId, Boolean.TRUE);
-    }
-
-    /**
-     * Was job requested to be stopped
-     * 
-     * @param jobInstanceId Job instance Id
-     * @return True if job was requested to be stopped
-     */
-    public static boolean isJobRequestedToStop(Long jobInstanceId) {
-        return Boolean.TRUE.equals(requestToStopJobs.get(jobInstanceId));
     }
 }

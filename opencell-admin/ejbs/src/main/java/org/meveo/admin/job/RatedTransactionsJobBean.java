@@ -117,7 +117,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         int fetchSize = batchSize.intValue() * nbThreads.intValue();
 
         // Number of Wallet operations to process in a single job run
-        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("jobs.ratedTransactionsJob.processNrInJobRun", 4000000);
+        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("ratedTransactionsJob.processNrInJobRun", 4000000);
 
         Object[] convertSummary = (Object[]) emWrapper.getEntityManager().createNamedQuery("WalletOperation.getConvertToRTsSummary").getSingleResult();
 

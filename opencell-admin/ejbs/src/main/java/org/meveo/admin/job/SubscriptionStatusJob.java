@@ -19,7 +19,6 @@
 package org.meveo.admin.job;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.*;
@@ -63,7 +62,7 @@ public class SubscriptionStatusJob extends Job {
         }
         jobExecutionResultService.persistResult(result);
 
-        result = new JobExecutionResultImpl(result.getJobInstance(), result.getJobLauncherEnum(), EjbUtils.getCurrentClusterNode());
+        result = new JobExecutionResultImpl(result.getJobInstance(), result.getJobLauncherEnum());
         serviceStatusJobBean.execute(result, jobInstance);
         
         return result;

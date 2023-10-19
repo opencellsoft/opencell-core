@@ -93,7 +93,6 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             throw new EntityDoesNotExistsException("JobTemplate with code '" + postData.getJobTemplate() + "' doesn't exist.");
         }
 
-        @SuppressWarnings("rawtypes")
         JobCategoryEnum jobCategory = job.getJobCategory();
 
         JobInstance jobInstance = new JobInstance();
@@ -141,8 +140,8 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             jobInstance.setVerboseReport(postData.getVerboseReport());
         }
 
-        if (postData.getJobStatusReportFrequency() != null) {
-            jobInstance.setJobStatusReportFrequency(postData.getJobStatusReportFrequency());
+        if (postData.getJobSpeed() != null) {
+            jobInstance.setJobSpeed(postData.getJobSpeed());
         }
 
         // Create any missing CFT for a given provider and job
@@ -198,7 +197,6 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             throw new EntityDoesNotExistsException("JobTemplate with code '" + postData.getJobTemplate() + "' doesn't exist.");
         }
 
-        @SuppressWarnings("rawtypes")
         JobCategoryEnum jobCategory = job.getJobCategory();
 
         jobInstance.setJobTemplate(postData.getJobTemplate());
@@ -244,8 +242,8 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             }
         }
 
-        if (postData.getJobStatusReportFrequency() != null) {
-            jobInstance.setJobStatusReportFrequency(postData.getJobStatusReportFrequency());
+        if (postData.getJobSpeed() != null) {
+            jobInstance.setJobSpeed(postData.getJobSpeed());
         }
 
         // Create any missing CFT for a given provider and job
