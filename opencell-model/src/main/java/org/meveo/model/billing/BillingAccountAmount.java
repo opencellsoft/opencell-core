@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
@@ -18,6 +20,9 @@ import java.math.BigDecimal;
 @Table(name = "billing_account_amount")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = {@Parameter(name = "sequence_name", value = "bill_account_amount_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "BillingAccountAmount.deleteByBillingReport", query = "DELETE FROM BillingAccountAmount WHERE billingRunReport.id = :billingRunReportId")
+})
 public class BillingAccountAmount extends AuditableEntity {
 
     @OneToOne(fetch = LAZY)
