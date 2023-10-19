@@ -98,6 +98,7 @@ import org.meveo.model.securityDeposit.SecurityDepositTemplate;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -142,6 +143,9 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     private InvoiceService invoiceService;
+    
+    @Inject
+    private InvoiceLineService invoiceLineService;
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
@@ -588,6 +592,8 @@ public class InvoiceApi extends BaseApi {
 
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
+        
+        invoiceLineService.passInvoiceLinesToBilled(invoice);
         
         //Create SD
         if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode()) && createSD) {
