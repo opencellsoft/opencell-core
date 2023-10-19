@@ -303,7 +303,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             offerTemplate.setOfferModel(loadEntityByCode(offerTemplateService, postData.getOfferModelCode(), OfferTemplate.class));
         }
 
-        offerTemplate.setIsOfferChangeRestricted(postData.isOfferChangeRestricted());
+        if (postData.isOfferChangeRestricted() != null) {
+        	offerTemplate.setIsOfferChangeRestricted(postData.isOfferChangeRestricted());
+        }
 
         if (postData.getAllowedOfferChange() != null && !postData.getAllowedOfferChange().isEmpty()) {
             List<OfferTemplate> allowedOffers = new ArrayList<>();
