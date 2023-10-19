@@ -10,6 +10,7 @@ import static org.meveo.model.billing.RatedTransactionStatusEnum.REJECTED;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.JobExecutionResultDto;
@@ -26,8 +27,10 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +58,12 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 
 	@Inject
 	private JobApi jobApi;
+	
 	@Inject
 	private JobInstanceService jobInstanceService;
+	
+	@Inject
+	private FinanceSettingsService financeSettingsService;
 
 	@Override
 	public Optional<RatedTransaction> findById(Long id) {
@@ -144,7 +151,10 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	public Object duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
 			boolean returnRts, boolean startJob) {
 		DuplicateRTResult result = new DuplicateRTResult();
-		int maxLimit = ParamBean.getInstance().getPropertyAsInteger("api.ratedTransaction.massAction.limit", 10000);
+		
+		FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
+		int maxLimit = financeSettings.getSynchronousMassActionLimit(); 
+		//ParamBean.getInstance().getPropertyAsInteger("api.ratedTransaction.massAction.limit", 10000);
 
 		if(MapUtils.isEmpty(filters)) {
 			throw new InvalidParameterException("filters is required");
@@ -157,14 +167,17 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 		}
 
 		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(filters);
-		if(countRatedTransaction.intValue() > maxLimit) {
+		if (countRatedTransaction.intValue() > maxLimit) {
 			log.info("filter for duplication has more than : {}, current rated transaction from filters are : {} . will job be lunched ? : {}",
 					maxLimit, countRatedTransaction, startJob);
-			ratedTransactionService.incrementPendingDuplicate(rtToDuplicate.stream().map(RatedTransaction::getId).collect(Collectors.toList()), negateAmount);
-			if(!startJob){
-				result.setActionStatus(new ActionStatus(ActionStatusEnum.WARNING, "The filter reach the max limit to duplicate, to duplicate these rated transaction please run the job 'DuplicationRatedTransactionJob'"));
-				return result;
-			}else{
+			// ratedTransactionService.incrementPendingDuplicate(rtToDuplicate.stream().map(RatedTransaction::getId).collect(Collectors.toList()), negateAmount);
+			if (!startJob) {
+				throw new BusinessException(String.format(
+						"Number of rated items to process exceeds synchronous limit (%d/%d). Please, use flag ‘startJob’ to force asynchronous execution.",
+						countRatedTransaction.intValue(), maxLimit));
+				//result.setActionStatus(new ActionStatus(ActionStatusEnum.WARNING, "The filter reach the max limit to duplicate, to duplicate these rated transaction please run the job 'DuplicationRatedTransactionJob'"));
+				//return result;
+			} else {
 				return duplicateRatedTransactionWithJob();
 			}
 		}

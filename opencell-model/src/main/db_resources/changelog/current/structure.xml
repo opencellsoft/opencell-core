@@ -8677,5 +8677,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                   constraintName="billing_billing_run_billed_rated_transactions_report_id_fk"/>
         <dropColumn columnName="billed_rated_transactions_report_id" tableName="billing_billing_run"/>
     </changeSet>
+    
+ 	<changeSet id="#INTRD-18841_20231017" author="AdilElJaouhari">
+ 		<dropColumn columnName="pending_duplicates" tableName="billing_rated_transaction" />
+		<dropColumn columnName="pending_duplicates_to_negate" tableName="billing_rated_transaction" />
+		<addColumn tableName="finance_settings">
+			<column name="synchronous_mass_action_limit" type="int4" defaultValueNumeric="10000" />
+		</addColumn>
+		<addColumn tableName="meveo_job_instance">
+			<column name="advanced_parameters" type="${type.json}">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

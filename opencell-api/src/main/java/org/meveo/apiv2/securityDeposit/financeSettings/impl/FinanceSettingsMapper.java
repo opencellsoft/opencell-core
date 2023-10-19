@@ -81,6 +81,7 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
 	     Map<String, List<String>> entitiesWithHugeVolume = resource.getEntitiesWithHugeVolume();
 	     financeSettings.setEntitiesWithHugeVolume(entitiesWithHugeVolume);
          financeSettings.setBillingRunProcessWarning(resource.getBillingRunProcessWarning());
+         financeSettings.setSynchronousMassActionLimit(resource.getSynchronousMassActionLimit());
          return financeSettings;
     }
 }

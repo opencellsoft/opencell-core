@@ -74,6 +74,9 @@ public class FinanceSettings extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "billing_run_process_warning")
     private boolean billingRunProcessWarning;
+    
+    @Column(name = "synchronous_mass_action_limit")
+    private Integer synchronousMassActionLimit = 10000;
 
     public FinanceSettings() {
         super();
@@ -190,4 +193,12 @@ public class FinanceSettings extends BusinessEntity {
     public void setBillingRunProcessWarning(boolean billingRunProcessWarning) {
         this.billingRunProcessWarning = billingRunProcessWarning;
     }
+
+	public Integer getSynchronousMassActionLimit() {
+		return synchronousMassActionLimit;
+	}
+
+	public void setSynchronousMassActionLimit(Integer synchronousMassActionLimit) {
+		this.synchronousMassActionLimit = synchronousMassActionLimit;
+	}
 }

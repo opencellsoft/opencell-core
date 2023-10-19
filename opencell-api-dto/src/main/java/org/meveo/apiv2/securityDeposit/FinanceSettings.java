@@ -91,4 +91,10 @@ public interface FinanceSettings extends Resource {
     default boolean getBillingRunProcessWarning() {
         return false;
     }
+    
+    @Value.Default
+    @Schema(description = "Number of elements to process in a synchronous mode")
+    default Integer getSynchronousMassActionLimit() {
+        return 10000;
+    }
 }

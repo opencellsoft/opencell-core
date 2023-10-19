@@ -149,6 +149,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         if (jobCustomFields != null) {
             customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
         }
+        
+        if (postData.getAdvancedParameters() != null) {
+            jobInstance.setAdvancedParameters(postData.getAdvancedParameters());
+        }
 
         // Populate customFields
         try {
@@ -250,6 +254,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
         if (jobCustomFields != null) {
             customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
+        }
+        
+        if (postData.getAdvancedParameters() != null) {
+            jobInstance.setAdvancedParameters(postData.getAdvancedParameters());
         }
 
         // Populate customFields

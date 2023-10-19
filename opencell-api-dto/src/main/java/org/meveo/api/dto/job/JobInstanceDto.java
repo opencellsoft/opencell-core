@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto.job;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -105,6 +107,12 @@ public class JobInstanceDto extends EnableBusinessDto {
      */
     @Schema(description = "Job execution speed. Defines how often job execution history gets updated")
     private JobSpeedEnum jobSpeed;
+    
+    /**
+     * Advanced parameters for job instance.
+     */
+    @Schema(description = "Advanced parameters for job instance")
+    private Map<String, Object> advancedParameters;
 
     /**
      * Instantiate a new JobInstance DTO
@@ -346,4 +354,18 @@ public class JobInstanceDto extends EnableBusinessDto {
     public void setClusterBehavior(JobClusterBehaviorEnum clusterBehavior) {
         this.clusterBehavior = clusterBehavior;
     }
+
+	/**
+	 * @return the advancedParameters
+	 */
+	public Map<String, Object> getAdvancedParameters() {
+		return advancedParameters;
+	}
+
+	/**
+	 * @param advancedParameters the advancedParameters to set
+	 */
+	public void setAdvancedParameters(Map<String, Object> advancedParameters) {
+		this.advancedParameters = advancedParameters;
+	}
 }

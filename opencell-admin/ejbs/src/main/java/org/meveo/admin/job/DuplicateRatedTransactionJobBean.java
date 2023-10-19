@@ -25,6 +25,7 @@ public class DuplicateRatedTransactionJobBean extends IteratorBasedJobBean<Rated
     }
 
     private void processRatedTransactionToDuplicate(RatedTransaction ratedTransaction, JobExecutionResultImpl jobExecutionResult) {
+    	//Boolean negateAmount = (Boolean) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "negateAmount");
         duplicateRated(ratedTransaction, ratedTransaction.getPendingDuplicates(), false);
         duplicateRated(ratedTransaction, ratedTransaction.getPendingDuplicatesToNegate(), true);
     }

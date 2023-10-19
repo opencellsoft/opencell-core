@@ -165,6 +165,10 @@ public class JobInstance extends EnableBusinessCFEntity {
     /** The run time values. */
     @Transient
     private Map<String, Object> runTimeValues;
+    
+    @Type(type = "json")    
+    @Column(name = "advanced_parameters", columnDefinition = "jsonb")    
+    private Map<String, Object> advancedParameters;
 
     /**
      * Gets the job template.
@@ -515,4 +519,19 @@ public class JobInstance extends EnableBusinessCFEntity {
     public void setQueryScheduler(QueryScheduler queryScheduler) {
         this.queryScheduler = queryScheduler;
     }
+
+	/**
+	 * @return the advancedParameters
+	 */
+	public Map<String, Object> getAdvancedParameters() {
+		return advancedParameters;
+	}
+
+	/**
+	 * @param advancedParameters the advancedParameters to set
+	 */
+	public void setAdvancedParameters(Map<String, Object> advancedParameters) {
+		this.advancedParameters = advancedParameters;
+	}
+    
 }

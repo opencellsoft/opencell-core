@@ -3521,8 +3521,6 @@
 			<column name="transactional_unit_amount_with_tax" type="numeric(23, 12)" />
 			<column name="transactional_unit_amount_tax" type="numeric(23, 12)" />
 			<column name="trading_currency_id" type="bigint" />
-            <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
-            <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
             <column name="discounted_amount" type="numeric(23,12)" />
             <column name="business_key" type="VARCHAR(255)" />
         </createTable>
@@ -6247,6 +6245,9 @@
             <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
             <column name="query_scheduler_id" type="bigint" />
             <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
+            <column name="advanced_parameters" type="${type.json}">
+				<constraints nullable="true" />
+			</column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -12083,6 +12084,7 @@
             <column name="article_selection_mode" defaultValue="AFTER_PRICING" type="varchar(30)"/>
             <column name="entities_with_huge_volume" type="${type.json}"/>
             <column name="billing_run_process_warning" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="synchronous_mass_action_limit" type="int4" defaultValueNumeric="10000" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -20995,6 +20997,7 @@
 	<changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
 	<changeSet id="INTRD-18839_20231012" author="AkadidAbdelmounaim" />
     <changeSet id="INTRD-18726_20231012" author="khalidHORRI" />
+    <changeSet id="#INTRD-18841_20231017" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
