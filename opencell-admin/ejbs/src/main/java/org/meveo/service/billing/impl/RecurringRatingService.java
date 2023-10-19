@@ -47,6 +47,8 @@ import org.meveo.model.RatingResult;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -374,6 +376,28 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
                     BigDecimal inputQuantity = chargeMode.isReimbursement() ? chargeInstance.getQuantity().negate() : chargeInstance.getQuantity();
 
+                    if (chargeInstance != null && chargeInstance.getSubscription() != null
+                            && chargeInstance.getSubscription().getSubscribedTillDate() != null
+                            && chargeInstance.getRecurringChargeTemplate().getTerminationProrata()) {
+                        prorate = true;
+                        if(chargeInstance.getWalletOperations() != null && !chargeInstance.getWalletOperations().isEmpty()) {
+                            final int lastIndex = chargeInstance.getWalletOperations().size() - 1;
+                            WalletOperation lastWo = chargeInstance.getWalletOperations().get(lastIndex);
+                            boolean alreadyInvoiced = (lastWo.getRatedTransaction() != null
+                                    && lastWo.getRatedTransaction().getStatus().equals(RatedTransactionStatusEnum.BILLED)
+                                    && (lastWo.getRatedTransaction().getInvoiceLine() != null
+                                    && lastWo.getRatedTransaction().getInvoiceLine().getStatus().equals(InvoiceLineStatusEnum.BILLED)));
+                            if(!alreadyInvoiced) {
+                                walletOperationService.cancelWalletOperations(Arrays.asList(lastWo.getId()));
+                                inputQuantity = inputQuantity.abs();
+                                effectiveChargeFromDate = lastWo.getStartDate();
+                                effectiveChargeToDate = chargeInstance.getChargeToDateOnTermination();
+                            } else {
+                                effectiveChargeFromDate = chargeInstance.getChargeToDateOnTermination();
+                                effectiveChargeToDate = chargeInstance.getSubscription().getSubscribedTillDate();
+                            }
+                        }
+                    }
                     // Apply prorating if needed
                     if (prorate) {
                         BigDecimal prorata = DateUtils.calculateProrataRatio(effectiveChargeFromDate, effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, false);
