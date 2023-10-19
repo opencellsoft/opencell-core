@@ -98,6 +98,16 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
         }
         return true;
     }
+    
+
+    /**
+     * Cancel the batch entity
+     *
+     * @param id the batch entity id
+     */
+    public void cancel(Long id) {
+        service.cancel(id);
+    }
 
 	@Override
 	public List<BatchEntity> list(Long offset, Long limit, String sort, String orderBy, String filter) {

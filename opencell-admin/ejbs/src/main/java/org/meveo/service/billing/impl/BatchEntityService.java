@@ -65,6 +65,15 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
     }
 
     /**
+     * Call BatchEntity.cancelOpenedBatchEntity Named query to cancel opened RatedTransaction.
+     *
+     * @param id rated batch entity to cancel
+     */
+    public void cancel(Long id) {
+        getEntityManager().createNamedQuery("BatchEntity.cancelOpenedBatchEntity").setParameter("id", id).executeUpdate();
+    }
+
+    /**
      * Mark a multiple Wallet operations to rerate
      *
      * @param batchEntities      batch entities
