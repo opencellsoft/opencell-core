@@ -212,11 +212,9 @@ public class InvoiceLineAggregationService implements Serializable {
                     "SUM(a.amountWithoutTax) as sum_without_tax", "SUM(a.amountWithTax) as sum_with_tax", "offerTemplate.id as offer_id", usageDateAggregationFunction + " as usage_date", "min(a.startDate) as start_date",
                     "max(a.endDate) as end_date", "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id", "accountingArticle.id as article_id", "count(a.id) as rt_count"));
 
-            if (aggregationConfiguration.getDiscountAggregation() == DiscountAggregationModeEnum.NO_AGGREGATION) {
-                fieldToFetch.add("discountedRatedTransaction as discounted_ratedtransaction_id");
-                fieldToFetch.add("discountPlanType as discount_plan_type");
-                fieldToFetch.add("discountValue as discount_value");
-            }
+            fieldToFetch.add("discountedRatedTransaction as discounted_ratedtransaction_id");
+            fieldToFetch.add("discountPlanType as discount_plan_type");
+            fieldToFetch.add("discountValue as discount_value");
 
             if (!aggregationConfiguration.isIgnoreOrders()) {
                 fieldToFetch.add("infoOrder.order.id as commercial_order_id");
@@ -308,11 +306,9 @@ public class InvoiceLineAggregationService implements Serializable {
         groupBy.add("tax.id");
         groupBy.add("taxPercent");
         groupBy.add("infoOrder.productVersion.id");
-        if (aggregationConfiguration.getDiscountAggregation() == DiscountAggregationModeEnum.NO_AGGREGATION) {
-            groupBy.add("discountedRatedTransaction");
-            groupBy.add("discountValue");
-            groupBy.add("discountPlanType");
-        }
+        groupBy.add("discountedRatedTransaction");
+        groupBy.add("discountValue");
+        groupBy.add("discountPlanType");
         if (aggregationConfiguration.getType() == BillingEntityTypeEnum.ORDER) {
             groupBy.add("orderNumber");
         } else if (aggregationConfiguration.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
