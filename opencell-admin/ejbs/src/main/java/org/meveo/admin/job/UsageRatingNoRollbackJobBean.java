@@ -99,7 +99,7 @@ public class UsageRatingNoRollbackJobBean extends IteratorBasedJobBean<EDR> {
         int fetchSize = batchSize.intValue() * nbThreads.intValue();
 
         // Number of EDRs to process in a single job run
-        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("jobs.usageRatingJob.processNrInJobRun", 2000000);
+        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("usageRatingJob.processNrInJobRun", 2000000);
 
         EntityManager em = emWrapper.getEntityManager();
 
@@ -177,7 +177,7 @@ public class UsageRatingNoRollbackJobBean extends IteratorBasedJobBean<EDR> {
     }
 
     @Override
-    protected boolean isProcessMultipleItemFunctionUpdateProgressItself() {
+    protected boolean isProcessMultipleItemFunctionUpdateProgress() {
         return true;
     }
 }

@@ -33,7 +33,6 @@ import javax.interceptor.Interceptors;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -78,8 +77,6 @@ public class GDPRJobBean extends BaseJobBean {
         }
 
         try {
-            String nodeName = EjbUtils.getCurrentClusterNode();
-            
             if (gdprConfiguration.isDeleteSubscription()) {
                 long count = thisNewTx.removeSubscriptions(gdprConfiguration, jobExecutionResult);
                 jobExecutionResult.addNbItemsCorrectlyProcessed(count);
@@ -87,7 +84,7 @@ public class GDPRJobBean extends BaseJobBean {
                 jobExecutionResult.setStatus(JobExecutionResultStatusEnum.COMPLETED);
                 jobExecutionResultService.persistResult(jobExecutionResult);
 
-                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum(), nodeName);
+                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum());
             }
 
             if (gdprConfiguration.isDeleteOrder()) {
@@ -97,7 +94,7 @@ public class GDPRJobBean extends BaseJobBean {
                 jobExecutionResult.setStatus(JobExecutionResultStatusEnum.COMPLETED);
                 jobExecutionResultService.persistResult(jobExecutionResult);
 
-                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum(), nodeName);
+                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum());
             }
 
             if (gdprConfiguration.isDeleteInvoice()) {
@@ -106,7 +103,7 @@ public class GDPRJobBean extends BaseJobBean {
                 jobExecutionResult.close();
                 jobExecutionResult.setStatus(JobExecutionResultStatusEnum.COMPLETED);
                 jobExecutionResultService.persistResult(jobExecutionResult);
-                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum(), nodeName);
+                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum());
             }
 
             if (gdprConfiguration.isDeleteAccounting() || gdprConfiguration.isDeleteAoCheckUnpaidLife()) {
@@ -115,7 +112,7 @@ public class GDPRJobBean extends BaseJobBean {
                 jobExecutionResult.close();
                 jobExecutionResult.setStatus(JobExecutionResultStatusEnum.COMPLETED);
                 jobExecutionResultService.persistResult(jobExecutionResult);
-                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum(), nodeName);
+                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum());
             }
 
             if (gdprConfiguration.isDeleteCustomerProspect()) {
@@ -124,7 +121,7 @@ public class GDPRJobBean extends BaseJobBean {
                 jobExecutionResult.close();
                 jobExecutionResult.setStatus(JobExecutionResultStatusEnum.COMPLETED);
                 jobExecutionResultService.persistResult(jobExecutionResult);
-                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum(), nodeName);
+                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum());
             }
 
         } catch (Exception e) {

@@ -37,27 +37,38 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  */
 @Stateless
-public class ImportCatalogJobBean extends BaseJobBean {
-
-    private static final long serialVersionUID = 1550522576131404599L;
+public class ImportCatalogJobBean {
 
     @Inject
     private PricePlanMatrixService pricePlanService;
+
+    @Inject
+    private Logger log;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     private String fileName;
     private File file;
@@ -136,10 +147,10 @@ public class ImportCatalogJobBean extends BaseJobBean {
                     }
                     result.setNbItemsToProcess(rowsObj.length - 1);
                     
-                    Long jobInstanceId = result.getJobInstance().getId();
+                    int checkJobStatusEveryNr = result.getJobInstance().getJobSpeed().getCheckNb();
                     
                     for (int rowIndex = 1; rowIndex < rowsObj.length; rowIndex++) {         
-                        if (isJobRequestedToStop(jobInstanceId)) {
+                        if (rowIndex % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                             break;
                         }
                         Row row = (Row) rowsObj[rowIndex];

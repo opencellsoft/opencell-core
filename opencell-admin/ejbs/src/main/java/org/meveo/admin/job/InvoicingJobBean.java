@@ -39,7 +39,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -58,6 +57,7 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -218,7 +218,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 }
                 jobExecutionResultService.persistResult(jobExecutionResult);
 
-                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum(), EjbUtils.getCurrentClusterNode());
+                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum());
 
             } else {
                 billableEntities = (List<IBillableEntity>) billingRunService.getEntitiesByBillingRun(billingRun);
@@ -261,7 +261,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 }
                 jobExecutionResultService.persistResult(jobExecutionResult);
 
-                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum(), EjbUtils.getCurrentClusterNode());
+                jobExecutionResult = new JobExecutionResultImpl(jobExecutionResult.getJobInstance(), jobExecutionResult.getJobLauncherEnum());
             }
 
             jobExecutionResult.addReport("Billing run #" + billingRun.getId() + ", stage: Assign invoice numbers.");
@@ -330,7 +330,7 @@ public class InvoicingJobBean extends BaseJobBean {
 
                 Function<IBillableEntity, IBillableEntity> task = (billableEntity) -> ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(billableEntity, billingRun, minAmountForAccounts);
 
-                entitiesToBill = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<>(entities), task, nbRuns, waitingMillis, false,
+                entitiesToBill = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<>(entities), task, nbRuns, waitingMillis, false, JobSpeedEnum.NORMAL,
                     true);
             }
 
@@ -348,7 +348,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 Function<AmountsToInvoice, IBillableEntity> task = (amountsToInvoice) -> ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(amountsToInvoice.getEntityToInvoiceId(), billingRun,
                     amountsToInvoice.getAmountsToInvoice());
 
-                entitiesToBill = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<>(billableAmountSummary), task, nbRuns, waitingMillis, false,
+                entitiesToBill = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<>(billableAmountSummary), task, nbRuns, waitingMillis, false, JobSpeedEnum.NORMAL,
                     true);
 
                 log.info("Will update BR amount totals for Billing run {}. Will invoice {} out of {} entities of type {}", billingRun.getId(), (entitiesToBill != null ? entitiesToBill.size() : 0), totalEntityCount,
@@ -402,7 +402,7 @@ public class InvoicingJobBean extends BaseJobBean {
         BiConsumer<IBillableEntity, JobExecutionResultImpl> task = (entityToInvoice, jobResult) -> invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun,
             billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null, null, null, null, minAmountForAccountsAdjusted, false, !billingRun.isSkipValidationScript());
 
-        iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, false,
+        iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, null, null, nbRuns, waitingMillis, false, jobInstance.getJobSpeed(),
             true);
     }
 
@@ -441,7 +441,7 @@ public class InvoicingJobBean extends BaseJobBean {
             invoiceService.incrementBAInvoiceDateInNewTx(billingRun, baId);
         };
 
-        iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) billingAccountIds), task, null, null, nbRuns, waitingMillis, false, false);
+        iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) billingAccountIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.NORMAL, false);
     }
 
     /**
@@ -497,7 +497,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 invoiceService.updateStatus(invoiceId, InvoiceStatusEnum.VALIDATED);
 
             };
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, true);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
 
             List<Long> baIds = invoiceService.getBillingAccountIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(), invoicesToNumberInfo.getInvoiceDate());
 
@@ -506,7 +506,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 invoiceService.incrementBAInvoiceDate(billingRun, baId);
             };
 
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null, null, nbRuns, waitingMillis, false, false);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
         }
     }
 
