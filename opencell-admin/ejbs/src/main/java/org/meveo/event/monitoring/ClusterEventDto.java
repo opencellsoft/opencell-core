@@ -48,19 +48,9 @@ public class ClusterEventDto implements Serializable {
         executeWorker,
 
         /**
-         * Stop job execution on the next iteration of data processing. Job is stopped without errors.
+         * Stop job execution
          */
-        stop,
-
-        /**
-         * Stop job execution immediatelly. Kills the job
-         */
-        stopByForce,
-
-        /**
-         * Last message was received in job processing data queue. Will indicate that data processing threads should continue.
-         */
-        lastJobDataMessageReceived;
+        stop;
     };
 
     /**

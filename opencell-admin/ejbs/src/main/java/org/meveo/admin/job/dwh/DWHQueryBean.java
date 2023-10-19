@@ -58,8 +58,6 @@ import org.slf4j.Logger;
 @Stateless
 public class DWHQueryBean extends BaseJobBean{
 
-    private static final long serialVersionUID = -3013557344708711673L;
-
     @Inject
     private MeasurableQuantityService mqService;
 
@@ -69,6 +67,12 @@ public class DWHQueryBean extends BaseJobBean{
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
+
+    @Inject
+    private Logger log;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     // iso 8601 date and datetime format
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -119,10 +123,11 @@ public class DWHQueryBean extends BaseJobBean{
         
         EntityManager em = emWrapper.getEntityManager();
         
-        Long jobInstanceId = result.getJobInstance().getId();
-
+        int checkJobStatusEveryNr = result.getJobInstance().getJobSpeed().getCheckNb();
+        
+        int ji = 0;
         for (MeasurableQuantity mq : mqList) {
-            if (isJobRequestedToStop(jobInstanceId)) {
+            if (ji % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             if (StringUtils.isBlank(mq.getSqlQuery())) {
@@ -207,6 +212,7 @@ public class DWHQueryBean extends BaseJobBean{
                 result.registerError("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query: " + e.getMessage());
                 log.error("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query", e);
             }
+            ji++;
         }
     }
 }
