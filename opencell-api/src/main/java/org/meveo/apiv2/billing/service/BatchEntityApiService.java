@@ -49,8 +49,8 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
             throw new EntityDoesNotExistsException(BatchEntity.class, id);
         }
         BatchEntity batchEntity = batchEntityOptional.get();
-        if (!isBlank(baseEntity.getName())) {
-            batchEntity.setName(baseEntity.getName());
+        if (!isBlank(baseEntity.getCode())) {
+            batchEntity.setCode(baseEntity.getCode());
         }
         if (!isBlank(baseEntity.getTargetJob())) {
             batchEntity.setTargetJob(baseEntity.getTargetJob());

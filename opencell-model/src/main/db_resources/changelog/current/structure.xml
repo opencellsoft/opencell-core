@@ -8691,11 +8691,33 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="job_execution_id" type="bigint"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="batch_entity"
-                                 constraintName="fk_batch_entity_job_instance" referencedTableName="meveo_job_instance"
+                                 constraintName="fk_batch_entity_job_instance"
+                                 referencedTableName="meveo_job_instance"
                                  referencedColumnNames="id"/>
         <addForeignKeyConstraint baseColumnNames="job_execution_id" baseTableName="batch_entity"
-                                 constraintName="fk_batch_entity_job_execution" referencedTableName="job_execution"
+                                 constraintName="fk_batch_entity_job_execution"
+                                 referencedTableName="job_execution"
                                  referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-18966_20231018" author="AbdellatifBARI">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="batch_entity_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="batch_entity_id" baseTableName="billing_wallet_operation"
+                                 constraintName="fk_billing_wallet_operation_batch_entity"
+                                 referencedTableName="batch_entity"
+                                 referencedColumnNames="id"/>
+        <addColumn tableName="batch_entity">
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(1000)"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <sql>UPDATE ${db.schema.adapted}batch_entity set code = name </sql>
+        <dropColumn columnName="name" tableName="batch_entity"/>
+        <addNotNullConstraint tableName="billing_billing_account" columnName="trading_currency_id"/>
     </changeSet>
 
 </databaseChangeLog>

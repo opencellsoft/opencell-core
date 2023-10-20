@@ -108,6 +108,9 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.listToRateByOrderNumber", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.orderNumber=:orderNumber"),
 
         @NamedQuery(name = "WalletOperation.listToRerate", query = "SELECT o.id FROM WalletOperation o WHERE o.status='TO_RERATE'"),
+        @NamedQuery(name = "WalletOperation.listToRerateNoBatch", query = "SELECT o.id FROM WalletOperation o WHERE o.status='TO_RERATE' and o.reratingBatch is null"),
+        @NamedQuery(name = "WalletOperation.listToRerateAllBatches", query = "SELECT o.id FROM WalletOperation o WHERE o.status='TO_RERATE' and o.reratingBatch is not null"),
+        @NamedQuery(name = "WalletOperation.listToRerateWithBatches", query = "SELECT o.id FROM WalletOperation o WHERE o.status='TO_RERATE' and o.reratingBatch.id in (:targetBatches)"),
 
         @NamedQuery(name = "WalletOperation.getBalancesForWalletInstance", query = "SELECT sum(case when o.status in ('OPEN','TREATED') then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o WHERE o.wallet.id=:walletId and o.status in ('OPEN','RESERVED','TREATED')"),
         @NamedQuery(name = "WalletOperation.getBalancesForCache", query = "SELECT o.wallet.id, sum(case when o.status in ('OPEN','TREATED') then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o WHERE o.status in ('OPEN','RESERVED','TREATED') and o.wallet.walletTemplate.walletType='PREPAID' group by o.wallet.id"),
@@ -690,6 +693,12 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     
     @Column(name = "business_key")
     private String businessKey;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "batch_entity_id")
+    private BatchEntity reratingBatch;
+
     
     /**
      * Constructor
@@ -1255,6 +1264,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setChargeMode(chargeMode);
         result.setAccountingCode(accountingCode);
         result.setTradingCurrency(tradingCurrency);
+        result.setReratingBatch(reratingBatch);
 
         return result;
     }
@@ -1912,6 +1922,23 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
 	public void setBusinessKey(String businessKey) {
 		this.businessKey = businessKey;
-	}  
-    
+	}
+
+    /**
+     * Gets reratingBatch.
+     *
+     * @return value of reratingBatch
+     */
+    public BatchEntity getReratingBatch() {
+        return reratingBatch;
+    }
+
+    /**
+     * Sets reratingBatch.
+     *
+     * @param reratingBatch value of reratingBatch
+     */
+    public void setReratingBatch(BatchEntity reratingBatch) {
+        this.reratingBatch = reratingBatch;
+    }
 }
