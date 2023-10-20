@@ -180,6 +180,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                     BillingAccountAmount billingAccountAmount = new BillingAccountAmount();
                     billingAccountAmount.setBillingAccount(billingAccountService.findById((Long) amount[0]));
                     billingAccountAmount.setAmount((BigDecimal) amount[1]);
+                    billingAccountAmount.setRatedTransactionCount(BigDecimal.valueOf((Long) amount[2]));
                     billingAccountAmountService.create(billingAccountAmount);
                     billingAccountAmount.setBillingRunReport(billingRunReport);
                     billingAccountAmounts.add(billingAccountAmount);
@@ -205,6 +206,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                     OfferAmount offerAmount = new OfferAmount();
                     offerAmount.setOffer(offerTemplateService.findById((Long) amount[0]));
                     offerAmount.setAmount((BigDecimal) amount[1]);
+                    offerAmount.setRatedTransactionCount(BigDecimal.valueOf((Long) amount[2]));
                     offerAmount.setBillingRunReport(billingRunReport);
                     offerAmountService.create(offerAmount);
                     offerAmounts.add(offerAmount);
@@ -231,6 +233,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                     SubscriptionAmount subscriptionAmount = new SubscriptionAmount();
                     subscriptionAmount.setSubscription(subscriptionService.findById((Long) amount[0]));
                     subscriptionAmount.setAmount((BigDecimal) amount[1]);
+                    subscriptionAmount.setRatedTransactionCount(BigDecimal.valueOf((Long) amount[2]));
                     subscriptionAmount.setBillingRunReport(billingRunReport);
                     subscriptionAmountService.create(subscriptionAmount);
                     subscriptionAmounts.add(subscriptionAmount);
@@ -258,6 +261,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                     if(product != null) {
                         productAmount.setProduct(product);
                         productAmount.setAmount((BigDecimal) amount[1]);
+                        productAmount.setRatedTransactionCount(BigDecimal.valueOf((Long) amount[2]));
                         productAmount.setBillingRunReport(billingRunReport);
                         productAmountService.create(productAmount);
                         productAmounts.add(productAmount);
@@ -284,6 +288,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                     AccountingArticleAmount accountingArticleAmount = new AccountingArticleAmount();
                     accountingArticleAmount.setAccountingArticle(accountingArticleService.findById((Long) amount[0]));
                     accountingArticleAmount.setAmount((BigDecimal) amount[1]);
+                    accountingArticleAmount.setRatedTransactionCount(BigDecimal.valueOf((Long) amount[2]));
                     accountingArticleAmount.setBillingRunReport(billingRunReport);
                     accountingArticleAmountService.create(accountingArticleAmount);
                     accountingArticleAmounts.add(accountingArticleAmount);
