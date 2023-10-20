@@ -20,8 +20,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
+import com.ingenico.connect.gateway.sdk.java.ApiException;
+
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
@@ -382,6 +385,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		//add missing attribute instances
 		AttributeInstance attributeInstance=null;
 		for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
+	    
 			Attribute attribute=productVersionAttribute.getAttribute();
 			if(!instantiatedAttributes.containsKey(attribute.getCode())) {
 				attributeInstance = new AttributeInstance(currentUser);
@@ -418,6 +422,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					break;
 				}
 			}
+			if(productVersionAttribute.isMandatory() && !checkAttributeValue(attributeInstance) && productVersionAttribute.getDefaultValue()==null) {
+				throw new MeveoApiException("Attribute value should not be null code="+attribute.getCode());
+			}
 			serviceInstance.addAttributeInstance(attributeInstance);
 			
 		}
@@ -447,6 +454,34 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}
 			subscription.addServiceInstance(serviceInstance);
 			return serviceInstance;
+	}
+	
+	public boolean checkAttributeValue(AttributeInstance attributeInstance) {
+		Attribute attribute=attributeInstance.getAttribute();
+		switch (attribute.getAttributeType()) {
+			case TOTAL :
+			case COUNT :
+			case NUMERIC :
+			case INTEGER:
+				if(attributeInstance.getDoubleValue()==null)
+					return false;
+				break;
+			case LIST_MULTIPLE_TEXT:
+			case LIST_TEXT:
+			case EXPRESSION_LANGUAGE :
+			case TEXT:
+				if(attributeInstance.getStringValue()==null)
+					return false;
+				break;
+
+			case DATE:
+				if(attributeInstance.getDateValue()==null)
+					return false;
+				break;
+			default:
+				break;
+		}
+		return true;
 	}
 	
 	public void updateProduct(OrderOffer offer, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate, String subscriptionCode) {
