@@ -1380,6 +1380,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	log.info("passInvoiceLinesToBilled invoice={}",invoice.getId());
     	getEntityManager().createNamedQuery("InvoiceLine.passInvoiceLinesToBilled")
          .setParameter("invoiceId", invoice.getId())
-         .setParameter("now", new Date());
+         .setParameter("now", new Date()).executeUpdate();
     }
 }
