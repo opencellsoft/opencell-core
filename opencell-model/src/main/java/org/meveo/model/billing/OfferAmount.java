@@ -37,6 +37,9 @@ public class OfferAmount extends AuditableEntity {
     @JoinColumn(name = "billing_run_report_id")
     private BillingRunReport billingRunReport;
 
+    @Column(name = "rated_transaction_count", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal ratedTransactionCount;
+
     public OfferTemplate getOffer() {
         return offer;
     }
@@ -59,5 +62,13 @@ public class OfferAmount extends AuditableEntity {
 
     public void setBillingRunReport(BillingRunReport billingRunReport) {
         this.billingRunReport = billingRunReport;
+    }
+
+    public BigDecimal getRatedTransactionCount() {
+        return ratedTransactionCount;
+    }
+
+    public void setRatedTransactionCount(BigDecimal ratedTransactionCount) {
+        this.ratedTransactionCount = ratedTransactionCount;
     }
 }
