@@ -275,6 +275,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         discountItems.sort(Comparator.comparing(DiscountPlanItem::getFinalSequence));
         
         for (DiscountPlanItem discountPlanItem : discountItems) {
+        	var quantity = invoiceLine.getQuantity();
         	accountingArticle=discountPlanItem.getAccountingArticle();
         	if(accountingArticle==null) {
         		accountingArticle=invoiceLine.getAccountingArticle();
@@ -289,7 +290,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 }
                 BigDecimal discountAmount = discountPlanItemService.getDiscountAmount(invoiceLine.getUnitPrice(), discountPlanItem,null,invoice,invoiceLine, Collections.emptyList());
                 if(discountAmount != null) {
-                	invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(discountAmount);
+                	invoiceLineDiscountAmount = invoiceLineDiscountAmount.add(quantity.multiply(discountAmount));
         	  	}
                 BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, taxPercent, appProvider.isEntreprise(),  rounding,
                         roundingMode.getRoundingMode());
@@ -297,7 +298,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 BigDecimal discountValue=discountPlanItemService.getDiscountAmountOrPercent(invoice,invoiceLine, null, invoiceLine.getUnitPrice(), discountPlanItem,null,Collections.emptySet());
     			
                 
-                var quantity = invoiceLine.getQuantity();
+                
                 discountInvoice.setUnitPrice(discountAmount);
                 discountInvoice.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?quantity.multiply(amounts[0]):BigDecimal.ZERO);
                 discountInvoice.setAmountWithTax(quantity.multiply(amounts[1]));
