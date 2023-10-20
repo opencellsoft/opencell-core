@@ -36,6 +36,9 @@ public class SubscriptionAmount extends AuditableEntity {
     @JoinColumn(name = "billing_run_report_id")
     private BillingRunReport billingRunReport;
 
+    @Column(name = "rated_transaction_count", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal ratedTransactionCount;
+
     public Subscription getSubscription() {
         return subscription;
     }
@@ -58,5 +61,13 @@ public class SubscriptionAmount extends AuditableEntity {
 
     public void setBillingRunReport(BillingRunReport billingRunReport) {
         this.billingRunReport = billingRunReport;
+    }
+
+    public BigDecimal getRatedTransactionCount() {
+        return ratedTransactionCount;
+    }
+
+    public void setRatedTransactionCount(BigDecimal ratedTransactionCount) {
+        this.ratedTransactionCount = ratedTransactionCount;
     }
 }

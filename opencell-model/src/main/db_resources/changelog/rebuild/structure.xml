@@ -12778,6 +12778,7 @@
             <column name="offer_id" type="${cast.long}"/>
             <column name="amount" type="numeric(23, 12)"/>
             <column name="billing_run_report_id" type="${cast.long}"/>
+            <column name="rated_transaction_count" type="numeric(23, 12)"/>
         </createTable>
         <createTable tableName="billing_account_amount">
             <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
@@ -12793,6 +12794,7 @@
             <column name="billing_account_id" type="${cast.long}"/>
             <column name="amount" type="numeric(23, 12)"/>
             <column name="billing_run_report_id" type="${cast.long}"/>
+            <column name="rated_transaction_count" type="numeric(23, 12)"/>
         </createTable>
 
         <createTable tableName="billing_run_report">
@@ -12939,6 +12941,7 @@
             <column name="product_id" type="${cast.long}"/>
             <column name="amount" type="numeric(23, 12)"/>
             <column name="billing_run_report_id" type="${cast.long}"/>
+            <column name="rated_transaction_count" type="numeric(23, 12)"/>
         </createTable>
         <createTable tableName="subscription_amount">
             <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
@@ -12954,6 +12957,7 @@
             <column name="amount" type="numeric(23, 12)"/>
             <column name="subscription_id" type="${cast.long}"/>
             <column name="billing_run_report_id" type="${cast.long}"/>
+            <column name="rated_transaction_count" type="numeric(23, 12)"/>
         </createTable>
         <createTable tableName="accounting_article_amount">
             <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
@@ -12969,6 +12973,7 @@
             <column name="amount" type="numeric(23, 12)"/>
             <column name="accounting_article_id" type="${cast.long}"/>
             <column name="billing_run_report_id" type="${cast.long}"/>
+            <column name="rated_transaction_count" type="numeric(23, 12)"/>
         </createTable>
     </changeSet>
 
@@ -20995,6 +21000,7 @@
 	<changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
 	<changeSet id="INTRD-18839_20231012" author="AkadidAbdelmounaim" />
     <changeSet id="INTRD-18726_20231012" author="khalidHORRI" />
+    <changeSet id="INTRD-19050_20231020" author="zbariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
