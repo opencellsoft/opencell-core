@@ -4,6 +4,7 @@ import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.service.cpq.AttributeValueService;
 
 @Stateless
@@ -48,4 +49,37 @@ public class AttributeInstanceService extends AttributeValueService<AttributeIns
     		}
         }
     }
+    
+    
+    public boolean checkAttributeValue(AttributeInstance attributeInstance) {
+		Attribute attribute=attributeInstance.getAttribute();
+		switch (attribute.getAttributeType()) {
+			case TOTAL :
+			case COUNT :
+			case NUMERIC :
+			case INTEGER:
+				if(attributeInstance.getDoubleValue()==null && attributeInstance.getStringValue()==null)
+					return false;
+				break;
+			case LIST_MULTIPLE_TEXT:
+			case LIST_TEXT:
+			case EXPRESSION_LANGUAGE :
+			case TEXT:
+				if(attributeInstance.getStringValue()==null)
+					return false;
+				break;
+
+			case DATE:
+				if(attributeInstance.getDateValue()==null)
+					return false;
+				break;
+			case BOOLEAN:
+				if(attributeInstance.getBooleanValue()==null)
+					return false;
+				break;
+			default:
+				break;
+		}
+		return true;
+	}
 }

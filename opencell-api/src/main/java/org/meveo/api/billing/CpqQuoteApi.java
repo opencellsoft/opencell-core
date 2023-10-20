@@ -90,7 +90,6 @@ import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.OfferLineTypeEnum;
@@ -542,7 +541,6 @@ public class CpqQuoteApi extends BaseApi {
         if(productAttributes != null && !productAttributes.contains(attribute)){
             throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", quoteProduct.getProductVersion().getProduct().getCode() , quoteProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
         }
-       
         QuoteAttribute quoteAttribute = new QuoteAttribute();
         quoteAttribute.setAttribute(attribute);
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
@@ -556,12 +554,6 @@ public class CpqQuoteApi extends BaseApi {
         if(productAttributes != null) {
             quoteProduct.getQuoteAttributes().add(quoteAttribute);
             quoteAttribute.setQuoteProduct(quoteProduct);
-        }
-        for(ProductVersionAttribute productVersionAttribute:quoteProduct.getProductVersion().getAttributes()) {
-        	if(productVersionAttribute.isMandatory() && (quoteAttribute.getBooleanValue()==null && quoteAttribute.getStringValue()==null && quoteAttribute.getDoubleValue()==null && quoteAttribute.getDateValue()==null)
-        	&& productVersionAttribute.getDefaultValue()==null) {
-				throw new MeveoApiException("Attribute value should not be null code="+attribute.getCode());
-			}	
         }
         quoteAttribute.updateAudit(currentUser);
         if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
@@ -577,7 +569,7 @@ public class CpqQuoteApi extends BaseApi {
         }
         return quoteAttribute;
     }
-    
+
     public GetPdfQuoteResponseDto generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
         GetPdfQuoteResponseDto result = new GetPdfQuoteResponseDto();
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion); 
@@ -1290,12 +1282,6 @@ public class CpqQuoteApi extends BaseApi {
         	quoteAttribute.setQuoteOffer(quoteOffer);
         }
         if(quoteProduct!=null) {
-        	for(ProductVersionAttribute productVersionAttribute:quoteProduct.getProductVersion().getAttributes()) {
-        		if(productVersionAttribute.isMandatory() && (quoteAttribute.getBooleanValue()==null && quoteAttribute.getStringValue()==null && quoteAttribute.getDoubleValue()==null && quoteAttribute.getDateValue()==null)
-        				&& productVersionAttribute.getDefaultValue()==null) {
-        			throw new MeveoApiException("Attribute value should not be null code="+attribute.getCode());
-        		}	
-        	}
         quoteProduct.getQuoteAttributes().add(quoteAttribute);
         quoteAttribute.setQuoteProduct(quoteProduct);
         }
