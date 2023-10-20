@@ -7423,7 +7423,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedColumnNames="id"/>
 
     </changeSet>
-    
+
     <changeSet id="#INTRD-17719_20230829" author="AbdelmounaimAkadid" failOnError="false">
 		<addColumn tableName="adm_user">
 			<column name="email" type="varchar(100)" />
@@ -7431,13 +7431,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="lastname" type="varchar(100)" />
 		</addColumn>
 	</changeSet>
-	
+
 	  <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" failOnError="false">
 		<addColumn tableName="adm_role">
 			<column name="role_description" type="varchar(255)" />
 		</addColumn>
 	</changeSet>
-	 
+
 
     <changeSet id="INTRD-17307_20230712" author="TarikFA.">
         <addColumn tableName="finance_settings">
@@ -7499,9 +7499,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="ubl_reference" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="INTRD-17544_20230817" author="hatimOUDAD">
-       
+
         <createTable tableName="charge_template_translated_desc_param1">
             <column name="charge_template_id" type="${cast.long}">
                 <constraints nullable="false"/>
@@ -7514,7 +7514,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addPrimaryKey columnNames="charge_template_id, trading_language_id"
                        constraintName="pk_charge_template_translated_descriptions"
                        tableName="charge_template_translated_desc_param1"/>
-        
+
         <createTable tableName="charge_template_translated_desc_param2">
             <column name="charge_template_id" type="${cast.long}">
                 <constraints nullable="false"/>
@@ -7527,7 +7527,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addPrimaryKey columnNames="charge_template_id, trading_language_id"
                        constraintName="pk_charge_template_translated_desc_param2"
                        tableName="charge_template_translated_desc_param2"/>
-                              
+
         <createTable tableName="charge_template_translated_desc_param3">
             <column name="charge_template_id" type="${cast.long}">
                 <constraints nullable="false"/>
@@ -7540,7 +7540,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
          <addPrimaryKey columnNames="charge_template_id, trading_language_id"
                        constraintName="pk_charge_template_translated_desc_param3"
                        tableName="charge_template_translated_desc_param3"/>
-                         
+
         <createTable tableName="charge_template_translated_desc_param_extra">
             <column name="charge_template_id" type="${cast.long}">
                 <constraints nullable="false"/>
@@ -7553,11 +7553,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addPrimaryKey columnNames="charge_template_id, trading_language_id"
                        constraintName="pk_charge_template_translated_desc_param_extra"
                        tableName="charge_template_translated_desc_param_extra"/>
-        
-        
-        
-        
-	    <!-- Parameter 1 Translated Long Descriptions --> 
+
+
+
+
+	    <!-- Parameter 1 Translated Long Descriptions -->
 	    <createTable tableName="parameter1_translated_long_descriptions">
 	    <column name="charge_template_id" type="${cast.long}">
 	        <constraints nullable="false"/>
@@ -7573,8 +7573,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	    <addPrimaryKey columnNames="charge_template_id, trading_language_id"
 	                   constraintName="pk_parameter1_translated_long_desc"
 	                   tableName="parameter1_translated_long_descriptions"/>
-	
-	    
+
+
 	    <!-- Parameter 2 Translated Long Descriptions -->
 	    <createTable tableName="parameter2_translated_long_descriptions">
 	        <column name="charge_template_id" type="${cast.long}">
@@ -7591,9 +7591,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	    <addPrimaryKey columnNames="charge_template_id, trading_language_id"
 	                   constraintName="pk_parameter2_translated_long_desc"
 	                   tableName="parameter2_translated_long_descriptions"/>
-	    
-	    
-	
+
+
+
 	    <!-- Parameter 3 Translated Long Descriptions -->
 	    <createTable tableName="parameter3_translated_long_descriptions">
 	        <column name="charge_template_id" type="${cast.long}">
@@ -7610,9 +7610,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	    <addPrimaryKey columnNames="charge_template_id, trading_language_id"
 	                   constraintName="pk_parameter3_translated_long_desc"
 	                   tableName="parameter3_translated_long_descriptions"/>
-	    
-	    
-	
+
+
+
 	    <!-- Parameter Extra Translated Long Descriptions -->
 	    <createTable tableName="parameter_extra_translated_long_descriptions">
 	        <column name="charge_template_id" type="${cast.long}">
@@ -7629,9 +7629,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	    <addPrimaryKey columnNames="charge_template_id, trading_language_id"
 	                   constraintName="pk_parameter_extra_translated_long_desc"
 	                   tableName="parameter_extra_translated_long_descriptions"/>
-    
-    
-        
+
+
+
         <addColumn tableName="cat_charge_template">
         	<column name="parameter1_description" type="VARCHAR(255)" defaultValue="Parameter 1"/>
         	<column name="parameter2_description" type="VARCHAR(255)" defaultValue="Parameter 2"/>
@@ -7641,25 +7641,25 @@ public class AgedBalanceReporting extends ReportExtractScript {
     		<column name="parameter2_format" type="VARCHAR(50)"/>
     		<column name="parameter3_format" type="VARCHAR(50)"/>
     		<column name="parameter_extra_format" type="VARCHAR(50)"/>
-    	
+
 	        <!-- Parameter 1 -->
 	        <column name="parameter1_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
 	        <column name="parameter1_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
-	
+
 	        <!-- Parameter 2 -->
 	        <column name="parameter2_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
 	        <column name="parameter2_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
-	
+
 	        <!-- Parameter 3 -->
 	        <column name="parameter3_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
 	        <column name="parameter3_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
-	
+
 	        <!-- Extra Parameter -->
         	<column name="parameter_extra_is_mandatory" type="${type.boolean}" defaultValueNumeric="0" />
         	<column name="parameter_extra_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
     	</addColumn>
-        
-                    
+
+
        <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param1"
                                      baseColumnNames="charge_template_id"
                                      referencedTableName="cat_charge_template"
@@ -7669,7 +7669,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                      baseColumnNames="trading_language_id"
                                      referencedTableName="billing_trading_language"
                                      referencedColumnNames="id"
-                                     constraintName="fk_trading_language_id"/>              
+                                     constraintName="fk_trading_language_id"/>
         <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param2"
                                  baseColumnNames="charge_template_id"
                                  referencedTableName="cat_charge_template"
@@ -7679,8 +7679,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  baseColumnNames="trading_language_id"
                                  referencedTableName="billing_trading_language"
                                  referencedColumnNames="id"
-                                 constraintName="fk_trading_language_id_param2"/>                    
-                       
+                                 constraintName="fk_trading_language_id_param2"/>
+
         <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param3"
                                  baseColumnNames="charge_template_id"
                                  referencedTableName="cat_charge_template"
@@ -7691,7 +7691,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="billing_trading_language"
                                  referencedColumnNames="id"
                                  constraintName="fk_trading_language_id_param3"/>
-                                                
+
         <addForeignKeyConstraint baseTableName="charge_template_translated_desc_param_extra"
                                  baseColumnNames="charge_template_id"
                                  referencedTableName="cat_charge_template"
@@ -7702,10 +7702,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="billing_trading_language"
                                  referencedColumnNames="id"
                                  constraintName="fk_trading_language_id_param_extra"/>
-                                 
-                                 
-                        
-    
+
+
+
+
 
 
 		<addForeignKeyConstraint baseTableName="parameter1_translated_long_descriptions"
@@ -7714,57 +7714,57 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	                             referencedColumnNames="id"
 	                             constraintName="fk_parameter1_translated_long_desc_charge_template"
 	                             onDelete="CASCADE"/>
-	
+
 	    <addForeignKeyConstraint baseTableName="parameter1_translated_long_descriptions"
 	                             baseColumnNames="trading_language_id"
 	                             referencedTableName="billing_trading_language"
 	                             referencedColumnNames="id"
 	                             constraintName="fk_parameter1_translated_long_desc_trading_language"
 	                             onDelete="CASCADE"/>
-	    
-	
+
+
 	    <addForeignKeyConstraint baseTableName="parameter2_translated_long_descriptions"
 	                             baseColumnNames="charge_template_id"
 	                             referencedTableName="cat_charge_template"
 	                             referencedColumnNames="id"
 	                             constraintName="fk_parameter2_translated_long_desc_charge_template"
 	                             onDelete="CASCADE"/>
-	
+
 	    <addForeignKeyConstraint baseTableName="parameter2_translated_long_descriptions"
 	                             baseColumnNames="trading_language_id"
 	                             referencedTableName="billing_trading_language"
 	                             referencedColumnNames="id"
 	                             constraintName="fk_parameter2_translated_long_desc_trading_language"
 	                             onDelete="CASCADE"/>
-	
+
 	    <addForeignKeyConstraint baseTableName="parameter3_translated_long_descriptions"
 	                             baseColumnNames="charge_template_id"
 	                             referencedTableName="cat_charge_template"
 	                             referencedColumnNames="id"
 	                             constraintName="fk_parameter3_translated_long_desc_charge_template"
 	                             onDelete="CASCADE"/>
-	
+
 	    <addForeignKeyConstraint baseTableName="parameter3_translated_long_descriptions"
 	                             baseColumnNames="trading_language_id"
 	                             referencedTableName="billing_trading_language"
 	                             referencedColumnNames="id"
 	                             constraintName="fk_parameter3_translated_long_desc_trading_language"
 	                             onDelete="CASCADE"/>
-	
+
 	    <addForeignKeyConstraint baseTableName="parameter_extra_translated_long_descriptions"
 	                             baseColumnNames="charge_template_id"
 	                             referencedTableName="cat_charge_template"
 	                             referencedColumnNames="id"
 	                             constraintName="fk_parameter_extra_translated_long_desc_charge_template"
 	                             onDelete="CASCADE"/>
-	
+
 	    <addForeignKeyConstraint baseTableName="parameter_extra_translated_long_descriptions"
 	                             baseColumnNames="trading_language_id"
 	                             referencedTableName="billing_trading_language"
 	                             referencedColumnNames="id"
 	                             constraintName="fk_parameter_extra_translated_long_desc_trading_language"
 	                             onDelete="CASCADE"/>
-	   
+
     </changeSet>
 
     <changeSet id="#INTRD-16955_20230816" author="aelmalki">
@@ -7908,32 +7908,32 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="sips_batch_archive_name" type="varchar(255)" />
     	</addColumn>
     </changeSet>
-    
+
     <changeSet id="INTRD-17573_20230829" author="hatimOUDAD">
 	   	 <!-- Drop foreign key constraints -->
 	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param1" constraintName="fk_charge_template_id"/>
 	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param1" constraintName="fk_trading_language_id"/>
-	    
+
 	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param2" constraintName="fk_charge_template_id_param2"/>
 	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param2" constraintName="fk_trading_language_id_param2"/>
-	    
+
 	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param3" constraintName="fk_charge_template_id_param3"/>
 	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param3" constraintName="fk_trading_language_id_param3"/>
-	    
+
 	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param_extra" constraintName="fk_charge_template_id_param_extra"/>
 	    <dropForeignKeyConstraint baseTableName="charge_template_translated_desc_param_extra" constraintName="fk_trading_language_id_param_extra"/>
-	    
+
 	    <dropForeignKeyConstraint baseTableName="parameter1_translated_long_descriptions" constraintName="fk_parameter1_translated_long_desc_charge_template"/>
 	    <dropForeignKeyConstraint baseTableName="parameter1_translated_long_descriptions" constraintName="fk_parameter1_translated_long_desc_trading_language"/>
-	    
+
 	    <dropForeignKeyConstraint baseTableName="parameter2_translated_long_descriptions" constraintName="fk_parameter2_translated_long_desc_charge_template"/>
 	    <dropForeignKeyConstraint baseTableName="parameter2_translated_long_descriptions" constraintName="fk_parameter2_translated_long_desc_trading_language"/>
-	    
+
 	    <dropForeignKeyConstraint baseTableName="parameter3_translated_long_descriptions" constraintName="fk_parameter3_translated_long_desc_charge_template"/>
 	    <dropForeignKeyConstraint baseTableName="parameter3_translated_long_descriptions" constraintName="fk_parameter3_translated_long_desc_trading_language"/>
 	    <dropForeignKeyConstraint baseTableName="parameter_extra_translated_long_descriptions" constraintName="fk_parameter_extra_translated_long_desc_charge_template"/>
 	    <dropForeignKeyConstraint baseTableName="parameter_extra_translated_long_descriptions" constraintName="fk_parameter_extra_translated_long_desc_trading_language"/>
-	    
+
 	    <!-- Drop primary key constraints -->
 	    <dropPrimaryKey constraintName="pk_charge_template_translated_descriptions" tableName="charge_template_translated_desc_param1"/>
 	    <dropPrimaryKey constraintName="pk_charge_template_translated_desc_param2" tableName="charge_template_translated_desc_param2"/>
@@ -7943,7 +7943,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	    <dropPrimaryKey constraintName="pk_parameter2_translated_long_desc" tableName="parameter2_translated_long_descriptions"/>
 	    <dropPrimaryKey constraintName="pk_parameter3_translated_long_desc" tableName="parameter3_translated_long_descriptions"/>
 	    <dropPrimaryKey constraintName="pk_parameter_extra_translated_long_desc" tableName="parameter_extra_translated_long_descriptions"/>
-	    
+
 	    <!-- Drop tables -->
 	    <dropTable tableName="charge_template_translated_desc_param1"/>
 	    <dropTable tableName="charge_template_translated_desc_param2"/>
@@ -7953,7 +7953,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	    <dropTable tableName="parameter2_translated_long_descriptions"/>
 	    <dropTable tableName="parameter3_translated_long_descriptions"/>
 	    <dropTable tableName="parameter_extra_translated_long_descriptions"/>
-	    
+
 	    <!-- add Columns -->
 	    <addColumn tableName="cat_charge_template">
         <column name="parameter1_translated_description" type="${type.json}"/>
@@ -7965,8 +7965,8 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <column name="parameter3_translated_long_descriptions" type="${type.json}"/>
         <column name="parameter_extra_translated_long_descriptions" type="${type.json}"/>
     	</addColumn>
-    	
-    	
+
+
          <sql>
         <![CDATA[
         ALTER TABLE ${db.schema.adapted}cat_charge_template
@@ -7990,14 +7990,14 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="physical" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#INTRD-17634_2023-09-29" author="ZBariki">
         <renameColumn  oldColumnName="subscription_accounts_count"
                        newColumnName="subscriptions_count" tableName="billing_run_report"/>
         <renameColumn  oldColumnName="rated_transaction_accounts_count"
                        newColumnName="rated_transactions_count" tableName="billing_run_report"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD">
         <addColumn tableName="finance_settings">
             <column name="entities_with_huge_volume" type="${type.json}"/>
@@ -8013,7 +8013,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  constraintName="billing_billing_run_billed_rated_transactions_report_id_fk"
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-18140_20230904" author="AdilElJaouhari">
 		<addColumn tableName="cat_charge_template">
 			<column name="business_key_el" type="varchar(2000)" />
@@ -8031,7 +8031,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="business_key_is_hidden" type="${type.boolean}" defaultValueNumeric="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari">
 		<addColumn tableName="billing_wallet_operation">
 			<column name="business_key" type="VARCHAR(255)" />
@@ -8292,13 +8292,13 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="billing_run_process_warning" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-18252_20230908" author="aelmalki">
         <addColumn tableName="billing_cycle">
             <column name="application_el" type="varchar(2000)" />
         </addColumn>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-18280_20230911" author="aelmalki">
         <addColumn tableName="billing_billing_run">
             <column name="application_el" type="varchar(2000)" />
@@ -8390,7 +8390,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  constraintName="accounting_article_amount_br_report_id_fk"
                                  referencedTableName="billing_run_report" referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-18386_20230915" author="AdilElJaouhari">
     	<addColumn tableName="billing_cycle">
 			<column name="ignore_user_accounts" type="${type.boolean}" defaultValueNumeric="1" />
@@ -8399,7 +8399,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="ignore_user_accounts" type="${type.boolean}" defaultValueNumeric="1" />
 		</addColumn>
 	</changeSet>
-    
+
     <changeSet id="#INTRD-18393_20230920" author="TarikFA.">
         <createSequence sequenceName="pdp_status_seq" startValue="1"/>
         <createTable tableName="pdp_status">
@@ -8486,7 +8486,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name= "ubl_generation_job" type="varchar(50)" />
         </createTable>
     </changeSet>
-    
+
   	<changeSet id="#INTRD-18527_20231002" author="AdilElJaouhari">
 		<addColumn tableName="billing_invoice_type">
 			<column name="custom_ubl_script_id" type="bigint" />
@@ -8611,7 +8611,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__description</sql>
         <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__tax_percent</sql>
         <sql>DROP INDEX IF EXISTS idx__billing_rated_transaction__service_instance</sql>
-        
+
         <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__billing_account_id</sql>
         <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__billing_run</sql>
         <sql>DROP INDEX IF EXISTS idx__billing_invoice_line__status</sql>
@@ -8694,6 +8694,15 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addColumn tableName="accounting_article_amount">
             <column name="rated_transaction_count" type="numeric(23, 12)"/>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-18439_20230120" author="TarikFA.">
+        <addForeignKeyConstraint baseTableName="billing_chrg_inst_counter" baseColumnNames="chrg_instance_id"
+                                                                            constraintName="fk_billing_chrg_inst_counter_chrg_instance_id" referencedTableName="billing_charge_instance"
+                                                                            referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_chrg_inst_counter" baseColumnNames="counter_instance_id"
+                                 constraintName="fk_billing_chrg_inst_counter_counter_instance_id" referencedTableName="billing_counter"
+                                 referencedColumnNames="id"/>
     </changeSet>
 
 </databaseChangeLog>
