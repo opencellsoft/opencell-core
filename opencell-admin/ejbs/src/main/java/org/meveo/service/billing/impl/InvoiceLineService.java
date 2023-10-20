@@ -1377,6 +1377,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     	if(invoice==null) {
     		throw new MissingParameterException("invoice");
     	}
+    	log.info("passInvoiceLinesToBilled invoice={}",invoice.getId());
     	getEntityManager().createNamedQuery("InvoiceLine.passInvoiceLinesToBilled")
          .setParameter("invoiceId", invoice.getId())
          .setParameter("now", new Date());

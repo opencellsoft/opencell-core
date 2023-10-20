@@ -581,8 +581,10 @@ public class InvoiceApi extends BaseApi {
         }
         handleMissingParameters();
         serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, refreshExchangeRate);
-
+        
         Invoice invoice = invoiceService.findById(invoiceId);
+        invoiceLineService.passInvoiceLinesToBilled(invoice);
+
         Boolean brGenerateAO = Optional.ofNullable(invoice.getBillingRun()).map(BillingRun::getGenerateAO).orElse(false);
         if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
@@ -593,7 +595,7 @@ public class InvoiceApi extends BaseApi {
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);
         
-        invoiceLineService.passInvoiceLinesToBilled(invoice);
+        
         
         //Create SD
         if (invoice.getInvoiceType() != null && "SECURITY_DEPOSIT".equals(invoice.getInvoiceType().getCode()) && createSD) {
