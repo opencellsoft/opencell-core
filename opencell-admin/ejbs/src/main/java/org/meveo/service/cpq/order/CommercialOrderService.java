@@ -22,6 +22,7 @@ import javax.persistence.Query;
 
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
@@ -58,6 +59,7 @@ import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -86,6 +88,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private DiscountPlanService discountPlanService;
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+    @Inject
+    private AttributeInstanceService attributeInstanceService;
 
 	@Override
 	public void create(CommercialOrder entity) throws BusinessException {
@@ -382,6 +386,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		//add missing attribute instances
 		AttributeInstance attributeInstance=null;
 		for(ProductVersionAttribute productVersionAttribute:product.getCurrentVersion().getAttributes()) {
+	    
 			Attribute attribute=productVersionAttribute.getAttribute();
 			if(!instantiatedAttributes.containsKey(attribute.getCode())) {
 				attributeInstance = new AttributeInstance(currentUser);
@@ -418,6 +423,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					break;
 				}
 			}
+			if(productVersionAttribute.isMandatory() && !attributeInstanceService.checkAttributeValue(attributeInstance) &&  productVersionAttribute.getDefaultValue()==null) {
+				 throw new BusinessApiException("The attribute " + attribute.getCode() + " is mandatory");
+			}
 			serviceInstance.addAttributeInstance(attributeInstance);
 			
 		}
@@ -448,7 +456,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			subscription.addServiceInstance(serviceInstance);
 			return serviceInstance;
 	}
-	
 	public void updateProduct(OrderOffer offer, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes, OrderProduct orderProduct, Date deliveryDate, String subscriptionCode) {
 
 		List<ServiceInstance> services = serviceInstanceService.findByCodeSubscriptionAndStatus(subscriptionCode, offer.getSubscription());
@@ -508,6 +515,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 							attributeInstance.setStringValue(productVersionAttribute.getDefaultValue());
 						break;
 					}
+				}
+				if(productVersionAttribute.isMandatory() && !attributeInstanceService.checkAttributeValue(attributeInstance) &&  productVersionAttribute.getDefaultValue()==null) {
+					 throw new BusinessApiException("The attribute " + attribute.getCode() + " is mandatory");
 				}
 				serviceInstance.addAttributeInstance(attributeInstance);	
 			}
@@ -596,6 +606,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 						attributeInstance.setStringValue(offerAttribute.getDefaultValue());
 					break;
 				}
+			}
+			if(offerAttribute.isMandatory() && !attributeInstanceService.checkAttributeValue(attributeInstance) &&  offerAttribute.getDefaultValue()==null) {
+				 throw new BusinessApiException("The attribute " + attribute.getCode() + " is mandatory");
 			}
 			subscription.addAttributeInstance(attributeInstance);
 			
