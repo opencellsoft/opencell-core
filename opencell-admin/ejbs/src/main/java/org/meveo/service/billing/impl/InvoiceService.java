@@ -367,7 +367,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public Invoice findByInvoiceNumberAndType(String invoiceNumber, InvoiceType invoiceType) throws BusinessException {
         QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);
-        qb.addCriterion("i.invoiceNumber", "=", invoiceNumber, true);
+        qb.addCriterion("i.invoiceNumber", "=", invoiceNumber, false);
         qb.addCriterionEntity("i.invoiceType", invoiceType);
         try {
             return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
