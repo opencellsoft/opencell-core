@@ -197,7 +197,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                 || (billingRun.getBillingCycle() != null && billingRun.getBillingCycle().getReportConfigDisplayOffers())) {
             List<OfferAmount> offerAmounts = new ArrayList<>();
             final int OfferBlockSize = ofNullable(billingRun.getBillingCycle())
-                    .map(BillingCycle::getReportConfigBlockSizeBillingAccounts)
+                    .map(BillingCycle::getReportConfigBlockSizeOffers)
                     .orElse(DEFAULT_BLOCK_SIZE);
             List<Object[]> amountsPerOffer =
                     ratedTransactionService.getOfferStatisticsDetails(billingRun, rtIds, filters, OfferBlockSize);
@@ -278,11 +278,11 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         if(billingRun.getBillingCycle() == null
                 || (billingRun.getBillingCycle() != null && billingRun.getBillingCycle().getReportConfigDisplayArticles())) {
             List<AccountingArticleAmount> accountingArticleAmounts = new ArrayList<>();
-            final int productsBlockSize = ofNullable(billingRun.getBillingCycle())
-                    .map(BillingCycle::getReportConfigBlockSizeProducts)
+            final int articleBlockSize = ofNullable(billingRun.getBillingCycle())
+                    .map(BillingCycle::getReportConfigBlockSizeArticles)
                     .orElse(DEFAULT_BLOCK_SIZE);
             List<Object[]> amountsPerArticle =
-                    ratedTransactionService.getArticleStatisticsDetails(billingRun, rtIds, filters, productsBlockSize);
+                    ratedTransactionService.getArticleStatisticsDetails(billingRun, rtIds, filters, articleBlockSize);
             for (Object[] amount : amountsPerArticle) {
                 if (amount[0] != null) {
                     AccountingArticleAmount accountingArticleAmount = new AccountingArticleAmount();
