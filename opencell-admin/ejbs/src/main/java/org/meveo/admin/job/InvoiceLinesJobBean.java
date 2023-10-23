@@ -30,6 +30,7 @@ import org.hibernate.StatelessSession;
 import org.meveo.admin.async.SynchronizedIteratorGrouped;
 import org.meveo.admin.async.SynchronizedMultiItemIterator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.commons.utils.ParamBean;
@@ -389,7 +390,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         }
         PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
 
-        List<BillingRun> billingRuns = billingRunService.list(pagination);
+        List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(billingRunService.list(pagination), jobInstance);
 
         // Extra validation of BR status when billing run list is provided as parameters
         if (!billingRunIds.isEmpty() && !billingRuns.isEmpty()) {
