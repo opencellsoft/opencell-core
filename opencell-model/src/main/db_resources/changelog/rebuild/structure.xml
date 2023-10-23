@@ -8931,9 +8931,6 @@
             <column name="counter_instance_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="indx" type="int4">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
         <addPrimaryKey columnNames="chrg_instance_id, counter_instance_id" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
     </changeSet>
@@ -17808,6 +17805,29 @@
                                  constraintName="fk_pdp_status_history_id" referencedTableName="pdp_status_history"
                                  referencedColumnNames="id"/>
     </changeSet>
+    <changeSet id="#INTRD-18439_20230120_FK" author="TarikFA.">
+
+        <addForeignKeyConstraint baseTableName="billing_chrg_inst_counter" baseColumnNames="chrg_instance_id"
+
+                                 constraintName="fk_billing_chrg_inst_counter_chrg_instance_id" referencedTableName="billing_charge_instance"
+
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="billing_chrg_inst_counter" baseColumnNames="counter_instance_id"
+
+                                 constraintName="fk_billing_chrg_inst_counter_counter_instance_id" referencedTableName="billing_counter"
+
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+    <changeSet id="#INTRD-18439_20230120_FK" author="TarikFA.">
+        <addForeignKeyConstraint baseTableName="billing_chrg_inst_counter" baseColumnNames="chrg_instance_id"
+                                 constraintName="fk_billing_chrg_inst_counter_chrg_instance_id" referencedTableName="billing_charge_instance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="billing_chrg_inst_counter" baseColumnNames="counter_instance_id"
+                                 constraintName="fk_billing_chrg_inst_counter_counter_instance_id" referencedTableName="billing_counter"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
 
     <!-- end fk -->
@@ -21001,6 +21021,7 @@
 	<changeSet id="INTRD-18839_20231012" author="AkadidAbdelmounaim" />
     <changeSet id="INTRD-18726_20231012" author="khalidHORRI" />
     <changeSet id="INTRD-19050_20231020" author="zbariki" />
+    <changeSet id="#INTRD-18439_20230120" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
