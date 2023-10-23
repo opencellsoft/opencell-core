@@ -21696,5 +21696,13 @@ public class ImportJobNotification extends Script {
             update electronic_invoice_settings set invoicing_job =(select code from meveo_job_instance where job_template = 'InvoicingJobV2' and ROWNUM = 1)
         </sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-19070" author="TARIKFA.">
+        <update tableName="electronic_invoice_settings">
+            <column name="force_xml_generation" valueNumeric="1" />
+            <column name="force_pdf_generation" valueNumeric="1" />
+            <column name="force_ubl_generation" valueNumeric="1" />
+        </update>
+    </changeSet>
 
 </databaseChangeLog>
