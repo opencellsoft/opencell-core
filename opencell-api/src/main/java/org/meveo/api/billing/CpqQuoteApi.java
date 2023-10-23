@@ -1683,7 +1683,6 @@ public class CpqQuoteApi extends BaseApi {
 
         clearExistingQuotations(quoteVersion);
 
-        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
         //calculate totalQuoteAttribute
         calculateTotalAttributes (quoteVersion);
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
@@ -1812,7 +1811,6 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     public List<QuotePrice> offerQuotation(QuoteOffer quoteOffer, Set<DiscountPlanItem> quoteEligibleFixedDiscountItems) {
-    	quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
         List<PriceDTO> pricesDTO =new ArrayList<>();
         List<QuotePrice> offerQuotePrices = new ArrayList<>();
