@@ -1267,7 +1267,13 @@ public class QueryBuilder {
             if(value instanceof String) {
                 value = DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN);
             }
-            addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
+
+            if(value instanceof Date) {
+                addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
+            } else {
+                addCriterionDateRangeToTruncatedToDay(concatenatedFields, DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN), inclusive, isFieldValueOptional);
+            }
+
         }
         return this;
     }
