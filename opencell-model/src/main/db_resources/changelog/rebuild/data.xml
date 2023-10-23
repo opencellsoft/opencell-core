@@ -12053,9 +12053,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="created" valueDate="${db.current.time}"/>
             <column name="creator" value="OPENCELL.ADMIN" />
 
-            <column name="force_xml_generation" valueNumeric="0" />
-            <column name="force_pdf_generation" valueNumeric="0" />
-            <column name="force_ubl_generation" valueNumeric="0" />
+            <column name="force_xml_generation" valueNumeric="1" />
+            <column name="force_pdf_generation" valueNumeric="1" />
+            <column name="force_ubl_generation" valueNumeric="1" />
             <column name="invoicing_job" value="Invoicing_Job_V2"/>
             <column name="xml_generation_job" value="XML_Job"/>
             <column name="pdf_generation_job" value="PDF_Job"/>
@@ -12111,6 +12111,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-18352_20230915_data" author="TarikFA." />
 	<changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
     <changeSet id="#INTRD-18858_202301006" author="TARIKFA." />
+    <changeSet id="#INTRD-19070" author="TARIKFA." />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
