@@ -30,6 +30,7 @@ import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.apiv2.ordering.services.ApiService;
 
 import org.meveo.model.billing.BillingRun;
@@ -137,6 +138,14 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 && billingRun.getStatus() != DRAFT_INVOICES && billingRun.getStatus() != REJECTED
                 && billingRun.getStatus() != OPEN) {
             throw new BadRequestException("Billing run status must be either {NEW, OPEN, INVOICE_LINES_CREATED, DRAFT_INVOICES, REJECTED}");
+        }
+        
+        if (billingRun.isDisabled()) {
+        	throw new BusinessException(String.format("Billing run %d is disabled. It cannot be processed.", billingRun.getId()));
+        }
+        
+        if (!BillinRunApplicationElFilterUtils.isToProcessBR(billingRun, new JobInstance())) {
+        	throw new BusinessException(String.format("Billing run %d has been disabled by application EL. It cannot be processed.", billingRun.getId()));
         }
 
         if (billingRun.getStatus() == NEW || billingRun.getStatus() == INVOICE_LINES_CREATED
