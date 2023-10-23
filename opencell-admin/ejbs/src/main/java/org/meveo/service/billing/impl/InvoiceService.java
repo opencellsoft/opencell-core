@@ -4199,6 +4199,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.addAmountWithoutTax(taxAggregate.getAmountWithoutTax());
                 invoice.addAmountWithTax(taxAggregate.getAmountWithTax());
                 invoice.addAmountTax(taxAggregate.getAmountTax());
+                invoice.addTransactionalAmountWithoutTax(taxAggregate.getTransactionalAmountWithoutTax());
+                invoice.addTransactionalAmountWithTax(taxAggregate.getTransactionalAmountWithTax());
+                invoice.addTransactionalAmountTax(taxAggregate.getTransactionalAmountTax());
             }
             Map<String, TaxInvoiceAgregate> simpleTaxMap = taxAggregates.entrySet().stream()
                   .filter(x -> !x.getValue().getTax().isComposite())
@@ -7431,7 +7434,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .map(LinkedInvoice::getTransactionalAmount)
                     .reduce(BigDecimal::add).orElse(ZERO);
             //if balance is well calculated and balance=0, we don't need to recalculate
-            if ((sum.add(invoiceBalance)).compareTo(invoice.getTransactionalAmountWithoutTax()) == 0) {
+            if ((sum.add(invoiceBalance)).compareTo(invoice.getTransactionalAmountWithTax()) == 0) {
                 CommercialOrder commercialOrder = CollectionUtils.isNotEmpty(advInvoices) ? advInvoices.get(0).getCommercialOrder() : null;
                 if (BigDecimal.ZERO.compareTo(invoiceBalance) == 0 && !(commercialOrder != null && commercialOrder.equals(invoice.getCommercialOrder()))) {
                     return;
