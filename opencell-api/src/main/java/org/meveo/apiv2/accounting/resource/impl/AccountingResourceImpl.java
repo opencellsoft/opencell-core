@@ -24,18 +24,11 @@ import org.meveo.service.validation.ValidationByNumberCountryService;
 
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import java.util.Map;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import javax.xml.ws.soap.*;
 
 @Interceptors({ WsRestApiInterceptor.class })
 public class AccountingResourceImpl implements AccountingResource {
@@ -88,10 +81,8 @@ public class AccountingResourceImpl implements AccountingResource {
         if (valueValideNodeBoolean) {
             return Response.ok(result).build();
         }
-	    
-        return serverError()
-                .entity(new ActionStatus(ActionStatusEnum.FAIL, "invalid vat"))
-                .build();
+
+        throw new BadRequestException("Invalid VAT");
     }   
 
     private AuxiliaryAccount buildResponse(CustomerAccount customerAccount, Map<String, String> accountingResult) {
