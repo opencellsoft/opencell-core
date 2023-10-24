@@ -35,6 +35,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.parameter.CRMAccountHierarchyDtoParser;
+import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -153,6 +154,9 @@ public class AccountHierarchyApi extends BaseApi {
 
     @Inject
     private PaymentMethodApi paymentMethodApi;
+
+    @Inject
+    private MethodCallingUtils methodCallingUtils;
 
     @Inject
     @MeveoParamBean
@@ -848,7 +852,7 @@ public class AccountHierarchyApi extends BaseApi {
             currencyApi.findOrCreate(sellerDto.getCurrencyCode());
             languageApi.findOrCreate(sellerDto.getLanguageCode());
 
-            sellerApi.createOrUpdate(sellerDto);
+            methodCallingUtils.callMethodInNewTx(() -> sellerApi.createOrUpdate(sellerDto));
 
             // customers
             if (sellerDto.getCustomers() != null) {
@@ -862,7 +866,7 @@ public class AccountHierarchyApi extends BaseApi {
                     } else {
                         customerDto.setSeller(sellerDto.getCode());
                     }
-                    customerApi.createOrUpdatePartial(customerDto);
+                    methodCallingUtils.callMethodInNewTx(() -> customerApi.createOrUpdatePartial(customerDto));
 
                     // customerAccounts
                     if (customerDto.getCustomerAccounts() != null) {
@@ -877,7 +881,7 @@ public class AccountHierarchyApi extends BaseApi {
                                 customerAccountDto.setCustomer(customerDto.getCode());
                             }
 
-                            customerAccountApi.createOrUpdatePartial(customerAccountDto);
+                            methodCallingUtils.callMethodInNewTx(() -> customerAccountApi.createOrUpdatePartial(customerAccountDto));
 
                             // billing accounts
                             if (customerAccountDto.getBillingAccounts() != null) {
@@ -892,7 +896,7 @@ public class AccountHierarchyApi extends BaseApi {
                                     } else {
                                         billingAccountDto.setCustomerAccount(customerAccountDto.getCode());
                                     }
-                                    billingAccountApi.createOrUpdatePartial(billingAccountDto);
+                                    methodCallingUtils.callMethodInNewTx(() -> billingAccountApi.createOrUpdatePartial(billingAccountDto));
 
                                     // user accounts
                                     if (billingAccountDto.getUserAccounts() != null) {
@@ -907,7 +911,7 @@ public class AccountHierarchyApi extends BaseApi {
                                             } else {
                                                 userAccountDto.setBillingAccount(billingAccountDto.getCode());
                                             }
-                                            userAccountApi.createOrUpdatePartial(userAccountDto);
+                                            methodCallingUtils.callMethodInNewTx(() -> userAccountApi.createOrUpdatePartial(userAccountDto));
 
                                             // subscriptions
                                             if (userAccountDto.getSubscriptions() != null) {
@@ -922,7 +926,7 @@ public class AccountHierarchyApi extends BaseApi {
                                                     } else {
                                                         subscriptionDto.setUserAccount(userAccountDto.getCode());
                                                     }
-                                                    subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, null, null, null);
+                                                    methodCallingUtils.callMethodInNewTx(() -> subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, null, null, null));
                                                 }
                                             }
                                         }
