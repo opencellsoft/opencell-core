@@ -84,16 +84,14 @@ public class RatedTransactionsJob extends Job {
         if (aggregationSettings == null) {
             ratedTransactionsJobBean.execute(result, jobInstance);
             
-            if(result.getNbItemsCorrectlyProcessed()>0) {
+            if(result.getJobLauncherEnum() != JobLauncherEnum.WORKER && result.getNbItemsCorrectlyProcessed()>0) {
             	JobExecutionResultImpl updateResult = new JobExecutionResultImpl(jobInstance,result.getJobLauncherEnum(),result.getNodeName());
             	updateResult.setJobParams(result.getJobParams());
             	initUpdateStepParams(updateResult, jobInstance);
-            	updateResult.setReport("Dispatching update discount Step");
-            	jobInstance.addRunTimeValues(Map.of(Job.CF_BATCH_SIZE,1));
+            	updateResult.setReport("Dispatching update discount Step ");
+            	jobInstance.addRunTimeValues(Map.of(Job.CF_BATCH_SIZE,1L));
             	updateStepExecutor.execute(updateResult, jobInstance);
-            	if(updateResult.getJobLauncherEnum() != JobLauncherEnum.WORKER) {
-            		closeExecutionResult(jobInstance, updateResult, result.isMoreToProcess());
-            	}
+            	closeExecutionResult(jobInstance, updateResult, result.isMoreToProcess());
             }
         } else {
             ratedTransactionsAggregatedJobBean.execute(result, jobInstance);
