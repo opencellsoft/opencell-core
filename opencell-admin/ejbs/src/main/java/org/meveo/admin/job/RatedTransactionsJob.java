@@ -36,6 +36,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.job.Job;
@@ -88,8 +89,11 @@ public class RatedTransactionsJob extends Job {
             	updateResult.setJobParams(result.getJobParams());
             	initUpdateStepParams(updateResult, jobInstance);
             	updateResult.setReport("Dispatching update discount Step");
+            	jobInstance.addRunTimeValues(Map.of(Job.CF_BATCH_SIZE,1));
             	updateStepExecutor.execute(updateResult, jobInstance);
-            	closeExecutionResult(jobInstance, updateResult, result.isMoreToProcess());
+            	if(updateResult.getJobLauncherEnum() != JobLauncherEnum.WORKER) {
+            		closeExecutionResult(jobInstance, updateResult, result.isMoreToProcess());
+            	}
             }
         } else {
             ratedTransactionsAggregatedJobBean.execute(result, jobInstance);

@@ -228,8 +228,7 @@ public abstract class Job {
         }
     }
 
-	protected boolean closeExecutionResult(JobInstance jobInstance, JobExecutionResultImpl executionResult,
-			boolean moreToProcess) {
+	protected boolean closeExecutionResult(JobInstance jobInstance, JobExecutionResultImpl executionResult, boolean moreToProcess) {
 		boolean jobCanceled = jobExecutionService.isJobCancelled(jobInstance.getId());
 		executionResult.setStatus(jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
 		executionResult.close();

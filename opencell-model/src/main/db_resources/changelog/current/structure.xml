@@ -15994,6 +15994,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
 
     </changeSet>
     
+   	<changeSet id="USAGE_RERATE_RT_JOB" author="Mohammed_ElAzzouzi">
+            <sql>create index billing_redirection_rule__idx_contract_id_priority on ${db.schema.adapted}.billing_redirection_rule using btree (contract_id, priority)</sql>
+            <sql>create index cpq_attribute_instance__service_instance_index on ${db.schema.adapted}.cpq_attribute_instance using btree (service_instance_id)</sql>
+            <sql>create index idx_subscription_id_charge_type on ${db.schema.adapted}.billing_charge_instance using btree (subscription_id, charge_type)</sql>
+    </changeSet>
+    
      <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi">
      <createSequence sequenceName="advanced_settings_seq" startValue="1" />
     	<createTable tableName="advanced_settings">
