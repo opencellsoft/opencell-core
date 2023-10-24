@@ -2797,10 +2797,8 @@ public class SubscriptionApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
             }
 
-            if (offerTemplate.getSellers().size() > 0) {
-                if (!offerTemplate.getSellers().contains(seller)) {
-                    throw new EntityNotAllowedException(Seller.class, Subscription.class, postData.getSeller());
-                }
+            if (!offerTemplate.getSellers().isEmpty() && !offerTemplate.getSellers().contains(seller)) {
+                throw new EntityNotAllowedException(Seller.class, OfferTemplate.class, postData.getSeller());
             }
         }
         
