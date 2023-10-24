@@ -2,6 +2,7 @@ package org.meveo.service.payments.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -524,4 +525,20 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
         return paymentMethodService;
     }
+	@Override
+	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference) throws BusinessException {
+		throw new UnsupportedOperationException();
+		
+	}
+
+	@Override
+	public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+		throw new UnsupportedOperationException();
+		
+	}
 }
