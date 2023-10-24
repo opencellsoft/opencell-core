@@ -195,8 +195,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             } else if (entity instanceof ServiceInstance) {
                 counterInstance.setServiceInstance((ServiceInstance) entity);
             }
-
+            if(counterTemplate.getAccumulator() != null && counterTemplate.getAccumulator()) {
             counterInstance.getChargeInstances().add(chargeInstance);
+            }
 
             if (!isVirtual) {
                 create(counterInstance);
