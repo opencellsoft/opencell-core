@@ -79,6 +79,14 @@ public class JobExecutionResultImpl extends BaseEntity {
     public void addJobParam(String key, Object value){
     	jobParams.put(key,value);
     }
+    
+    public void setJobParams(Map<String,Object> jobParams){
+    	this.jobParams=jobParams;
+    }
+
+    public Map<String,Object> getJobParams(){
+    	return this.jobParams;
+    }
 
     /**
      * Job instance

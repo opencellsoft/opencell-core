@@ -54,6 +54,7 @@ public class RatedTransactionsJob extends Job {
     
     public static final String BILLING_RULES_MAP_KEY = "BILLING_RULES_MAP_KEY";
     public static final String BILLING_ACCOUNTS_MAP_KEY = "BILLING_ACCOUNTS_MAP_KEY";
+    public static final String CF_USE_JOB_CONTEXT = "CF_USE_JOB_CONTEXT";
 
 	/** The rated transactions job bean. */
     @Inject
@@ -81,9 +82,14 @@ public class RatedTransactionsJob extends Job {
 
         if (aggregationSettings == null) {
             ratedTransactionsJobBean.execute(result, jobInstance);
-            initUpdateStepParams(result, jobInstance);
+            
             if(result.getNbItemsCorrectlyProcessed()>0) {
-            	updateStepExecutor.execute(result, jobInstance);
+            	JobExecutionResultImpl updateResult = new JobExecutionResultImpl(jobInstance,result.getJobLauncherEnum(),result.getNodeName());
+            	updateResult.setJobParams(result.getJobParams());
+            	initUpdateStepParams(updateResult, jobInstance);
+            	updateResult.setReport("Dispatching update discount Step");
+            	updateStepExecutor.execute(updateResult, jobInstance);
+            	closeExecutionResult(jobInstance, updateResult, result.isMoreToProcess());
             }
         } else {
             ratedTransactionsAggregatedJobBean.execute(result, jobInstance);
@@ -112,6 +118,8 @@ public class RatedTransactionsJob extends Job {
         result.put(CF_BATCH_SIZE, CustomFieldTemplateUtils.buildCF(CF_BATCH_SIZE, resourceMessages.getString("jobExecution.batchSize"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2",
             "10000", true, null, null, "JobInstance_RatedTransactionsJob"));
         result.put(CF_MASS_UPDATE_CHUNK, CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK, resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "100000",
+                false, null, null, "JobInstance_RatedTransactionsJob"));
+        result.put(CF_USE_JOB_CONTEXT, CustomFieldTemplateUtils.buildCF(CF_USE_JOB_CONTEXT, resourceMessages.getString("jobExecution.useJobContext"), CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;fieldGroup:Configuration:0;field:4", "true",
                 false, null, null, "JobInstance_RatedTransactionsJob"));
         // aggregations
         result.put("woAggregationSettings",

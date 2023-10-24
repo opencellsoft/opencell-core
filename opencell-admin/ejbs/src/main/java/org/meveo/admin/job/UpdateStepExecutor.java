@@ -65,7 +65,7 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initFunction, this::processUpdateByInterval, null, null, null, null, true);
+        super.execute(jobExecutionResult, jobInstance, this::initFunction, this::processUpdateByInterval, null, null, null, null);
     }
 
     /**

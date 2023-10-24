@@ -59,6 +59,8 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoiceLinesFactory;
+import org.meveo.admin.job.JobContextHolder;
+import org.meveo.admin.job.RatedTransactionsJob;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.generics.GenericRequestMapper;
@@ -167,6 +169,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private ServiceInstanceService serviceInstanceService;
     
+    @Inject
+    JobContextHolder jobContextHolder;
+
     @Inject
     private ChargeInstanceService<ChargeInstance> chargeInstanceService;
     @Inject
@@ -1880,12 +1885,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
 	private Long findIdByCode(String calculatedCode) {
-		return (Long) getEntityManager().createNamedQuery("BillingAccount.fetchIdByCode").setParameter("code", calculatedCode).setHint("org.hibernate.cacheable", true).getSingleResult();
+		if(jobContextHolder.isNotEmpty(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY)) {
+			return jobContextHolder.getValueFromMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY, calculatedCode);
+		}
+		return (Long) getEntityManager().createNamedQuery("BillingAccount.fetchIdByCode").setParameter("code", calculatedCode).getSingleResult();
 	}
 
 	private List<Object[]> findBillingRules(RatedTransaction ratedTransaction) {
 		Long contractId = ratedTransaction.getRulesContract().getId();
-		return getEntityManager().createNamedQuery("BillingRule.findByContractIdForRating").setParameter("contractId", contractId).setHint("org.hibernate.cacheable", true).getResultList();
+		if(jobContextHolder.isNotEmpty(RatedTransactionsJob.BILLING_RULES_MAP_KEY)) {
+			return jobContextHolder.getValueFromMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY, contractId);
+		}
+		return getEntityManager().createNamedQuery("BillingRule.findByContractIdForRating").setParameter("contractId", contractId).setHint("org.hibernate.cacheable", true).getResultList();//2
 	}
 	
     
