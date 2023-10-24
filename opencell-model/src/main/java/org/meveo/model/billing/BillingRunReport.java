@@ -182,6 +182,15 @@ public class BillingRunReport extends AuditableEntity {
     public void setOneShotTransactionsCount(BigDecimal oneShotTransactionsCount) {
         this.oneShotTransactionsCount = oneShotTransactionsCount;
     }
+    
+    public void addOneShotTransactionsCount(BigDecimal oneShotTransactionsCountToAdd) {
+        if (this.oneShotTransactionsCount == null) {
+        	this.oneShotTransactionsCount = ZERO;
+        }
+        if (oneShotTransactionsCountToAdd != null) {
+        	this.oneShotTransactionsCount = this.oneShotTransactionsCount.add(oneShotTransactionsCountToAdd);
+        }
+    }
 
     public BigDecimal getRecurringTransactionsCount() {
         return recurringTransactionsCount;
@@ -207,6 +216,15 @@ public class BillingRunReport extends AuditableEntity {
         this.oneShotTotalAmountWithoutTax = oneShotTotalAmountWithoutTax;
     }
 
+    public void addOneShotTotalAmountWithoutTax(BigDecimal oneShotTotalAmountWithoutTaxToAdd) {
+        if (this.oneShotTotalAmountWithoutTax == null) {
+        	this.oneShotTotalAmountWithoutTax = ZERO;
+        }
+        if (oneShotTotalAmountWithoutTaxToAdd != null) {
+        	this.oneShotTotalAmountWithoutTax = this.oneShotTotalAmountWithoutTax.add(oneShotTotalAmountWithoutTaxToAdd);
+        }
+    }
+    
     public BigDecimal getRecurringTotalAmountWithoutTax() {
         return recurringTotalAmountWithoutTax;
     }
