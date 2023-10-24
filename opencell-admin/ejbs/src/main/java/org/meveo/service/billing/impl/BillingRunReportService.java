@@ -133,8 +133,8 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
             }
             if ("O".equalsIgnoreCase(chargeType)
                     || "S".equalsIgnoreCase(chargeType) || "T".equalsIgnoreCase(chargeType)) {
-                billingRunReport.setOneShotTransactionsCount(valueOf((Long) line[3]));
-                billingRunReport.setOneShotTotalAmountWithoutTax((BigDecimal) line[4]);
+                billingRunReport.addOneShotTransactionsCount(valueOf((Long) line[3]));
+                billingRunReport.addOneShotTotalAmountWithoutTax((BigDecimal) line[4]);
             }
             if ("U".equalsIgnoreCase(chargeType)) {
                 billingRunReport.setUsageTransactionsCount(valueOf((Long) line[3]));
