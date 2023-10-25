@@ -15870,6 +15870,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-17222_20231005" author="AndriusKarpavicius">
+        <addColumn tableName="job_execution">
+            <column name="node" type="varchar(25)"/>
+        </addColumn>
+        <addColumn tableName="meveo_job_instance">
+            <column name="status_report_freq" type="int" defaultValueNumeric="60" />
+        </addColumn>
+        <dropColumn tableName="meveo_job_instance" columnName="job_speed" />
+    </changeSet>
 
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI">
         <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
@@ -15910,14 +15920,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="ignore_orders" type="${type.boolean}" defaultValueNumeric="1" >
                 <constraints nullable="false" />
             </column>
-            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <addColumn tableName="billing_cycle">
-            <column name="discount_aggregation" type="varchar(17)" defaultValue="FULL_AGGREGATION">
-                <constraints nullable="false" />
-            </column>
         </addColumn>
         <!--  Existing BC should be NO_AGGREGATION -->
         <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' </sql>
@@ -15933,6 +15935,19 @@ public class AgedBalanceReporting extends ReportExtractScript {
               br.aggregate_unit_amounts = bc.aggregate_unit_amounts, br.ignore_subscriptions = bc.ignore_subscriptions, br.ignore_orders = bc.ignore_orders, br.incremental_invoice_lines = bc.incremental_invoice_lines"),
          </sql>
     </changeSet>
+
+    <changeSet id="#INTRD-17987_20230825_discount_agg_cherry-pick" author="a.rouaguebe">
+        <addColumn tableName="billing_billing_run">
+            <column name="discount_aggregation" type="varchar(17)" />
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="discount_aggregation" type="varchar(17)" />
+        </addColumn>
+        <sql>UPDATE ${db.schema.adapted}billing_billing_run set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
+        <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET DEFAULT 'FULL_AGGREGATION';</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET NOT NULL</sql>
+	 </changeSet>
     
     <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD">
         <addColumn tableName="finance_settings">
@@ -15985,6 +16000,40 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>DROP INDEX IF EXISTS idx__charge_instance__lower_code</sql>
 
     </changeSet>
+    
+   	<changeSet id="USAGE_RERATE_RT_JOB" author="Mohammed_ElAzzouzi">
+            <sql>create index billing_redirection_rule__idx_contract_id_priority on ${db.schema.adapted}billing_redirection_rule using btree (contract_id, priority)</sql>
+            <sql>create index cpq_attribute_instance__service_instance_index on ${db.schema.adapted}cpq_attribute_instance using btree (service_instance_id)</sql>
+            <sql>create index idx_subscription_id_charge_type on ${db.schema.adapted}billing_charge_instance using btree (subscription_id, charge_type)</sql>
+    </changeSet>
+    
+     <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi">
+     <createSequence sequenceName="advanced_settings_seq" startValue="1" />
+    	<createTable tableName="advanced_settings">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="advanced_settings_pk" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="unique_advanced_settings_code" />
+            </column>
+            <column name="description" type="varchar(255)" />
+	        <column name="origin" type="varchar(100)"/>
+	        <column name="category" type="varchar(100)"/>
+	        <column name="property_group" type="varchar(100)"/>
+	        <column name="property_value" type="VARCHAR(255)"/>
+	        <column name="property_type" type="VARCHAR(255)"/>
+	    </createTable>
+	</changeSet>
     
     <changeSet id="#INTRD-16881_20230816" author="Mohammed_ElAzzouzi">
 		  <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE status= 'OPEN' and accounting_article_id is null </sql>

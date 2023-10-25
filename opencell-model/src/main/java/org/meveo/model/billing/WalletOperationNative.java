@@ -55,7 +55,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
-@NamedQueries({ @NamedQuery(name = "WalletOperationNative.listConvertToRTs", query = "SELECT o FROM WalletOperationNative o WHERE o.status='OPEN' and o.id<=:maxId") })
+@NamedQueries({ @NamedQuery(name = "WalletOperationNative.listConvertToRTs", query = "SELECT o FROM WalletOperationNative o WHERE o.status='OPEN' and o.id<=:maxId order by billingAccountId") })
 public class WalletOperationNative extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

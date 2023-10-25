@@ -22,6 +22,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,10 +61,32 @@ import org.meveo.model.NotifiableEntity;
         @NamedQuery(name = "JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", query = "select count(*) FROM JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
         @NamedQuery(name = "JobExecutionResult.purgeHistoryByDateAndJobInstance", query = "delete JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
         @NamedQuery(name = "JobExecutionResult.updateProgress", query = "update JobExecutionResultImpl set endDate=:endDate, nbItemsToProcess=:nbItemsToProcess, nbItemsCorrectlyProcessed=:nbItemsCorrectlyProcessed, nbItemsProcessedWithError=:nbItemsProcessedWithError, nbItemsProcessedWithWarning=:nbItemsProcessedWithWarning, report=:report, status=:status where id=:id"),
-        @NamedQuery(name = "JobExecutionResult.cancelAllRunningJobs", query = "update JobExecutionResultImpl je set je.status='CANCELLED', je.endDate=NOW(), je.report='job cancelled due to the server was shutdown in the middle of job execution' where je.status = 'RUNNING'") })
+        @NamedQuery(name = "JobExecutionResult.cancelUnfinishedJobsByNode", query = "update JobExecutionResultImpl je set je.status='CANCELLED', je.endDate=NOW(), je.report='job cancelled due to the server was shutdown in the middle of job execution' where je.status = 'RUNNING' and je.nodeName=:nodeName"),
+        @NamedQuery(name = "JobExecutionResult.listUnfinishedJobs", query = "select jr from JobExecutionResultImpl jr where jr.id in (select distinct (case when je.parentJobExecutionResult is null then je.id else je.parentJobExecutionResult end) from JobExecutionResultImpl je where je.status = 'RUNNING')") })
 
 public class JobExecutionResultImpl extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
+    
+    
+    @Transient
+    Map<String,Object> jobParams = new TreeMap<String,Object>();
+    
+    public Object getJobParam(String key){
+    	return jobParams.get(key);
+    }
+    
+    
+    public void addJobParam(String key, Object value){
+    	jobParams.put(key,value);
+    }
+    
+    public void setJobParams(Map<String,Object> jobParams){
+    	this.jobParams=jobParams;
+    }
+
+    public Map<String,Object> getJobParams(){
+    	return this.jobParams;
+    }
 
     /**
      * Job instance
@@ -149,6 +173,12 @@ public class JobExecutionResultImpl extends BaseEntity {
     private String report;
 
     /**
+     * A name of node that job ran on
+     */
+    @Column(name = "node")
+    private String nodeName;
+
+    /**
      * Indicates that job has not completed fully - there might be more data to process
      */
     @Transient
@@ -181,11 +211,12 @@ public class JobExecutionResultImpl extends BaseEntity {
      * 
      * @param jobInstance Job instance
      */
-    public JobExecutionResultImpl(JobInstance jobInstance, JobLauncherEnum jobLauncher) {
+    public JobExecutionResultImpl(JobInstance jobInstance, JobLauncherEnum jobLauncher, String nodeName) {
         this.jobInstance = jobInstance;
         this.status = JobExecutionResultStatusEnum.RUNNING;
         this.startDate = new Date();
         this.jobLauncherEnum = jobLauncher;
+        this.nodeName = nodeName;
     }
 
     /**
@@ -555,6 +586,20 @@ public class JobExecutionResultImpl extends BaseEntity {
     }
 
     /**
+     * @return A name of node that job run on
+     */
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    /**
+     * @param nodeName A name of node that job run on
+     */
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
+    }
+
+    /**
      * @return Indicates that job has not completed fully - there might be more data to process
      */
     public boolean isMoreToProcess() {
@@ -690,6 +735,11 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     public JobExecutionResultStatusEnum getCumulativeStatus() {
         cumulativeStatus = status;
+
+        // If main node has completed, then ignore statuses of worker nodes
+        if (status == JobExecutionResultStatusEnum.COMPLETED || status == JobExecutionResultStatusEnum.COMPLETED_MORE || status == JobExecutionResultStatusEnum.RUNNING) {
+            return status;
+        }
 
         for (JobExecutionResultImpl workerJob : workerJobExecutionResults) {
             cumulativeStatus = cumulativeStatus.getStatusWithHigherPriority(workerJob.getStatus());

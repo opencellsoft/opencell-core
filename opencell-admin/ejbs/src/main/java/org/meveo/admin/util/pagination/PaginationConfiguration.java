@@ -78,7 +78,7 @@ public class PaginationConfiguration implements Serializable {
     private JoinType joinType;
 
     private Boolean forceCount = false;
-    
+
     /**
      * Shall query results be cached - see Hibernate query cache behavior
      */

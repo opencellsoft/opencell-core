@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
 
+import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -37,7 +38,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.Address;
 import org.meveo.model.jaxb.account.Name;
 import org.meveo.model.jaxb.customer.CustomFields;
@@ -46,11 +46,7 @@ import org.meveo.model.jaxb.customer.CustomerAccounts;
 import org.meveo.model.jaxb.customer.Customers;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.job.JobExecutionService;
-import org.meveo.util.ApplicationProvider;
-import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
@@ -58,22 +54,14 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class ExportCustomersJobBean {
+public class ExportCustomersJobBean extends BaseJobBean {
+
+    private static final long serialVersionUID = 8566934375312596081L;
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
 
     @Inject
-    private Logger log;
-
-    @Inject
     private CustomerService customerService;
-
-    @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
-
-    @Inject
-    private JobExecutionService jobExecutionService;
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
@@ -95,18 +83,16 @@ public class ExportCustomersJobBean {
         List<Seller> sellersInDB = customerService.listSellersWithCustomers();
         sellers = new Sellers(sellersInDB);// ,param.getProperty("connectorCRM.dateFormat",
                                            // "yyyy-MM-dd"));
-        int i = 0;
-        
-        int checkJobStatusEveryNr = result.getJobInstance().getJobSpeed().getCheckNb();
+                
+        Long jobInstanceId = result.getJobInstance().getId();
         
         for (org.meveo.model.jaxb.customer.Seller seller : sellers.getSeller()) {
             
-            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
+            if (isJobRequestedToStop(jobInstanceId)) {
                 break;
             }
             List<Customer> customers = customerService.listBySellerCode(seller.getCode());
             seller.setCustomers(customersToDto(customers));
-            i++;
         }
         int nbItems = sellers.getSeller() != null ? sellers.getSeller().size() : 0;
         result.setNbItemsToProcess(nbItems);

@@ -46,7 +46,6 @@ import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.service.job.JobExecutionService;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
@@ -54,6 +53,8 @@ import org.slf4j.Logger;
 
 @Stateless
 public class DWHQueryBean extends BaseJobBean{
+
+    private static final long serialVersionUID = -3013557344708711673L;
 
     @Inject
     private MeasurableQuantityService mqService;
@@ -64,12 +65,6 @@ public class DWHQueryBean extends BaseJobBean{
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
-
-    @Inject
-    private Logger log;
-
-    @Inject
-    private JobExecutionService jobExecutionService;
 
     // iso 8601 date and datetime format
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -120,11 +115,10 @@ public class DWHQueryBean extends BaseJobBean{
         
         EntityManager em = emWrapper.getEntityManager();
         
-        int checkJobStatusEveryNr = result.getJobInstance().getJobSpeed().getCheckNb();
-        
-        int ji = 0;
+        Long jobInstanceId = result.getJobInstance().getId();
+
         for (MeasurableQuantity mq : mqList) {
-            if (ji % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
+            if (isJobRequestedToStop(jobInstanceId)) {
                 break;
             }
             if (StringUtils.isBlank(mq.getSqlQuery())) {
@@ -209,7 +203,6 @@ public class DWHQueryBean extends BaseJobBean{
                 result.registerError("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query: " + e.getMessage());
                 log.error("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query", e);
             }
-            ji++;
         }
     }
 }

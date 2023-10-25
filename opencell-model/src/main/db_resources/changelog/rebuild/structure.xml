@@ -5848,6 +5848,7 @@
             </column>
             <column name="job_status" type="varchar(14)"/>
             <column name ="parent_job_result_id" type="bigint" />
+            <column name="node" type="varchar(25)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-262">
@@ -6101,9 +6102,9 @@
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
             <column name="query_scheduler_id" type="bigint" />
             <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
+            <column name="status_report_freq" type="int" defaultValueNumeric="60" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -18164,6 +18165,42 @@
 								 deferrable="false" initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" />
     </changeSet>
+    
+    
+    
+     <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi">
+     	<createSequence sequenceName="advanced_settings_seq" startValue="1" />
+    	<createTable tableName="advanced_settings">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="advanced_settings_pk" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="unique_advanced_settings_code" />
+            </column>
+            <column name="description" type="varchar(255)" />
+	        <column name="origin" type="varchar(100)"/>
+	        <column name="category" type="varchar(100)"/>
+	        <column name="property_group" type="varchar(100)"/>
+	        <column name="property_value" type="VARCHAR(255)"/>
+	        <column name="property_type" type="VARCHAR(255)"/>
+	    </createTable>
+	</changeSet>
+	
+	<changeSet id="USAGE_RERATE_RT_JOB" author="Mohammed_ElAzzouzi">
+            <sql>create index billing_redirection_rule__idx_contract_id_priority on ${db.schema.adapted}billing_redirection_rule using btree (contract_id, priority)</sql>
+            <sql>create index cpq_attribute_instance__service_instance_index on ${db.schema.adapted}cpq_attribute_instance using btree (service_instance_id)</sql>
+            <sql>create index idx_subscription_id_charge_type on ${db.schema.adapted}billing_charge_instance using btree (subscription_id, charge_type)</sql>
+    </changeSet>
 
     <changeSet id="#INTRD-9535-20220902" author="Abdelkader.Bouazza" />
 
@@ -19477,11 +19514,13 @@
     <changeSet id="#INTRD-17084_20230623" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
+    <changeSet id="#INTRD-17222_20231005" author="AndriusKarpavicius"/>
 
     <changeSet id="#INTRD-16636_20230610" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16640_20230724" author="AndriusKarpavicius" />
     <changeSet id="#INTRD-16881_20230816" author="Mohammed_ElAzzouzi"/>
     <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe" />
+    <changeSet id="#INTRD-17987_20230825_discount_agg_cherry-pick" author="a.rouaguebe" />
     
     <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD"/>
     <changeSet id="#INTRD-14264_20230222" author="TarikFA." />

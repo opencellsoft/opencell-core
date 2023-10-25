@@ -15,29 +15,26 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.admin.listener;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.inject.Inject;
+package org.meveo.event.qualifier;
 
-import org.slf4j.Logger;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Startup
-@Singleton
-public class StartupListener {
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-    @Inject
-    private ApplicationInitializer applicationInitializer;
+import javax.inject.Qualifier;
 
-    @Inject
-    private Logger log;
+/**
+ * An event indicating that a last message, containing job processing data, was read from a QUEUE
+ */
+@Qualifier
+@Target({ METHOD, FIELD, PARAMETER, TYPE })
+@Retention(RUNTIME)
+public @interface LastJobDataMessageReceived {
 
-    @PostConstruct
-    private void init() {
-        log.info("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase an Opencell subscription from https://opencellsoft.com/");
-
-        applicationInitializer.init();
-    }
 }
