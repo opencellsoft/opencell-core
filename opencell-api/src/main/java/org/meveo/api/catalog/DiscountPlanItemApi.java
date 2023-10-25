@@ -352,9 +352,7 @@ public class DiscountPlanItemApi extends BaseApi {
             discountPlanItem.setExpressionEl(source.getExpressionEl());
         }
         discountPlanItem.setDiscountValue(source.getDiscountValue());
-        if (source.getDiscountValueEL() != null) {
-            discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
-        }
+        discountPlanItem.setDiscountValueEL(StringUtils.isEmpty(source.getDiscountValueEL())?null:source.getDiscountValueEL());
         if (source.getDiscountPlanItemType() != null) {
             discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
         }
