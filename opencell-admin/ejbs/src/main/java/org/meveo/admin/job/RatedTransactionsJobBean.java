@@ -80,7 +80,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     private Long nrOfRecords = null;
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED) // Transaction set to REQUIRED, so ScrollableResultset would do paging. With TX=NEVER all data is retrieved at once resulting in memory increase
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::bindRTs);
     }

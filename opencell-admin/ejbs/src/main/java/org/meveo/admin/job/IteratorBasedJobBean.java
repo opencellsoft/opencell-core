@@ -30,9 +30,11 @@ import javax.jms.JMSConsumer;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.JMSProducer;
+import javax.jms.JMSRuntimeException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Queue;
+import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
@@ -303,7 +305,9 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 clearPendingWorkLoad(jobInstance);
 
                 for (int k = 0; k < nbPublishers; k++) {
-                    Runnable publishingTask = getDataPublishingToQueueTask(jobInstance.getCode(), lastCurrentUser, finalIterator, batchSize, jobQueue, jobExecutionResult, k);
+                    int kFinal = k;
+                    Runnable publishingTask = methodCallingUtils
+                        .callCallableInNoTx(() -> getDataPublishingToQueueTask(jobInstance.getCode(), lastCurrentUser, finalIterator, batchSize, jobQueue, jobExecutionResult, kFinal));
                     tasks.add(publishingTask);
                 }
             }
@@ -358,7 +362,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                     // Send EOF message to a queue once all data publishing tasks are finished
                     if (!wasKilled && i == nbPublishers - 1) {
-                        sendEOFMessageToAQueue(jobQueue);
+                        methodCallingUtils.callMethodInNoTx(() -> sendEOFMessageToAQueue(jobQueue));
                     }
 
                 } catch (InterruptedException | CancellationException e) {
@@ -598,6 +602,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 //            jmsProducer.send(jobQueue, eofMessage);
 
             log.info("Thread {} published {} data items in {} messages for cluster-wide data processing", Thread.currentThread().getName(), nrOfItemsProcessedByThread, nrMessages);
+
         };
 
         return task;
@@ -606,20 +611,23 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
     /**
      * Send a message to a queue indicating that all messages have been send
      * 
-     * @param jobInstanceCode Jo
      * @param jobQueue JMS queue where messages should be posted
-     * @throws JMSException An exception publishing to JMS
      */
-    private void sendEOFMessageToAQueue(Destination jobQueue) throws JMSException {
+    private void sendEOFMessageToAQueue(Destination jobQueue) {
 
-        JMSProducer jmsProducer = jmsContextForPublishing.createProducer();
-        Message eofMessage = jmsContextForPublishing.createMessage();
-        eofMessage.setStringProperty(ItertatorJobMessageListener.EOF_MESSAGE, ItertatorJobMessageListener.EOF_MESSAGE);
+        try {
+            JMSProducer jmsProducer = jmsContextForPublishing.createProducer();
+            Message eofMessage = jmsContextForPublishing.createMessage();
+            eofMessage.setStringProperty(ItertatorJobMessageListener.EOF_MESSAGE, ItertatorJobMessageListener.EOF_MESSAGE);
 
-        jmsProducer.send(jobQueue, eofMessage);
+            jmsProducer.send(jobQueue, eofMessage);
 
-        log.info("Published EOF message to queue {} for cluster-wide data processing", jobQueue.toString());
+            log.info("Published EOF message to queue {} for cluster-wide data processing", jobQueue.toString());
 
+        } catch (Exception e) {
+            log.error("Failed to publish EOF message to queue {} for cluster-wide data processing", jobQueue.toString());
+            throw new JMSRuntimeException(e.getMessage());
+        }
     }
 
     /**
@@ -685,7 +693,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                 mainLoop: while (true) {
 
-                    List<T> itemsToProcess = getNextItemsToProcess(batchSize, dataIterator, nrOfItemsProcessedByThread, jobExecutionResult.getJobInstance().getId());
+                    List<T> itemsToProcess = getNextItemsToProcess(batchSize, dataIterator, jobExecutionResult.getJobInstance().getId());
                     if (itemsToProcess.isEmpty()) {
                         break mainLoop;
                     }
@@ -797,11 +805,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * 
      * @param nrItems Number of items to return
      * @param threadIterator Iterator from DB based data source
-     * @param nrOfItemsProcessedByThread Number of items already processed by a thread
      * @param jobInstanceId Job instance identifier
      * @return A list of data items
      */
-    private List<T> getNextItemsToProcess(int nrItems, Iterator<T> threadIterator, int nrOfItemsProcessedByThread, Long jobInstanceId) {
+    private List<T> getNextItemsToProcess(int nrItems, Iterator<T> threadIterator, Long jobInstanceId) {
 
         final List<T> itemsToProcess = new ArrayList<T>();
 
@@ -877,6 +884,9 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             remote.invoke(bean, "purge", null, null);
             connector.close();
+
+        } catch (InstanceNotFoundException e) {
+            // Do nothing, the queue does not exist yet
 
         } catch (Exception e) {
             log.error("Failed to purge pending job data  messages for job {}", jobInstance.getCode(), e);
@@ -1049,6 +1059,9 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         if (countDown != null) {
             countDown.countDown();
             countDowns.remove(jobInstanceId);
+        } else {
+            Logger log = LoggerFactory.getLogger(IteratorBasedJobBean.class);
+            log.error("No countDownLatch found for job {}", jobInstanceId);
         }
     }
 }
