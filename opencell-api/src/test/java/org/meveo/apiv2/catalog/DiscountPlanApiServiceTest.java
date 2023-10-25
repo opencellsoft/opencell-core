@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.catalog.service.DiscountPlanApiService;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
@@ -66,6 +67,9 @@ public class DiscountPlanApiServiceTest {
 
     @Mock
     private GenericApiAlteringService genericApiAlteringService;
+    
+    @Mock
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     @Mock
     private EntityManagerWrapper entityManagerWrapper;
@@ -159,6 +163,8 @@ public class DiscountPlanApiServiceTest {
     public void test_get_all_discount_plan() throws JsonProcessingException {
 
         PaginationConfiguration searchConfig = Mockito.mock(PaginationConfiguration.class);
+        Mockito.when(searchConfig.getFirstRow()).thenReturn(0);
+        Mockito.when(searchConfig.getNumberOfRows()).thenReturn(10);
         String jsonResponse = loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, null, null, 1L, null, null);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> map = objectMapper.readValue(jsonResponse, Map.class);

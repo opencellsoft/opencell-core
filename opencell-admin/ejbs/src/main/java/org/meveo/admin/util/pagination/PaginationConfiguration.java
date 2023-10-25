@@ -78,6 +78,7 @@ public class PaginationConfiguration implements Serializable {
     private JoinType joinType;
 
     private Boolean forceCount = false;
+    
     /**
      * Shall query results be cached - see Hibernate query cache behavior
      */
@@ -336,7 +337,7 @@ public class PaginationConfiguration implements Serializable {
 	public void setFilterOperator(FilterOperatorEnum filterOperator) {
 		this.filterOperator = filterOperator;
 	}
-
+	
 	/**
 	 * @param cacheable Shall query results be cached - see Hibernate query cache behavior
 	 */

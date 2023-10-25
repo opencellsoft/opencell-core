@@ -74,8 +74,12 @@ public class GenericApiLoadService {
                     .collect(toList());
             Map<String, Object> results = new LinkedHashMap<>();
             results.put("total", list.size());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
-            results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
+            if(searchConfig.getNumberOfRows() != null) {
+            	results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            }
+            if(searchConfig.getFirstRow() != null) {
+            	results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
+            }
             results.put("data", mapResult);
 
             return serializeResults(results);
@@ -92,15 +96,19 @@ public class GenericApiLoadService {
             .collect(toList());
             Map<String, Object> results = new LinkedHashMap<String, Object>();
             results.put("total", searchResult.getCount());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
-            results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
+            if(searchConfig.getNumberOfRows() != null) {
+            	results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            }
+            if(searchConfig.getFirstRow() != null) {
+            	results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
+            }
             results.put("data", mapResult);
             return serializeResults(results);
         }else{
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
             ImmutableGenericPaginatedResource.Builder builder = ImmutableGenericPaginatedResource.builder()
                     .data(searchResult.getEntityList())
-                    .limit(genericPagingAndFilteringUtils.getLimit(searchConfig.getLimit()))
+                    .limit(genericPagingAndFilteringUtils.getLimit(searchConfig.getNumberOfRows()))
                     .offset(Long.valueOf(searchConfig.getFirstRow()))
                     .filters(searchConfig.getFilters());
             builder.total(searchResult.getCount());
