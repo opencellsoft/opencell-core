@@ -383,20 +383,7 @@ public class InvoiceUblHelper {
 			InvoicedQuantity invoicedQuantity = objectFactorycommonBasic.createInvoicedQuantity();
 			invoicedQuantity.setValue(invoiceLine.getQuantity());
 			invoiceLineType.setInvoicedQuantity(invoicedQuantity);
-			// InvoiceLine/ Price/ BaseQuantity
-			PriceType priceType = getPriceType(invoiceLine);
-			invoiceLineType.setPrice(priceType);
-			// InvoiceLine/ LineExtensionAmount
-			LineExtensionAmount lineExtensionAmount = getLineExtensionAmount(invoiceLine);
-			invoiceLineType.setLineExtensionAmount(lineExtensionAmount);
-			// InvoiceLine/ Note
-			ID id = objectFactorycommonBasic.createID();
-			id.setValue(invoiceLine.getId().toString());
-			invoiceLineType.setID(id);
-			Note note = objectFactorycommonBasic.createNote();
-			note.setValue(invoiceLine.getLabel());
-			invoiceLineType.getNotes().add(note);
-			invoiceLineType.setItem(itemType);
+			setPriceAndCreditLine(invoiceLine, invoiceLineType, itemType);
 			target.getInvoiceLines().add(invoiceLineType);
 		});
 	}
@@ -409,22 +396,36 @@ public class InvoiceUblHelper {
 			CreditedQuantity invoicedQuantity = objectFactorycommonBasic.createCreditedQuantity();
 			invoicedQuantity.setValue(invoiceLine.getQuantity());
 			invoiceLineType.setCreditedQuantity(invoicedQuantity);
-			// InvoiceLine/ Price/ BaseQuantity
-			PriceType priceType = getPriceType(invoiceLine);
-			invoiceLineType.setPrice(priceType);
-			// InvoiceLine/ LineExtensionAmount
-			LineExtensionAmount lineExtensionAmount = getLineExtensionAmount(invoiceLine);
-			invoiceLineType.setLineExtensionAmount(lineExtensionAmount);
-			// InvoiceLine/ Note
-			ID id = objectFactorycommonBasic.createID();
-			id.setValue(invoiceLine.getId().toString());
-			invoiceLineType.setID(id);
-			Note note = objectFactorycommonBasic.createNote();
-			note.setValue(invoiceLine.getLabel());
-			invoiceLineType.getNotes().add(note);
-			invoiceLineType.setItem(itemType);
+			setPriceAndCreditLine(invoiceLine, invoiceLineType, itemType);
 			target.getCreditNoteLines().add(invoiceLineType);
 		});
+	}
+	
+	private void setPriceAndCreditLine(InvoiceLine invoiceLine, Object invoiceLineType, ItemType itemType) {
+		// InvoiceLine/ Price/ BaseQuantity
+		PriceType priceType = getPriceType(invoiceLine);
+		// InvoiceLine/ LineExtensionAmount
+		LineExtensionAmount lineExtensionAmount = getLineExtensionAmount(invoiceLine);
+		// InvoiceLine/ Note
+		ID id = objectFactorycommonBasic.createID();
+		id.setValue(invoiceLine.getId().toString());
+		Note note = objectFactorycommonBasic.createNote();
+		note.setValue(invoiceLine.getLabel());
+		if(invoiceLineType instanceof  CreditNoteLineType){
+			CreditNoteLineType CreditlineType = (CreditNoteLineType) invoiceLineType;
+			CreditlineType.setID(id);
+			CreditlineType.setPrice(priceType);
+			CreditlineType.setLineExtensionAmount(lineExtensionAmount);
+			CreditlineType.getNotes().add(note);
+			CreditlineType.setItem(itemType);
+		}else{
+			InvoiceLineType lineType = (InvoiceLineType) invoiceLineType;
+			lineType.setID(id);
+			lineType.setPrice(priceType);
+			lineType.setLineExtensionAmount(lineExtensionAmount);
+			lineType.getNotes().add(note);
+			lineType.setItem(itemType);
+		}
 	}
 	
 	private static LineExtensionAmount getLineExtensionAmount(InvoiceLine invoiceLine) {
