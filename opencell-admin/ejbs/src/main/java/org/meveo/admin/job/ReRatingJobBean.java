@@ -27,15 +27,20 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.ReratingService;
 import org.meveo.service.billing.impl.WalletOperationService;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+
 /**
  * Job implementation to rerate wallet operations
- * 
+ *
  * @author Andrius Karpavicius
  */
 @Stateless
@@ -59,13 +64,17 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
 
     /**
      * Initialize job settings and retrieve data to process
-     * 
+     *
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of Wallet operation Ids to re-rate
      */
     private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
-        List<Long> ids = walletOperationService.listToRerate();
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+        String reratingTarget = (String) this.getParamOrCFValue(jobInstance, ReRatingJob.CF_RERATING_TARGET);
+        List<EntityReferenceWrapper> batchEntityWrappers = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, ReRatingJob.CF_TARGET_BATCHES);
+        List<Long> targetBatches = CollectionUtils.isNotEmpty(batchEntityWrappers) ? batchEntityWrappers.stream().map(br -> br.getId()).collect(toList()) : emptyList();
+        List<Long> ids = walletOperationService.listToRerate(reratingTarget, targetBatches);
 
         useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
 
@@ -74,7 +83,7 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
 
     /**
      * Re-rate wallet operation
-     * 
+     *
      * @param walletOperationId Wallet operation id
      * @param jobExecutionResult Job execution result
      */

@@ -56,7 +56,7 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
      */
     public void create(Map<String, Object> filters, String targetJob, String targetEntity) {
         BatchEntity batchEntity = new BatchEntity();
-        batchEntity.setName(targetJob + "_" + targetEntity);
+        batchEntity.setCode(targetJob + "_" + targetEntity);
         batchEntity.setTargetJob(targetJob);
         batchEntity.setTargetEntity(targetEntity);
         batchEntity.setFilters(filters);
@@ -91,6 +91,7 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
 
                 Map<String, Object> toUpdateFields = new HashMap<>();
                 toUpdateFields.put("status", WalletOperationStatusEnum.TO_RERATE);
+                toUpdateFields.put("reratingBatch", batchEntity);
                 toUpdateFields.put("updated", new Date());
 
                 nativePersistenceService.update("WalletOperation", toUpdateFields, paginationConfiguration);
@@ -98,7 +99,7 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
                 update(batchEntity);
                 jobExecutionResult.registerSucces();
             } catch (Exception e) {
-                log.error("Failed to process the entity batch : " + batchEntity.getName(), e);
+                log.error("Failed to process the entity batch : " + batchEntity.getCode(), e);
                 batchEntity.setStatus(BatchEntityStatusEnum.FAILURE);
                 update(batchEntity);
                 jobExecutionResult.registerError(e.getMessage());
