@@ -644,6 +644,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @Transient
     private WalletOperation discountedWO;
     
+    @Column(name = "business_key")
+    private String businessKey;
+    
     /**
      * Constructor
      */
@@ -1721,6 +1724,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	public void setDiscountedWO(WalletOperation discountedWO) {
 		this.discountedWO = discountedWO;
 	}
+	
+	public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}  
 	
 	
 

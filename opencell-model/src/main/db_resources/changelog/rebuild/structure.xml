@@ -3438,6 +3438,7 @@
             <column name="rules_contract_id" type="bigint" />
             <column name="discounted_amount" type="numeric(23,12)" />
     		<column name="origin_ratedtransaction_id" type="bigint" />
+            <column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -4041,6 +4042,7 @@
 			<column name="price_plan_matrix_version_id" type="bigint" />
 			<column name="price_plan_matrix_line_id" type="bigint" />
 			<column name="contract_id" type="bigint" />
+			<column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -5966,6 +5968,7 @@
             <column name="event_key" type="varchar(100)" />
             <column name="event_version" type="int4" />
 			<column name="wallet_operation_id" type="bigint"/>
+			<column name="business_key" type="VARCHAR(255)" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -17167,7 +17170,7 @@
         <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
     </changeSet>
 
-    <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe">
+    <changeSet id="#INTRD-17581-wo-indexes-rebuild" author="a.rouaguebe">
         <sql>create index idx__billing_wo__billing_account_id on ${db.schema.adapted}billing_wallet_operation(billing_account_id)</sql>
 
         <sql>create index idx__charge_instance__lower_description on ${db.schema.adapted}billing_charge_instance(lower(description))</sql>
@@ -19520,6 +19523,11 @@
     <changeSet id="#INTRD-17987_20230825_discount_agg_cherry-pick" author="a.rouaguebe" />
     
     <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD"/>
+    <changeSet id="#INTRD-14264_20230222" author="TarikFA." />
+    <changeSet id="#INTRD-17581-wo-indexes" author="a.rouaguebe" />
+    
+    <changeSet id="#INTRD-18140_20230904" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

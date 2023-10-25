@@ -110,7 +110,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
 
     @Schema(description = "indicat if offer change is restricted")
-    private boolean isOfferChangeRestricted;
+    private Boolean isOfferChangeRestricted;
 
     @Schema(description = "list of allowed offer change")
     private List<String> allowedOfferChange;
@@ -485,12 +485,12 @@ public class OfferTemplateDto extends ProductOfferingDto {
 		this.commercialRuleCodes = commercialRuleCodes;
 	}
 
-    public boolean isOfferChangeRestricted() {
+    public Boolean isOfferChangeRestricted() {
         return isOfferChangeRestricted;
     }
 
-    public void setOfferChangeRestricted(boolean offerChangeRestricted) {
-        isOfferChangeRestricted = offerChangeRestricted;
+    public void setOfferChangeRestricted(Boolean offerChangeRestricted) {
+        this.isOfferChangeRestricted = offerChangeRestricted;
     }
 
     public List<String> getAllowedOfferChange() {

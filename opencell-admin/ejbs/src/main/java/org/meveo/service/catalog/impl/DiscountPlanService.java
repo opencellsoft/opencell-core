@@ -237,8 +237,8 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     				unitAmountWithoutTax=walletOperation.getDiscountedAmount();
     				discountedAmount=unitAmountWithoutTax;
     			}else if(walletOperation!=null){
-    				unitAmountWithoutTax=walletOperation.getUnitAmountWithoutTax();
-    				discountedAmount=walletOperation.getDiscountedAmount()!=null && walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 ?walletOperation.getDiscountedAmount():walletOperation.getUnitAmountWithoutTax();
+    				unitAmountWithoutTax=appProvider.isEntreprise() ? walletOperation.getUnitAmountWithoutTax() : walletOperation.getUnitAmountWithTax();
+    				discountedAmount=walletOperation.getDiscountedAmount()!=null && walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 ?walletOperation.getDiscountedAmount():unitAmountWithoutTax;
     			}
     			 
     			walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,product,serviceInstance!=null?new ArrayList<>(serviceInstance.getAttributeInstances()):Collections.emptyList());
@@ -262,6 +262,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 				discountWalletOperation.setTaxClass(taxInfo.taxClass);
 				discountWalletOperation.setDiscountValue(discountValue);
 				discountWalletOperation.setDiscountedAmount(discountedAmount);
+			    discountWalletOperation.setBusinessKey(walletOperation != null ? walletOperation.getBusinessKey() : null);
     			
     			if(!isVirtual) {
     				discountWalletOperation.setSubscription(subscription);

@@ -49,7 +49,7 @@ public class GenericRequestMapper {
         return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
                 computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getGroupBy(), genericPagingAndFiltering.getHaving(), genericPagingAndFiltering.getJoinType(),
-                !defaultSort ? genericPagingAndFiltering.getSortBy() : "id", !defaultSort ? Optional.ofNullable(genericPagingAndFiltering.getSortOrder()).map(PagingAndFiltering.SortOrder::valueOf).orElse(null) : PagingAndFiltering.SortOrder.ASCENDING);
+                genericPagingAndFiltering.getForceCount(), !defaultSort ? genericPagingAndFiltering.getSortBy() : "id", !defaultSort ? Optional.ofNullable(genericPagingAndFiltering.getSortOrder()).map(PagingAndFiltering.SortOrder::valueOf).orElse(null) : PagingAndFiltering.SortOrder.ASCENDING);
     }
     private List<String> computeFetchFields(GenericPagingAndFiltering genericPagingAndFiltering) {
         if(genericPagingAndFiltering.getSortBy() == null) {

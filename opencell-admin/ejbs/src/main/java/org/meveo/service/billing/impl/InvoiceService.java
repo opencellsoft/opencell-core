@@ -2576,6 +2576,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     drafWalletOperationIds = new ArrayList<>();
                     invoice.setStatus(InvoiceStatusEnum.VALIDATED);
                     update(invoice);
+                    getEntityManager().flush();
+
                 }
                 produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft, drafWalletOperationIds);
             } catch (Exception e) {
@@ -4902,6 +4904,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null, null, null, null);
 
         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
+        rt.setBusinessKey(ratedTransactionDto.getBusinessKey());
         // #3355 : setting params 1,2,3
         if (isDetailledInvoiceMode) {
             rt.setParameter1(ratedTransactionDto.getParameter1());
@@ -6085,20 +6088,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
             }
-
-
-
-
-
-
-
-
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
             applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice, automaticInvoiceCheck);
             postCreate(invoiceAggregateProcessingInfo.invoice);
         }
         applyExchangeRateToInvoiceLineAndAggregate(invoiceList);
-        return invoiceList;
+        return refreshOrRetrieve(invoiceList);
 
     }
 
@@ -6750,6 +6745,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
+    	toUpdate = refreshOrRetrieve(toUpdate);
         toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
                 InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
                 && linkedInvoice.getLinkedInvoiceValue() != null &&
@@ -7242,7 +7238,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 return inv1.getInvoiceBalance().compareTo(inv2.getInvoiceBalance());
 
             });
-            BigDecimal remainingAmount = invoice.getConvertedAmountWithTax() != null ? invoice.getConvertedAmountWithTax() : invoice.getAmountWithTax();
+            BigDecimal remainingAmount = invoice.getConvertedAmountWithTax() != null && invoice.getConvertedAmountTax().intValue() != ZERO.intValue()  ? invoice.getConvertedAmountWithTax() : invoice.getAmountWithTax();
             for (Invoice adv : advInvoices) {
                 if (adv.getInvoiceBalance() == null) {
                     continue;
@@ -7304,7 +7300,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (invoice.getLinkedInvoices() != null) {
 			Predicate<LinkedInvoice> advFilter = i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType());
 			if (delete) {
-				invoice.getLinkedInvoices().stream().filter(advFilter).forEach(li -> li.getLinkedInvoiceValue().setInvoiceBalance(li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount())));
+				invoice.getLinkedInvoices().stream().filter(advFilter).forEach(li -> {
+					li.getLinkedInvoiceValue().setInvoiceBalance(li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount()));
+					li.getLinkedInvoiceValue().setConvertedInvoiceBalance(li.getLinkedInvoiceValue().getConvertedInvoiceBalance().add(li.getAmount()));
+				});
 				linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(), InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
 				invoice.getLinkedInvoices().removeIf(advFilter);
 			} else {

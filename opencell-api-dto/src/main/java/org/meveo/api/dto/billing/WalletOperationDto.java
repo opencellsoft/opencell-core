@@ -205,6 +205,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     private Integer sortIndex;
 
+    /** The WO  business key. */
+    private String businessKey;
+    
     /**
      * Instantiates a new wallet operation dto.
      */
@@ -1038,7 +1041,15 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         this.productCode = productCode;
     }
 
-    @Override
+    public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}
+
+	@Override
     public String toString() {
         return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="
                 + walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance + ", chargeInstanceId=" + chargeInstanceId + ", currency=" + currency + ", type="

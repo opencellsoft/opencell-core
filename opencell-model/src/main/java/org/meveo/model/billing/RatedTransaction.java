@@ -648,6 +648,9 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
   	@Column(name = "sequence")
   	private Integer sequence;
     
+    @Column(name = "business_key")
+    private String businessKey;
+    
     public RatedTransaction() {
         super();
     }
@@ -806,6 +809,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountedAmount = walletOperation.getDiscountedAmount();
         this.sequence = walletOperation.getSequence();
         this.rulesContract = walletOperation.getRulesContract();
+        this.businessKey = walletOperation.getBusinessKey();
     }
 
 
@@ -862,6 +866,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountValue = rateTransactionToDuplicate.getDiscountValue();
         this.sequence = rateTransactionToDuplicate.getSequence();
         this.rulesContract = rateTransactionToDuplicate.getRulesContract();
+        this.businessKey = rateTransactionToDuplicate.getBusinessKey();
     }
     
     public WalletInstance getWallet() {
@@ -1697,5 +1702,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setOriginRatedTransaction(RatedTransaction originRatedTransaction) {
 		this.originRatedTransaction = originRatedTransaction;
 	}
-	
+
+	public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}
+    
 }

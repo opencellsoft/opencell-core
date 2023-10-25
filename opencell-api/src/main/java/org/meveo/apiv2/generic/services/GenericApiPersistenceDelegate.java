@@ -3,17 +3,20 @@ package org.meveo.apiv2.generic.services;
 import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.security.interceptor.SecuredBusinessEntityCheckInterceptor;
 import org.meveo.model.IEntity;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.securityDeposit.FinanceSettings;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 
 /**
@@ -28,7 +31,8 @@ import org.meveo.model.billing.WalletOperation;
 @Interceptors({ SecuredBusinessEntityCheckInterceptor.class})
 public class GenericApiPersistenceDelegate {
 
-    private static final List<Class<?>> HUGE_ENTITIES = List.of(WalletOperation.class, RatedTransaction.class);
+    @Inject
+    private FinanceSettingsService financeSettingsService;
 
     /**
      * Search and list entities
@@ -38,8 +42,15 @@ public class GenericApiPersistenceDelegate {
      * @return list of entities wrapped in {@link SearchResult} object
      */
     public SearchResult list(Class entityClass, PaginationConfiguration searchConfig) {
+        FinanceSettings financeSetting = financeSettingsService.getFinanceSetting();
+        boolean isHugeVolume = Optional.ofNullable(financeSetting)
+                               .map(FinanceSettings::getEntitiesWithHugeVolume)
+                               .map(Map::keySet)
+                               .orElse(new HashSet<>())
+                               .stream()
+                               .anyMatch(e -> e.equalsIgnoreCase(entityClass.getSimpleName()));
         Long count = null;
-        if(!HUGE_ENTITIES.contains(entityClass) || searchConfig.getForceCount()) {
+        if(!isHugeVolume || searchConfig.getForceCount()) {
             count = this.count(entityClass, searchConfig);
         }
 

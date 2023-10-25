@@ -471,6 +471,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			if(walletOperation.getRulesContractId() != null) {
 				ratedTransaction.setRulesContract(em.getReference(Contract.class, walletOperation.getRulesContractId()));
 			}
+            ratedTransaction.setBusinessKey(walletOperation.getBusinessKey());
+
             if (cftEndPeriodEnabled) {
                 customFieldInstanceService.scheduleEndPeriodEvents(ratedTransaction);
             }
@@ -1419,6 +1421,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             ratedTransaction.setStartDate(dto.getStartDate());
             ratedTransaction.setEndDate(dto.getEndDate());
             ratedTransaction.setTaxPercent(dto.getTaxPercent());
+            ratedTransaction.setBusinessKey(dto.getBusinessKey());
             create(ratedTransaction);
         }
     }

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.billing.service.DiscountPlanInstanceApiService;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
@@ -82,6 +83,9 @@ public class DiscountPlanInstanceApiServiceTest {
 
     @Mock
     private SubscriptionService subscriptionService;
+    
+    @Mock
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
 
     @Before
     public void setup() {
