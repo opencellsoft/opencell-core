@@ -1524,16 +1524,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		try {
 			invoice.setRejectReason(null);
 			Object validationResult = evaluateExpression(validationRule.getValidationEL(), Map.of("invoice", invoice), Boolean.class);
-			if (!((Boolean) validationResult)) {
+			if (validationResult == null || !((Boolean) validationResult)) {
 		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.SUSPECT) {
 		            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
 		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Suspected by rule " + validationResult == null? "Technical error while evaluating expression" :  validationRule.getDescription());
 		        }
 		        if(validationRule.getFailStatus() == InvoiceValidationStatusEnum.REJECTED) {
 		            invoice.setStatus(InvoiceStatusEnum.REJECTED);
 		            invoice.setRejectedByRule(validationRule);
-		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
+		            if (invoice.getRejectReason() == null) invoice.setRejectReason("Rejected by rule " + validationResult == null? "Technical error while evaluating expression" : validationRule.getDescription());
 		        }
 		        noValidationError = false;
 		    }
@@ -5557,7 +5557,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (defaultPaymentMethod == null && billingAccount != null) {
             defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
         }
-        EntityManager em = getEntityManager();
         for (InvoiceLine invoiceLine : invoiceLines) {
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
         	if ((entityToInvoice instanceof CommercialOrder || entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote || entityToInvoice instanceof BillingAccount ) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
@@ -5604,14 +5603,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             ilGroup.getInvoiceLines().add(invoiceLine);
 
-            em.detach(invoiceLine);
         }
 
         List<InvoiceLinesGroup> convertedIlGroups = new ArrayList<>();
         for (InvoiceLinesGroup linesGroup : invoiceLinesGroup.values()) {
 
             if (linesGroup.getBillingCycle().getScriptInstance() != null) {
-                convertedIlGroups.addAll(executeBCScriptWithInvoiceLines(billingRun, linesGroup.getInvoiceType(), linesGroup.getInvoiceLines(), entityToInvoice, linesGroup.getBillingCycle().getScriptInstance().getCode(),
+                convertedIlGroups.addAll(executeBCScriptWithInvoiceLines(billingRun, linesGroup, linesGroup.getInvoiceType(), linesGroup.getInvoiceLines(), entityToInvoice, linesGroup.getBillingCycle().getScriptInstance().getCode(),
                     linesGroup.getPaymentMethod()));
             } else {
                 convertedIlGroups.add(linesGroup);
@@ -6144,13 +6142,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     @SuppressWarnings("unchecked")
-    private List<InvoiceLinesGroup> executeBCScriptWithInvoiceLines(BillingRun billingRun, InvoiceType invoiceType, List<InvoiceLine> invoiceLines, IBillableEntity entity, String scriptInstanceCode,
-            PaymentMethod paymentMethod) throws BusinessException {
+    private List<InvoiceLinesGroup> executeBCScriptWithInvoiceLines(BillingRun billingRun, InvoiceLinesGroup linesGroup, InvoiceType invoiceType, List<InvoiceLine> invoiceLines, IBillableEntity entity, String scriptInstanceCode,
+                                                                    PaymentMethod paymentMethod) throws BusinessException {
+        // May be only keep passing invoiceLinesGroup to the script
+        // since others params could be deducted from it
         HashMap<String, Object> context = new HashMap<>();
         context.put(Script.CONTEXT_ENTITY, entity);
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
         context.put("br", billingRun);
+        context.put("invoiceLinesGroup", linesGroup);
         context.put("invoiceType", invoiceType);
         context.put("invoiceLines", invoiceLines);
         context.put("paymentMethod", paymentMethod);

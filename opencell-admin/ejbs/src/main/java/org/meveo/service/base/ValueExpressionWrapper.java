@@ -555,7 +555,7 @@ public class ValueExpressionWrapper {
 
         } catch (Exception e) {
             log.warn("EL {} throw error with variables {}", expression, contextMap, e);
-            throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage());
+            throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage() + " " + e.getCause().getMessage());
         }
     }
 

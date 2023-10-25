@@ -1,6 +1,8 @@
 package org.meveo.model.securityDeposit;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
@@ -45,6 +47,10 @@ public class FinanceSettings extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "activate_dunning")
     private boolean activateDunning = false;
+
+	@Type(type = "json")
+    @Column(name = "entities_with_huge_volume", columnDefinition = "jsonb")
+    private Map<String, List<String>> entitiesWithHugeVolume;
 
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
@@ -117,4 +123,12 @@ public class FinanceSettings extends BusinessEntity {
     public void setActivateDunning(boolean activateDunning) {
         this.activateDunning = activateDunning;
     }
+
+	public Map<String, List<String>> getEntitiesWithHugeVolume() {
+		return entitiesWithHugeVolume;
+	}
+
+	public void setEntitiesWithHugeVolume(Map<String, List<String>> entitiesWithHugeVolume) {
+		this.entitiesWithHugeVolume = entitiesWithHugeVolume;
+	}
 }

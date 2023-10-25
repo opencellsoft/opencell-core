@@ -10,6 +10,8 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -25,7 +27,7 @@ public class FileUploadResourceImpl implements FileUploadResource {
             if(Files.notExists(saveTo)){
                 (new File(saveTo.toUri())).mkdirs();
             }
-            Path savedFilePath = Path.of(saveTo.toString(), file.getFileName());
+            Path savedFilePath = Path.of(saveTo.toString(), URLDecoder.decode(file.getFileName(), StandardCharsets.UTF_8));
             byte[] data = file.getData() != null ? file.getData() : downloadFile(file.getFileUrl());
             StorageFactory.write(savedFilePath, data);
             return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"media file successfully uploaded\"}," +

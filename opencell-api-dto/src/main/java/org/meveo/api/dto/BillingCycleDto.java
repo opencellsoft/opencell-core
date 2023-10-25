@@ -152,7 +152,7 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     /** The billing cycle type. */
     @XmlElement
-    private BillingEntityTypeEnum type;
+    private BillingEntityTypeEnum type = BillingEntityTypeEnum.BILLINGACCOUNT;
 
     /**
      * What reference date to use when calculating the next invoicing date with an invoice calendar as in: BillingCycle.calendar.nextCalendarDate(referenceDate)

@@ -15935,6 +15935,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
               br.aggregate_unit_amounts = bc.aggregate_unit_amounts, br.ignore_subscriptions = bc.ignore_subscriptions, br.ignore_orders = bc.ignore_orders, br.incremental_invoice_lines = bc.incremental_invoice_lines"),
          </sql>
     </changeSet>
+
     <changeSet id="#INTRD-17987_20230825_discount_agg_cherry-pick" author="a.rouaguebe">
         <addColumn tableName="billing_billing_run">
             <column name="discount_aggregation" type="varchar(17)" />
@@ -15946,6 +15947,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
         <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET DEFAULT 'FULL_AGGREGATION';</sql>
         <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET NOT NULL</sql>
+	 </changeSet>
+    
+    <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD">
+        <addColumn tableName="finance_settings">
+            <column name="entities_with_huge_volume" type="${type.json}"/>
+        </addColumn>
     </changeSet>
 
 
@@ -15995,9 +16002,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
     </changeSet>
     
    	<changeSet id="USAGE_RERATE_RT_JOB" author="Mohammed_ElAzzouzi">
-            <sql>create index billing_redirection_rule__idx_contract_id_priority on ${db.schema.adapted}.billing_redirection_rule using btree (contract_id, priority)</sql>
-            <sql>create index cpq_attribute_instance__service_instance_index on ${db.schema.adapted}.cpq_attribute_instance using btree (service_instance_id)</sql>
-            <sql>create index idx_subscription_id_charge_type on ${db.schema.adapted}.billing_charge_instance using btree (subscription_id, charge_type)</sql>
+            <sql>create index billing_redirection_rule__idx_contract_id_priority on ${db.schema.adapted}billing_redirection_rule using btree (contract_id, priority)</sql>
+            <sql>create index cpq_attribute_instance__service_instance_index on ${db.schema.adapted}cpq_attribute_instance using btree (service_instance_id)</sql>
+            <sql>create index idx_subscription_id_charge_type on ${db.schema.adapted}billing_charge_instance using btree (subscription_id, charge_type)</sql>
     </changeSet>
     
      <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi">

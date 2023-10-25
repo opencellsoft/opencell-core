@@ -55,7 +55,6 @@ public class RatedTransactionDiscountJob extends Job {
 	protected JobExecutionResultImpl execute(JobExecutionResultImpl updateResult, JobInstance jobInstance) throws BusinessException {
 
 		initUpdateStepParams(updateResult, jobInstance);
-		jobInstance.setParamValue(Job.CF_BATCH_SIZE, 1L);
 		updateStepExecutor.execute(updateResult, jobInstance);
 		return updateResult;
 	}
