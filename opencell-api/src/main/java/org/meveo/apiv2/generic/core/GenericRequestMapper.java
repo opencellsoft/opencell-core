@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.MapUtils;
 import org.assertj.core.util.VisibleForTesting;
 import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -52,7 +53,7 @@ public class GenericRequestMapper {
         return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
                 computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getGroupBy(), genericPagingAndFiltering.getHaving(), genericPagingAndFiltering.getJoinType(),
-                genericPagingAndFiltering.getIsFilter(), genericPagingAndFiltering.getSortBy(), PagingAndFiltering.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
+                genericPagingAndFiltering.getIsFilter() || useDistinctProjection(genericPagingAndFiltering), genericPagingAndFiltering.getSortBy(), PagingAndFiltering.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
     }
     private List<String> computeFetchFields(GenericPagingAndFiltering genericPagingAndFiltering) {
         List<String> sortByFetchList = Stream.of(genericPagingAndFiltering.getSortBy().split(","))
@@ -61,6 +62,20 @@ public class GenericRequestMapper {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 		return sortByFetchList;
+    }
+
+    private boolean useDistinctProjection(GenericPagingAndFiltering genericPagingAndFiltering) {
+
+        if(genericPagingAndFiltering.getSortBy() == null) {
+            return MapUtils.isNotEmpty(genericPagingAndFiltering.getFilters());
+        }
+
+        if(MapUtils.isNotEmpty(genericPagingAndFiltering.getFilters())) {
+            return Stream.of(genericPagingAndFiltering.getSortBy().split(","))
+                         .noneMatch(s -> !s.isBlank() && s.contains("."));
+        }
+
+        return false;
     }
     
    private List<String> getFetchList(String fetchProperty){
