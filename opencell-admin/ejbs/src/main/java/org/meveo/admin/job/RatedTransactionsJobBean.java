@@ -65,13 +65,13 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
 
     @Inject
     private RatedTransactionService ratedTransactionService;
-    
+
     @Inject
-	private JobContextHolder jobContextHolder;
+    private JobContextHolder jobContextHolder;
 
     @Inject
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
-    
+
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -85,12 +85,12 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     private Long nrOfRecords = null;
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED) // Transaction set to REQUIRED, so ScrollableResultset would do paging. With TX=NEVER all data is retrieved at once resulting in memory increase
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::destroyContext);
-		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_MIN_ID, minId);
+        jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_MIN_ID, minId);
         jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_MAX_ID, maxId);
-        
+
     }
 
     /**
@@ -102,9 +102,9 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     private Optional<Iterator<WalletOperationNative>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
-        
-        if( (boolean)getParamOrCFValue(jobInstance, RatedTransactionsJob.CF_USE_JOB_CONTEXT, true)) {
-        	initBillingAccountsData();
+
+        if ((boolean) getParamOrCFValue(jobInstance, RatedTransactionsJob.CF_USE_JOB_CONTEXT, true)) {
+            initBillingAccountsData();
             initBillingRulesData();
         }
 
@@ -151,9 +151,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         return Optional.of(new SynchronizedIterator<WalletOperationNative>(scrollableResults, nrOfRecords.intValue()));
     }
 
-    
-
-	/**
+    /**
      * Convert a multiple Wallet operations to a Rated transactions
      * 
      * @param walletOperations Wallet operations
@@ -181,38 +179,38 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     protected boolean isProcessItemInNewTx() {
         return false;
     }
-    
+
     /**
      * Bridge discount Rated transactions
      * 
      * @param jobExecutionResult Job execution result
      */
     private void destroyContext(JobExecutionResultImpl jobExecutionResult) {
-		if(!hasMore) {
-			jobContextHolder.clearMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY);
-			jobContextHolder.clearMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY);
-		}
+        if (!hasMore) {
+            jobContextHolder.clearMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY);
+            jobContextHolder.clearMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY);
+        }
     }
-    
+
     public void initBillingAccountsData() {
-    	if(jobContextHolder.isNotEmpty(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY)) {
-    		return;
-    	}
+        if (jobContextHolder.isNotEmpty(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY)) {
+            return;
+        }
         TypedQuery<Object[]> query = emWrapper.getEntityManager().createNamedQuery("BillingAccount.listIdByCode", Object[].class);
         List<Object[]> results = query.getResultList();
         Map<String, Long> data = new HashMap<>(results.stream().collect(Collectors.toMap(arr -> (String) arr[0], arr -> (Long) arr[1])));
-		jobContextHolder.putMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY, data);
+        jobContextHolder.putMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY, data);
     }
-    
-    
+
     public void initBillingRulesData() {
-    	if(jobContextHolder.isNotEmpty(RatedTransactionsJob.BILLING_RULES_MAP_KEY)) {
-    		return;
-    	}
+        if (jobContextHolder.isNotEmpty(RatedTransactionsJob.BILLING_RULES_MAP_KEY)) {
+            return;
+        }
         TypedQuery<Object[]> query = emWrapper.getEntityManager().createNamedQuery("BillingRule.findAllByContractIdForRating", Object[].class);
         List<Object[]> results = query.getResultList();
-        Map<Long, List<Object[]>> data = new HashMap<>(results.stream().collect(Collectors.groupingBy(result -> (Long) result[0],Collectors.mapping(result -> new Object[]{(Long) result[1],(String) result[2], (String) result[3]}, Collectors.toList()))));
-		jobContextHolder.putMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY, data);
+        Map<Long, List<Object[]>> data = new HashMap<>(
+            results.stream().collect(Collectors.groupingBy(result -> (Long) result[0], Collectors.mapping(result -> new Object[] { (Long) result[1], (String) result[2], (String) result[3] }, Collectors.toList()))));
+        jobContextHolder.putMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY, data);
     }
-    
+
 }

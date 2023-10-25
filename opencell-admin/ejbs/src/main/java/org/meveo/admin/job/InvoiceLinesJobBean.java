@@ -98,7 +98,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
     private BasicStatistics aggregatedStats = new BasicStatistics();
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED) // Transaction set to REQUIRED, so ScrollableResultset would do paging. With TX=NEVER all data is retrieved at once resulting in memory increase
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createInvoiceLines, null, this::hasMore, this::closeResultset, this::closeBillingRun);
     }
@@ -123,12 +123,16 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         // Number of Rated transactions to process in a single job run
         int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("invoiceLinesJob.processNrInJobRun", 4000000);
 
-        Long batchSize = 10L;// Just for fetching purpose
+        // Grouping/processing settings
+        boolean groupByBA = (boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_GROUP_BY_BA, false);
+        final long nrRtsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_RTS_PER_TX, 1000000L);
+        final long nrILsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_ILS_PER_TX, 10000L);
+
         Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbThreads == -1) {
             nbThreads = (long) Runtime.getRuntime().availableProcessors();
         }
-        int fetchSize = batchSize.intValue() * nbThreads.intValue();
+        int fetchSize = ((Long) nrILsPerTx).intValue() * nbThreads.intValue();
 
         EntityManager em = emWrapper.getEntityManager();
         statelessSession = em.unwrap(Session.class).getSessionFactory().openStatelessSession();
@@ -151,6 +155,10 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
                 continue;
             }
 
+            // Initialize BR
+            billingRun.getBillingCycle().getType();
+
+            em.detach(billingRun);
             currentBillingRun = billingRun;
 
             // The first run of billing run (status is 'NEW' at that moment) should be in a normal run to create new invoice line
@@ -194,7 +202,6 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         Long nrOfRecords = aggregationQueryInfo.getNumberOfIL();
         List<String> aggregationFields = aggregationQueryInfo.getFieldNames();
 
-        em.detach(currentBillingRun);
 
         boolean brHasMore = nrOfRecords >= processNrInJobRun;
 
@@ -205,11 +212,6 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
         // Continue with additional job run if there are still BR related records to process or there are more BR to process
         hasMore = brHasMore || (!brHasMore && !isLastBRToProcess);
-
-        // Grouping/processing settings
-        boolean groupByBA = (boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_GROUP_BY_BA, false);
-        final long nrRtsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_RTS_PER_TX, 1000000L);
-        final long nrILsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_ILS_PER_TX, 10000L);
 
         if (groupByBA) {
             return Optional.of(new SynchronizedIteratorGrouped<Map<String, Object>>(scrollableResults, nrOfRecords.intValue(), true, aggregationFields) {
@@ -282,6 +284,9 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
     private void dropView() {
 
+        if (currentBillingRun == null) {
+            return;
+        }
         EntityManager em = emWrapper.getEntityManager();
         Session hibernateSession = em.unwrap(Session.class);
 
