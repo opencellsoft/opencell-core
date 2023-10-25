@@ -125,6 +125,8 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         }
         billingRunReport.setType(type);
         BigDecimal totalAmountWithoutTax = ZERO;
+        billingRunReport.setOneShotTransactionsCount(ZERO);
+        billingRunReport.setOneShotTotalAmountWithoutTax(ZERO);
         for (Object[] line : reportDetails) {
             final String chargeType = (String) line[5];
             if ("R".equalsIgnoreCase(chargeType)) {
