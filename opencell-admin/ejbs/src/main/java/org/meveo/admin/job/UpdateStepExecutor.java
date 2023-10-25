@@ -11,6 +11,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
@@ -32,6 +33,7 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
     public static final String PARAM_MAX_ID = "maxId";
     public static final String PARAM_CHUNK_SIZE = "chunkSize";
     public static final String PARAM_UPDATE_QUERY = "updateQuery";
+    public static final String PARAM_READ_INTERVAL_QUERY = "readQuery";
     public static final String PARAM_NAMED_QUERY = "namedQuery";
     public static final String PARAM_TABLE_ALIAS = "tableAlias";
 
@@ -43,8 +45,13 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
     public Optional<Iterator<Long[]>> initFunction(JobExecutionResultImpl jobExecutionResult) {
         List<Long[]> intervals = new ArrayList<>();
 
-        Long minId = (Long) jobExecutionResult.getJobParam(PARAM_MIN_ID);
-        Long maxId = (Long) jobExecutionResult.getJobParam(PARAM_MAX_ID);
+        String readQuery = (String) jobExecutionResult.getJobParam(PARAM_READ_INTERVAL_QUERY);
+        Object[] result=null;
+        if(!StringUtils.isEmpty(readQuery)){
+        	result= (Object[]) emWrapper.getEntityManager().createQuery(readQuery).getSingleResult();
+        }
+		Long minId = result != null ? (Long)result[0] :  (Long)jobExecutionResult.getJobParam(PARAM_MIN_ID);
+		Long maxId = result != null ? (Long)result[1] : (Long) jobExecutionResult.getJobParam(PARAM_MAX_ID);
         Long chunkSize = (Long) jobExecutionResult.getJobParam(PARAM_CHUNK_SIZE);
 
         if (minId == null || maxId == null || chunkSize == null) {

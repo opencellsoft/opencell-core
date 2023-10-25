@@ -43,7 +43,9 @@ import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.billing.WalletOperationNative;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -87,10 +89,9 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED) // Transaction set to REQUIRED, so ScrollableResultset would do paging. With TX=NEVER all data is retrieved at once resulting in memory increase
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::destroyContext);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::bindRTs);
         jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_MIN_ID, minId);
         jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_MAX_ID, maxId);
-
     }
 
     /**
@@ -181,15 +182,19 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     }
 
     /**
-     * Bridge discount Rated transactions
+     * Bridge discount Rated transactions and destroy job context if needed
      * 
      * @param jobExecutionResult Job execution result
      */
-    private void destroyContext(JobExecutionResultImpl jobExecutionResult) {
-        if (!hasMore) {
-            jobContextHolder.clearMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY);
-            jobContextHolder.clearMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY);
+    private void bindRTs(JobExecutionResultImpl jobExecutionResult) {
+    	Boolean runDiscountStep = (Boolean) getParamOrCFValue(jobExecutionResult.getJobInstance(), RatedTransactionsJob.CF_RUN_DISCOUNT_STEP, true);
+        if (runDiscountStep && jobExecutionResult.getJobLauncherEnum() != JobLauncherEnum.WORKER && jobExecutionResult.getStatus() != JobExecutionResultStatusEnum.CANCELLED && nrOfRecords != null && nrOfRecords.intValue() > 0) {
+            ratedTransactionService.bridgeDiscountRTs(minId, maxId);
         }
+        if(!hasMore) {
+			jobContextHolder.clearMap(RatedTransactionsJob.BILLING_RULES_MAP_KEY);
+			jobContextHolder.clearMap(RatedTransactionsJob.BILLING_ACCOUNTS_MAP_KEY);
+		}
     }
 
     public void initBillingAccountsData() {

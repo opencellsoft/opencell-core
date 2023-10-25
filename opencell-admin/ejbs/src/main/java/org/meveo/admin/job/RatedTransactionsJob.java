@@ -27,7 +27,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
-import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -36,7 +35,6 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.job.Job;
@@ -51,11 +49,12 @@ import org.meveo.service.job.Job;
 @Stateless
 public class RatedTransactionsJob extends Job {
 
-    public static final String CF_MASS_UPDATE_CHUNK = "CF_MASS_UPDATE_CHUNK";
+
     
     public static final String BILLING_RULES_MAP_KEY = "BILLING_RULES_MAP_KEY";
     public static final String BILLING_ACCOUNTS_MAP_KEY = "BILLING_ACCOUNTS_MAP_KEY";
     public static final String CF_USE_JOB_CONTEXT = "CF_USE_JOB_CONTEXT";
+    public static final String CF_RUN_DISCOUNT_STEP = "CF_RUN_DISCOUNT_STEP";
 
 	/** The rated transactions job bean. */
     @Inject
@@ -65,9 +64,6 @@ public class RatedTransactionsJob extends Job {
     @Inject
     private RatedTransactionsAggregatedJobBean ratedTransactionsAggregatedJobBean;
     
-    @Inject
-    private UpdateStepExecutor updateStepExecutor;
-
     @Inject
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
 
@@ -83,26 +79,12 @@ public class RatedTransactionsJob extends Job {
 
         if (aggregationSettings == null) {
             ratedTransactionsJobBean.execute(result, jobInstance);
-            
-            if(result.getJobLauncherEnum() != JobLauncherEnum.WORKER && result.getNbItemsCorrectlyProcessed()>0) {
-            	JobExecutionResultImpl updateResult = new JobExecutionResultImpl(jobInstance,result.getJobLauncherEnum(),result.getNodeName());
-            	updateResult.setJobParams(result.getJobParams());
-            	initUpdateStepParams(updateResult, jobInstance);
-            	updateResult.setReport("Dispatching update discount Step ");
-            	jobInstance.addRunTimeValues(Map.of(Job.CF_BATCH_SIZE,1L));
-            	updateStepExecutor.execute(updateResult, jobInstance);
-            	closeExecutionResult(jobInstance, updateResult, result.isMoreToProcess());
-            }
         } else {
             ratedTransactionsAggregatedJobBean.execute(result, jobInstance);
         }
         return result;
     }
     
-	private void initUpdateStepParams(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        jobExecutionResult.addJobParam(updateStepExecutor.PARAM_CHUNK_SIZE, (Long) getParamOrCFValue(jobInstance, RatedTransactionsJob.CF_MASS_UPDATE_CHUNK, 100000L));
-        jobExecutionResult.addJobParam(updateStepExecutor.PARAM_NAMED_QUERY, ("RatedTransaction.massUpdateWithDiscountedRT" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")));
-	}
 
     @Override
     public JobCategoryEnum getJobCategory() {
@@ -119,7 +101,7 @@ public class RatedTransactionsJob extends Job {
             "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, "JobInstance_RatedTransactionsJob"));
         result.put(CF_BATCH_SIZE, CustomFieldTemplateUtils.buildCF(CF_BATCH_SIZE, resourceMessages.getString("jobExecution.batchSize"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2",
             "10000", true, null, null, "JobInstance_RatedTransactionsJob"));
-        result.put(CF_MASS_UPDATE_CHUNK, CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK, resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "100000",
+        result.put(CF_RUN_DISCOUNT_STEP, CustomFieldTemplateUtils.buildCF(CF_RUN_DISCOUNT_STEP, resourceMessages.getString("jobExecution.runDiscountStep"), CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "true",
                 false, null, null, "JobInstance_RatedTransactionsJob"));
         result.put(CF_USE_JOB_CONTEXT, CustomFieldTemplateUtils.buildCF(CF_USE_JOB_CONTEXT, resourceMessages.getString("jobExecution.useJobContext"), CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;fieldGroup:Configuration:0;field:4", "true",
                 false, null, null, "JobInstance_RatedTransactionsJob"));
