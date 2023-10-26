@@ -145,14 +145,45 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         }
         AccountingArticle accountingArticle = accountingArticleOptional.get();
 
+        TaxClass taxClass = null;
+
         if (baseEntity.getTaxClass() != null) {
-            accountingArticle.setTaxClass(taxClassService.tryToFindByCodeOrId(baseEntity.getTaxClass()));
+            if (baseEntity.getTaxClass().getId() != null) {
+                taxClass = taxClassService.findById(baseEntity.getTaxClass().getId());
+            } else if (baseEntity.getTaxClass().getCode() != null) {
+                taxClass = taxClassService.findByCode(baseEntity.getTaxClass().getCode());
+            }
+
+            if (taxClass == null) {
+                String errorMessage = baseEntity.getTaxClass().getId() != null ?
+                    "No taxClass found for id : " + baseEntity.getTaxClass().getId() :
+                    "No taxClass found for code : " + baseEntity.getTaxClass().getCode();
+                throw new BadRequestException(errorMessage);
+            }
+
+            accountingArticle.setTaxClass(taxClass);
         }
 
+
+        InvoiceSubCategory invoiceSubCategory = null;
+
         if (baseEntity.getInvoiceSubCategory() != null) {
-            accountingArticle.setInvoiceSubCategory(invoiceSubCategoryService
-                    .tryToFindByCodeOrId(baseEntity.getInvoiceSubCategory()));
+            if (baseEntity.getInvoiceSubCategory().getId() != null) {
+                invoiceSubCategory = invoiceSubCategoryService.findById(baseEntity.getInvoiceSubCategory().getId());
+            } else if (baseEntity.getInvoiceSubCategory().getCode() != null) {
+                invoiceSubCategory = invoiceSubCategoryService.findByCode(baseEntity.getInvoiceSubCategory().getCode());
+            }
+
+            if (invoiceSubCategory == null) {
+                String errorMessage = baseEntity.getInvoiceSubCategory().getId() != null ?
+                    "No invoiceSubCategory found for id : " + baseEntity.getInvoiceSubCategory().getId() :
+                    "No invoiceSubCategory found for code : " + baseEntity.getInvoiceSubCategory().getCode();
+                throw new BadRequestException(errorMessage);
+            }
+
+            accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
         }
+
 
         if (baseEntity.getAccountingCode() != null) {
             AccountingCode accountingCode = accountingArticleService.tryToFindByCodeOrId(baseEntity.getAccountingCode());
