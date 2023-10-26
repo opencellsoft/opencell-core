@@ -56,7 +56,7 @@ import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 
 @Stateless
-public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, Object>>> {
+public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<String, Object>>> {
 
     private static final long serialVersionUID = -1318477921039388503L;
 
@@ -477,4 +477,13 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         }
     }
 
+    @Override
+    Optional<Iterator<List<Map<String, Object>>>> getSynchronizedIteratorWithLimit(JobInstance jobInstance, int jobItemsLimit) {
+        return Optional.empty();
+    }
+
+    @Override
+    Optional<Iterator<List<Map<String, Object>>>> getSynchronizedIterator(JobInstance jobInstance) {
+        return Optional.empty();
+    }
 }

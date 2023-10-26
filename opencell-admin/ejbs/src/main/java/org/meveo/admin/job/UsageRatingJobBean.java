@@ -36,7 +36,7 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
 
 @Stateless
-public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
+public class UsageRatingJobBean extends IteratorBasedScopedJobBean<Long> {
 
     private static final long serialVersionUID = 6091764740338888327L;
 
@@ -123,5 +123,15 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
     @Override
     protected boolean isProcessItemInNewTx() {
         return false;
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIteratorWithLimit(JobInstance jobInstance, int jobItemsLimit) {
+        return Optional.empty();
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIterator(JobInstance jobInstance) {
+        return Optional.empty();
     }
 }

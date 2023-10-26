@@ -42,6 +42,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 /**
  * Job definition to process CDR files converting CDRs to EDR records
@@ -52,7 +53,7 @@ import org.meveo.service.job.Job;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class MediationJobV2 extends Job {
+public class MediationJobV2 extends ScopedJob {
 
     private static final String JOB_INSTANCE_MEDIATION_JOB = "JobInstance_MediationJobV2";
 

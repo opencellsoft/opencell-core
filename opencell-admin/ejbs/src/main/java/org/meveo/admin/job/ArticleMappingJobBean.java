@@ -20,7 +20,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 
 @Stateless
-public class ArticleMappingBean extends IteratorBasedJobBean<AccountingArticleAssignmentItem> {
+public class ArticleMappingJobBean extends IteratorBasedScopedJobBean<AccountingArticleAssignmentItem> {
 
     private static final long serialVersionUID = 1402462714195024317L;
 
@@ -64,5 +64,15 @@ public class ArticleMappingBean extends IteratorBasedJobBean<AccountingArticleAs
     @Override
     protected boolean isProcessItemInNewTx() {
         return false;
+    }
+
+    @Override
+    Optional<Iterator<AccountingArticleAssignmentItem>> getSynchronizedIteratorWithLimit(JobInstance jobInstance, int jobItemsLimit) {
+        return Optional.empty();
+    }
+
+    @Override
+    Optional<Iterator<AccountingArticleAssignmentItem>> getSynchronizedIterator(JobInstance jobInstance) {
+        return Optional.empty();
     }
 }

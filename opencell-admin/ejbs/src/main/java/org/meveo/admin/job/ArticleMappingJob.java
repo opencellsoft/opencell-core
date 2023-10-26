@@ -5,7 +5,6 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
-import org.meveo.service.job.Job;
 import org.meveo.service.job.ScopedJob;
 
 import javax.ejb.Stateless;
@@ -18,11 +17,11 @@ public class ArticleMappingJob extends ScopedJob {
      * Job bean
      */
     @Inject
-    private ArticleMappingBean articleMappingBean;
+    private ArticleMappingJobBean articleMappingJobBean;
 
     @Override
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        articleMappingBean.execute(result, jobInstance);
+        articleMappingJobBean.execute(result, jobInstance);
         return result;
     }
 

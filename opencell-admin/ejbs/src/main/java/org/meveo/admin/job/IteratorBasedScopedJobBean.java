@@ -9,8 +9,13 @@ import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.Optional;
 
-
-public abstract class IteratorBasedScopedJobBean<T> extends IteratorBasedJobBean {
+/**
+ * Implements job logic to iterate over data and process one item at a time
+ *
+ * @author Abdellatif BARI
+ * @since 16.0.0
+ */
+public abstract class IteratorBasedScopedJobBean<T> extends IteratorBasedJobBean<T> {
 
     private static final long serialVersionUID = 1L;
 

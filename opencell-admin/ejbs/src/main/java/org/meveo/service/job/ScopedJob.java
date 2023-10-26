@@ -31,7 +31,7 @@ import java.util.Date;
  * - a time limit (ex: run until 03:00)
  *
  * @author Abdellatif BARI
- * @since 15.1.0
+ * @since 16.0.0
  */
 public abstract class ScopedJob extends Job {
 
@@ -81,45 +81,12 @@ public abstract class ScopedJob extends Job {
     }
 
     /**
-     * Check if the current job instance have the items limit CF value.
+     * Check if the job duration limit has not been reached
      *
-     * @param jobInstance the job instance
-     * @return true if the current job instance have the items limit CF value.
+     * @param jobExecutionResult the job execution result
+     * @param jobInstance        the job instance
+     * @return the difference between now and the start date of job
      */
-    protected boolean hasJobItemsLimit(JobInstance jobInstance) {
-        Integer jobItemsLimit = getJobItemsLimit(jobInstance);
-        return (jobItemsLimit != null && jobItemsLimit > 0);
-    }
-
-    /**
-     * Check if the current job instance have the duration limit CF value.
-     *
-     * @param jobInstance the job instance
-     * @return true if the current job instance have the duration limit CF value.
-     */
-    protected boolean hasJobDurationLimit(JobInstance jobInstance) {
-        Integer jobItemsLimit = getJobDurationLimit(jobInstance);
-        return (jobItemsLimit != null && jobItemsLimit > 0);
-    }
-
-    /**
-     * Check if the current job instance have the time limit CF value.
-     *
-     * @param jobInstance the job instance
-     * @return true if the current job instance have the time limit CF value.
-     */
-    protected boolean hasJobTimeLimit(JobInstance jobInstance) {
-        Date jobTimeLimit = getJobTimeLimit(jobInstance);
-        return (jobTimeLimit != null);
-    }
-
-    protected void checkJobItemsLimitReached(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        Integer jobItemsLimit = getJobItemsLimit(jobInstance);
-        if (jobItemsLimit != null && jobItemsLimit > 0 && jobItemsLimit >= jobExecutionResult.getNbItemsProcessed()) {
-            jobExecutionService.stopJob(jobInstance);
-        }
-    }
-
     protected long checkJobDurationLimitReached(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         Integer jobDurationLimit = getJobDurationLimit(jobInstance);
         Date startDate = jobExecutionResult.getStartDate();
@@ -131,6 +98,13 @@ public abstract class ScopedJob extends Job {
         return (duration - jobDurationLimit) * 60;
     }
 
+    /**
+     * Check if the job time limit has not been reached
+     *
+     * @param jobExecutionResult the job execution result
+     * @param jobInstance        the job instance
+     * @return the difference between limit time and the start date of job
+     */
     protected long checkJobTimeLimitReached(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         Date jobTimeLimit = getJobTimeLimit(jobInstance);
         Date endDate = jobExecutionResult.getStartDate();

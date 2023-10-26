@@ -39,7 +39,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
  * @author Andrius Karpavicius
  */
 @Stateless
-public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
+public class ReRatingJobBean extends IteratorBasedScopedJobBean<Long> {
 
     private static final long serialVersionUID = 2226065462536318643L;
 
@@ -81,5 +81,15 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
     private void rerate(Long walletOperationId, JobExecutionResultImpl jobExecutionResult) {
 
         reratingService.reRate(walletOperationId, useSamePricePlan);
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIteratorWithLimit(JobInstance jobInstance, int jobItemsLimit) {
+        return Optional.empty();
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIterator(JobInstance jobInstance) {
+        return Optional.empty();
     }
 }
