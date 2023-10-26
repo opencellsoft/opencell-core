@@ -5,7 +5,7 @@
         <artifactId>opencell</artifactId>
         <groupId>com.opencellsoft</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>14.1.13-SNAPSHOT</version>
+        <version>14.1.13-600-c5ea5d6</version>
     </parent>
     <artifactId>opencell-security</artifactId>
     <packaging>jar</packaging>
