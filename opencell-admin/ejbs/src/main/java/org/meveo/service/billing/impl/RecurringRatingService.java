@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
@@ -52,6 +53,7 @@ import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
@@ -248,6 +250,17 @@ public class RecurringRatingService extends RatingService implements Serializabl
             if (prorateLastPeriodToDate != null) {
                 applyChargeToDate = prorateLastPeriodToDate;
             }
+	        if(chargeInstance.isAnticipateEndOfSubscription()) {
+		        Date prorateLastPeriodDate = Arrays.asList(period.getTo(), chargeInstance.getSubscription().getSubscribedTillDate(),
+				        chargeInstance.getServiceInstance().getSubscribedTillDate())
+				        .stream()
+				        .filter(Objects::nonNull).min(Date::compareTo).orElse(null);
+		        if(prorateLastPeriodDate != null && prorateLastPeriodDate.compareTo(period.getTo()) != 0 && chargeInstance.getSubscription().getStatus() == SubscriptionStatusEnum.RESILIATED) {
+			        applyChargeFromDate = period.getFrom();
+			        applyChargeToDate = chargeInstance.getTerminationDate();
+			        prorateLastPeriod = true;
+		        }
+	        }
 
             // When charging first time, need to determine if counter is available and prorata ratio if subscription charge proration is enabled
             if (isFirstCharge) {
