@@ -60,6 +60,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplateStatusEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
@@ -654,6 +655,34 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         boolean woCanceled = false;
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
+	        if(recurringChargeInstance.isAnticipateEndOfSubscription()) {
+		        List<WalletOperation> walletOperations = walletOperationService.getEntityManager()
+				        .createNamedQuery("WalletOperation.findWalletOperationByChargeInstance")
+				        .setParameter("chargeInstanceId", recurringChargeInstance.getId())
+				        .setParameter("subscriptionId", recurringChargeInstance.getSubscription().getId())
+				        .setParameter("dateToCharge", recurringChargeInstance.getNextChargeDate())
+				        .getResultList();
+		        if (walletOperations != null && !walletOperations.isEmpty()) {
+			        walletOperationService.getEntityManager()
+					        .createNamedQuery("WalletOperation.setStatusToCanceledById")
+					        .setParameter("now", new Date())
+					        .setParameter("woIds", walletOperations)
+					        .executeUpdate();
+			        walletOperationService.getEntityManager()
+					        .createNamedQuery("RatedTransaction.cancelByWOIds")
+					        .setParameter("now", new Date())
+					        .setParameter("woIds", walletOperations)
+					        .executeUpdate();
+			        walletOperationService.getEntityManager()
+					        .createNamedQuery("InvoiceLine.cancelInvoiceLineByWoIds")
+					        .setParameter("now", new Date())
+					        .setParameter("woIds", walletOperations)
+					        .executeUpdate();
+			        woCanceled = true;
+			        
+		        }
+		        
+	        }
 			if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
 				Date lastChargedDate = recurringChargeInstance.getChargedToDate() != null ? recurringChargeInstance.getChargedToDate() : recurringChargeInstance.getChargeDate();
 				recurringChargeInstance.setChargeToDateOnTermination(lastChargedDate);
