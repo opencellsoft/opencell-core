@@ -53,6 +53,7 @@ import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
@@ -264,8 +265,8 @@ public class RecurringRatingService extends RatingService implements Serializabl
                         chargeInstance.getServiceInstance().getSubscribedTillDate())
                         .stream()
                         .filter(Objects::nonNull).min(Date::compareTo).orElse(null);
-                if(prorateLastPeriodDate != null && prorateLastPeriodDate.compareTo(period.getTo()) != 0) {
-                    applyChargeFromDate = prorateLastPeriodDate;
+                if(prorateLastPeriodDate != null && prorateLastPeriodDate.compareTo(period.getTo()) != 0 && chargeInstance.getSubscription().getStatus() == SubscriptionStatusEnum.RESILIATED) {
+                    applyChargeFromDate = period.getFrom();
                     applyChargeToDate = chargeInstance.getTerminationDate();
                     prorateLastPeriod = true;
                 }
