@@ -26,7 +26,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -80,10 +79,9 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
                 log.info("Job execution finished {}", result);
             }
             getEntityManager().createNamedQuery("JobExecutionResult.updateProgress").setParameter("id", result.getId()).setParameter("endDate", result.getEndDate())
-                .setParameter("nbItemsToProcess",
-                    (result.getNbItemsToProcess() != 0 ? result.getNbItemsToProcess() : result.getNbItemsCorrectlyProcessed() + result.getNbItemsProcessedWithError() + result.getNbItemsProcessedWithWarning()))
-                .setParameter("nbItemsCorrectlyProcessed", result.getNbItemsCorrectlyProcessed()).setParameter("nbItemsProcessedWithError", result.getNbItemsProcessedWithError())
-                .setParameter("nbItemsProcessedWithWarning", result.getNbItemsProcessedWithWarning()).setParameter("report", result.getReport()).setParameter("status", result.getStatus()).executeUpdate();
+                .setParameter("nbItemsToProcess", (result.getNbItemsToProcess() != 0 ? result.getNbItemsToProcess() : result.getNbItemsCorrectlyProcessed() + result.getNbItemsProcessedWithError() + result.getNbItemsProcessedWithWarning())).setParameter("nbItemsCorrectlyProcessed", result.getNbItemsCorrectlyProcessed())
+                .setParameter("nbItemsProcessedWithError", result.getNbItemsProcessedWithError()).setParameter("nbItemsProcessedWithWarning", result.getNbItemsProcessedWithWarning())
+                .setParameter("report", result.getReport()).setParameter("status", result.getStatus()).executeUpdate();
         }
     }
 
@@ -216,20 +214,5 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
         qb.addOrderCriterionAsIs("id", false);
 
         return (JobExecutionResultImpl) qb.getQuery(getEntityManager()).setMaxResults(1).getResultList().get(0);
-    }
-
-    /**
-     * Get a list of unfinished job execution results for a current node and mark all them as canceled
-     * 
-     * @return A list of unfinished job execution results
-     */
-    public List<JobExecutionResultImpl> listUnfinishedJobsAndMarkThemCanceled(String nodeName) {
-
-        EntityManager em = getEntityManager();
-        List<JobExecutionResultImpl> jobInstances = em.createNamedQuery("JobExecutionResult.listUnfinishedJobs", JobExecutionResultImpl.class).getResultList();
-
-        em.createNamedQuery("JobExecutionResult.cancelUnfinishedJobsByNode").setParameter("nodeName", nodeName).executeUpdate();
-
-        return jobInstances;
     }
 }

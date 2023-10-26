@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
 
-import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
@@ -40,6 +39,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.SubscriptionImportHisto;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.subscription.Access;
 import org.meveo.model.jaxb.subscription.ErrorServiceInstance;
 import org.meveo.model.jaxb.subscription.ErrorSubscription;
@@ -50,11 +50,15 @@ import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jaxb.subscription.WarningSubscription;
 import org.meveo.model.jaxb.subscription.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.admin.impl.SubscriptionImportHistoService;
 import org.meveo.service.crm.impl.CheckedSubscription;
 import org.meveo.service.crm.impl.ImportIgnoredException;
 import org.meveo.service.crm.impl.SubscriptionImportService;
 import org.meveo.service.crm.impl.SubscriptionServiceException;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
@@ -62,15 +66,23 @@ import org.meveo.service.crm.impl.SubscriptionServiceException;
  * 
  */
 @Stateless
-public class ImportSubscriptionsJobBean extends BaseJobBean{
+public class ImportSubscriptionsJobBean {
 
-    private static final long serialVersionUID = 4782268279087032050L;
+    @Inject
+    private Logger log;
 
     @Inject
     private SubscriptionImportHistoService subscriptionImportHistoService;
 
     @Inject
     private SubscriptionImportService subscriptionImportService;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     private Subscriptions subscriptionsError;
     private Subscriptions subscriptionsWarning;
@@ -118,7 +130,7 @@ public class ImportSubscriptionsJobBean extends BaseJobBean{
                 log.info("InputFiles job {} in progress...", file.getName());
                 currentFile = FileUtils.addExtension(file, ".processing");
 
-                importFile(currentFile, file.getName(), result.getJobInstance().getId());
+                importFile(currentFile, file.getName(), result.getJobInstance());
                 FileUtils.moveFile(dirOK, currentFile, file.getName());
                 log.info("InputFiles job {} done.", file.getName());
             } catch (Exception e) {
@@ -145,7 +157,7 @@ public class ImportSubscriptionsJobBean extends BaseJobBean{
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    private void importFile(File file, String fileName, Long jobInstanceId) throws JAXBException, Exception {
+    private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, Exception {
         log.info("start import file :" + fileName);
 
         subscriptionsError = new Subscriptions();
@@ -176,8 +188,10 @@ public class ImportSubscriptionsJobBean extends BaseJobBean{
             createSubscriptionWarning(null, "Empty file.");
         }
 
+        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+        
         for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions.getSubscription()) {
-            if (isJobRequestedToStop(jobInstanceId)) {
+            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                 break;
             }
             try {
