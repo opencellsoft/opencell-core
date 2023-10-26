@@ -17,9 +17,10 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 @Stateless
-public class InvoiceLinesJob extends Job {
+public class InvoiceLinesJob extends ScopedJob {
 
     public static final String CF_INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE = "JobInstance_InvoiceLinesJob_AggregationPerUnitAmount";
 

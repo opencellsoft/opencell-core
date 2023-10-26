@@ -10,6 +10,7 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 @Stateless
-public class InvoicingJobV2 extends Job {
+public class InvoicingJobV2 extends ScopedJob {
 
     @Inject
     private InvoicingJobV2Bean invoiceSplitJobBean;

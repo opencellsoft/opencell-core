@@ -35,12 +35,13 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 /**
  * Job definition to rerate wallet operations
  */
 @Stateless
-public class ReRatingJob extends Job {
+public class ReRatingJob extends ScopedJob {
 
     /** The re rating job bean. */
     @Inject

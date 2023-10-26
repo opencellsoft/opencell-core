@@ -34,6 +34,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 /**
  * The Class UsageRatingJob rate all opened EDRs.
@@ -42,7 +43,7 @@ import org.meveo.service.job.Job;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class UsageRatingJob extends Job {
+public class UsageRatingJob extends ScopedJob {
 
     /** The usage rating job bean when rollback IS needed when rating fails. */
     @Inject

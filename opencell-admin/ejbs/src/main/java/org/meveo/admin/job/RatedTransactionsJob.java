@@ -38,6 +38,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 /**
  * Job definition to convert Open Wallet operations to Rated transactions
@@ -47,7 +48,7 @@ import org.meveo.service.job.Job;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class RatedTransactionsJob extends Job {
+public class RatedTransactionsJob extends ScopedJob {
 
     /** The rated transactions job bean. */
     @Inject

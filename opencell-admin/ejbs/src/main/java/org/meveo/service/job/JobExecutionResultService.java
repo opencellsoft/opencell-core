@@ -232,4 +232,20 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
 
         return jobInstances;
     }
+
+    public Long getJobDurationLimit(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
+        if (ScopedJob.class.isAssignableFrom(job.getClass())) {
+            return ((ScopedJob) job).checkJobDurationLimitReached(jobExecutionResult, jobInstance);
+        }
+        return null;
+    }
+
+    public Long getJobTimeLimit(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
+        if (ScopedJob.class.isAssignableFrom(job.getClass())) {
+            return ((ScopedJob) job).checkJobTimeLimitReached(jobExecutionResult, jobInstance);
+        }
+        return null;
+    }
 }

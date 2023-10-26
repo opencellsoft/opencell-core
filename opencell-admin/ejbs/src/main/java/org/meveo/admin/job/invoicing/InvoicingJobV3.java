@@ -8,6 +8,8 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
+
 import java.util.HashMap;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -15,7 +17,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 @Stateless
-public class InvoicingJobV3 extends Job {
+public class InvoicingJobV3 extends ScopedJob {
     @Inject
     private InvoicingJobV3Bean invoicingJobV3Bean;
     private static final String INVOICING_JOB_V3_JOB_INSTANCE = "JobInstance_InvoicingJobV3";

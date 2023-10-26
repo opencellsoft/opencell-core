@@ -323,7 +323,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstance.getId()) };
 
             // Start job status report task. Not run in future, so it will die when main thread dies
-            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance.getCode(), lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
+            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance, lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
                 currentUserProvider, log, jobExecutionResultService);
             Thread jobStatusReportThread = new Thread(jobStatusReportTask);
             jobStatusReportThread.start();
@@ -492,15 +492,16 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
     /**
      * Create a task to save to DB job processing progress
      * 
-     * @param jobInstanceCode Job instance code
+     * @param jobInstance Job instance
      * @param lastCurrentUser Current user
      * @param reportFrequency How often (number of seconds) job progress should be saved to DB
      * @param jobExecutionResult Job execution result
      * @return A task definition
      */
-    public static Runnable getJobStatusReportingTask(String jobInstanceCode, MeveoUser lastCurrentUser, int reportFrequency, JobExecutionResultImpl jobExecutionResult, boolean[] isProcessing,
+    public static Runnable getJobStatusReportingTask(JobInstance jobInstance, MeveoUser lastCurrentUser, int reportFrequency, JobExecutionResultImpl jobExecutionResult, boolean[] isProcessing,
             CurrentUserProvider currentUserProvider, Logger log, JobExecutionResultService jobExecutionResultService) {
 
+        String jobInstanceCode = jobInstance.getCode();
         Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
 
         Runnable task = () -> {
@@ -520,10 +521,23 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 } catch (Exception e) {
                     log.error("Failed to update job progress", e);
                 }
-                try {
-                    Thread.sleep(reportFrequency * 1000);
-                } catch (InterruptedException e1) {
 
+                Long duration = jobExecutionResultService.getJobDurationLimit(jobExecutionResult, jobInstance);
+                Long time = jobExecutionResultService.getJobTimeLimit(jobExecutionResult, jobInstance);
+                if ((duration == null || duration > 0) && (time == null || time > 0)) {
+                    try {
+                        if ((duration != null && duration < reportFrequency) || (time != null && time < reportFrequency)) {
+                            if (duration != null && time != null) {
+                                Thread.sleep(duration > time ? time * 1000 : duration * 1000);
+                            } else {
+                                Thread.sleep(duration != null ? duration * 1000 : time * 1000);
+                            }
+                        } else {
+                            Thread.sleep(reportFrequency * 1000);
+                        }
+                    } catch (InterruptedException e1) {
+
+                    }
                 }
             }
             log.debug("Thread {} will stop storing job progress", Thread.currentThread().getName());

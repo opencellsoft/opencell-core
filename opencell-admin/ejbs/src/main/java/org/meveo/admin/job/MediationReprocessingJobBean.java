@@ -166,7 +166,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
             boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstanceId) };
 
             // Start job status report task. Not run in future, so it will die when main thread dies
-            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance.getCode(), lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
+            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance, lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
                 currentUserProvider, log, jobExecutionResultService);
             Thread jobStatusReportThread = new Thread(jobStatusReportTask);
             jobStatusReportThread.start();
