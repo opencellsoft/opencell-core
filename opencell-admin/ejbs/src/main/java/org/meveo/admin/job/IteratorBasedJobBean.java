@@ -299,7 +299,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             if (isRunningAsJobManager && spreadOverCluster) {
                 // Number of data publishing tasks is half of the cluster members or the number of nodes that job can run on
                 nbPublishers = (jobInstance.getRunOnNodes() != null ? jobInstance.getRunOnNodes().split(",").length : channel.getView().getMembers().size()) / 2;
-                nbPublishers = nbPublishers < 1 ? 1 : nbPublishers;
+                nbPublishers = nbPublishers < 1 ? 1 : nbPublishers > 2 ? nbPublishers + (nbPublishers / 2) : nbPublishers;
 
                 log.info("{}/{} Will submit task to publish data for cluster-wide data processing", jobInstance.getJobTemplate(), jobInstance.getCode());
                 clearPendingWorkLoad(jobInstance);
