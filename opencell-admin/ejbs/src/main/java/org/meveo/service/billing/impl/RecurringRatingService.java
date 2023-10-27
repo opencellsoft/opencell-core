@@ -407,7 +407,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                         }
                     }
                     // Apply prorating if needed
-                    if (prorate) {
+                    if (prorate && !isVirtual) {
                         BigDecimal prorata = DateUtils.calculateProrataRatio(effectiveChargeFromDate, effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, false);
                         if (prorata == null) {
                             throw new RatingException("Failed to calculate prorating for charge id=" + chargeInstance.getId() + " : periodFrom=" + currentPeriodFromDate + ", periodTo=" + currentPeriodToDate
