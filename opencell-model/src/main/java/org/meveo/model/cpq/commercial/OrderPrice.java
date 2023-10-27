@@ -1,5 +1,7 @@
 package org.meveo.model.cpq.commercial;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -20,6 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -131,6 +134,10 @@ public class OrderPrice extends BusinessEntity {
      /**The amount after discount**/
      @Column(name = "discounted_amount")
     	private BigDecimal discountedAmount;
+     
+     @ManyToOne(fetch = LAZY)
+     @JoinColumn(name = "tax_id")
+     private Tax tax;
      
      /**
  	 * 
@@ -337,6 +344,14 @@ public class OrderPrice extends BusinessEntity {
 
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+
+	public Tax getTax() {
+		return tax;
+	}
+
+	public void setTax(Tax tax) {
+		this.tax = tax;
 	}
 	
 	

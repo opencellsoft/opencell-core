@@ -309,6 +309,7 @@ public class QuoteValidationScript extends ModuleScript {
 			orderPrice.setAmountWithoutTaxWithDiscount(price.getAmountWithoutTaxWithoutDiscount());
 			orderPrice.setTaxAmount(price.getTaxAmount());
 			orderPrice.setTaxRate(price.getTaxRate());
+			orderPrice.setTax(price.getTax());
 			orderPrice.setPriceOverCharged(price.getPriceOverCharged());
 			orderPrice.setCurrencyCode(price.getCurrencyCode());
 			orderPrice.setRecurrenceDuration(price.getRecurrenceDuration());

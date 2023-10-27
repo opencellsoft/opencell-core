@@ -31,6 +31,7 @@ public class UtilsDto {
 		    quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
 		    quotePrice.setAmountWithoutTaxWithoutDiscount(a.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTaxWithoutDiscount()));
 		    quotePrice.setTaxRate(a.getTaxRate());
+		    quotePrice.setTax(a.getTax());
 		    quotePrice.setChargeTemplate(a.getChargeTemplate());
 		    if(a.getRecurrenceDuration()!=null) {
 		    	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
