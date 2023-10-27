@@ -124,9 +124,6 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 	@Override
 	public DiscountPlanItem update(DiscountPlanItem dpi) throws BusinessException {
         DiscountPlan discountPlan = discountPlanService.findById(dpi.getDiscountPlan().getId());
-        if (!discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
-            throw new BusinessException("only discount plan items attached to DRAFT discount plans can be updated");
-        }
         dpi.setDiscountPlan(discountPlan);
         dpi = super.update(dpi);
         // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it

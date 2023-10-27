@@ -147,7 +147,6 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
         }
 
-        if (discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
 
 	        final String description = postData.getDescription();
 	        if (description != null) {
@@ -214,8 +213,6 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 	            log.error("Failed to associate custom field instance to an entity", e);
 	            throw e;
 	        }
-        }
-        
     	if(postData.getEndDate() != null)
     		discountPlan.setEndDate(postData.getEndDate());
 
