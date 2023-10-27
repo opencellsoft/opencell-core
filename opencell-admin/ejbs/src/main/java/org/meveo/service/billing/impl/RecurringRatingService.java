@@ -261,7 +261,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
 			        prorateLastPeriod = true;
 		        }
 	        }
-
+	        
             // When charging first time, need to determine if counter is available and prorata ratio if subscription charge proration is enabled
             if (isFirstCharge) {
 
