@@ -21010,6 +21010,7 @@
     <changeSet id="#INTRD-17222_20231005" author="AndriusKarpavicius"/>    
     <changeSet id="INTRD-19050_20231020" author="zbariki" />
     <changeSet id="#INTRD-18439_20230120" author="TarikFA." />
+    <changeSet id="#INTRD-16834_20231026" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
