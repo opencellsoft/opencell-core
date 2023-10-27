@@ -12845,6 +12845,7 @@
             <column name="usage_total_amount_without_tax" type="numeric(23, 12)">
                 <constraints nullable="false"/>
             </column>
+            <column name="report_final" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
 

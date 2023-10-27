@@ -10,12 +10,14 @@ import static java.util.stream.Collectors.toList;
 import static org.meveo.model.jobs.JobLauncherEnum.API;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.billing.AccountingArticleAmount;
 import org.meveo.model.billing.BillingAccountAmount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunReport;
 import org.meveo.model.billing.BillingRunReportTypeEnum;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.OfferAmount;
 import org.meveo.model.billing.ProductAmount;
 import org.meveo.model.billing.RatedTransaction;
@@ -33,6 +35,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +44,9 @@ import java.util.Optional;
 
 @Stateless
 public class BillingRunReportService extends PersistenceService<BillingRunReport> {
-
+	
+	@Inject
+	private ResourceBundle resourceMessages;
     @Inject
     private RatedTransactionService ratedTransactionService;
 
@@ -96,6 +101,9 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
      */
     public BillingRunReport createBillingRunReport(BillingRun billingRun,
                                                    Map<String, Object> filters, BillingRunReportTypeEnum reportType) {
+		if(billingRun.getPreInvoicingReport() != null && billingRun.getPreInvoicingReport().isReportFinal()){
+			throw new BusinessException(resourceMessages.getString("billingRunReport.billingRun.preInvoicingReport.final.error.message"));
+		}
         List<RatedTransaction> ratedTransactions = ratedTransactionService.getReportRatedTransactions(billingRun, filters);
         BillingRunReport billingRunReport = new BillingRunReport();
         if (!ratedTransactions.isEmpty()) {
@@ -113,6 +121,9 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
             createArticleAmounts(billingRun, rtIds, billingRunReport, filters);
         }
         billingRunReport.setBillingRun(billingRun);
+		if(!Arrays.asList(BillingRunStatusEnum.OPEN, BillingRunStatusEnum.NEW, BillingRunStatusEnum.CREATING_INVOICE_LINES).contains(billingRun.getStatus())){
+			billingRunReport.setReportFinal(true);
+		}
         createOrUpdate(billingRunReport);
         return billingRunReport;
     }
