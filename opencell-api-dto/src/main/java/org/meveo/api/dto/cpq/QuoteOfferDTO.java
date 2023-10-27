@@ -239,6 +239,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 			quotePrice.setAmountWithoutTaxWithoutDiscount(accountingArticlePrice.getAmountWithoutTaxWithoutDiscount());
 			quotePrice.setUnitPriceWithoutTax(accountingArticlePrice.getUnitPriceWithoutTax());
 			quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
+			quotePrice.setTax(accountingArticlePrice.getTax());
 			quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
 			quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
 			return Optional.of(quotePrice);
@@ -260,6 +261,7 @@ public class QuoteOfferDTO extends BusinessEntityDto {
 				quotePrice.setAmountWithoutTaxWithoutDiscount(b.getAmountWithoutTaxWithoutDiscount());
 			quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
 			quotePrice.setTaxRate(a.getTaxRate());
+			quotePrice.setTax(a.getTax());
 			if(a.getRecurrenceDuration()!=null) {
 				quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
 			}

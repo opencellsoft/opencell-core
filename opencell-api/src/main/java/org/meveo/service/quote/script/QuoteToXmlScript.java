@@ -292,6 +292,7 @@ public class QuoteToXmlScript extends ModuleScript {
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax());
             quotePrice.setTaxRate(a.getTaxRate());
+            quotePrice.setTax(a.getTax());
             return quotePrice;
         });
     }

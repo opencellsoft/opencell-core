@@ -1583,6 +1583,7 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setAmountWithoutTax(accountingArticlePrice.getAmountWithoutTax());
             quotePrice.setUnitPriceWithoutTax(accountingArticlePrice.getUnitPriceWithoutTax());
             quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
+            quotePrice.setTax(accountingArticlePrice.getTax());
             quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
             quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
             quotePrice.setChargeTemplate(accountingArticlePrice.getChargeTemplate());
@@ -1633,6 +1634,7 @@ public class CpqQuoteApi extends BaseApi {
        	 if(b.getDiscountedQuotePrice()==null)
             quotePrice.setAmountWithoutTaxWithoutDiscount(quotePrice.getAmountWithoutTaxWithoutDiscount().add(b.getAmountWithoutTax())); 
             quotePrice.setTaxRate(a.getTaxRate());
+            quotePrice.setTax(a.getTax());
             quotePrice.setCurrencyCode(a.getCurrencyCode());
             quotePrice.setChargeTemplate(a.getChargeTemplate());
             quotePrice.setApplyDiscountsOnOverridenPrice(a.getApplyDiscountsOnOverridenPrice());
@@ -1739,6 +1741,7 @@ public class CpqQuoteApi extends BaseApi {
             } 
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():wo.getAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
+            quotePrice.setTax(wo.getTax());
             quotePrice.setPricePlanMatrixVersion(wo.getPricePlanMatrixVersion());
             quotePrice.setPricePlanMatrixLine(wo.getPricePlanMatrixLine());
             quotePrice.setContractItem(wo.getContractLine());
@@ -2082,6 +2085,7 @@ public class CpqQuoteApi extends BaseApi {
         	   final TaxInfo taxInfo = taxMappingService.determineTax(wo);
         	   if(taxInfo != null)
         		   discountQuotePrice.setTaxRate(taxInfo.tax.getPercent());
+        	       discountQuotePrice.setTax(taxInfo.tax);
            }
            
            discountQuotePrice.setQuoteArticleLine(createQuoteArticleLine(wo, quoteVersion));

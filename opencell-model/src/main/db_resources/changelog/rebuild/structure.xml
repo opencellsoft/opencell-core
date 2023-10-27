@@ -9976,6 +9976,7 @@
 			<column name="price_plan_matrix_version_id" type="bigint" />
 			<column name="price_plan_matrix_line_id" type="bigint" />
 			<column name="contract_item_id" type="bigint" />
+			<column name="tax_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -10596,6 +10597,7 @@
     		<column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
     		<column name="discounted_amount" type="numeric(23,12)"/>
     		<column name="sequence" type="int4"/>
+    		<column name="tax_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-484" author="NabilOUACHI">
@@ -16800,6 +16802,15 @@
 
     </changeSet>
     
+    <changeSet id="#INTRD-19244_27102023_fk" author="Mbarek-Ay" failOnError="false">
+    
+	   <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_tax" 
+            referencedColumnNames="id" referencedTableName="billing_tax" />
+       <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="order_price" constraintName="fk_order_price_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="billing_tax" />
+            
+      </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -19103,6 +19114,7 @@
     <changeSet id="#INTRD-17189_20230711" author="Mbarek-Ay"/>
     <changeSet id="#INTRD-17304_20230714" author="AdilElJaouhari" />
     <changeSet id="#INTRD-18346_14092023" author="Mbarek-Ay" />
+    <changeSet id="#INTRD-19244_27102023" author="Mbarek-Ay" />
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
