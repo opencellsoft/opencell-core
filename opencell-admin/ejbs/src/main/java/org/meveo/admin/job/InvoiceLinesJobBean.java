@@ -380,7 +380,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         filters.put("disabled", false);
         PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, Arrays.asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
 
-        List<BillingRun> billingRuns = billingRunService.list(pagination);
+        List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(billingRunService.list(pagination), jobInstance);
 
         // Extra validation of BR status when billing run list is provided as parameters
         if (!billingRunIds.isEmpty() && !billingRuns.isEmpty()) {
