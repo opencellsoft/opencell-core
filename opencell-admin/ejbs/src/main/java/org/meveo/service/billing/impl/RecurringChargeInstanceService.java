@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -374,6 +375,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             log.debug("Will apply recurring charge {} for missing periods {} - {} {}", recurringChargeInstance.getId(), nextChargeToDate, maxDate, isMaxDateInclusive ? "inclusive" : "exclusive");
             int i = 0;
             RatingResult ratingResult = new RatingResult();
+			Subscription subscription = recurringChargeInstance.getSubscription();
             while (nextChargeToDate != null && i < maxRecurringRatingHistory
                     && ((nextChargeToDate.getTime() <= maxDate.getTime() && isMaxDateInclusive) || (nextChargeToDate.getTime() < maxDate.getTime() && !isMaxDateInclusive))) {
 
@@ -382,6 +384,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 ratingResult.add(localRatingResult);
 
                 nextChargeToDate = recurringChargeInstance.getNextChargeDate();
+				if(subscription.getSubscribedTillDate() != null && subscription.getSubscribedTillDate().equals(nextChargeToDate)) break;
                 i++;
 
             }

@@ -265,9 +265,9 @@ public class RecurringRatingService extends RatingService implements Serializabl
                         chargeInstance.getServiceInstance().getSubscribedTillDate())
                         .stream()
                         .filter(Objects::nonNull).min(Date::compareTo).orElse(null);
-                if(prorateLastPeriodDate != null && prorateLastPeriodDate.compareTo(period.getTo()) != 0 && chargeInstance.getSubscription().getStatus() == SubscriptionStatusEnum.RESILIATED) {
+                if(prorateLastPeriodDate != null && prorateLastPeriodDate.compareTo(period.getTo()) != 0) {
                     applyChargeFromDate = period.getFrom();
-                    applyChargeToDate = chargeInstance.getTerminationDate();
+                    applyChargeToDate = chargeInstance.getTerminationDate() != null ? chargeInstance.getTerminationDate() : prorateLastPeriodDate;
                     prorateLastPeriod = true;
                 }
             }
