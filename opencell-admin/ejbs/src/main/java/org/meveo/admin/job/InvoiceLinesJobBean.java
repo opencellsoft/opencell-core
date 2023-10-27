@@ -461,9 +461,9 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
     private void runBillingRunReports(List<Long> billingRuns) {
         Map<String, Object> jobParams = new HashMap<>();
-        jobParams.put("billingRun", billingRuns.stream()
-                .map(String::valueOf)
-                .collect(joining("/")));
+        jobParams.put("billingRuns", billingRuns.stream()
+        									   .map(idBr -> new EntityReferenceWrapper("org.meveo.model.billing.BillingRun", "BillingRun", idBr.toString()))
+        									   .collect(toList()));
         Map<String, Object> filters = new HashMap<>();
         filters.put("status", RatedTransactionStatusEnum.BILLED.toString());
         jobParams.put("filters", filters);
