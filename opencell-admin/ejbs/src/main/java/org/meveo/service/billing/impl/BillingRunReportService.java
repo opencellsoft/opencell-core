@@ -21,6 +21,7 @@ import org.meveo.model.billing.ProductAmount;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubscriptionAmount;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -33,6 +34,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -309,7 +311,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         if (billingRun.isPreReportAutoOnCreate() && !billingRun.hasPreInvoicingReport()) {
             try {
                 Map<String, Object> jobParams = new HashMap<>();
-                jobParams.put("billingRun", billingRun.getId().toString());
+                jobParams.put("billingRuns",  Arrays.asList(new EntityReferenceWrapper("org.meveo.model.billing.BillingRun", "BillingRun", billingRun.getId().toString())));
                 JobInstance jobInstance = jobInstanceService.findByCode(BILLING_RUN_REPORT_JOB_CODE);
                 jobInstance.setRunTimeValues(jobParams);
                 jobExecutionService.executeJob(jobInstance, jobParams, API);

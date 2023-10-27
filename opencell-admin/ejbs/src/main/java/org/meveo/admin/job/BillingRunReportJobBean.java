@@ -11,6 +11,7 @@ import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunReport;
 import org.meveo.model.billing.BillingRunReportTypeEnum;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunReportService;
@@ -34,8 +35,8 @@ public class BillingRunReportJobBean extends BaseJobBean {
 
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         billingRunIds = jobInstance.getRunTimeValues() != null
-                && jobInstance.getRunTimeValues().get("billingRun") != null
-                ? extractBRIds((String) jobInstance.getRunTimeValues().get("billingRun")) : emptyList();
+                && jobInstance.getRunTimeValues().get("billingRuns") != null
+                ? extractBRIds((List<EntityReferenceWrapper>) jobInstance.getRunTimeValues().get("billingRuns")) : emptyList();
         try {
             List<BillingRun> billingRuns = initJobAndGetDataToProcess();
             jobExecutionResult.setNbItemsToProcess(billingRuns.size());
@@ -49,11 +50,12 @@ public class BillingRunReportJobBean extends BaseJobBean {
         }
     }
 
-    private List<Long> extractBRIds(String billingRunIds) {
-        if(billingRunIds == null || billingRunIds.isBlank()) {
+    private List<Long> extractBRIds(List<EntityReferenceWrapper> billingRuns) {
+        if(billingRuns == null || billingRuns.isEmpty()) {
             return emptyList();
         }
-        return stream(billingRunIds.split("/"))
+        return billingRuns.stream()
+        		.map(EntityReferenceWrapper::getCode)
                 .map(Long::valueOf)
                 .collect(toList());
     }
