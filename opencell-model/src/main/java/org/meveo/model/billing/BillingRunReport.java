@@ -8,6 +8,7 @@ import static org.meveo.model.billing.BillingRunReportTypeEnum.OPEN_RATED_TRANSA
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
 import javax.persistence.Column;
@@ -103,6 +104,10 @@ public class BillingRunReport extends AuditableEntity {
 
     @OneToMany(mappedBy = "billingRunReport", fetch = LAZY)
     private List<SubscriptionAmount> topSubscriptions;
+	
+	@Type(type = "numeric_boolean")
+	@Column(name = "report_final")
+	private boolean reportFinal = false;
 
     public BillingRunReport() {
         this.totalAmountWithoutTax = ZERO;
@@ -280,4 +285,12 @@ public class BillingRunReport extends AuditableEntity {
     public void setTopSubscriptions(List<SubscriptionAmount> topSubscriptions) {
         this.topSubscriptions = topSubscriptions;
     }
+	
+	public boolean isReportFinal() {
+		return reportFinal;
+	}
+	
+	public void setReportFinal(boolean reportFinal) {
+		this.reportFinal = reportFinal;
+	}
 }

@@ -19,6 +19,7 @@ import org.meveo.service.billing.impl.BillingRunService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
