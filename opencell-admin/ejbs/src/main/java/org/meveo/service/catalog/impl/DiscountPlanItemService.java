@@ -108,9 +108,6 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 	@Override
 	public void create(DiscountPlanItem dpi) throws BusinessException {
         DiscountPlan discountPlan = discountPlanService.findById(dpi.getDiscountPlan().getId());
-        if (!discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
-            throw new BusinessException("only discount plan items attached to DRAFT discount plans can be created");
-        }
         dpi.setDiscountPlan(discountPlan);
         super.create(dpi);
         // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it
@@ -121,9 +118,6 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 	@Override
 	public DiscountPlanItem update(DiscountPlanItem dpi) throws BusinessException {
         DiscountPlan discountPlan = discountPlanService.findById(dpi.getDiscountPlan().getId());
-        if (!discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
-            throw new BusinessException("only discount plan items attached to DRAFT discount plans can be updated");
-        }
         dpi.setDiscountPlan(discountPlan);
         dpi = super.update(dpi);
         // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it
@@ -135,8 +129,8 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     @Override
     public void remove(DiscountPlanItem dpi) throws BusinessException {
         DiscountPlan discountPlan = discountPlanService.findById(dpi.getDiscountPlan().getId());
-        if (!discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
-            throw new BusinessException("only discount plan items attached to DRAFT discount plans can be removed");
+        if (discountPlan.getStatus().equals(DiscountPlanStatusEnum.IN_USE)) {
+            throw new BusinessException("discount plan item attached to discount plan with status IN_USE cannot be removed");
         }
         super.remove(dpi);
         // Needed to remove from DiscountPlan.discountPlanItems field as it is cached
