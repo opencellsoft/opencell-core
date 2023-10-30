@@ -191,6 +191,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     
     @Inject
     private ParamBeanFactory paramBeanFactory;
+    
+    @Inject
+    private UntdidTaxationCategoryService untdidTaxationCategoryService;
 
     @PostConstruct
     private void init() {
@@ -931,6 +934,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             tax.setCode("TAX_" + taxRate + parCodeAccountingCode);
             tax.setUuid("TAX_" + taxRate + parCodeAccountingCode);
             tax.setAccountingCode(accountingCode);
+            tax.setUntdidTaxationCategory(untdidTaxationCategoryService.getByCode("S"));
             taxService.create(tax);
         }
         return tax;
