@@ -8704,5 +8704,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  constraintName="fk_billing_chrg_inst_counter_counter_instance_id" referencedTableName="billing_counter"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-16834_20231026" author="TarikFA.">
+        <addColumn tableName="billing_run_report">
+            <column name="report_final" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

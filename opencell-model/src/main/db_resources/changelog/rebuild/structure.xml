@@ -12844,6 +12844,7 @@
             <column name="usage_total_amount_without_tax" type="numeric(23, 12)">
                 <constraints nullable="false"/>
             </column>
+            <column name="report_final" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
 
@@ -21007,6 +21008,7 @@
     <changeSet id="INTRD-18726_20231012" author="khalidHORRI" />
     <changeSet id="INTRD-19050_20231020" author="zbariki" />
     <changeSet id="#INTRD-18439_20230120" author="TarikFA." />
+    <changeSet id="#INTRD-16834_20231026" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
