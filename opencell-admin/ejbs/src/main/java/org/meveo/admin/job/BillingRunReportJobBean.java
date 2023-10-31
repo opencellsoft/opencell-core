@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.model.billing.BillingRunReportTypeEnum.BILLED_RATED_TRANSACTIONS;
@@ -19,7 +18,6 @@ import org.meveo.service.billing.impl.BillingRunService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +77,7 @@ public class BillingRunReportJobBean extends BaseJobBean {
                 filters.put("billingRun", billingRun);
             }
             BillingRunReport billingRunReport =
-                    billingRunReportService.createBillingRunReport(billingRun, filters, reportType);
+                    billingRunReportService.createBillingRunReport(billingRun, reportType);
             billingRun = billingRunService.refreshOrRetrieve(billingRun);
             billingRun.setPreInvoicingReport(billingRunReport);
             billingRun.addJobExecutions(jobExecutionResult);
