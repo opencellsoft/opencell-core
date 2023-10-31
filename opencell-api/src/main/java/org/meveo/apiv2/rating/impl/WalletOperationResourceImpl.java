@@ -10,12 +10,12 @@ import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.apiv2.rating.resource.WalletOperationResource;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.service.billing.impl.BatchEntityService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 import javax.inject.Inject;
@@ -43,6 +43,9 @@ public class WalletOperationResourceImpl implements WalletOperationResource {
 
     @Inject
     private FinanceSettingsService financeSettingsService;
+
+    @Inject
+    private WalletOperationService walletOperationService;
 
     @Inject
     private BatchEntityService batchEntityService;
@@ -87,20 +90,7 @@ public class WalletOperationResourceImpl implements WalletOperationResource {
             List<Integer> updated = new ArrayList<>();
             if (ids.size() > 0) {
                 List<List<Long>> listOfSubListIds = partition(ids, maxValue);
-                listOfSubListIds.forEach(sublist -> {
-                    // Build update filterQuery
-                    StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation a SET");
-                    updatedFields.forEach((s, o) ->
-                            updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
-                    );
-                    updateQuery.setLength(updateQuery.length() - 1);
-                    updateQuery.append(" WHERE a.id in (").append(sublist).append(")");
-
-                    updated.add(entityManagerWrapper.getEntityManager().createQuery(updateQuery.toString()).executeUpdate());
-
-                    entityManagerWrapper.getEntityManager().flush();
-                    entityManagerWrapper.getEntityManager().clear();
-                });
+                listOfSubListIds.forEach(sublist -> updated.add(walletOperationService.markWOToRerate(updatedFields, sublist)));
             }
 
             if (updated.stream().anyMatch(p -> p > 0)) {
