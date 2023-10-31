@@ -2,11 +2,13 @@ package org.meveo.service.billing.impl;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.BigDecimal.valueOf;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static org.meveo.model.billing.BillingRunStatusEnum.CREATING_INVOICE_LINES;
+import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 import static org.meveo.model.jobs.JobLauncherEnum.API;
 
 import org.meveo.admin.exception.BusinessException;
@@ -17,7 +19,6 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunReport;
 import org.meveo.model.billing.BillingRunReportTypeEnum;
-import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.OfferAmount;
 import org.meveo.model.billing.ProductAmount;
 import org.meveo.model.billing.RatedTransaction;
@@ -36,12 +37,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Stateless
 public class BillingRunReportService extends PersistenceService<BillingRunReport> {
@@ -96,33 +95,33 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
      * Create billing run reports from billing run
      *
      * @param billingRun billing run
-     * @param filters billing run filters
      * @param reportType report type
      * @return Billing run report
      */
-    public BillingRunReport createBillingRunReport(BillingRun billingRun,
-                                                   Map<String, Object> filters, BillingRunReportTypeEnum reportType) {
+    public BillingRunReport createBillingRunReport(BillingRun billingRun, BillingRunReportTypeEnum reportType) {
 		if(billingRun.getPreInvoicingReport() != null && billingRun.getPreInvoicingReport().isReportFinal()){
 			throw new BusinessException(resourceMessages.getString("billingRunReport.billingRun.preInvoicingReport.final.error.message"));
 		}
-        List<RatedTransaction> ratedTransactions = ratedTransactionService.getReportRatedTransactions(billingRun, filters);
+        List<RatedTransaction> ratedTransactions = ratedTransactionService.getReportRatedTransactions(billingRun);
         BillingRunReport billingRunReport = new BillingRunReport();
         if (!ratedTransactions.isEmpty()) {
             List<Long> rtIds = ratedTransactions.stream().map(RatedTransaction::getId).collect(toList());
-            List<Object[]> reportDetails = ratedTransactionService.getReportStatisticsDetails(billingRun, rtIds, filters);
-            List<Object[]> initialDetails = ratedTransactionService.getReportInitialDetails(billingRun, rtIds, filters);
+            List<Object[]> reportDetails = ratedTransactionService.getReportStatisticsDetails(rtIds,
+                    "RatedTransaction.findBillingRunReportBilledDetails", -1);
+            List<Object[]> initialDetails = ratedTransactionService.getReportStatisticsDetails(rtIds,
+                    "RatedTransaction.findReportInitialDataDetails", -1);
             billingRunReport = prepareBillingRunReport(billingRun, reportDetails, reportType, initialDetails);
             if(billingRunReport.getId() != null) {
                 clearOldAmounts(billingRunReport.getId());
             }
-            createBillingAccountAmounts(billingRun, rtIds, billingRunReport, filters);
-            createOfferAmounts(billingRun, rtIds, billingRunReport, filters);
-            createSubscriptionAmounts(billingRun, rtIds, billingRunReport, filters);
-            createProductAmounts(billingRun, rtIds, billingRunReport, filters);
-            createArticleAmounts(billingRun, rtIds, billingRunReport, filters);
+            createBillingAccountAmounts(billingRun, rtIds, billingRunReport);
+            createOfferAmounts(billingRun, rtIds, billingRunReport);
+            createSubscriptionAmounts(billingRun, rtIds, billingRunReport);
+            createProductAmounts(billingRun, rtIds, billingRunReport);
+            createArticleAmounts(billingRun, rtIds, billingRunReport);
         }
         billingRunReport.setBillingRun(billingRun);
-		if(!Arrays.asList(BillingRunStatusEnum.OPEN, BillingRunStatusEnum.NEW, BillingRunStatusEnum.CREATING_INVOICE_LINES).contains(billingRun.getStatus())){
+		if(!asList(OPEN, NEW, CREATING_INVOICE_LINES).contains(billingRun.getStatus())){
 			billingRunReport.setReportFinal(true);
 		}
         createOrUpdate(billingRunReport);
@@ -131,7 +130,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
 
     private BillingRunReport prepareBillingRunReport(BillingRun billingRun, List<Object[]> reportDetails,
                                                      BillingRunReportTypeEnum type, List<Object[]> initialData) {
-        BillingRunReport billingRunReport = findBillingReportBy(billingRun).orElse(new BillingRunReport());
+        BillingRunReport billingRunReport = ofNullable(billingRun.getPreInvoicingReport()).orElse(new BillingRunReport());
         if(billingRunReport.getId() == null) {
             billingRunReport.setCreationDate(new Date());
         }
@@ -179,8 +178,8 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                 .setParameter("billingRunReportId", billingRunReportId).executeUpdate();
     }
 
-    private List<BillingAccountAmount> createBillingAccountAmounts(BillingRun billingRun, List<Long> rtIds,
-                                                                   BillingRunReport billingRunReport, Map<String, Object> filters) {
+    private List<BillingAccountAmount> createBillingAccountAmounts(BillingRun billingRun,
+                                                                   List<Long> rtIds, BillingRunReport billingRunReport) {
         if(billingRun.getBillingCycle() == null
                 || (billingRun.getBillingCycle() != null && billingRun.getBillingCycle().getReportConfigDisplayBillingAccounts())) {
             List<BillingAccountAmount> billingAccountAmounts = new ArrayList<>();
@@ -188,7 +187,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                     .map(BillingCycle::getReportConfigBlockSizeBillingAccounts)
                     .orElse(DEFAULT_BLOCK_SIZE);
             List<Object[]> amountsPerBA =
-                    ratedTransactionService.getBillingAccountStatisticsDetails(billingRun, rtIds, filters, blockSize);
+                    ratedTransactionService.getReportStatisticsDetails(rtIds, "RatedTransaction.findAmountsPerBillingAccountBilledDetails", blockSize);
             for (Object[] amount : amountsPerBA) {
                 if (amount[0] != null) {
                     BillingAccountAmount billingAccountAmount = new BillingAccountAmount();
@@ -205,8 +204,8 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         return emptyList();
     }
 
-    private List<OfferAmount> createOfferAmounts(BillingRun billingRun, List<Long> rtIds,
-                                                 BillingRunReport billingRunReport, Map<String, Object> filters) {
+    private List<OfferAmount> createOfferAmounts(BillingRun billingRun,
+                                                 List<Long> rtIds, BillingRunReport billingRunReport) {
         if(billingRun.getBillingCycle() == null
                 || (billingRun.getBillingCycle() != null && billingRun.getBillingCycle().getReportConfigDisplayOffers())) {
             List<OfferAmount> offerAmounts = new ArrayList<>();
@@ -214,7 +213,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                     .map(BillingCycle::getReportConfigBlockSizeOffers)
                     .orElse(DEFAULT_BLOCK_SIZE);
             List<Object[]> amountsPerOffer =
-                    ratedTransactionService.getOfferStatisticsDetails(billingRun, rtIds, filters, OfferBlockSize);
+                    ratedTransactionService.getReportStatisticsDetails(rtIds, "RatedTransaction.findAmountsPerOfferBilledDetails", OfferBlockSize);
             for (Object[] amount : amountsPerOffer) {
                 if (amount[0] != null) {
                     OfferAmount offerAmount = new OfferAmount();
@@ -232,8 +231,8 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
     }
 
 
-    private List<SubscriptionAmount> createSubscriptionAmounts(BillingRun billingRun, List<Long> rtIds,
-                                                               BillingRunReport billingRunReport, Map<String, Object> filters) {
+    private List<SubscriptionAmount> createSubscriptionAmounts(BillingRun billingRun,
+                                                               List<Long> rtIds, BillingRunReport billingRunReport) {
         if(billingRun.getBillingCycle() == null
                 || (billingRun.getBillingCycle() != null && billingRun.getBillingCycle().getReportConfigDisplaySubscriptions())) {
             List<SubscriptionAmount> subscriptionAmounts = new ArrayList<>();
@@ -241,7 +240,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                     .map(BillingCycle::getReportConfigBlockSizeSubscriptions)
                     .orElse(DEFAULT_BLOCK_SIZE);
             List<Object[]> amountsPerSubscription =
-                    ratedTransactionService.getSubscriptionStatisticsDetails(billingRun, rtIds, filters, subscriptionBlockSize);
+                    ratedTransactionService.getReportStatisticsDetails(rtIds, "RatedTransaction.findAmountsPerSubscriptionBilledDetails", subscriptionBlockSize);
             for (Object[] amount : amountsPerSubscription) {
                 if (amount[0] != null) {
                     SubscriptionAmount subscriptionAmount = new SubscriptionAmount();
@@ -258,8 +257,8 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         return emptyList();
     }
 
-    private List<ProductAmount> createProductAmounts(BillingRun billingRun, List<Long> rtIds,
-                                                               BillingRunReport billingRunReport, Map<String, Object> filters) {
+    private List<ProductAmount> createProductAmounts(BillingRun billingRun,
+                                                     List<Long> rtIds, BillingRunReport billingRunReport) {
         if(billingRun.getBillingCycle() == null
                 || (billingRun.getBillingCycle() != null && billingRun.getBillingCycle().getReportConfigDisplayProducts())) {
             List<ProductAmount> productAmounts = new ArrayList<>();
@@ -267,7 +266,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                     .map(BillingCycle::getReportConfigBlockSizeProducts)
                     .orElse(DEFAULT_BLOCK_SIZE);
             List<Object[]> amountsPerProduct =
-                    ratedTransactionService.getProductStatisticsDetails(billingRun, rtIds, filters, productsBlockSize);
+                    ratedTransactionService.getReportStatisticsDetails(rtIds, "RatedTransaction.findAmountsPerProductBilledDetails", productsBlockSize);
             for (Object[] amount : amountsPerProduct) {
                 if (amount[0] != null) {
                     ProductAmount productAmount = new ProductAmount();
@@ -287,8 +286,8 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         return emptyList();
     }
 
-    private List<AccountingArticleAmount> createArticleAmounts(BillingRun billingRun, List<Long> rtIds,
-                                                     BillingRunReport billingRunReport, Map<String, Object> filters) {
+    private List<AccountingArticleAmount> createArticleAmounts(BillingRun billingRun,
+                                                               List<Long> rtIds, BillingRunReport billingRunReport) {
         if(billingRun.getBillingCycle() == null
                 || (billingRun.getBillingCycle() != null && billingRun.getBillingCycle().getReportConfigDisplayArticles())) {
             List<AccountingArticleAmount> accountingArticleAmounts = new ArrayList<>();
@@ -296,7 +295,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
                     .map(BillingCycle::getReportConfigBlockSizeArticles)
                     .orElse(DEFAULT_BLOCK_SIZE);
             List<Object[]> amountsPerArticle =
-                    ratedTransactionService.getArticleStatisticsDetails(billingRun, rtIds, filters, articleBlockSize);
+                    ratedTransactionService.getReportStatisticsDetails(rtIds, "RatedTransaction.findAmountsPerArticleBilledDetails", articleBlockSize);
             for (Object[] amount : amountsPerArticle) {
                 if (amount[0] != null) {
                     AccountingArticleAmount accountingArticleAmount = new AccountingArticleAmount();
@@ -321,7 +320,7 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         if (billingRun.isPreReportAutoOnCreate() && !billingRun.hasPreInvoicingReport()) {
             try {
                 Map<String, Object> jobParams = new HashMap<>();
-                jobParams.put("billingRuns",  Arrays.asList(new EntityReferenceWrapper("org.meveo.model.billing.BillingRun", "BillingRun", billingRun.getId().toString())));
+                jobParams.put("billingRuns", asList(new EntityReferenceWrapper("org.meveo.model.billing.BillingRun", "BillingRun", billingRun.getId().toString())));
                 JobInstance jobInstance = jobInstanceService.findByCode(BILLING_RUN_REPORT_JOB_CODE);
                 jobInstance.setRunTimeValues(jobParams);
                 jobExecutionService.executeJob(jobInstance, jobParams, API);
@@ -332,19 +331,11 @@ public class BillingRunReportService extends PersistenceService<BillingRunReport
         }
     }
 
-    public Optional<BillingRunReport> findBillingReportBy(BillingRun billingRun) {
-        List<BillingRunReport> billingRunReports = getEntityManager()
-                .createNamedQuery("BillingRunReport.findAssociatedReportToBillingRun")
-                .setParameter("billingRunId", billingRun.getId())
-                .setMaxResults(1)
-                .getResultList();
-        if(billingRunReports != null && !billingRunReports.isEmpty()) {
-            return of(billingRunReports.get(0));
-        } else {
-            return empty();
-        }
-    }
-
+    /**
+     * Create or update billing run report
+     * @param billingRunReport
+     * @return BillingRunReport
+     */
     public BillingRunReport createOrUpdate(BillingRunReport billingRunReport) {
         if (billingRunReport.getId() == null) {
             create(billingRunReport);
