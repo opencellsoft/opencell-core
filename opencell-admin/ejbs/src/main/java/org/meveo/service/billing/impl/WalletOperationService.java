@@ -36,6 +36,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import com.google.common.collect.Lists;
 
@@ -457,8 +458,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return nrOfWosToRerate;
     }
 
-    public List<Long> listToRerate() {
-        return getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class).getResultList();
+    public List<Long> listToRerate(int nbToRetrieve) {
+        TypedQuery<Long> query = getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class);
+        if (nbToRetrieve > 0) {
+            query = query.setMaxResults(nbToRetrieve);
+        }
+        return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")

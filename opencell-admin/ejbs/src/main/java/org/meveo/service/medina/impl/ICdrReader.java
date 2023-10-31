@@ -2,6 +2,7 @@ package org.meveo.service.medina.impl;
 
 import java.io.IOException;
 
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.rating.CDR;
 
 /**
@@ -15,8 +16,9 @@ public interface ICdrReader {
      * Initialize CDR Reader to read from originBatch.
      *
      * @param originBatch the origin batch
+     * @param jobInstance the job instance
      */
-    void init(String originBatch);
+    void init(String originBatch, JobInstance jobInstance);
 
     /**
      * Return a total number of records if a reader supports such functionality

@@ -112,7 +112,7 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
         log.info("Remove wallet operations rated to 0");
         walletOperationService.removeZeroWalletOperation();
 
-        return getIterator(jobInstance);
+        return getIterator(jobExecutionResult);
     }
 
     /**
@@ -156,8 +156,8 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
         return false;
     }
 
-    @Override
-    Optional<Iterator<WalletOperationNative>> getSynchronizedIteratorWithLimit(JobInstance jobInstance, int jobItemsLimit) {
+    private Optional<Iterator<WalletOperationNative>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
         Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 10000L);
         Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbThreads <= -1) {
@@ -167,13 +167,24 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
         // Number of Wallet operations to process in a single job run
         int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("jobs.ratedTransactionsJob.processNrInJobRun", 4000000);
 
-        List<Long> ids = (List<Long>) emWrapper.getEntityManager()
-                .createNamedQuery("WalletOperation.getOpenIds", Long.class)
-                .setMaxResults(jobItemsLimit);
+        if (jobItemsLimit > 0) {
+            List<Long> ids = emWrapper.getEntityManager().createNamedQuery("WalletOperation.getOpenIds", Long.class)
+                    .setMaxResults(jobItemsLimit).getResultList();
 
-        nrOfRecords = Long.valueOf(ids.size());
-        maxId = Long.valueOf(ids.get(ids.size() - 1));
-        minId = Long.valueOf(ids.get(0));
+            nrOfRecords = Long.valueOf(ids.size());
+            if (!ids.isEmpty()) {
+                maxId = Long.valueOf(ids.get(ids.size() - 1));
+                minId = Long.valueOf(ids.get(0));
+            }
+        } else {
+            Object[] convertSummary = (Object[]) emWrapper.getEntityManager().createNamedQuery("WalletOperation.getConvertToRTsSummary")
+                    .getSingleResult();
+
+            nrOfRecords = (Long) convertSummary[0];
+            maxId = (Long) convertSummary[1];
+            minId = (Long) convertSummary[2];
+        }
+
 
         if (nrOfRecords.intValue() == 0) {
             return Optional.empty();
@@ -186,36 +197,16 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
 
         hasMore = nrOfRecords >= processNrInJobRun;
         return Optional.of(new SynchronizedIterator<WalletOperationNative>(scrollableResults, nrOfRecords.intValue()));
+
     }
 
     @Override
-    Optional<Iterator<WalletOperationNative>> getSynchronizedIterator(JobInstance jobInstance) {
+    Optional<Iterator<WalletOperationNative>> getSynchronizedIteratorWithLimit(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        return getSynchronizedIterator(jobExecutionResult, jobItemsLimit);
+    }
 
-        Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 10000L);
-        Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbThreads <= -1) {
-            nbThreads = (long) Runtime.getRuntime().availableProcessors();
-        }
-        int fetchSize = batchSize.intValue() * nbThreads.intValue();
-        // Number of Wallet operations to process in a single job run
-        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("jobs.ratedTransactionsJob.processNrInJobRun", 4000000);
-
-        Object[] convertSummary = (Object[]) emWrapper.getEntityManager().createNamedQuery("WalletOperation.getConvertToRTsSummary").getSingleResult();
-
-        nrOfRecords = (Long) convertSummary[0];
-        maxId = (Long) convertSummary[1];
-        minId = (Long) convertSummary[2];
-
-        if (nrOfRecords.intValue() == 0) {
-            return Optional.empty();
-        }
-
-        statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
-        scrollableResults = statelessSession.createNamedQuery("WalletOperationNative.listConvertToRTs").setParameter("maxId", maxId)
-                .setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun)
-                .setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
-
-        hasMore = nrOfRecords >= processNrInJobRun;
-        return Optional.of(new SynchronizedIterator<WalletOperationNative>(scrollableResults, nrOfRecords.intValue()));
+    @Override
+    Optional<Iterator<WalletOperationNative>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult) {
+        return getSynchronizedIterator(jobExecutionResult, 0);
     }
 }

@@ -1,5 +1,6 @@
 package org.meveo.admin.job;
 
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
@@ -22,18 +23,19 @@ public abstract class IteratorBasedScopedJobBean<T> extends IteratorBasedJobBean
     @Inject
     protected JobInstanceService jobInstanceService;
 
-    abstract Optional<Iterator<T>> getSynchronizedIteratorWithLimit(JobInstance jobInstance, int jobItemsLimit);
+    abstract Optional<Iterator<T>> getSynchronizedIteratorWithLimit(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit);
 
-    abstract Optional<Iterator<T>> getSynchronizedIterator(JobInstance jobInstance);
+    abstract Optional<Iterator<T>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult);
 
-    protected Optional<Iterator<T>> getIterator(JobInstance jobInstance) {
+    protected Optional<Iterator<T>> getIterator(JobExecutionResultImpl jobExecutionResult) {
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
         Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
         if (ScopedJob.class.isAssignableFrom(job.getClass())) {
             Integer jobItemsLimit = ((ScopedJob) job).getJobItemsLimit(jobInstance);
             if (jobItemsLimit != null && jobItemsLimit > 0) {
-                return getSynchronizedIteratorWithLimit(jobInstance, jobItemsLimit);
+                return getSynchronizedIteratorWithLimit(jobExecutionResult, jobItemsLimit);
             }
         }
-        return getSynchronizedIterator(jobInstance);
+        return getSynchronizedIterator(jobExecutionResult);
     }
 }

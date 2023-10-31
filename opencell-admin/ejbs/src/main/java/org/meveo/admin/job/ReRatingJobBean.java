@@ -64,12 +64,7 @@ public class ReRatingJobBean extends IteratorBasedScopedJobBean<Long> {
      * @return An iterator over a list of Wallet operation Ids to re-rate
      */
     private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-
-        List<Long> ids = walletOperationService.listToRerate();
-
-        useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
-
-        return Optional.of(new SynchronizedIterator<Long>(ids));
+        return getIterator(jobExecutionResult);
     }
 
     /**
@@ -83,13 +78,19 @@ public class ReRatingJobBean extends IteratorBasedScopedJobBean<Long> {
         reratingService.reRate(walletOperationId, useSamePricePlan);
     }
 
-    @Override
-    Optional<Iterator<Long>> getSynchronizedIteratorWithLimit(JobInstance jobInstance, int jobItemsLimit) {
-        return Optional.empty();
+    private Optional<Iterator<Long>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        List<Long> ids = walletOperationService.listToRerate(jobItemsLimit);
+        useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
+        return Optional.of(new SynchronizedIterator<Long>(ids));
     }
 
     @Override
-    Optional<Iterator<Long>> getSynchronizedIterator(JobInstance jobInstance) {
-        return Optional.empty();
+    Optional<Iterator<Long>> getSynchronizedIteratorWithLimit(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        return getSynchronizedIterator(jobExecutionResult, jobItemsLimit);
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult) {
+        return getSynchronizedIterator(jobExecutionResult, 0);
     }
 }
