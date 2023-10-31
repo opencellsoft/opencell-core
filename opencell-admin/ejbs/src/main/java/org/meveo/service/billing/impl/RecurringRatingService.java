@@ -399,11 +399,10 @@ public class RecurringRatingService extends RatingService implements Serializabl
                                 walletOperationService.cancelWalletOperations(Arrays.asList(lastWo.getId()));
                                 inputQuantity = inputQuantity.abs();
                                 effectiveChargeFromDate = lastWo.getStartDate();
-                                effectiveChargeToDate = chargeInstance.getChargeToDateOnTermination();
                             } else {
-                                effectiveChargeFromDate = chargeInstance.getChargeToDateOnTermination();
-                                effectiveChargeToDate = chargeInstance.getSubscription().getSubscribedTillDate();
+                                effectiveChargeFromDate = chargeInstance.getSubscription().getSubscribedTillDate();
                             }
+                            effectiveChargeToDate = chargeInstance.getChargeToDateOnTermination();
                         }
                     }
                     // Apply prorating if needed
