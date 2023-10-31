@@ -267,18 +267,6 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     private String selectedBillingAccounts;
 
     /**
-     * Pre-invoicing reports
-     */
-    @Transient
-    PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
-
-    /**
-     * Post-invoicing reports
-     */
-    @Transient
-    PostInvoicingReportsDTO postInvoicingReports = new PostInvoicingReportsDTO();
-
-    /**
      * Rejected billing accounts
      */
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
@@ -680,22 +668,6 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
      */
     public void setLastTransactionDate(Date lastTransactionDate) {
         this.lastTransactionDate = lastTransactionDate;
-    }
-
-    public PreInvoicingReportsDTO getPreInvoicingReports() {
-        return preInvoicingReports;
-    }
-
-    public void setPreInvoicingReports(PreInvoicingReportsDTO preInvoicingReports) {
-        this.preInvoicingReports = preInvoicingReports;
-    }
-
-    public PostInvoicingReportsDTO getPostInvoicingReports() {
-        return postInvoicingReports;
-    }
-
-    public void setPostInvoicingReports(PostInvoicingReportsDTO postInvoicingReports) {
-        this.postInvoicingReports = postInvoicingReports;
     }
 
     public List<BillingAccount> getBillableBillingAccounts() {
