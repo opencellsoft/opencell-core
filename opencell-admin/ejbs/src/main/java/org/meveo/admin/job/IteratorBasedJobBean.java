@@ -524,8 +524,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                 Long duration = jobExecutionResultService.getJobDurationLimit(jobExecutionResult, jobInstance);
                 Long time = jobExecutionResultService.getJobTimeLimit(jobExecutionResult, jobInstance);
-                if ((duration == null || duration > 0) && (time == null || time > 0)) {
-                    try {
+                try {
+                    if ((duration != null && duration > 0) || (time != null && time > 0)) {
                         if ((duration != null && duration < reportFrequency) || (time != null && time < reportFrequency)) {
                             if (duration != null && time != null) {
                                 Thread.sleep(duration > time ? time * 1000 : duration * 1000);
@@ -535,10 +535,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                         } else {
                             Thread.sleep(reportFrequency * 1000);
                         }
-                    } catch (InterruptedException e1) {
-
+                    } else {
+                        Thread.sleep(reportFrequency * 1000);
                     }
-                }
+                } catch (InterruptedException e1) {}
             }
             log.debug("Thread {} will stop storing job progress", Thread.currentThread().getName());
         };
