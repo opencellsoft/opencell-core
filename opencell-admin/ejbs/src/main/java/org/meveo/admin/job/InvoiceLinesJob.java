@@ -22,10 +22,6 @@ import org.meveo.service.job.ScopedJob;
 @Stateless
 public class InvoiceLinesJob extends ScopedJob {
 
-    public static final String CF_INVOICE_LINES_AGGREGATION_PER_UNIT_PRICE = "JobInstance_InvoiceLinesJob_AggregationPerUnitAmount";
-
-    public static final String CF_INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS = "JobInstance_InvoiceLinesJob_ILDateAggregationOptions";
-
     public static final String CF_INVOICE_LINES_GROUP_BY_BA = "JobInstance_InvoiceLinesJob_BillingAccountPerTransaction";
 
     public static final String CF_INVOICE_LINES_NR_RTS_PER_TX = "JobInstance_InvoiceLinesJob_MaxRTsPerTransaction";
@@ -65,6 +61,15 @@ public class InvoiceLinesJob extends ScopedJob {
 
         result.put(CF_INVOICE_LINES_BR, CustomFieldTemplateUtils.buildCF(CF_INVOICE_LINES_BR, resourceMessages.getString("jobExecution.ilJob.billingRuns"), CustomFieldTypeEnum.ENTITY,
             "tab:Configuration:0;fieldGroup:Filtering:2;field:1", null, false, CustomFieldStorageTypeEnum.LIST, BillingRun.class.getName(), "JobInstance_InvoiceLinesJob"));
+
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:5", null, false, null, null, "JobInstance_InvoiceLinesJob"));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:6", null, false, null, null, "JobInstance_InvoiceLinesJob"));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;fieldGroup:Configuration:0;field:7", null, false, null, null, "JobInstance_InvoiceLinesJob"));
 
         return result;
     }

@@ -27,6 +27,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -162,16 +163,14 @@ public class UsageRatingJob extends ScopedJob {
         parameter2.setGuiPosition("tab:Configuration:0;field:6");
         result.put("parameter2", parameter2);
 
-//        CustomFieldTemplate noRollback = new CustomFieldTemplate();
-//        noRollback.setCode(CF_ROLLBACK_ON_FAILURE);
-//        noRollback.setAppliesTo("JobInstance_UsageRatingJob");
-//        noRollback.setActive(true);
-//        noRollback.setDescription(resourceMessages.getString("jobExecution.rollbackOnFailure"));
-//        noRollback.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-//        noRollback.setValueRequired(false);
-//        noRollback.setDefaultValue("true");
-//        noRollback.setGuiPosition("tab:Configuration:0;field:5");
-//        result.put(noRollback.getCode(), noRollback);
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:7", null, false, null, null, "JobInstance_UsageRatingJob"));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:8", null, false, null, null, "JobInstance_UsageRatingJob"));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:9", null, false, null, null, "JobInstance_UsageRatingJob"));
 
         return result;
     }

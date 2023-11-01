@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -284,8 +285,17 @@ public class MediationJob extends ScopedJob {
         listValuesProcessingOrder.put(SortingFilesEnum.ALPHA.name(), resourceMessages.getString("flatFile.alphabeticFileNameOrder"));
         listValuesProcessingOrder.put(SortingFilesEnum.CREATION_DATE.name(), resourceMessages.getString("flatFile.creationDateFileOrder"));
         processingOrder.setListValues(listValuesProcessingOrder);
-        processingOrder.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:7");
+        processingOrder.setGuiPosition("tab:Configuration:0;field:7");
         result.put(CF_SORTING_OPTION, processingOrder);
+
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:8", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:9", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:10", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
 
         return result;
     }

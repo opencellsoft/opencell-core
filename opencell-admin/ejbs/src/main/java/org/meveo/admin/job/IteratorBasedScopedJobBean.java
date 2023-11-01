@@ -31,9 +31,9 @@ public abstract class IteratorBasedScopedJobBean<T> extends IteratorBasedJobBean
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
         Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
         if (ScopedJob.class.isAssignableFrom(job.getClass())) {
-            Integer jobItemsLimit = ((ScopedJob) job).getJobItemsLimit(jobInstance);
+            Long jobItemsLimit = ((ScopedJob) job).getJobItemsLimit(jobInstance);
             if (jobItemsLimit != null && jobItemsLimit > 0) {
-                return getSynchronizedIteratorWithLimit(jobExecutionResult, jobItemsLimit);
+                return getSynchronizedIteratorWithLimit(jobExecutionResult, jobItemsLimit.intValue());
             }
         }
         return getSynchronizedIterator(jobExecutionResult);

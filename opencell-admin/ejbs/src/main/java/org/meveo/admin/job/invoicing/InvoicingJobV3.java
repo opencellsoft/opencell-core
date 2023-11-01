@@ -1,6 +1,7 @@
 package org.meveo.admin.job.invoicing;
 import static org.meveo.model.jobs.MeveoJobCategoryEnum.INVOICING;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -66,7 +67,16 @@ public class InvoicingJobV3 extends ScopedJob {
         customFieldBR.setValueRequired(false);
         customFieldBR.setGuiPosition("tab:Configuration:0;field:2");
         result.put("billingRuns", customFieldBR);
-        
+
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:3", null, false, null, null, INVOICING_JOB_V3_JOB_INSTANCE));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:4", null, false, null, null, INVOICING_JOB_V3_JOB_INSTANCE));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:5", null, false, null, null, INVOICING_JOB_V3_JOB_INSTANCE));
+
         return result;
     }
 }

@@ -56,8 +56,8 @@ public abstract class ScopedJob extends Job {
      * @param jobInstance the job instance
      * @return job items limit CF value
      */
-    public Integer getJobItemsLimit(JobInstance jobInstance) {
-        return (Integer) this.getParamOrCFValue(jobInstance, CF_JOB_ITEMS_LIMIT);
+    public Long getJobItemsLimit(JobInstance jobInstance) {
+        return (Long) this.getParamOrCFValue(jobInstance, CF_JOB_ITEMS_LIMIT);
     }
 
     /**
@@ -66,8 +66,8 @@ public abstract class ScopedJob extends Job {
      * @param jobInstance the job instance
      * @return job duration limit CF value
      */
-    protected Integer getJobDurationLimit(JobInstance jobInstance) {
-        return (Integer) this.getParamOrCFValue(jobInstance, CF_JOB_DURATION_LIMIT);
+    protected Long getJobDurationLimit(JobInstance jobInstance) {
+        return (Long) this.getParamOrCFValue(jobInstance, CF_JOB_DURATION_LIMIT);
     }
 
     /**
@@ -88,7 +88,7 @@ public abstract class ScopedJob extends Job {
      * @return the difference between now and the start date of job
      */
     protected long checkJobDurationLimitReached(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        Integer jobDurationLimit = getJobDurationLimit(jobInstance);
+        Long jobDurationLimit = getJobDurationLimit(jobInstance);
         Date startDate = jobExecutionResult.getStartDate();
         Date currentDate = new Date();
         long duration = ((currentDate.getTime() / (60 * 1000)) - (startDate.getTime() / (60 * 1000)));

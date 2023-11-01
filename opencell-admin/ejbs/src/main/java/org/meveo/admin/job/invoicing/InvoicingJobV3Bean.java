@@ -127,12 +127,7 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 		filters.put("disabled", false);
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
 		paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
-		Integer jobItemsLimit = null;
-		Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-		if (ScopedJob.class.isAssignableFrom(job.getClass())) {
-			jobItemsLimit = ((ScopedJob) job).getJobItemsLimit(jobInstance);
-		}
-		paginationConfiguration.setLimit(jobItemsLimit);
+		paginationConfiguration.setLimit(jobInstanceService.getJobItemsLimit(jobInstance));
 		List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
 		return billingRuns;
 	}

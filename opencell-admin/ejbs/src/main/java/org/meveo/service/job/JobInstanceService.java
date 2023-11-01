@@ -404,4 +404,19 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         return getEntityManager().createNamedQuery("JobInstance.findByJobTemplate", JobInstance.class).setParameter("jobTemplate", jobTemplateName).getResultList();
     }
+
+    /**
+     * Gets the Job items limit
+     *
+     * @param jobInstance the job instance
+     * @return the Job items limit
+     */
+    public Integer getJobItemsLimit(JobInstance jobInstance) {
+        Long jobItemsLimit = null;
+        Job job = getJobByName(jobInstance.getJobTemplate());
+        if (ScopedJob.class.isAssignableFrom(job.getClass())) {
+            jobItemsLimit = ((ScopedJob) job).getJobItemsLimit(jobInstance);
+        }
+        return jobItemsLimit != null ? jobItemsLimit.intValue() : null;
+    }
 }

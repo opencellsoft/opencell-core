@@ -101,6 +101,15 @@ public class RatedTransactionsJob extends ScopedJob {
                 "tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:0", null, false, CustomFieldStorageTypeEnum.SINGLE, "org.meveo.model.billing.WalletOperationAggregationSettings",
                 "JobInstance_RatedTransactionsJob"));
 
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", null, false, null, null, "JobInstance_RatedTransactionsJob"));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:4", null, false, null, null, "JobInstance_RatedTransactionsJob"));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;fieldGroup:Configuration:0;field:5", null, false, null, null, "JobInstance_RatedTransactionsJob"));
+
         return result;
     }
 }

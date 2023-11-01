@@ -157,11 +157,7 @@ public class InvoicingJobBean extends BaseJobBean {
             return billingRunService.listByNamedQuery("BillingRun.getForInvoicingLimitToIds", "ids", ids);
 
         } else {
-            Integer jobItemsLimit = null;
-            Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-            if (ScopedJob.class.isAssignableFrom(job.getClass())) {
-                jobItemsLimit = ((ScopedJob) job).getJobItemsLimit(jobInstance);
-            }
+            Integer jobItemsLimit = jobInstanceService.getJobItemsLimit(jobInstance);
             return billingRunService.getForInvoicing(jobItemsLimit != null ? jobItemsLimit : 0);
         }
     }

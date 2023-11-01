@@ -107,11 +107,7 @@ public class CDRReprocessingReader implements ICdrReader, Serializable {
     public void init(String originBatch, JobInstance jobInstance) {
         batchName = originBatch;
         try {
-            Integer jobItemsLimit = null;
-            Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-            if (ScopedJob.class.isAssignableFrom(job.getClass())) {
-                jobItemsLimit = ((ScopedJob) job).getJobItemsLimit(jobInstance);
-            }
+            Integer jobItemsLimit = jobInstanceService.getJobItemsLimit(jobInstance);
             List<CDR> cdrs = cdrService.getCDRsToReprocess(jobItemsLimit != null ? jobItemsLimit : 0);
             totalNumberOfRecords = cdrs.size();
             cdrIterator = new SynchronizedIterator<CDR>(cdrs);

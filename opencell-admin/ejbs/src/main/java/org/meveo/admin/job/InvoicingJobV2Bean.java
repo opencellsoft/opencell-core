@@ -98,12 +98,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
             paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
 
-            Integer jobItemsLimit = null;
-            Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-            if (ScopedJob.class.isAssignableFrom(job.getClass())) {
-                jobItemsLimit = ((ScopedJob) job).getJobItemsLimit(jobInstance);
-            }
-            paginationConfiguration.setLimit(jobItemsLimit);
+            paginationConfiguration.setLimit(jobInstanceService.getJobItemsLimit(jobInstance));
             List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(
                     billingRunService.list(paginationConfiguration), jobInstance);
             if (billingRuns.isEmpty()) {

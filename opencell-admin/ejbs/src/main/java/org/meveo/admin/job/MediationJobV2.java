@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -113,8 +114,18 @@ public class MediationJobV2 extends ScopedJob {
         batchSize.setFieldType(CustomFieldTypeEnum.LONG);
         batchSize.setValueRequired(true);
         batchSize.setDefaultValue("1000");
-        batchSize.setGuiPosition("tab:Configuration:0;field:6");
+        batchSize.setGuiPosition("tab:Configuration:0;field:2");
         result.put(batchSize.getCode(), batchSize);
+
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:3", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:4", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:5", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+
 
         return result;
     }
