@@ -32,6 +32,7 @@ import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.UntdidVatPaymentOption;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
@@ -148,6 +149,9 @@ public class ServiceSingleton {
     private JobExecutionService jobExecutionService;
     @Inject
     private JobInstanceService jobInstanceService;
+	
+	@Inject
+	private UntdidVatPaymentOptionService untdidVatPaymentOptionService;
 
     private static Map<Character, Character> mapper = Map.of('0', 'Q',
             '1', 'R', '2', 'S', '3', 'T', '4', 'U', '5',
@@ -330,10 +334,15 @@ public class ServiceSingleton {
             occTemplate.setOccCategory(operationCategory);
             oCCTemplateService.create(occTemplate);
         }
-
+	    // untdidVatPaymentOption
         invoiceType = new InvoiceType();
         invoiceType.setCode(invoiceTypeCode);
         invoiceType.setOccTemplate(occTemplate);
+	    UntdidVatPaymentOption untdidVatPaymentOption = untdidVatPaymentOptionService.findTheOldOne();
+		if(untdidVatPaymentOption == null) {
+			throw new EntityDoesNotExistsException("No Vat payment is present");
+		}
+	    invoiceType.setUntdidVatPaymentOption(untdidVatPaymentOption);
         invoiceTypeService.create(invoiceType);
         return invoiceType;
     }
