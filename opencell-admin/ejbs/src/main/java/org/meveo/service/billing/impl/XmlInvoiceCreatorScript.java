@@ -2363,7 +2363,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
         line.setAttribute("taxPercent", invoiceLine.getTaxRate() != null ? invoiceLine.getTaxRate().toPlainString() : "");
         line.setAttribute("sortIndex", "");
-        line.setAttribute("code", invoiceLine.getOrderRef());
+        line.setAttribute("code", invoiceLine.getOrderRef()!=null?invoiceLine.getOrderRef():(invoiceLine.getAccountingArticle() != null ? invoiceLine.getAccountingArticle().getCode() : ""));
         Element label = doc.createElement("label");
         label.appendChild(this.createTextNode(doc, getDefaultIfNull(invoiceLine.getLabel(), "")));
         line.appendChild(label);
