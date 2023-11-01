@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.commons.utils.NumberUtils.round;
 
@@ -1062,5 +1063,23 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 .createNamedQuery("WalletOperation.findWalletOperationTradingCurrency")
                 .setParameter("walletOperationIds", walletOperationsIds)
                 .getResultList();
+    }
+
+    public Integer markWOToRerate(Map<String, Object> updatedFields, List<Long> woIds) {
+        // Build update filterQuery
+        StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation a SET");
+        updatedFields.forEach((s, o) ->
+                updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
+        );
+        updateQuery.setLength(updateQuery.length() - 1);
+        updateQuery.append(" WHERE a.id in (")
+                .append(woIds.stream().map(String::valueOf).collect(joining(",")))
+                .append(")");
+
+        Integer updated = getEntityManager().createQuery(updateQuery.toString()).executeUpdate();
+
+        getEntityManager().flush();
+        getEntityManager().clear();
+        return updated;
     }
 }
