@@ -1,6 +1,7 @@
 package org.meveo.apiv2.settings.globalSettings.service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -40,15 +41,18 @@ public class AdvancedSettingsApiService implements ApiService<AdvancedSettings> 
 
     @Override
     public Optional<AdvancedSettings> update(Long id, AdvancedSettings baseEntity) {
-        AdvancedSettings entityToUpdate = findById(id).orElseThrow(() -> new NotFoundException("The AdvancedsettingSettings does not exist"));
+        return Optional.of(advancedSettingsService.update(updateEntity(id, baseEntity)));
+    }
+
+	private AdvancedSettings updateEntity(Long id, AdvancedSettings baseEntity) {
+		AdvancedSettings entityToUpdate = findById(id).orElseThrow(() -> new NotFoundException("The AdvancedsettingSettings does not exist"));
 
         if(!StringUtils.equals(entityToUpdate.getCode(),baseEntity.getCode())){
         	throw new InvalidParameterException("the property code cannot be modified ");
         }
         mapEntityToUpdate(baseEntity, entityToUpdate);
-
-        return Optional.of(advancedSettingsService.update(entityToUpdate));
-    }
+		return entityToUpdate;
+	}
     
     public static AdvancedSettings mapEntityToUpdate(AdvancedSettings source, AdvancedSettings target) {
 
@@ -89,5 +93,9 @@ public class AdvancedSettingsApiService implements ApiService<AdvancedSettings> 
     public Optional<AdvancedSettings> findByCode(String code) {
         return null;
     }
+
+	public Optional<List<AdvancedSettings>> patch(List<AdvancedSettings> listEntities) {
+		return Optional.of(listEntities.stream().map(x->updateEntity(x.getId(),x)).collect(Collectors.toList()));
+	}
 
 }

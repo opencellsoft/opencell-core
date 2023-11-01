@@ -19113,7 +19113,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enablePricePlanFilters"/>
 		    <column name="description" value="pricePlanFilters.enablePricePlanFilters"/>
@@ -19126,7 +19126,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableOfferTemplate"/>
 		    <column name="description" value="pricePlanFilters.enableOfferTemplate"/>
@@ -19139,7 +19139,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableStartSubscriptionDate"/>
 		    <column name="description" value="pricePlanFilters.enableStartSubscriptionDate"/>
@@ -19152,7 +19152,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableEndSubscriptionDate"/>
 		    <column name="description" value="pricePlanFilters.enableEndSubscriptionDate"/>
@@ -19165,7 +19165,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableStartRatingDate"/>
 		    <column name="description" value="pricePlanFilters.enableStartRatingDate"/>
@@ -19178,7 +19178,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableEndRatingDate"/>
 		    <column name="description" value="pricePlanFilters.enableEndRatingDate"/>
@@ -19191,7 +19191,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableMinQuantity"/>
 		    <column name="description" value="pricePlanFilters.enableMinQuantity"/>
@@ -19204,7 +19204,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableMaxQuantity"/>
 		    <column name="description" value="pricePlanFilters.enableMaxQuantity"/>
@@ -19217,7 +19217,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableMinSubscriptionAgeInMonth"/>
 		    <column name="description" value="pricePlanFilters.enableMinSubscriptionAgeInMonth"/>
@@ -19230,7 +19230,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableMaxSubscriptionAgeInMonth"/>
 		    <column name="description" value="pricePlanFilters.enableMaxSubscriptionAgeInMonth"/>
@@ -19243,7 +19243,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableCriteria1Value"/>
 		    <column name="description" value="pricePlanFilters.enableCriteria1Value"/>
@@ -19256,7 +19256,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableCriteria2Value"/>
 		    <column name="description" value="pricePlanFilters.enableCriteria2Value"/>
@@ -19269,7 +19269,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableCriteria3Value"/>
 		    <column name="description" value="pricePlanFilters.enableCriteria3Value"/>
@@ -19282,7 +19282,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableCriteriaEL"/>
 		    <column name="description" value="pricePlanFilters.enableCriteriaEL"/>
@@ -19295,7 +19295,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableTradingCurrency"/>
 		    <column name="description" value="pricePlanFilters.enableTradingCurrency"/>
@@ -19308,7 +19308,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableTradingCountry"/>
 		    <column name="description" value="pricePlanFilters.enableTradingCountry"/>
@@ -19321,7 +19321,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableSeller"/>
 		    <column name="description" value="pricePlanFilters.enableSeller"/>
@@ -19334,7 +19334,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableValidityCalendar"/>
 		    <column name="description" value="pricePlanFilters.enableValidityCalendar"/>
@@ -19347,7 +19347,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableValidityFrom"/>
 		    <column name="description" value="pricePlanFilters.enableValidityFrom"/>
@@ -19360,7 +19360,7 @@ public class ValidateBRScript extends ValidateBR {
 		    <column name="category" value="performance"/>
 		    <column name="property_group" value="pricePlanFilters"/>
 		    <column name="property_type" value="java.lang.Boolean"/>
-		    <column name="property_value" value="false"/>
+		    <column name="property_value" value="true"/>
 		    <column name="creator" value="applicationInitializer"/>
 		    <column name="code" value="pricePlanFilters.enableValidityDate"/>
 		    <column name="description" value="pricePlanFilters.enableValidityDate"/>
