@@ -5,7 +5,7 @@
     <groupId>com.opencellsoft</groupId>
     <artifactId>opencell</artifactId>
     <packaging>pom</packaging>
-    <version>14.0.11-SNAPSHOT</version>
+    <version>14.0.11-540-1a31bd4</version>
     <name>Opencell Parent Project</name>
 
     <modules>
