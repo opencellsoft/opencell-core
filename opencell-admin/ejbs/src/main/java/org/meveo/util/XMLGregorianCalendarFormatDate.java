@@ -1,5 +1,7 @@
 package org.meveo.util;
 
+import org.meveo.admin.exception.BusinessException;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
@@ -24,7 +26,7 @@ public final class XMLGregorianCalendarFormatDate {
 			SimpleDateFormat fmt = new SimpleDateFormat(SIMPLE_FORMAT);
 			date = fmt.parse(v);
 		} catch (ParseException e) {
-			throw new RuntimeException(e);
+			throw new BusinessException(e);
 		}
 		
 		GregorianCalendar cal = new GregorianCalendar();
@@ -33,7 +35,7 @@ public final class XMLGregorianCalendarFormatDate {
 		try {
 			return  DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
 		} catch (DatatypeConfigurationException e) {
-			throw new RuntimeException(e);
+			throw new BusinessException(e);
 		}
 	}
 	
