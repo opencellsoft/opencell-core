@@ -19,6 +19,7 @@ package org.meveo.service.billing.impl;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import static org.meveo.commons.utils.NumberUtils.round;
 
 import java.math.BigDecimal;
@@ -43,6 +44,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.admin.job.ReRatingJob;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
@@ -53,11 +55,13 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BatchEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ReratingTargetEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -90,7 +94,7 @@ import org.meveo.service.filter.FilterService;
 
 /**
  * Service class for WalletOperation entity
- * 
+ *
  * @author Edward P. Legaspi
  * @author Wassim Drira
  * @author Phung tien lan
@@ -134,10 +138,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
-    
+
     @Inject
     private OneShotChargeTemplateService oneShotChargeTemplateService;
-    
+
     /**
      *
      * @param ids
@@ -160,15 +164,15 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         if (entityToInvoice instanceof BillingAccount) {
             return getEntityManager().createNamedQuery("WalletOperation.listToRateByBA", WalletOperation.class).setParameter("invoicingDate", invoicingDate).setParameter("billingAccount", entityToInvoice)
-                .getResultList();
+                    .getResultList();
 
         } else if (entityToInvoice instanceof Subscription) {
             return getEntityManager().createNamedQuery("WalletOperation.listToRateBySubscription", WalletOperation.class).setParameter("invoicingDate", invoicingDate).setParameter("subscription", entityToInvoice)
-                .getResultList();
+                    .getResultList();
 
         } else if (entityToInvoice instanceof Order) {
             return getEntityManager().createNamedQuery("WalletOperation.listToRateByOrderNumber", WalletOperation.class).setParameter("invoicingDate", invoicingDate)
-                .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber()).getResultList();
+                    .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber()).getResultList();
         }
 
         return new ArrayList<>();
@@ -185,7 +189,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Charge wallet operation on prepaid wallets
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param op Wallet operation
      * @return A list of wallet operations containing a single original wallet operation or multiple wallet operations if had to be split among various wallets
@@ -340,7 +344,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Persist a wallet operation. For prepaid wallets, additional wallet operations might be created to span amount over multiple wallets.
-     * 
+     *
      * @param op Wallet operation
      * @return A list of wallet operations. For postpaid wallets, it will contain the same wallet operation as passed in. For postpaid wallets, additional wallet operations might be returned.
      * @throws InsufficientBalanceException Insufficient balance to charge for prepaid wallets
@@ -356,14 +360,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         if (chargeInstanceId == null) {
             op.setWallet(userAccount.getWallet());
             result.add(op);
-            
+
             // Balance and reserved balance deals with prepaid wallets.
             // With wallet cache at all
         } else if (!chargeInstance.getPrepaid()) {
             op.setWallet(userAccount.getWallet());
             result.add(op);
             create(op);
-            
+
             // Prepaid charges only
         } else {
             result = chargeOnPrepaidWallets(chargeInstance, op);
@@ -458,7 +462,25 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return nrOfWosToRerate;
     }
 
-    public List<Long> listToRerate() {
+    public List<Long> listToRerate(String reratingTarget, List<Long> targetBatches) {
+        if (ReratingTargetEnum.NO_BATCH.name().equals(reratingTarget)) {
+            return getEntityManager().createNamedQuery("WalletOperation.listToRerateNoBatch", Long.class).getResultList();
+        } else if (ReratingTargetEnum.WITH_BATCH.name().equals(reratingTarget)) {
+            if (CollectionUtils.isNotEmpty(targetBatches)) {
+                List<BatchEntity> batchEntities = getEntityManager().createNamedQuery("BatchEntity.listBatchEntities", BatchEntity.class)
+                        .setParameter("ids", targetBatches)
+                        .getResultList();
+                targetBatches = batchEntities.stream().filter(be -> ReRatingJob.class.getSimpleName().equalsIgnoreCase(be.getTargetJob()))
+                        .map(be -> be.getId()).collect(toList());
+                if (CollectionUtils.isNotEmpty(targetBatches)) {
+                    return getEntityManager().createNamedQuery("WalletOperation.listToRerateWithBatches", Long.class)
+                            .setParameter("targetBatches", targetBatches)
+                            .getResultList();
+                }
+            }
+            return getEntityManager().createNamedQuery("WalletOperation.listToRerateAllBatches", Long.class).getResultList();
+        }
+        // null | ALL
         return getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class).getResultList();
     }
 
@@ -532,18 +554,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     public int moveNotBilledWOToUA(WalletInstance newWallet, Subscription subscription) {
         return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA")
-        							.setParameter("newWallet", newWallet)
-        							.setParameter("newUserAccount", newWallet.getUserAccount())
-                                    .setParameter("billingAccount", newWallet.getUserAccount().getBillingAccount())
-        							.setParameter("subscription", subscription).executeUpdate();
+                .setParameter("newWallet", newWallet)
+                .setParameter("newUserAccount", newWallet.getUserAccount())
+                .setParameter("billingAccount", newWallet.getUserAccount().getBillingAccount())
+                .setParameter("subscription", subscription).executeUpdate();
     }
 
     public int moveAndRerateNotBilledWOToUA(WalletInstance wallet, Subscription subscription) {
         return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA")
-        							.setParameter("newWallet", wallet)
-        							.setParameter("newUserAccount", wallet.getUserAccount())
-        							.setParameter("billingAccount", wallet.getUserAccount().getBillingAccount())
-        							.setParameter("subscription", subscription).executeUpdate();
+                .setParameter("newWallet", wallet)
+                .setParameter("newUserAccount", wallet.getUserAccount())
+                .setParameter("billingAccount", wallet.getUserAccount().getBillingAccount())
+                .setParameter("subscription", subscription).executeUpdate();
     }
 
     @SuppressWarnings("unchecked")
@@ -586,13 +608,13 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     private void updateWalletOperationPeriodView(WalletOperationAggregationSettings aggregationSettings) {
-       
+
         String truncateDateFunction = EntityManagerProvider.isDBOracle()?"TRUNC":"DATE";
-        
+
         String queryTemplate = "DROP VIEW IF EXISTS billing_wallet_operation_period; CREATE OR REPLACE VIEW billing_wallet_operation_period AS select o.*, SUM(o.flag) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}}) as period "
                 + " from (select o.*, (case when (" + truncateDateFunction + "(lag(o.end_Date) over (partition by o.seller_id order by o.charge_instance_id {{ADDITIONAL_ORDER_BY}})) {{PERIOD_END_DATE_INCLUDED}}= " + truncateDateFunction + "(o.start_date)) then 0 else 1 end) as flag "
                 + " FROM billing_wallet_operation o WHERE o.status='OPEN' ) o ";
-        
+
         Map<String, String> parameters = new HashMap<>();
         if (aggregationSettings.isPeriodEndDateIncluded()) {
             parameters.put("{{PERIOD_END_DATE_INCLUDED}}", "+ interval '1' day");
@@ -629,12 +651,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      */
     public List<WalletOperation> getNotOpenedWalletOperationBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate, Long lastId, int max) {
         return getEntityManager().createNamedQuery("WalletOperation.listNotOpenedWObetweenTwoDates", WalletOperation.class).setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).setParameter("lastId", lastId).setMaxResults(max).getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate).setParameter("lastId", lastId).setMaxResults(max).getResultList();
     }
 
     /**
      * Remove all not open Wallet operation between two date
-     * 
+     *
      * @param firstTransactionDate first operation date
      * @param lastTransactionDate last operation date
      * @return the number of deleted entities
@@ -642,12 +664,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
         return getEntityManager().createNamedQuery("WalletOperation.deleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
-            .executeUpdate();
+                .executeUpdate();
     }
 
     /**
      * Import wallet operations.
-     * 
+     *
      * @param walletOperations Wallet Operations DTO list
      * @throws BusinessException
      */
@@ -692,7 +714,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 }
 
                 wo = new WalletOperation(chargeInstance, dto.getQuantity(), ratingQuantity, dto.getOperationDate(), dto.getOrderNumber(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(),
-                    dto.getParameterExtra(), tax, dto.getStartDate(), dto.getEndDate(), null, invoicingDate);
+                        dto.getParameterExtra(), tax, dto.getStartDate(), dto.getEndDate(), null, invoicingDate);
 
             } else {
                 Seller seller = null;
@@ -714,21 +736,21 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     currency = currencyService.findByCode(dto.getCurrency());
                 }
                 wo = new WalletOperation(dto.getCode(), "description", wallet, dto.getOperationDate(), null, dto.getType(), currency, tax, dto.getUnitAmountWithoutTax(), dto.getUnitAmountWithTax(),
-                    dto.getUnitAmountTax(), dto.getQuantity(), dto.getAmountWithoutTax(), dto.getAmountWithTax(), dto.getAmountTax(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(),
-                    dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer, seller, null, dto.getRatingUnitDescription(), null, null, null, null, dto.getStatus(),
-                    wallet != null ? wallet.getUserAccount() : null, wallet != null ? wallet.getUserAccount().getBillingAccount() : null);
+                        dto.getUnitAmountTax(), dto.getQuantity(), dto.getAmountWithoutTax(), dto.getAmountWithTax(), dto.getAmountTax(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(),
+                        dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer, seller, null, dto.getRatingUnitDescription(), null, null, null, null, dto.getStatus(),
+                        wallet != null ? wallet.getUserAccount() : null, wallet != null ? wallet.getUserAccount().getBillingAccount() : null);
             }
             Integer sortIndex = RatingService.getSortIndex(wo);
-            wo.setSortIndex(sortIndex);        
-        	wo.setBusinessKey(dto.getBusinessKey());
+            wo.setSortIndex(sortIndex);
+            wo.setBusinessKey(dto.getBusinessKey());
 
-        	create(wo);
+            create(wo);
         }
     }
 
     /**
      * Mark wallet operations, that were invoiced by a given billing run, to be rerated
-     * 
+     *
      * @param billingRun Billing run that invoiced wallet operations
      */
     public void markToRerateByBR(BillingRun billingRun) {
@@ -750,17 +772,17 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      */
     public List<WalletOperation> getWalletOperationBetweenTwoDatesByStatus(Date firstDate, Date lastDate, Long lastId, int maxResult, List<WalletOperationStatusEnum> formattedStatus) {
         return getEntityManager().createNamedQuery("WalletOperation.listWObetweenTwoDatesByStatus", WalletOperation.class).setParameter("firstTransactionDate", firstDate).setParameter("lastTransactionDate", lastDate)
-            .setParameter("lastId", lastId).setParameter("status", formattedStatus).setMaxResults(maxResult).getResultList();
+                .setParameter("lastId", lastId).setParameter("status", formattedStatus).setMaxResults(maxResult).getResultList();
     }
 
     public long purge(Date lastTransactionDate, List<WalletOperationStatusEnum> targetStatusList) {
         return getEntityManager().createNamedQuery("WalletOperation.deleteWOByLastTransactionDateAndStatus").setParameter("status", targetStatusList).setParameter("lastTransactionDate", lastTransactionDate)
-            .executeUpdate();
+                .executeUpdate();
     }
 
     public long purge(Date firstTransactionDate, Date lastTransactionDate, List<WalletOperationStatusEnum> targetStatusList) {
         return getEntityManager().createNamedQuery("WalletOperation.deleteWObetweenTwoDatesByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
     }
 
     /**
@@ -876,24 +898,24 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         return refundWo;
     }
-    
+
     public boolean isChargeMatch(ChargeInstance chargeInstance, String filterExpression) throws BusinessException {
-    	if(chargeInstance.getServiceInstance()!=null) {
-  		  boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
-      	 .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
-              .anyMatch(attributeInstance ->  attributeInstance.getStringValue()==null  || "false".equals(attributeInstance.getStringValue()));
-  	        if(anyFalseAttribute) return false;
-  	}
-     
+        if(chargeInstance.getServiceInstance()!=null) {
+            boolean anyFalseAttribute = chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+                    .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
+                    .anyMatch(attributeInstance ->  attributeInstance.getStringValue()==null  || "false".equals(attributeInstance.getStringValue()));
+            if(anyFalseAttribute) return false;
+        }
 
-      if (StringUtils.isBlank(filterExpression)) {
-          return true;
-      }
 
-      return ValueExpressionWrapper.evaluateToBooleanOneVariable(filterExpression, "ci", chargeInstance);
+        if (StringUtils.isBlank(filterExpression)) {
+            return true;
+        }
+
+        return ValueExpressionWrapper.evaluateToBooleanOneVariable(filterExpression, "ci", chargeInstance);
     }
-    
-    
+
+
     public boolean ignoreChargeTemplate(ChargeInstance chargeInstance){
         ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
         if(serviceInstance != null && serviceInstance.getProductVersion() != null){
@@ -947,7 +969,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         return wosToProcess;
     }
-    
+
     /**
      * Determine recurring period end date
      *
@@ -963,8 +985,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
         return cal;
     }
-    
-    
+
+
 
     public Date getRecurringPeriodEndDate(RecurringChargeInstance chargeInstance, Date date) {
 
@@ -978,7 +1000,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         Date nextChargeDate = cal.nextCalendarDate(cal.truncateDateTime(date));
         return nextChargeDate;
     }
-    
+
     public WalletOperation findWoByRatedTransactionId(Long rtId) {
         try {
             return (WalletOperation) getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.ratedTransaction.id = :rtId")
@@ -1000,24 +1022,24 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             return null;
         }
     }
-    
+
     @Override
     public void create(WalletOperation walletOperation) throws BusinessException {
-    	if(walletOperation.getDiscountedWO()!=null) {
-    		walletOperation.setDiscountedWalletOperation(walletOperation.getDiscountedWO().getId());
-    	}
-    	super.create(walletOperation);
+        if(walletOperation.getDiscountedWO()!=null) {
+            walletOperation.setDiscountedWalletOperation(walletOperation.getDiscountedWO().getId());
+        }
+        super.create(walletOperation);
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<WalletOperation> findByDiscountedWo(Long discountedWalletOperation) {
-    	List<WalletOperation> result = new ArrayList<>();
+        List<WalletOperation> result = new ArrayList<>();
         try {
-        	result=getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.discountedWalletOperation = :discountedWalletOperation")
+            result=getEntityManager().createQuery("SELECT wo FROM WalletOperation wo WHERE wo.discountedWalletOperation = :discountedWalletOperation")
                     .setParameter("discountedWalletOperation", discountedWalletOperation)
                     .getResultList();
         } catch (NoResultException exception) {
-        	return Collections.emptyList();
+            return Collections.emptyList();
         }
         return result;
     }
