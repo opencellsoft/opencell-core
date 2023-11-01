@@ -11,7 +11,7 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class UntdidVatPaymentOptionService extends PersistenceService<UntdidVatPaymentOption> {
-    
+ 
 	public UntdidVatPaymentOption getByCode(String byCode) {
         if (byCode == null) {
             return null;
@@ -99,5 +99,13 @@ public class UntdidVatPaymentOptionService extends PersistenceService<UntdidVatP
 		}
 		
 		return false;
+	}
+	
+	public UntdidVatPaymentOption findTheOldOne(){
+		try{
+			return (UntdidVatPaymentOption) getEntityManager().createQuery("from UntdidVatPaymentOption u order by  u.id ASC").setMaxResults(1).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 }
