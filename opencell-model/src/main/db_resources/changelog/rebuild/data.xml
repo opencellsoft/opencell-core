@@ -9295,7 +9295,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueNumeric="-1" />
 			<column name="dunning_policy_id" valueNumeric="-1" />
 		</insert>
@@ -9338,7 +9338,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueNumeric="-2" />
 			<column name="dunning_policy_id" valueNumeric="-1" />
 		</insert>
@@ -9380,7 +9380,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueNumeric="-3" />
 			<column name="dunning_policy_id" valueNumeric="-1" />
 		</insert>
@@ -9423,7 +9423,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueNumeric="-4" />
 			<column name="dunning_policy_id" valueNumeric="-1" />
 		</insert>		
@@ -9503,7 +9503,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueNumeric="-5" />
 			<column name="dunning_policy_id" valueNumeric="-2" />
 		</insert>
@@ -9545,7 +9545,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueNumeric="-6" />
 			<column name="dunning_policy_id" valueNumeric="-2" />
 		</insert>
@@ -9587,7 +9587,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueNumeric="-7" />
 			<column name="dunning_policy_id" valueNumeric="-2" />
 		</insert>
@@ -9630,7 +9630,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueNumeric="-8" />
 			<column name="dunning_policy_id" valueNumeric="-2" />
 		</insert>
@@ -9712,7 +9712,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueNumeric="-10" />
 			<column name="dunning_policy_id" valueNumeric="-10" />
 		</insert>
@@ -9755,7 +9755,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueNumeric="-20" />
 			<column name="dunning_policy_id" valueNumeric="-10" />
 		</insert>
@@ -9797,7 +9797,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueNumeric="-30" />
 			<column name="dunning_policy_id" valueNumeric="-10" />
 		</insert>
@@ -9840,7 +9840,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueNumeric="-40" />
 			<column name="dunning_policy_id" valueNumeric="-10" />
 		</insert>		
@@ -9920,7 +9920,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueNumeric="-50" />
 			<column name="dunning_policy_id" valueNumeric="-20" />
 		</insert>
@@ -9962,7 +9962,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueNumeric="-60" />
 			<column name="dunning_policy_id" valueNumeric="-20" />
 		</insert>
@@ -10004,7 +10004,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueNumeric="-70" />
 			<column name="dunning_policy_id" valueNumeric="-20" />
 		</insert>
@@ -10047,7 +10047,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueNumeric="-80" />
 			<column name="dunning_policy_id" valueNumeric="-20" />
 		</insert>
@@ -12740,7 +12740,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2B 1')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2B')" />
 		</insert>
@@ -12749,7 +12749,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2B 2')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2B')" />
 		</insert>
@@ -12758,7 +12758,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2B 3')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2B')" />
 		</insert>
@@ -12767,7 +12767,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2B 4')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2B')" />
 		</insert>
@@ -12815,7 +12815,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2B 1 FR')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2B FR')" />
 		</insert>
@@ -12824,7 +12824,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2B 2 FR')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2B FR')" />
 		</insert>
@@ -12833,7 +12833,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2B 3 FR')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2B FR')" />
 		</insert>
@@ -12842,7 +12842,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2B 4 FR')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2B FR')" />
 		</insert>
@@ -12890,7 +12890,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2C 1')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2C')" />
 		</insert>
@@ -12899,7 +12899,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2C 2')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2C')" />
 		</insert>
@@ -12908,7 +12908,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2C 3')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2C')" />
 		</insert>
@@ -12917,7 +12917,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2C 4')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2C')" />
 		</insert>
@@ -12965,7 +12965,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2C 1 FR')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2C FR')" />
 		</insert>
@@ -12974,7 +12974,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2C 2 FR')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2C FR')" />
 		</insert>
@@ -12983,7 +12983,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2C 3 FR')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2C FR')" />
 		</insert>
@@ -12992,7 +12992,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueComputed="(SELECT id from dunning_level where code = 'B2C 4 FR')" />
 			<column name="dunning_policy_id" valueComputed="(SELECT id from dunning_policy where policy_name = 'B2C FR')" />
 		</insert>
