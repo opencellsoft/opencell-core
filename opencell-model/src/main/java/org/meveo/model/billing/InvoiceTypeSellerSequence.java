@@ -40,7 +40,6 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.OfferServiceTemplate;
 
 /**
  * A mapping between Invoice type, seller and invoice numbering sequence
