@@ -2,9 +2,7 @@ package org.meveo.admin.job;
 
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.job.ScopedJob;
 
 import javax.inject.Inject;
 import java.util.Iterator;
@@ -29,12 +27,9 @@ public abstract class IteratorBasedScopedJobBean<T> extends IteratorBasedJobBean
 
     protected Optional<Iterator<T>> getIterator(JobExecutionResultImpl jobExecutionResult) {
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
-        Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-        if (ScopedJob.class.isAssignableFrom(job.getClass())) {
-            Long jobItemsLimit = ((ScopedJob) job).getJobItemsLimit(jobInstance);
-            if (jobItemsLimit != null && jobItemsLimit > 0) {
-                return getSynchronizedIteratorWithLimit(jobExecutionResult, jobItemsLimit.intValue());
-            }
+        Integer jobItemsLimit = jobInstanceService.getJobItemsLimit(jobInstance);
+        if (jobItemsLimit != null && jobItemsLimit > 0) {
+            return getSynchronizedIteratorWithLimit(jobExecutionResult, jobItemsLimit);
         }
         return getSynchronizedIterator(jobExecutionResult);
     }

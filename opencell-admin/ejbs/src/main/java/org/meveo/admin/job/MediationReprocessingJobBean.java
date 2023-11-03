@@ -167,7 +167,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
 
             // Start job status report task. Not run in future, so it will die when main thread dies
             Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance, lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
-                currentUserProvider, log, jobExecutionResultService);
+                currentUserProvider, log, jobExecutionResultService, jobExecutionService);
             Thread jobStatusReportThread = new Thread(jobStatusReportTask);
             jobStatusReportThread.start();
 

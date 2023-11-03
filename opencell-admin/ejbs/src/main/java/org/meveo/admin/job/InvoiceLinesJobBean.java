@@ -216,33 +216,20 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
     /**
      * Get a min and max ID from RT table
      *
-     * @param nbToRetrieve Number of items to retrieve for processing
      * @return An array containing [ min RT id, max RT id]
      */
-    private Long[] getProcessingSummary(int nbToRetrieve) {
-
+    private Long[] getProcessingSummary() {
         EntityManager em = emWrapper.getEntityManager();
-        if (nbToRetrieve > 0) {
-            List<Long> ids = em.createQuery("SELECT r.id FROM RatedTransaction r WHERE r.status='OPEN' order by r.id asc", Long.class)
-                    .setMaxResults(nbToRetrieve).getResultList();
-            if (!ids.isEmpty()) {
-                return new Long[]{Long.valueOf(ids.get(ids.size() - 1)), Long.valueOf(ids.get(0))};
-            } else {
-                return new Long[]{null, null};
-            }
+        Object[] minMax = (Object[]) em.createQuery("select min(id), max(id) from RatedTransaction where status='OPEN'").getSingleResult();
+        if (minMax[0] != null) {
+            Long minId = ((Number) minMax[0]).longValue();
+            Long maxId = ((Number) minMax[1]).longValue();
+
+            return new Long[]{minId, maxId};
+
         } else {
-            Object[] minMax = (Object[]) em.createQuery("select min(id), max(id) from RatedTransaction where status='OPEN'").getSingleResult();
-            if (minMax[0] != null) {
-                Long minId = ((Number) minMax[0]).longValue();
-                Long maxId = ((Number) minMax[1]).longValue();
-
-                return new Long[]{minId, maxId};
-
-            } else {
-                return new Long[]{null, null};
-            }
+            return new Long[]{null, null};
         }
-
     }
 
     /**
@@ -408,7 +395,9 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
             aggregationConfiguration = new AggregationConfiguration(currentBillingRun);
             aggregationConfiguration.setEnterprise(appProvider.isEntreprise());
 
-            aggregationQueryInfo = invoiceLineAggregationService.getAggregationSummaryAndILDetailsQuery(currentBillingRun, aggregationConfiguration, statelessSession, incrementalInvoiceLines);
+            aggregationQueryInfo = invoiceLineAggregationService.getAggregationSummaryAndILDetailsQuery(currentBillingRun, aggregationConfiguration,
+                    statelessSession, incrementalInvoiceLines, jobItemsLimit);
+
             nrOfAccounts = aggregationQueryInfo.getNumberOfBA();
 
             jobExecutionResult.addReport("Billing run #" + billingRun.getId() + ": will process " + nrOfAccounts + " accounts" + (incrementalInvoiceLines ? " in append mode." : "."));
@@ -428,7 +417,7 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
             break;
         }
 
-        Object[] convertSummary = getProcessingSummary(jobItemsLimit);
+        Object[] convertSummary = getProcessingSummary();
         minId = (Long) convertSummary[0];
         maxId = (Long) convertSummary[1];
 

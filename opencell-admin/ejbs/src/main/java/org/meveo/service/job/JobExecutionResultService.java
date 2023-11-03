@@ -35,6 +35,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -233,19 +234,38 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
         return jobInstances;
     }
 
+    /**
+     * Gets the job duration limit
+     *
+     * @param jobExecutionResult the job execution result
+     * @return the difference between now and the start date of job
+     */
     public Long getJobDurationLimit(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-        if (ScopedJob.class.isAssignableFrom(job.getClass())) {
-            return ((ScopedJob) job).checkJobDurationLimitReached(jobExecutionResult, jobInstance);
+        Long jobDurationLimit = jobInstanceService.getJobDurationLimit(jobInstance);
+        if (jobDurationLimit == null || jobDurationLimit == 0) {
+            return null;
         }
-        return null;
+        Date startDate = jobExecutionResult.getStartDate();
+        Date currentDate = new Date();
+        long jobExecutionDuration = ((currentDate.getTime() / (60 * 1000)) - (startDate.getTime() / (60 * 1000)));
+        return (jobExecutionDuration - jobDurationLimit) * 60;
     }
 
+    /**
+     * Gets the job time limit
+     *
+     * @param jobExecutionResult the job execution result
+     * @return the difference between limit time and the start date of job
+     */
     public Long getJobTimeLimit(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-        if (ScopedJob.class.isAssignableFrom(job.getClass())) {
-            return ((ScopedJob) job).checkJobTimeLimitReached(jobExecutionResult, jobInstance);
+        Date jobTimeLimit = jobInstanceService.getJobTimeLimit(jobInstance);
+        if (jobTimeLimit == null) {
+            return null;
         }
-        return null;
+        Date dateLimit = jobExecutionResult.getStartDate();
+        dateLimit = DateUtils.setHourToDate(dateLimit, jobTimeLimit.getHours());
+        dateLimit = DateUtils.setMinuteToDate(dateLimit, jobTimeLimit.getMinutes());
+        Date currentDate = new Date();
+        return (currentDate.getTime() - dateLimit.getTime()) / 1000;
     }
 }
