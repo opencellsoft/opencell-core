@@ -141,6 +141,10 @@ public class PaginationConfiguration implements Serializable {
     	this.joinType=joinType;
         this.forceCount = forceCount;
     }
+
+    public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, Set<String> groupBy, Set<String> having, JoinType joinType, Object... sortFieldsAndOrder) {
+        this(firstRow, numberOfRows, filters, fullTextFilter, fetchFields, groupBy, having, joinType, true, sortFieldsAndOrder);
+    }
     
     /**
      * Constructor
