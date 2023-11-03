@@ -792,12 +792,12 @@ public class InvoiceUblHelper {
 					allowanceCharge.getAllowanceChargeReasons().add(allowanceChargeReason);
 				}
 				Amount amount = objectFactorycommonBasic.createAmount();
-				amount.setValue(subCategoryInvoiceAgregate.getAmountWithTax());
+				amount.setValue(subCategoryInvoiceAgregate.getAmountWithTax().abs());
 				allowanceCharge.setAmount(amount);
 				
 				BaseAmount baseAmount = objectFactorycommonBasic.createBaseAmount();
 				baseAmount.setCurrencyID(invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getCurrencyCode() : null);
-				baseAmount.setValue(subCategoryInvoiceAgregate.getAmountWithoutTax());
+				baseAmount.setValue(subCategoryInvoiceAgregate.getAmountWithoutTax().abs());
 				allowanceCharge.setBaseAmount(baseAmount);
 				if(creditNote != null)
 					creditNote.getAllowanceCharges().add(allowanceCharge);
