@@ -158,8 +158,8 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param jobExecutionResult Job execution result
      */
     private void closeResultset(JobExecutionResultImpl jobExecutionResult) {
-        scrollableResults.close();
-        statelessSession.close();
+        if(scrollableResults !=null) scrollableResults.close();
+        if(statelessSession !=null) statelessSession.close();
     }
 
     /**
