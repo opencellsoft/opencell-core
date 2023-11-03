@@ -19,6 +19,7 @@
 package org.meveo.model.billing;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -39,7 +40,6 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.OfferServiceTemplate;
 
 /**
  * A mapping between Invoice type, seller and invoice numbering sequence
@@ -148,38 +148,22 @@ public class InvoiceTypeSellerSequence implements IEntity {
         this.prefixEL = prefixEL;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, invoiceSequence, invoiceType, prefixEL, seller);
+	}
 
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof OfferServiceTemplate)) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		InvoiceTypeSellerSequence other = (InvoiceTypeSellerSequence) obj;
+		return Objects.equals(id, other.id) && Objects.equals(invoiceSequence, other.invoiceSequence)
+				&& Objects.equals(invoiceType, other.invoiceType) && Objects.equals(prefixEL, other.prefixEL);
+	}
 
-        InvoiceTypeSellerSequence other = (InvoiceTypeSellerSequence) obj;
-
-        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            return true;
-        }
-
-        if (invoiceType != null) {
-            if (!invoiceType.equals(other.getInvoiceType())) {
-                return false;
-            }
-        } else if (other.getInvoiceType() != null) {
-            return false;
-        }
-
-        if (seller != null) {
-            if (!seller.equals(other.getSeller())) {
-                return false;
-            }
-        } else if (other.getSeller() != null) {
-            return false;
-        }
-        return true;
-    }
 }
