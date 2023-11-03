@@ -559,18 +559,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         RatingResult ratedEDRResult = new RatingResult();
         WalletOperation discountedWalletOperation=null;
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
-	    /* ignore businessKey to test perf changes
-		try {
-			String businessKey = (String) ValueExpressionWrapper.evaluateExpression(
-					bareWalletOperation.getChargeInstance().getChargeTemplate().getBusinessKeyEl(), Map.of("op", bareWalletOperation), String.class);
-			bareWalletOperation.setBusinessKey(businessKey);
-		} catch (Exception e) {
-			throw new InvalidELException(String.format("Error during businessKeyEl evaluation: subscription=%s, product instance=%s,%s, charge=%s, EDR=%s",
-					bareWalletOperation.getSubscription().getCode(), getProductId(bareWalletOperation), getProductCode(bareWalletOperation), 
-					getChargeTemplateCode(bareWalletOperation), (bareWalletOperation.getEdr() == null)? null : bareWalletOperation.getEdr().getId()));
-		}*/
-	   
-	    
+	/*    
 		try {
 			String businessKey = (String) ValueExpressionWrapper.evaluateExpression(
 					bareWalletOperation.getChargeInstance().getChargeTemplate().getBusinessKeyEl(), Map.of("op", bareWalletOperation), String.class);
@@ -580,6 +569,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 					bareWalletOperation.getSubscription().getCode(), getProductId(bareWalletOperation), getProductCode(bareWalletOperation), 
 					getChargeTemplateCode(bareWalletOperation), (bareWalletOperation.getEdr() == null)? null : bareWalletOperation.getEdr().getId()));
 		}
+*/
 	   
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
