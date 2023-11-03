@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,10 +23,19 @@ import org.meveo.service.base.PersistenceService;
 
 public class GenericRequestMapper {
     private final Class entityClass;
+
+    private boolean hugeEntity = false;
+
     private final Function<Class, PersistenceService> serviceFunction;
+
     public GenericRequestMapper(Class entityClass, Function<Class, PersistenceService> serviceFunction) {
+        this(entityClass, serviceFunction, true);
+    }
+
+    public GenericRequestMapper(Class entityClass, Function<Class, PersistenceService> serviceFunction, boolean hugeEntity) {
         this.entityClass = entityClass;
         this.serviceFunction = serviceFunction;
+        this.hugeEntity = hugeEntity;
     }
 
     public PaginationConfiguration mapTo(GenericPagingAndFiltering genericPagingAndFiltering){
@@ -39,7 +49,7 @@ public class GenericRequestMapper {
         return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(0L).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
                 computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getGroupBy(), genericPagingAndFiltering.getHaving(), genericPagingAndFiltering.getJoinType(),
-                genericPagingAndFiltering.getSortBy(), PagingAndFiltering.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
+                Optional.ofNullable(genericPagingAndFiltering.getSortBy()).orElse(hugeEntity ? null : "id"), Optional.ofNullable(genericPagingAndFiltering.getSortOrder()).map(PagingAndFiltering.SortOrder::valueOf).orElse(hugeEntity ? null : PagingAndFiltering.SortOrder.ASCENDING));
     }
     private List<String> computeFetchFields(GenericPagingAndFiltering genericPagingAndFiltering) {
         if(genericPagingAndFiltering.getSortBy() == null) {
