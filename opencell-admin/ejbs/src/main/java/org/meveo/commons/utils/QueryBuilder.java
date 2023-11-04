@@ -155,6 +155,7 @@ public class QueryBuilder {
         String sql = "left join " + shouldFetch + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
 
         return innerJoin.getNextInnerJoins().stream()
+                .distinct()
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
                         return format(innerJoin.getAlias(), next, doFetch);
