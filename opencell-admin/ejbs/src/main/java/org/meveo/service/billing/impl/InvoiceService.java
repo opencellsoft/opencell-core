@@ -5670,8 +5670,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         EntityManager em = getEntityManager();
         for (InvoiceLine invoiceLine : invoiceLines) {
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
-        	if ((entityToInvoice instanceof CommercialOrder || entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote || entityToInvoice instanceof BillingAccount ) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getInvoice().getBillingAccount().getId()))) {
-                billingAccount = invoiceLine.getInvoice().getBillingAccount();
+        	if ((entityToInvoice instanceof CommercialOrder || entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote || entityToInvoice instanceof BillingAccount ) && (billingAccount == null || (invoiceLine.getBillingAccount() != null && !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId())))) {
+                billingAccount = invoiceLine.getBillingAccount();
                 if (defaultPaymentMethod == null && billingAccount != null) {
                     defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
                 }
@@ -6336,7 +6336,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Tax tax = invoiceLine.getTax();
             UserAccount userAccount = invoiceLine.getSubscription() == null ? null : invoiceLine.getSubscription().getUserAccount();
             if(userAccount==null) {
-                userAccount=invoiceLine.getInvoice().getBillingAccount().getUsersAccounts().size()==1?invoiceLine.getInvoice().getBillingAccount().getUsersAccounts().get(0):null;
+                userAccount=invoiceLine.getBillingAccount() != null && invoiceLine.getBillingAccount().getUsersAccounts().size()==1?invoiceLine.getBillingAccount().getUsersAccounts().get(0):null;
             }
             // Check if tax has to be recalculated. Does not apply to RatedTransactions that had tax explicitly set/overridden
             if (calculateTaxOnSubCategoryLevel && !invoiceLine.isTaxOverridden()) {
