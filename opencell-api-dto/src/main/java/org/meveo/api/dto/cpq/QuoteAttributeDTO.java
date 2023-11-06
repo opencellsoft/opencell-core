@@ -68,6 +68,9 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	private Boolean booleanValue;
 	
 	private Integer sequence;
+	private boolean mandatory=Boolean.FALSE;
+	private boolean display;
+	private boolean readOnly = Boolean.FALSE;
 
 	/**
 	 * @return the quoteAttributeCode
@@ -91,9 +94,12 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 		booleanValue = quoteAttribute.getBooleanValue();
 	}
 	
-	public QuoteAttributeDTO(QuoteAttribute quoteAttribute, Integer sequence) {
+	public QuoteAttributeDTO(QuoteAttribute quoteAttribute, Integer sequence, boolean mandatory, boolean display, boolean readOnly) {
 		this(quoteAttribute);
 		this.sequence = sequence;
+		this.mandatory = mandatory;
+		this.display = display;
+		this.readOnly = readOnly;
 	}
 	/**
 	 * @param quoteAttributeCode the quoteAttributeCode to set
@@ -175,5 +181,32 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+	
+	public boolean isMandatory() {
+		return mandatory;
+	}
+	
+	public QuoteAttributeDTO setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+		return this;
+	}
+	
+	public boolean isDisplay() {
+		return display;
+	}
+	
+	public QuoteAttributeDTO setDisplay(boolean display) {
+		this.display = display;
+		return this;
+	}
+	
+	public Boolean getReadOnly() {
+		return readOnly;
+	}
+	
+	public QuoteAttributeDTO setReadOnly(Boolean readOnly) {
+		this.readOnly = readOnly;
+		return this;
 	}
 }
