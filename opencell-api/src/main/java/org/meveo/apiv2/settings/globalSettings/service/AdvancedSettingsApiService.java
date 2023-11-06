@@ -95,7 +95,7 @@ public class AdvancedSettingsApiService implements ApiService<AdvancedSettings> 
     }
 
 	public Optional<List<AdvancedSettings>> patch(List<AdvancedSettings> listEntities) {
-		return Optional.of(listEntities.stream().map(x->updateEntity(x.getId(),x)).collect(Collectors.toList()));
+		return Optional.of(listEntities.stream().map(x->advancedSettingsService.update(updateEntity(x.getId(),x))).collect(Collectors.toList()));
 	}
 
 }
