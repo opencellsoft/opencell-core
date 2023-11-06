@@ -121,8 +121,18 @@ public class QuoteProductDTO extends BaseEntityDto{
 		if(loadAttributes) {
 			productAttributes=new ArrayList<QuoteAttributeDTO>();
 			for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {
-				Integer sequence = quoteProduct.getProductVersion().getAttributes().stream().filter(pva -> pva.getAttribute().getCode().equals(quoteAttribute.getAttribute().getCode())).findFirst().map(ProductVersionAttribute::getSequence).orElse(0);
-				productAttributes.add(new QuoteAttributeDTO(quoteAttribute, sequence));
+				ProductVersionAttribute productVersionAttribute = quoteProduct.getProductVersion().getAttributes().stream().filter(pva -> pva.getAttribute().getCode().equals(quoteAttribute.getAttribute().getCode())).findFirst().orElse(null);
+				Integer sequence = 0;
+				boolean display = false;
+				boolean mandatory = false;
+				Boolean readOnly = null;
+				if(productVersionAttribute != null) {
+					sequence = productVersionAttribute.getSequence();
+					display = productVersionAttribute.isDisplay();
+					mandatory = productVersionAttribute.isMandatory();
+					readOnly = productVersionAttribute.getReadOnly();
+				}
+				productAttributes.add(new QuoteAttributeDTO(quoteAttribute, sequence, mandatory, display, readOnly));
 			}
 		}
 		accountingArticlePrices=new ArrayList<AccountingArticlePricesDTO>();
