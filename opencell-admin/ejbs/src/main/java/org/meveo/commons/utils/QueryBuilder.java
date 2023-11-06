@@ -155,6 +155,7 @@ public class QueryBuilder {
         String sql = "left join " + shouldFetch + (rootAlias.isEmpty() ? "" : rootAlias + ".") + innerJoin.getName() + " " + innerJoin.getAlias() + " ";
 
         return innerJoin.getNextInnerJoins().stream()
+                .distinct()
                 .map(next -> {
                     if(!next.getNextInnerJoins().isEmpty())
                         return format(innerJoin.getAlias(), next, doFetch);
@@ -269,7 +270,7 @@ public class QueryBuilder {
 	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType) {
 		this.clazz = clazz;
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
-		initQueryBuilder(getInitQuery(clazz, alias, doFetch, fetchFields), alias);
+		initQueryBuilder(getInitQuery(clazz, alias, null, doFetch, fetchFields), alias);
 	}
 	
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
@@ -288,21 +289,24 @@ public class QueryBuilder {
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator) {
 		this(clazz, alias, true, fetchFields, joinType, filterOperator);
 	}
-	
-	/**
-	 * Contructor 
-	 * 
-	 * @param clazz Class for which query is created.
+
+    /**
+     * Contructor
+     * 
+     * @param clazz Class for which query is created.
      * @param alias Alias of a main table.
+     * @param selectFields Fields to return by query. If ommited - a full entity will be returned
+     * @param doFetch Apply fetch to left join fetchFields?
      * @param fetchFields Additional (list/map type) fields to fetch
-	 * @param joinType
-	 * @param filterOperator Operator to build where statement
-	 */
-	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator, boolean distinct) {
+     * @param joinType Join type (Inner, left, right) to apply to related entities
+     * @param filterOperator Operator to build where statement
+     * @param distinct Is this a distinct select query
+     */
+    public QueryBuilder(Class<?> clazz, String alias,String selectFields, boolean doFetch, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator, boolean distinct) {
 		this.distinct = distinct;
 		this.joinType=joinType;
-		this.filterOperator=filterOperator;
-		initQueryBuilder(getInitQuery(clazz, alias, doFetch,  fetchFields), alias);
+        this.filterOperator = filterOperator;
+        initQueryBuilder(getInitQuery(clazz, alias, selectFields, doFetch, fetchFields), alias);
 	}
 
 	/**
@@ -328,7 +332,7 @@ public class QueryBuilder {
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
     	this.clazz = clazz;
-    	initQueryBuilder(getInitQuery(clazz, alias, true, fetchFields), alias);
+    	initQueryBuilder(getInitQuery(clazz, alias, null, true, fetchFields), alias);
     }
 
     /**
@@ -379,15 +383,17 @@ public class QueryBuilder {
     /**
      * @param clazz name of class
      * @param alias alias for entity
+     * @param selectFields Fields to return by query. If ommited - a full entity will be returned
+     * @param doFetch Apply fetch to left join fetchFields?
      * @param fetchFields list of field need to be fetched.
      * @return SQL query.
      */
-    private String getInitQuery(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields) {
-    	this.alias=alias;
-    	this.clazz=clazz;
+    private String getInitQuery(Class<?> clazz, String alias, String selectFields, boolean doFetch, List<String> fetchFields) {
+        this.alias = alias;
+        this.clazz = clazz;
     	List<String> select = new ArrayList<>();
-    	boolean useSelectColumns = false;
-        StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
+        boolean useSelectColumns = false;
+        StringBuilder query = new StringBuilder((selectFields != null ? "select " + selectFields + " " : "") + "from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
 				if(!fetchField.contains(".") && !fetchField.contains(" ")) {

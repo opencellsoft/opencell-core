@@ -8415,59 +8415,6 @@
             <column name="timerentity_id" valueNumeric="-1" />
             <column name="uuid" value="Invoice_Lines_Job_V2" />
         </insert>
-       <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="InvoiceLinesJob_billingRun"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Billing Runs"/>
-            <column name="field_type" value="ENTITY"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="versionable" value="0"/>
-            <column name="entity_clazz" value="org.meveo.model.billing.BillingRun"/>
-            <column name="storage_type" value="LIST"/>
-            <column name="allow_edit" value="1"/>
-            <column name="hide_on_new" value="0"/>
-            <column name="inh_as_def_value" value="0"/>
-            <column name="cf_protectable" value="0"/>
-        </insert>
-	    <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_AggregationPerUnitAmount"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="aggregation per unit amount"/>
-            <column name="field_type" value="BOOLEAN"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="value_required" value="0"/>
-            <column name="default_value" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_ILDateAggregationOptions"/>
-            <column name="description" value="date aggregation options"/>
-            <column name="field_type" value="LIST"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="versionable" value="0"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="trigger_end_period_event" value="0"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="allow_edit" value="1"/>
-            <column name="max_value" value="9223372036854775807"/>
-            <column name="hide_on_new" value="0"/>
-            <column name="inh_as_def_value" value="0"/>
-            <column name="cf_protectable" value="0"/>
-        </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
@@ -10261,28 +10208,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
-    <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI">
-        <insert tableName="crm_custom_field_tmpl_val">
-            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
-            <column name="listvalues" value="NO_DATE_AGGREGATION"/>
-            <column name="listvalues_key" value="NO_DATE_AGGREGATION"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl_val">
-            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
-            <column name="listvalues" value="MONTH_OF_USAGE_DATE"/>
-            <column name="listvalues_key" value="MONTH_OF_USAGE_DATE"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl_val">
-            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
-            <column name="listvalues" value="WEEK_OF_USAGE_DATE"/>
-            <column name="listvalues_key" value="WEEK_OF_USAGE_DATE"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl_val">
-            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
-            <column name="listvalues" value="DAY_OF_USAGE_DATE"/>
-            <column name="listvalues_key" value="DAY_OF_USAGE_DATE"/>
-        </insert>
-    </changeSet>
+    <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI"/>
 
 	<changeSet id="INTRD-4891-25022022" author="Abdelkader.Bouazza"/>
 
@@ -17112,6 +17038,269 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
             <where>code='org.meveo.service.script.ServiceInstanceImportScript'</where>
         </update>
     </changeSet>
+    
+    <changeSet id="INTRD-18792_INSERT_DEFAULT_PP_FILTERS_CONFIGURATION" author="Mohammed_ElAzzouzi">
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enablePricePlanFilters"/>
+		    <column name="description" value="pricePlanFilters.enablePricePlanFilters"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableOfferTemplate"/>
+		    <column name="description" value="pricePlanFilters.enableOfferTemplate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableStartSubscriptionDate"/>
+		    <column name="description" value="pricePlanFilters.enableStartSubscriptionDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableEndSubscriptionDate"/>
+		    <column name="description" value="pricePlanFilters.enableEndSubscriptionDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableStartRatingDate"/>
+		    <column name="description" value="pricePlanFilters.enableStartRatingDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableEndRatingDate"/>
+		    <column name="description" value="pricePlanFilters.enableEndRatingDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMinQuantity"/>
+		    <column name="description" value="pricePlanFilters.enableMinQuantity"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMaxQuantity"/>
+		    <column name="description" value="pricePlanFilters.enableMaxQuantity"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMinSubscriptionAgeInMonth"/>
+		    <column name="description" value="pricePlanFilters.enableMinSubscriptionAgeInMonth"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMaxSubscriptionAgeInMonth"/>
+		    <column name="description" value="pricePlanFilters.enableMaxSubscriptionAgeInMonth"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria1Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria1Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria2Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria2Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria3Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria3Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteriaEL"/>
+		    <column name="description" value="pricePlanFilters.enableCriteriaEL"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableTradingCurrency"/>
+		    <column name="description" value="pricePlanFilters.enableTradingCurrency"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableTradingCountry"/>
+		    <column name="description" value="pricePlanFilters.enableTradingCountry"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableSeller"/>
+		    <column name="description" value="pricePlanFilters.enableSeller"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityCalendar"/>
+		    <column name="description" value="pricePlanFilters.enableValidityCalendar"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityFrom"/>
+		    <column name="description" value="pricePlanFilters.enableValidityFrom"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="true"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityDate"/>
+		    <column name="description" value="pricePlanFilters.enableValidityDate"/>
+		</insert>
+	</changeSet>
 
     <changeSet id="#INTRD-13383_20230123" author="bourras">
         <insert tableName="meveo_script_instance">
@@ -17130,50 +17319,6 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     </changeSet>
     
     <changeSet id="#INTRD-5882__23-03-2022" author="Mohammed_ELAZZOUZI">
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="waitingMillis"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Waiting before next launch (ms)"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="0"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:1"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="nbRuns"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Number of parallel execution"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="1"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:0"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="maxInvoiceLinesPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Maximum of maxInvoiceLines generated per transaction"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="0"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-        </insert>
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
             <column name="version" valueNumeric="0" />
@@ -17212,70 +17357,6 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
                     valueComputed="(SELECT id from generic_sequence where code = 'billing_cycle_sequence')"/>
         </insert>
     </changeSet>
-    
-    <changeSet id="#INTRD-17353__14-07-2023" author="Mohammed_ELAZZOUZI">
-	    <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_BillingAccountPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Process transactions by billing account"/>
-            <column name="field_type" value="BOOLEAN"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="value_required" value="0"/>
-            <column name="default_value" value="1"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:2;fieldGroup:Performances"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_MaxRTsPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="preferred max RTs per transaction"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="1000000"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:3;fieldGroup:Performances"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_MaxLinesPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="preferred max lines per transaction"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="10000"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:4;fieldGroup:Performances"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_MaxRTsPerLine"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="preferred max RTs per line"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="100000"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:5;fieldGroup:Performances"/>
-        </insert>
-
-    </changeSet>
 
 	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-12463_20230119" author="AbdellatifBARI" />
@@ -17290,6 +17371,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
     <changeSet id="#INTRD-16167_20230515" author="TarikFA." />
     <changeSet id="#INTRD-16167_20230515_revert" author="TarikFA." />
+    <changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

@@ -115,7 +115,7 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
 
         try {
         	if (postData.getId() == null ) {
-        		result.setEntityId(billingCycleApi.create(postData).getId());
+        		result.setEntityId(billingCycleApi.createOrUpdate(postData).getId());
         	} else {
         		result.setEntityId(billingCycleApi.update(postData).getId());
         	}

@@ -1,8 +1,8 @@
 package org.meveo.model.cpq.contract;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -13,7 +13,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
-import org.meveo.model.admin.Seller;
 
 /**
  * 
@@ -23,6 +22,7 @@ import org.meveo.model.admin.Seller;
  */
 @Entity
 @Table(name = "billing_redirection_rule")
+@Cacheable
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_billing_rule_seq"), })
 @NamedQueries({
@@ -54,6 +54,7 @@ import org.meveo.model.admin.Seller;
             + " and (br.contract.customer.id is null or br.contract.customer.id=:customerId) "
             + " and (br.contract.seller.id is null) "
             + " order by br.contract.billingAccount.id, br.contract.customerAccount.id, br.contract.customer.id, br.contract.seller.id, br.priority NULLS LAST"),
+    @NamedQuery(name = "BillingRule.findAllByContractIdForRating", query = "select contract.id, id, criteriaEL, invoicedBACodeEL from BillingRule order by contract.id, priority NULLS LAST"),
     @NamedQuery(name = "BillingRule.findByContractIdForRating", query = "select id, criteriaEL, invoicedBACodeEL from BillingRule where contract.id=:contractId order by priority NULLS LAST", hints = {
             @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
 public class BillingRule extends EnableEntity {

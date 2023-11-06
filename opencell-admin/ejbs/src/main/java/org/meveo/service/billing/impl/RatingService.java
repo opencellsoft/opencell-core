@@ -456,6 +456,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 newEdr.setParameter4(elUtils.evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
                 newEdr.setQuantity(BigDecimal.valueOf(elUtils.evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
                 newEdr.setWalletOperation(walletOperation);
+                newEdr.setBusinessKey(walletOperation.getBusinessKey());
 
                 Subscription sub = null;
 
@@ -560,6 +561,28 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         RatingResult ratedEDRResult = new RatingResult();
         WalletOperation discountedWalletOperation=null;
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
+	    
+		try {
+			String businessKey = (String) ValueExpressionWrapper.evaluateExpression(
+					bareWalletOperation.getChargeInstance().getChargeTemplate().getBusinessKeyEl(), Map.of("op", bareWalletOperation), String.class);
+			bareWalletOperation.setBusinessKey(businessKey);
+		} catch (Exception e) {
+			throw new InvalidELException(String.format("Error during businessKeyEl evaluation: subscription=%s, product instance=%s,%s, charge=%s, EDR=%s",
+					bareWalletOperation.getSubscription().getCode(), getProductId(bareWalletOperation), getProductCode(bareWalletOperation), 
+					getChargeTemplateCode(bareWalletOperation), (bareWalletOperation.getEdr() == null)? null : bareWalletOperation.getEdr().getId()));
+		}
+	   
+	    
+		try {
+			String businessKey = (String) ValueExpressionWrapper.evaluateExpression(
+					bareWalletOperation.getChargeInstance().getChargeTemplate().getBusinessKeyEl(), Map.of("op", bareWalletOperation), String.class);
+			bareWalletOperation.setBusinessKey(businessKey);
+		} catch (Exception e) {
+			throw new InvalidELException(String.format("Error during businessKeyEl evaluation: subscription=%s, product instance=%s,%s, charge=%s, EDR=%s",
+					bareWalletOperation.getSubscription().getCode(), getProductId(bareWalletOperation), getProductCode(bareWalletOperation), 
+					getChargeTemplateCode(bareWalletOperation), (bareWalletOperation.getEdr() == null)? null : bareWalletOperation.getEdr().getId()));
+		}
+	   
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
 
@@ -755,7 +778,32 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
         return recurringChargeTemplate;
     }
+    
+    /**
+     * Get Product id
+     * @param bareWalletOperation {@link WalletOperation}
+     * @return Product id
+     */
+    private static Long getProductId(WalletOperation bareWalletOperation) {
+        Long productId = null;
 
+        if(bareWalletOperation.getServiceInstance() != null && bareWalletOperation.getServiceInstance().getProductVersion() != null
+                && bareWalletOperation.getServiceInstance().getProductVersion().getProduct() != null ) {
+            productId = bareWalletOperation.getServiceInstance().getProductVersion().getProduct().getId();
+        }
+
+        return productId;
+    }
+
+    private static String getChargeTemplateCode(WalletOperation bareWalletOperation) {
+        String chargeTemplateCode = null;
+
+        if(bareWalletOperation.getChargeInstance() != null && bareWalletOperation.getChargeInstance().getChargeTemplate() != null) {
+            chargeTemplateCode = bareWalletOperation.getChargeInstance().getChargeTemplate().getCode();
+        }
+
+        return chargeTemplateCode;
+    }
     /**
      * Get the customer and all parent customers
      * @param pCustomer Customer
@@ -767,6 +815,21 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
     }
 
+    /**
+     * Get Product code
+     * @param bareWalletOperation {@link WalletOperation}
+     * @return Product code
+     */
+    private static String getProductCode(WalletOperation bareWalletOperation) {
+        String productCode = null;
+
+        if(bareWalletOperation.getServiceInstance() != null && bareWalletOperation.getServiceInstance().getProductVersion() != null
+                && bareWalletOperation.getServiceInstance().getProductVersion().getProduct() != null ) {
+            productCode = bareWalletOperation.getServiceInstance().getProductVersion().getProduct().getCode();
+        }
+
+        return productCode;
+    }
 
     private Contract lookupSuitableContract(List<Customer> customers, List<Contract> contracts) {
         return this.lookupSuitableContract(customers, contracts, false);
@@ -855,12 +918,19 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                         wo.setUnitAmountWithoutTax(priceWithoutTax);
                     }
                     String amountEL = ppmVersion.getPriceEL();
-                    String amountELPricePlanMatrixLine = pricePlanMatrixLine.getValueEL();
                     if (!StringUtils.isBlank(amountEL)) {
                         priceWithoutTax = elUtils.evaluateAmountExpression(amountEL, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
+                    String amountELPricePlanMatrixLine = pricePlanMatrixLine.getValueEL();
                     if (!StringUtils.isBlank(amountELPricePlanMatrixLine)) {
-                        priceWithoutTax = elUtils.evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
+                        BigDecimal amountElPPML = elUtils.evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
+                        if (amountElPPML != null) {
+                            if (appProvider.isEntreprise()) {
+                                priceWithoutTax = amountElPPML;
+                            } else {
+                                priceWithTax = amountElPPML;
+                            }
+                        }
                     }
                 }
                 if (priceWithoutTax == null && priceWithTax == null) {
@@ -983,6 +1053,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         walletOperation.setAmountWithoutTax(amount);
         walletOperation.setAmountWithTax(amount);
         AccountingArticle accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(walletOperation.getChargeInstance(), walletOperation);
+        if (accountingArticle == null) {
+            throw new RatingException("Unable to match an accounting article for a charge " + walletOperation.getChargeInstance().getId() + "/" + walletOperation.getChargeInstance().getCode());
+        }
         walletOperation.setAccountingArticle(accountingArticle);
 
         TaxInfo taxInfo = taxMappingService.determineTax(walletOperation);
@@ -1262,7 +1335,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             discountWalletOperation.setPriceplan(pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix());
             discountWalletOperation.setPricePlanMatrixLine(pricePlanMatrixLine);
         }
-    	
+        discountWalletOperation.setBusinessKey(bareWalletOperation.getBusinessKey());
+
     	accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, discountWalletOperation);
     	if(defaultArticle.equalsIgnoreCase(accountingArticle.getCode())) {
     		accountingArticle=bareWalletOperation.getAccountingArticle();

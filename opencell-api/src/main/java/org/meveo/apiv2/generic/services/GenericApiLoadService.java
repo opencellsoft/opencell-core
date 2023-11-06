@@ -27,6 +27,7 @@ import javax.inject.Named;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.GenericOpencellRestful;
 import org.meveo.apiv2.generic.GenericFieldDetails;
 import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
@@ -52,6 +53,13 @@ public class GenericApiLoadService {
     
     @Inject
     private GenericFileExportManager genericExportManager;
+    
+    @Inject
+    private GenericPagingAndFilteringUtils genericPagingAndFilteringUtils;
+
+    public Long count(Class entityClass, PaginationConfiguration searchConfig) {
+        return persistenceDelegate.count(entityClass, searchConfig);
+    }
 
     public String findPaginatedRecords(Boolean extractList, Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> fetchFields, Long nestedDepth, Long id, Set<String> excludedFields) {
         if(genericFields != null && isAggregationQueries(genericFields)){
@@ -66,8 +74,12 @@ public class GenericApiLoadService {
                     .collect(toList());
             Map<String, Object> results = new LinkedHashMap<>();
             results.put("total", list.size());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
-            results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
+            if(searchConfig.getNumberOfRows() != null) {
+            	results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            }
+            if(searchConfig.getFirstRow() != null) {
+            	results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
+            }
             results.put("data", mapResult);
 
             return serializeResults(results);
@@ -84,19 +96,23 @@ public class GenericApiLoadService {
             .collect(toList());
             Map<String, Object> results = new LinkedHashMap<String, Object>();
             results.put("total", searchResult.getCount());
-            results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
-            results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
+            if(searchConfig.getNumberOfRows() != null) {
+            	results.put("limit", Long.valueOf(searchConfig.getNumberOfRows()));
+            }
+            if(searchConfig.getFirstRow() != null) {
+            	results.put("offset", Long.valueOf(searchConfig.getFirstRow()));
+            }
             results.put("data", mapResult);
             return serializeResults(results);
         }else{
             SearchResult searchResult = persistenceDelegate.list(entityClass, searchConfig);
-            ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
+            ImmutableGenericPaginatedResource.Builder builder = ImmutableGenericPaginatedResource.builder()
                     .data(searchResult.getEntityList())
-                    .limit(Long.valueOf(searchConfig.getNumberOfRows()))
+                    .limit(genericPagingAndFilteringUtils.getLimit(searchConfig.getNumberOfRows()))
                     .offset(Long.valueOf(searchConfig.getFirstRow()))
-                    .total(searchResult.getCount())
-                    .filters(searchConfig.getFilters())
-                    .build();
+                    .filters(searchConfig.getFilters());
+            builder.total(searchResult.getCount());
+            ImmutableGenericPaginatedResource genericPaginatedResource = builder.build();
             return JsonGenericMapper.Builder.getBuilder()
                     .withExtractList(Objects.nonNull(extractList) ? extractList : genericOpencellRestful.shouldExtractList())
                     .withNestedEntities(fetchFields)

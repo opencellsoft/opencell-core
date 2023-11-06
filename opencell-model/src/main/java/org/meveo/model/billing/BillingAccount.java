@@ -45,6 +45,7 @@ import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -95,7 +96,6 @@ import org.meveo.model.tax.TaxCategory;
         @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount"),
         @NamedQuery(name = "BillingAccount.getCountByParent", query = "select count(*) from BillingAccount ba where ba.customerAccount=:parent"),
         @NamedQuery(name = "BillingAccount.listByOpenILFromBillingRun", query = "select distinct b from InvoiceLine il join il.billingAccount b where il.billingRun=:billingRun and il.status='OPEN'"),
-        @NamedQuery(name = "BillingAccount.changeMassDataProcessing", query = "update BillingAccount set massData=:massData where id=:id"),
 		@NamedQuery(name = "BillingAccount.getBillingAccountDetailsItems", query = "select distinct b.id, s.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, m2.id, m2.paymentType, string_agg(concat(CAST(dpi.discountPlan.id as string),'|',CAST(dpi.startDate AS string),'|',CAST(dpi.endDate AS string)),','),"
 				+ " sum(case when ao.transactionCategory = 'DEBIT' then ao.unMatchingAmount else (-1 * ao.unMatchingAmount) end) "
 				+ " FROM BillingAccount b left join b.customerAccount ca left join ca.customer c left join c.customerCategory cc left join c.seller s "
@@ -117,6 +117,8 @@ import org.meveo.model.tax.TaxCategory;
 				+ " group by b.id, s.id, b.tradingLanguage.id, b.nextInvoiceDate, b.electronicBilling, ca.dueDateDelayEL, cc.exoneratedFromTaxes, cc.exonerationTaxEl, m.id, m.paymentType, m2.id, m2.paymentType"
 				+ " order by b.id"),
 		@NamedQuery(name = "BillingAccount.getCountByCreditCategory", query = "select count(*) from BillingAccount ba where ba.id=:id and ba.customerAccount.creditCategory.id in (:creditCategoryIds)"),
+		@NamedQuery(name = "BillingAccount.fetchIdByCode", query = "SELECT b.id FROM BillingAccount b where b.code=:code", hints = {@QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
+		@NamedQuery(name = "BillingAccount.listIdByCode", query = "SELECT b.code, b.id FROM BillingAccount b "),
             @NamedQuery(name = "BillingAccount.getBaFetchCaAndCustomer", query = "select ba from BillingAccount ba left join fetch ba.customerAccount as ca left join fetch ca.customer as c where ba.id = :id ")})
 public class BillingAccount extends AccountEntity implements IInvoicingMinimumApplicable, IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
@@ -379,23 +381,8 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
 
     @Transient
     private List<InvoiceLine> minInvoiceLines;
-    
+
     /**
-     * account is linked to hug number of RTs
-     */
-    @Type(type = "numeric_boolean")
-    @Column(name = "mass_data")
-    private boolean massData=false;
-
-    public boolean isMassData() {
-		return massData;
-	}
-
-	public void setMassData(boolean massData) {
-		this.massData = massData;
-	}
-
-	/**
      * IsoIcd
      */
     @ManyToOne(fetch = FetchType.LAZY)

@@ -24,4 +24,12 @@ public class UntdidVatPaymentOptionService extends PersistenceService<UntdidVatP
             return null;
         }
     }
+	
+	public UntdidVatPaymentOption findTheOldOne(){
+		try{
+			return (UntdidVatPaymentOption) getEntityManager().createQuery("from UntdidVatPaymentOption u order by  u.id ASC").setMaxResults(1).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 }

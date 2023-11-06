@@ -851,6 +851,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                         taxInfo != null ? taxInfo.taxClass : null, null, rt.getType(), null,  null);
 
                     newRT.setInvoice(entity);
+                    newRT.setBusinessKey(rt.getBusinessKey());
 
                     aggregateHandler.addRT(entity.getInvoiceDate(), newRT);
                 }

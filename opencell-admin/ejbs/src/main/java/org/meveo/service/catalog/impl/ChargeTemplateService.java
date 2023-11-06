@@ -29,10 +29,12 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.util.CollectionUtil;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -381,4 +383,10 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
         }
         return chargeTemplates;
     }
+	public boolean checkCreatedCharg(String code) {
+		List<ChargeTemplate> results = getEntityManager().createQuery("from ChargeTemplate ct where lower(ct.code)=:code", ChargeTemplate.class)
+				.setParameter("code", code.toLowerCase())
+				.getResultList();
+		return CollectionUtils.isNotEmpty(results);
+	}
 }

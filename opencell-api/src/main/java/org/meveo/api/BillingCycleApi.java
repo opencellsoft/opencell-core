@@ -110,6 +110,15 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         entity = billingCycleService.update(entity);
         return entity;
     }
+    
+    @Override
+    public BillingCycle createOrUpdate(BillingCycleDto dto) throws MeveoApiException, BusinessException {
+	    if(billingCycleService.findByCode(dto.getCode()) != null) {
+	        return update(dto);
+	    } else {
+	        return create(dto);
+	    }
+    }
 
     /**
      * Populate entity with fields from DTO entity
@@ -258,11 +267,14 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getDisableAggregation() != null) {
             entity.setDisableAggregation(dto.getDisableAggregation());
         }
+
         if (dto.getUseAccountingArticleLabel() != null) {
             entity.setUseAccountingArticleLabel(dto.getUseAccountingArticleLabel());
         }
-        
-        entity.setDateAggregation(dto.getDateAggregation());
+
+        if (dto.getDateAggregation() != null) {
+            entity.setDateAggregation(dto.getDateAggregation());
+        }
         
         if (dto.getAggregateUnitAmounts() != null) {
             entity.setAggregateUnitAmounts(dto.getAggregateUnitAmounts());

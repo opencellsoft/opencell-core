@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.JobRunningStatusEnum;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Started;
 import org.meveo.model.audit.ChangeOriginEnum;
@@ -70,7 +71,7 @@ public abstract class Job {
     public static final String CFT_PREFIX = "JobInstance";
 
     /**
-     * Custom field for a Number of simultaneous threads that job executes
+     * Custom field for a Number of simultaneous data processing threads that job executes
      */
     public static final String CF_NB_RUNS = "nbRuns";
 
@@ -85,6 +86,11 @@ public abstract class Job {
     public static final String CF_BATCH_SIZE = "batchSize";
     
     /**
+     * Custom field for a number of items to process simultaneously in one transaction as a batch for Job secondary steps.
+     */
+    public static final String CF_BATCH_SECONDARY_STEP_SIZE = "batchSecondaryStepSize";
+
+    /**
      * Custom field for a applyBilingRules.
      */
     public static final String CF_APPLY_BILLING_RULES = "applyBillingRules";
@@ -93,7 +99,7 @@ public abstract class Job {
      * Custom field for a sorting option
      */
     public static final String CF_SORTING_OPTION = "sortingOption";
-    
+
     /**
      * What initiated/launched Job
      */
@@ -177,7 +183,7 @@ public abstract class Job {
                 Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());
 
             if (executionResult == null) {
-                executionResult = new JobExecutionResultImpl(jobInstance, jobLauncher != null ? jobLauncher : JobLauncherEnum.TRIGGER);
+                executionResult = new JobExecutionResultImpl(jobInstance, jobLauncher != null ? jobLauncher : JobLauncherEnum.TRIGGER, EjbUtils.getCurrentClusterNode());
                 jobExecutionResultService.persistResult(executionResult);
             }
 
@@ -185,12 +191,9 @@ public abstract class Job {
                 eventJobStarted.fire(executionResult);
                 executionResult = execute(executionResult, jobInstance);
 
-                boolean jobCanceled = jobExecutionService.isJobCancelled(jobInstance.getId());
                 boolean moreToProcess = executionResult.isMoreToProcess();
-
-                executionResult.setStatus(jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
-                executionResult.close();
-                jobExecutionResultService.persistResult(executionResult);
+                
+                boolean jobCanceled = closeExecutionResult(jobInstance, executionResult, moreToProcess);
 
                 log.info("Job {} of type {} execution finished. Job {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
                     jobCanceled ? "was canceled." : moreToProcess ? "completed, with more data to process." : "completed.");
@@ -224,6 +227,14 @@ public abstract class Job {
             return JobExecutionResultStatusEnum.CANCELLED;
         }
     }
+
+	protected boolean closeExecutionResult(JobInstance jobInstance, JobExecutionResultImpl executionResult, boolean moreToProcess) {
+		boolean jobCanceled = jobExecutionService.isJobCancelled(jobInstance.getId());
+		executionResult.setStatus(jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
+		executionResult.close();
+		jobExecutionResultService.persistResult(executionResult);
+		return jobCanceled;
+	}
 
     /**
      * The actual job execution logic implementation.
@@ -304,6 +315,7 @@ public abstract class Job {
     /**
      * @return job category enum
      */
+    @SuppressWarnings("rawtypes")
     public abstract JobCategoryEnum getJobCategory();
 
     /**
@@ -351,6 +363,7 @@ public abstract class Job {
      * @param jobInstance Job instance definition
      * @return Entity class
      */
+    @SuppressWarnings("rawtypes")
     public Class getTargetEntityClass(JobInstance jobInstance) {
         return null;
     }

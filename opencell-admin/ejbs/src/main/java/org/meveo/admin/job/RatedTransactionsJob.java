@@ -49,14 +49,21 @@ import org.meveo.service.job.Job;
 @Stateless
 public class RatedTransactionsJob extends Job {
 
-    /** The rated transactions job bean. */
+
+    
+    public static final String BILLING_RULES_MAP_KEY = "BILLING_RULES_MAP_KEY";
+    public static final String BILLING_ACCOUNTS_MAP_KEY = "BILLING_ACCOUNTS_MAP_KEY";
+    public static final String CF_USE_JOB_CONTEXT = "CF_USE_JOB_CONTEXT";
+    public static final String CF_RUN_DISCOUNT_STEP = "CF_RUN_DISCOUNT_STEP";
+
+	/** The rated transactions job bean. */
     @Inject
     private RatedTransactionsJobBean ratedTransactionsJobBean;
 
     /** The rated transactions aggregation job bean. */
     @Inject
     private RatedTransactionsAggregatedJobBean ratedTransactionsAggregatedJobBean;
-
+    
     @Inject
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
 
@@ -77,6 +84,7 @@ public class RatedTransactionsJob extends Job {
         }
         return result;
     }
+    
 
     @Override
     public JobCategoryEnum getJobCategory() {
@@ -93,6 +101,10 @@ public class RatedTransactionsJob extends Job {
             "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, "JobInstance_RatedTransactionsJob"));
         result.put(CF_BATCH_SIZE, CustomFieldTemplateUtils.buildCF(CF_BATCH_SIZE, resourceMessages.getString("jobExecution.batchSize"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2",
             "10000", true, null, null, "JobInstance_RatedTransactionsJob"));
+        result.put(CF_RUN_DISCOUNT_STEP, CustomFieldTemplateUtils.buildCF(CF_RUN_DISCOUNT_STEP, resourceMessages.getString("jobExecution.runDiscountStep"), CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "true",
+                false, null, null, "JobInstance_RatedTransactionsJob"));
+        result.put(CF_USE_JOB_CONTEXT, CustomFieldTemplateUtils.buildCF(CF_USE_JOB_CONTEXT, resourceMessages.getString("jobExecution.useJobContext"), CustomFieldTypeEnum.BOOLEAN, "tab:Configuration:0;fieldGroup:Configuration:0;field:4", "true",
+                false, null, null, "JobInstance_RatedTransactionsJob"));
         // aggregations
         result.put("woAggregationSettings",
             CustomFieldTemplateUtils.buildCF("woAggregationSettings", resourceMessages.getString("jobExecution.woAggregationSettings"), CustomFieldTypeEnum.ENTITY,

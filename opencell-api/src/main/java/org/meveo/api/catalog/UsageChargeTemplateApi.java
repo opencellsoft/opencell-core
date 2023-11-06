@@ -63,12 +63,11 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
             addGenericCodeIfAssociated(UsageChargeTemplate.class.getName(), postData);
         }
         handleMissingParametersAndValidate(postData);
-        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(postData.getCode());
-        if (chargeTemplate != null) {
-            throw new EntityAlreadyExistsException(UsageChargeTemplate.class, postData.getCode());
-        }
-
-        chargeTemplate = dtoToEntity(postData, null);
+	    if (usageChargeTemplateService.checkCreatedCharg(postData.getCode())) {
+		    throw new EntityAlreadyExistsException("code field(s) must be unique. A record with value(s) '"+postData.getCode()+"' already exists");
+	    }
+	    
+	    UsageChargeTemplate chargeTemplate = dtoToEntity(postData, null);
 
         usageChargeTemplateService.create(chargeTemplate);
         return chargeTemplate;

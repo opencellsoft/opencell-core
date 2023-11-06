@@ -28,6 +28,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.RatingResult;
+import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -53,6 +54,7 @@ import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -94,6 +96,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	private ProductService productService;
 	@Inject
 	private OrderProductService orderProductService;
+	@Inject
+	private CustomGenericEntityCodeService customGenericEntityCodeService;
 
 	@Override
 	public void create(CommercialOrder entity) throws BusinessException {
@@ -200,6 +204,14 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					subscription.setUserAccount(offer.getUserAccount());
 				}
 				subscription.setCode(subscription.getSeller().getCode() + "_" + userAccount.getCode() + "_" + offer.getId());
+				CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(Subscription.class.getName());
+				if(customGenericEntityCode != null) {
+					String newCode = serviceSingleton.getGenericCode(customGenericEntityCode);
+					if(StringUtils.isNotBlank(newCode)){
+						subscription.setCode(newCode);
+					}
+				}
+				
 				subscription.setOffer(offer.getOfferTemplate());
 				subscription.setSubscriptionDate(getSubscriptionDeliveryDate(order, offer));
 				if (subscription.getSubscriptionDate().after(new Date())) {
@@ -208,12 +220,23 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 				}
 				subscription.setEndAgreementDate(null);
-				subscription.setRenewed(true);
+				subscription.setRenewed(false);
 				subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
 				subscription.setOrder(order);
 				subscription.setOrderOffer(offer);
-				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
+				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal().copy() : null);
 				subscription.setSalesPersonName(order.getSalesPersonName());
+				if(offer.getTerminationDate() != null) {
+					subscription.setTerminationDate(offer.getTerminationDate());
+					subscription.setSubscribedTillDate(offer.getTerminationDate());
+					if(offer.getTerminationReason() != null && subscription.getSubscriptionRenewal() != null) {
+						SubscriptionRenewal renewal =  subscription.getSubscriptionRenewal();
+						renewal.setTerminationReason(offer.getTerminationReason());
+						renewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
+						renewal.setAutoRenew(false);
+						renewal.setEndOfTermAction(SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
+					}
+				}
 				subscriptionService.create(subscription);
 				if(offer.getDiscountPlan()!=null) {
 					discountPlans.add(offer.getDiscountPlan());

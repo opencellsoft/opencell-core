@@ -2,8 +2,10 @@ package org.meveo.admin.async;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.ScrollableResults;
 import org.hibernate.exception.GenericJDBCException;
@@ -25,9 +27,24 @@ public class SynchronizedIterator<T> implements Iterator<T> {
     private int size;
 
     /**
+     * Are multiple columns returned in a resultset. Used to construct an array of values as next() result.
+     */
+    private boolean isMultipleColumns;
+
+    /**
+     * List of field names corresponding to the order of resultset columns
+     */
+    List<String> fieldNames;
+
+    /**
      * Keeps track of a current position in iterator or scrollable results data source implementation
      */
     private int position;
+
+    /**
+     * Keeps an "optimistic" track if there is any data more to retrieve
+     */
+    private boolean hasMore = true;
 
     /**
      * Data iterator
@@ -56,8 +73,22 @@ public class SynchronizedIterator<T> implements Iterator<T> {
      * @param size A total number of records
      */
     public SynchronizedIterator(ScrollableResults scrollableResults, int size) {
+        this(scrollableResults, size, false, null);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param scrollableResults Scrollable results
+     * @param size A total number of records
+     * @param isMultipleColumns Read multiple columns
+     * @param fieldNames List of field names corresponding to the order of resultset columns
+     */
+    public SynchronizedIterator(ScrollableResults scrollableResults, int size, boolean isMultipleColumns, List<String> fieldNames) {
         this.scrollableResults = scrollableResults;
         this.size = size;
+        this.isMultipleColumns = isMultipleColumns;
+        this.fieldNames = fieldNames;
     }
 
     /**
@@ -78,20 +109,43 @@ public class SynchronizedIterator<T> implements Iterator<T> {
                 try {
                     if (scrollableResults.next()) {
                         position++;
-                        return (T) scrollableResults.get(0);
+                        if (isMultipleColumns) {
+                            // Return an array of data
+                            if (fieldNames == null) {
+                                return (T) scrollableResults.get();
+                                // Or mapped by a fieldname
+                            } else {
+
+                                Object[] data = scrollableResults.get();
+
+                                Map<String, Object> mappedData = new HashMap<>();
+                                for (int i = 0; i < data.length; i++) {
+                                    String dataShort = data[i] != null ? data[i].toString() : "null";
+                                    dataShort = dataShort.substring(0, dataShort.length() > 20 ? 20 : dataShort.length());
+                                    mappedData.put(fieldNames.get(i), data[i]);
+                                }
+                                return (T) mappedData;
+                            }
+
+                        } else {
+                            return (T) scrollableResults.get(0);
+                        }
+
                     } else {
+                        hasMore = false;
                         return null;
                     }
                 } catch (GenericJDBCException e) {
                     Logger log = LoggerFactory.getLogger(getClass());
                     log.error("Failed to scroll to the next record: {}", e.getMessage());
+                    hasMore = false;
                     return null;
                 }
 
             } else {
+                hasMore = false;
                 return null;
             }
-
         }
     }
 
@@ -118,7 +172,26 @@ public class SynchronizedIterator<T> implements Iterator<T> {
                     try {
                         if (scrollableResults.next()) {
                             position++;
-                            item = (T) scrollableResults.get(0);
+                            if (isMultipleColumns) {
+
+                                // Return an array of data
+                                if (fieldNames == null) {
+                                    item = (T) scrollableResults.get();
+                                    // Or mapped by a fieldname
+                                } else {
+
+                                    Object[] data = scrollableResults.get();
+
+                                    Map<String, Object> mappedData = new HashMap<>();
+                                    for (int k = 0; k < data.length; k++) {
+                                        mappedData.put(fieldNames.get(k), data[k]);
+                                    }
+                                    item = (T) mappedData;
+                                }
+
+                            } else {
+                                item = (T) scrollableResults.get(0);
+                            }
                         } else {
                             break;
                         }
@@ -134,6 +207,7 @@ public class SynchronizedIterator<T> implements Iterator<T> {
                 items.add(item);
             }
             if (items.isEmpty()) {
+                hasMore = false;
                 return null;
             } else {
                 return items;
@@ -158,24 +232,49 @@ public class SynchronizedIterator<T> implements Iterator<T> {
         } else if (scrollableResults != null) {
             if (scrollableResults.next()) {
 
-                NextItem<T> nextItem = new NextItem<T>(position, (T) scrollableResults.get(0));
+                T item = null;
+
+                if (isMultipleColumns) {
+
+                    // Return an array of data
+                    if (fieldNames == null) {
+                        item = (T) scrollableResults.get();
+                        // Or mapped by a fieldname
+                    } else {
+
+                        Object[] data = scrollableResults.get();
+
+                        Map<String, Object> mappedData = new HashMap<>();
+                        for (int k = 0; k < data.length; k++) {
+                            mappedData.put(fieldNames.get(k), data[k]);
+                        }
+                        item = (T) mappedData;
+                    }
+
+                } else {
+                    item = (T) scrollableResults.get(0);
+                }
+
+                NextItem<T> nextItem = new NextItem<T>(position, item);
                 position++;
 
                 return nextItem;
             } else {
+                hasMore = false;
                 return null;
             }
 
         } else {
+            hasMore = false;
             return null;
         }
     }
 
     /**
-     * Do not use this method - use next() instead. This method will always return false.
+     * An "optimistic" response if there is any data more to retrieve. Will return <b>False</n> ONLY if the last call to next() returned no data.
      */
     public boolean hasNext() {
-        return false;
+        return hasMore;
     }
 
     /**

@@ -596,7 +596,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private AccountingArticle accountingArticle;
     
     /**
-     * What Wallet operation the current Wallet operation, that represents a discount amount, is related to
+     * What Wallet operation the current Wallet operation, that represents a discount amount, is related to - Points to an original Wallet operation with a full amount
      */
     @Column(name = "discounted_wallet_operation_id")
     private Long discountedWalletOperation;
@@ -647,6 +647,9 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     
     @Transient
     private WalletOperation discountedWO;
+    
+    @Column(name = "business_key")
+    private String businessKey;
     
     /**
      * Constructor
@@ -1725,6 +1728,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	public void setDiscountedWO(WalletOperation discountedWO) {
 		this.discountedWO = discountedWO;
 	}
+	
+	public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}  
 	
 	
 

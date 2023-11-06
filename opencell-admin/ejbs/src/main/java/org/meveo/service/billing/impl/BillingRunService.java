@@ -744,27 +744,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
     
-    public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
-    	return getBillingAccountsIdsForOpenRTs(billingRun,false);
-    }
-	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun, boolean massData) {
-		Map<String, Object> configuredFilter = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
-		if(configuredFilter==null && billingRun.getBillingCycle() != null) {
-			configuredFilter = new TreeMap<String, Object>();
-			configuredFilter.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
-		}
-		if(configuredFilter==null){
-			throw new BusinessException("No filter found for billingRun "+billingRun.getId());
-		}
-		Map<String, Object> filters = new TreeMap<String, Object>(configuredFilter);
-		if(massData) {
-			filters.put("billingAccount.massData", "true");
-		}
-		filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
-		QueryBuilder queryBuilder = ratedTransactionService.getQueryFromFilters(filters, Arrays.asList("billingAccount.id"), true);
-		return queryBuilder.getQuery(getEntityManager()).getResultList();
-	}
-
     /**
      * Gets entities that are associated with a billing run
      *
@@ -1089,12 +1068,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     private void addInvoiceAmounts(Map<Long, Map<Long, Amounts>> entityAmounts, Amounts amounts, Long invoiceId, Long entityId) {
-        if (entityAmounts.get(entityId) == null) {
-            Map<Long, Amounts> thresholdAmounts = new TreeMap<>();
-            thresholdAmounts.put(invoiceId, amounts.clone());
-            entityAmounts.put(entityId, thresholdAmounts);
-        } else {
-            entityAmounts.get(entityId).put(invoiceId, amounts.clone());
+        if (entityId != null && invoiceId != null) {
+            Map<Long, Amounts> thresholdAmounts = entityAmounts.get(entityId);
+            if (thresholdAmounts == null) {
+                thresholdAmounts = new TreeMap<>();
+                thresholdAmounts.put(invoiceId, amounts.clone());
+                entityAmounts.put(entityId, thresholdAmounts);
+            } else {
+                thresholdAmounts.put(invoiceId, amounts.clone());
+            }
         }
     }
 
@@ -1702,10 +1684,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         
     }
 
-    public void updateBillingRunJobExecution(BillingRun billingRun, JobExecutionResultImpl result) {
-        billingRun = billingRunService.refreshOrRetrieve(billingRun);
+    public void updateBillingRunJobExecution(Long billingRunId, JobExecutionResultImpl result) {
+        BillingRun billingRun = billingRunService.findById(billingRunId);
         billingRun.addJobExecutions(result);
-
+        update(billingRun);
     }
 
     public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {

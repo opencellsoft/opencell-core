@@ -13,58 +13,56 @@ import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.AccountingArticleAssignementItem;
+import org.meveo.model.billing.AccountingArticleAssignmentItem;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 
 @Stateless
-public class ArticleMappingBean extends IteratorBasedJobBean<AccountingArticleAssignementItem> {
-	
+public class ArticleMappingBean extends IteratorBasedJobBean<AccountingArticleAssignmentItem> {
+
+    private static final long serialVersionUID = 1402462714195024317L;
+
     @Inject
     private RatedTransactionService ratedTransactionService;
-    
+
     @Inject
     private AccountingArticleService accountingArticleService;
-    
 
-    
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
-
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-    	super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::assignAccountingArticle, this::assignAccountingArticles, null, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::assignAccountingArticle, this::assignAccountingArticles, null, null, null);
     }
 
-    private Optional<Iterator<AccountingArticleAssignementItem>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-        List<AccountingArticleAssignementItem> resultList = emWrapper.getEntityManager().createNamedQuery("RatedTransaction.getMissingAccountingArticleInputs").getResultList();
-		return Optional.of(new SynchronizedIterator<AccountingArticleAssignementItem>(resultList));
-    }
-    
-    private void assignAccountingArticles(List<AccountingArticleAssignementItem> items, JobExecutionResultImpl jobExecutionResult) {
-    	AccountingArticle article=null;
-    	for(AccountingArticleAssignementItem item : items) {
-			assigneArticle(item,article);
-    	}
+    private Optional<Iterator<AccountingArticleAssignmentItem>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+        List<AccountingArticleAssignmentItem> resultList = emWrapper.getEntityManager().createNamedQuery("RatedTransaction.getMissingAccountingArticleInputs").getResultList();
+        return Optional.of(new SynchronizedIterator<AccountingArticleAssignmentItem>(resultList));
     }
 
-    private void assignAccountingArticle(AccountingArticleAssignementItem item, JobExecutionResultImpl jobExecutionResult) {
-    	assigneArticle(item,null);
+    private void assignAccountingArticles(List<AccountingArticleAssignmentItem> items, JobExecutionResultImpl jobExecutionResult) {
+
+        for (AccountingArticleAssignmentItem item : items) {
+            assignArticle(item);
+        }
     }
 
-	private void assigneArticle(AccountingArticleAssignementItem item, AccountingArticle article) {
-		article = accountingArticleService.getAccountingArticle(item.getServiceInstanceId(),item.getChargeTemplateId(), item.getOfferTemplateId());
-		ratedTransactionService.updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(item.getChargeInstancesIDs(),item.getServiceInstanceId(), item.getOfferTemplateId(), article);
-	}
+    private void assignAccountingArticle(AccountingArticleAssignmentItem item, JobExecutionResultImpl jobExecutionResult) {
+        assignArticle(item);
+    }
+
+    private void assignArticle(AccountingArticleAssignmentItem item) {
+        AccountingArticle article = accountingArticleService.getAccountingArticle(item.getServiceInstanceId(), item.getChargeTemplateId(), item.getOfferTemplateId());
+        ratedTransactionService.updateAccountingArticlesByChargeInstanceIdsOrOtherCriterias(item.getChargeInstancesIDs(), item.getServiceInstanceId(), item.getOfferTemplateId(), article);
+    }
 
     @Override
     protected boolean isProcessItemInNewTx() {
-        return false;
+        return true;
     }
-    
 }

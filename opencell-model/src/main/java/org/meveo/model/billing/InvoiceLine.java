@@ -21,6 +21,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -64,7 +66,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 @CustomFieldEntity(cftCodePrefix = "InvoiceLine")
 @Table(name = "billing_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_invoice_line_seq")})
+        @Parameter(name = "sequence_name", value = "billing_invoice_line_seq"), @Parameter(name = "increment_size", value = "5000")})
 @NamedQueries({
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccountAndIDs", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND il.status='OPEN' AND id in (:listOfIds) "),
 		@NamedQuery(name = "InvoiceLine.InvoiceLinesByInvoiceID", query = "FROM InvoiceLine il WHERE il.invoice.id =:invoiceId"),
@@ -142,8 +144,15 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.updateByIncrementalModeWoutDates", query = "UPDATE InvoiceLine il SET il.amountWithoutTax=il.amountWithoutTax+:deltaAmountWithoutTax, il.amountWithTax=il.amountWithTax+:deltaAmountWithTax, il.amountTax=il.amountTax+:deltaAmountTax, il.quantity=il.quantity+:deltaQuantity, il.auditable.updated=:now WHERE il.id=:id"),
 		@NamedQuery(name = "InvoiceLine.updateByIncrementalModeWoutDatesWithAverageUnitAmounts", query = "UPDATE InvoiceLine il SET il.amountWithoutTax=il.amountWithoutTax+:deltaAmountWithoutTax, il.amountWithTax=il.amountWithTax+:deltaAmountWithTax, il.amountTax=il.amountTax+:deltaAmountTax, il.quantity=il.quantity+:deltaQuantity, il.auditable.updated=:now, il.unitPrice=(il.amountWithoutTax+:deltaAmountWithoutTax)/(il.quantity+:deltaQuantity) WHERE il.id=:id"),
         @NamedQuery(name = "InvoiceLine.updateStatusInvoiceLine", query = "UPDATE InvoiceLine il SET " +
-				"il.status =: statusToUpdate WHERE il.id =: id")
+				"il.status =: statusToUpdate WHERE il.id =: id"),
+		@NamedQuery(name = "InvoiceLine.countDistinctBAByBR", query = "select count(distinct il.billingAccount) from InvoiceLine il where billingRun.id=:brId")
 	})
+
+@NamedNativeQueries({
+    @NamedNativeQuery(name = "InvoiceLine.massUpdateWithDiscountedIL", query = "UPDATE {h-schema}billing_invoice_line il SET discounted_invoice_line = sub_il.invoice_line_id, updated = now() FROM (SELECT DISTINCT discountRT.invoice_line_id, invoiceLine.id as invoiceLineId FROM {h-schema}billing_rated_transaction discountRT, {h-schema}billing_rated_transaction discountedRT, {h-schema}billing_invoice_line invoiceLine WHERE discountRT.id = discountedRT.discounted_ratedtransaction_id  and discountedRT.status = 'BILLED' and discountedRT.discounted_ratedtransaction_id is not null and discountedRT.id >=:minId and discountedRT.id <=:maxId and invoiceLine.id = discountedRT.invoice_line_id and invoiceLine.status = 'OPEN' and invoiceLine.discounted_invoice_line is null and invoiceLine.billing_run_id =:brId ) AS sub_il WHERE id = sub_il.invoiceLineId"),
+    @NamedNativeQuery(name = "InvoiceLine.massUpdateWithDiscountedILOracle", query = "UPDATE (SELECT il.discounted_invoice_line, il.updated FROM {h-schema}billing_invoice_line il, {h-schema}billing_rated_transaction discountRT, {h-schema}billing_rated_transaction discountedRT where discountRT.id=discountedRT.discounted_ratedtransaction_id and il.id=discountedRT.invoice_line_id and discountedRT.status='BILLED' and il.status='OPEN' and il.billing_run_id=:brId and discountedRT.discounted_ratedtransaction_id is not null and discounted_invoice_line is null and discountedRT.id>=:minId and discountedRT.id<=:maxId) SET il.discounted_invoice_line=discountRT.invoice_line_id , updated=now()"),
+})
+    
 public class InvoiceLine extends AuditableCFEntity {
 
 	/**

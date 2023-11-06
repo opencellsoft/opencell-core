@@ -86,7 +86,6 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
-import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.expressions.NativeExpressionFactory;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
@@ -1619,12 +1618,12 @@ public class NativePersistenceService extends BaseService {
     }
 
     private GenericPagingAndFiltering buildGenericPagingAndFiltering(ReportQuery reportQuery) {
-		Builder builder = ImmutableGenericPagingAndFiltering.builder()
-				.filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
-            .groupBy((List<String>) reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
-            .nestedEntities((List<String>) reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
-				.genericFields((List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>()))
-				.having((List<String>) reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()));
+        Builder builder = ImmutableGenericPagingAndFiltering.builder()
+                                                            .filters((Map<String, Object>) reportQuery.getAdvancedQuery().getOrDefault("filters", new HashMap<>()))
+                                                            .groupBy((List<String>) reportQuery.getAdvancedQuery().getOrDefault("groupBy", new ArrayList<>()))
+                                                            .nestedEntities((List<String>) reportQuery.getAdvancedQuery().getOrDefault("nestedEntities", new ArrayList<>()))
+                                                            .genericFields((List<String>) reportQuery.getAdvancedQuery().getOrDefault("fields", new ArrayList<>()))
+                                                            .having((List<String>) reportQuery.getAdvancedQuery().getOrDefault("having", new ArrayList<>()));
         String sortBy = (String) reportQuery.getAdvancedQuery().get("sortBy");
         if (org.meveo.commons.utils.StringUtils.isNotBlank(sortBy)) {
             builder.sortBy(sortBy);

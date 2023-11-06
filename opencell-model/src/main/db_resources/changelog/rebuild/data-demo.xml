@@ -1783,65 +1783,6 @@
             <column name="timerentity_id" valueNumeric="-1" />
             <column name="uuid" value="Article_Mapp_Job_V2" />
         </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="ArticleMappingJob_billingRun"/>
-            <column name="applies_to" value="JobInstance_ArticleMappingJob"/>
-            <column name="description" value="Billing Runs"/>
-            <column name="field_type" value="ENTITY"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="versionable" value="0"/>
-            <column name="entity_clazz" value="org.meveo.model.billing.BillingRun"/>
-            <column name="storage_type" value="LIST"/>
-            <column name="allow_edit" value="1"/>
-            <column name="hide_on_new" value="0"/>
-            <column name="inh_as_def_value" value="0"/>
-            <column name="cf_protectable" value="0"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="FirstTransactionDate"/>
-            <column name="description" value="First transaction date"/>
-            <column name="field_type" value="DATE"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="versionable" value="0"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="trigger_end_period_event" value="0"/>
-            <column name="applies_to" value="JobInstance_ArticleMappingJob"/>
-            <column name="allow_edit" value="1"/>
-            <column name="max_value" value="9223372036854775807"/>
-            <column name="hide_on_new" value="0"/>
-            <column name="inh_as_def_value" value="0"/>
-            <column name="cf_protectable" value="0"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="LastTransactionDate"/>
-            <column name="description" value="Last transaction date"/>
-            <column name="field_type" value="DATE"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="versionable" value="0"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="trigger_end_period_event" value="0"/>
-            <column name="applies_to" value="JobInstance_ArticleMappingJob"/>
-            <column name="allow_edit" value="1"/>
-            <column name="max_value" value="9223372036854775807"/>
-            <column name="hide_on_new" value="0"/>
-            <column name="inh_as_def_value" value="0"/>
-            <column name="cf_protectable" value="0"/>
-        </insert>                
         
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq"/>
