@@ -193,8 +193,7 @@ public class ReratingServiceTest {
                 for (Long woId : (List<Long>) getParameterRaw("woIds")) {
                     for (Object[] edrInfo : edrs) {
                         if (woId.equals(edrInfo[5])) {
-                            values.add(new Object[] { BigInteger.valueOf((Long) edrInfo[0]), edrInfo[1], edrInfo[2] != null ? BigInteger.valueOf((Long) edrInfo[2]) : null, edrInfo[3],
-                                    edrInfo[4] != null ? BigInteger.valueOf((Long) edrInfo[4]) : null });
+                            values.add(new Object[] { BigInteger.valueOf((Long) edrInfo[0]), edrInfo[1] });
                         }
                     }
                 }
@@ -202,9 +201,33 @@ public class ReratingServiceTest {
             }
         };
 
-        when(entityManager.createNamedQuery(eq("WalletOperation.triggeredWoSummaryForRerating"))).thenAnswer(new Answer<JPAQuerySimulation<Object[]>>() {
+        when(entityManager.createNamedQuery(eq("EDR.triggeredEDRSummaryForRerating"))).thenAnswer(new Answer<JPAQuerySimulation<Object[]>>() {
             public JPAQuerySimulation<Object[]> answer(InvocationOnMock invocation) throws Throwable {
                 return triggeredEdrSummaryQuery;
+            }
+        });
+
+        JPAQuerySimulation<Object[]> woSummaryQuery = new JPAQuerySimulation<Object[]>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public List<Object[]> getResultList() {
+
+                List<Object[]> values = new ArrayList<>();
+
+                for (Long edrId : (List<Long>) getParameterRaw("edrIds")) {
+                    for (Object[] edrInfo : edrs) {
+                        if (edrId.equals(edrInfo[0]) && edrInfo[3] != null && !"CANCELED".equals((String) edrInfo[3])) {
+                            values.add(new Object[] { BigInteger.valueOf((Long) edrInfo[2]), edrInfo[3], edrInfo[4] != null ? BigInteger.valueOf((Long) edrInfo[4]) : null });
+                        }
+                    }
+                }
+                return values;
+            }
+        };
+
+        when(entityManager.createNamedQuery(eq("WalletOperation.woSummaryForRerating"))).thenAnswer(new Answer<JPAQuerySimulation<Object[]>>() {
+            public JPAQuerySimulation<Object[]> answer(InvocationOnMock invocation) throws Throwable {
+                return woSummaryQuery;
             }
         });
 

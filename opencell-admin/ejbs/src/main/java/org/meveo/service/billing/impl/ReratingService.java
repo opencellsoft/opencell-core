@@ -513,28 +513,30 @@ public class ReratingService extends RatingService implements Serializable {
             }
 
             // Find any EDR and their WO, RT that were triggered - EDRs with Canceled status are omitted
-            List<Object[]> edrWoInfos = em.createNamedQuery("WalletOperation.triggeredWoSummaryForRerating").setParameter("woIds", woIdsToCheck).getResultList();
+            List<Object[]> edrInfos = em.createNamedQuery("EDR.triggeredEDRSummaryForRerating").setParameter("woIds", woIdsToCheck).getResultList();
             woIdsToCheck = new ArrayList<Long>();
-            for (Object[] edrWoInfo : edrWoInfos) {
-                Long edrId = ((BigInteger) edrWoInfo[0]).longValue();
-                edrIdsToUpdate.add(edrId);
-                EDRStatusEnum edrStatus = EDRStatusEnum.valueOf((String) edrWoInfo[1]);
-                if (edrStatus != EDRStatusEnum.OPEN) { // EDR with CANCELED status was already omitted in SQL
+            List<Long> edrIdsToCheck = new ArrayList<Long>();
 
-                    if (edrWoInfo[2] != null) {
-                        Long woId = ((BigInteger) edrWoInfo[2]).longValue();
-                        WalletOperationStatusEnum woStatus = WalletOperationStatusEnum.valueOf((String) edrWoInfo[3]);
-                        // Check further for triggered EDRs/WOs/RTs for WOs in other than Canceled status
-                        if (woStatus != WalletOperationStatusEnum.CANCELED) {
-                            woIdsToCheck.add(woId);
-                        }
-                        // Non-Canceled WOs will be marked as canceled
-                        if (woStatus != WalletOperationStatusEnum.CANCELED) {
-                            woIdsToUpdate.add(woId);
-                        }
-                    }
-                    if (edrWoInfo[4] != null) {
-                        Long rtId = ((BigInteger) edrWoInfo[4]).longValue();
+            for (Object[] edrInfo : edrInfos) {
+                Long edrId = ((BigInteger) edrInfo[0]).longValue();
+                edrIdsToUpdate.add(edrId);
+                EDRStatusEnum edrStatus = EDRStatusEnum.valueOf((String) edrInfo[1]);
+                if (edrStatus != EDRStatusEnum.OPEN) { // EDR with CANCELED status was already omitted in SQL
+                    edrIdsToCheck.add(edrId);
+                }
+            }
+
+            if (!edrIdsToCheck.isEmpty()) {
+                List<Object[]> woInfos = em.createNamedQuery("WalletOperation.woSummaryForRerating").setParameter("edrIds", edrIdsToCheck).getResultList();
+                for (Object[] woInfo : woInfos) {
+                    Long woId = ((BigInteger) woInfo[0]).longValue();
+                    // WalletOperationStatusEnum woStatus = WalletOperationStatusEnum.valueOf((String) woInfo[1]);
+                    // Check further for triggered EDRs/WOs/RTs for WOs in other than Canceled status // WO with status CANCELED was already omitted in SQL
+                    woIdsToCheck.add(woId);
+                    // Non-Canceled WOs will be marked as canceled
+                    woIdsToUpdate.add(woId);
+                    if (woInfo[2] != null) {
+                        Long rtId = ((BigInteger) woInfo[2]).longValue();
                         rtIdsToCheck.add(rtId);
                     }
                 }
