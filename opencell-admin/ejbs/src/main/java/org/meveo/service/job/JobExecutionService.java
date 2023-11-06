@@ -157,9 +157,11 @@ public class JobExecutionService extends BaseService {
                 throw new ValidationException("Job is currently running on another cluster node and is limited to run one at a time");
             }
         }
-        // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only or was launched from a node that
-        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API) && (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.RUN_IN_PARALLEL
-                || (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
+        // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only or was launched from a node that is not allowed to run on.
+        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API)
+                && (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.RUN_IN_PARALLEL
+                        || ((jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE || jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES)
+                                && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
 
             Map<String, Object> jobParameters = new HashMap<String, Object>();
             if (params != null) {
