@@ -6849,6 +6849,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
                 LinkedInvoice linkedInvoice = new LinkedInvoice(invoiceTmp, toUpdate);
+				if(toUpdate.getInvoiceType() != null && toUpdate.getInvoiceType().getCode().equals("ADJ")) {
+					linkedInvoice.setType(InvoiceTypeEnum.ADJUSTMENT);
+					invoiceTmp.getLinkedInvoices().add(new LinkedInvoice(toUpdate, invoiceTmp));
+	            }
                 if (!invoiceTmp.getLinkedInvoices().contains(linkedInvoice)) {
                     toUpdate.getLinkedInvoices().add(linkedInvoice);
                 }
