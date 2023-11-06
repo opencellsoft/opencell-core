@@ -1,23 +1,20 @@
 package org.meveo.service.script;
 
-import org.joda.time.DateTime;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.UserApi;
-import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.job.JobInstanceInfoDto;
-import org.meveo.api.job.JobApi;
-import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.communication.impl.EmailSender;
-import org.meveo.service.communication.impl.EmailTemplateService;
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.meveo.commons.utils.ParamBean;
 
-import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+import org.joda.time.DateTime;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.UserApi;
+import org.meveo.api.job.JobApi;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.EmailTemplateService;
 
 public class ImportJobNotificationScript extends Script {
     private static final String USER_CODE = "user";
@@ -56,7 +53,6 @@ public class ImportJobNotificationScript extends Script {
             											(String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE) : null : null;
 
             if (category == null || !category.equals("customer") || userName == null) return;
-            executeNextJob(jobExecutionResult);
 
             // if there are no rows to process, we don't send a notification
             if(jobExecutionResult.getNbItemsToProcess() == 0) return;
@@ -98,44 +94,6 @@ public class ImportJobNotificationScript extends Script {
         }
     }
 
-    private void executeNextJob(JobExecutionResultImpl jobExecutionResult) {
-        String nextJobCode;
-        switch (jobExecutionResult.getJobInstance().getCode()) {
-            case CUSTOMER_JOB_CODE:
-                nextJobCode = CUSTOMER_ACCOUNT_JOB_CODE;
-                break;
-            case CUSTOMER_ACCOUNT_JOB_CODE:
-                nextJobCode = PAYMENT_METHOD_JOB_CODE;
-                break;
-            case PAYMENT_METHOD_JOB_CODE:
-                nextJobCode = BILLING_ACCOUNT_JOB_CODE;
-                break;
-            case BILLING_ACCOUNT_JOB_CODE:
-                nextJobCode = USER_ACCOUNT_JOB_CODE;
-                break;
-            case SUBSCRIPTION_JOB_CODE:
-                nextJobCode = SERVICE_INSTANCE_JOB_CODE;
-                break;
-            case SERVICE_INSTANCE_JOB_CODE:
-                nextJobCode = ATTRIBUTE_INTSNACE_JOB_CODE;
-                break;
-            case ATTRIBUTE_INTSNACE_JOB_CODE:
-                nextJobCode = ACCESS_POINT_JOB_CODE;
-                break;
-            default:
-                return;
-        }
-        JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
-        jobInstanceInfoDto.setCode(nextJobCode);
-        CustomFieldsDto customFields = new CustomFieldsDto();
-        CustomFieldDto customFieldDto = new CustomFieldDto();
-        customFieldDto.setCode(USER_CODE);
-        customFieldDto.setStringValue((String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE));
-        customFields.setCustomField(List.of(customFieldDto));
-        jobInstanceInfoDto.setCustomFields(customFields);
-
-        jobApi.executeJob(jobInstanceInfoDto);
-    }
 
     private JobResultStatusEnum getJobResultStatus(JobExecutionResultImpl jobExecutionResult) {
         if(jobExecutionResult.getNbItemsToProcess() == 0)
