@@ -123,7 +123,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         counterTemplate.setAccumulator(isAccumulator);
         if (isAccumulator) {
             counterTemplate.setCeilingExpressionEl(null);
-            counterTemplate.setCeiling(BigDecimal.ZERO);
+            counterTemplate.setCeiling(null);
             counterTemplate.setAccumulatorType(postData.getAccumulatorType());
             if(postData.getAccumulatorType() != null && postData.getAccumulatorType().equals(AccumulatorCounterTypeEnum.MULTI_VALUE)) {
                 counterTemplate.setFilterEl(postData.getFilterEl());
