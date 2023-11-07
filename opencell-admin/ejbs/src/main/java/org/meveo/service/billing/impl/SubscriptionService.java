@@ -693,7 +693,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
      * @throws BusinessException business exception
      */
     public void cancelSubscriptionTermination(Subscription subscription) throws BusinessException {
-        SubscriptionRenewal subscriptionRenewal = null;
+        SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
         Date subscribedTillDate = null;
 
         String initialRenewal = subscription.getInitialSubscriptionRenewal();
