@@ -8666,6 +8666,10 @@
             <column name="matching_auto" valueNumeric="0" />
             <column name="uuid" value="InvoiceType-QUOTE" />
             <column name="vat_payment_option_id" value="1" />
+            <column name="prefix_el" value="QUOTE_" />
+            <column name="billing_template_name_el" value="quote_new" />
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '310')" />
+            <column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'QUT')" />
         </insert>
         <insert tableName="billing_invoice_type_applies_to">
             <column name="invoice_type_id" value="-1" />
@@ -12112,6 +12116,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
     <changeSet id="#INTRD-18858_202301006" author="TARIKFA." />
     <changeSet id="#INTRD-19070" author="TARIKFA." />
+    <changeSet id="#INTRD-18995_20231107" author="zelmeliani" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
