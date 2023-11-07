@@ -103,8 +103,9 @@ public class AuditDataLogAggregationJobBean extends IteratorBasedJobBean<List<Au
         maxId = ((BigInteger) convertSummary[1]).longValue();
 
         statelessSession = em.unwrap(Session.class).getSessionFactory().openStatelessSession();
-        scrollableResults = statelessSession.createNamedQuery("AuditDataLogRecord.listConvertToAggregate").setParameter("maxId", maxId).setReadOnly(true).setCacheable(false).setFetchSize(fetchSize)
-            .scroll(ScrollMode.FORWARD_ONLY);
+		scrollableResults = statelessSession.createNamedQuery("AuditDataLogRecord.listConvertToAggregate")
+				.setParameter("maxId", maxId).setReadOnly(true).setCacheable(false).setFetchSize(fetchSize)
+				.scroll(ScrollMode.FORWARD_ONLY);
 
         return Optional.of(new SynchronizedIteratorGrouped<AuditDataLogRecord>(scrollableResults, nrOfRecords.intValue()) {
 
@@ -138,8 +139,8 @@ public class AuditDataLogAggregationJobBean extends IteratorBasedJobBean<List<Au
      * @param jobExecutionResult Job execution result
      */
     private void closeResultset(JobExecutionResultImpl jobExecutionResult) {
-        scrollableResults.close();
-        statelessSession.close();
+        if (scrollableResults != null) scrollableResults.close();
+        if (statelessSession != null) statelessSession.close();
     }
 
     @Override
