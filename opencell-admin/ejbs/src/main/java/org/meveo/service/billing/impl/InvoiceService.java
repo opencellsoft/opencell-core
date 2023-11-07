@@ -7213,7 +7213,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void addLinkedInvoice(Invoice invoice, Invoice duplicatedInvoice) {
         LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, duplicatedInvoice, duplicatedInvoice.getAmountWithTax(), duplicatedInvoice.getTransactionalAmountWithTax(), InvoiceTypeEnum.ADJUSTMENT);
-        duplicatedInvoice.getLinkedInvoices().addAll(of(linkedInvoice));
+	    LinkedInvoice reversLinkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice, null, null, null);
+        duplicatedInvoice.getLinkedInvoices().addAll(of(linkedInvoice, reversLinkedInvoice));
     }
 
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
