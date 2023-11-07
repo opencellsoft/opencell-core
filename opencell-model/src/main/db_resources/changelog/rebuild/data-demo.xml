@@ -1764,7 +1764,15 @@
             <column name="uuid" value="MAIN_SELLER" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
-            <column name="email" value="billing@opencell.com"/>
+            <column name="email" value="billing@opencell.com" />
+            <column name="trading_country_id" value="-1"/>
+            <column name="legal_entity_type_id" valueComputed="(select id from adm_title where code = 'SAS')" />
+            <column name="vat_no" value="89810129411" />
+            <column name="registration_no" value="89810129411" />
+            <column name="address_city" value="New York" />
+            <column name="address_zipcode" value="10001" />
+            <column name="address_1" value="High level suite" />
+            <column name="address_2" value="Appt 3327" />
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-2" />
@@ -4724,6 +4732,10 @@
 			<column name="occ_template_id" valueNumeric="-25" />
 			<column name="uuid" value="InvoiceType-COMMERCIAL_ORDER" />
 			<column name="vat_payment_option_id" value="1" />
+            <column name="prefix_el" value="COMMERCIAL_ORDER_" />
+            <column name="billing_template_name_el" value="commercial_order_new" />
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '220')" />
+            <column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'ORI')" />
 		</insert>	
 	</changeSet>
 	
@@ -6461,6 +6473,18 @@
     
     <changeSet id="#INTRD-16859_20230626" author="aeljaouhari" />
     <changeSet id="#INTRD-18527_20231002" author="aeljaouhari" />
+
+    <changeSet id="#INTRD-18995_20231107_rebuild" author="zelmeliani">
+		<update tableName="crm_seller">
+			<column name="legal_entity_type_id" valueComputed="(select id from adm_title where code = 'SAS')" />
+            <where>code = 'MAIN_SELLER'</where>
+        </update>
+        <update tableName="billing_invoice_type">
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '310')" />
+			<column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'QUT')" />
+            <where>code = 'QUOTE'</where>
+        </update>
+    </changeSet>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
