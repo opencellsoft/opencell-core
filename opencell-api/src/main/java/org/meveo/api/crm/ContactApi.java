@@ -407,12 +407,14 @@ public class ContactApi extends BaseApi {
                 if (postData.getName().getTitle() != null) {
                     if (StringUtils.isBlank(postData.getName().getTitle())) {
                         name.setTitle(null);
+                        contact.setTitle(null);
                     } else {
                         Title title = titleService.findByCode(postData.getName().getTitle());
                         if (title == null) {
                             throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
                         } else {
                             name.setTitle(title);
+                            contact.setTitle(title);
                         }
                     }
                 }
