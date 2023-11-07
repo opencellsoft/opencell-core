@@ -256,7 +256,7 @@ public class InvoicingService extends PersistenceService<Invoice> {
         InvoiceType invoiceType = invoiceService.determineInvoiceType(false, false, false, billingCycle, billingRun, billingAccount);
         Invoice invoice = new Invoice();
         invoice.setBillingAccount(billingAccount);
-        invoice.setSeller(getEntityManager().getReference(Seller.class, billingAccountDetailsItem.getSellerId()));
+        invoice.setSeller(billingAccountDetailsItem.getSellerId() != null ? getEntityManager().getReference(Seller.class, billingAccountDetailsItem.getSellerId()) : null);
         invoice.setStatus(isFullAutomatic?InvoiceStatusEnum.VALIDATED:InvoiceStatusEnum.DRAFT);
         invoice.setInvoiceType(invoiceType);
         invoice.setInvoiceDate(billingRun.getInvoiceDate());
