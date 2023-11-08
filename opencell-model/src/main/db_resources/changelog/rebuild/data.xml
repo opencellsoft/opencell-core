@@ -9163,7 +9163,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueNumeric="-1" />
 			<column name="dunning_policy_id" valueNumeric="-1" />
 		</insert>
@@ -9206,7 +9206,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueNumeric="-2" />
 			<column name="dunning_policy_id" valueNumeric="-1" />
 		</insert>
@@ -9248,7 +9248,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueNumeric="-3" />
 			<column name="dunning_policy_id" valueNumeric="-1" />
 		</insert>
@@ -9291,7 +9291,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueNumeric="-4" />
 			<column name="dunning_policy_id" valueNumeric="-1" />
 		</insert>		
@@ -9371,7 +9371,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueNumeric="-5" />
 			<column name="dunning_policy_id" valueNumeric="-2" />
 		</insert>
@@ -9413,7 +9413,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueNumeric="-6" />
 			<column name="dunning_policy_id" valueNumeric="-2" />
 		</insert>
@@ -9455,7 +9455,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueNumeric="-7" />
 			<column name="dunning_policy_id" valueNumeric="-2" />
 		</insert>
@@ -9498,7 +9498,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueNumeric="-8" />
 			<column name="dunning_policy_id" valueNumeric="-2" />
 		</insert>
@@ -9580,7 +9580,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueNumeric="-10" />
 			<column name="dunning_policy_id" valueNumeric="-10" />
 		</insert>
@@ -9623,7 +9623,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueNumeric="-20" />
 			<column name="dunning_policy_id" valueNumeric="-10" />
 		</insert>
@@ -9665,7 +9665,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueNumeric="-30" />
 			<column name="dunning_policy_id" valueNumeric="-10" />
 		</insert>
@@ -9708,7 +9708,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueNumeric="-40" />
 			<column name="dunning_policy_id" valueNumeric="-10" />
 		</insert>		
@@ -9788,7 +9788,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="1" />
+			<column name="sequence" valueNumeric="0" />
 			<column name="dunning_level_id" valueNumeric="-50" />
 			<column name="dunning_policy_id" valueNumeric="-20" />
 		</insert>
@@ -9830,7 +9830,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="2" />
+			<column name="sequence" valueNumeric="1" />
 			<column name="dunning_level_id" valueNumeric="-60" />
 			<column name="dunning_policy_id" valueNumeric="-20" />
 		</insert>
@@ -9872,7 +9872,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="3" />
+			<column name="sequence" valueNumeric="2" />
 			<column name="dunning_level_id" valueNumeric="-70" />
 			<column name="dunning_policy_id" valueNumeric="-20" />
 		</insert>
@@ -9915,7 +9915,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="applicationInitializer" />
-			<column name="sequence" valueNumeric="4" />
+			<column name="sequence" valueNumeric="3" />
 			<column name="dunning_level_id" valueNumeric="-80" />
 			<column name="dunning_policy_id" valueNumeric="-20" />
 		</insert>
@@ -12112,6 +12112,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
     <changeSet id="#INTRD-18858_202301006" author="TARIKFA." />
     <changeSet id="#INTRD-19070" author="TARIKFA." />
+    <changeSet id="#INTRD-19224_20231101" author="zelmeliani" />
     <changeSet id="#INTRD-18995_20231107" author="zelmeliani" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
