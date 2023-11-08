@@ -21,6 +21,7 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
 import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
@@ -169,6 +171,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private RecurringRatingService recurringRatingService;
+    
+    @Inject
+    protected UserAccountService userAccountService;
     
     @Inject
     private ELUtils elUtils;
@@ -1345,5 +1350,24 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	
     	log.info("rateDiscountWalletOperation walletOperation code={},discountValue={},UnitAmountWithoutTax={},UnitAmountWithTax={},UnitAmountTax={}",discountWalletOperation.getCode(),discountedAmount,amounts[0],amounts[1],amounts[2]);
     	return discountWalletOperation;
-    }    
+    }
+
+    /**
+     * Load services and accounts related to subscription
+     * 
+     * @param loadServices Should services be loaded up including their attributes
+     */
+    protected void loadEntitiesRelatedToSubscription(Subscription subscription, boolean loadServices) {
+        if (!loadServices) {
+            List<ServiceInstance> subscriptionServices = getEntityManager().createNamedQuery("ServiceInstance.findBySubscriptionIdLoadAttributes", ServiceInstance.class)
+                .setParameter("subscriptionId", subscription.getId()).getResultList();
+        }
+
+        if (!Hibernate.isInitialized(subscription.getUserAccount())) {
+            UserAccount userAccount = userAccountService.findById(subscription.getUserAccount().getId(), Arrays.asList("wallet"));
+        }
+
+        // Initialize all the way to customer
+        subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getCode();
+    }
 }

@@ -39,7 +39,7 @@ import org.meveo.model.payments.CustomerAccount;
     @NamedQuery(name = "Contract.findByAccounts", query = "select c from Contract c where c.status='ACTIVE' and (cast(:operationDate as date) is null or (c.beginDate<=:operationDate and c.endDate>:operationDate)) "
     		+ " and (c.customer.id is null or c.customer.id=:customerId) "
 				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  ", hints = {
-			@QueryHint(name = "org.hibernate.cacheable", value = "TRUE")
+			@QueryHint(name = "org.hibernate.cacheable", value = "TRUE"), @QueryHint(name = "org.hibernate.readOnly", value = "true")
 	} )
 })
 public class Contract extends EnableBusinessCFEntity {
