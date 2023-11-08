@@ -87,7 +87,9 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            result.setEntityId(customerApi.update(postData).getId());
+            Customer customer = customerApi.update(postData);
+            result.setEntityId(customer.getId());
+            result.setEntityCode(customer.getCode());
         } catch (Exception e) {
             processException(e, result);
         }
