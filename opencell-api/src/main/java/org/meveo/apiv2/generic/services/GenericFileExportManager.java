@@ -74,6 +74,14 @@ public class GenericFileExportManager {
     private static final String EN_AGED_BALANCE_FILENAME = "Aged_trial_balance_";
     private static final String EN_DATE_FORMAT = "MM/dd/yyyy";
     private String saveDirectory;
+    private static Map<String, CellStyle> excelCellStyles = new HashMap<>();
+
+    /**
+     * Excel styles enum
+     */
+    protected enum ExcelStylesEnum {
+        BIG_DECIMAL_FORMAT, NUMERIC_FORMAT, STRING_FORMAT, DATE_FORMAT
+    }
 
     public String export(String entityName, List<Map<String, Object>> mapResult, String fileType, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn, String locale){
     	log.debug("Save directory "+paramBeanFactory.getChrootDir());
@@ -328,31 +336,47 @@ public class GenericFileExportManager {
 	}
 
     private void applyBigDecimalFormat(Workbook outWorkbook, Cell cell) {
-        CellStyle style = outWorkbook.createCellStyle();
-        DataFormat format = outWorkbook.createDataFormat();
-        style.setDataFormat(format.getFormat("#,##0.00"));
-        style.setAlignment(HorizontalAlignment.RIGHT);
-        cell.setCellStyle(style);
+        CellStyle cellStyle = excelCellStyles.get(ExcelStylesEnum.BIG_DECIMAL_FORMAT.name());
+        if (cellStyle == null) {
+            cellStyle = outWorkbook.createCellStyle();
+            DataFormat format = outWorkbook.createDataFormat();
+            cellStyle.setDataFormat(format.getFormat("#,##0.00"));
+            cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+            excelCellStyles.put(ExcelStylesEnum.BIG_DECIMAL_FORMAT.name(), cellStyle);
+        }
+        cell.setCellStyle(cellStyle);
     }
 
     private void applyNumericFormat(Workbook outWorkbook, Cell cell) {
-        CellStyle style = outWorkbook.createCellStyle();
-        style.setDataFormat((short) 1);
-        style.setAlignment(HorizontalAlignment.RIGHT);
-        cell.setCellStyle(style);
+        CellStyle cellStyle = excelCellStyles.get(ExcelStylesEnum.NUMERIC_FORMAT.name());
+        if (cellStyle == null) {
+            cellStyle = outWorkbook.createCellStyle();
+            cellStyle.setDataFormat((short) 1);
+            cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+            excelCellStyles.put(ExcelStylesEnum.NUMERIC_FORMAT.name(), cellStyle);
+        }
+        cell.setCellStyle(cellStyle);
     }
 
     private void applyStringFormat(Workbook outWorkbook, Cell cell) {
-        CellStyle style = outWorkbook.createCellStyle();
-        style.setAlignment(HorizontalAlignment.LEFT);
-        cell.setCellStyle(style);
+        CellStyle cellStyle = excelCellStyles.get(ExcelStylesEnum.STRING_FORMAT.name());
+        if (cellStyle == null) {
+            cellStyle = outWorkbook.createCellStyle();
+            cellStyle.setAlignment(HorizontalAlignment.LEFT);
+            excelCellStyles.put(ExcelStylesEnum.STRING_FORMAT.name(), cellStyle);
+        }
+        cell.setCellStyle(cellStyle);
     }
 
     private void applyDateFormat(Workbook outWorkbook, Cell cell) {
-        CellStyle style = outWorkbook.createCellStyle();
-        style.setDataFormat((short) 14);
-        style.setAlignment(HorizontalAlignment.LEFT);
-        cell.setCellStyle(style);
+        CellStyle cellStyle = excelCellStyles.get(ExcelStylesEnum.DATE_FORMAT.name());
+        if (cellStyle == null) {
+            cellStyle = outWorkbook.createCellStyle();
+            cellStyle.setDataFormat((short) 14);
+            cellStyle.setAlignment(HorizontalAlignment.LEFT);
+            excelCellStyles.put(ExcelStylesEnum.DATE_FORMAT.name(), cellStyle);
+        }
+        cell.setCellStyle(cellStyle);
     }
 
     /**
