@@ -1358,7 +1358,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @param loadServices Should services be loaded up including their attributes
      */
     protected void loadEntitiesRelatedToSubscription(Subscription subscription, boolean loadServices) {
-        if (!loadServices) {
+        if (loadServices) {
             List<ServiceInstance> subscriptionServices = getEntityManager().createNamedQuery("ServiceInstance.findBySubscriptionIdLoadAttributes", ServiceInstance.class)
                 .setParameter("subscriptionId", subscription.getId()).getResultList();
         }
