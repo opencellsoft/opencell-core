@@ -1001,7 +1001,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             } else if (CounterTypeEnum.USAGE.equals(counterPeriod.getCounterType())) {
                 value = walletOperation.getQuantity();
             }
-            counterPeriod.setValue(counterPeriod.getValue().add(value));
+            counterPeriod.setValue(counterPeriod.getValue() != null ? counterPeriod.getValue().add(value) : value);
         }
 
         // AK Do not understand why this code is here
