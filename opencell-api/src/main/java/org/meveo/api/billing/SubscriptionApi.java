@@ -127,6 +127,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductInstance;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -1211,9 +1212,17 @@ public class SubscriptionApi extends BaseApi {
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(),
                             true, ChargeApplicationModeEnum.SUBSCRIPTION, isVirtual);
 
-        	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
-        		osho.getWalletOperations().stream().forEach(wo->ratedTransactionService.createRatedTransaction(wo,false));
+        	if (StringUtils.isNotBlank(postData.getBusinessKey())) {
+        		osho.getWalletOperations().stream().forEach(wo -> wo.setBusinessKey(postData.getBusinessKey()));
         	}
+        	
+        	if (Boolean.TRUE.equals(postData.getGenerateRTs())) {
+        		osho.getWalletOperations().stream().forEach(wo -> {
+        		    RatedTransaction ratedTransaction = ratedTransactionService.createRatedTransaction(wo, false);
+        		    ratedTransaction.setBusinessKey(wo.getBusinessKey());
+        		});
+        	}
+        	
         	return osho;
         } catch (RatingException e) {
             log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
