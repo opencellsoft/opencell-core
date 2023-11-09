@@ -136,7 +136,7 @@ public class QuoteProductDTO extends BaseEntityDto{
 					display = productVersionAttribute.isDisplay();
 					mandatory = productVersionAttribute.isMandatory();
 					readOnly = productVersionAttribute.getReadOnly();
-					allowedValues = productVersionAttribute.getAttribute().getAllowedValues();
+					allowedValues = new HashSet<>(productVersionAttribute.getAttribute().getAllowedValues());
 					attributeCategoryEnum = productVersionAttribute.getAttribute().getAttributeCategory();
 				}
 				productAttributes.add(new QuoteAttributeDTO(quoteAttribute, sequence, mandatory, display, readOnly, allowedValues, attributeCategoryEnum));
