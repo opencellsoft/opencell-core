@@ -649,12 +649,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
 		
 		if(invoiceLine.getUnitPrice() == null) {
-			throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : "+resource.getAccountingArticleCode());
-		} else {
-            invoiceLine.setAmountWithoutTax(invoiceLine.getUnitPrice().multiply(resource.getQuantity()));
-            invoiceLine.setAmountWithTax(NumberUtils.computeTax(invoiceLine.getAmountWithoutTax(),
-                    invoiceLine.getTaxRate(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).add(invoiceLine.getAmountWithoutTax()));
-        }
+			throw new BusinessException("You cannot create an invoice line without a price if unit price is not set on article with code : " + resource.getAccountingArticleCode());
+		}
 
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
@@ -721,8 +717,11 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 			  invoiceLine.setTaxRate(recalculatedTaxInfo.tax.getPercent());
 		}
 		
-        /****recalculate amountWithoutTax and amountWithTax  according to tax percent and the business model (b2b or b2c)*/
-        invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode());
+        BigDecimal[] amounts = computeAmounts(invoiceLine.getUnitPrice(),
+                invoiceLine.getQuantity(), invoiceLine.getTaxRate(), appProvider.isEntreprise());
+        invoiceLine.setAmountWithoutTax(amounts[0]);
+        invoiceLine.setAmountWithTax(amounts[1]);
+        invoiceLine.setAmountTax(amounts[2]);
 
         invoiceLine.setValidity(datePeriod);
         invoiceLine.setProductVersion((ProductVersion) tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
@@ -766,14 +765,36 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     }
 
+    private BigDecimal[] computeAmounts(BigDecimal unitPrice,
+                                        BigDecimal quantity, BigDecimal taxRate, boolean isEnterprise) {
+        BigDecimal amountTax;
+        BigDecimal amountWithTax;
+        BigDecimal amountWithoutTax;
+        final BigDecimal hundred = new BigDecimal(100);
+        if(isEnterprise) {
+            amountWithoutTax = unitPrice.multiply(quantity);
+            amountTax = (amountWithoutTax.multiply(taxRate))
+                    .divide(hundred, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            amountWithTax = amountWithoutTax.add(amountTax);
+        } else {
+            amountWithTax = unitPrice.multiply(quantity);
+            BigDecimal computeValue = (hundred.add(taxRate))
+                    .divide(hundred, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            amountWithoutTax = amountWithTax
+                    .divide(computeValue, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            amountTax = amountWithTax.subtract(amountWithoutTax);
+        }
+        return new BigDecimal[]{amountWithoutTax, amountWithTax, amountTax};
+    }
+
 	/**
 	 * @param invoice
 	 * @param invoiceLineResource
 	 * @param invoiceLineId
 	 */
-	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource, Long invoiceLineId) {
+	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineResource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-		invoiceLine = initInvoiceLineFromResource(invoiceLineRessource, invoiceLine);
+		invoiceLine = initInvoiceLineFromResource(invoiceLineResource, invoiceLine);
 		update(invoiceLine);
 	}
 
