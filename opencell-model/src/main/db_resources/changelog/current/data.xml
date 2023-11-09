@@ -21578,5 +21578,12 @@ public class ImportJobNotification extends Script {
         <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -20 and dunning_level_id = -70</sql>
         <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -20 and dunning_level_id = -80</sql>
 	</changeSet>
+	
+	<changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid">
+		<update tableName="adm_custom_generic_entity_code">
+            <column name="format_el" value="#{'BA-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}" />
+            <where>entity_class='org.meveo.model.billing.BillingAccount' and format_el='#{''CU-''.concat((mv:formatDate(null, ''YY''))).concat(generatedCode)}'</where>
+        </update>
+    </changeSet>
 	        
 </databaseChangeLog>
