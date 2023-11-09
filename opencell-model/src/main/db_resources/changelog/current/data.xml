@@ -21723,5 +21723,11 @@ public class ImportJobNotification extends Script {
         <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -20 and dunning_level_id = -70</sql>
         <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -20 and dunning_level_id = -80</sql>
 	</changeSet>
+	
+	<changeSet id="#INTRD-19093_20231109" author="aeljaouhari">
+		<delete tableName="meveo_job_instance">
+			<where>code = 'APIv2PermissionsSyncJob'</where>
+		</delete>
+	</changeSet>
 
 </databaseChangeLog>
