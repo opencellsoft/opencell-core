@@ -18,8 +18,8 @@ import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.payments.impl.PaymentHistoryService;
 import org.meveo.service.payments.impl.PaymentService;
-import org.meveo.util.ApplicationProvider;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -61,6 +61,9 @@ public class PaymentApiTest {
 
     @Mock
     private Provider applicationProvider;
+
+    @Mock
+    private PaymentHistoryService paymentHistoryService;
 
     @Mock
     private AccountOperationService accountOperationService;

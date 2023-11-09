@@ -75,7 +75,6 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -120,9 +119,6 @@ public class PaymentApi extends BaseApi {
 
 	@Inject
 	private JournalService journalService;
-
-	@Inject
-	private TradingCurrencyService tradingCurrencyService;
 
 	/**
      * @param paymentDto payment object which encapsulates the input data sent by client
@@ -202,13 +198,13 @@ public class PaymentApi extends BaseApi {
 		payment.setJournal(journalService.findByCode("BAN"));
         paymentService.create(payment);
 
-        if (paymentDto.isToMatching()) {
-            matchPayment(paymentDto, customerAccount, payment);
-            paymentHistoryService.addHistory(customerAccount,
-            		payment,
-    				null, paymentDto.getAmount().multiply(new BigDecimal(100)).longValue(),
-    				PaymentStatusEnum.ACCEPTED, null, null, payment.getReference(), null, null,
-    				null,null,paymentDto.getListAoIdsForMatching());            
+		paymentHistoryService.addHistory(customerAccount,
+				payment,
+				null, paymentDto.getAmount().multiply(new BigDecimal(100)).longValue(),
+				PaymentStatusEnum.ACCEPTED, null, null, payment.getReference(), null, null,
+				null,null,paymentDto.getListAoIdsForMatching());
+		if (paymentDto.isToMatching()) {
+			matchPayment(paymentDto, customerAccount, payment);
         } else {
             log.info("no matching created ");
         }
