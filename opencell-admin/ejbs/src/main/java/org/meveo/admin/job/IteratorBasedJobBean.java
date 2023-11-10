@@ -275,7 +275,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
-        int nbPublishers = 0;
+        // A value of data publishers might come from a Custom Field or calculated dynamically based on number of nodes in a cluster
+        Long nbPublishers = (Long) getParamOrCFValue(jobInstance, Job.CF_NB_PUBLISHERS, 0L);
 
         List<Future> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
@@ -297,6 +298,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             // Create publishing data to the job processing queue tasks if data processing is spread over a cluster
             if (isRunningAsJobManager && spreadOverCluster) {
+
+                if (nbPublishers == null || nbPublishers < 1) {
                     // Number of data publishing tasks is half of the cluster members or the number of nodes that job can run on
                     int nrOfNodes = jobInstance.getRunOnNodes() != null ? jobInstance.getRunOnNodes().split(",").length : channel.getView().getMembers().size();
                     nbPublishers = ((Integer) (nrOfNodes < 1 ? 1 : (3 * nrOfNodes) / 4)).longValue();

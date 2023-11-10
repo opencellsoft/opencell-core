@@ -75,6 +75,15 @@
 								rendered="#{jobInstanceBean.entity != null and (jobInstanceBean.entity.jobTemplate eq 'AccountOperationsGenerationJob')}" />
 						</h:panelGroup>
 
+						<p:fieldset legend="#{messages['jobExecution.runtime']}" styleClass="clearLeft">
+							<hftl:decorateFormField label="#{messages['jobExecution.nbOfAvailableProcessors']}">
+								<h:outputText value="#{jobInstanceBean.nrOfAvailableProcessors}" styleClass="field-value" />
+							</hftl:decorateFormField>
+							<hftl:decorateFormField label="#{messages['jobExecution.availableClusterNodes']}">
+								<h:outputText value="#{jobInstanceBean.availableClusterNodes}" styleClass="field-value" />
+							</hftl:decorateFormField>
+						</p:fieldset>
+
 						<p:fieldset legend="#{messages['jobExecution.status']}" styleClass="clearLeft">
 							<hftl:decorateFormField label="#{messages['jobExecution.status']}">
 								<h:outputText value="#{messages['JobRunningStatusEnum.'.concat(jobInstanceBean.jobExecutionStatus)]}" styleClass="field-value" />

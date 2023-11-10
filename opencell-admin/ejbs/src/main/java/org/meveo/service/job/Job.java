@@ -86,6 +86,11 @@ public abstract class Job {
     public static final String CF_BATCH_SIZE = "batchSize";
 
     /**
+     * Custom field for a number of threads to publish data for cluster wide processing
+     */
+    public static final String CF_NB_PUBLISHERS = "nbPublishers";
+    
+    /**
      * Custom field for a applyBilingRules.
      */
     public static final String CF_APPLY_BILLING_RULES = "applyBillingRules";
