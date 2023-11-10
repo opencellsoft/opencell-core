@@ -20,6 +20,7 @@ package org.meveo.service.payments.impl;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.*;
 import static org.meveo.model.payments.OperationCategoryEnum.CREDIT;
 
 import java.math.BigDecimal;
@@ -30,7 +31,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -60,6 +60,7 @@ import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
@@ -127,6 +128,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     private UnMatchingAmountService unMatchingAmountService;
     @Inject
     private OCCTemplateService occTemplateService;
+
+    @Inject
+    private PaymentHistoryService paymentHistoryService;
 
     private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
@@ -497,7 +501,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         paymentPlanService.toComplete(listOcc.stream()
                 .filter(accountOperation -> PPL_INSTALLMENT.equals(accountOperation.getCode()) && MatchingStatusEnum.L == accountOperation.getMatchingStatus())
                 .map(AccountOperation::getId)
-                .collect(Collectors.toList()));
+                .collect(toList()));
 
         // generate matchingCode for related AOs
         aosToGenerateMatchingCode.forEach(accountOperation -> journalEntryService.assignMatchingCodeToJournalEntries(accountOperation, null));
@@ -805,6 +809,32 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
         log.info("matchOperations  balance: {}", balance);
 
+        Payment payment = (Payment) listOcc.stream().filter(accountOperation -> accountOperation instanceof Payment).findFirst().orElse(null);
+        PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(payment.getReference());
+        if (payment != null && paymentHistory != null) {
+            List<Long> aoIdsToPay = operationIds.stream().filter(aoId -> !aoId.equals(payment.getId())).collect(toList());
+            if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
+                List<AccountOperation> aoToPay = new ArrayList<>();
+                for (Long aoId : aoIdsToPay) {
+                    aoToPay.add(accountOperationService.findById(aoId));
+                }
+                for (AccountOperation ao : aoToPay) {
+                    if (ao != null) {
+                        if (ao.getPaymentHistories() == null) {
+                            ao.setPaymentHistories(new ArrayList<>());
+                        }
+                        ao.getPaymentHistories().add(paymentHistory);
+
+                        if (paymentHistory.getListAoPaid() == null) {
+                            paymentHistory.setListAoPaid(new ArrayList<>());
+                        }
+                        paymentHistory.getListAoPaid().add(ao);
+                    }
+                }
+            }
+        }
+
+
         if (balance.compareTo(ZERO) == 0) {
             matching(listOcc, matchedAmount, null, matchingTypeEnum);
             matchingReturnObject.setOk(true);
@@ -921,6 +951,30 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
         log.info("matchOperations  balance: {}", balance);
 
+            Payment payment = (Payment) listOcc.stream().filter(accountOperation -> accountOperation instanceof Payment).findFirst().orElse(null);
+            PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(payment.getReference());
+            if (payment != null && paymentHistory != null) {
+                List<Long> aoIdsToPay = operationIds.stream().filter(aoId -> !aoId.equals(payment.getId())).collect(toList());
+                if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
+                    List<AccountOperation> aoToPay = new ArrayList<>();
+                    for (Long aoId : aoIdsToPay) {
+                        aoToPay.add(accountOperationService.findById(aoId));
+                    }
+                    for (AccountOperation ao : aoToPay) {
+                        if (ao != null) {
+                            if (ao.getPaymentHistories() == null) {
+                                ao.setPaymentHistories(new ArrayList<>());
+                            }
+                            ao.getPaymentHistories().add(paymentHistory);
+
+                            if (paymentHistory.getListAoPaid() == null) {
+                                paymentHistory.setListAoPaid(new ArrayList<>());
+                            }
+                            paymentHistory.getListAoPaid().add(ao);
+                        }
+                    }
+                }
+            }
         if (balance.compareTo(ZERO) == 0) {
             matching(listOcc, amount, null, matchingTypeEnum);
             matchingReturnObject.setOk(true);
