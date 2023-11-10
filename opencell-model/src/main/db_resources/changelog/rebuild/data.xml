@@ -11492,7 +11492,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         <insert tableName="adm_custom_generic_entity_code">
             <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
             <column name="entity_class" value="org.meveo.model.billing.BillingAccount"/>
-            <column name="format_el" value="#{'CU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="format_el" value="#{'BA-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
             <column name="created" valueDate="${db.current.time}"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
@@ -12024,7 +12024,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
            <column name="sequence_size" valueNumeric="9" />
            <column name="created" valueDate="2021-02-03 00:00:00.000" />
            <column name="creator" value="OPENCELL.ADMIN" />
-       </insert>        
+       </insert>
         <insert tableName="billing_invoice_type">
             <column name="id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />
@@ -12094,7 +12094,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="applies_to_id" value="-5"/>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
 	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
@@ -12114,6 +12114,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-19070" author="TARIKFA." />
     <changeSet id="#INTRD-19224_20231101" author="zelmeliani" />
     <changeSet id="#INTRD-18995_20231107" author="zelmeliani" />
+    <changeSet id="#INTRD-19093_20231109" author="aeljaouhari" />
+    <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
