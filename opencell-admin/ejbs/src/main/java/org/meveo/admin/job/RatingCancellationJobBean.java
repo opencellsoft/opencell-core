@@ -59,8 +59,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 		if (nbThreads == -1) {
 			nbThreads = (long) Runtime.getRuntime().availableProcessors();
 		}
-		final long nrPerTx = (Long) this.getParamOrCFValue(jobInstance, RatingCancellationJob.CF_INVOICE_LINES_NR_RTS_PER_TX, 100000L);
-		int fetchSize = ((Long) nrPerTx).intValue() * nbThreads.intValue();
+
 
 		createView();
 
@@ -73,7 +72,12 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 			return Optional.empty();
 		}
 		jobExecutionResult.addReport(" will rerate " + nrOfInitialWOs + " WOs");
-
+		
+		final long configuredNrPerTx = (Long) this.getParamOrCFValue(jobInstance, RatingCancellationJob.CF_INVOICE_LINES_NR_RTS_PER_TX, 100000L);
+		
+		
+		final long nrPerTx = (nrOfInitialWOs / nbThreads) < configuredNrPerTx ? nrOfInitialWOs / nbThreads : configuredNrPerTx;
+		int fetchSize = ((Long) nrPerTx).intValue() * nbThreads.intValue();
 		org.hibernate.query.Query nativeQuery = statelessSession
 				.createNativeQuery("select id, count_wo from " + viewName + " order by id");
 		scrollableResults = nativeQuery.setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun)
@@ -198,10 +202,8 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 				try (Statement statement = connection.createStatement()) {
 					log.info("Dropping and recreating materialized view {} : ", viewName);
 					statement.execute("drop materialized view if exists " + viewName);
-					statement.execute("create materialized view " + viewName + " as " + sql);
-					statement.execute("create index idx__il_id_" + viewName + " ON " + viewName + " USING btree (il_id) ");
-					statement.execute("create index idx__dil_id_" + viewName + " ON " + viewName + " USING btree (dil_id) ");
-					statement.execute("create index idx__til_id_" + viewName + " ON " + viewName + " USING btree (til_id) ");
+					statement.execute(sql);
+					statement.execute("create index idx__" + viewName + "__subscription_id ON " + viewName + " USING btree (s_id) ");
 				} catch (Exception e) {
 					log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
 					throw new BusinessException(e);
