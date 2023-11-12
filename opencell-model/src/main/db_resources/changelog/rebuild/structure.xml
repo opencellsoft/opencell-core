@@ -11917,6 +11917,15 @@
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="entities_with_huge_volume" type="${type.json}"/>
+            <column name="wo_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="rt_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="edr_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">

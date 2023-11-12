@@ -16068,11 +16068,24 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="business_key" type="VARCHAR(255)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="INTRD-17830_20231108" author="AbdelmounaimAkadid">
         <sql>CREATE INDEX idx_rating_edr__business_key ON ${db.schema.adapted}rating_edr using btree(business_key)</sql>
         <sql>CREATE INDEX idx_billing_rated_transaction__business_key ON billing_rated_transaction using btree(business_key)</sql>
         <sql>CREATE INDEX idx_rating_wo__business_key ON billing_wallet_operation using btree(business_key)</sql>
     </changeSet>
 
+    <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe">
+        <addColumn tableName="finance_settings">
+            <column name="wo_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="rt_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="edr_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
