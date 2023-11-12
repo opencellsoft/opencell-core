@@ -71,6 +71,15 @@ public class FinanceSettings extends BusinessEntity {
     @Column(name = "nb_partitions_keep")
     private Integer nbPartitionsToKeep;
 
+   @Column(name = "wo_partition_range_months")
+   private Integer woPartitionPeriod;
+
+    @Column(name = "rt_partition_range_months")
+    private Integer rtPartitionPeriod;
+
+    @Column(name = "edr_partition_range_months")
+    private Integer edrPartitionPeriod;
+
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
 
@@ -200,5 +209,29 @@ public class FinanceSettings extends BusinessEntity {
 
     public void setNbPartitionsToKeep(Integer nbPartitionsToKeep) {
         this.nbPartitionsToKeep = nbPartitionsToKeep;
+    }
+
+    public Integer getWoPartitionPeriod() {
+        return woPartitionPeriod;
+    }
+
+    public void setWoPartitionPeriod(Integer woPartitionPeriod) {
+        this.woPartitionPeriod = woPartitionPeriod;
+    }
+
+    public Integer getRtPartitionPeriod() {
+        return rtPartitionPeriod;
+    }
+
+    public void setRtPartitionPeriod(Integer rtPartitionPeriod) {
+        this.rtPartitionPeriod = rtPartitionPeriod;
+    }
+
+    public Integer getEdrPartitionPeriod() {
+        return edrPartitionPeriod;
+    }
+
+    public void setEdrPartitionPeriod(Integer edrPartitionPeriod) {
+        this.edrPartitionPeriod = edrPartitionPeriod;
     }
 }

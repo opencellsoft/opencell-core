@@ -12085,6 +12085,15 @@
             <column name="entities_with_huge_volume" type="${type.json}"/>
             <column name="billing_run_process_warning" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="nb_partitions_keep" type="int4" />
+            <column name="wo_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="rt_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="edr_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -21088,6 +21097,7 @@
     <changeSet id="#INTRD-18966_20231018" author="AbdellatifBARI" />
     <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
