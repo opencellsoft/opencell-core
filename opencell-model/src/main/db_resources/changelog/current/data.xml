@@ -21737,4 +21737,34 @@ public class ImportJobNotification extends Script {
 		</delete>
 	</changeSet>
 
+	<changeSet id="#INTRD-18995_20231107" author="zelmeliani">
+		<update tableName="crm_seller">
+            <column name="trading_country_id" valueComputed="(select id from billing_trading_country where code = 'US')" />
+			<column name="legal_entity_type_id" valueComputed="(select id from adm_title where code = 'SAS')" />
+			<column name="vat_no" value="89810129411"/>
+			<column name="registration_no" value="89810129411"/>
+			<column name="address_city" value="New York"/>
+			<column name="address_zipcode" value="10001"/>
+			<column name="address_1" value="High level suite"/>
+			<column name="address_2" value="Appt 3327"/>
+            <where>code = 'MAIN_SELLER'</where>
+        </update>
+
+		<update tableName="billing_invoice_type">
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '220')" />
+			<column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'ORI')" />
+			<column name="prefix_el" value="COMMERCIAL_ORDER_"/>
+			<column name="billing_template_name_el" value="commercial_order_new"/>
+            <where>code = 'COMMERCIAL_ORDER'</where>
+        </update>
+
+		<update tableName="billing_invoice_type">
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '310')" />
+			<column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'QUT')" />
+			<column name="prefix_el" value="QUOTE_"/>
+			<column name="billing_template_name_el" value="quote_new"/>
+            <where>code = 'QUOTE'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
