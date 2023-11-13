@@ -8582,101 +8582,6 @@
            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
         </insert> 
 	</changeSet>
-	
-    <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceTypes">
-
-        <insert tableName="billing_seq_invoice">
-            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="sequence_size" valueNumeric="9" />
-            <column name="code" value="COM" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-        </insert>
-        <insert tableName="billing_seq_invoice">
-            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="sequence_size" valueNumeric="9" />
-            <column name="code" value="ADJ" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-        </insert>
-        <insert tableName="billing_seq_invoice">
-            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="sequence_size" valueNumeric="9" />
-            <column name="code" value="QUOTE" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-        </insert>
-       <insert tableName="billing_seq_invoice">
-           <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
-           <column name="version" valueNumeric="0" />
-           <column name="code" value="ADV" />
-           <column name="description" value="Advanced Payment Invoice sequence" />
-           <column name="sequence_size" valueNumeric="9" />
-           <column name="created" valueDate="2021-02-03 00:00:00.000" />
-           <column name="creator" value="OPENCELL.ADMIN" />
-       </insert>        
-        <insert tableName="billing_invoice_type">
-            <column name="id" valueNumeric="-1" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="code" value="COM" />
-            <column name="description" value="Invoice" />
-            <column name="description_i18n" value='{"FRA":"Facture","ENG":"Invoice"}'/>
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="invoice_sequence_id"
-					valueComputed="(SELECT id from billing_seq_invoice where code = 'COM')" />
-            <column name="occ_template_id" valueNumeric="-25" />
-            <column name="occ_templ_negative_id" value="-40" />
-            <column name="matching_auto" valueNumeric="0" />
-            <column name="uuid" value="InvoiceType-COM" />
-            <column name="vat_payment_option_id" value="1" />
-            <column name="invoice_code_type_id" value="18" />
-            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
-        </insert>
-        <insert tableName="billing_invoice_type">
-            <column name="id" valueNumeric="-2" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="code" value="ADJ" />
-            <column name="description" value="Credit note"/>
-			<column name="description_i18n" value='{"FRA":"Avoir","ENG":"Credit note"}'/>
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="invoice_sequence_id"
-					valueComputed="(SELECT id from billing_seq_invoice where code = 'ADJ')" />
-            <column name="occ_template_id" value="-40" />
-            <column name="matching_auto" valueNumeric="0" />
-            <column name="uuid" value="InvoiceType-ADJ" />
-            <column name="vat_payment_option_id" value="1" />
-            <column name="invoice_code_type_id" value="19" />
-            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
-        </insert>
-        <insert tableName="billing_invoice_type">
-            <column name="id" valueNumeric="-3" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="code" value="QUOTE" />
-            <column name="description" value="Quote"/>
-			<column name="description_i18n" value='{"FRA":"Devis","ENG":"Quote"}'/>
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="invoice_sequence_id"
-					valueComputed="(SELECT id from billing_seq_invoice where code = 'QUOTE')" />
-            <column name="matching_auto" valueNumeric="0" />
-            <column name="uuid" value="InvoiceType-QUOTE" />
-            <column name="vat_payment_option_id" value="1" />
-        </insert>
-        <insert tableName="billing_invoice_type_applies_to">
-            <column name="invoice_type_id" value="-1" />
-            <column name="applies_to_id" value="-2" />
-        </insert>
-        <insert tableName="billing_invoice_type_applies_to">
-            <column name="invoice_type_id" value="-2" />
-            <column name="applies_to_id" value="-1" />
-        </insert>
-    </changeSet>
-
 
     <changeSet id="#INTRD-292_20210816" author="HatimOUDAD" />
     <changeSet id="#540_563_20210607" author="TarikFA."/>
@@ -10786,15 +10691,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
-
-	<changeSet id="#INTRD-10907_20221026" author="EBOURRAS">
-		<insert tableName="billing_invoice_type_applies_to">
-			<column name="invoice_type_id" value="-1"/>
-			<column name="applies_to_id" value="-5"/>
-		</insert>
-	</changeSet>
-
-
 	<changeSet id="#INTRD-11328_20221110" author="aelmalki">
 		<insert tableName="crm_custom_field_tmpl">
 			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
@@ -12094,7 +11990,111 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		]]>
 		</sql>
     </changeSet>
-	
+
+    <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceTypes">
+        <insert tableName="billing_seq_invoice">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="code" value="COM" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+        </insert>
+        <insert tableName="billing_seq_invoice">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="code" value="ADJ" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+        </insert>
+        <insert tableName="billing_seq_invoice">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="code" value="QUOTE" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+        </insert>
+       <insert tableName="billing_seq_invoice">
+           <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+           <column name="version" valueNumeric="0" />
+           <column name="code" value="ADV" />
+           <column name="description" value="Advanced Payment Invoice sequence" />
+           <column name="sequence_size" valueNumeric="9" />
+           <column name="created" valueDate="2021-02-03 00:00:00.000" />
+           <column name="creator" value="OPENCELL.ADMIN" />
+       </insert>
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="COM" />
+            <column name="description" value="Invoice" />
+            <column name="description_i18n" value='{"FRA":"Facture","ENG":"Invoice"}'/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="invoice_sequence_id"
+					valueComputed="(SELECT id from billing_seq_invoice where code = 'COM')" />
+            <column name="occ_template_id" valueNumeric="-25" />
+            <column name="occ_templ_negative_id" value="-40" />
+            <column name="matching_auto" valueNumeric="0" />
+            <column name="uuid" value="InvoiceType-COM" />
+            <column name="vat_payment_option_id" value="1" />
+            <column name="invoice_code_type_id" value="18" />
+            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
+        </insert>
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="ADJ" />
+            <column name="description" value="Credit note"/>
+			<column name="description_i18n" value='{"FRA":"Avoir","ENG":"Credit note"}'/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="invoice_sequence_id"
+					valueComputed="(SELECT id from billing_seq_invoice where code = 'ADJ')" />
+            <column name="occ_template_id" value="-40" />
+            <column name="matching_auto" valueNumeric="0" />
+            <column name="uuid" value="InvoiceType-ADJ" />
+            <column name="vat_payment_option_id" value="1" />
+            <column name="invoice_code_type_id" value="19" />
+            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
+        </insert>
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="QUOTE" />
+            <column name="description" value="Quote"/>
+			<column name="description_i18n" value='{"FRA":"Devis","ENG":"Quote"}'/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="invoice_sequence_id"
+					valueComputed="(SELECT id from billing_seq_invoice where code = 'QUOTE')" />
+            <column name="matching_auto" valueNumeric="0" />
+            <column name="uuid" value="InvoiceType-QUOTE" />
+            <column name="vat_payment_option_id" value="1" />
+            <column name="prefix_el" value="QUOTE_" />
+            <column name="billing_template_name_el" value="quote_new" />
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '310')" />
+            <column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'QUT')" />
+        </insert>
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" value="-1" />
+            <column name="applies_to_id" value="-2" />
+        </insert>
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" value="-2" />
+            <column name="applies_to_id" value="-1" />
+        </insert>
+    </changeSet>
+
+	<changeSet id="#INTRD-10907_20221026" author="EBOURRAS">
+		<insert tableName="billing_invoice_type_applies_to">
+			<column name="invoice_type_id" value="-1"/>
+			<column name="applies_to_id" value="-5"/>
+		</insert>
+	</changeSet>
+
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
 	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
@@ -12113,6 +12113,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-18858_202301006" author="TARIKFA." />
     <changeSet id="#INTRD-19070" author="TARIKFA." />
     <changeSet id="#INTRD-19224_20231101" author="zelmeliani" />
+    <changeSet id="#INTRD-18995_20231107" author="zelmeliani" />
     <changeSet id="#INTRD-19093_20231109" author="aeljaouhari" />
     <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid" />
 
