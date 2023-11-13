@@ -1220,7 +1220,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         usageChargeInstances = new ArrayList<>();
 
         for (ChargeInstance chargeInstance : getChargeInstances()) {
-            PersistenceUtils.initializeAndUnproxy(chargeInstance);
+            chargeInstance = PersistenceUtils.initializeAndUnproxy(chargeInstance);
 
             if (chargeInstance.getChargeType().equals("R")) {
                 recurringChargeInstances.add((RecurringChargeInstance) chargeInstance);
