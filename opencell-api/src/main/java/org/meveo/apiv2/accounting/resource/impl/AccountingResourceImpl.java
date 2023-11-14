@@ -69,21 +69,20 @@ public class AccountingResourceImpl implements AccountingResource {
     
     @Override
     public Response getValByValNbContryCode(String vatNumber, String countryCode) {
-        boolean valueValideNodeBoolean = false; 
-        
+        boolean valueValideNodeBoolean = false;
+
         try {
-            valueValideNodeBoolean = validationByNumberCountryService.getValByValNbCountryCode(vatNumber, countryCode); 
+            valueValideNodeBoolean = validationByNumberCountryService.getValByValNbCountryCode(vatNumber, countryCode);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
-        
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        if (valueValideNodeBoolean) {
-            return Response.ok(result).build();
-        }
 
-        throw new BadRequestException("Invalid VAT");
-    }   
+        if (valueValideNodeBoolean) {
+            return Response.ok(new ActionStatus(ActionStatusEnum.SUCCESS, "")).build();
+        } else {
+            return Response.ok(new ActionStatus(ActionStatusEnum.FAIL, "Invalid VAT")).build();
+        }
+    }
 
     private AuxiliaryAccount buildResponse(CustomerAccount customerAccount, Map<String, String> accountingResult) {
         Resource customerAccountResource = ImmutableResource.builder()
