@@ -95,7 +95,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.contract.Contract;
-import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.contract.ContractItemForRating;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.Customer;
@@ -631,7 +631,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-                ContractItem contractItem = null;
+                ContractItemForRating contractItem = null;
                 if (contract != null && serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
                     if (contract != null && bareWalletOperation.getOperationDate().compareTo(contract.getBeginDate()) >= 0 && bareWalletOperation.getOperationDate().compareTo(contract.getEndDate()) < 0) {
@@ -642,9 +642,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     // If contract rate type is Fixed - unit rate comes either from 1. hardcoded in contact item or 2. from a price plan specified in a contract
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
 
-                        if (contractItem.getPricePlan() != null) {
-							pricePlan = contractItem.getPricePlan();
-							PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(pricePlan, bareWalletOperation);
+                        if (contractItem.getPricePlanId() != null) {
+							pricePlan = getEntityManager().find(PricePlanMatrix.class, contractItem.getPricePlanId());
+							PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlanId(), bareWalletOperation);
                             if (pricePlanMatrixLine != null) {
                                 try {
                                     unitPriceWithoutTax = pricePlanMatrixLine.getValue();
@@ -713,8 +713,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             }
                             
                             // Discount rate is specified in a price plan associated to a contact
-                        } else if (contractItem.getPricePlan() != null) {
-                            pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlan(), bareWalletOperation);
+                        } else if (contractItem.getPricePlanId() != null) {
+                            pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlanId(), bareWalletOperation);
                             if (pricePlanMatrixLine != null) {
                                 discountRate = pricePlanMatrixLine.getValue();
                                 if (discountRate != null && discountRate.compareTo(BigDecimal.ZERO) > 0) {
@@ -1010,7 +1010,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             String invoiceSubCategoryCode = elUtils.evaluateStringExpression(pricePlan.getInvoiceSubCategoryEL(), bareWalletOperation,
                 bareWalletOperation.getWallet() != null ? bareWalletOperation.getWallet().getUserAccount() : null, null, null);
             if (!StringUtils.isBlank(invoiceSubCategoryCode)) {
-                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
+                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode, true);
                 if (invoiceSubCategory != null) {
                     bareWalletOperation.setInvoiceSubCategory(invoiceSubCategory);
                 }

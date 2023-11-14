@@ -110,9 +110,8 @@ public class ContractItem extends EnableBusinessCFEntity {
 
 	
 	/**
-     * separate discount
+     * Shall discount be created as a separate WO
      */
-	
 	@Type(type = "numeric_boolean")
 	@Column(name = "separate_discount")
 	private boolean separateDiscount = false;
@@ -253,17 +252,19 @@ public class ContractItem extends EnableBusinessCFEntity {
 		this.contractRateType = contractRateType;
 	}
 
-	
+    /**
+     * @return Shall discount be created as a separate WO
+     */
+    public boolean isSeparateDiscount() {
+        return separateDiscount;
+    }
 
-	public boolean isSeparateDiscount() {
-		return separateDiscount;
-	}
-
-
-	public void setSeparateDiscount(boolean separateDiscount) {
-		this.separateDiscount = separateDiscount;
-	}
-
+    /**
+     * @param separateDiscount Shall discount be created as a separate WO
+     */
+    public void setSeparateDiscount(boolean separateDiscount) {
+        this.separateDiscount = separateDiscount;
+    }
 
 	@Override
 	public int hashCode() {
