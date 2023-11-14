@@ -395,8 +395,8 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 		return request;
 	}
 
-    private String buildTransactionReference() {
-		return UUID.randomUUID().toString().substring(0, 30);
+	private String buildTransactionReference() {
+		return UUID.randomUUID().toString().substring(0, paramBean().getPropertyAsInteger("sips.transReference.size",35)).replace("-", "x");
 	}
 
 	
