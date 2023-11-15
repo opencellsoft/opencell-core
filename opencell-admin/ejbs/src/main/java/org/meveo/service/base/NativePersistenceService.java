@@ -1727,34 +1727,23 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Specific getQuery
+     * Execute the query builder with the provided filters
      *
-     * @param tableName                table name
-     * @param updatedFields            table fields to be updated
-     * @param config                   the pagination configuration
-     * @return List<Integer>           list of execute update return
+     * @param tableNameAlias the table name
+     * @param queryBuilder   the query builder
+     * @param filters        the filters
      */
-    public List<Integer> update(String tableName, Map<String, Object> updatedFields, PaginationConfiguration config) {
-        final List<Integer> updated = new ArrayList<>();
-        StringBuilder updateQuery = new StringBuilder("UPDATE ").append(tableName).append(" a SET");
-        updatedFields.forEach((s, o) ->
-                updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
-        );
-        updateQuery.setLength(updateQuery.length() - 1);
-        QueryBuilder queryBuilder = new QueryBuilder(updateQuery.toString(), "a");
+    public void update(String tableNameAlias, QueryBuilder queryBuilder, Map<String, Object> filters) {
+        if (queryBuilder != null) {
+            if (filters != null && !filters.isEmpty()) {
+                NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, tableNameAlias);
+                filters.keySet().stream()
+                        .sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
+                        .filter(key -> filters.get(key) != null)
+                        .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
 
-
-        Map<String, Object> filters = config.getFilters();
-
-        if (filters != null && !filters.isEmpty()) {
-            NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
-            filters.keySet().stream()
-                    .sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
-                    .filter(key -> filters.get(key) != null)
-                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
-
+            }
+            getEntityManager().createQuery(queryBuilder.getQueryAsString()).executeUpdate();
         }
-        updated.add(getEntityManager().createQuery(queryBuilder.getQueryAsString()).executeUpdate());
-        return updated;
     }
 }
