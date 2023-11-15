@@ -789,6 +789,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "pdp_status_id")
 	private PDPStatusEntity pdpStatus;
+	
+	@Column(name = "certificate_uncollectibility_number", length = 50)
+	private String certificateUncollectibilityNumber;
     
     public Invoice() {
 	}
@@ -2093,5 +2096,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	
 	public void setPdpStatus(PDPStatusEntity pdpStatus) {
 		this.pdpStatus = pdpStatus;
+	}
+	
+	public String getCertificateUncollectibilityNumber() {
+		return certificateUncollectibilityNumber;
+	}
+	
+	public Invoice setCertificateUncollectibilityNumber(String certificateUncollectibilityNumber) {
+		this.certificateUncollectibilityNumber = certificateUncollectibilityNumber;
+		return this;
 	}
 }
