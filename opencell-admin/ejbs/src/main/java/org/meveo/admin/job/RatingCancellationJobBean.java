@@ -215,7 +215,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 	private void markCanceledRTs(EntityManager entityManager, String prefix, long min, long max) {
 		String updateILQuery = "UPDATE billing_Rated_transaction rt SET status='CANCELED', updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' "
 				+ " FROM " + viewName 
-				+ " rr, unnest(string_to_array(" + prefix + "rt_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and rt.id = CAST(to_update AS bigint)";
+				+ " rr, unnest(string_to_array(" + prefix + "rt_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and " + prefix + "rt_id is not null and rt.id = CAST(to_update AS bigint)";
 		entityManager.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
 				.executeUpdate();
 	}
@@ -223,7 +223,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 	private void markCanceledWOs(EntityManager entityManager, String prefix, long min, long max) {
 		String updateILQuery = "UPDATE billing_wallet_operation wo SET status='CANCELED', updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' "
 				+ " FROM " + viewName 
-				+ " rr, unnest(string_to_array(" + prefix + "wo_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and wo.id = CAST(to_update AS bigint)";
+				+ " rr, unnest(string_to_array(" + prefix + "wo_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and " + prefix + "wo_id is not null and wo.id = CAST(to_update AS bigint)";
 		entityManager.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
 				.executeUpdate();
 	}
@@ -231,7 +231,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 	private void markCanceledEDRs(EntityManager entityManager, long min, long max) {
 		String updateILQuery = "UPDATE rating_EDR edr SET status='CANCELLED', last_updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' "
 				+ " FROM " + viewName
-				+ " rr, unnest(string_to_array(edr_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and edr.id = CAST(to_update AS bigint)";
+				+ " rr, unnest(string_to_array(edr_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and edr_id is not null and edr.id = CAST(to_update AS bigint)";
 		entityManager.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
 				.executeUpdate();
 	}
@@ -250,7 +250,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 				+ "rt_amount_without_tax, amount_with_tax = il.amount_with_tax + rr." + prefix + "rt_amount_with_tax,"
 				+ "    quantity = il.quantity + rr." + prefix + "rt_quantity, amount_tax = il.amount_tax + rr." + prefix
 				+ "rt_amount_tax, updated = CURRENT_TIMESTAMP" + " FROM " + viewName
-				+ " rr WHERE rr.billed_il is null and il.id = rr." + prefix + "il_id and rr.id between :min and :max";
+				+ " rr WHERE rr.billed_il is null and rr." + prefix + "il_id is not null and il.id = rr." + prefix + "il_id and rr.id between :min and :max";
 		entityManager.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
 				.executeUpdate();
 	}
