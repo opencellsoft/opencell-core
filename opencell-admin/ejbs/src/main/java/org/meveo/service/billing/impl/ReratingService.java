@@ -37,6 +37,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.mediation.MediationsettingService;
 import org.slf4j.Logger;
 
 /**
@@ -144,6 +145,9 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
 
     @Inject
     private UsageRatingService usageRatingService;
+    
+    @Inject
+    private MediationsettingService mediationsettingService;
 
     /**
      * Re-rate service instance charges
@@ -511,7 +515,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(newWO, operationToRerate.getEdr(), false, false);
                     for (EDR e : edrs) {
                         e.setWalletOperation(newWO);
-                        e.setEventKey(edr.getEventKey());
+                        e.setEventKey(mediationsettingService.getEventKeyFromEdrVersionRule(e));
                         e.setEventVersion(edr.getEventVersion() != null ? edr.getEventVersion() : null);
                         edrService.create(e);
                     }
@@ -535,7 +539,7 @@ public class ReratingService extends PersistenceService<WalletOperation> impleme
                     List<EDR> edrs = usageRatingService.instantiateTriggeredEDRs(newWO, operationToRerate.getEdr(), false, false);
                     for (EDR e : edrs) {
                         e.setWalletOperation(newWO);
-                        e.setEventKey(edr.getEventKey());
+                        e.setEventKey(mediationsettingService.getEventKeyFromEdrVersionRule(e));
                         e.setEventVersion(edr.getEventVersion() != null ? edr.getEventVersion() : null);
                         edrService.create(e);
                     }
