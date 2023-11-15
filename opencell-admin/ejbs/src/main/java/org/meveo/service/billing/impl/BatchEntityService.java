@@ -17,7 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
-import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BatchEntity;
 import org.meveo.model.billing.BatchEntityStatusEnum;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -26,11 +26,13 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +48,9 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
     @Inject
     @Named
     private NativePersistenceService nativePersistenceService;
+
+    @EJB
+    BatchEntityService batchEntityService;
 
     /**
      * Create the new batch entity
@@ -87,24 +92,29 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
                 batchEntity.setStatus(BatchEntityStatusEnum.PROCESSING);
                 batchEntity.setJobInstance(jobInstance);
 
-                PaginationConfiguration paginationConfiguration = new PaginationConfiguration(batchEntity.getFilters());
+                String tableNameAlias = "a";
+                StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation ").append(tableNameAlias).append(" SET ")
+                        .append(tableNameAlias).append(".status=").append(QueryBuilder.paramToString(WalletOperationStatusEnum.TO_RERATE))
+                        .append(", ").append(tableNameAlias).append(".reratingBatch.id=").append(batchEntity.getId())
+                        .append(", ").append(tableNameAlias).append(".updated=").append(QueryBuilder.paramToString(new Date()));
 
-                Map<String, Object> toUpdateFields = new HashMap<>();
-                toUpdateFields.put("status", WalletOperationStatusEnum.TO_RERATE);
-                toUpdateFields.put("reratingBatch", batchEntity);
-                toUpdateFields.put("updated", new Date());
-
-                nativePersistenceService.update("WalletOperation", toUpdateFields, paginationConfiguration);
+                QueryBuilder queryBuilder = new QueryBuilder(updateQuery.toString(), tableNameAlias);
+                nativePersistenceService.update(tableNameAlias, queryBuilder, batchEntity.getFilters());
                 batchEntity.setStatus(BatchEntityStatusEnum.SUCCESS);
                 update(batchEntity);
                 jobExecutionResult.registerSucces();
             } catch (Exception e) {
                 log.error("Failed to process the entity batch : " + batchEntity.getCode(), e);
-                batchEntity.setStatus(BatchEntityStatusEnum.FAILURE);
-                update(batchEntity);
-                jobExecutionResult.registerError(e.getMessage());
+                batchEntityService.update(batchEntity, jobExecutionResult, e.getMessage());
             }
         }
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void update(BatchEntity batchEntity, JobExecutionResultImpl jobExecutionResult, String errorMessage) {
+        batchEntity.setStatus(BatchEntityStatusEnum.FAILURE);
+        update(batchEntity);
+        jobExecutionResult.registerError(errorMessage);
     }
 
 }

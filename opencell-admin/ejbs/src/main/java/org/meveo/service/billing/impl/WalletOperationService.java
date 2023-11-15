@@ -1065,21 +1065,26 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 .getResultList();
     }
 
-    public Integer markWOToRerate(Map<String, Object> updatedFields, List<Long> woIds) {
-        // Build update filterQuery
-        StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation a SET");
-        updatedFields.forEach((s, o) ->
-                updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
-        );
-        updateQuery.setLength(updateQuery.length() - 1);
-        updateQuery.append(" WHERE a.id in (")
-                .append(woIds.stream().map(String::valueOf).collect(joining(",")))
-                .append(")");
+    public int markWOToRerate(Map<String, Object> updatedFields, List<Long> woIds) {
+        int updated = 0;
+        if (updatedFields != null && !updatedFields.isEmpty()) {
+            // Build update filterQuery
+            StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation a SET");
+            updatedFields.forEach((s, o) ->
+                    updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
+            );
+            updateQuery.setLength(updateQuery.length() - 1);
+            if (woIds != null && !woIds.isEmpty()) {
+                updateQuery.append(" WHERE a.id in (")
+                        .append(woIds.stream().map(String::valueOf).collect(joining(",")))
+                        .append(")");
+            }
+            updated = getEntityManager().createQuery(updateQuery.toString()).executeUpdate();
 
-        Integer updated = getEntityManager().createQuery(updateQuery.toString()).executeUpdate();
+            getEntityManager().flush();
+            getEntityManager().clear();
+        }
 
-        getEntityManager().flush();
-        getEntityManager().clear();
         return updated;
     }
 }
