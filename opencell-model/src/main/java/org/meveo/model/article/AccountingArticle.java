@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -51,15 +50,15 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = LAZY)
     @JoinColumn(name = "tax_class_id")
     private TaxClass taxClass;
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = LAZY)
     @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "article_family_id")
     private ArticleFamily articleFamily;
 
@@ -67,7 +66,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
     
-    @OneToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "invoice_type_id")
     private InvoiceType invoiceType;
 

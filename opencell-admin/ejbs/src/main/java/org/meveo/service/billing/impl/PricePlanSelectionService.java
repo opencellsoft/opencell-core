@@ -102,7 +102,6 @@ public class PricePlanSelectionService implements Serializable {
             endDate = DateUtils.truncateTime(bareWo.getEndDate());
         }
 
-
         Object[] params = new Object[] { "chargeCode", bareWo.getCode(), "sellerId", bareWo.getSeller().getId(), "tradingCountryId", buyerCountryId, "tradingCurrencyId",
                 buyerCurrency != null ? buyerCurrency.getId() : null, "subscriptionDate", subscriptionDate, "subscriptionAge", subscriptionAge, "operationDate", operationDate, "param1", bareWo.getParameter1(), "param2",
                 bareWo.getParameter2(), "param3", bareWo.getParameter3(), "offerId", bareWo.getOfferTemplate() != null ? bareWo.getOfferTemplate().getId() : null, "quantity", bareWo.getQuantity(), "startDate", startDate,
@@ -110,8 +109,7 @@ public class PricePlanSelectionService implements Serializable {
 
         Map<String, Boolean> advancedSettingsMapByGroup = advancedSettingsService.getAdvancedSettingsMapByGroup("pricePlanFilters", Boolean.class);
         // When matching in DB only, no PricePlanMatrix.criteriaEl and validityCalendar fields will be consulted and the highest priority will be chosen
-		boolean matchDbOnly = ParamBean.getInstance().getPropertyAsBoolean("pricePlan.default.matchDBOnly", false)
-				|| (!advancedSettingsMapByGroup.get("pricePlanFilters.enablePricePlanFilters")
+        boolean matchDbOnly = ParamBean.getInstance().getPropertyAsBoolean("pricePlan.default.matchDBOnly", false) || (!advancedSettingsMapByGroup.get("pricePlanFilters.enablePricePlanFilters")
 						|| (!advancedSettingsMapByGroup.get("pricePlanFilters.enableValidityCalendar") && !advancedSettingsMapByGroup.get("pricePlanFilters.enableCriteriaEL")));
 
         EntityManager em = getEntityManager();
@@ -135,8 +133,8 @@ public class PricePlanSelectionService implements Serializable {
         }
     }
     
-	public PricePlanMatrix getActivePricePlansByChargeCodeForRatingMatchDB(WalletOperation bareWo, Long buyerCountryId, Map<String, Boolean> advancedSettingsMapByGroup,
-			TradingCurrency buyerCurrency, Date startDate, Date endDate, long subscriptionAge, Date subscriptionDate, Date operationDate) {
+    public PricePlanMatrix getActivePricePlansByChargeCodeForRatingMatchDB(WalletOperation bareWo, Long buyerCountryId, Map<String, Boolean> advancedSettingsMapByGroup, TradingCurrency buyerCurrency, Date startDate,
+            Date endDate, long subscriptionAge, Date subscriptionDate, Date operationDate) {
 		StringBuilder queryBuilder = new StringBuilder("SELECT ppm FROM PricePlanMatrix ppm WHERE ppm.disabled = false AND ppm.eventCode = :chargeCode");
 
 		Map<String, Object> queryParams = new HashMap<>();
@@ -232,8 +230,7 @@ public class PricePlanSelectionService implements Serializable {
 
 		queryBuilder.append(" ORDER BY ppm.priority ASC, ppm.id");
 
-		TypedQuery<PricePlanMatrix> query = getEntityManager().createQuery(queryBuilder.toString(),
-				PricePlanMatrix.class);
+        TypedQuery<PricePlanMatrix> query = getEntityManager().createQuery(queryBuilder.toString(), PricePlanMatrix.class);
 		query.setMaxResults(1);
 		for (Map.Entry<String, Object> entry : queryParams.entrySet()) {
 			query.setParameter(entry.getKey(), entry.getValue());
@@ -244,12 +241,10 @@ public class PricePlanSelectionService implements Serializable {
 			PricePlanMatrix pricePlan = query.getSingleResult();
 			return pricePlan;
 		} catch (NoResultException e) {
-			throw new NoPricePlanException("No active price plan matched for parameters: " + queryParams.keySet()
-					.stream().map(key -> key + "=" + queryParams.get(key)).collect(Collectors.joining(", ", "{", "}")));
+            throw new NoPricePlanException("No active price plan matched for parameters: " + queryParams.keySet().stream().map(key -> key + "=" + queryParams.get(key)).collect(Collectors.joining(", ", "{", "}")));
 		}
 
 	}
-
 
 	/**
      * Find a matching price plan for a given wallet operation - used to resolve Price plan criteriaEL and validityCalendar fields that can not be done in DB
@@ -293,13 +288,13 @@ public class PricePlanSelectionService implements Serializable {
     /**
      * get pricePlanVersion Valid for the given operationDate
      * 
-     * @param ppmId Price plan ID
+     * @param pricePlanId Price plan ID
      * @param serviceInstance Service instance
      * @param operationDate Operation date
      * @return PricePlanMatrixVersion Matched Price plan version or NULL if nothing found
      * @throws RatingException More than one Price plan version was found for a given date
      */
-    public PricePlanMatrixVersion getPublishedVersionValidForDate(Long ppmId, ServiceInstance serviceInstance, Date operationDate) throws RatingException {
+    public PricePlanMatrixVersion getPublishedVersionValidForDate(Long pricePlanId, ServiceInstance serviceInstance, Date operationDate) throws RatingException {
         Date operationDateParam = new Date();
         if (serviceInstance == null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
             operationDateParam = operationDate;
@@ -318,13 +313,13 @@ public class PricePlanSelectionService implements Serializable {
             operationDateParam = calendar.getTime();
         }
 
-        List<PricePlanMatrixVersion> result = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class).setParameter("pricePlanMatrixId", ppmId)
-            .setParameter("operationDate", operationDateParam).getResultList();
+        List<PricePlanMatrixVersion> result = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class)
+            .setParameter("pricePlanMatrixId", pricePlanId).setParameter("operationDate", operationDateParam).getResultList();
         if (CollectionUtils.isEmpty(result)) {
             return null;
         }
         if (result.size() > 1) {
-            throw new RatingException("More than one pricePlanVersion for pricePlan '" + ppmId + "' matching date: " + operationDate);
+            throw new RatingException("More than one pricePlanVersion for pricePlan '" + pricePlanId + "' matching date: " + operationDate);
         }
         return result.get(0);
     }
@@ -377,7 +372,19 @@ public class PricePlanSelectionService implements Serializable {
      * @throws NoPricePlanException No price plan line was matched
      */
     public PricePlanMatrixLine determinePricePlanLine(PricePlanMatrix pricePlan, WalletOperation bareWalletOperation) throws NoPricePlanException {
-        PricePlanMatrixVersion ppmVersion = getPublishedVersionValidForDate(pricePlan.getId(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
+        return determinePricePlanLine(pricePlan.getId(), bareWalletOperation);
+    }
+
+    /**
+     * Determine a price plan matrix line matching wallet operation parameters. Business type attributes defined in a price plan version will be resolved via Wallet operation properties.
+     * 
+     * @param pricePlanId Applicable price plan ID
+     * @param bareWalletOperation Wallet operation to match
+     * @return A matched Price plan matrix line
+     * @throws NoPricePlanException No price plan line was matched
+     */
+    public PricePlanMatrixLine determinePricePlanLine(Long pricePlanId, WalletOperation bareWalletOperation) throws NoPricePlanException {
+        PricePlanMatrixVersion ppmVersion = getPublishedVersionValidForDate(pricePlanId, bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
         if (ppmVersion != null) {
             PricePlanMatrixLine ppLine = determinePricePlanLine(ppmVersion, bareWalletOperation);
             if (ppLine != null) {

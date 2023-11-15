@@ -17,11 +17,11 @@ import javax.validation.constraints.NotNull;
 @Cacheable
 public class AttributeMapping extends AuditableEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_mapping_line_id")
     private ArticleMappingLine articleMappingLine;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attribute_id")
     private Attribute attribute;
 

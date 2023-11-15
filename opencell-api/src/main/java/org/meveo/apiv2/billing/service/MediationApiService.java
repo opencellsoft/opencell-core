@@ -340,7 +340,7 @@ public class MediationApiService {
 
         // Update total amounts and wallet operation count based on charged CDRs
         cdrListResult.updateAmountAndWOCountStatistics();
-            
+
         // Gather counter update summary information
         if (returnCounters) {
             List<CounterPeriod> counterPeriods = counterInstanceService.getCounterUpdates();
@@ -409,9 +409,19 @@ public class MediationApiService {
                         if (isDuplicateCheckOn) {
                             cdrParser.deduplicate(cdr);
                         }
-                        cdrParsingService.createEdrs(edrs, cdr);
 
-                        mediationsettingService.applyEdrVersioningRule(edrs, cdr, false);
+                        if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
+                            mediationsettingService.applyEdrVersioningRule(edrs, cdr, false);
+                            cdrParsingService.createEdrs(edrs, cdr);
+
+                        } else {
+                            final List<EDR> edrsFinal = edrs;
+                            methodCallingUtils.callMethodInNewTx(() -> {
+                                mediationsettingService.applyEdrVersioningRule(edrsFinal, cdr, false);
+                                cdrParsingService.createEdrs(edrsFinal, cdr);
+                            });
+                        }
+
                     }
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
@@ -421,6 +431,7 @@ public class MediationApiService {
                             Reservation reservation = null;
                             // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
                             if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
+
                                 reservation = usageRatingService.reserveUsageWithinTransaction(edr);
                                 // For other cases, rate each EDR in a separate TX
                             } else {
@@ -474,7 +485,11 @@ public class MediationApiService {
 
                                 // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if rollback is needed, rating is called in a new TX and will rollback
                             } else {
-                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, false));
+                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> {
+                                    RatingResult ratingResultLocal = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, false);
+                                    edrService.update(edr);
+                                    return ratingResultLocal;
+                                });
 
                                 if (ratingResult.getWalletOperations() != null) {
                                     walletOperations.addAll(ratingResult.getWalletOperations());

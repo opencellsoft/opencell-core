@@ -15936,18 +15936,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
          </sql>
     </changeSet>
 
-    <changeSet id="#INTRD-17987_20230825_discount_agg_cherry-pick" author="a.rouaguebe">
-        <addColumn tableName="billing_billing_run">
-            <column name="discount_aggregation" type="varchar(17)" />
-        </addColumn>
-        <addColumn tableName="billing_cycle">
-            <column name="discount_aggregation" type="varchar(17)" />
-        </addColumn>
-        <sql>UPDATE ${db.schema.adapted}billing_billing_run set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
-        <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
-        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET DEFAULT 'FULL_AGGREGATION';</sql>
-        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET NOT NULL</sql>
-	 </changeSet>
+<!--     <changeSet id="#INTRD-17987_20230825_discount_agg_cherry-pick" author="a.rouaguebe"> -->
+<!--         <addColumn tableName="billing_billing_run"> -->
+<!--             <column name="discount_aggregation" type="varchar(17)" /> -->
+<!--         </addColumn> -->
+<!--         <addColumn tableName="billing_cycle"> -->
+<!--             <column name="discount_aggregation" type="varchar(17)" /> -->
+<!--         </addColumn> -->
+<!--         <sql>UPDATE ${db.schema.adapted}billing_billing_run set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql> -->
+<!--         <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql> -->
+<!--         <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET DEFAULT 'FULL_AGGREGATION';</sql> -->
+<!--         <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET NOT NULL</sql> -->
+<!-- 	 </changeSet> -->
     
     <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD">
         <addColumn tableName="finance_settings">
@@ -16074,5 +16074,21 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX idx_billing_rated_transaction__business_key ON billing_rated_transaction using btree(business_key)</sql>
         <sql>CREATE INDEX idx_rating_wo__business_key ON billing_wallet_operation using btree(business_key)</sql>
     </changeSet>
-
+    
+    <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_UsageRatingJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_UsageRatingJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReRatingJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReRatingJob'</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-19413_20231113" author="AndriusKarpavicius">
+        <dropIndex tableName="billing_charge_instance" indexName="bc_instance_sub_id"/>
+        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id, priority)</sql>
+    </changeSet>
+    
 </databaseChangeLog>

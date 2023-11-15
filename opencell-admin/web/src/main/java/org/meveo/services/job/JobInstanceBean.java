@@ -25,11 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.jgroups.Address;
+import org.jgroups.JChannel;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -40,6 +43,7 @@ import org.meveo.cache.JobExecutionStatus;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.EnumBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -88,6 +92,9 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @Inject
     private IEntityService iEntityService;
+
+    @Resource(lookup = "java:jboss/jgroups/channel/default")
+    private JChannel channel;
 
     private TreeNode executionHistoryRoot;
 
@@ -425,5 +432,32 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         }
 
         return entityClassForErrorLog;
+    }
+
+    /**
+     * Get a list of cluster nodes that are connected
+     * 
+     * @return
+     */
+    public String getAvailableClusterNodes() {
+
+        List<String> clusterNodes = new ArrayList<String>();
+
+        for (Address member : channel.getView().getMembers()) {
+            clusterNodes.add(member.toString());
+        }
+
+        clusterNodes.sort(null);
+
+        return StringUtils.concatenate(", ", clusterNodes);
+    }
+
+    /**
+     * Get a number of available processors
+     * 
+     * @return A number of available processors for job execution
+     */
+    public int getNrOfAvailableProcessors() {
+        return Runtime.getRuntime().availableProcessors();
     }
 }

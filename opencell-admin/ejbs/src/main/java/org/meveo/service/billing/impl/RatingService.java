@@ -20,8 +20,15 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -29,6 +36,7 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
 import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
@@ -87,7 +95,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.contract.Contract;
-import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.contract.ContractItemForRating;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.crm.Customer;
@@ -103,7 +111,6 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
@@ -145,9 +152,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     @Inject
-    private PricePlanMatrixVersionService pricePlanMatrixVersionService;
-
-    @Inject
     private ContractService contractService;
 
     @Inject
@@ -167,6 +171,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
     @Inject
     private RecurringRatingService recurringRatingService;
+    
+    @Inject
+    protected UserAccountService userAccountService;
     
     @Inject
     private ELUtils elUtils;
@@ -509,7 +516,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             }
         }
-        if(evaluatEdrVersioning) {
+        if (evaluatEdrVersioning && !triggredEDRs.isEmpty()) {
             mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, true);
         }
         return triggredEDRs;
@@ -624,20 +631,20 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 
                 ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-                ContractItem contractItem = null;
+                ContractItemForRating contractItem = null;
                 if (contract != null && serviceInstance != null) {
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
                     if (contract != null && bareWalletOperation.getOperationDate().compareTo(contract.getBeginDate()) >= 0 && bareWalletOperation.getOperationDate().compareTo(contract.getEndDate()) < 0) {
                     Long productId = serviceInstance.getProductVersion() != null ? serviceInstance.getProductVersion().getProduct().getId() : null;
-                        contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, productId, chargeTemplate);
+                        contractItem = contractItemService.getApplicableContractItemForRating(contract, offerTemplate, productId, chargeTemplate);
                     }
 
                     // If contract rate type is Fixed - unit rate comes either from 1. hardcoded in contact item or 2. from a price plan specified in a contract
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
 
-                        if (contractItem.getPricePlan() != null) {
-							pricePlan = contractItem.getPricePlan();
-							PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(pricePlan, bareWalletOperation);
+                        if (contractItem.getPricePlanId() != null) {
+							pricePlan = getEntityManager().find(PricePlanMatrix.class, contractItem.getPricePlanId());
+							PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlanId(), bareWalletOperation);
                             if (pricePlanMatrixLine != null) {
                                 try {
                                     unitPriceWithoutTax = pricePlanMatrixLine.getValue();
@@ -706,8 +713,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             }
                             
                             // Discount rate is specified in a price plan associated to a contact
-                        } else if (contractItem.getPricePlan() != null) {
-                            pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlan(), bareWalletOperation);
+                        } else if (contractItem.getPricePlanId() != null) {
+                            pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlanId(), bareWalletOperation);
                             if (pricePlanMatrixLine != null) {
                                 discountRate = pricePlanMatrixLine.getValue();
                                 if (discountRate != null && discountRate.compareTo(BigDecimal.ZERO) > 0) {
@@ -1003,7 +1010,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             String invoiceSubCategoryCode = elUtils.evaluateStringExpression(pricePlan.getInvoiceSubCategoryEL(), bareWalletOperation,
                 bareWalletOperation.getWallet() != null ? bareWalletOperation.getWallet().getUserAccount() : null, null, null);
             if (!StringUtils.isBlank(invoiceSubCategoryCode)) {
-                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
+                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode, true);
                 if (invoiceSubCategory != null) {
                     bareWalletOperation.setInvoiceSubCategory(invoiceSubCategory);
                 }
@@ -1094,8 +1101,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         }
     }
 
-    
-
     /**
      * Get a rerated copy of a wallet operation. New wallet operation is not persisted nor status of wallet operation to rerate is changed
      *
@@ -1104,7 +1109,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws BusinessException business exception
      * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RatingResult rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
+    protected RatingResult rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         WalletOperation operation = walletOperationToRerate.getUnratedClone();
         operation.setOperationDate(operation.getEdr() != null ? operation.getEdr().getEventDate() : operation.getOperationDate());
@@ -1345,5 +1350,24 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     	
     	log.info("rateDiscountWalletOperation walletOperation code={},discountValue={},UnitAmountWithoutTax={},UnitAmountWithTax={},UnitAmountTax={}",discountWalletOperation.getCode(),discountedAmount,amounts[0],amounts[1],amounts[2]);
     	return discountWalletOperation;
-    }    
+    }
+
+    /**
+     * Load services and accounts related to subscription
+     * 
+     * @param loadServices Should services be loaded up including their attributes
+     */
+    protected void loadEntitiesRelatedToSubscription(Subscription subscription, boolean loadServices) {
+        if (loadServices) {
+            List<ServiceInstance> subscriptionServices = getEntityManager().createNamedQuery("ServiceInstance.findBySubscriptionIdLoadAttributes", ServiceInstance.class)
+                .setParameter("subscriptionId", subscription.getId()).getResultList();
+        }
+
+        if (!Hibernate.isInitialized(subscription.getUserAccount())) {
+            UserAccount userAccount = userAccountService.findById(subscription.getUserAccount().getId(), Arrays.asList("wallet"));
+        }
+
+        // Initialize all the way to customer
+        subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getCode();
+    }
 }
