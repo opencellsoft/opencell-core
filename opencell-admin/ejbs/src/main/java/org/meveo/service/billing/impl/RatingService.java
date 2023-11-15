@@ -636,7 +636,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     OfferTemplate offerTemplate = serviceInstance.getSubscription().getOffer();
                     if (contract != null && bareWalletOperation.getOperationDate().compareTo(contract.getBeginDate()) >= 0 && bareWalletOperation.getOperationDate().compareTo(contract.getEndDate()) < 0) {
                     Long productId = serviceInstance.getProductVersion() != null ? serviceInstance.getProductVersion().getProduct().getId() : null;
-                        contractItem = contractItemService.getApplicableContractItem(contract, offerTemplate, productId, chargeTemplate);
+                        contractItem = contractItemService.getApplicableContractItemForRating(contract, offerTemplate, productId, chargeTemplate);
                     }
 
                     // If contract rate type is Fixed - unit rate comes either from 1. hardcoded in contact item or 2. from a price plan specified in a contract

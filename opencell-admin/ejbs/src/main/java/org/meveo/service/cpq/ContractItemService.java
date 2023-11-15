@@ -129,7 +129,50 @@ public class ContractItemService extends BusinessService<ContractItem> {
 	}
 
     @SuppressWarnings("unchecked")
-    public ContractItemForRating getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate) {
+    public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate) {
+        ContractItem contractItem = null;
+        StringBuilder builder = new StringBuilder("select c from ContractItem c where  c.contract.id=:contractId");
+
+        if (offer != null && offer.getId() != null) {
+            builder.append(" and c.offerTemplate.id=:offerId");
+        }
+        if (productId != null) {
+            builder.append(" and c.product.id=:productId");
+        }
+        if (chargeTemplate != null && chargeTemplate.getId() != null) {
+            builder.append(" and c.chargeTemplate.id=:chargeTemplate");
+        }
+        Query query = getEntityManager().createQuery(builder.toString());
+        query.setParameter("contractId", contract.getId());
+
+        if (offer != null && offer.getId() != null) {
+            query.setParameter("offerId", offer.getId());
+        }
+        if (productId != null) {
+            query.setParameter("productId", productId);
+        }
+        if (chargeTemplate != null && chargeTemplate.getId() != null) {
+            query.setParameter("chargeTemplate", chargeTemplate.getId());
+        }
+
+        query.setHint("org.hibernate.readOnly", true);
+        
+        List<ContractItem> applicableContractItems = query.getResultList();
+
+        if (!applicableContractItems.isEmpty()) {
+            if (applicableContractItems.size() > 1) {
+                log.error("Contract " + contract.getCode() + "has more than one item matching offer {}, product {} and chargeTemplate {}", offer != null ? offer.getId() : null, productId,
+                    chargeTemplate != null ? chargeTemplate.getId() : null);
+
+            } else {
+                contractItem = applicableContractItems.get(0);
+            }
+        }
+        return contractItem;
+    }
+
+    @SuppressWarnings("unchecked")
+    public ContractItemForRating getApplicableContractItemForRating(Contract contract, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate) {
 		StringBuilder builder = new StringBuilder("select new org.meveo.model.cpq.contract.ContractItemForRating(c.pricePlan.id, c.rate, c.amountWithoutTax, c.contractRateType, c.separateDiscount) from ContractItem c where  c.contract.id=:contractId");
 
 		if(offer != null && offer.getId() != null){
@@ -172,7 +215,7 @@ public class ContractItemService extends BusinessService<ContractItem> {
     
     public Contract getApplicableContract(List<Contract> contracts, OfferTemplate offer, Long productId, ChargeTemplate chargeTemplate) {
         for (Contract contract : contracts) {
-            ContractItemForRating contractItem = getApplicableContractItem(contract, offer, productId, chargeTemplate);
+            ContractItemForRating contractItem = getApplicableContractItemForRating(contract, offer, productId, chargeTemplate);
             if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
                 return contract;
             };
