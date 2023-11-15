@@ -303,8 +303,9 @@
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<pageHeader>
+	<detail>
 		<band height="70">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT}==1]]></printWhenExpression>
 			<line>
 				<reportElement x="11" y="23" width="565" height="1" forecolor="#CCCCCC" uuid="49fddbb7-327b-4080-b5d7-05bd11bed13d"/>
 				<graphicElement>
@@ -545,7 +546,7 @@
 				</jr:table>
 			</componentElement>
 		</band>
-	</pageHeader>
+	</detail>
 	<pageFooter>
 		<band height="102">
 			<staticText>
