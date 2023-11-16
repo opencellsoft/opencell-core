@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -507,6 +509,14 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_user_accounts")
     private boolean ignoreUserAccounts = true;
+
+    /**
+     * Define additional criterias for aggregation
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "billing_run_aggregation_fields", joinColumns = @JoinColumn(name = "billing_run_id"))
+    @Column(name = "fields")
+    private List<String> additionalAggregationFields;
 
     public BillingRun getNextBillingRun() {
         return nextBillingRun;
@@ -1216,5 +1226,13 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
 	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
 		this.ignoreUserAccounts = ignoreUserAccounts;
 	}
-    
+
+    public List<String> getAdditionalAggregationFields() {
+        return additionalAggregationFields;
+    }
+
+    public void setAdditionalAggregationFields(List<String> additionalAggregationFields) {
+        this.additionalAggregationFields = additionalAggregationFields;
+    }
+
 }
