@@ -629,7 +629,7 @@ public class ReratingService extends RatingService implements Serializable {
      * @param operationToRerate Operation to rerate
      * @param useSamePricePlan Shall a same price plan will be used, or a new one should be looked up again
      */
-    private void rerateWalletOperationAndInstantiateTriggeredEDRs(WalletOperation operationToRerate, boolean useSamePricePlan) {
+    public void rerateWalletOperationAndInstantiateTriggeredEDRs(WalletOperation operationToRerate, boolean useSamePricePlan) {
 
         RatingResult ratingResult = null;
         try {
