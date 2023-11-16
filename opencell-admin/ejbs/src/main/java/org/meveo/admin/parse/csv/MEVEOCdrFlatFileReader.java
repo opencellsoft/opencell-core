@@ -37,6 +37,7 @@ import org.meveo.admin.exception.InvalidELException;
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.RecordContext;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.medina.impl.CDRParsingException;
@@ -189,7 +190,7 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     }
 
     @Override
-    public void init(String originBatch) {
+    public void init(String originBatch, JobInstance jobInstance) {
         batchName = originBatch;
     }
 

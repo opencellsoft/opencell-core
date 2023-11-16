@@ -39,7 +39,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
  * @author Andrius Karpavicius
  */
 @Stateless
-public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
+public class ReRatingJobBean extends IteratorBasedScopedJobBean<Long> {
 
     private static final long serialVersionUID = 2226065462536318643L;
 
@@ -64,12 +64,7 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
      * @return An iterator over a list of Wallet operation Ids to re-rate
      */
     private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-
-        List<Long> ids = walletOperationService.listToRerate();
-
-        useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
-
-        return Optional.of(new SynchronizedIterator<Long>(ids));
+        return getIterator(jobExecutionResult);
     }
 
     /**
@@ -81,5 +76,21 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
     private void rerate(Long walletOperationId, JobExecutionResultImpl jobExecutionResult) {
 
         reratingService.reRate(walletOperationId, useSamePricePlan);
+    }
+
+    private Optional<Iterator<Long>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        List<Long> ids = walletOperationService.listToRerate(jobItemsLimit);
+        useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
+        return Optional.of(new SynchronizedIterator<Long>(ids));
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIteratorWithLimit(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        return getSynchronizedIterator(jobExecutionResult, jobItemsLimit);
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult) {
+        return getSynchronizedIterator(jobExecutionResult, 0);
     }
 }

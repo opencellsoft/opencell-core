@@ -39,6 +39,7 @@ import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.medina.impl.CDRParsingException;
@@ -161,9 +162,8 @@ public class MEVEOCdrReader implements ICdrCsvReader {
     }
 
     @Override
-    public void init(String originBatch) {
+    public void init(String originBatch, JobInstance jobInstance) {
         batchName = originBatch;
-
     }
 
     /**

@@ -26,6 +26,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -34,6 +35,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 
 /**
@@ -43,7 +45,7 @@ import org.meveo.service.job.Job;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class InvoicingJob extends Job {
+public class InvoicingJob extends ScopedJob {
 
     /** The invoicing job bean. */
     @Inject
@@ -99,6 +101,17 @@ public class InvoicingJob extends Job {
         customFieldBR.setValueRequired(false);
         customFieldBR.setGuiPosition("tab:Configuration:0;field:2");
         result.put("billingRuns", customFieldBR);
+
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:3", null, false, null, null, "JobInstance_InvoicingJob"));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:4", null, false, null, null, "JobInstance_InvoicingJob"));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:5", null, false, null, null, "JobInstance_InvoicingJob"));
+
+
         return result;
     }
 }
