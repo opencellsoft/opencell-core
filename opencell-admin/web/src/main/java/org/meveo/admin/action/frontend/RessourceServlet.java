@@ -152,6 +152,15 @@ public class RessourceServlet extends HttpServlet {
             return;
         }
 
+        // Check if requested file is in the frontend directory
+        String canonicalResourcePath = path.getCanonicalPath();
+        String canonicalFilePath = file.getCanonicalPath();
+        if (!canonicalFilePath.startsWith(canonicalResourcePath)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            log.debug("canonicalFilePath don't starts with canonicalResourcePath");
+            return;
+        }
+
         // Prepare some variables. The ETag is an unique identifier of the file.
         String fileName = file.getName();
         long length = file.length();

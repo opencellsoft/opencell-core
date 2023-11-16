@@ -135,7 +135,16 @@ public class FileServlet extends HttpServlet {
 
         // URL-decode the file name (might contain spaces and on) and prepare file
         // object.
+        File rootDir = new File(this.basePath);
         File fileOrFolder = new File(basePath, URLDecoder.decode(requestedFile, "UTF-8"));
+
+        // Check if requested file or dir is in the root directory
+        String canonicalRootDirPath = rootDir.getCanonicalPath();
+        String canonicalFilePath = fileOrFolder.getCanonicalPath();
+        if (!canonicalFilePath.startsWith(canonicalRootDirPath)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
         // Check if file actually exists in filesystem.
         if (!fileOrFolder.exists()) {
