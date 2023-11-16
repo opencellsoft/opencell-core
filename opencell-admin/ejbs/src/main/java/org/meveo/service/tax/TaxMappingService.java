@@ -285,7 +285,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
         Date date = walletOperation.getOperationDate();
-        TaxClass taxClass = chargeInstance.getTaxClassResolved();
+        TaxClass taxClass = chargeInstance != null ?  chargeInstance.getTaxClassResolved() : null;
 
         try {
             if (IS_DETERMINE_TAX_CLASS_FROM_AA) {
