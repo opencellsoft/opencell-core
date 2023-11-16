@@ -7749,4 +7749,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 
+    <changeSet id="#INTRD-19322_add_aggre_fields" author="anas.rouaguebe">
+        <addColumn tableName="billing_invoice_line">
+            <column name="additional_agg_fields" type="${type.json}" />
+        </addColumn>
+        <createTable tableName="billing_cycle_aggregation_fields">
+            <column name="billing_cycle_id"  type="bigint"/>
+            <column name="fields"  type="varchar(255)"/>
+        </createTable>
+        <createTable tableName="billing_run_aggregation_fields">
+            <column name="billing_run_id"  type="bigint"/>
+            <column name="fields"  type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

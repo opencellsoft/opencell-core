@@ -10922,6 +10922,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="adjustment_status" type="varchar(50)"/>
             <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="additional_agg_fields" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -12733,6 +12734,17 @@
             </column>    
             <column name="entity_fields" type="varchar(2000)" />
             <column name="actions" type="varchar(2000)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#INTRD-19322_add_aggre_fields_rebuild" author="anas.rouaguebe">
+        <createTable tableName="billing_cycle_aggregation_fields">
+            <column name="billing_cycle_id"  type="bigint"/>
+            <column name="fields"  type="varchar(255)"/>
+        </createTable>
+        <createTable tableName="billing_run_aggregation_fields">
+            <column name="billing_run_id"  type="bigint"/>
+            <column name="fields"  type="varchar(255)"/>
         </createTable>
     </changeSet>
         
@@ -20548,6 +20560,7 @@
     <changeSet id="#INTRD-18439_20230120" author="TarikFA." />
 	<changeSet id="#INTRD-18252_20230908" author="aelmalki" />
 	<changeSet id="#INTRD-18280_20230911" author="aelmalki" />
+    <changeSet id="#INTRD-19322_add_aggre_fields" author="anas.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
