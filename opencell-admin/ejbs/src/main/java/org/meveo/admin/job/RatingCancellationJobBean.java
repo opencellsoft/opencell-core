@@ -114,22 +114,22 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 			log.info("start processing " + count + " items, view lines from: " + min + " to: " + max);
 			EntityManager em = emWrapper.getEntityManager();
 
-			recalculateInvoiceLines(em, "", min, max);
-			recalculateInvoiceLines(em, "t", min, max);
-			recalculateInvoiceLines(em, "d", min, max);
+			recalculateInvoiceLines("", min, max);
+			recalculateInvoiceLines("t", min, max);
+			recalculateInvoiceLines("d", min, max);
 
-			markFailedToRerate(em, "", min, max);
-			markFailedToRerate(em, "t", min, max);
-			markFailedToRerate(em, "d", min, max);
+			markFailedToRerate("", min, max);
+			markFailedToRerate("t", min, max);
+			markFailedToRerate("d", min, max);
 
-			markCanceledEDRs(em, min, max);
+			markCanceledEDRs(min, max);
 
-			markCanceledRTs(em, "", min, max);
-			markCanceledRTs(em, "t", min, max);
-			markCanceledRTs(em, "d", min, max);
+			markCanceledRTs("", min, max);
+			markCanceledRTs("t", min, max);
+			markCanceledRTs("d", min, max);
 
-			markCanceledWOs(em, "t", min, max);
-			markCanceledWOs(em, "d", min, max);
+			markCanceledWOs("t", min, max);
+			markCanceledWOs("d", min, max);
 		}
 	}
 
@@ -212,46 +212,46 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 		});
 	}
 
-	private void markCanceledRTs(EntityManager entityManager, String prefix, long min, long max) {
+	private void markCanceledRTs( String prefix, long min, long max) {
 		String updateILQuery = "UPDATE billing_Rated_transaction rt SET status='CANCELED', updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' "
 				+ " FROM " + viewName 
 				+ " rr, unnest(string_to_array(" + prefix + "rt_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and " + prefix + "rt_id is not null and rt.id = CAST(to_update AS bigint)";
-		entityManager.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
+		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
 				.executeUpdate();
 	}
 
-	private void markCanceledWOs(EntityManager entityManager, String prefix, long min, long max) {
+	private void markCanceledWOs( String prefix, long min, long max) {
 		String updateILQuery = "UPDATE billing_wallet_operation wo SET status='CANCELED', updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' "
 				+ " FROM " + viewName 
 				+ " rr, unnest(string_to_array(" + prefix + "wo_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and " + prefix + "wo_id is not null and wo.id = CAST(to_update AS bigint)";
-		entityManager.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
+		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
 				.executeUpdate();
 	}
 
-	private void markCanceledEDRs(EntityManager entityManager, long min, long max) {
+	private void markCanceledEDRs( long min, long max) {
 		String updateILQuery = "UPDATE rating_EDR edr SET status='CANCELLED', last_updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' "
 				+ " FROM " + viewName
 				+ " rr, unnest(string_to_array(edr_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and edr_id is not null and edr.id = CAST(to_update AS bigint)";
-		entityManager.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
+		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
 				.executeUpdate();
 	}
 
-	private void markFailedToRerate(EntityManager entityManager, String prefix, long min, long max) {
+	private void markFailedToRerate( String prefix, long min, long max) {
 		String updateILQuery = "UPDATE billing_wallet_operation wo SET status='F_TO_RERATE', updated = CURRENT_TIMESTAMP, reject_reason='failed to rerate operation because invoiceLine '||rr.billed_il||' already billed' "
 				+ " FROM " + viewName 
 				+ " rr, unnest(string_to_array(" + prefix + "wo_id, ',')) AS to_update WHERE rr.billed_il is not null and rr.id between :min and :max and wo.id = CAST(to_update AS bigint)";
-		entityManager.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
+		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
 				.executeUpdate();
 	}
 
-	private void recalculateInvoiceLines(EntityManager entityManager, String prefix, long min, long max) {
+	private void recalculateInvoiceLines( String prefix, long min, long max) {
 		String updateILQuery = "UPDATE billing_invoice_line il SET"
 				+ "    amount_without_tax = il.amount_without_tax + rr." + prefix
 				+ "rt_amount_without_tax, amount_with_tax = il.amount_with_tax + rr." + prefix + "rt_amount_with_tax,"
 				+ "    quantity = il.quantity + rr." + prefix + "rt_quantity, amount_tax = il.amount_tax + rr." + prefix
 				+ "rt_amount_tax, updated = CURRENT_TIMESTAMP" + " FROM " + viewName
 				+ " rr WHERE rr.billed_il is null and rr." + prefix + "il_id is not null and il.id = rr." + prefix + "il_id and rr.id between :min and :max";
-		entityManager.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
+		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
 				.executeUpdate();
 	}
 
