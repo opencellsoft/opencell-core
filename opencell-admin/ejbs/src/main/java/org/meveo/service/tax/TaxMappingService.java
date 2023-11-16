@@ -394,11 +394,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
                 } else if (taxMapping.getTaxScript() != null) {
 
-                    if (taxScriptService.isApplicable(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date, walletoperation)) {
-                        List<Tax> taxes = taxScriptService.computeTaxes(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date, walletoperation);
-                        if (taxes != null && !taxes.isEmpty()) {
-                            tax = taxes.get(0);
-                        }
+                    List<Tax> taxes = taxScriptService.computeTaxesIfApplicable(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date, walletoperation);
+                    if (taxes != null && !taxes.isEmpty()) {
+                        tax = taxes.get(0);
                     }
                 }
 

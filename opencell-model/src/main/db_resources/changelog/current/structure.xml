@@ -8710,4 +8710,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
 
+    <changeSet id="#INTRD-19413_20231113" author="AndriusKarpavicius">
+        <dropIndex tableName="billing_charge_instance" indexName="bc_instance_sub_id"/>
+        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id, priority)</sql>
+    </changeSet>
+    
 </databaseChangeLog>

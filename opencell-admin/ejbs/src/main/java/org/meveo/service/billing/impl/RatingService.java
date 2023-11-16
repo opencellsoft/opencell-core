@@ -18,16 +18,18 @@
 
 package org.meveo.service.billing.impl;
 
+
+import static java.math.RoundingMode.HALF_UP;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
-import static java.math.RoundingMode.HALF_UP;
 import static org.meveo.commons.utils.NumberUtils.computeDerivedAmounts;
 import static org.meveo.model.BaseEntity.NB_DECIMALS;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +45,7 @@ import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
 import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
@@ -194,6 +197,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private RecurringRatingService recurringRatingService;
 
     @Inject
+    protected UserAccountService userAccountService;
+    
+    @Inject
     private ELUtils elUtils;
 
     @Inject
@@ -207,6 +213,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
 	
 	@Inject
     protected TradingCurrencyService tradingCurrencyService;
+
+    @Inject
+    protected ServiceInstanceService serviceInstanceService;
     
     /**
      * @param level level enum
@@ -543,7 +552,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                 }
             }
         }
-        if(evaluatEdrVersioning) {
+        if (evaluatEdrVersioning && !triggredEDRs.isEmpty()) {
             mediationsettingService.applyEdrVersioningRule(triggredEDRs, null, true);
         }
         return triggredEDRs;
@@ -647,7 +656,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             //Get contract by list of customer ids, billing account and customer account
             List<Contract> contracts = contractService.getContractByAccount(ids, billingAccount, customerAccount,sellerIds, bareWalletOperation, null);
 			
-
             List<Contract> suitableContracts = new ArrayList<>();
         	Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null && "ACTIVE".equals(bareWalletOperation.getSubscription().getContract().getStatus()) ? bareWalletOperation.getSubscription().getContract() : null : null;
             if(contractFromSubscription != null) {
@@ -682,8 +690,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     if (contractItem != null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
 
                         if (contractItem.getPricePlan() != null) {
-                            pricePlan = contractItem.getPricePlan();
-                            PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(pricePlan, bareWalletOperation);
+							pricePlan = contractItem.getPricePlan();
+							PricePlanMatrixLine pricePlanMatrixLine = pricePlanSelectionService.determinePricePlanLine(contractItem.getPricePlan(), bareWalletOperation);
                             if (pricePlanMatrixLine != null) {
                                 try {
                                     unitPriceWithoutTax = pricePlanMatrixLine.getValue();
@@ -712,12 +720,12 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             bareWalletOperation.setContractLine(contractItem);
                         }
                     }
-                    // Check if price is not overriden by a pricelist in subscription
+                    // Check if price is not overridden by a pricelist in subscription
                 }
 
                
 
-                // No associated contract found and price not speciffied in subscription price list or contract rate is not fixed - a price discount is applied by contract to a default price
+                // No associated contract found and price not specified in subscription price list or contract rate is not fixed - a price discount is applied by contract to a default price
                 if (contractItem != null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType()) ) {
                     	 // Find a default price plan
                         pricePlan = pricePlanSelectionService.determineDefaultPricePlan(bareWalletOperation, buyerCountryId, buyerCurrency);
@@ -1297,7 +1305,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             String invoiceSubCategoryCode = elUtils.evaluateStringExpression(pricePlan.getInvoiceSubCategoryEL(), bareWalletOperation,
                 bareWalletOperation.getWallet() != null ? bareWalletOperation.getWallet().getUserAccount() : null, null, null);
             if (!StringUtils.isBlank(invoiceSubCategoryCode)) {
-                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
+                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode, true);
                 if (invoiceSubCategory != null) {
                     bareWalletOperation.setInvoiceSubCategory(invoiceSubCategory);
                 }
@@ -1399,7 +1407,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      * @throws BusinessException business exception
      * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RatingResult rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
+    protected RatingResult rateRatedWalletOperation(WalletOperation walletOperationToRerate, boolean useSamePricePlan) throws BusinessException, RatingException {
     	RatingResult ratingResult = new RatingResult();
         WalletOperation operation = walletOperationToRerate.getUnratedClone();
         operation.setOperationDate(operation.getEdr() != null ? operation.getEdr().getEventDate() : operation.getOperationDate());
@@ -1663,6 +1671,25 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     }
 
     /**
+     * Load services and accounts related to subscription
+     * 
+     * @param loadServices Should services be loaded up including their attributes
+     */
+    protected void loadEntitiesRelatedToSubscription(Subscription subscription, boolean loadServices) {
+        if (loadServices) {
+            List<ServiceInstance> subscriptionServices = getEntityManager().createNamedQuery("ServiceInstance.findBySubscriptionIdLoadAttributes", ServiceInstance.class)
+                .setParameter("subscriptionId", subscription.getId()).getResultList();
+        }
+
+        if (!Hibernate.isInitialized(subscription.getUserAccount())) {
+            UserAccount userAccount = userAccountService.findById(subscription.getUserAccount().getId(), Arrays.asList("wallet"));
+        }
+
+        // Initialize all the way to customer
+        subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getCode();
+    }
+
+    /**
      * Determine trading unit price from pricePlanMatrix and walletOperation
      *
      * @param pricePlan Price plan matrix
@@ -1853,6 +1880,11 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
      */
     protected boolean anyFalseAttributeMatch(ChargeInstance chargeInstance) {
         if (chargeInstance.getServiceInstance() != null) {
+            
+            if (!Hibernate.isInitialized(chargeInstance.getServiceInstance())) {
+                serviceInstanceService.findAndFetchProductById(chargeInstance.getServiceInstance().getId());
+            }
+            
             return chargeInstance.getServiceInstance().getAttributeInstances().stream().filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
                     .filter(attributeInstance -> chargeInstance.getChargeTemplate().getAttributes().contains(attributeInstance.getAttribute()))
                     .anyMatch(attributeInstance -> attributeInstance.getStringValue() == null || "false".equals(attributeInstance.getStringValue()));

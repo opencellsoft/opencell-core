@@ -128,8 +128,6 @@ public class ContractItemService extends BusinessService<ContractItem> {
     public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId,
 												  ChargeTemplate chargeTemplate, WalletOperation walletOperation) {
         
-		StringBuilder builder = new StringBuilder("select c from ContractItem c where  c.contract.id=:contractId");
-
 	        Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
 					.setParameter("contractId", contract.getId())
 					.setParameter("offerId", offer.getId())

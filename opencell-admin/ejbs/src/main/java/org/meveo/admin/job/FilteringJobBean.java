@@ -103,6 +103,7 @@ public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
 
         scriptInterface = null;
         scriptContext = new HashMap<String, Object>();
+        scriptContext.put(Script.JOB_EXECUTION_RESULT, jobExecutionResult);
 
         String filterCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_filter")).getCode();
         String scriptCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_script")).getCode();
@@ -176,7 +177,7 @@ public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
      */
     private void applyScriptOnEntity(IEntity entity, JobExecutionResultImpl jobExecutionResult) {
 
-        Map<String, Object> context = new HashMap<String, Object>();
+        Map<String, Object> context = new HashMap<String, Object>(scriptContext);
         context.put(recordVariableName, entity);
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
