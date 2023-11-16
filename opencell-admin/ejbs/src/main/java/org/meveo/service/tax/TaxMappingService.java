@@ -295,10 +295,11 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             	 }
                 if (accountingArticle != null) {
                     taxClass = accountingArticle.getTaxClass();
-                    chargeInstance.setTaxClassResolved(taxClass);
+					if(chargeInstance != null)
+                        chargeInstance.setTaxClassResolved(taxClass);
                 }
             }
-            if (taxClass == null) {
+            if (taxClass == null && chargeInstance != null) {
                 if (chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
                     taxClass = evaluateTaxClassExpression(chargeInstance.getChargeTemplate().getTaxClassEl(), chargeInstance);
                 }
@@ -307,6 +308,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                 }
                 chargeInstance.setTaxClassResolved(taxClass);
             }
+			if(taxClass == null && chargeInstance == null) {
+				throw new InvalidELException("No tax found for charge : " + walletOperation.getCode());
+			}
         } catch (InvalidELException e) {
             throw new NoTaxException(e);
         }
