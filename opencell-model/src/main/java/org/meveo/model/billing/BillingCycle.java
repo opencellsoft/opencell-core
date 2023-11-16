@@ -18,10 +18,13 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -254,6 +257,14 @@ public class BillingCycle extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "discount_aggregation", nullable = false)
     private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
+
+    /**
+     * Define additional criterias for aggregation
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "billing_cycle_aggregation_fields", joinColumns = @JoinColumn(name = "billing_cycle_id"))
+    @Column(name = "fields")
+    private List<String> additionalAggregationFields;
     
     public boolean isThresholdPerEntity() {
         return thresholdPerEntity;
@@ -613,5 +624,13 @@ public class BillingCycle extends BusinessCFEntity {
 
     public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
         this.discountAggregation = discountAggregation;
+    }
+
+    public List<String> getAdditionalAggregationFields() {
+        return additionalAggregationFields;
+    }
+
+    public void setAdditionalAggregationFields(List<String> additionalAggregationFields) {
+        this.additionalAggregationFields = additionalAggregationFields;
     }
 }
