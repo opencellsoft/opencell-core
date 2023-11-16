@@ -748,7 +748,8 @@ public class MediationApiService {
         return cdrDtoResponse.build();
     }
 
-    public void updateCDR(Long cdrId, CDR toBeUpdated) {
+    public CdrDtoResponse updateCDR(Long cdrId, CDR toBeUpdated) {
+	    Builder cdrDtoResponse = ImmutableCdrDtoResponse.builder();
         CDR cdr = Optional.ofNullable(cdrService.findById(cdrId)).orElseThrow(() -> new EntityDoesNotExistsException(CDR.class, cdrId));
         // OPEN, PROCESSED, CLOSED, DISCARDED, ERROR,TO_REPROCESS
         CDRStatusEnum statusToUpdated = toBeUpdated.getStatus();
@@ -808,12 +809,14 @@ public class MediationApiService {
             throw new MissingParameterException(error);
 
         }
+	    fillCdr(toBeUpdated, cdr, statusToUpdated);
+	    cdrDtoResponse.addAllCdrs(List.of(ImmutableResource.builder().id(cdr.getId()).build()));
         if (CollectionUtils.isEmpty(accessService.getActiveAccessByUserId(toBeUpdated.getAccessCode()))) {
-            throw new BusinessException("Invalid Access for " + toBeUpdated.getAccessCode());
+			cdr.setRejectReason("Invalid Access for " + toBeUpdated.getAccessCode());
+	        cdrDtoResponse.addAllErrors(List.of(new CdrErrorDto(cdr.toCsv(), cdr.getRejectReason())));
         }
-        fillCdr(toBeUpdated, cdr, statusToUpdated);
-
         cdrService.update(cdr);
+		return cdrDtoResponse.build();
     }
 
     public CdrDtoResponse updateCDRs(List<CDR> cdrs, ProcessingModeEnum mode, boolean returnCDRs, boolean returnError) {

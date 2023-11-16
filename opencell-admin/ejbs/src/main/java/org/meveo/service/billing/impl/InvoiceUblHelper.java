@@ -770,7 +770,7 @@ public class InvoiceUblHelper {
 			subCategoryInvoiceAgregates.forEach(subCategoryInvoiceAgregate -> {
 				AllowanceChargeType allowanceCharge = objectFactoryCommonAggrement.createAllowanceChargeType();
 				ChargeIndicator chargeIndicator = objectFactorycommonBasic.createChargeIndicator();
-				chargeIndicator.setValue(subCategoryInvoiceAgregate.getDiscountPlanItem() == null);
+				chargeIndicator.setValue(false);
 				allowanceCharge.setChargeIndicator(chargeIndicator);
 				AllowanceChargeReasonCode allowanceChargeReasonCode = objectFactorycommonBasic.createAllowanceChargeReasonCode();
 				AllowanceChargeReason allowanceChargeReason = objectFactorycommonBasic.createAllowanceChargeReason();

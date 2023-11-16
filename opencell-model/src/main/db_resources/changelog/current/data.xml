@@ -21705,4 +21705,66 @@ public class ImportJobNotification extends Script {
         </update>
     </changeSet>
 
+	<changeSet id="#INTRD-19224_20231101" author="zelmeliani">
+        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -1 and dunning_level_id = -1</sql>
+        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -1 and dunning_level_id = -2</sql>
+        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -1 and dunning_level_id = -3</sql>
+        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -1 and dunning_level_id = -4</sql>
+        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -2 and dunning_level_id = -5</sql>
+        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -2 and dunning_level_id = -6</sql>
+        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -2 and dunning_level_id = -7</sql>
+        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -2 and dunning_level_id = -8</sql>
+        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -10 and dunning_level_id = -10</sql>
+        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -10 and dunning_level_id = -20</sql>
+        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -10 and dunning_level_id = -30</sql>
+        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -10 and dunning_level_id = -40</sql>
+        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -20 and dunning_level_id = -50</sql>
+        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -20 and dunning_level_id = -60</sql>
+        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -20 and dunning_level_id = -70</sql>
+        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -20 and dunning_level_id = -80</sql>
+	</changeSet>
+	
+	<changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid">
+		<update tableName="adm_custom_generic_entity_code">
+            <column name="format_el" value="#{'BA-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}" />
+            <where>entity_class='org.meveo.model.billing.BillingAccount' and format_el='#{''CU-''.concat((mv:formatDate(null, ''YY''))).concat(generatedCode)}'</where>
+        </update>
+    </changeSet>
+	
+	<changeSet id="#INTRD-19093_20231109" author="aeljaouhari">
+		<delete tableName="meveo_job_instance">
+			<where>code = 'APIv2PermissionsSyncJob'</where>
+		</delete>
+	</changeSet>
+
+	<changeSet id="#INTRD-18995_20231107" author="zelmeliani">
+		<update tableName="crm_seller">
+            <column name="trading_country_id" valueComputed="(select id from billing_trading_country where code = 'US')" />
+			<column name="legal_entity_type_id" valueComputed="(select id from adm_title where code = 'SAS')" />
+			<column name="vat_no" value="89810129411"/>
+			<column name="registration_no" value="89810129411"/>
+			<column name="address_city" value="New York"/>
+			<column name="address_zipcode" value="10001"/>
+			<column name="address_1" value="High level suite"/>
+			<column name="address_2" value="Appt 3327"/>
+            <where>code = 'MAIN_SELLER'</where>
+        </update>
+
+		<update tableName="billing_invoice_type">
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '220')" />
+			<column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'ORI')" />
+			<column name="prefix_el" value="COMMERCIAL_ORDER_"/>
+			<column name="billing_template_name_el" value="commercial_order_new"/>
+            <where>code = 'COMMERCIAL_ORDER'</where>
+        </update>
+
+		<update tableName="billing_invoice_type">
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '310')" />
+			<column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'QUT')" />
+			<column name="prefix_el" value="QUOTE_"/>
+			<column name="billing_template_name_el" value="quote_new"/>
+            <where>code = 'QUOTE'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>

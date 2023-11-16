@@ -6946,14 +6946,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return currentRate;
     }
 
-    public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
-        if(lastAppliedRate == null) return;
-        toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
-                        InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
-                                && linkedInvoice.getLinkedInvoiceValue() != null &&
-                                linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
-                .forEach(linkedInvoice -> linkedInvoice.setTransactionalAmount(linkedInvoice.getAmount() != null ? linkedInvoice.getAmount().multiply(lastAppliedRate) : null));
-    }
+	public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
+		if (lastAppliedRate != null) {
+			toUpdate = refreshOrRetrieve(toUpdate);
+			toUpdate.getLinkedInvoices().stream()
+					.filter(linkedInvoice -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
+							&& linkedInvoice.getLinkedInvoiceValue() != null
+							&& linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
+					.forEach(linkedInvoice -> linkedInvoice.setTransactionalAmount(linkedInvoice.getAmount() != null ? linkedInvoice.getAmount().multiply(lastAppliedRate) : null));
+		}
+	}
 
     /**
      * @param paginationConfiguration
@@ -7221,7 +7223,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void addLinkedInvoice(Invoice invoice, Invoice duplicatedInvoice) {
         LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, duplicatedInvoice, duplicatedInvoice.getAmountWithTax(), duplicatedInvoice.getTransactionalAmountWithTax(), InvoiceTypeEnum.ADJUSTMENT);
-        duplicatedInvoice.getLinkedInvoices().addAll(of(linkedInvoice));
+	    LinkedInvoice reversLinkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice, null, null, null);
+        duplicatedInvoice.getLinkedInvoices().addAll(of(linkedInvoice, reversLinkedInvoice));
     }
 
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {

@@ -21,8 +21,10 @@ package org.meveo.api.dto.cpq;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.cpq.AttributeCategoryEnum;
 import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
@@ -121,8 +124,22 @@ public class QuoteProductDTO extends BaseEntityDto{
 		if(loadAttributes) {
 			productAttributes=new ArrayList<QuoteAttributeDTO>();
 			for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {
-				Integer sequence = quoteProduct.getProductVersion().getAttributes().stream().filter(pva -> pva.getAttribute().getCode().equals(quoteAttribute.getAttribute().getCode())).findFirst().map(ProductVersionAttribute::getSequence).orElse(0);
-				productAttributes.add(new QuoteAttributeDTO(quoteAttribute, sequence));
+				ProductVersionAttribute productVersionAttribute = quoteProduct.getProductVersion().getAttributes().stream().filter(pva -> pva.getAttribute().getCode().equals(quoteAttribute.getAttribute().getCode())).findFirst().orElse(null);
+				Integer sequence = 0;
+				boolean display = false;
+				boolean mandatory = false;
+				Boolean readOnly = null;
+				Set<String> allowedValues = new HashSet<>();
+				AttributeCategoryEnum attributeCategoryEnum = null;
+				if(productVersionAttribute != null) {
+					sequence = productVersionAttribute.getSequence();
+					display = productVersionAttribute.isDisplay();
+					mandatory = productVersionAttribute.isMandatory();
+					readOnly = productVersionAttribute.getReadOnly();
+					allowedValues = new HashSet<>(productVersionAttribute.getAttribute().getAllowedValues());
+					attributeCategoryEnum = productVersionAttribute.getAttribute().getAttributeCategory();
+				}
+				productAttributes.add(new QuoteAttributeDTO(quoteAttribute, sequence, mandatory, display, readOnly, allowedValues, attributeCategoryEnum));
 			}
 		}
 		accountingArticlePrices=new ArrayList<AccountingArticlePricesDTO>();
