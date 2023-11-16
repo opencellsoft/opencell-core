@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -421,7 +422,14 @@ public class InvoiceLine extends AuditableCFEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "linked_invoice_line_id", nullable = false, referencedColumnName = "id")
 	private InvoiceLine linkedInvoiceLine;
-    
+
+    /**
+     * define additional criterias for aggregration
+     */
+    @Type(type = "json")
+    @Column(name = "additional_agg_fields", columnDefinition = "jsonb")
+    private Map<String, String> additionalAggregationFields ;
+
 	public InvoiceLine() {
 	}
 
@@ -994,4 +1002,11 @@ public class InvoiceLine extends AuditableCFEntity {
 		return amount != null ? amount.divide(rate, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : ZERO;
 	}
 
+	public Map<String, String> getAdditionalAggregationFields() {
+		return additionalAggregationFields;
+	}
+
+	public void setAdditionalAggregationFields(Map<String, String> additionalAggregationFields) {
+		this.additionalAggregationFields = additionalAggregationFields;
+	}
 }
