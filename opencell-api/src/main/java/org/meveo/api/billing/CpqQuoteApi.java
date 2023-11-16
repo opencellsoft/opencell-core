@@ -2241,10 +2241,12 @@ public class CpqQuoteApi extends BaseApi {
            discountQuotePrice.setPriceLevelEnum(priceLevelEnum);
            discountQuotePrice.setPriceTypeEnum(PriceTypeEnum.ONE_SHOT_OTHER);
            final AccountingArticle accountingArticle = wo.getAccountingArticle();
-           if (accountingArticle != null && accountingArticle.getTaxClass() != null) {
+           if (accountingArticle != null && accountingArticle.getTaxClass() != null && ( wo.getTaxPercent() == null || wo.getTaxPercent().compareTo(BigDecimal.ZERO) == 0)) {
         	   final TaxInfo taxInfo = taxMappingService.determineTax(wo);
         	   if(taxInfo != null)
         		   discountQuotePrice.setTaxRate(taxInfo.tax.getPercent());
+           }else{
+	           discountQuotePrice.setTaxRate(wo.getTaxPercent());
            }
            
            discountQuotePrice.setQuoteArticleLine(createQuoteArticleLine(wo, quoteVersion));
