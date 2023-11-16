@@ -255,7 +255,8 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
     
     public InvoiceLine createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice, boolean isDuplicated) throws BusinessException {
-        AccountingArticle accountingArticle=entity.getAccountingArticle();
+    	invoice = invoiceService.refreshOrRetrieve(invoice);
+    	AccountingArticle accountingArticle=entity.getAccountingArticle();
         Date date=new Date();
         if(entity.getValueDate()!=null) {
             date=entity.getValueDate();
@@ -884,7 +885,15 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
 		
         /****recalculate amountWithoutTax and amountWithTax  according to tax percent and the business model (b2b or b2c)*/
-        invoiceLine.computeDerivedAmounts(appProvider.isEntreprise(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode());
+        final BigDecimal appliedRate = invoiceLine.getInvoice() != null ? invoiceLine.getInvoice().getAppliedRate() : ONE;
+        BigDecimal[] amounts = computeAmounts(invoiceLine.getUnitPrice(), appliedRate,
+                invoiceLine.getQuantity(), invoiceLine.getTaxRate(), appProvider.isEntreprise());
+        invoiceLine.setAmountWithoutTax(amounts[0]);
+        invoiceLine.setAmountWithTax(amounts[1]);
+        invoiceLine.setAmountTax(amounts[2]);
+        invoiceLine.setTransactionalAmountWithoutTax(amounts[3]);
+        invoiceLine.setTransactionalAmountWithTax(amounts[4]);
+        invoiceLine.setTransactionalAmountTax(amounts[5]);
 
         invoiceLine.setValidity(datePeriod);
         invoiceLine.setProductVersion((ProductVersion) tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
@@ -938,6 +947,44 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             taxService.create(tax);
         }
         return tax;
+    }
+
+    private BigDecimal[] computeAmounts(BigDecimal unitPrice, BigDecimal appliedRate,
+                                        BigDecimal quantity, BigDecimal taxRate, boolean isEnterprise) {
+        BigDecimal amountTax;
+        BigDecimal amountWithTax;
+        BigDecimal amountWithoutTax;
+        BigDecimal transactionalAmountTax;
+        BigDecimal transactionalAmountWithTax;
+        BigDecimal transactionalAmountWithoutTax;
+        final BigDecimal hundred = new BigDecimal(100);
+        final BigDecimal transactionalUnitPrice = unitPrice.multiply(appliedRate).setScale(appProvider.getRounding(),
+                appProvider.getRoundingMode().getRoundingMode());
+        if(isEnterprise) {
+            amountWithoutTax = unitPrice.multiply(quantity);
+            amountTax = (amountWithoutTax.multiply(taxRate))
+                    .divide(hundred, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            amountWithTax = amountWithoutTax.add(amountTax);
+
+            transactionalAmountWithoutTax = transactionalUnitPrice.multiply(quantity);
+            transactionalAmountTax = (transactionalAmountWithoutTax.multiply(taxRate))
+                    .divide(hundred, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            transactionalAmountWithTax = transactionalAmountWithoutTax.add(transactionalAmountTax);
+        } else {
+            BigDecimal computeValue = (hundred.add(taxRate))
+                    .divide(hundred, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            amountWithTax = unitPrice.multiply(quantity);
+            amountWithoutTax = amountWithTax
+                    .divide(computeValue, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            amountTax = amountWithTax.subtract(amountWithoutTax);
+
+            transactionalAmountWithTax = transactionalUnitPrice.multiply(quantity);
+            transactionalAmountWithoutTax = transactionalAmountWithTax
+                    .divide(computeValue, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            transactionalAmountTax = transactionalAmountWithTax.subtract(transactionalAmountWithoutTax);
+        }
+        return new BigDecimal[]{amountWithoutTax, amountWithTax, amountTax,
+                transactionalAmountWithoutTax, transactionalAmountWithTax, transactionalAmountTax};
     }
 
     private BigDecimal getRateForInvoice(InvoiceLine invoiceLine) {
