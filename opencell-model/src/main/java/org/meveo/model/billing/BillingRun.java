@@ -26,7 +26,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -489,6 +491,14 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @Column(name = "application_el", length = 2000)
     @Size(max = 2000)
     private String applicationEl;
+
+    /**
+     * Define additional criterias for aggregation
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "billing_run_aggregation_fields", joinColumns = @JoinColumn(name = "billing_run_id"))
+    @Column(name = "fields")
+    private List<String> additionalAggregationFields;
 
     
     public BillingRun getNextBillingRun() {
@@ -1178,5 +1188,13 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
 
     public void setApplicationEl(String applicationEl) {
         this.applicationEl = applicationEl;
+    }
+
+    public List<String> getAdditionalAggregationFields() {
+        return additionalAggregationFields;
+    }
+
+    public void setAdditionalAggregationFields(List<String> additionalAggregationFields) {
+        this.additionalAggregationFields = additionalAggregationFields;
     }
 }
