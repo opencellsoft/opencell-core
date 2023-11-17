@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.opencellsoft</groupId>
         <artifactId>opencell</artifactId>
-        <version>14.1.13-600-c5ea5d6</version>
+        <version>14.1.13-600-e8dca9f</version>
     </parent>
     <artifactId>opencell-client</artifactId>
     <name>Opencell Client</name>
