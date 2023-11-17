@@ -28,6 +28,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -35,6 +36,7 @@ import org.meveo.service.script.ScriptInstanceService;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -48,6 +50,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
 
     @Inject
     private BillingCycleService billingCycleService;
+
+    @Inject
+    private BillingRunService billingRunService;
 
     @Inject
     private CalendarService calendarService;
@@ -108,6 +113,13 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         dtoToEntity(entity, dto);
 
         entity = billingCycleService.update(entity);
+        List<BillingRun> attachedBRs = billingRunService.findBillingRunsByBillingCycle(entity);
+        List<String> additionalAggregationFields = entity.getAdditionalAggregationFields();
+        attachedBRs.forEach(br -> {
+            br.setAdditionalAggregationFields(additionalAggregationFields);
+            billingRunService.update(br);
+        });
+
         return entity;
     }
 
@@ -287,6 +299,10 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         }
 
         entity.setApplicationEl(dto.getApplicationEl());
+
+        if(dto.getAdditionalAggregationFields() != null) {
+            entity.setAdditionalAggregationFields(dto.getAdditionalAggregationFields());
+        }
 
        	// populate customFields
         try {

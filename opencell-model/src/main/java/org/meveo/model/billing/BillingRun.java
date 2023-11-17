@@ -80,7 +80,8 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
     	@NamedQuery(name = "BillingRun.getForInvoicingLimitToIds", query = "SELECT br FROM BillingRun br where (br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC')) and br.id in :ids and br.disabled = false order by br.id asc"),
         @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code "),
         @NamedQuery(name = "BillingRun.nullifyBillingRunXMLExecutionResultIds", query = "update BillingRun br set br.xmlJobExecutionResultId = null where br = :billingRun"),
-        @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") })
+        @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") ,
+        @NamedQuery(name = "BillingRun.findByBillingCycle", query = "FROM BillingRun br WHERE br.billingCycle = :bc")})
 public class BillingRun extends EnableEntity implements ICustomFieldEntity, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
