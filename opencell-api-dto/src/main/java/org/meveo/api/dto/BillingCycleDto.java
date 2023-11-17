@@ -223,6 +223,9 @@ public class BillingCycleDto extends BusinessEntityDto {
     @Size(max = 2000)
     private String applicationEl;
 
+    @Schema(description = "List of additional aggregation criteria")
+    private List<String> additionalAggregationFields;
+
     public String getLastTransactionDateDelayEL() {
 		return lastTransactionDateDelayEL;
 	}
@@ -816,5 +819,21 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
         this.discountAggregation = discountAggregation;
+    }
+
+    /**
+     * Get the additional aggregration fields
+     * @return
+     */
+    public List<String> getAdditionalAggregationFields() {
+        return additionalAggregationFields;
+    }
+
+    /**
+     * Set the additional aggregation fields
+     * @param additionalAggregationFields
+     */
+    public void setAdditionalAggregationFields(List<String> additionalAggregationFields) {
+        this.additionalAggregationFields = additionalAggregationFields;
     }
 }
