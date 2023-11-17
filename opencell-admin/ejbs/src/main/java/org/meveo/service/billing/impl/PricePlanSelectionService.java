@@ -117,7 +117,7 @@ public class PricePlanSelectionService implements Serializable {
         EntityManager em = getEntityManager();
 
         if (matchDbOnly) {
-        	return getActivePricePlansByChargeCodeForRatingMatchDB( bareWo, buyerCountryId, advancedSettingsMapByGroup, buyerCurrency, startDate, endDate, subscriptionAge, subscriptionDate, operationDate);
+        	return getActivePricePlansByChargeCodeForRatingMatchDB( bareWo, buyerCurrency.getId(), advancedSettingsMapByGroup, buyerCurrency, startDate, endDate, subscriptionAge, subscriptionDate, operationDate);
 
         } else {
             TypedQuery<PricePlanMatrixForRating> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRating", PricePlanMatrixForRating.class);
