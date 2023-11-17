@@ -1751,6 +1751,7 @@ public class NativePersistenceService extends BaseService {
                 } else {
                     updateQuery = updateQuery + query.substring(query.indexOf(" where "));
                     updateQuery = updateQuery.replaceAll(" " + tableNameAlias + "\\.", " ");
+                    updateQuery = updateQuery.replaceAll("(" + tableNameAlias + "\\.", "(");
                 }
             }
             getEntityManager().createQuery(updateQuery).executeUpdate();
