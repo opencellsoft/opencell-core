@@ -55,12 +55,14 @@ public class InvoiceLinesJob extends Job {
             false, null, null, "JobInstance_InvoiceLinesJob"));
         result.put(Job.CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
             "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, "JobInstance_InvoiceLinesJob"));
+        result.put(CF_NB_PUBLISHERS, CustomFieldTemplateUtils.buildCF(CF_NB_PUBLISHERS, resourceMessages.getString("jobExecution.nbPublishers"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2",
+            null, false, null, null, "JobInstance_InvoiceLinesJob"));             
         result.put(CF_INVOICE_LINES_GROUP_BY_BA, CustomFieldTemplateUtils.buildCF(CF_INVOICE_LINES_GROUP_BY_BA, resourceMessages.getString("jobExecution.ilJob.groupByBA"), CustomFieldTypeEnum.BOOLEAN,
-            "tab:Configuration:0;fieldGroup:Configuration:0;field:2", "false", true, null, null, "JobInstance_InvoiceLinesJob"));
+            "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "false", true, null, null, "JobInstance_InvoiceLinesJob"));
         result.put(CF_INVOICE_LINES_NR_RTS_PER_TX, CustomFieldTemplateUtils.buildCF(CF_INVOICE_LINES_NR_RTS_PER_TX, resourceMessages.getString("jobExecution.ilJob.numberOfRTsPerTX"), CustomFieldTypeEnum.LONG,
-            "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "1000000", true, null, null, "JobInstance_InvoiceLinesJob"));
+            "tab:Configuration:0;fieldGroup:Configuration:0;field:4", "1000000", true, null, null, "JobInstance_InvoiceLinesJob"));
         result.put(CF_INVOICE_LINES_NR_ILS_PER_TX, CustomFieldTemplateUtils.buildCF(CF_INVOICE_LINES_NR_ILS_PER_TX, resourceMessages.getString("jobExecution.ilJob.numberOfILsPerTX"), CustomFieldTypeEnum.LONG,
-            "tab:Configuration:0;fieldGroup:Configuration:0;field:4", "10000", true, null, null, "JobInstance_InvoiceLinesJob"));
+            "tab:Configuration:0;fieldGroup:Configuration:0;field:5", "10000", true, null, null, "JobInstance_InvoiceLinesJob"));
 
         CustomFieldTemplate cft = CustomFieldTemplateUtils.buildCF(CF_INVOICE_LINES_IL_DATE_AGGREGATION_OPTIONS, resourceMessages.getString("jobExecution.ilJob.dateAggregation"), CustomFieldTypeEnum.LIST,
             "tab:Configuration:0;fieldGroup:Aggregation:1;field:1", "0", false, null, null, "JobInstance_InvoiceLinesJob");

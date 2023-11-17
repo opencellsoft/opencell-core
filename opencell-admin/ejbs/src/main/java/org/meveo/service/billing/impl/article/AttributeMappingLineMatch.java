@@ -29,6 +29,10 @@ public class AttributeMappingLineMatch {
         partialMatchMappingLines.add(new PartialMatchMappingLine(numberOfMatchedAttribute, articleMappingLine));
     }
 
+    public int getFullMatchesCount() {
+        return fullMatches.size();
+    }
+    
     public Set<AccountingArticle> getFullMatchsArticle() {
         return fullMatches.stream()
                 .map(ArticleMappingLine::getAccountingArticle)

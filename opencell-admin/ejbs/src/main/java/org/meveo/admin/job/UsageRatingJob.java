@@ -101,6 +101,16 @@ public class UsageRatingJob extends Job {
         waitingMillis.setDefaultValue("0");
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put(Job.CF_WAITING_MILLIS, waitingMillis);
+        
+        CustomFieldTemplate nbPublishers = new CustomFieldTemplate();
+        nbPublishers.setCode(Job.CF_NB_PUBLISHERS);
+        nbPublishers.setAppliesTo("JobInstance_UsageRatingJob");
+        nbPublishers.setActive(true);
+        nbPublishers.setDescription(resourceMessages.getString("jobExecution.nbPublishers"));
+        nbPublishers.setFieldType(CustomFieldTypeEnum.LONG);
+        nbPublishers.setValueRequired(false);
+        nbPublishers.setGuiPosition("tab:Configuration:0;field:2");
+        result.put(Job.CF_NB_PUBLISHERS, nbPublishers);
 
         CustomFieldTemplate rateUntilDate = new CustomFieldTemplate();
         rateUntilDate.setCode("rateUntilDate");
@@ -110,7 +120,7 @@ public class UsageRatingJob extends Job {
         rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);
         rateUntilDate.setValueRequired(false);
         rateUntilDate.setMaxValue(50L);
-        rateUntilDate.setGuiPosition("tab:Configuration:0;field:2");
+        rateUntilDate.setGuiPosition("tab:Configuration:0;field:3");
         result.put("rateUntilDate", rateUntilDate);
 
         CustomFieldTemplate ratingGroup = new CustomFieldTemplate();
@@ -122,7 +132,7 @@ public class UsageRatingJob extends Job {
         ratingGroup.setValueRequired(false);
         ratingGroup.setDefaultValue(null);
         ratingGroup.setMaxValue(50L);
-        ratingGroup.setGuiPosition("tab:Configuration:0;field:3");
+        ratingGroup.setGuiPosition("tab:Configuration:0;field:4");
         result.put("ratingGroup", ratingGroup);
 
         CustomFieldTemplate batchSize = new CustomFieldTemplate();
@@ -134,7 +144,7 @@ public class UsageRatingJob extends Job {
         batchSize.setValueRequired(false);
         batchSize.setDefaultValue("1");
         batchSize.setMaxValue(10000L);
-        batchSize.setGuiPosition("tab:Configuration:0;field:4");
+        batchSize.setGuiPosition("tab:Configuration:0;field:5");
         result.put(batchSize.getCode(), batchSize);
         
         CustomFieldTemplate parameter1 = new CustomFieldTemplate();
@@ -146,7 +156,7 @@ public class UsageRatingJob extends Job {
         parameter1.setValueRequired(false);
         parameter1.setDefaultValue(null);
         parameter1.setMaxValue(200L);
-        parameter1.setGuiPosition("tab:Configuration:0;field:5");
+        parameter1.setGuiPosition("tab:Configuration:0;field:6");
         result.put("parameter1", parameter1);
         
         CustomFieldTemplate parameter2 = new CustomFieldTemplate();
@@ -158,7 +168,7 @@ public class UsageRatingJob extends Job {
         parameter2.setValueRequired(false);
         parameter2.setDefaultValue(null);
         parameter2.setMaxValue(200L);
-        parameter2.setGuiPosition("tab:Configuration:0;field:6");
+        parameter2.setGuiPosition("tab:Configuration:0;field:7");
         result.put("parameter2", parameter2);
 
 //        CustomFieldTemplate noRollback = new CustomFieldTemplate();

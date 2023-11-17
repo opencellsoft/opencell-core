@@ -85,7 +85,7 @@ public class TaxScriptService implements Serializable {
      * @return A list of tax entities
      * @throws BusinessException General business exception
      */
-    public List<Tax> computeTaxes(String scriptCode, UserAccount userAccount, Seller seller, TaxClass taxClass, Date date,WalletOperation walletOperation) throws BusinessException {
+    public List<Tax> computeTaxes(String scriptCode, UserAccount userAccount, Seller seller, TaxClass taxClass, Date date, WalletOperation walletOperation) throws BusinessException {
         TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 
         Map<String, Object> scriptContext = new HashMap<>();
@@ -96,6 +96,34 @@ public class TaxScriptService implements Serializable {
         scriptContext.put(TaxScript.TAX_WALLET_OPERATION, walletOperation);
 
         return scriptInterface.computeTaxes(scriptContext);
+    }
+    
+    /**
+     * Determines applicable taxes from an external web service. First a check is done to see if script is applicable.
+     * 
+     * @param scriptCode Tax script code
+     * @param userAccount User account
+     * @param seller Seller
+     * @param taxClass Tax class
+     * @param date Date to determine tax for
+     * @return A list of tax entities
+     * @throws BusinessException General business exception
+     */
+    public List<Tax> computeTaxesIfApplicable(String scriptCode, UserAccount userAccount, Seller seller, TaxClass taxClass, Date date, WalletOperation walletOperation) throws BusinessException {
+        TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+
+        Map<String, Object> scriptContext = new HashMap<>();
+        scriptContext.put(TaxScript.TAX_USER_ACCOUNT, userAccount);
+        scriptContext.put(TaxScript.TAX_SELLER, seller);
+        scriptContext.put(TaxScript.TAX_TAX_CLASS, taxClass);
+        scriptContext.put(TaxScript.TAX_DATE, date);
+        scriptContext.put(TaxScript.TAX_WALLET_OPERATION, walletOperation);
+
+        if (scriptInterface.isApplicable(scriptContext)) {
+            return scriptInterface.computeTaxes(scriptContext);
+        } else {
+            return null;
+        }
     }
 
     /**

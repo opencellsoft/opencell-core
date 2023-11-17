@@ -58,7 +58,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_tax_mapping_seq"), })
 @NamedQueries({
         @NamedQuery(name = "TaxMapping.findApplicableTax", query = "select m from TaxMapping m where m.accountTaxCategory=:taxCategory and (m.chargeTaxClass=:taxClass or m.chargeTaxClass is null) and (m.sellerCountry=:sellerCountry or m.sellerCountry is null) and (m.buyerCountry=:buyerCountry or m.buyerCountry is null) and ((m.valid.from is null or m.valid.from<=:applicationDate) AND (:applicationDate<m.valid.to or m.valid.to is null)) ORDER BY m.chargeTaxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, priority DESC", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
         @NamedQuery(name = "TaxMapping.findApplicableTaxByIds", query = "select m from TaxMapping m where m.accountTaxCategory.id=:taxCategoryId and (m.chargeTaxClass.id=:taxClassId or m.chargeTaxClass is null) and (m.sellerCountry.id=:sellerCountryId or m.sellerCountry.id is null) and (m.buyerCountry.id=:buyerCountryId or m.buyerCountry is null) and ((m.valid.from is null or m.valid.from<=:applicationDate) AND (:applicationDate<m.valid.to or m.valid.to is null)) ORDER BY m.chargeTaxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, priority DESC"),
 })
 public class TaxMapping extends AuditableEntity implements Serializable {

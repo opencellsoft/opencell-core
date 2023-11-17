@@ -12452,7 +12452,7 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
+    
 	<changeSet id="#INTRD-9066_20231009-rebuild" author="AbdellatifBARI">
         <createTable tableName="batch_entity">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -16976,7 +16976,7 @@
         <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
         <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
         <sql>CREATE INDEX medina_access_user_id_index ON ${db.schema.adapted}medina_access(acces_user_id)</sql>
-        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id)</sql>
+        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id, priority)</sql>
         <sql>CREATE INDEX counter_period_ci_id ON ${db.schema.adapted}billing_counter_period(counter_instance_id)</sql>
         <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_record)</sql>
         <sql>CREATE INDEX rating_edr_wo_index ON ${db.schema.adapted}rating_edr(wallet_operation_id)</sql>
@@ -19577,6 +19577,7 @@
     <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
     <changeSet id="INTRD-17830_20231108" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius"/>
 
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
