@@ -94,8 +94,6 @@ import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.util.MeveoParamBean;
 
 import static java.util.stream.Collectors.joining;
-import static org.apache.commons.collections4.ListUtils.partition;
-import static org.meveo.commons.utils.ParamBean.getInstance;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -1729,21 +1727,33 @@ public class NativePersistenceService extends BaseService {
     /**
      * Execute the query builder with the provided filters
      *
-     * @param tableNameAlias the table name
-     * @param queryBuilder   the query builder
-     * @param filters        the filters
+     * @param updateQueryBuilder the update query builder
+     * @param entityClassName    the entity class name
+     * @param tableNameAlias     the table name alias
+     * @param filters            the filters
      */
-    public void update(String tableNameAlias, QueryBuilder queryBuilder, Map<String, Object> filters) {
-        if (queryBuilder != null) {
+    public void update(QueryBuilder updateQueryBuilder, String entityClassName, String tableNameAlias, Map<String, Object> filters) {
+        if (updateQueryBuilder != null) {
+            String updateQuery = updateQueryBuilder.getQueryAsString();
             if (filters != null && !filters.isEmpty()) {
-                NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, tableNameAlias);
+                StringBuilder selectQuery = new StringBuilder("SELECT ").append(tableNameAlias).append(".id")
+                        .append(" FROM ").append(entityClassName).append(" ").append(tableNameAlias);
+                QueryBuilder selectQueryBuilder = new QueryBuilder(selectQuery.toString(), tableNameAlias);
+                NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(selectQueryBuilder, tableNameAlias);
                 filters.keySet().stream()
-                        .sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
+                        .sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".")
+                                - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                         .filter(key -> filters.get(key) != null)
                         .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
-
+                String query = selectQueryBuilder.getQueryAsString();
+                if (query.indexOf("join") > -1) {
+                    updateQuery = updateQuery + " WHERE id in (" + query + ")";
+                } else {
+                    updateQuery = updateQuery + query.substring(query.indexOf(" where "));
+                    updateQuery = updateQuery.replaceAll(" " + tableNameAlias + "\\.", " ");
+                }
             }
-            getEntityManager().createQuery(queryBuilder.getQueryAsString()).executeUpdate();
+            getEntityManager().createQuery(updateQuery).executeUpdate();
         }
     }
 }

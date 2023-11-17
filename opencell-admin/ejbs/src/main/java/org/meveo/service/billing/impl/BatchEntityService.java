@@ -92,19 +92,20 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
                 batchEntity.setStatus(BatchEntityStatusEnum.PROCESSING);
                 batchEntity.setJobInstance(jobInstance);
 
+                String entityClassName = "WalletOperation";
                 String tableNameAlias = "a";
-                StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation ").append(tableNameAlias).append(" SET ")
-                        .append(tableNameAlias).append(".status=").append(QueryBuilder.paramToString(WalletOperationStatusEnum.TO_RERATE))
-                        .append(", ").append(tableNameAlias).append(".reratingBatch.id=").append(batchEntity.getId())
-                        .append(", ").append(tableNameAlias).append(".updated=").append(QueryBuilder.paramToString(new Date()));
+                StringBuilder updateQuery = new StringBuilder("UPDATE ").append(entityClassName).append(" SET ")
+                        .append("status=").append(QueryBuilder.paramToString(WalletOperationStatusEnum.TO_RERATE))
+                        .append(", updated=").append(QueryBuilder.paramToString(new Date()))
+                        .append(", reratingBatch.id=").append(batchEntity.getId());
 
-                QueryBuilder queryBuilder = new QueryBuilder(updateQuery.toString(), tableNameAlias);
-                nativePersistenceService.update(tableNameAlias, queryBuilder, batchEntity.getFilters());
+                QueryBuilder queryBuilder = new QueryBuilder(updateQuery.toString());
+                nativePersistenceService.update(queryBuilder, entityClassName, tableNameAlias, batchEntity.getFilters());
                 batchEntity.setStatus(BatchEntityStatusEnum.SUCCESS);
                 update(batchEntity);
                 jobExecutionResult.registerSucces();
             } catch (Exception e) {
-                log.error("Failed to process the entity batch : " + batchEntity.getCode(), e);
+                log.error("Failed to process the entity batch id : " + batchEntity.getId(), e);
                 batchEntityService.update(batchEntity, jobExecutionResult, e.getMessage());
             }
         }
