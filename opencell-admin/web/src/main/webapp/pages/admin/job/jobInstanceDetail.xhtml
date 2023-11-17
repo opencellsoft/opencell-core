@@ -165,8 +165,11 @@
 							<p:column sortBy="#{entity.status}" headerText="#{messages['jobExecution.status']}" width="10%">
 								<h:outputText value="#{messages[node.type eq 'child'?entity.status.label:entity.cumulativeStatus.label]}" />
 							</p:column>
-							<hftl:column label="#{messages['jobExecution.node']}" field="nodeName" show="#{node.type eq 'child' or entity.getWorkerJobExecutionResults().isEmpty()}" width="10%" />
-						
+							
+							<p:column sortBy="#{entity.nodename}" headerText="#{messages['jobExecution.node']}" width="10%" >
+								<h:outputText value="#{entity.nodeName}#{node.type eq 'child' and entity.jobLauncherEnum ne 'WORKER'?' (M)':''}" rendered="#{node.type eq 'child' or entity.getWorkerJobExecutionResults().isEmpty()}"/>
+							</p:column>
+							
 							<hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" show="#{node.type eq 'child' or entity.getWorkerJobExecutionResults().isEmpty()}" />
 						</p:treeTable>
 					</h:form>
