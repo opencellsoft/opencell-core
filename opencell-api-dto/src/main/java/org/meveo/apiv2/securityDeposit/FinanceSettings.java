@@ -66,25 +66,25 @@ public interface FinanceSettings extends Resource {
     default Boolean getEnableBillingRedirectionRules() {
         return FALSE;
     }
-    
+
     @Value.Default
     @Schema(description = "Enable Billing Redirection Rules")
     default Boolean getDiscountAdvancedMode() {
         return FALSE;
     }
-    
+
     @Value.Default
     @Schema(description = "Enable Price List")
     default Boolean getEnablePriceList() {
         return FALSE;
     }
-	
+
 	@Nullable
 	@Schema(description = "determinate if the article will be compute before or after pricing")
 	ArticleSelectionModeEnum getArticleSelectionMode();
-	
+
 	@Schema(description = "Entities with Huge Volume")
-    Map<String, List<String>> getEntitiesWithHugeVolume();
+    Map<String, HugeEntity> getEntitiesWithHugeVolume();
 
     @Value.Default
     @Schema(description = "Display warning before process billing Run")
