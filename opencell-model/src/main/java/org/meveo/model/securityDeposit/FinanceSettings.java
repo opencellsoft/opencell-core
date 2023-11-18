@@ -50,7 +50,7 @@ public class FinanceSettings extends BusinessEntity {
 
 	@Type(type = "json")
     @Column(name = "entities_with_huge_volume", columnDefinition = "jsonb")
-    private Map<String, List<String>> entitiesWithHugeVolume;
+    private Map<String, HugeEntity> entitiesWithHugeVolume;
 
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
@@ -124,11 +124,11 @@ public class FinanceSettings extends BusinessEntity {
         this.activateDunning = activateDunning;
     }
 
-	public Map<String, List<String>> getEntitiesWithHugeVolume() {
+	public Map<String, HugeEntity> getEntitiesWithHugeVolume() {
 		return entitiesWithHugeVolume;
 	}
 
-	public void setEntitiesWithHugeVolume(Map<String, List<String>> entitiesWithHugeVolume) {
+	public void setEntitiesWithHugeVolume(Map<String, HugeEntity> entitiesWithHugeVolume) {
 		this.entitiesWithHugeVolume = entitiesWithHugeVolume;
 	}
 }
