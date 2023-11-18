@@ -8401,7 +8401,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	</changeSet>
 
 
-    <changeSet id="#INTRD-10574_20221013-job" author="AndriusKarpavicius">    
+    <changeSet id="#INTRD-10574_20221013-job" author="AndriusKarpavicius">
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
@@ -15442,10 +15442,10 @@ public class CdrFlatFileImportScript extends Script {
 			INSERT INTO ${db.schema.adapted}untdid_5189_allowance_code(id,version,created,updated,creator,updater,code,description) VALUES (19, 0, now(), NULL, 'opencell.admin', NULL, '105', 'Yearly turnover');	
 			
 
-				
+
 		]]>
 		</sql>
-		
+
 		<update tableName="cat_discount_plan">
 			<column name="allowance_code_id" valueComputed="(SELECT id from untdid_5189_allowance_code where code = '95')"></column>
 			<where>allowance_code_id is null</where>
@@ -15461,11 +15461,11 @@ public class CdrFlatFileImportScript extends Script {
 		</changeSet>
 		
 		<changeSet id="#INTRD-12085_20221221" author="HatimOUDAD">
-	
+
 				<update tableName="billing_tax">
 					<column name="vatex_id" value="57" />
 					<where> tax_percentage = 0</where>
-				</update>					
+				</update>
 				
 				<update tableName="billing_invoice_type">
 					<column name="invoice_code_type_id" value="30" />
@@ -15544,22 +15544,22 @@ public class CdrFlatFileImportScript extends Script {
 	</changeSet>
     
     <changeSet id="#INTRD-12925_20230106" author="aeljaouhari">
-    
+
     	<update tableName="billing_invoice_type">
      		<column name="invoice_validation_script_id">null</column>
 			<where>
-				invoice_validation_script_id IN (SELECT id FROM meveo_script_instance WHERE 
-					code='org.meveo.service.script.CompareInvoiceAmount' or 
+				invoice_validation_script_id IN (SELECT id FROM meveo_script_instance WHERE
+					code='org.meveo.service.script.CompareInvoiceAmount' or
 					code='org.meveo.service.script.CompareOfferAmountScript' or
-					code='org.meveo.service.script.validation.ValidateCreditCategoryScript' or 
-					code='org.meveo.service.script.CompareOfferLinesAmountScript' or 
-					code='org.meveo.service.script.validation.ValidateCustomerAge' or 
+					code='org.meveo.service.script.validation.ValidateCreditCategoryScript' or
+					code='org.meveo.service.script.CompareOfferLinesAmountScript' or
+					code='org.meveo.service.script.validation.ValidateCustomerAge' or
 					code='org.meveo.service.script.validation.ValidateSubscriptionAge'
 				)
 			</where>
-		</update>                    
-		
-     	<!-- Script :  CompareInvoiceAmount -->     
+		</update>
+
+     	<!-- Script :  CompareInvoiceAmount -->
 		<delete tableName="meveo_script_parameter">
 			<where>script_instance_id = (SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.CompareInvoiceAmount')</where>
 		</delete>
@@ -15983,8 +15983,8 @@ public class CdrFlatFileImportScript extends Script {
 	        <where>code='Inv_Job'</where>
 	    </delete>
     </changeSet>
-	
-	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE">	
+
+	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE">
 		<update tableName="billing_invoice_type">
 			<column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
 			<where>code in ('COM','ADJ_INV', 'ADJ_REF', 'ADJ', 'SECURITY_DEPOSIT', 'ADV')</where>
@@ -15992,12 +15992,12 @@ public class CdrFlatFileImportScript extends Script {
 
 		<update tableName="billing_accounting_article">
 			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code Where code = '95')"></column>
-		</update>		
-	
+		</update>
+
 		<update tableName="ar_payment_token">
 			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '10')"></column>
 			<where>token_type = 'CASH'</where>
-		</update>		
+		</update>
 		<update tableName="ar_payment_token">
 			<column name="payment_means" valueComputed="(SELECT id from untdid_4461_payment_means where code = '20')"></column>
 			<where>token_type = 'CHECK'</where>
@@ -16805,7 +16805,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             if(amountCts == null){
                 throw new BusinessException("amountCts is null");
             }
-			
+
 			if(!"RFD_SEPA".equals(operationType)) {
 				CardPaymentMethod paymentToken = (CardPaymentMethod)methodContext.get(PaymentScript.CONTEXT_TOKEN);
 				if(paymentToken == null && (operationType.equals("PAL") || operationType.equals("RFD"))){
@@ -16907,7 +16907,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="entity_class" value="org.meveo.model.payments.CustomerAccount"/>
             <column name="entity_fields" value="customer"/>
         </insert>
-    
+
         <insert tableName="audit_data_config">
             <column name="id" valueSequenceNext="audit_data_config_seq"/>
             <column name="version" valueNumeric="0"/>
@@ -17367,7 +17367,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             </column>
         </insert>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13074_20230214" author="zelmeliani">
     	<insert tableName="ar_customer_balance">
     		<column name="id" value="-1"/>
@@ -17431,7 +17431,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
 		</insert>
 		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_TIP')" /> 
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REF_TIP')" />
 		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
 		</insert>
 		<insert tableName="ar_customer_balance_templates">
@@ -17455,7 +17455,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
 		</insert>
 		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_CRD')" /> 
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'REJ_CRD')" />
 		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
 		</insert>
 		<insert tableName="ar_customer_balance_templates">
@@ -17463,7 +17463,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
 		</insert>
 		<insert tableName="ar_customer_balance_templates">
-		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_20')" /> 
+		    <column name="template_id"          valueComputed="(SELECT id FROM ar_occ_template WHERE code = 'TAX_VAT_20')" />
 		    <column name="customer_balance_id"  valueComputed="(SELECT id FROM ar_customer_balance WHERE code = 'default_customer_balance')" />
 		</insert>
 		<insert tableName="ar_customer_balance_templates">
@@ -19720,7 +19720,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		        
         </sql>
         </changeSet>
-        
+
         <changeSet id="#INTRD-13967_20230215" author="houdad">
 		<update tableName="adm_currency">
 			<column name="currency_code" value="AFN" />
@@ -19966,7 +19966,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where> id = 23</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-13968" author="houdad">
 	<insert tableName="adm_country">
             <column name="id" valueNumeric="-238" />
@@ -20087,7 +20087,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		            <column name="created" valueDate="2015-03-19 00:04:08.896" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="country_code" value="XI" />
-		            <column name="description" value="United Kingdom (Northern Ireland)" />					
+		            <column name="description" value="United Kingdom (Northern Ireland)" />
 					<column name="currency_id" valueNumeric="65" />
 					<column name="language_id" valueNumeric="2" />
 		</insert>
@@ -20155,7 +20155,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         <column name="description" value="Featured"/>
         <column name="tag_type_id" value="-1" />
     </insert>
-	
+
 	<update tableName="crm_customer">
 		<column name="customer_category_id" valueComputed="(SELECT id FROM crm_customer_category WHERE code = 'CLIENT')" />
 		<where>customer_category_id = (SELECT id FROM crm_customer_category WHERE code = 'PROSPECT')</where>
@@ -20163,7 +20163,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
     <delete tableName="crm_customer_category">
         <where>code='PROSPECT'</where>
     </delete>
-	
+
     <insert tableName="crm_customer_category">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
@@ -20226,12 +20226,12 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="symbol" value="$"  />
             <where> currency_code = 'USD'</where>
         </update>
-		
+
 		<update tableName="billing_billing_account">
 			<column name="legal_entity_type_id" valueComputed="(SELECT id FROM adm_title WHERE code = 'CIE')" />
 			<where>legal_entity_type_id = (SELECT id FROM adm_title WHERE code = 'ASSOC')</where>
 		</update>
-		
+
         <delete tableName="adm_title">
             <where>code = 'ASSOC'</where>
         </delete>
@@ -20302,7 +20302,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
         </insert>
 
     </changeSet>
-    
+
     <changeSet id="#INTRD-14122_20230221-FIX" author="hichamELHALOUI">
     	<preConditions onFail="MARK_RAN">
 		    <sqlCheck expectedResult="0">
@@ -20319,9 +20319,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	                <column name="description" value="Web" />
 	        </insert>
      </changeSet>
-    
-    
-    
+
+
+
 
     <changeSet id="#INTRD-13867_20230301" author="AbdellatifBARI">
         <delete tableName="meveo_job_instance">
@@ -20381,13 +20381,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
           <where>code = 'org.meveo.service.script.CompareOfferLinesAmount' </where>
       </update>
     </changeSet>
-    
+
    	<changeSet id="#INTRD-14555_20230303" author="aeljaouhari">
         <update tableName="crm_customer_category">
             <column name="default_seller_id" valueComputed="(SELECT min(id) FROM crm_seller WHERE code = 'MAIN_SELLER' OR id >= 1)" />
         </update>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-14126_20230307" author="aelmalki">
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-75" />
@@ -20432,7 +20432,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
         </insert>
     </changeSet>
-    
+
     <changeSet author="houdad" id="#INTRD-15126_20230322">
 		<update tableName="ar_payment_token">
 			<column name="token_type" value="PAYPALPAYMENTLINK"/>
@@ -20443,39 +20443,39 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where> token_type ='STRIPE'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-15191_20230328" author="aelmalki">
 		<update tableName="billing_trading_currency">
 			<column name="symbol" value="$" />
 			<where>currency_id=49</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-15189_20230327" author="hichamELHALOUI">
         <update tableName="cat_offer_template_category">
             <column name="order_level" valueNumeric="0" />
             <where> id in (-1, -2)</where>
         </update>
     </changeSet>
-    
+
     <changeSet id="#INTRD-15228_20230327" author="hichamELHALOUI">
 		<update tableName="adm_currency">
 			<column name="symbol" value="$" />
 			<where> currency_code = 'USD'</where>
 		</update>
 	</changeSet>
-	
-	<changeSet id="#INTRD-15186_20230328" author="zelmeliani">  
-        <sql>SELECT setval('iso_icd_seq', 208, true)</sql> 
-        <sql>SELECT setval('untdid_5189_allowance_code_seq', 19, true)</sql> 
-        <sql>SELECT setval('untdid_1001_invoice_code_type_seq', 43, true)</sql> 
-        <sql>SELECT setval('untdid_4451_invoice_subject_code_seq', 383, true)</sql> 
-        <sql>SELECT setval('untdid_4461_payment_means_seq', 83, true)</sql> 
-        <sql>SELECT setval('untdid_5305_taxation_category_seq', 9, true)</sql> 
-        <sql>SELECT setval('untdid_vatex_seq', 57, true)</sql> 
-        <sql>SELECT setval('untdid_2475_vat_payment_option_seq', 3, true)</sql> 
+
+	<changeSet id="#INTRD-15186_20230328" author="zelmeliani">
+        <sql>SELECT setval('iso_icd_seq', 208, true)</sql>
+        <sql>SELECT setval('untdid_5189_allowance_code_seq', 19, true)</sql>
+        <sql>SELECT setval('untdid_1001_invoice_code_type_seq', 43, true)</sql>
+        <sql>SELECT setval('untdid_4451_invoice_subject_code_seq', 383, true)</sql>
+        <sql>SELECT setval('untdid_4461_payment_means_seq', 83, true)</sql>
+        <sql>SELECT setval('untdid_5305_taxation_category_seq', 9, true)</sql>
+        <sql>SELECT setval('untdid_vatex_seq', 57, true)</sql>
+        <sql>SELECT setval('untdid_2475_vat_payment_option_seq', 3, true)</sql>
     </changeSet>
-    
+
     	<changeSet id="#INTRD-5882__23-03-2022" author="Mohammed_ELAZZOUZI">
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
@@ -20550,7 +20550,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="uuid" value="DuplicateRatedTransactionJob-UUID" />
         </insert>
     </changeSet>
-    
+
     <changeSet id="#INTRD-13978_20230407" author="HOudad">
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
@@ -20572,8 +20572,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'attribute_code_sequence')"/>
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20594,8 +20594,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'user_account_code_sequence')"/>
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20616,8 +20616,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'customer_code_sequence')"/>
         </insert>
-        
-        
+
+
          <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20638,8 +20638,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'offer_template_code_sequence')"/>
         </insert>
-        
-        
+
+
          <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20660,8 +20660,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_code_sequence')"/>
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20682,8 +20682,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'invoicing_plan_code_sequence')"/>
         </insert>
-       
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20704,8 +20704,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'invoicing_plan_item_code_sequence')"/>
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20726,8 +20726,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'commercial_order_code_sequence')"/>
         </insert>
-      
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20748,8 +20748,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'product_code_sequence')"/>
         </insert>
-        
-         
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20770,8 +20770,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'product_line_code_sequence')"/>
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20792,8 +20792,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'quote_code_sequence')"/>
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20814,9 +20814,9 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'subscription_code_sequence')"/>
         </insert>
-    
-    
-    
+
+
+
       <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20837,8 +20837,8 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="sequence_id"
                     valueComputed="(SELECT id from generic_sequence where code = 'tag_code_sequence')"/>
         </insert>
-        
-        
+
+
          <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -20921,14 +20921,14 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>entity_class = 'org.meveo.model.cpq.Media'</where>
         </update>
     </changeSet>
-	
+
 	<changeSet id="INTRD-15222_20230424" author="aelmalki" failOnError="false">
         <insert tableName="billing_invoice_type_applies_to">
             <column name="invoice_type_id" valueComputed="(select id from billing_invoice_type where code = 'ADJ')"/>
             <column name="applies_to_id" valueComputed="(select id from billing_invoice_type where code = 'COMMERCIAL_ORDER')"/>
         </insert>
     </changeSet>
-    
+
     <changeSet id="INTRD-15841_20230502" author="aeljaouhari">
 		<update tableName="billing_invoice_type">
 			<column name="description" value="Invoice"/>
@@ -21031,7 +21031,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="chart_of_account_view_type" value="REGULAR" />
 			<column name="migrated" value="0" />
 			<column name="disabled" value="0" />
-		</insert>		
+		</insert>
 		<insert tableName="billing_accounting_code">
 			<column name="id" valueNumeric="-47" />
 			<column name="version" valueNumeric="0" />
@@ -21042,7 +21042,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="chart_of_account_view_type" value="REGULAR" />
 			<column name="migrated" value="0" />
 			<column name="disabled" value="0" />
-		</insert>		
+		</insert>
 		<update tableName="ar_occ_template">
 			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='666000000')"/>
 			<where>code='XCH_LOSS'</where>
@@ -21052,19 +21052,19 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='XCH_GAIN'</where>
 		</update>
 	</changeSet>
-    
+
     <changeSet id="#INTRD-16247_20230605" author="zelmeliani">
         <update tableName="adm_custom_generic_entity_code">
             <column name="version" value="1"/>
             <where>version is null</where>
         </update>
     </changeSet>
-	<changeSet id="#INTRD-16278_20230606" author="anasseh">			
+	<changeSet id="#INTRD-16278_20230606" author="anasseh">
 		<update tableName="meveo_script_instance">
             <column name="script">
                 <![CDATA[
 					package org.meveo.service.script.demo;
-					
+
 					import java.io.StringReader;
 					import java.util.Date;
 					import java.util.Map;
@@ -21075,52 +21075,52 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 					import org.slf4j.Logger;
 					import org.slf4j.LoggerFactory;
 					import org.xml.sax.InputSource;
-					
+
 					/**
 					 * @author anasseh
 					 */
 					public class CustomGatewayPaymentScript extends PaymentScript {
 						private static final Logger log = LoggerFactory.getLogger(CustomGatewayPaymentScript.class);
-					
+
 						public void createCardToken(Map<String, Object> methodContext) throws BusinessException {
 							log.info("createCardToken  methodContext {} ", methodContext);
 							methodContext.put(PaymentScript.RESULT_TOKEN,
 									"7ced0000-3ab2-000d-6a50-08d4b8a6" + (int) (Math.random() * 1000 + 1));
 						}
-					
+
 						public void doPaymentToken(Map<String, Object> methodContext) throws BusinessException {
 							doIt(methodContext, "PAL");
 						}
-					
+
 						public void doPaymentCard(Map<String, Object> methodContext) throws BusinessException {
 							doIt(methodContext, "PAL_CARD");
 						}
-					
+
 						public void doRefundToken(Map<String, Object> methodContext) throws BusinessException {
 							doIt(methodContext, "RFD");
 						}
-					
+
 						public void doRefundCard(Map<String, Object> methodContext) throws BusinessException {
 							doIt(methodContext, "RFD_CARD");
 						}
-					
+
 						@Override
 						public void doPaymentSepa(Map<String, Object> methodContext) throws BusinessException {
 							log.info("doPaymentSepa  methodContext {} ", methodContext);
 							doIt(methodContext, "PAL_SEPA");
 						}
-					
+
 						@Override
 						public void cancelPayment(Map<String, Object> methodContext) throws BusinessException {
 							log.info("cancelPayment  methodContext {} ", methodContext);
 						}
-					
+
 						@Override
 						public void doRefundSepa(Map<String, Object> methodContext) throws BusinessException {
 							log.info("doRefundSepa  methodContext {} ", methodContext);
 							doIt(methodContext, "RFD_SEPA");
 						}
-					
+
 						@Override
 						public void checkPayment(Map<String, Object> methodContext) throws BusinessException {
 							try {
@@ -21143,7 +21143,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 								throw new BusinessException(e.getMessage());
 							}
 						}
-					
+
 						@Override
 						public void checkMandat(Map<String, Object> methodContext) throws BusinessException {
 							log.info("checkMandat  methodContext {} ", methodContext);
@@ -21159,51 +21159,51 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 							methodContext.put(PaymentScript.RESULT_IBAN, PaymentScript.RESULT_IBAN);
 							methodContext.put(PaymentScript.RESULT_BANK_NAME, PaymentScript.RESULT_BANK_NAME);
 						}
-					
+
 						@Override
 						public void getHostedCheckoutUrl(Map<String, Object> methodContext) throws BusinessException {
 							log.info("getHostedCheckoutUrl  methodContext {} ", methodContext);
-					
+
 							methodContext.put(PaymentScript.RESULT_HOSTED_CO_URL, "https://dump.url.com/checkoutPageUrl");
 							methodContext.put(PaymentScript.RESULT_HOSTED_CO_ID, "123456789");
-					
+
 						}
-					
+
 						@Override
 						public void createInvoice(Map<String, Object> methodContext) throws BusinessException {
 							log.info("createInvoice  methodContext {} ", methodContext);
 							methodContext.put(PaymentScript.RESULT_HOSTED_CO_URL, "https://dump.url.com/invoicePageUrl");
 						}
-					
+
 						@Override
 						public void createSepaDirectDebitToken(Map<String, Object> methodContext) throws BusinessException {
 							log.info("createSepaDirectDebitToken  methodContext {} ", methodContext);
 							methodContext.put(PaymentScript.RESULT_TOKEN,
 									"7ced0000-3ab2-000d-6a50-08d4b8a6" + (int) (Math.random() * 1000 + 1));
-					
+
 						}
-					
+
 						@Override
 						public void createMandate(Map<String, Object> methodContext) throws BusinessException {
 							log.info("createMandate  methodContext {} ", methodContext);
-					
+
 						}
-					
+
 						@Override
 						public void approveSepaDDMandate(Map<String, Object> methodContext) throws BusinessException {
 							log.info("approveSepaDDMandate  methodContext {} ", methodContext);
-					
+
 						}
-					
+
 						@Override
 						public void getHostedCheckoutStatus(Map<String, Object> methodContext) throws BusinessException {
 							log.info("getHostedCheckoutStatus  methodContext {} ", methodContext);
 							methodContext.put(PaymentScript.RESULT_HOSTED_CO_STATUS, PaymentScript.RESULT_HOSTED_CO_STATUS);
 							methodContext.put(PaymentScript.RESULT_PAYMENT_ID, "123456");
 							methodContext.put(PaymentScript.RESULT_PAYMENT_STATUS, PaymentStatusEnum.ACCEPTED);
-					
+
 						}
-					
+
 						private void doIt(Map<String, Object> methodContext, String operationType) throws BusinessException {
 							try {
 								log.debug("EXECUTE  methodContext {} ", methodContext);
@@ -21211,7 +21211,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 								if (amountCts == null) {
 									throw new BusinessException("amountCts is null");
 								}
-					
+
 								// DEMO : get tokenId or card infos from context
 								String body = "{";
 								body += " \"PSPID\" : \"PSPID\" ,";
@@ -21223,7 +21223,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 								body += " \"AMOUNT\" : \"" + amountCts.longValue() + "\" ,";
 								body += " \"SHASIGN\" : \"SHASIGN\" ,";
 								body += " }";
-					
+
 								String paymentResponse = "<root>";
 								paymentResponse += "<STATUS>92</STATUS>";
 								paymentResponse += "<PAYID>" + ((int) (Math.random() * 100000 + 1)) + "</PAYID>";
@@ -21242,7 +21242,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 								throw new BusinessException(e.getMessage());
 							}
 						}
-					
+
 						private String getValue(String sourceXML, String expression) throws XPathExpressionException {
 							InputSource iSource = new InputSource(new StringReader(sourceXML));
 							XPathFactory xpathFactory = XPathFactory.newInstance();
@@ -21255,7 +21255,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>code='org.meveo.service.script.demo.CustomGatewayPaymentScript'</where>
         </update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-16859_20230626" author="aeljaouhari">
 		<update tableName="meveo_job_instance">
             <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportCustomerAccountJob')" />
@@ -21292,7 +21292,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<where>code='OC_MASS_IMPORT_NOTIFICATION'</where>
 		</update>
 	</changeSet>
-    
+
     <changeSet id="INTRD-17129_20230627" author="TarikFA.">
         <update tableName="adm_custom_generic_entity_code">
             <column name="entity_class" value="org.meveo.model.cpq.offer.QuoteOffer" />
@@ -21356,13 +21356,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>code = 'XML_Job'</where>
         </update>
     </changeSet>
-	
+
 	<changeSet id="INTRD-12463_20230821" author="aelmalki">
         <update tableName="billing_invoice_configuration">
 			<column name="default_advanced_payment_article_id" valueComputed="(SELECT id FROM billing_accounting_article WHERE code = 'ADV-STD')" />
 		</update>
     </changeSet>
-    
+
     <changeSet id="INTRD-18097_20230830" author="houdad">
 	    <update tableName="cat_charge_template">
 	    <column name="parameter1_translated_description" value='{
@@ -21371,7 +21371,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	    }'/>
 	    <where>parameter1_translated_description IS NULL</where>
 		</update>
-	
+
 		<update tableName="cat_charge_template">
 		    <column name="parameter2_translated_description" value='{
 		        "ENG": "Parameter 2",
@@ -21379,7 +21379,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		    }'/>
 		    <where>parameter2_translated_description IS NULL</where>
 		</update>
-		
+
 		<update tableName="cat_charge_template">
 		    <column name="parameter3_translated_description" value='{
 		        "ENG": "Parameter 3",
@@ -21387,7 +21387,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		    }'/>
 		    <where>parameter3_translated_description IS NULL</where>
 		</update>
-		
+
 		<update tableName="cat_charge_template">
 		    <column name="parameter_extra_translated_description" value='{
 		        "ENG": "Parameter Extra",
@@ -21399,22 +21399,22 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 	    <column name="parameter1_format" value="TEXT"/>
 	    <where>parameter1_format IS NULL</where>
 		</update>
-		
+
 		<update tableName="cat_charge_template">
 		    <column name="parameter2_format" value="TEXT"/>
 		    <where>parameter2_format IS NULL</where>
 		</update>
-		
+
 		<update tableName="cat_charge_template">
 		    <column name="parameter3_format" value="TEXT"/>
 		    <where>parameter3_format IS NULL</where>
 		</update>
-		
+
 		<update tableName="cat_charge_template">
 		    <column name="parameter_extra_format" value="TEXT"/>
 		    <where>parameter_extra_format IS NULL</where>
 		</update>
-		
+
     </changeSet>
 
     <changeSet id="#INTRD-16833-20230830" author="ZBariki">
@@ -21448,7 +21448,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="ubl_generation_job" value="UBLGenerationJob"/>
         </insert>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-18587_20230925" author="aelmalki">
 		<sql>
 		<![CDATA[
@@ -21470,24 +21470,24 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0228', 'Répertoire des Entreprises et des Etablissements (RIDET)'),
 				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0229', 'T.A.H.I.T.I (traitement automatique hiérarchisé des institutions de Tahiti et des îles)'),
 				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0230', 'National e-Invoicing Framework');
-			
-			
+
+
 			INSERT INTO ${db.schema.adapted}untdid_1001_invoice_code_type(id,version,created,updated,creator,updater,code,en16931_interpretation,name) VALUES
 				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '105', 'Purchase order', 'Purchase order'),
 				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '220', 'Order', 'Order'),
 				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '310', 'Offer/quotation', 'Offer/quotation');
-			
+
 		]]>
 		</sql>
     </changeSet>
-	
+
 	<changeSet id="INTRD-18673-20230927" author="aelmalki">
 		<update tableName="billing_accounting_article">
 			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code WHERE code='95')" />
 			<where>code IN ('DISC-STD', 'PROD-STD')</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-18527_20231002" author="aeljaouhari">
 		<insert tableName="meveo_script_instance_cat">
 			<column name="id" valueNumeric="-7" />
@@ -21696,7 +21696,7 @@ public class ImportJobNotification extends Script {
             update electronic_invoice_settings set invoicing_job =(select code from meveo_job_instance where job_template = 'InvoicingJobV2' and ROWNUM = 1)
         </sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-19070" author="TARIKFA.">
         <update tableName="electronic_invoice_settings">
             <column name="force_xml_generation" valueNumeric="1" />
@@ -21723,14 +21723,14 @@ public class ImportJobNotification extends Script {
         <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -20 and dunning_level_id = -70</sql>
         <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -20 and dunning_level_id = -80</sql>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid">
 		<update tableName="adm_custom_generic_entity_code">
             <column name="format_el" value="#{'BA-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}" />
             <where>entity_class='org.meveo.model.billing.BillingAccount' and format_el='#{''CU-''.concat((mv:formatDate(null, ''YY''))).concat(generatedCode)}'</where>
         </update>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-19093_20231109" author="aeljaouhari">
 		<delete tableName="meveo_job_instance">
 			<where>code = 'APIv2PermissionsSyncJob'</where>
@@ -21765,6 +21765,32 @@ public class ImportJobNotification extends Script {
 			<column name="billing_template_name_el" value="quote_new"/>
             <where>code = 'QUOTE'</where>
         </update>
+    </changeSet>
+
+    <changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe">
+        <sql dbms="postgresql" endDelimiter="$$" splitStatements="false">
+        <![CDATA[
+        DO $$
+        DECLARE
+            field_name		text;
+            fs_id			integer;
+            record_settings	record;
+        BEGIN
+            FOR record_settings IN
+                SELECT id, jsonb_object_keys(entities_with_huge_volume) as field_name
+                FROM finance_settings
+            LOOP
+                fs_id	    := record_settings.id;
+                field_name  := record_settings.field_name;
+                IF not exists (select 1 from finance_settings where entities_with_huge_volume->field_name->'hugeLists' is not null and id = fs_id)
+                THEN
+                    update finance_settings
+                       set entities_with_huge_volume = jsonb_set(entities_with_huge_volume, ARRAY[field_name], jsonb_build_object('entityClass', field_name, 'hugeLists', entities_with_huge_volume->field_name))
+                     where id = fs_id;
+                END IF;
+            END LOOP;
+        END $$;]]>
+        </sql>
     </changeSet>
 
 </databaseChangeLog>
