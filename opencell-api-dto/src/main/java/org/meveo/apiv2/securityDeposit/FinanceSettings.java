@@ -82,13 +82,14 @@ public interface FinanceSettings extends Resource {
 	@Nullable
 	@Schema(description = "determinate if the article will be compute before or after pricing")
 	ArticleSelectionModeEnum getArticleSelectionMode();
-	
-	@Schema(description = "Entities with Huge Volume")
-    Map<String, List<String>> getEntitiesWithHugeVolume();
 
     @Value.Default
     @Schema(description = "Display warning before process billing Run")
     default boolean getBillingRunProcessWarning() {
         return false;
     }
+
+    @Schema(description = "Entities with Huge Volume")
+    Map<String, HugeEntity> getEntitiesWithHugeVolume();
+
 }
