@@ -2,12 +2,14 @@ package org.meveo.apiv2.securityDeposit.financeSettings.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.apiv2.securityDeposit.ImmutableFinanceSettings;
 import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingMapper;
 import org.meveo.model.securityDeposit.AuxiliaryAccounting;
 import org.meveo.model.securityDeposit.FinanceSettings;
+import org.meveo.model.securityDeposit.HugeEntity;
 
 public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.securityDeposit.FinanceSettings, FinanceSettings> {
 
@@ -39,9 +41,13 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          if(entity.getOpenOrderSetting() != null) {
             builder.openOrderSetting(openOrderSettingMapper.toResource(entity.getOpenOrderSetting()));
         }
-         
+
         // Set the entitiesWithHugeVolume field
-        Map<String, List<String>> entitiesWithHugeVolume = entity.getEntitiesWithHugeVolume();
+        Map<String, List<String>> entitiesWithHugeVolume = entity.getEntitiesWithHugeVolume()
+                                                                 .entrySet()
+                                                                 .stream()
+                                                                 .map(e -> Map.entry(e.getKey(), e.getValue().getHugeLists()))
+                                                                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         builder.entitiesWithHugeVolume(entitiesWithHugeVolume);
         return builder.build();
     }
@@ -79,7 +85,12 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
 	     }
 	     // Set the entitiesWithHugeVolume field
 	     Map<String, List<String>> entitiesWithHugeVolume = resource.getEntitiesWithHugeVolume();
-	     financeSettings.setEntitiesWithHugeVolume(entitiesWithHugeVolume);
+         Map<String, HugeEntity> hugeEntitiesSettings = entitiesWithHugeVolume.entrySet()
+                                                                              .stream()
+                                                                              .map(e -> Map.entry(e.getKey(), new HugeEntity().setEntityClass(e.getKey())
+                                                                                                                              .setHugeLists(e.getValue())))
+                                                                              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+         financeSettings.setEntitiesWithHugeVolume(hugeEntitiesSettings);
          financeSettings.setBillingRunProcessWarning(resource.getBillingRunProcessWarning());
          return financeSettings;
     }
