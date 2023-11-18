@@ -62,6 +62,6 @@ public interface FinanceSettings extends Resource {
         return FALSE;
     }
 	@Schema(description = "Entities with Huge Volume")
-    Map<String, List<String>> getEntitiesWithHugeVolume();
+    Map<String, HugeEntity> getEntitiesWithHugeVolume();
 	
 }
