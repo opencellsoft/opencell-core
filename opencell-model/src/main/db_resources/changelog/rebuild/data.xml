@@ -7961,7 +7961,7 @@
 			INSERT INTO ${db.schema.adapted}untdid_5305_taxation_category(id,version,created,updated,creator,updater,code,semantic_model,name) VALUES (8, 0, now(), NULL, 'opencell.admin', NULL, 'L', 'Canary Islands General Indirect Tax', 'Canary Islands general indirect tax');
 			INSERT INTO ${db.schema.adapted}untdid_5305_taxation_category(id,version,created,updated,creator,updater,code,semantic_model,name) VALUES (9, 0, now(), NULL, 'opencell.admin', NULL, 'M', 'Liable for IPSI', 'Tax for production, services and importation in Ceuta and Melilla');
 			
-			
+
 			INSERT INTO ${db.schema.adapted}untdid_vatex(id,version,created,updated,creator,updater,code,remark,code_name) VALUES (1, 0, now(), NULL, 'opencell.admin', NULL, 'VATEX-EU-79-C', 'Repayment of expenditure is not an exemption in the sense of the VAT Directive but may be handled as such in the context of the EN16931.', 'Exempt based on article 79, point c of Council Directive 2006/112/EC');
 			INSERT INTO ${db.schema.adapted}untdid_vatex(id,version,created,updated,creator,updater,code,remark,code_name) VALUES (2, 0, now(), NULL, 'opencell.admin', NULL, 'VATEX-EU-132', NULL, 'Exempt based on article 132 of Council Directive 2006/112/EC');
 			INSERT INTO ${db.schema.adapted}untdid_vatex(id,version,created,updated,creator,updater,code,remark,code_name) VALUES (3, 0, now(), NULL, 'opencell.admin', NULL, 'VATEX-EU-132-1A', NULL, 'Exempt based on article 132, section 1 (a) of Council Directive 2006/112/EC');
@@ -8125,9 +8125,9 @@
 			INSERT INTO ${db.schema.adapted}untdid_5189_allowance_code(id,version,created,updated,creator,updater,code,description) VALUES (19, 0, now(), NULL, 'opencell.admin', NULL, '105', 'Yearly turnover');	
 			
 			
-			
-	
-			
+
+
+
 		]]>
 		</sql>
 		</changeSet>
@@ -8527,7 +8527,7 @@
         </insert>
     </changeSet>
     
-    
+
     <changeSet id="#INTRD-14042_20230227" author="aeljaouhari">
 		<insert tableName="meveo_script_instance">
 			<column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -8552,7 +8552,7 @@
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code='org.meveo.service.script.accountingscheme.NoAccountingEntryScript')"/>
 		</insert>
 	</changeSet>
-    
+
     <changeSet id="INTRD-11152_20221102_data" author="TarikFA.">
          <insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-65" />
@@ -8805,7 +8805,7 @@
 		</insert>
     
     </changeSet>
-    
+
 	<changeSet id="INTRD-2634_20211027" author="YoussefIZEM">
         <insert tableName="com_message_template">
             <column name="media" value="DUNNING_MEDIA" />
@@ -9920,7 +9920,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="dunning_policy_id" valueNumeric="-20" />
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-2962_20211110" author="AmineBENAICHA">
 		<insert tableName="dunning_stop_reasons">
 			<column name="id" valueSequenceNext="dunning_stop_reasons_seq" />
@@ -10033,7 +10033,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	</changeSet>
 
     <changeSet id="#INTRD-1166_20211110_Business_attributes" author="MohammedELAZZOUZI"/>
-    <changeSet id="INTRD-2849_20211110" author="TarikRabeh"></changeSet>    
+    <changeSet id="INTRD-2849_20211110" author="TarikRabeh"></changeSet>
     <changeSet id="#INTRD-2961_20211109-add-status-color_code" author="AmineBENAICHA" />
     <changeSet id="INTRD-3316_20211129_query_notification_template" author="TarikRabeh" />
 	<changeSet id="INTRD-3316_20211215_query_notification_template" author="TarikRabeh" />
@@ -10253,7 +10253,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="quote_default_validity_delay" value="30" />
 		</insert>
 	</changeSet>
-	
+
 
 	<changeSet id="#INTRD-6131_20220805" author="anas.rouaguebe">
         <insert tableName="crm_custom_field_tmpl">
@@ -10723,7 +10723,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="uuid" value="Mass_Adjustment" />
 		</insert>
 	</changeSet>
-	
+
     
     <changeSet id="#INTRD-12677_20221230_rebuild" author="aeljaouhari">
 		<insert tableName="crm_provider_order_line_type">
@@ -10743,7 +10743,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="order_line_type" value="APPLY_ONE_SHOT" />
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="#INTRD-6484" author="hichamElHaloui"/>
 	<changeSet id="#INTRD-6668_20220421" author="TarikRabeh" />
 	<changeSet id="#INTRD-6638_20220422-update-occT" author="aelmalki" />
@@ -11402,17 +11402,17 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 
     <changeSet id="#INTRD-15191_20230328" author="aelmalki" />
 
-    <changeSet id="#INTRD-15186_20230328" author="zelmeliani">  
-        <sql>SELECT setval('iso_icd_seq', 208, true)</sql> 
-        <sql>SELECT setval('untdid_5189_allowance_code_seq', 19, true)</sql> 
-        <sql>SELECT setval('untdid_1001_invoice_code_type_seq', 43, true)</sql> 
-        <sql>SELECT setval('untdid_4451_invoice_subject_code_seq', 383, true)</sql> 
-        <sql>SELECT setval('untdid_4461_payment_means_seq', 83, true)</sql> 
-        <sql>SELECT setval('untdid_5305_taxation_category_seq', 9, true)</sql> 
-        <sql>SELECT setval('untdid_vatex_seq', 57, true)</sql> 
-        <sql>SELECT setval('untdid_2475_vat_payment_option_seq', 3, true)</sql> 
+    <changeSet id="#INTRD-15186_20230328" author="zelmeliani">
+        <sql>SELECT setval('iso_icd_seq', 208, true)</sql>
+        <sql>SELECT setval('untdid_5189_allowance_code_seq', 19, true)</sql>
+        <sql>SELECT setval('untdid_1001_invoice_code_type_seq', 43, true)</sql>
+        <sql>SELECT setval('untdid_4451_invoice_subject_code_seq', 383, true)</sql>
+        <sql>SELECT setval('untdid_4461_payment_means_seq', 83, true)</sql>
+        <sql>SELECT setval('untdid_5305_taxation_category_seq', 9, true)</sql>
+        <sql>SELECT setval('untdid_vatex_seq', 57, true)</sql>
+        <sql>SELECT setval('untdid_2475_vat_payment_option_seq', 3, true)</sql>
     </changeSet>
-    
+
     	<changeSet id="#INTRD-5882__23-03-2022" author="Mohammed_ELAZZOUZI">
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
@@ -11428,9 +11428,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="value_required" value="0"/>
             <column name="creator" value="applicationInitializer"/>
         </insert>
-        
+
     </changeSet>
-    
+
     <changeSet id="#INTRD-13978_20230407" author="HOudad">
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
@@ -11453,8 +11453,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'attribute_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11476,8 +11476,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'user_account_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11499,8 +11499,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'customer_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-        
-        
+
+
          <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11522,8 +11522,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'offer_template_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-        
-        
+
+
          <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11545,8 +11545,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'discount_plan_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11568,8 +11568,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'invoicing_plan_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-       
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11591,8 +11591,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'invoicing_plan_item_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11614,8 +11614,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'commercial_order_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-      
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11637,8 +11637,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'product_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-        
-         
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11660,8 +11660,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'product_line_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11683,8 +11683,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'quote_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-        
-        
+
+
         <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11706,9 +11706,9 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'subscription_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-    
-    
-    
+
+
+
       <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11730,8 +11730,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from generic_sequence where code = 'tag_code_sequence')"/>
             <column name="version" value="1" />
         </insert>
-        
-        
+
+
          <insert tableName="generic_sequence">
             <column name="id" valueSequenceNext="bill_seq_invoice_seq"/>
             <column name="created" valueDate="${db.current.time}"/>
@@ -11848,8 +11848,8 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="uuid" value="BILLING_RUN_REPORT_JOB"/>
 		</insert>
 	</changeSet>
-    
-    <changeSet id="#INTRD-10574_20221013-job" author="AndriusKarpavicius">    
+
+    <changeSet id="#INTRD-10574_20221013-job" author="AndriusKarpavicius">
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
@@ -11863,7 +11863,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     valueComputed="(SELECT id from meveo_timer where code = 'Hourly')" />
             <column name="uuid" value="AuditDataLogAggregationJob_Job" />
         </insert>
-    </changeSet> 
+    </changeSet>
 
     <changeSet id="#INTRD-10574_20230213" author="AndriusKarpavicius">
         <insert tableName="audit_data_config">
@@ -11914,7 +11914,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="entity_class" value="org.meveo.model.payments.CustomerAccount"/>
             <column name="entity_fields" value="customer"/>
         </insert>
-    
+
         <insert tableName="audit_data_config">
             <column name="id" valueSequenceNext="audit_data_config_seq"/>
             <column name="version" valueNumeric="0"/>
@@ -11958,7 +11958,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="ubl_generation_job" value="EInvoice_job"/>
         </insert>
     </changeSet>
-	
+
 	<changeSet id="#INTRD-18587_20230925" author="aelmalki">
 		<sql>
 		<![CDATA[
@@ -11980,13 +11980,13 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0228', 'Répertoire des Entreprises et des Etablissements (RIDET)'),
 				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0229', 'T.A.H.I.T.I (traitement automatique hiérarchisé des institutions de Tahiti et des îles)'),
 				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0230', 'National e-Invoicing Framework');
-			
-			
+
+
 			INSERT INTO ${db.schema.adapted}untdid_1001_invoice_code_type(id,version,created,updated,creator,updater,code,en16931_interpretation,name) VALUES
 				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '105', 'Purchase order', 'Purchase order'),
 				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '220', 'Order', 'Order'),
 				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '310', 'Offer/quotation', 'Offer/quotation');
-			
+
 		]]>
 		</sql>
     </changeSet>
@@ -12116,6 +12116,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-18995_20231107" author="zelmeliani" />
     <changeSet id="#INTRD-19093_20231109" author="aeljaouhari" />
     <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
