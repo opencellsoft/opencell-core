@@ -18,7 +18,6 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.commons.utils.NumberUtils.round;
 
@@ -36,6 +35,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -81,12 +81,12 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.transformer.AliasToAggregatedWalletOperationResultTransformer;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -138,9 +138,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
-    
+
     @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
+    @Named
+    private NativePersistenceService nativePersistenceService;
     
     /**
      *
@@ -1064,27 +1065,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 .setParameter("walletOperationIds", walletOperationsIds)
                 .getResultList();
     }
-
-    public int markWOToRerate(Map<String, Object> updatedFields, List<Long> woIds) {
-        int updated = 0;
-        if (updatedFields != null && !updatedFields.isEmpty()) {
-            // Build update filterQuery
-            StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation a SET");
-            updatedFields.forEach((s, o) ->
-                    updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
-            );
-            updateQuery.setLength(updateQuery.length() - 1);
-            if (woIds != null && !woIds.isEmpty()) {
-                updateQuery.append(" WHERE a.id in (")
-                        .append(woIds.stream().map(String::valueOf).collect(joining(",")))
-                        .append(")");
-            }
-            updated = getEntityManager().createQuery(updateQuery.toString()).executeUpdate();
-
-            getEntityManager().flush();
-            getEntityManager().clear();
-        }
-
-        return updated;
+    /**
+     * Mark a multiple Wallet operations to rerate
+     *
+     * @param updateQuery the update query which mark Wallet operations to rerate
+     * @param ids         the ids of Wallet operations to be marked
+     * @return the number of updated Wallet operations
+     */
+    public int markWoToRerate(StringBuilder updateQuery, List<Long> ids) {
+        return nativePersistenceService.update(updateQuery, ids);
     }
 }

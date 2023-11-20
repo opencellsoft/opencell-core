@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -94,6 +95,8 @@ import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.util.MeveoParamBean;
 
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -1725,7 +1728,7 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Execute the query builder with the provided filters
+     * Execute the provided query builder with the provided filters
      *
      * @param updateQueryBuilder the update query builder
      * @param entityClassName    the entity class name
@@ -1745,16 +1748,42 @@ public class NativePersistenceService extends BaseService {
                                 - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
                         .filter(key -> filters.get(key) != null)
                         .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
-                String query = selectQueryBuilder.getQueryAsString();
-                if (query.indexOf("join") > -1) {
-                    updateQuery = updateQuery + " WHERE id in (" + query + ")";
+                String subQuery = selectQueryBuilder.getQueryAsString();
+                if (subQuery.indexOf("join") > -1) {
+                    updateQuery = updateQuery + " WHERE id in (" + subQuery + ")";
                 } else {
-                    updateQuery = updateQuery + query.substring(query.indexOf(" where "));
+                    updateQuery = updateQuery + subQuery.substring(subQuery.indexOf(" where "));
                     updateQuery = updateQuery.replaceAll(" " + tableNameAlias + "\\.", " ");
                     updateQuery = updateQuery.replaceAll("\\(" + tableNameAlias + "\\.", "(");
                 }
             }
             getEntityManager().createQuery(updateQuery).executeUpdate();
         }
+    }
+
+    /**
+     * Execute the provided update query with the provided ids
+     *
+     * @param updateQuery the update query to be executed
+     * @param ids         the ids of records to be updated
+     * @return the number of updated records
+     */
+    public int update(StringBuilder updateQuery, List<Long> ids) {
+        AtomicInteger updated = new AtomicInteger(0);
+        if (updateQuery != null && updateQuery.length() > 0 && ids != null && ids.size() > 0) {
+            final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+            List<List<Long>> listOfSubListIds = partition(ids, maxValue);
+            listOfSubListIds.forEach(sublist -> {
+                if (sublist != null && !sublist.isEmpty()) {
+                    updateQuery.append(" WHERE id in (")
+                            .append(sublist.stream().map(String::valueOf).collect(joining(",")))
+                            .append(")");
+                    updated.addAndGet(getEntityManager().createQuery(updateQuery.toString()).executeUpdate());
+                    getEntityManager().flush();
+                    getEntityManager().clear();
+                }
+            });
+        }
+        return updated.intValue();
     }
 }
