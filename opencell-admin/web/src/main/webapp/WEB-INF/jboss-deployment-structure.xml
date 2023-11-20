@@ -39,6 +39,7 @@
           <module name="org.jboss.as.controller" />
           <module name="org.jboss.as.server" />
           <module name="org.jaxen" />
+          <module name="org.jgroups" />
         </dependencies>          
 	</deployment>
 </jboss-deployment-structure>
