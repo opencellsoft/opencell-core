@@ -490,6 +490,7 @@
         <createSequence sequenceName="electronic_invoice_settings_seq" startValue="1"/>
         <createSequence sequenceName="pdp_status_seq" startValue="1"/>
         <createSequence sequenceName="pdp_status_history_seq" startValue="1"/>
+        <createSequence sequenceName="batch_entity_seq" startValue="1"/>
     </changeSet>
 
 
@@ -4145,6 +4146,7 @@
             <column name="contract_line_id" type="bigint" />
 			<column name="price_list_line_id" type="bigint" />
 			<column name="business_key" type="VARCHAR(255)" />
+			<column name="batch_entity_id" type="bigint"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -13040,6 +13042,33 @@
         </createTable>
 
     </changeSet>
+    
+    <changeSet id="#INTRD-9066_20231009-rebuild" author="AbdellatifBARI">
+        <createTable tableName="batch_entity">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="batch_entity_pkey"/>
+            </column>
+            <column name="version" type="int4" defaultValueNumeric="0"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="target_job" type="varchar(255)"/>
+            <column name="target_entity" type="varchar(255)"/>
+            <column name="filters" type="${type.json}"/>
+            <column name="notify" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="status" type="varchar(25)"/>
+            <column name="job_instance_id" type="bigint"/>
+            <column name="job_execution_id" type="bigint"/>
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(1000)"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 
     <!-- end tables -->
 
@@ -17844,6 +17873,22 @@
     </changeSet>
 
 
+	<changeSet id="#INTRD-9066_20231009-rebuild-fk" author="AbdellatifBARI">
+    	<addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_instance" referencedTableName="meveo_job_instance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="job_execution_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_execution" referencedTableName="job_execution"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-18966_20231018-rebuild-fk" author="AbdellatifBARI">
+        <addForeignKeyConstraint baseColumnNames="batch_entity_id" baseTableName="billing_wallet_operation"
+                                 constraintName="fk_billing_wallet_operation_batch_entity"
+                                 referencedTableName="batch_entity"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -19391,8 +19436,7 @@
                 referencedTableName="ar_account_operation"
                 referencedColumnNames="id" />
     </changeSet>
-
-
+    
     <changeSet author="AndriusKarpavicius"  id="rebuild_pg_audit_functions" dbms="postgresql">
         <createProcedure>
             CREATE OR REPLACE FUNCTION jsonb_minus ( arg1 jsonb, arg2 jsonb, preserveField varchar, retainOnlyFields varchar ) RETURNS jsonb
@@ -21039,6 +21083,8 @@
     <changeSet id="#INTRD-18439_20230120" author="TarikFA." />
     <changeSet id="#INTRD-16834_20231026" author="TarikFA." />
     <changeSet id="#INTRD-19322_add_aggre_fields" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-18966_20231018" author="AbdellatifBARI" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
