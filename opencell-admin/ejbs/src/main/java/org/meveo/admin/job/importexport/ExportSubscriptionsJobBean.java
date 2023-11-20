@@ -30,13 +30,13 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
 
-import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.jaxb.subscription.Accesses;
 import org.meveo.model.jaxb.subscription.Services;
@@ -44,8 +44,12 @@ import org.meveo.model.jaxb.subscription.Status;
 import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
@@ -53,14 +57,22 @@ import org.meveo.service.billing.impl.SubscriptionService;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class ExportSubscriptionsJobBean extends BaseJobBean {
-
-    private static final long serialVersionUID = 2952039583797102158L;
+public class ExportSubscriptionsJobBean {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
 
     @Inject
+    private Logger log;
+
+    @Inject
     private SubscriptionService subscriptionService;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     private Subscriptions subscriptions;
 
@@ -81,7 +93,7 @@ public class ExportSubscriptionsJobBean extends BaseJobBean {
 
         String timestamp = sdf.format(new Date());
         List<org.meveo.model.billing.Subscription> subs = subscriptionService.list();
-        subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
+        subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance());
         int nbItems = subscriptions.getSubscription() != null ? subscriptions.getSubscription().size() : 0;
         result.setNbItemsToProcess(nbItems);
         try {
@@ -107,15 +119,18 @@ public class ExportSubscriptionsJobBean extends BaseJobBean {
         }
     }
 
-    private Subscriptions subscriptionsToDto(List<org.meveo.model.billing.Subscription> subs, String dateFormat, Long jobInstanceId) {
+    private Subscriptions subscriptionsToDto(List<org.meveo.model.billing.Subscription> subs, String dateFormat, JobInstance jobInstance) {
         Subscriptions dto = new Subscriptions();
         if (subs != null) {
+            int i = 0;
+            int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
             
             for (org.meveo.model.billing.Subscription sub : subs) {
-                if (isJobRequestedToStop(jobInstanceId)) {
+                if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                     break;
                 }
                 dto.getSubscription().add(subscriptionToDto(sub, dateFormat));
+                i++;
             }
         }
         return dto;

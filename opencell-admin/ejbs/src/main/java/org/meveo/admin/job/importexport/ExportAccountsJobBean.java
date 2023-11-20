@@ -30,13 +30,13 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
 
-import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.Address;
 import org.meveo.model.jaxb.account.BillingAccount;
 import org.meveo.model.jaxb.account.BillingAccounts;
@@ -45,8 +45,13 @@ import org.meveo.model.jaxb.account.UserAccount;
 import org.meveo.model.jaxb.account.UserAccounts;
 import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
@@ -54,14 +59,22 @@ import org.meveo.service.billing.impl.BillingAccountService;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class ExportAccountsJobBean extends BaseJobBean {
-
-    private static final long serialVersionUID = -7466658180607205896L;
+public class ExportAccountsJobBean {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
 
     @Inject
+    private Logger log;
+
+    @Inject
     private BillingAccountService billingAccountService;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     private BillingAccounts billingAccounts;
 
@@ -82,7 +95,7 @@ public class ExportAccountsJobBean extends BaseJobBean {
 
         String timestamp = sdf.format(new Date());
         List<org.meveo.model.billing.BillingAccount> bas = billingAccountService.list();
-        billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
+        billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance());
         int nbItems = billingAccounts.getBillingAccount() != null ? billingAccounts.getBillingAccount().size() : 0;
         result.setNbItemsToProcess(nbItems);
         try {
@@ -107,15 +120,18 @@ public class ExportAccountsJobBean extends BaseJobBean {
         }
     }
 
-    private BillingAccounts billingAccountsToDto(List<org.meveo.model.billing.BillingAccount> bas, String dateFormat, Long jobInstanceId) {
+    private BillingAccounts billingAccountsToDto(List<org.meveo.model.billing.BillingAccount> bas, String dateFormat, JobInstance jobInstance) {
         BillingAccounts dto = new BillingAccounts();
-                
+        int i = 0;
+        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+        
         for (org.meveo.model.billing.BillingAccount ba : bas) {
-            if (isJobRequestedToStop(jobInstanceId)) {
+            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                 break;
             }
-            BillingAccount billingAcc = billingAccountToDto(ba, dateFormat, jobInstanceId);
+            BillingAccount billingAcc = billingAccountToDto(ba, dateFormat, jobInstance.getId());
             dto.getBillingAccount().add(billingAcc);
+            i++;
         }
         return dto;
     }
@@ -156,12 +172,13 @@ public class ExportAccountsJobBean extends BaseJobBean {
 
     private UserAccounts userAccountsToDto(List<org.meveo.model.billing.UserAccount> usersAccounts, String dateFormat, Long jobInstanceId) {
         UserAccounts dto = new UserAccounts();
-
+        int i = 0;
         for (org.meveo.model.billing.UserAccount userAcc : usersAccounts) {
-            if (isJobRequestedToStop(jobInstanceId)) {
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                 break;
             }
             dto.getUserAccount().add(userAccountToDto(userAcc, dateFormat));
+            i++;
         }
         return dto;
     }

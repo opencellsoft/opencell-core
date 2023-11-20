@@ -30,10 +30,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.apache.commons.collections.MapUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.admin.job.IteratorBasedJobBean;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobExecutionStatus;
 import org.meveo.cache.JobRunningStatusEnum;
@@ -117,6 +115,7 @@ public class JobExecutionService extends BaseService {
      * @return Job execution result ID
      * @throws BusinessException Any exception
      */
+    @SuppressWarnings("unchecked")
     public Long executeJob(JobInstance jobInstance, Map<String, Object> params, JobLauncherEnum jobLauncher, boolean triggerExecutionOnOtherNodes) throws BusinessException {
 
         jobInstance = jobInstanceService.findById(jobInstance.getId());
@@ -125,20 +124,17 @@ public class JobExecutionService extends BaseService {
 
         Long jobExecutionResultId = null;
 
-        boolean isRunningAsJobManager = jobLauncher != JobLauncherEnum.WORKER;
-        // In Spread data processing over cluster nodes only one node can act as a job manager
-        boolean limitRunToASingleNode = jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE || (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && isRunningAsJobManager);
-        
         if (jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())) {
 
-            JobRunningStatusEnum isRunning = lockForRunning(jobInstance, limitRunToASingleNode);
+            JobRunningStatusEnum isRunning = lockForRunning(jobInstance, jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE);
 
             // For worker, expected response is running_other
 
-            if ((limitRunToASingleNode && isRunning == JobRunningStatusEnum.NOT_RUNNING)
-                    || (!limitRunToASingleNode && (isRunning == JobRunningStatusEnum.NOT_RUNNING || isRunning == JobRunningStatusEnum.LOCKED_OTHER || isRunning == JobRunningStatusEnum.RUNNING_OTHER))) {
+            if ((jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && isRunning == JobRunningStatusEnum.NOT_RUNNING)
+                    || (jobInstance.getClusterBehavior() != JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE
+                            && (isRunning == JobRunningStatusEnum.NOT_RUNNING || isRunning == JobRunningStatusEnum.LOCKED_OTHER || isRunning == JobRunningStatusEnum.RUNNING_OTHER))) {
 
-                JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl(jobInstance, jobLauncher, EjbUtils.getCurrentClusterNode());
+                JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl(jobInstance, jobLauncher);
                 // set parent history id
                 if (params != null && params.containsKey(Job.JOB_PARAM_HISTORY_PARENT_ID)) {
                     jobExecutionResult.setParentJobExecutionResult((Long) params.get(Job.JOB_PARAM_HISTORY_PARENT_ID));
@@ -157,14 +153,12 @@ public class JobExecutionService extends BaseService {
                 throw new ValidationException("Job is already running on this cluster node");
 
             } else {
-                throw new ValidationException("Job is currently running on another cluster node and is limited to run one node at a time, or one job manager at a time");
+                throw new ValidationException("Job is currently running on another cluster node and is limited to run one at a time");
             }
         }
-        // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only or was launched from a node that is not allowed to run on.
-        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API)
-                && (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.RUN_IN_PARALLEL
-                        || ((jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE || jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES)
-                                && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
+        // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only or was launched from a node that
+        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API) && (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.RUN_IN_PARALLEL
+                || (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
 
             Map<String, Object> jobParameters = new HashMap<String, Object>();
             if (params != null) {
@@ -229,27 +223,9 @@ public class JobExecutionService extends BaseService {
      */
     public void stopJob(JobInstance jobInstance) {
 
-        stopJob(jobInstance, true);
-    }
-
-    /**
-     * Stop a running job.
-     *
-     * @param jobInstance Job instance to stop
-     * @param triggerStopOnOtherNodes When job is being stopped from GUI or API, shall job stopping be triggered on other nodes as well
-     */
-    public void stopJob(JobInstance jobInstance, boolean triggerStopOnOtherNodes) {
-
         log.info("Requested to stop job {} of type {}  ", jobInstance, jobInstance.getJobTemplate());
 
-        IteratorBasedJobBean.markJobToStop(jobInstance.getId());
         jobCacheContainerProvider.markJobToStop(jobInstance);
-        IteratorBasedJobBean.releaseJobDataProcessingThreads(jobInstance.getId());
-        
-        // Publish to other cluster nodes to cancel job execution
-        if (triggerStopOnOtherNodes) {
-            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.stop);
-        }
     }
 
     /**
@@ -272,7 +248,6 @@ public class JobExecutionService extends BaseService {
 
         log.info("Requested to stop BY FORCE job {}  of type {}", jobInstance, jobInstance.getJobTemplate());
 
-        IteratorBasedJobBean.markJobToStop(jobInstance.getId());
         if (triggerStopOnOtherNodes) {
             jobCacheContainerProvider.markJobToStop(jobInstance);
         }
@@ -296,9 +271,10 @@ public class JobExecutionService extends BaseService {
             }
         }
 
-        // Publish to other cluster nodes to cancel job execution
+        // Clear pending workload from queue and
+        // publish to other cluster nodes to cancel job execution
         if (triggerStopOnOtherNodes) {
-            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.stopByForce);
+            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.stop);
         }
     }
 
@@ -420,41 +396,6 @@ public class JobExecutionService extends BaseService {
         } else {
             String nodeToCheck = EjbUtils.getCurrentClusterNode();
             return jobInstance.isRunnableOnNode(nodeToCheck);
-        }
-    }
-
-    /**
-     * Restart any unfinished jobs that were not completed
-     */
-    @SuppressWarnings("unchecked")
-    public void restartUnfinishedJobsUpponNodeRestart() {
-
-        String nodeName = EjbUtils.getCurrentClusterNode();
-
-        List<JobExecutionResultImpl> unfinishedJobResults = jobExecutionResultService.listUnfinishedJobsAndMarkThemCanceled(nodeName);
-
-        for (JobExecutionResultImpl jobExecutionResult : unfinishedJobResults) {
-
-            JobInstance jobInstance = jobExecutionResult.getJobInstance();
-
-            if (!jobInstance.isRunnableOnNode(nodeName)) {
-                continue;
-            }
-
-            // A job that was running on a cluster and still has data to be processed in a queue, will be launched as a worker node
-            if (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && !IteratorBasedJobBean.areAllMessagesDelivered(jobInstance.getCode())) {
-
-                Map<String, Object> jobParams = MapUtils.putAll(new HashMap<String, Object>(), new Object[] { Job.JOB_PARAM_HISTORY_PARENT_ID, jobExecutionResult.getId() });
-                jobExecutionService.executeJob(jobInstance, jobParams, JobLauncherEnum.WORKER, false);
-
-                // For jobs that run in parallel - launch it as regular job
-            } else if (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.RUN_IN_PARALLEL) {
-                jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.INCOMPLETE, false);
-
-                // For jobs that run one at a time - check if job that was running on the same node and launch it as a regular job
-            } else if (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && nodeName.equals(jobExecutionResult.getNodeName())) {
-                jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.INCOMPLETE, false);
-            }
         }
     }
 }
