@@ -18,7 +18,6 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.meveo.commons.utils.NumberUtils.round;
 
@@ -86,7 +85,6 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -138,9 +136,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
-    
-    @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
     
     /**
      *
@@ -1065,26 +1060,4 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 .getResultList();
     }
 
-    public int markWOToRerate(Map<String, Object> updatedFields, List<Long> woIds) {
-        int updated = 0;
-        if (updatedFields != null && !updatedFields.isEmpty()) {
-            // Build update filterQuery
-            StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation a SET");
-            updatedFields.forEach((s, o) ->
-                    updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
-            );
-            updateQuery.setLength(updateQuery.length() - 1);
-            if (woIds != null && !woIds.isEmpty()) {
-                updateQuery.append(" WHERE a.id in (")
-                        .append(woIds.stream().map(String::valueOf).collect(joining(",")))
-                        .append(")");
-            }
-            updated = getEntityManager().createQuery(updateQuery.toString()).executeUpdate();
-
-            getEntityManager().flush();
-            getEntityManager().clear();
-        }
-
-        return updated;
-    }
 }

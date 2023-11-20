@@ -17,6 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BatchEntity;
 import org.meveo.model.billing.BatchEntityStatusEnum;
@@ -26,10 +27,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Date;
@@ -49,15 +47,15 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
     @Named
     private NativePersistenceService nativePersistenceService;
 
-    @EJB
-    BatchEntityService batchEntityService;
+    @Inject
+    private MethodCallingUtils methodCallingUtils;
 
     /**
      * Create the new batch entity
      *
-     * @param filters
-     * @param targetJob
-     * @param targetEntity
+     * @param filters      the filters
+     * @param targetJob    the target job
+     * @param targetEntity the target entity
      */
     public void create(Map<String, Object> filters, String targetJob, String targetEntity) {
         BatchEntity batchEntity = new BatchEntity();
@@ -67,6 +65,19 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
         batchEntity.setFilters(filters);
         batchEntity.setNotify(true);
         create(batchEntity);
+    }
+
+    /**
+     * Update the batch entity and register job execution error
+     *
+     * @param batchEntity        the batch entity
+     * @param jobExecutionResult the job execution tesult
+     * @param errorMessage       the error message
+     */
+    public void update(BatchEntity batchEntity, JobExecutionResultImpl jobExecutionResult, String errorMessage) {
+        batchEntity.setStatus(BatchEntityStatusEnum.FAILURE);
+        update(batchEntity);
+        jobExecutionResult.registerError(errorMessage);
     }
 
     /**
@@ -106,17 +117,21 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
                 jobExecutionResult.registerSucces();
             } catch (Exception e) {
                 log.error("Failed to process the entity batch id : " + batchEntity.getId(), e);
-                batchEntityService.update(batchEntity, jobExecutionResult, e.getMessage());
+                methodCallingUtils.callMethodInNewTx(() -> update(batchEntity, jobExecutionResult,
+                        e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
             }
         }
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void update(BatchEntity batchEntity, JobExecutionResultImpl jobExecutionResult, String errorMessage) {
-        batchEntity.setStatus(BatchEntityStatusEnum.FAILURE);
-        update(batchEntity);
-        jobExecutionResult.registerError(errorMessage);
+    /**
+     * Mark a multiple Wallet operations to rerate
+     *
+     * @param updateQuery the update query which mark Wallet operations to rerate
+     * @param ids         the ids of Wallet operations to be marked
+     * @return the number of updated Wallet operations
+     */
+    public int markWoToRerate(StringBuilder updateQuery, List<Long> ids) {
+        return nativePersistenceService.update(updateQuery, ids);
     }
-
 }
 
