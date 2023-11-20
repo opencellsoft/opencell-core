@@ -86,7 +86,7 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
         }
 
         // Number of EDRs to process in a single job run
-        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("jobs.usageRatingJob.processNrInJobRun", 2000000);
+        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("usageRatingJob.processNrInJobRun", 2000000);
 
         List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup,parameter1,parameter2, processNrInJobRun);
         hasMore = ids.size() == processNrInJobRun;

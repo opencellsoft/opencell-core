@@ -42,13 +42,11 @@ import org.meveo.cache.MetricsConfigurationCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.TenantCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
 import org.slf4j.Logger;
@@ -74,9 +72,6 @@ public class ApplicationInitializer {
 
     @Inject
     private JobInstanceService jobInstanceService;
-
-    @Inject
-    private JobExecutionService jobExecutionService;
 
     @Inject
     private ScriptCompilerService scriptCompilerService;
@@ -120,10 +115,7 @@ public class ApplicationInitializer {
     @Inject
     @Named
     private NativePersistenceService nativePersistenceService;
-
-    @Inject
-    protected ParamBeanFactory paramBeanFactory;
-
+    
     public void init() {
 
         final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
@@ -184,9 +176,9 @@ public class ApplicationInitializer {
         // Register jobs
         jobInstanceService.registerJobs();
 
-        // Load Custom table field data type mappings
+        // Load Custom table field data type mappings 
         nativePersistenceService.refreshTableFieldMapping(null);
-
+        
         // Initialize scripts
         scriptCompilerService.compileAndInitializeAll();
 
@@ -203,10 +195,6 @@ public class ApplicationInitializer {
         // cfValueAcumulator.loadCfAccumulationRules();
 
         log.info("Initialized application for provider {}", provider.getCode());
-
-        if (paramBeanFactory.getInstance().getPropertyAsBoolean("jobs.restartUnfinishedJobs", true)) {
-            jobExecutionService.restartUnfinishedJobsUpponNodeRestart();
-        }
 
         return new AsyncResult<Boolean>(Boolean.TRUE);
     }
