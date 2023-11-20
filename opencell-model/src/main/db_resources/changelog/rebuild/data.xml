@@ -17013,6 +17013,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#INTRD-16167_20230515" author="TarikFA." />
     <changeSet id="#INTRD-16167_20230515_revert" author="TarikFA." />
     <changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
+	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
