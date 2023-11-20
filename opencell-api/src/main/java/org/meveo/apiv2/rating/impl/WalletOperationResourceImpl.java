@@ -16,7 +16,6 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.service.billing.impl.BatchEntityService;
-import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 import javax.inject.Inject;
@@ -43,9 +42,6 @@ public class WalletOperationResourceImpl implements WalletOperationResource {
 
     @Inject
     private BatchEntityService batchEntityService;
-
-    @Inject
-    private WalletOperationService walletOperationService;
 
     @Override
     public ActionStatus markWOToRerate(WalletOperationRerate reRateFilters) {
@@ -79,7 +75,7 @@ public class WalletOperationResourceImpl implements WalletOperationResource {
                     .append("status=").append(QueryBuilder.paramToString(WalletOperationStatusEnum.TO_RERATE))
                     .append(", updated=").append(QueryBuilder.paramToString(new Date()));
 
-            int updated = walletOperationService.markWoToRerate(updateQuery, ids);
+            int updated = batchEntityService.markWoToRerate(updateQuery, ids);
 
             if (updated > 0) {
                 result.setMessage(updated + " Wallet operations updated to status 'TO_RERATE'");

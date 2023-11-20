@@ -122,5 +122,16 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
             }
         }
     }
+
+    /**
+     * Mark a multiple Wallet operations to rerate
+     *
+     * @param updateQuery the update query which mark Wallet operations to rerate
+     * @param ids         the ids of Wallet operations to be marked
+     * @return the number of updated Wallet operations
+     */
+    public int markWoToRerate(StringBuilder updateQuery, List<Long> ids) {
+        return nativePersistenceService.update(updateQuery, ids);
+    }
 }
 
