@@ -5,10 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -25,11 +22,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.rating.EDR;
-import org.meveo.service.billing.impl.ReratingService;
 import org.meveo.service.job.Job;
 
 @Stateless
@@ -50,10 +44,6 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 
 	private Long nrOfInitialWOs = null;
 	
-	private boolean useSamePricePlan;
-	
-    @Inject
-    private ReratingService reratingService;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -65,8 +55,6 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 	@SuppressWarnings({ "unchecked" })
 	private Optional<Iterator<List<Object[]>>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
-		useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
-		
 		JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
 		int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("RatingCancellationJob.processNrInJobRun", 10000000);
@@ -83,7 +71,6 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 		statelessSession = entityManager.unwrap(Session.class).getSessionFactory().openStatelessSession();
 		getProcessingSummary();
 		if (nrOfInitialWOs.intValue() == 0) {
-			dropView();
 			return Optional.empty();
 		}
 		jobExecutionResult.addReport(" Start rerate cancelllation process for " + nrOfInitialWOs + " WOs");
@@ -124,8 +111,6 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 			log.info("start processing " + count + " items, view lines from: " + min + " to: " + max);
 			
 			cancelAllObjects(min, max);
-			rerateMainWO(min, max);
-			
 		}
 	}
 
@@ -143,36 +128,9 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 
 		markCanceledWOs("t", min, max);
 		markCanceledWOs("d", min, max);
+		entityManager.flush();
 	}
 	
-	private void rerateMainWO(long min, long max) {
-		
-		String readWOsQuery = "SELECT wo.* FROM billing_wallet_operation wo WHERE wo.status='TO_RERATE' and wo.id IN "
-				+ "(SELECT CAST(unnest(string_to_array(wo_id, ',')) AS bigint) as to_rerate FROM rerate_tree rr WHERE rr.billed_il is null and rr.id between :min and :max)";
-
-		List<WalletOperation> walletOperations = entityManager.createNativeQuery(readWOsQuery, WalletOperation.class).setParameter("min", min).setParameter("max", max).getResultList();
-		
-		String readEDRsQuery = "SELECT edr.* FROM rating_edr edr WHERE edr.id IN "
-			    + "(SELECT wo.edr_id FROM billing_wallet_operation wo WHERE wo.status='TO_RERATE' and wo.id IN "
-			    + "(SELECT CAST(unnest(string_to_array(wo_id, ',')) AS bigint) as to_rerate FROM rerate_tree rr WHERE rr.billed_il is null and rr.id between :min and :max))";
-
-		List<EDR> edrs = entityManager.createNativeQuery(readEDRsQuery, EDR.class).setParameter("min", min).setParameter("max", max).getResultList();
-
-		// Map EDRs to their corresponding WalletOperations
-		Map<Long, EDR> edrMap = edrs.stream().collect(Collectors.toMap(EDR::getId, Function.identity()));
-		Long edrId=null;
-		// Associate each EDR with its WalletOperation
-		for (WalletOperation walletOperation : walletOperations) {
-		     edrId = walletOperation.getEdr().getId(); 
-		    if (edrId != null) {
-		        EDR edr = edrMap.get(edrId);
-		        walletOperation.setEdr(edr);
-		    }
-		}
-		
-		walletOperations.stream().forEach(operationToRerate -> reratingService.rerateWalletOperationAndInstantiateTriggeredEDRs(operationToRerate, useSamePricePlan));
-	}
-
 	/**
 	 * Close data resultset
 	 * 
@@ -185,25 +143,6 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 		if (statelessSession != null) {
 			statelessSession.close();
 		}
-		dropView();
-	}
-
-	private void dropView() {
-		Session hibernateSession = entityManager.unwrap(Session.class);
-
-		hibernateSession.doWork(new org.hibernate.jdbc.Work() {
-			@Override
-			public void execute(Connection connection) throws SQLException {
-
-				try (Statement statement = connection.createStatement()) {
-					log.info("Dropping materialized view {}", viewName);
-					statement.execute("drop materialized view if exists " + viewName);
-				} catch (Exception e) {
-					log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
-					throw new BusinessException(e);
-				}
-			}
-		});
 	}
 
 	private void getProcessingSummary() {
