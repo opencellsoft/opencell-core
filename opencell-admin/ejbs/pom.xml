@@ -815,6 +815,11 @@
             <artifactId>org.apache.oltu.oauth2.client</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.carlspring.cloud.aws</groupId>
+            <artifactId>s3fs-nio</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
