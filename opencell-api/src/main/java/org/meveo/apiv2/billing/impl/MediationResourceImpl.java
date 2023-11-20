@@ -69,10 +69,9 @@ public class MediationResourceImpl implements MediationResource {
     }
 
     @Override
-    public ActionStatus updateCDR(Long cdrId, CdrDtoInput cdrDto) {
+    public CdrDtoResponse updateCDR(Long cdrId, CdrDtoInput cdrDto) {
         CDR toBeUpdated = mapper.toEntity(cdrDto);
-         mediationApiService.updateCDR(cdrId, toBeUpdated);
-         return new ActionStatus(ActionStatusEnum.SUCCESS, "");
+         return mediationApiService.updateCDR(cdrId, toBeUpdated);
     }
 
     @Override

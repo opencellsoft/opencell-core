@@ -137,7 +137,7 @@ public class DiscountPlanItemApi extends BaseApi {
         }
         
         discountPlanItemService.create(discountPlanItem);
-        discountPlanItem.setCode(discountPlanItem.getId().toString());
+        discountPlanItem.setCode(!StringUtils.isBlank(postData.getCode())?postData.getCode():discountPlanItem.getId().toString());
         if(postData.getSequence() == null) {
         	discountPlanItemService.setDisountPlanItemSequence(discountPlanItem);
         }
@@ -361,9 +361,8 @@ public class DiscountPlanItemApi extends BaseApi {
             discountPlanItem.setExpressionEl(source.getExpressionEl());
         }
         discountPlanItem.setDiscountValue(source.getDiscountValue());
-        if (source.getDiscountValueEL() != null) {
-            discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
-        }
+        discountPlanItem.setDiscountValueEL(StringUtils.isEmpty(source.getDiscountValueEL())?null:source.getDiscountValueEL());
+        
         if (source.getDiscountPlanItemType() != null) {
             discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
         }
