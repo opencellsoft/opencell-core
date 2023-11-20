@@ -5990,6 +5990,7 @@
             </column>
             <column name="job_status" type="varchar(14)"/>
             <column name ="parent_job_result_id" type="bigint" />
+            <column name="node" type="varchar(25)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-262">
@@ -6244,9 +6245,9 @@
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
             <column name="query_scheduler_id" type="bigint" />
             <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
+            <column name="status_report_freq" type="int" defaultValueNumeric="60" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -21018,6 +21019,7 @@
     <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi"/>
     <changeSet id="#INTRD-16881_20230816" author="Mohammed_ElAzzouzi"/>    
     <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe" />
+    <changeSet id="#INTRD-17222_20231005" author="AndriusKarpavicius"/>
 
     <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-18276_20230908" author="aelmalki" />

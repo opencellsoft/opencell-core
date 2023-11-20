@@ -200,7 +200,8 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
             String nodeToCheck = EjbUtils.getCurrentClusterNode();
 
-            return jobExecutionStatus.isRunning(nodeToCheck);
+            boolean isRunning = jobExecutionStatus.isRunning(nodeToCheck);
+            return isRunning;
         }
     }
 
@@ -227,7 +228,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             return previousStatus;
         }
 
-        if (!jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())) {
+        if (!jobInstance.isRunnableOnNode(currentNode)) {
             return previousStatus;
         }
 

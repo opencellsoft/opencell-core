@@ -18,10 +18,28 @@
 
 package org.meveo.admin.job;
 
-import org.apache.commons.collections.CollectionUtils;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import javax.ejb.EJB;
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.FlatFileProcessing;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.cache.JobRunningStatusEnum;
@@ -33,11 +51,9 @@ import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
-import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.AuditOrigin;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -48,26 +64,6 @@ import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
-
-import javax.ejb.EJB;
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * Job implementation to process CDR files converting CDRs to EDR records
@@ -100,7 +96,6 @@ public class MediationJobBean extends BaseJobBean {
     @EJB
     private MediationJobBean thisNewTX;
     
-
     @Inject
     private MediationsettingService mediationsettingService;
 
@@ -211,8 +206,6 @@ public class MediationJobBean extends BaseJobBean {
             List<Future> futures = new ArrayList<>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
-            int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
-
             ICdrReader cdrReaderFinal = cdrReader;
             ICdrParser cdrParserFinal = cdrParser;
             PrintWriter outputFileWriterFinal = outputFileWriter;
@@ -224,6 +217,8 @@ public class MediationJobBean extends BaseJobBean {
 
             String originRecordEL = appProvider.getCdrDeduplicationKeyEL();
 
+            Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
+
             for (int k = 0; k < nbThreads; k++) {
 
                 int finalK = k;
@@ -233,8 +228,6 @@ public class MediationJobBean extends BaseJobBean {
 
                     currentUserProvider.reestablishAuthentication(lastCurrentUser);
                     AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.JOB, auditOriginName);
-
-                    int i = 0;
 
                     mainLoop: while (true) {
 
@@ -255,10 +248,9 @@ public class MediationJobBean extends BaseJobBean {
 
                                 cdrs.add(cdr);
 
-                                if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                                if (isJobRequestedToStop(jobInstanceId)) {
                                     return;
                                 }
-                                i++;
                                 nrOfItemsInBatch++;
 
                             } catch (IOException e) {
@@ -272,25 +264,25 @@ public class MediationJobBean extends BaseJobBean {
                             break mainLoop;
                         }
 
-                        thisNewTX.processCDRs(cdrs, jobExecutionResult, cdrParserFinal, outputFileWriterFinal, rejectFileWriterFinal, fileName, isDuplicateCheckOn, updateTotalCount, checkJobStatusEveryNr);
+                        thisNewTX.processCDRs(cdrs, jobExecutionResult, cdrParserFinal, outputFileWriterFinal, rejectFileWriterFinal, fileName, isDuplicateCheckOn, updateTotalCount);
 
-                        try {
-                            // Record progress
-                            jobExecutionResultService.persistResult(jobExecutionResult);
-
-                        } catch (EJBTransactionRolledbackException e) {
-                            // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
-                        } catch (Exception e) {
-                            log.error("Failed to update job progress", e);
-                        }
-
-                        if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                        if (isJobRequestedToStop(jobInstanceId)) {
                             return;
                         }
                     }
                 });
             }
 
+            // Tracks if job's main thread is still running. Used only to stop job status reporting thread.
+            boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstanceId) };
+
+            // Start job status report task. Not run in future, so it will die when main thread dies
+            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance.getCode(), lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
+                currentUserProvider, log, jobExecutionResultService);
+            Thread jobStatusReportThread = new Thread(jobStatusReportTask);
+            jobStatusReportThread.start();
+
+            // Launch main processing tasks
             int i = 0;
             for (Runnable task : tasks) {
                 log.info("{}/{} Will submit task #{} to run", jobInstance.getJobTemplate(), jobInstance.getCode(), i++);
@@ -322,6 +314,10 @@ public class MediationJobBean extends BaseJobBean {
                     log.error("Failed to execute async method", cause);
                 }
             }
+
+            // This will exit the status report task
+            isProcessing[0] = false;
+            jobStatusReportThread.interrupt();
 
             // Mark job as stopped if task was killed
             if (wasKilled) {
@@ -419,7 +415,7 @@ public class MediationJobBean extends BaseJobBean {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void processCDRs(List<CDR> cdrs, JobExecutionResultImpl jobExecutionResult, ICdrParser cdrParserFinal, PrintWriter outputFileWriter, PrintWriter rejectFileWriter, String fileName, boolean isDuplicateCheckOn,
-            boolean updateTotalCount, int checkJobStatusEveryNr) {
+            boolean updateTotalCount) {
 
         for (CDR cdr : cdrs) {
 
@@ -483,7 +479,6 @@ public class MediationJobBean extends BaseJobBean {
         }
     }
     
-
     private void failedCDR(JobExecutionResultImpl jobExecutionResult,String fileName, CDR cdr, CDRStatusEnum status, PrintWriter rejectFileWriter) {
         log.error("Failed to process a CDR line: {} from file {}. Reason: {}", cdr.getLine(), fileName, cdr.getRejectReason());
         rejectFileWriter.println(cdr.getLine() + "\t" + cdr.getRejectReason());
@@ -494,5 +489,4 @@ public class MediationJobBean extends BaseJobBean {
         cdrService.createOrUpdateCdr(cdr);
     }
     
-
 }

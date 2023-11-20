@@ -406,6 +406,8 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
                 TaxCategory taxCategory = getTaxCategory(billingAccount);
                 taxInfo.taxCategory = taxCategory;
+                
+                date = DateUtils.truncateTime(date);
 
                 TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date, walletoperation);
 
