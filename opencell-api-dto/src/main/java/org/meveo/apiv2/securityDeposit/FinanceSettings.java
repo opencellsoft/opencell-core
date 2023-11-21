@@ -63,5 +63,9 @@ public interface FinanceSettings extends Resource {
     }
 	@Schema(description = "Entities with Huge Volume")
     Map<String, HugeEntity> getEntitiesWithHugeVolume();
+
+    @Nullable
+    @Schema(description = "Number of partitions to keep")
+    Integer getNbPartitionsToKeep();
 	
 }

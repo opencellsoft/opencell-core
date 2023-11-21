@@ -26,7 +26,8 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                 .maxAmountPerSecurityDeposit(entity.getMaxAmountPerSecurityDeposit())
                 .maxAmountPerCustomer(entity.getMaxAmountPerCustomer())
                 .autoRefund(entity.isAutoRefund())
-                .activateDunning(entity.isActivateDunning());
+                .activateDunning(entity.isActivateDunning())
+                .nbPartitionsToKeep(entity.getNbPartitionsToKeep());
         if(entity.getAuxiliaryAccounting() != null) {
             builder.useAuxiliaryAccounting(entity.getAuxiliaryAccounting().isUseAuxiliaryAccounting())
                     .auxiliaryAccountCodeEl(entity.getAuxiliaryAccounting().getAuxiliaryAccountCodeEl())
@@ -79,6 +80,7 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                                                                               .map(e -> Map.entry(e.getKey(), toHugeEntity(e.getValue())))
                                                                               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
          financeSettings.setEntitiesWithHugeVolume(hugeEntitiesSettings);
+         financeSettings.setNbPartitionsToKeep(resource.getNbPartitionsToKeep());
          return financeSettings;
     }
 
