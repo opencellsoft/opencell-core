@@ -125,11 +125,12 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
     @Inject
     private MethodCallingUtils methodCallingUtils;
 
+
     @Inject
-    @JMSConnectionFactory("java:/jms/remoteCF")
+    //@JMSConnectionFactory("java:/jms/remoteCF")
     private JMSContext jmsContextForPublishing;
 
-    @Resource(lookup = "java:/jms/remoteCF-consumer")
+    //@Resource(lookup = "java:/jms/remoteCF-consumer")
     private ConnectionFactory jmsConnectionFactory;
 
     @Inject
