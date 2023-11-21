@@ -154,7 +154,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	    }
 	    
 	    public String generateFileName(QuoteVersion quoteVersion) {
-	    	if (quoteVersion.getXmlFilename()!= null) {
+	    	if (StringUtils.isNotBlank(quoteVersion.getXmlFilename())) {
 	            return quoteVersion.getXmlFilename();
 	        }
 	    	CpqQuote quote=quoteVersion.getQuote();
@@ -195,7 +195,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	     */
 	    public String getOrGeneratePdfFilename(QuoteVersion quoteVersion) {
 	    	CpqQuote quote =quoteVersion.getQuote();
-	        if (quoteVersion.getPdfFilename() != null) {
+	        if (StringUtils.isNotBlank(quoteVersion.getPdfFilename())) {
 	            return quoteVersion.getPdfFilename();
 	        } 
 	        String pdfFileName = null; 
@@ -319,7 +319,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 
 	            JRXmlDataSource dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(quoteNode).getBytes(StandardCharsets.UTF_8)), "/quote");
 
-	            String fileKey = jasperFile.getPath() + jasperFile.lastModified();
+	            String fileKey = jasperFile.getPath();
 	            JasperReport jasperReport = jasperReportMap.get(fileKey);
 	            if (jasperReport == null) {
 	                jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
