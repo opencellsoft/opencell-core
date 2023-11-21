@@ -12084,6 +12084,7 @@
             <column name="article_selection_mode" defaultValue="AFTER_PRICING" type="varchar(30)"/>
             <column name="entities_with_huge_volume" type="${type.json}"/>
             <column name="billing_run_process_warning" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="nb_partitions_keep" type="int4" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -21085,6 +21086,7 @@
     <changeSet id="#INTRD-19322_add_aggre_fields" author="anas.rouaguebe" />
     <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI" />
     <changeSet id="#INTRD-18966_20231018" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
