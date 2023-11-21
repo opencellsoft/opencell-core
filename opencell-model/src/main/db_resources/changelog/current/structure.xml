@@ -16075,6 +16075,36 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX idx_rating_wo__business_key ON billing_wallet_operation using btree(business_key)</sql>
     </changeSet>
     
+    <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI">
+        <createSequence sequenceName="batch_entity_seq" startValue="1"/>
+        <createTable tableName="batch_entity">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="batch_entity_pkey"/>
+            </column>
+            <column name="version" type="int4" defaultValueNumeric="0"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="name" type="${type.text}"/>
+            <column name="target_job" type="varchar(255)"/>
+            <column name="target_entity" type="varchar(255)"/>
+            <column name="filters" type="${type.json}"/>
+            <column name="notify" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="status" type="varchar(25)"/>
+            <column name="job_instance_id" type="bigint"/>
+            <column name="job_execution_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_instance" referencedTableName="meveo_job_instance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="job_execution_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_execution" referencedTableName="job_execution"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
     <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius">
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob' ) </sql>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob'</sql>

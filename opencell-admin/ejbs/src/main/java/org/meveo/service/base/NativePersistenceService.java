@@ -93,6 +93,8 @@ import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.util.MeveoParamBean;
 
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.collections4.ListUtils.partition;
+import static org.meveo.commons.utils.ParamBean.getInstance;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -123,6 +125,11 @@ public class NativePersistenceService extends BaseService {
      * Disabled field name
      */
     public static final String FIELD_DISABLED = "disabled";
+
+    /**
+     *
+     */
+    public static final int SHORT_MAX_VALUE = 32767;
 
     /**
      * Field name to field data type mapping to be used when native query caching is enabled. Format <db tablename:<field name,data type>>
@@ -1713,5 +1720,37 @@ public class NativePersistenceService extends BaseService {
     protected boolean areEventsEnabled(String tableName, NotificationEventTypeEnum eventType) {
         List<Notification> notifications = genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.CREATED, new CustomTableEvent(tableName, null, null, eventType));
         return notifications != null && !notifications.isEmpty();
+    }
+
+    /**
+     * Specific getQuery
+     *
+     * @param tableName                table name
+     * @param updatedFields            table fields to be updated
+     * @param config                   the pagination configuration
+     * @return List<Integer>           list of execute update return
+     */
+    public List<Integer> update(String tableName, Map<String, Object> updatedFields, PaginationConfiguration config) {
+        final List<Integer> updated = new ArrayList<>();
+        StringBuilder updateQuery = new StringBuilder("UPDATE ").append(tableName).append(" a SET");
+        updatedFields.forEach((s, o) ->
+                updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
+        );
+        updateQuery.setLength(updateQuery.length() - 1);
+        QueryBuilder queryBuilder = new QueryBuilder(updateQuery.toString(), "a");
+
+
+        Map<String, Object> filters = config.getFilters();
+
+        if (filters != null && !filters.isEmpty()) {
+            NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
+            filters.keySet().stream()
+                    .sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
+                    .filter(key -> filters.get(key) != null)
+                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
+
+        }
+        updated.add(getEntityManager().createQuery(queryBuilder.getQueryAsString()).executeUpdate());
+        return updated;
     }
 }

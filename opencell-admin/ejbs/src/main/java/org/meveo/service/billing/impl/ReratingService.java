@@ -23,8 +23,6 @@ import javax.persistence.TypedQuery;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.MethodCallingUtils;
-import org.meveo.jpa.EntityManagerWrapper;
-import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.RatingResult;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingRun;
