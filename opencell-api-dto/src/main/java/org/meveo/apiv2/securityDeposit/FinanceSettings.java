@@ -91,4 +91,8 @@ public interface FinanceSettings extends Resource {
     default boolean getBillingRunProcessWarning() {
         return false;
     }
+
+    @Nullable
+    @Schema(description = "Number of partitions to keep")
+    Integer getNbPartitionsToKeep();
 }

@@ -32,7 +32,8 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                 .discountAdvancedMode(entity.isDiscountAdvancedMode())
                 .enablePriceList(entity.isEnablePriceList())
 				.articleSelectionMode(entity.getArticleSelectionMode())
-                .billingRunProcessWarning(entity.isBillingRunProcessWarning());
+                .billingRunProcessWarning(entity.isBillingRunProcessWarning())
+                .nbPartitionsToKeep(entity.getNbPartitionsToKeep());;
         if(entity.getAuxiliaryAccounting() != null) {
             builder.useAuxiliaryAccounting(entity.getAuxiliaryAccounting().isUseAuxiliaryAccounting())
                     .auxiliaryAccountCodeEl(entity.getAuxiliaryAccounting().getAuxiliaryAccountCodeEl())
@@ -92,6 +93,7 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                                                                               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
          financeSettings.setEntitiesWithHugeVolume(hugeEntitiesSettings);
          financeSettings.setBillingRunProcessWarning(resource.getBillingRunProcessWarning());
+         financeSettings.setNbPartitionsToKeep(resource.getNbPartitionsToKeep());
          return financeSettings;
     }
 
