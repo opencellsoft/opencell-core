@@ -276,6 +276,7 @@ public class JobExecutionService extends BaseService {
         if (triggerStopOnOtherNodes) {
             jobCacheContainerProvider.markJobToStop(jobInstance);
         }
+        IteratorBasedJobBean.releaseJobDataProcessingThreads(jobInstance.getId());
 
         List<Future> futures = jobCacheContainerProvider.getJobExecutionThreads(jobInstance.getId());
         if (futures.isEmpty()) {
