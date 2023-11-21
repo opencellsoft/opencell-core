@@ -558,7 +558,9 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             throws JMSException {
 
         Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
-        JMSProducer jmsProducer = jmsContextForPublishing.createProducer();
+        JMSContext jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.CLIENT_ACKNOWLEDGE);
+        JMSProducer jmsProducer = jmsContext.createProducer();
+
 //        Message eofMessage = jmsContextForPublishing.createMessage();
 //        eofMessage.setStringProperty(ItertatorJobMessageListener.EOF_MESSAGE, ItertatorJobMessageListener.EOF_MESSAGE);
 
@@ -571,6 +573,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             int nrOfItemsProcessedByThread = 0;
             int nrMessages = 0;
+
+            jmsContext.start();
 
             while (true) {
                 // Retrieve next batchSize of items
@@ -601,11 +605,14 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                 nrOfItemsProcessedByThread = nrOfItemsProcessedByThread + nrOfItemsInBatch;
                 nrMessages++;
+
             }
 
 //            jmsProducer.send(jobQueue, eofMessage);
 
             log.info("Thread {} published {} data items in {} messages for cluster-wide data processing", Thread.currentThread().getName(), nrOfItemsProcessedByThread, nrMessages);
+
+            jmsContext.close();
 
         };
 
