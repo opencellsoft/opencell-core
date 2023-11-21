@@ -206,8 +206,26 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			if(discountAccountingArticle == null) {
     				throw new EntityDoesNotExistsException("discount plan item "+discountPlanItem.getCode()+" has no accounting article  ");
     			}
+			    discountWalletOperation.setAccountingArticle(discountAccountingArticle);
+			    discountWalletOperation.setAccountingCode(discountAccountingArticle.getAccountingCode());
+			    discountWalletOperation.setQuantity(quantity);
+			    discountWalletOperation.setCreated(new Date());
+			    discountWalletOperation.setCode(discountCode);
+			    discountWalletOperation.setSeller(seller);
+			    discountWalletOperation.setBillingAccount(billingAccount);
+			    discountWalletOperation.setDiscountPlan(discountPlanItem.getDiscountPlan());
+			    discountWalletOperation.setWallet(walletInstance); // TODO: check scenario where walletInstance is null, because it will throw exception on TR job
+			    discountWalletOperation.setOfferTemplate(offerTemplate);
+			    discountWalletOperation.setServiceInstance(serviceInstance);
+			    discountWalletOperation.setOperationDate(operationDate);
+			    discountWalletOperation.setDescription(discountDescription);
+			    discountWalletOperation.setChargeInstance(chargeInstance);
+			    discountWalletOperation.setInputQuantity(quantity);
+			    discountWalletOperation.setDiscountPlanItem(discountPlanItem);
+			    discountWalletOperation.setDiscountPlanType(discountPlanItem.getDiscountPlanItemType());
+			    discountWalletOperation.setSequence(discountPlanItem.getFinalSequence());
 
-    			TaxInfo taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(), seller, billingAccount, null, operationDate, false, false);
+    			TaxInfo taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(), seller, billingAccount, null, operationDate, discountWalletOperation,  false, false, null);
     			taxPercent = taxInfo.tax.getPercent();
 			    if ((BooleanUtils.isTrue(discountPlan.getApplicableOnDiscountedPrice()) || appProvider.isActivateCascadingDiscounts())
     					&& walletOperation!=null 
@@ -231,9 +249,8 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 			    discountedAmount=discountedAmount!=null?discountedAmount.add(walletOperationDiscountAmount).multiply(walletOperation.getQuantity()):null;
     			
     		     log.info("calculateDiscountplanItems walletOperationDiscountAmount{},unitAmountWithoutTax{} ,discountValue{} ,discountedAmount{} ",walletOperationDiscountAmount,unitAmountWithoutTax,discountValue,discountedAmount);
-    			
-    			discountWalletOperation.setAccountingArticle(discountAccountingArticle);
-    			discountWalletOperation.setAccountingCode(discountAccountingArticle.getAccountingCode());
+			    
+			    discountWalletOperation.setDiscountedAmount(discountedAmount);
 			    discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?amounts[0].multiply(walletOperation.getQuantity()):BigDecimal.ZERO);
 			    discountWalletOperation.setAmountWithTax(amounts[1].multiply(walletOperation.getQuantity()));
 			    discountWalletOperation.setAmountTax(amounts[2].multiply(walletOperation.getQuantity()));
@@ -241,26 +258,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     			discountWalletOperation.setUnitAmountWithoutTax(unitAmounts[0]);
     			discountWalletOperation.setUnitAmountWithTax(unitAmounts[1]);
     			discountWalletOperation.setUnitAmountTax(unitAmounts[2]);
-    			discountWalletOperation.setQuantity(quantity);
     			discountWalletOperation.setTax(taxInfo.tax);
-    			discountWalletOperation.setCreated(new Date());
-    			discountWalletOperation.setCode(discountCode);
-    			discountWalletOperation.setSeller(seller);
-    			discountWalletOperation.setBillingAccount(billingAccount);
-    			discountWalletOperation.setDiscountPlan(discountPlanItem.getDiscountPlan());
-    			discountWalletOperation.setWallet(walletInstance); // TODO: check scenario where walletInstance is null, because it will throw exception on TR job
-    			discountWalletOperation.setOfferTemplate(offerTemplate);
-    			discountWalletOperation.setServiceInstance(serviceInstance);
-    			discountWalletOperation.setOperationDate(operationDate);
-    			discountWalletOperation.setDescription(discountDescription);
-    			discountWalletOperation.setChargeInstance(chargeInstance);
-    			discountWalletOperation.setInputQuantity(quantity);
     			discountWalletOperation.setCurrency(walletOperation!=null?walletOperation.getCurrency():billingAccount.getCustomerAccount().getTradingCurrency().getCurrency());
-    			discountWalletOperation.setDiscountPlanItem(discountPlanItem);
-    			discountWalletOperation.setDiscountPlanType(discountPlanItem.getDiscountPlanItemType());
-			    discountWalletOperation.setDiscountValue(discountValue.multiply(walletOperation.getQuantity()));
-    			discountWalletOperation.setSequence(discountPlanItem.getFinalSequence());
-    			discountWalletOperation.setDiscountedAmount(discountedAmount);
+			    discountWalletOperation.setDiscountValue(discountValue);
 				discountWalletOperation.setOrderNumber(walletOperation != null ? walletOperation.getOrderNumber() : null);
 			    discountWalletOperation.setUuid(walletOperation.getUuid());
     			
