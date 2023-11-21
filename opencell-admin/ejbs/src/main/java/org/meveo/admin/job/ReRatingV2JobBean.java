@@ -1,13 +1,13 @@
 package org.meveo.admin.job;
 
+import static org.apache.commons.collections4.ListUtils.partition;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -20,6 +20,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
+import org.hibernate.query.NativeQuery;
 import org.meveo.admin.async.SynchronizedMultiItemIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
@@ -28,12 +29,13 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.ReratingService;
 import org.meveo.service.job.Job;
 
 @Stateless
 public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
+
+	private static final long serialVersionUID = 8799763764569695857L;
 
 	private static final String viewName = "rerate_tree";
 
@@ -88,7 +90,7 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 		
 		final long nrPerTx = (nrOfInitialWOs / nbThreads) < configuredNrPerTx ? nrOfInitialWOs / nbThreads : configuredNrPerTx;
 		int fetchSize = ((Long) nrPerTx).intValue() * nbThreads.intValue();
-		org.hibernate.query.Query nativeQuery = statelessSession.createNativeQuery("select id, count_wo from " + viewName + " order by id");
+		NativeQuery nativeQuery = statelessSession.createNativeQuery("SELECT CAST(unnest(string_to_array(wo_id, ',')) AS bigint) as id FROM " + viewName + " WHERE billed_il is null order by s_id");
 		scrollableResults = nativeQuery.setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun).setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
 
 		return Optional.of(
@@ -98,59 +100,35 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 
 					@Override
 					public void initializeDecisionMaking(Object[] item) {
-						count = ((Number) item[1]).longValue();
+						count = 1;
 					}
 
 					@Override
 					public boolean isIncludeItem(Object[] item) {
-						Long woCount = ((Number) item[1]).longValue();
-						if (count + woCount > nrPerTx) {
+						if (count ++ > nrPerTx) {
 							return false;
 						}
-						count = count + woCount;
 						return true;
 					}
 				});
 	}
 
 	private void applyReRating(List<Object[]> reratingTree, JobExecutionResultImpl jobExecutionResult) {
-
 		if (reratingTree != null) {
-			long min = ((Number) reratingTree.get(0)[0]).longValue();
-			long max = ((Number) reratingTree.get(reratingTree.size() - 1)[0]).longValue();
-			Long count = reratingTree.stream().mapToLong(x -> ((Number) x[1]).longValue()).sum();
-			log.info("start processing " + count + " items, view lines from: " + min + " to: " + max);
-			rerateMainWO(min, max);
-			
+			rerateByGroup(reratingTree.stream().map(x->((Number)x[0]).longValue()).collect(Collectors.toList()));
 		}
 	}
 
 	
-	private void rerateMainWO(long min, long max) {
-		
-		String readWOsQuery = "SELECT wo.* FROM billing_wallet_operation wo WHERE wo.status='TO_RERATE' and wo.id IN "
-				+ "(SELECT CAST(unnest(string_to_array(wo_id, ',')) AS bigint) as to_rerate FROM rerate_tree rr WHERE rr.billed_il is null and rr.id between :min and :max)";
+	private void rerateByGroup(List<Long> reratingTree) {
+    	final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", reratingService.SHORT_MAX_VALUE);
+    	List<List<Long>> subList = partition(reratingTree, maxValue);
+    	subList.forEach(ids -> rerate(ids));
+	}
 
-		List<WalletOperation> walletOperations = entityManager.createNativeQuery(readWOsQuery, WalletOperation.class).setParameter("min", min).setParameter("max", max).getResultList();
-		
-		String readEDRsQuery = "SELECT edr.* FROM rating_edr edr WHERE edr.id IN "
-			    + "(SELECT wo.edr_id FROM billing_wallet_operation wo WHERE wo.status='TO_RERATE' and wo.id IN "
-			    + "(SELECT CAST(unnest(string_to_array(wo_id, ',')) AS bigint) as to_rerate FROM rerate_tree rr WHERE rr.billed_il is null and rr.id between :min and :max))";
-
-		List<EDR> edrs = entityManager.createNativeQuery(readEDRsQuery, EDR.class).setParameter("min", min).setParameter("max", max).getResultList();
-
-		// Map EDRs to their corresponding WalletOperations
-		Map<Long, EDR> edrMap = edrs.stream().collect(Collectors.toMap(EDR::getId, Function.identity()));
-		Long edrId=null;
-		// Associate each EDR with its WalletOperation
-		for (WalletOperation walletOperation : walletOperations) {
-		     edrId = walletOperation.getEdr().getId(); 
-		    if (edrId != null) {
-		        EDR edr = edrMap.get(edrId);
-		        walletOperation.setEdr(edr);
-		    }
-		}
-		
+	private void rerate(List<Long> ids) {
+		String readWOsQuery = "FROM WalletOperation wo JOIN FETCH wo.edr edr WHERE wo.status='TO_RERATE' AND wo.id IN (:ids)";
+		List<WalletOperation> walletOperations = entityManager.createQuery(readWOsQuery, WalletOperation.class).setParameter("ids", ids).getResultList();
 		walletOperations.stream().forEach(operationToRerate -> reratingService.rerateWalletOperationAndInstantiateTriggeredEDRs(operationToRerate, useSamePricePlan));
 	}
 
