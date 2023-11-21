@@ -7,7 +7,7 @@ public class HugeEntity {
 
     private List<String> hugeLists;
 
-    private List<String> mandatoryFields;
+    private List<String> mandatoryFilterFields;
 
     public String getEntityClass() {
         return entityClass;
@@ -27,12 +27,12 @@ public class HugeEntity {
         return this;
     }
 
-    public List<String> getMandatoryFields() {
-        return mandatoryFields;
+    public List<String> getMandatoryFilterFields() {
+        return mandatoryFilterFields;
     }
 
-    public HugeEntity setMandatoryFields(List<String> mandatoryFields) {
-        this.mandatoryFields = mandatoryFields;
+    public HugeEntity setMandatoryFilterFields(List<String> mandatoryFilterFields) {
+        this.mandatoryFilterFields = mandatoryFilterFields;
         return this;
     }
 }
