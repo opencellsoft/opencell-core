@@ -8802,4 +8802,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReRatingJob'</sql>
     </changeSet>
     
+    <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe">
+        <addColumn tableName="finance_settings">
+            <column name="nb_partitions_keep" type="int4" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
