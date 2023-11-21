@@ -402,7 +402,7 @@ public class ReratingService extends RatingService implements Serializable {
 
             // Rate a copy of wallet operation, rate it, link with previous WO and trigger EDRS
 
-            rerateWalletOperationAndInstantiateTriggeredEDRs(operationToRerate, useSamePricePlan);
+            rerateWalletOperationAndInstantiateTriggeredEDRs(operationToRerate, useSamePricePlan, true);
 
         } catch (Exception e) {
             methodCallingUtils.callMethodInNewTx(() -> {
@@ -627,7 +627,7 @@ public class ReratingService extends RatingService implements Serializable {
      * @param operationToRerate Operation to rerate
      * @param useSamePricePlan Shall a same price plan will be used, or a new one should be looked up again
      */
-    public void rerateWalletOperationAndInstantiateTriggeredEDRs(WalletOperation operationToRerate, boolean useSamePricePlan) {
+    public void rerateWalletOperationAndInstantiateTriggeredEDRs(WalletOperation operationToRerate, boolean useSamePricePlan, boolean update) {
 
         RatingResult ratingResult = null;
         try {
@@ -636,9 +636,13 @@ public class ReratingService extends RatingService implements Serializable {
             ratingResult = rateRatedWalletOperation(operationToRerate, useSamePricePlan);
             WalletOperation newWO = ratingResult.getWalletOperations().stream().filter(e -> e.getDiscountPlanType() == null).findFirst().orElse(null);
 
-            operationToRerate.changeStatus(WalletOperationStatusEnum.RERATED);
-            operationToRerate.setReratedWalletOperation(newWO);
-            walletOperationService.update(operationToRerate);
+            newWO.setReratedWalletOperation(operationToRerate);
+            if(update) {
+            	operationToRerate.changeStatus(WalletOperationStatusEnum.RERATED);
+                walletOperationService.update(operationToRerate);
+            }
+           
+           
 
             // Trigger EDRs
             for (WalletOperation walletOperation : ratingResult.getWalletOperations()) {

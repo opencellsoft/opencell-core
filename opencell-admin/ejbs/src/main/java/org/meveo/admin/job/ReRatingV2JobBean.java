@@ -5,6 +5,7 @@ import static org.apache.commons.collections4.ListUtils.partition;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -124,12 +125,25 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
     	final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", reratingService.SHORT_MAX_VALUE);
     	List<List<Long>> subList = partition(reratingTree, maxValue);
     	subList.forEach(ids -> rerate(ids));
+    	
+		
 	}
 
 	private void rerate(List<Long> ids) {
-		String readWOsQuery = "FROM WalletOperation wo JOIN FETCH wo.edr edr WHERE wo.status='TO_RERATE' AND wo.id IN (:ids)";
+		String readWOsQuery = "FROM WalletOperation wo left join fetch wo.chargeInstance ci left join fetch wo.wallet w left join fetch w.userAccount ua left JOIN FETCH wo.edr edr WHERE wo.status='TO_RERATE' AND wo.id IN (:ids)";
 		List<WalletOperation> walletOperations = entityManager.createQuery(readWOsQuery, WalletOperation.class).setParameter("ids", ids).getResultList();
-		walletOperations.stream().forEach(operationToRerate -> reratingService.rerateWalletOperationAndInstantiateTriggeredEDRs(operationToRerate, useSamePricePlan));
+		List<Long> failedIds = new ArrayList<>();
+		walletOperations.stream().forEach(operationToRerate -> {
+		    try {
+		        reratingService.rerateWalletOperationAndInstantiateTriggeredEDRs(operationToRerate, useSamePricePlan, false);
+		    } catch (Exception e) {
+		        failedIds.add(operationToRerate.getId());
+		        throw e;
+		    }
+		});
+		ids.removeAll(failedIds);
+		String updateILQuery = "UPDATE billing_wallet_operation wo SET status='RERATED', updated = CURRENT_TIMESTAMP where id in (:ids) ";
+		statelessSession.createNativeQuery(updateILQuery).setParameter("ids", ids).executeUpdate();
 	}
 
 	/**
@@ -166,12 +180,8 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 	}
 
 	private void getProcessingSummary() {
-
-		Object[] count = (Object[]) entityManager.createNativeQuery("select sum(count_wo), count(id) from " + viewName)
-				.getSingleResult();
-
+		Object[] count = (Object[]) entityManager.createNativeQuery("select sum(count_wo), count(id) from " + viewName).getSingleResult();
 		nrOfInitialWOs = count[0] != null ? ((Number) count[0]).longValue() : null;
-
 	}
 
 }
