@@ -1179,7 +1179,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         Object[][] rtIlBrIds = new Object[groupedRTs.size()][3];
         int numberOrRts = 0;
         
-        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
+        List<InvoiceLine> invoiceLines = new ArrayList<>();
 
         int i = 0;
         for (Map<String, Object> groupedRT : groupedRTs) {

@@ -6,6 +6,7 @@ import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
@@ -198,6 +199,13 @@ public class InvoiceLinesFactory {
             invoiceLine.setLabel(label);
         }
         ofNullable(openOrderNumber).ifPresent(invoiceLine::setOpenOrderNumber);
+        if(configuration.getAdditionalAggregation() != null && !configuration.getAdditionalAggregation().isEmpty()) {
+            Map<String, String> additionalAggregationFields = new HashMap<>();
+            configuration.getAdditionalAggregation()
+                    .forEach(additionalFields
+                            -> additionalAggregationFields.put(additionalFields, (String) data.get(additionalFields)));
+            invoiceLine.setAdditionalAggregationFields(additionalAggregationFields);
+        }
         return invoiceLine;
     }
 
