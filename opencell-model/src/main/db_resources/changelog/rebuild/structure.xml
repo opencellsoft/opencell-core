@@ -11918,6 +11918,7 @@
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="entities_with_huge_volume" type="${type.json}"/>
+            <column name="nb_partitions_keep" type="int4" />
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -19578,6 +19579,7 @@
     <changeSet id="INTRD-17830_20231108" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI" />
     <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe" />
 
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

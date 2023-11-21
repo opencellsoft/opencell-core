@@ -1,7 +1,6 @@
 package org.meveo.model.securityDeposit;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 
 import javax.persistence.*;
@@ -51,6 +50,9 @@ public class FinanceSettings extends BusinessEntity {
 	@Type(type = "json")
     @Column(name = "entities_with_huge_volume", columnDefinition = "jsonb")
     private Map<String, HugeEntity> entitiesWithHugeVolume;
+
+    @Column(name = "nb_partitions_keep")
+    private Integer nbPartitionsToKeep;
 
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
@@ -131,4 +133,12 @@ public class FinanceSettings extends BusinessEntity {
 	public void setEntitiesWithHugeVolume(Map<String, HugeEntity> entitiesWithHugeVolume) {
 		this.entitiesWithHugeVolume = entitiesWithHugeVolume;
 	}
+
+    public Integer getNbPartitionsToKeep() {
+        return nbPartitionsToKeep;
+    }
+
+    public void setNbPartitionsToKeep(Integer nbPartitionsToKeep) {
+        this.nbPartitionsToKeep = nbPartitionsToKeep;
+    }
 }

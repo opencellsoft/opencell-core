@@ -16120,5 +16120,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <dropIndex tableName="billing_charge_instance" indexName="bc_instance_sub_id"/>
         <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id, priority)</sql>
     </changeSet>
+
+    <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe">
+        <addColumn tableName="finance_settings">
+            <column name="nb_partitions_keep" type="int4" />
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
