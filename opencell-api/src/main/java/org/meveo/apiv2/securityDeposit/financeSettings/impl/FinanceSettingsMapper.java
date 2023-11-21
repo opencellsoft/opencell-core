@@ -1,6 +1,5 @@
 package org.meveo.apiv2.securityDeposit.financeSettings.impl;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -99,13 +98,13 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
         return ImmutableHugeEntity.builder()
                                   .entityClass(entity.getEntityClass())
                                   .hugeLists(entity.getHugeLists())
-                                  .mandatoryFilterFields(entity.getMandatoryFields())
+                                  .mandatoryFilterFields(entity.getMandatoryFilterFields())
                                   .build();
     }
 
     private HugeEntity toHugeEntity(org.meveo.apiv2.securityDeposit.HugeEntity resource) {
         return new HugeEntity().setEntityClass(resource.getEntityClass())
                                .setHugeLists(resource.getHugeLists())
-                               .setMandatoryFields(resource.getMandatoryFilterFields());
+                               .setMandatoryFilterFields(resource.getMandatoryFilterFields());
     }
 }
