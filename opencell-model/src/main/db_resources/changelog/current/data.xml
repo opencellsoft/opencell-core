@@ -21807,4 +21807,30 @@ public class ImportJobNotification extends Script {
         </sql>
     </changeSet>
 
+    <changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" dbms="postgresql">
+        <sql dbms="postgresql" endDelimiter="$$" splitStatements="false">
+        <![CDATA[
+            DO $$
+        DECLARE
+            field_name		text;
+            fs_id			integer;
+            record_settings	record;
+            BEGIN
+            FOR record_settings IN
+            SELECT id, jsonb_object_keys(entities_with_huge_volume) as field_name
+            FROM finance_settings
+                     LOOP
+                fs_id	    := record_settings.id;
+            field_name  := record_settings.field_name;
+                IF not exists (select 1 from finance_settings where entities_with_huge_volume->field_name->'hugeLists' is not null and id = fs_id)
+                THEN
+            update finance_settings
+            set entities_with_huge_volume = jsonb_set(entities_with_huge_volume, ARRAY[field_name], jsonb_build_object('entityClass', field_name, 'hugeLists', entities_with_huge_volume->field_name))
+            where id = fs_id;
+            END IF;
+            END LOOP;
+            END $$;]]>
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
