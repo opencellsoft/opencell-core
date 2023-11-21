@@ -7327,6 +7327,16 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
     </changeSet>
 
+    <changeSet id="#INTRD-17222_20231005" author="AndriusKarpavicius">
+        <addColumn tableName="job_execution">
+            <column name="node" type="varchar(25)"/>
+        </addColumn>
+        <addColumn tableName="meveo_job_instance">
+            <column name="status_report_freq" type="int" defaultValueNumeric="60" />
+        </addColumn>
+        <dropColumn tableName="meveo_job_instance" columnName="job_speed" />
+    </changeSet>
+
     <changeSet id="#INTRD-17026_delete_duplicated_data" author="a.rouaguebe_ext">
         <renameTable oldTableName="cat_price_plan_charge" newTableName="cat_price_plan_charge_tmp" />
         <createTable tableName="cat_price_plan_charge">
@@ -8708,6 +8718,72 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addColumn tableName="billing_run_report">
             <column name="report_final" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-19322_add_aggre_fields" author="anas.rouaguebe">
+        <addColumn tableName="billing_invoice_line">
+            <column name="additional_agg_fields" type="${type.json}" />
+        </addColumn>
+        <createTable tableName="billing_cycle_aggregation_fields">
+            <column name="billing_cycle_id"  type="bigint"/>
+            <column name="fields"  type="varchar(255)"/>
+        </createTable>
+        <createTable tableName="billing_run_aggregation_fields">
+            <column name="billing_run_id"  type="bigint"/>
+            <column name="fields"  type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI">
+        <createSequence sequenceName="batch_entity_seq" startValue="1"/>
+        <createTable tableName="batch_entity">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="batch_entity_pkey"/>
+            </column>
+            <column name="version" type="int4" defaultValueNumeric="0"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="name" type="${type.text}"/>
+            <column name="target_job" type="varchar(255)"/>
+            <column name="target_entity" type="varchar(255)"/>
+            <column name="filters" type="${type.json}"/>
+            <column name="notify" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="status" type="varchar(25)"/>
+            <column name="job_instance_id" type="bigint"/>
+            <column name="job_execution_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_instance"
+                                 referencedTableName="meveo_job_instance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="job_execution_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_execution"
+                                 referencedTableName="job_execution"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-18966_20231018" author="AbdellatifBARI">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="batch_entity_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="batch_entity_id" baseTableName="billing_wallet_operation"
+                                 constraintName="fk_billing_wallet_operation_batch_entity"
+                                 referencedTableName="batch_entity"
+                                 referencedColumnNames="id"/>
+        <addColumn tableName="batch_entity">
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(1000)"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <sql>UPDATE ${db.schema.adapted}batch_entity set code = name </sql>
+        <dropColumn columnName="name" tableName="batch_entity"/>
+        <addNotNullConstraint tableName="billing_billing_account" columnName="trading_currency_id"/>
     </changeSet>
 
     <changeSet id="#INTRD-19413_20231113" author="AndriusKarpavicius">

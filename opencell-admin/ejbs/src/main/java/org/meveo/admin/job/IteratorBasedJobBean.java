@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
@@ -14,16 +16,25 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import javax.annotation.Resource;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.ExceptionListener;
 import javax.jms.JMSConnectionFactory;
 import javax.jms.JMSConsumer;
 import javax.jms.JMSContext;
+import javax.jms.JMSException;
 import javax.jms.JMSProducer;
+import javax.jms.JMSRuntimeException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 import javax.jms.Queue;
+import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
@@ -32,7 +43,7 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.async.QueueBasedIterator;
+import org.jgroups.JChannel;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.async.SynchronizedIteratorGrouped;
 import org.meveo.admin.async.SynchronizedMultiItemIterator;
@@ -41,6 +52,7 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.event.qualifier.LastJobDataMessageReceived;
 import org.meveo.model.IEntity;
 import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.jobs.JobClusterBehaviorEnum;
@@ -48,8 +60,12 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.audit.AuditOrigin;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionResultService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements job logic to iterate over data and process one item at a time, checking if job is still running and update job progress in DB periodically
@@ -85,15 +101,51 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
     private static final long serialVersionUID = 649152055662228506L;
 
+    /**
+     * Remote MQ connection url
+     */
+    private static final String REMOTE_MQ_HOST = "REMOTE_MQ_HOST";
+
+    /**
+     * Remote MQ JMX connection port
+     */
+    private static final String REMOTE_MQ_JMX_PORT = "REMOTE_MQ_JMX_PORT";
+
+    /**
+     * Remote MQ connection username
+     */
+    private static final String REMOTE_MQ_ADMIN_USER = "REMOTE_MQ_ADMIN_USER";
+
+    /**
+     * Remote MQ connection password
+     */
+    private static final String REMOTE_MQ_ADMIN_PASSWORD = "REMOTE_MQ_ADMIN_PASSWORD";
+
     @Inject
     private MethodCallingUtils methodCallingUtils;
 
     @Inject
     @JMSConnectionFactory("java:/jms/remoteCF")
-    private JMSContext jmsContext;
+    private JMSContext jmsContextForPublishing;
+
+    @Resource(lookup = "java:/jms/remoteCF-consumer")
+    private ConnectionFactory jmsConnectionFactory;
 
     @Inject
     private ClusterEventPublisher clusterEventPublisher;
+
+    @Inject
+    @LastJobDataMessageReceived
+    protected Event<Long> lastJobDataMsgEventProducer;
+
+    @Resource(lookup = "java:jboss/jgroups/channel/default")
+    private JChannel channel;
+
+    /**
+     * Tracks countDowns used to wait for last message to receive when job load is spread over multiple nodes. Job identifier is a map key.<br/>
+     * When EOF message is received in a queue, a EJB event is fired and countDown is reduced.
+     */
+    private static final Map<Long, CountDownLatch> countDowns = new HashMap<Long, CountDownLatch>();
 
     /**
      * Execute job implementation
@@ -155,9 +207,14 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         Iterator<T> iterator = null;
 
-        if (EjbUtils.isRunningInClusterMode()) {
-            jobExecutionResult.addReport("Node " + EjbUtils.getCurrentClusterNode());
+        // Clean up canceled jobs map
+        requestToStopJobs.put(jobInstance.getId(), Boolean.FALSE);
 
+        // Clean up counter for job thread scheduling purpose
+        CountDownLatch countDown = countDowns.get(jobInstance.getId());
+        if (countDown != null) {
+            countDown.countDown();
+            countDowns.remove(jobInstance.getId());
         }
 
         // When running as a primary job manager, initialize job history tracking
@@ -198,7 +255,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 }
                 return;
             }
-            if (!jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
+            if (isJobRequestedToStop(jobInstance.getId())) {
                 log.info("{}/{} will skip as should not continue", jobInstance.getJobTemplate(), jobInstance.getCode());
                 return;
             }
@@ -218,16 +275,15 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
+        int nbPublishers = 0;
+
         List<Future> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
-
-        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
-        int updateJobStatusEveryNr = nbThreads.longValue() > 3 ? jobInstance.getJobSpeed().getUpdateNb() * nbThreads.intValue() / 2 : jobInstance.getJobSpeed().getUpdateNb();
 
         boolean isNewTx = isProcessItemInNewTx();
 
         // Multiple item processing will happen only if batch size is greater than one,
-        Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 0L);
+        Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 1L);
         boolean useMultipleItemProcessing = (processMultipleItemFunction != null && batchSize != null && batchSize > 1) || processSingleItemFunction == null;
 
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
@@ -237,28 +293,49 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         final Iterator<T> finalIterator = iterator;
         try {
-            Queue jobQueue = spreadOverCluster ? jmsContext.createQueue(queueName) : null;
+            Queue jobQueue = spreadOverCluster ? jmsContextForPublishing.createQueue(queueName) : null;
 
-            // Publish data to the job processing queue if data processing is spread over a cluster
+            // Create publishing data to the job processing queue tasks if data processing is spread over a cluster
             if (isRunningAsJobManager && spreadOverCluster) {
+                // Number of data publishing tasks is half of the cluster members or the number of nodes that job can run on
+                nbPublishers = (jobInstance.getRunOnNodes() != null ? jobInstance.getRunOnNodes().split(",").length : channel.getView().getMembers().size()) / 2;
+                nbPublishers = nbPublishers < 1 ? 1 : nbPublishers > 2 ? nbPublishers + (nbPublishers / 2) : nbPublishers;
 
                 log.info("{}/{} Will submit task to publish data for cluster-wide data processing", jobInstance.getJobTemplate(), jobInstance.getCode());
+                clearPendingWorkLoad(jobInstance);
 
-                JMSProducer jmsProducer = jmsContext.createProducer();
-                Runnable publishingTask = getDataPublishingToQueueTask(jobInstance.getCode(), lastCurrentUser, finalIterator, checkJobStatusEveryNr, jmsProducer, jobQueue, finalizeInitFunction, jobExecutionResult);
-                tasks.add(publishingTask);
+                for (int k = 0; k < nbPublishers; k++) {
+                    int kFinal = k;
+                    Runnable publishingTask = methodCallingUtils
+                        .callCallableInNoTx(() -> getDataPublishingToQueueTask(jobInstance.getCode(), lastCurrentUser, finalIterator, batchSize, jobQueue, jobExecutionResult, kFinal));
+                    tasks.add(publishingTask);
+                }
             }
 
-            final JMSConsumer jmsConsumer = spreadOverCluster ? jmsContext.createConsumer(jobQueue) : null;
+            // Initialize counter to 1. When EOF message is received in a queue, a EJB event is fired and countDown is reduced.
+            countDown = new CountDownLatch(1);
+            countDowns.put(jobInstance.getId(), countDown);
 
+            // Create data processing tasks
             for (int k = 0; k < nbThreads; k++) {
-                tasks.add(getDataProcessingTask(jobInstance.getCode(), finalIterator, k, lastCurrentUser, isRunningAsJobManager, spreadOverCluster, jmsConsumer, batchSize.intValue(), checkJobStatusEveryNr,
-                    updateJobStatusEveryNr, jobExecutionResult, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction));
+
+                tasks.add(getDataProcessingTask(jobInstance.getCode(), finalIterator, k, lastCurrentUser, isRunningAsJobManager, spreadOverCluster, jobQueue, batchSize.intValue(), jobExecutionResult, isNewTx,
+                    useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, countDown));
             }
 
+            // Tracks if job's main thread is still running. Used only to stop job status reporting thread.
+            boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstance.getId()) };
+
+            // Start job status report task. Not run in future, so it will die when main thread dies
+            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance.getCode(), lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
+                currentUserProvider, log, jobExecutionResultService);
+            Thread jobStatusReportThread = new Thread(jobStatusReportTask);
+            jobStatusReportThread.start();
+
+            // Launch main publishing and processing tasks
             int i = 0;
             for (Runnable task : tasks) {
-                log.info("{}/{} Will submit task #{} to run", jobInstance.getJobTemplate(), jobInstance.getCode(), i++);
+                log.info("{}/{} Will submit data {} task #{} to run", jobInstance.getJobTemplate(), jobInstance.getCode(), i < nbPublishers ? "publishing" : "processing", i++);
                 futures.add(executor.submit(task));
                 try {
                     Thread.sleep(waitingMillis.longValue());
@@ -278,9 +355,15 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             }
 
             // Wait for all async methods to finish
+            i = 0;
             for (Future future : futures) {
                 try {
                     future.get();
+
+                    // Send EOF message to a queue once all data publishing tasks are finished
+                    if (!wasKilled && i == nbPublishers - 1) {
+                        methodCallingUtils.callMethodInNoTx(() -> sendEOFMessageToAQueue(jobQueue));
+                    }
 
                 } catch (InterruptedException | CancellationException e) {
                     wasKilled = true;
@@ -291,15 +374,19 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     jobExecutionResult.registerError(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
+                i++;
             }
+
+            // This will exit the status report task
+            isProcessing[0] = false;
+            jobStatusReportThread.interrupt();
+
+            // Clean up countDown counter for job thread scheduling purpose
+            countDowns.remove(jobInstance.getId());
 
             // When running as a primary job manager, Close data initialization
             if (isRunningAsJobManager && finalizeInitFunction != null) {
                 finalizeInitFunction.accept(jobExecutionResult);
-            }
-
-            if (jmsConsumer != null) {
-                jmsConsumer.close();
             }
 
             // Mark job as stopped if task was killed
@@ -392,7 +479,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * 
      * @return True if "Process multiple items" function updates job progress itself
      */
-    protected boolean isProcessMultipleItemFunctionUpdateProgress() {
+    protected boolean isProcessMultipleItemFunctionUpdateProgressItself() {
         return false;
     }
 
@@ -406,41 +493,191 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         return true;
     }
 
-    private Runnable getDataPublishingToQueueTask(String jobInstanceCode, MeveoUser lastCurrentUser, Iterator<T> iterator, int checkJobStatusEveryNr, JMSProducer jmsProducer, Destination jobQueue,
-            Consumer<JobExecutionResultImpl> finalizeInitFunction, JobExecutionResultImpl jobExecutionResult) {
+    /**
+     * Create a task to save to DB job processing progress
+     * 
+     * @param jobInstanceCode Job instance code
+     * @param lastCurrentUser Current user
+     * @param reportFrequency How often (number of seconds) job progress should be saved to DB
+     * @param jobExecutionResult Job execution result
+     * @return A task definition
+     */
+    public static Runnable getJobStatusReportingTask(String jobInstanceCode, MeveoUser lastCurrentUser, int reportFrequency, JobExecutionResultImpl jobExecutionResult, boolean[] isProcessing,
+            CurrentUserProvider currentUserProvider, Logger log, JobExecutionResultService jobExecutionResultService) {
+
+        Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
 
         Runnable task = () -> {
-            Thread.currentThread().setName(jobInstanceCode + "-PublishToCluster");
+            Thread.currentThread().setName(jobInstanceCode + "-ReportJobStatus");
 
             currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-            int i = 0;
-            T itemToProcess = iterator.next();
+            log.debug("Thread {} will store job progress", Thread.currentThread().getName());
 
-            log.trace("Thread {} will publish data for cluster-wide data processing");
-            while (itemToProcess != null) {
+            while (isProcessing[0] && !BaseJobBean.isJobRequestedToStop(jobInstanceId)) {
+                try {
+                    // Record progress
+                    jobExecutionResultService.persistResult(jobExecutionResult);
 
-                if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
-                    break;
+                } catch (EJBTransactionRolledbackException e) {
+                    // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
+                } catch (Exception e) {
+                    log.error("Failed to update job progress", e);
                 }
+                try {
+                    Thread.sleep(reportFrequency * 1000);
+                } catch (InterruptedException e1) {
 
-                jmsProducer.send(jobQueue, (Serializable) itemToProcess);
-                i++;
-
-                itemToProcess = iterator.next();
+                }
             }
-
-            log.debug("Thread {} published {} data items for cluster-wide data processing", Thread.currentThread().getName(), i);
+            log.debug("Thread {} will stop storing job progress", Thread.currentThread().getName());
         };
 
         return task;
     }
 
-    private Runnable getDataProcessingTask(String jobInstanceCode, Iterator<T> dataIterator, int threadNr, MeveoUser lastCurrentUser, boolean isRunningAsJobManager, boolean spreadOverCluster, JMSConsumer jmsConsumer,
-            int batchSize, int checkJobStatusEveryNr, int updateJobStatusEveryNr, JobExecutionResultImpl jobExecutionResult, boolean isNewTx, boolean useMultipleItemProcessing,
-            BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction) {
+    /**
+     * Create a task to publish data to a queue
+     * 
+     * @param jobInstanceCode Job instance code
+     * @param lastCurrentUser Current user
+     * @param iterator Iterator from a DB based data source
+     * @param batchSize Batch processing size - number of items to send as a single message
+     * @param jmsProducer JMS message producer
+     * @param jobQueue JMS queue where messages should be posted
+     * @param jobExecutionResult Job execution result
+     * @param threadNr Thread identifier (index)
+     * @return A task definition
+     * @throws JMSException An exception publishing to JMS
+     */
+    private Runnable getDataPublishingToQueueTask(String jobInstanceCode, MeveoUser lastCurrentUser, Iterator<T> iterator, Long batchSize, Destination jobQueue, JobExecutionResultImpl jobExecutionResult, int threadNr)
+            throws JMSException {
+
+        Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
+        JMSProducer jmsProducer = jmsContextForPublishing.createProducer();
+//        Message eofMessage = jmsContextForPublishing.createMessage();
+//        eofMessage.setStringProperty(ItertatorJobMessageListener.EOF_MESSAGE, ItertatorJobMessageListener.EOF_MESSAGE);
+
+        Runnable task = () -> {
+            Thread.currentThread().setName(jobInstanceCode + "-PublishToCluster-" + threadNr);
+
+            currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+            log.debug("Thread {} will publish data for cluster-wide data processing", Thread.currentThread().getName());
+
+            int nrOfItemsProcessedByThread = 0;
+            int nrMessages = 0;
+
+            while (true) {
+                // Retrieve next batchSize of items
+                List<T> itemsToProcess = iterator instanceof SynchronizedIterator ? ((SynchronizedIterator<T>) iterator).next(batchSize.intValue()) : new ArrayList<T>();
+                if (!(iterator instanceof SynchronizedIterator)) {
+                    for (int k = 0; k < batchSize; k++) {
+                        T item = iterator.next();
+                        if (item == null) {
+                            break;
+                        }
+                        itemsToProcess.add(item);
+                    }
+                }
+
+                if (itemsToProcess == null || itemsToProcess.isEmpty()) {
+                    break;
+                }
+
+                int nrOfItemsInBatch = itemsToProcess.size();
+
+                // Check if job is not stopped yet
+                if (isJobRequestedToStop(jobInstanceId)) {
+                    log.info("Thread {} published {} data items in {} messages for cluster-wide data processing before was canceled", Thread.currentThread().getName(), nrOfItemsProcessedByThread, nrMessages);
+                    return;
+                }
+
+                jmsProducer.send(jobQueue, (Serializable) itemsToProcess);
+
+                nrOfItemsProcessedByThread = nrOfItemsProcessedByThread + nrOfItemsInBatch;
+                nrMessages++;
+            }
+
+//            jmsProducer.send(jobQueue, eofMessage);
+
+            log.info("Thread {} published {} data items in {} messages for cluster-wide data processing", Thread.currentThread().getName(), nrOfItemsProcessedByThread, nrMessages);
+
+        };
+
+        return task;
+    }
+
+    /**
+     * Send a message to a queue indicating that all messages have been send
+     * 
+     * @param jobQueue JMS queue where messages should be posted
+     */
+    private void sendEOFMessageToAQueue(Destination jobQueue) {
+
+        try {
+            JMSProducer jmsProducer = jmsContextForPublishing.createProducer();
+            Message eofMessage = jmsContextForPublishing.createMessage();
+            eofMessage.setStringProperty(ItertatorJobMessageListener.EOF_MESSAGE, ItertatorJobMessageListener.EOF_MESSAGE);
+
+            jmsProducer.send(jobQueue, eofMessage);
+
+            log.info("Published EOF message to queue {} for cluster-wide data processing", jobQueue.toString());
+
+        } catch (Exception e) {
+            log.error("Failed to publish EOF message to queue {} for cluster-wide data processing", jobQueue.toString());
+            throw new JMSRuntimeException(e.getMessage());
+        }
+    }
+
+    /**
+     * Create a task to process data. <br/>
+     * Job running as job manager publish data to a queue from a DB based iterator in parallel as other threads process data.<br/>
+     * So, job running as job manager can obtain data from two places - DB based iterator and message queue once no more data is retrieved from a DB based iterator<br/>
+     * Job running as a job worked can obtain data only from a message queue
+     * 
+     * @param jobInstanceCode Job instance code
+     * @param dataIterator Iterator from a DB based data source
+     * @param threadNr Thread identifier (index)
+     * @param lastCurrentUser Current user
+     * @param isRunningAsJobManager Is task running as a job manager
+     * @param spreadOverCluster Should job processing be spread over multiple cluster nodes
+     * @param jmsConsumer JMS message consumer
+     * @param batchSize Batch processing size
+     * @param jobExecutionResult Job execution tracking result
+     * @param isNewTx Should data processing run in a new TX
+     * @param useMultipleItemProcessing Process items in batch
+     * @param processSingleItemFunction A function to process single item
+     * @param processMultipleItemFunction A function to process multiple items
+     * @param countDown A synchronization counter to wait for the last message to process
+     * @return A task definition
+     */
+    private Runnable getDataProcessingTask(String jobInstanceCode, Iterator<T> dataIterator, int threadNr, MeveoUser lastCurrentUser, boolean isRunningAsJobManager, boolean spreadOverCluster, Destination jobQueue,
+            int batchSize, JobExecutionResultImpl jobExecutionResult, boolean isNewTx, boolean useMultipleItemProcessing, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction,
+            BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, CountDownLatch countDown) {
 
         String auditOriginName = jobExecutionResult.getJobInstance().getJobTemplate() + "/" + jobInstanceCode;
+
+        JMSContext jmsContext = null;
+        ItertatorJobMessageListener messageListener = null;
+        if (spreadOverCluster) {
+            jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.CLIENT_ACKNOWLEDGE);
+            JMSConsumer jmsConsumer = jmsContext.createConsumer(jobQueue);
+            messageListener = new ItertatorJobMessageListener(countDown, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult);
+            jmsConsumer.setMessageListener(messageListener);
+            jmsContext.setExceptionListener(new ExceptionListener() {
+
+                @Override
+                public void onException(JMSException e) {
+                    log.error("Exception while consuming Job processing data messages", e);
+
+                }
+            });
+        }
+        final JMSContext jmsContextFinal = jmsContext;
+        final ItertatorJobMessageListener messageListenerFinal = messageListener;
+
+        Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
 
         Runnable task = () -> {
 
@@ -449,167 +686,173 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
             AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.JOB, auditOriginName);
+            int nrOfItemsProcessedByThread = 0;
 
-            int i = 0;
-            long globalI = 0;
-            Iterator<T> threadIterator = dataIterator;
-            QueueBasedIterator<T> queueBasedIterator = new QueueBasedIterator<T>(jmsConsumer);
+            // First process data from a DB based iterator
+            if (isRunningAsJobManager) {
 
-            boolean isQueueBasedIterator = false;
-            // In worker job/thread, dataIterator is null. A new iterator based on JMS Queue consumer must be created
-            if (spreadOverCluster && !isRunningAsJobManager) {
-                threadIterator = queueBasedIterator;
-                isQueueBasedIterator = true;
-            }
+                mainLoop: while (true) {
 
-            // Job running as job manager publish data to a queue from a DB based iterator in parallel as other threads process data.
-            // Job running as job manager can obtain data from two places - DB based iterator and queue based iterator once no more data is retrieved from a DB based iterator
-            // First try to obtain a value from a current iterator. If no item is retrieved, give a try in Queue based iterator if applicable.
-            T itemToProcess = threadIterator.next();
-            if (itemToProcess == null && spreadOverCluster && isRunningAsJobManager && !isQueueBasedIterator) {
-                threadIterator = queueBasedIterator;
-                isQueueBasedIterator = true;
-                log.trace("Switching to queue based iterator. Processed none from db iterator");
-                itemToProcess = threadIterator.next();
-            }
-            if (itemToProcess != null) {
-                i++;
-            }
-
-            // In multiItemProcessing try to read batch size in 1/5th intervals as to spread better load among threads when there are little of data to process
-            int minMultiReadSize = batchSize / 5 + 1;
-            mainLoop: while (itemToProcess != null) {
-
-                if (useMultipleItemProcessing) {
-
-                    final List<T> itemsToProcess = new ArrayList<T>();
-                    itemsToProcess.add(itemToProcess);
-                    int nrOfItemsInBatch = 1;
-
-                    while (nrOfItemsInBatch < batchSize) {
-                        // Job running as job manager publish data to a queue from a DB based iterator in parallel as other threads process data.
-                        // Job running as job manager can obtain data from two places - DB based iterator and queue based iterator once no more data is retrieved from a DB based iterator
-                        // First try to obtain a value from a current iterator. If no item is retrieved, give a try in Queue based iterator if applicable.
-                        if (threadIterator instanceof SynchronizedIterator) {
-                            int nextJobStatusCheck = i / checkJobStatusEveryNr + checkJobStatusEveryNr;
-
-                            // Read items in batch as to minimize blocking time on synchronized method SynchronizedIterator.next
-                            int nrItemsToRead = (batchSize - nrOfItemsInBatch) < minMultiReadSize ? (batchSize - nrOfItemsInBatch) : minMultiReadSize;
-                            List<T> itemsToProcessBatchRead = ((SynchronizedIterator<T>) threadIterator).next(nrItemsToRead);
-                            if (itemsToProcessBatchRead != null) {
-
-                                itemsToProcess.addAll(itemsToProcessBatchRead);
-                                nrOfItemsInBatch = nrOfItemsInBatch + itemsToProcessBatchRead.size();
-                                i = i + itemsToProcessBatchRead.size();
-
-                                // Check if job is not stopped yet
-                                if (i >= nextJobStatusCheck && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
-                                    break mainLoop;
-                                }
-
-                                continue;
-
-                                // Nothing found in batch read
-                            } else {
-                                itemToProcess = null;
-                            }
-                        } else {
-                            itemToProcess = threadIterator.next();
-                        }
-                        if (itemToProcess == null && spreadOverCluster && isRunningAsJobManager && !isQueueBasedIterator) {
-                            threadIterator = queueBasedIterator;
-                            isQueueBasedIterator = true;
-                            log.trace("Switching to queue based iterator. Processed {} from db iterator.", i);
-                            itemToProcess = threadIterator.next();
-                        }
-                        // Still nothing retrieved neither from current nor queue based iterator, so no more data to retrieve - continue with processing
-                        if (itemToProcess == null) {
-                            break;
-                        }
-
-                        itemsToProcess.add(itemToProcess);
-
-                        if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
-                            break mainLoop;
-                        }
-                        i++;
-                        nrOfItemsInBatch++;
+                    List<T> itemsToProcess = getNextItemsToProcess(batchSize, dataIterator, jobExecutionResult.getJobInstance().getId());
+                    if (itemsToProcess.isEmpty()) {
+                        break mainLoop;
                     }
 
-                    // Process items in batch
-                    try {
-                        if (isNewTx) {
-                            methodCallingUtils.callMethodInNewTx(() -> processMultipleItemFunction.accept(itemsToProcess, jobExecutionResult));
-                        } else {
-                            processMultipleItemFunction.accept(itemsToProcess, jobExecutionResult);
-                        }
+//                for (T item : itemsToProcess) {
+//                    log.error("Will process #" + ((IEntity) item).getId());
+//                }
+                    processItems(itemsToProcess, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult);
 
-                        if (!isProcessMultipleItemFunctionUpdateProgress()) {
-                            globalI = jobExecutionResult.registerSucces(nrOfItemsInBatch);
-                        } else {
-                            globalI = globalI + nrOfItemsInBatch;
-                        }
-
-                        // Batch processing has failed, so process item one by one
-                    } catch (Exception e) {
-
-                        if (processSingleItemFunction != null) {
-                            // reset counter to previous value, so job continuity check would still be valid
-                            i = i - nrOfItemsInBatch;
-
-                            for (T itemToProcessFromFailedBatch : itemsToProcess) {
-                                globalI = processItem(itemToProcessFromFailedBatch, isNewTx, processSingleItemFunction, jobExecutionResult);
-                                i++;
-                            }
-
-                            // Record a message if there is no single item processing function available
-                        } else {
-                            globalI = jobExecutionResult.registerError(e.getMessage(), nrOfItemsInBatch);
-                        }
-                    }
-
-                } else {
-
-                    if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
-                        break;
-                    }
-                    // Process each item
-                    globalI = processItem(itemToProcess, isNewTx, processSingleItemFunction, jobExecutionResult);
+                    int nrOfItemsInBatch = itemsToProcess.size();
+                    nrOfItemsProcessedByThread = nrOfItemsProcessedByThread + nrOfItemsInBatch;
                 }
+            }
 
+            int nrOfItemsDb = nrOfItemsProcessedByThread;
+            int nrOfItemsQueue = 0;
+            int nrofMessages = 0;
+
+            // Continue processing messages from a message queue if applicable
+            if (spreadOverCluster) {
+
+                jmsContextFinal.start();
                 try {
-                    // Record progress
-                    if (globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
-                        jobExecutionResultService.persistResult(jobExecutionResult);
-                    }
-                } catch (EJBTransactionRolledbackException e) {
-                    // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
-                } catch (Exception e) {
-                    log.error("Failed to update job progress", e);
+                    countDown.await();
+
+                    // Now need to wait until all messages were processed, as countDown is released once last message is received, not when all messages are processed
+                    // Polling is done
+                    do {
+                        Thread.sleep(2000);
+                    } while (!isJobRequestedToStop(jobInstanceId) && !areAllMessagesConsumed(jobInstanceCode));
+
+                } catch (InterruptedException e) {
+                    log.error("Job message listener was interrupted");
                 }
 
-                // There was nothing retrieved the last time, so dont try it again
-                if (itemToProcess != null) {
-                    // Job running as job manager publish data to a queue from a DB based iterator in parallel as other threads process data.
-                    // Job running as job manager can obtain data from two places - DB based iterator and queue based iterator once no more data is retrieved from a DB based iterator
-                    // First try to obtain a value from a current iterator. If no item is retrieved, give a try in Queue based iterator if applicable.
-                    itemToProcess = threadIterator.next();
-                    if (itemToProcess == null && spreadOverCluster && isRunningAsJobManager && !isQueueBasedIterator) {
-                        threadIterator = queueBasedIterator;
-                        isQueueBasedIterator = true;
-                        log.trace("Switching to queue based iterator. Processed {} from db based iterator.", i);
-                        itemToProcess = threadIterator.next();
-                    }
-                    if (itemToProcess != null) {
-                        i++;
-                    }
-                }
+                nrOfItemsQueue = messageListenerFinal.getItemCount();
+                nrofMessages = messageListenerFinal.getMsgCount();
+                nrOfItemsProcessedByThread = nrOfItemsProcessedByThread + nrOfItemsQueue;
+                jmsContextFinal.close();
             }
-            log.debug("Thread {} processed {} items", Thread.currentThread().getName(), i);
+
+            log.debug("Thread {} processed {} items: {} from db and {} from {} messages", Thread.currentThread().getName(), nrOfItemsProcessedByThread, nrOfItemsDb, nrOfItemsQueue, nrofMessages);
 
         };
 
         return task;
+
+    }
+
+    /**
+     * Process items
+     * 
+     * @param itemsToProcess Items to process
+     * @param isNewTx Should functions be called in a new TX
+     * @param useMultipleItemProcessing Process items in batch
+     * @param processSingleItemFunction A function to process single item
+     * @param processMultipleItemFunction A function to process multiple items
+     * @param jobExecutionResult Job execution result
+     */
+    private void processItems(List<T> itemsToProcess, boolean isNewTx, boolean useMultipleItemProcessing, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction,
+            BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, JobExecutionResultImpl jobExecutionResult) {
+
+        int nrOfItemsInBatch = itemsToProcess.size();
+        long globalI = 0;
+
+        // Process items in batch.
+        if (useMultipleItemProcessing) {
+            try {
+                // When batch processing happens in its own TX, data is read from a queue in QueueBasedIterator and if rollback occurs, data will remain in a queue
+                if (isNewTx) {
+                    methodCallingUtils.callMethodInNewTx(() -> processMultipleItemFunction.accept(itemsToProcess, jobExecutionResult));
+
+                } else {
+                    processMultipleItemFunction.accept(itemsToProcess, jobExecutionResult);
+                }
+
+                if (isProcessMultipleItemFunctionUpdateProgressItself()) {
+                    globalI = globalI + nrOfItemsInBatch;
+                } else {
+                    globalI = jobExecutionResult.registerSucces(nrOfItemsInBatch);
+                }
+
+                // Batch processing has failed, so process item one by one if possible
+            } catch (Exception e) {
+
+                if (processSingleItemFunction != null) {
+
+                    log.error("Failed to process items in batch. Items will be processed one by one", e);
+                    for (T itemToProcessFromFailedBatch : itemsToProcess) {
+                        globalI = processItem(itemToProcessFromFailedBatch, isNewTx, processSingleItemFunction, jobExecutionResult);
+                    }
+
+                    // Record a message if there is no single item processing function available
+                } else {
+                    log.error("Failed to process items in batch", e);
+                    globalI = jobExecutionResult.registerError(e.getMessage(), nrOfItemsInBatch);
+                }
+            }
+
+            // Process each item
+        } else {
+
+            globalI = processItem(itemsToProcess.get(0), isNewTx, processSingleItemFunction, jobExecutionResult);
+        }
+    }
+
+    /**
+     * Get a set of data to process from a DB data source
+     * 
+     * @param nrItems Number of items to return
+     * @param threadIterator Iterator from DB based data source
+     * @param jobInstanceId Job instance identifier
+     * @return A list of data items
+     */
+    private List<T> getNextItemsToProcess(int nrItems, Iterator<T> threadIterator, Long jobInstanceId) {
+
+        final List<T> itemsToProcess = new ArrayList<T>();
+
+        // In multiItemProcessing try to read batch size in 1/5th intervals as to spread better load among threads when there are little of data to process
+        int maxMultiReadSize = nrItems / 5 + 1;
+        int nrOfItemsInBatch = 0;
+
+        while (nrOfItemsInBatch < nrItems) {
+
+            if (threadIterator instanceof SynchronizedIterator) {
+
+                // Read items in batch as to minimize blocking time on synchronized method SynchronizedIterator.next
+                int nrItemsToRead = (nrItems - nrOfItemsInBatch) < maxMultiReadSize ? (nrItems - nrOfItemsInBatch) : maxMultiReadSize;
+                List<T> itemsToProcessBatchRead = ((SynchronizedIterator<T>) threadIterator).next(nrItemsToRead);
+                if (itemsToProcessBatchRead != null) {
+
+                    itemsToProcess.addAll(itemsToProcessBatchRead);
+                    int nrItemsRead = itemsToProcessBatchRead.size();
+                    nrOfItemsInBatch = nrOfItemsInBatch + nrItemsRead;
+
+                    // Nothing found and no other iterator to switch to
+                } else {
+                    break;
+                }
+
+            } else {
+                T itemToProcess = threadIterator.next();
+                if (itemToProcess != null) {
+                    itemsToProcess.add(itemToProcess);
+                    nrOfItemsInBatch++;
+
+                    // No more data found in queue
+                } else {
+                    break;
+                }
+            }
+        }
+
+        // Check if job is not stopped yet
+        if (isJobRequestedToStop(jobInstanceId)) {
+            return new ArrayList<T>();
+        }
+
+        return itemsToProcess;
     }
 
     /**
@@ -619,15 +862,21 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      */
     private void clearPendingWorkLoad(JobInstance jobInstance) {
 
-        try {
+        String mqHost = System.getenv(REMOTE_MQ_HOST);
+        if (StringUtils.isBlank(mqHost)) {
+            mqHost = "localhost";
+        }
 
-            String mqHost = System.getenv("opencell.mq.host");
-            if (StringUtils.isBlank(mqHost)) {
-                mqHost = "localhost";
-            }
+        String jmxPort = System.getenv(REMOTE_MQ_JMX_PORT);
+        if (StringUtils.isBlank(jmxPort)) {
+            jmxPort = "1099";
+        }
 
-            JMXServiceURL target = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":1099/jmxrmi");
-            JMXConnector connector = JMXConnectorFactory.connect(target);
+        HashMap<String, Object> environment = new HashMap<String, Object>();
+        String[] credentials = new String[] { System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD) };
+        environment.put(JMXConnector.CREDENTIALS, credentials);
+
+        try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
             MBeanServerConnection remote = connector.getMBeanServerConnection();
 
             String queueName = "JOB_" + jobInstance.getCode().replace(' ', '_');
@@ -636,8 +885,183 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             remote.invoke(bean, "purge", null, null);
             connector.close();
 
+        } catch (InstanceNotFoundException e) {
+            // Do nothing, the queue does not exist yet
+
         } catch (Exception e) {
-            log.error("Failed to purge pending workload messages for job {}", jobInstance.getCode(), e);
+            log.error("Failed to purge pending job data  messages for job {}", jobInstance.getCode(), e);
+        }
+    }
+
+    /**
+     * Check if there are any messages that were either not delivered or not completely processed yet in a JMS queue
+     * 
+     * @param jobInstance Job instance to clear
+     */
+    private boolean areAllMessagesConsumed(String jobInstanceCode) {
+
+        String mqHost = System.getenv(REMOTE_MQ_HOST);
+        if (StringUtils.isBlank(mqHost)) {
+            mqHost = "localhost";
+        }
+
+        String jmxPort = System.getenv(REMOTE_MQ_JMX_PORT);
+        if (StringUtils.isBlank(jmxPort)) {
+            jmxPort = "1099";
+        }
+
+        HashMap<String, Object> environment = new HashMap<String, Object>();
+        String[] credentials = new String[] { System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD) };
+        environment.put(JMXConnector.CREDENTIALS, credentials);
+
+        try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
+            MBeanServerConnection remote = connector.getMBeanServerConnection();
+
+            String queueName = "JOB_" + jobInstanceCode.replace(' ', '_');
+            ObjectName bean = new ObjectName("org.apache.activemq.artemis:broker=\"0.0.0.0\",component=addresses,address=\"" + queueName + "\",subcomponent=queues,routing-type=\"anycast\",queue=\"" + queueName + "\"");
+
+            long nrMessagesNotDelivered = (long) remote.invoke(bean, "countMessages", null, null);
+            log.debug("Found {} pending messages in queue {}", nrMessagesNotDelivered, queueName);
+            if (nrMessagesNotDelivered == 0) {
+
+                nrMessagesNotDelivered = (long) remote.invoke(bean, "countDeliveringMessages", new String[] { null }, new String[] { String.class.getName() });
+                log.debug("Found {} still processing messages in queue {}", nrMessagesNotDelivered, queueName);
+
+                if (nrMessagesNotDelivered == 0) {
+                    return true;
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to check for pending job data messages for job {}", jobInstanceCode, e);
+        }
+        return false;
+    }
+
+    /**
+     * Check if there are any messages that were either not delivered yet in a JMS queue
+     * 
+     * @param jobInstance Job instance to clear
+     */
+    public static boolean areAllMessagesDelivered(String jobInstanceCode) {
+
+        String mqHost = System.getenv(REMOTE_MQ_HOST);
+        if (StringUtils.isBlank(mqHost)) {
+            mqHost = "localhost";
+        }
+
+        String jmxPort = System.getenv(REMOTE_MQ_JMX_PORT);
+        if (StringUtils.isBlank(jmxPort)) {
+            jmxPort = "1099";
+        }
+
+        HashMap<String, Object> environment = new HashMap<String, Object>();
+        String[] credentials = new String[] { System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD) };
+        environment.put(JMXConnector.CREDENTIALS, credentials);
+
+        try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
+            MBeanServerConnection remote = connector.getMBeanServerConnection();
+
+            String queueName = "JOB_" + jobInstanceCode.replace(' ', '_');
+            ObjectName bean = new ObjectName("org.apache.activemq.artemis:broker=\"0.0.0.0\",component=addresses,address=\"" + queueName + "\",subcomponent=queues,routing-type=\"anycast\",queue=\"" + queueName + "\"");
+
+            long nrMessagesNotDelivered = (long) remote.invoke(bean, "countMessages", null, null);
+            Logger log = LoggerFactory.getLogger(IteratorBasedJobBean.class);
+            log.debug("Found {} pending messages in queue {}", nrMessagesNotDelivered, queueName);
+            return nrMessagesNotDelivered == 0;
+
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(IteratorBasedJobBean.class);
+            log.error("Failed to check for pending job data messages for job {}", jobInstanceCode, e);
+        }
+        return false;
+    }
+
+    private class ItertatorJobMessageListener implements MessageListener {
+
+        /**
+         * A content of a message indicating that its a last message to be processed
+         */
+        public static final String EOF_MESSAGE = "eof";
+
+        private int msgCount = 0;
+        private int itemCount = 0;
+        private CountDownLatch countDown;
+        private boolean isNewTx;
+        private boolean useMultipleItemProcessing;
+        private BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction;
+        private BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction;
+        private JobExecutionResultImpl jobExecutionResult;
+
+        public ItertatorJobMessageListener(CountDownLatch countDown, boolean isNewTx, boolean useMultipleItemProcessing, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction,
+                BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, JobExecutionResultImpl jobExecutionResult) {
+
+            this.countDown = countDown;
+            this.isNewTx = isNewTx;
+            this.useMultipleItemProcessing = useMultipleItemProcessing;
+            this.processMultipleItemFunction = processMultipleItemFunction;
+            this.processSingleItemFunction = processSingleItemFunction;
+            this.jobExecutionResult = jobExecutionResult;
+        }
+
+        /**
+         * @return A number of messages received
+         */
+        public int getMsgCount() {
+            return msgCount;
+        }
+
+        /**
+         * @return A number of items received via a messages
+         */
+        public int getItemCount() {
+            return itemCount;
+        }
+
+        @Override
+        public void onMessage(Message msg) {
+
+            try {
+                // Indicates that a last message in a queue was reached and further processing should stop
+                if (EOF_MESSAGE.equals(msg.getStringProperty(EOF_MESSAGE))) {
+                    msg.acknowledge();
+
+                    // Fire an event to release threads for data processing
+                    lastJobDataMsgEventProducer.fire(jobExecutionResult.getJobInstance().getId());
+
+                } else {
+
+                    @SuppressWarnings("unchecked")
+                    List<T> itemsToProcess = (List<T>) msg.getBody(Serializable.class);
+                    msgCount++;
+                    itemCount = itemCount + itemsToProcess.size();
+
+                    processItems(itemsToProcess, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult);
+
+                    msg.acknowledge();
+                }
+            } catch (JMSException e) {
+                Logger log = LoggerFactory.getLogger(this.getClass());
+                log.error("Failed to read JMS JOB processing message body.", e);
+            }
+        }
+    }
+
+    /**
+     * Release job data processing threads - count down a countDownLatch that keeps threads in waiting mode. Thread will exit listening for messages in a queue mode.
+     * 
+     * @param jobInstanceId Job instance identifier
+     */
+    public static void releaseJobDataProcessingThreads(Long jobInstanceId) {
+
+        // Clean up counter for job thread scheduling purpose
+        CountDownLatch countDown = countDowns.get(jobInstanceId);
+        if (countDown != null) {
+            countDown.countDown();
+            countDowns.remove(jobInstanceId);
+        } else {
+            Logger log = LoggerFactory.getLogger(IteratorBasedJobBean.class);
+            log.error("No countDownLatch found for job {}", jobInstanceId);
         }
     }
 }
