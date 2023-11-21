@@ -275,7 +275,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
-        int nbPublishers = 0;
+        // A value of data publishers might come from a Custom Field or calculated dynamically based on number of nodes in a cluster
+        Long nbPublishers = (Long) getParamOrCFValue(jobInstance, Job.CF_NB_PUBLISHERS, 0L);
 
         List<Future> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
@@ -297,11 +298,14 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             // Create publishing data to the job processing queue tasks if data processing is spread over a cluster
             if (isRunningAsJobManager && spreadOverCluster) {
-                // Number of data publishing tasks is half of the cluster members or the number of nodes that job can run on
-                nbPublishers = (jobInstance.getRunOnNodes() != null ? jobInstance.getRunOnNodes().split(",").length : channel.getView().getMembers().size()) / 2;
-                nbPublishers = nbPublishers < 1 ? 1 : nbPublishers > 2 ? nbPublishers + (nbPublishers / 2) : nbPublishers;
 
-                log.info("{}/{} Will submit task to publish data for cluster-wide data processing", jobInstance.getJobTemplate(), jobInstance.getCode());
+                if (nbPublishers == null || nbPublishers < 1) {
+                    // Number of data publishing tasks is half of the cluster members or the number of nodes that job can run on
+                    int nrOfNodes = jobInstance.getRunOnNodes() != null ? jobInstance.getRunOnNodes().split(",").length : channel.getView().getMembers().size();
+                    nbPublishers = ((Integer) (nrOfNodes < 1 ? 1 : (3 * nrOfNodes) / 4)).longValue();
+                }
+
+                log.info("{}/{} Will submit {} task(s) to publish data for cluster-wide data processing", jobInstance.getJobTemplate(), jobInstance.getCode(), nbPublishers);
                 clearPendingWorkLoad(jobInstance);
 
                 for (int k = 0; k < nbPublishers; k++) {
@@ -530,7 +534,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                 }
             }
-            log.debug("Thread {} will stop storing job progress", Thread.currentThread().getName());
+            log.info("Thread {} will stop storing job progress", Thread.currentThread().getName());
         };
 
         return task;
@@ -735,7 +739,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 jmsContextFinal.close();
             }
 
-            log.debug("Thread {} processed {} items: {} from db and {} from {} messages", Thread.currentThread().getName(), nrOfItemsProcessedByThread, nrOfItemsDb, nrOfItemsQueue, nrofMessages);
+            log.info("Thread {} processed {} items: {} from db and {} from {} messages", Thread.currentThread().getName(), nrOfItemsProcessedByThread, nrOfItemsDb, nrOfItemsQueue, nrofMessages);
 
         };
 

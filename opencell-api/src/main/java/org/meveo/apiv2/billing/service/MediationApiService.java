@@ -53,8 +53,8 @@ import org.meveo.apiv2.billing.CdrListInput;
 import org.meveo.apiv2.billing.ChargeCdrListInput;
 import org.meveo.apiv2.billing.ImmutableCdrDtoResponse;
 import org.meveo.apiv2.billing.ImmutableCdrDtoResponse.Builder;
-import org.meveo.apiv2.billing.ProcessingModeEnum;
 import org.meveo.apiv2.billing.ProcessCdrListResult;
+import org.meveo.apiv2.billing.ProcessingModeEnum;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -280,7 +280,6 @@ public class MediationApiService {
         ProcessCdrListResult cdrListResult = new ProcessCdrListResult(mode, cdrLines.size());
 
         try {
-
             final ICdrCsvReader cdrReader = cdrParsingService.getCDRReader(currentUser.getUserName(), ipAddress);
 
             final ICdrParser cdrParser = cdrParsingService.getCDRParser(null);
@@ -314,7 +313,7 @@ public class MediationApiService {
 
                         currentUserProvider.reestablishAuthentication(lastCurrentUser);
                         methodCallingUtils.callMethodInNewTx(() -> processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations,
-                                returnWalletOperationDetails, returnEDRs, cdrListResult, virtualCounters, counterUpdates, generateRTs));
+                            returnWalletOperationDetails, returnEDRs, cdrListResult, virtualCounters, counterUpdates, generateRTs));
 
                     });
                 }
@@ -339,12 +338,12 @@ public class MediationApiService {
 
             } else {
                 methodCallingUtils.callMethodInNewTx(() -> processCDRs(cdrLineIterator, cdrReader, cdrParser, isDuplicateCheckOn, isVirtual, rate, reserve, rateTriggeredEdr, maxDepth, returnWalletOperations,
-                        returnWalletOperationDetails, returnEDRs, cdrListResult, virtualCounters, counterUpdates, generateRTs));
+                    returnWalletOperationDetails, returnEDRs, cdrListResult, virtualCounters, counterUpdates, generateRTs));
             }
 
             // Update total amounts and wallet operation count based on charged CDRs
             cdrListResult.updateAmountAndWOCountStatistics();
-            
+
             // Gather counter update summary information
             if (returnCounters) {
                 List<CounterPeriod> counterPeriods = counterInstanceService.getCounterUpdates();
@@ -419,9 +418,19 @@ public class MediationApiService {
                         if (isDuplicateCheckOn) {
                             cdrParser.deduplicate(cdr);
                         }
-                        cdrParsingService.createEdrs(edrs, cdr);
 
-                        mediationsettingService.applyEdrVersioningRule(edrs, cdr, false);
+                        if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
+                            mediationsettingService.applyEdrVersioningRule(edrs, cdr, false);
+                            cdrParsingService.createEdrs(edrs, cdr);
+
+                        } else {
+                            final List<EDR> edrsFinal = edrs;
+                            methodCallingUtils.callMethodInNewTx(() -> {
+                                mediationsettingService.applyEdrVersioningRule(edrsFinal, cdr, false);
+                                cdrParsingService.createEdrs(edrsFinal, cdr);
+                            });
+                        }
+
                     }
                     // Convert CDR to EDR and create a reservation
                     if (reserve) {
@@ -431,6 +440,7 @@ public class MediationApiService {
                             Reservation reservation = null;
                             // For ROLLBACK_ON_ERROR mode, processing is called within TX, so when error is thrown up, everything will rollback
                             if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
+
                                 reservation = usageRatingService.reserveUsageWithinTransaction(edr);
                                 // For other cases, rate each EDR in a separate TX
                             } else {
@@ -484,7 +494,11 @@ public class MediationApiService {
 
                                 // For STOP_ON_FIRST_FAIL or PROCESS_ALL model if rollback is needed, rating is called in a new TX and will rollback
                             } else {
-                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, false));
+                                ratingResult = methodCallingUtils.callCallableInNewTx(() -> {
+                                    RatingResult ratingResultLocal = usageRatingService.rateUsage(edr, isVirtual, rateTriggeredEdrs, maxDepth, 0, null, false);
+                                    edrService.update(edr);
+                                    return ratingResultLocal;
+                                });
 
                                 if (ratingResult.getWalletOperations() != null) {
                                     walletOperations.addAll(ratingResult.getWalletOperations());
@@ -539,9 +553,13 @@ public class MediationApiService {
                 cdrProcessingResult.addChargedCdr(position, createChargeCDRResultDto(edrs, walletOperations, returnWalletOperations, returnWalletOperationDetails, returnEDRs, reservations,
                     new CdrError(cdr.getRejectReasonException() != null ? cdr.getRejectReasonException().getClass().getSimpleName() : null, cdr.getRejectReason(), cdr.getLine())));
 
-				if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
-					throw new BusinessException(cdr.getRejectReason());
-				}
+                if (cdrProcessingResult.getMode() == ROLLBACK_ON_ERROR) {
+                    if (cdr.getRejectReasonException() != null && cdr.getRejectReasonException() instanceof BusinessException) {
+                        throw (BusinessException) cdr.getRejectReasonException();
+                    } else {
+                        throw new BusinessException(cdr.getRejectReason());
+                    }
+                }
 
                 rejectededCdrEventProducer.fire(cdr);
                 cdrService.createOrUpdateCdr(cdr);

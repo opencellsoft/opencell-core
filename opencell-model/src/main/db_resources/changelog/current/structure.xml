@@ -7326,7 +7326,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-17222_20231005" author="AndriusKarpavicius">
         <addColumn tableName="job_execution">
             <column name="node" type="varchar(25)"/>
@@ -8786,10 +8786,26 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addNotNullConstraint tableName="billing_billing_account" columnName="trading_currency_id"/>
     </changeSet>
 
+    <changeSet id="#INTRD-19413_20231113" author="AndriusKarpavicius">
+        <dropIndex tableName="billing_charge_instance" indexName="bc_instance_sub_id"/>
+        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id, priority)</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_UsageRatingJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_UsageRatingJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReRatingJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReRatingJob'</sql>
+    </changeSet>
+    
     <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe">
         <addColumn tableName="finance_settings">
             <column name="nb_partitions_keep" type="int4" />
         </addColumn>
     </changeSet>
-
+    
 </databaseChangeLog>
