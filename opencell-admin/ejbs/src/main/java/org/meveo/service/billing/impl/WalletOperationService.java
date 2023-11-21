@@ -465,15 +465,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             query = getEntityManager().createNamedQuery("WalletOperation.listToRerateNoBatch", Long.class);
         } else if (ReratingTargetEnum.WITH_BATCH.name().equals(reratingTarget)) {
             if (CollectionUtils.isNotEmpty(targetBatches)) {
-                targetBatches = getEntityManager().createNamedQuery("BatchEntity.listBatchEntities", Long.class)
-                        .setParameter("ids", targetBatches).setParameter("targetJob", ReRatingJob.class.getSimpleName())
-                        .getResultList();
-                if (CollectionUtils.isNotEmpty(targetBatches)) {
-                    query = getEntityManager().createNamedQuery("WalletOperation.listToRerateWithBatches", Long.class)
-                            .setParameter("targetBatches", targetBatches);
-                }
+                query = getEntityManager().createNamedQuery("WalletOperation.listToRerateWithBatches", Long.class)
+                        .setParameter("targetBatches", targetBatches)
+                        .setParameter("targetJob", ReRatingJob.class.getSimpleName());
+            } else {
+                query = getEntityManager().createNamedQuery("WalletOperation.listToRerateAllBatches", Long.class);
             }
-            query = getEntityManager().createNamedQuery("WalletOperation.listToRerateAllBatches", Long.class);
         }
         if (nbToRetrieve > 0) {
             query = query.setMaxResults(nbToRetrieve);
