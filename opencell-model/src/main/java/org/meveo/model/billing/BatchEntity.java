@@ -53,7 +53,7 @@ import java.util.Map;
         @NamedQuery(name = "BatchEntity.cancelOpenedBatchEntity",
                 query = "UPDATE BatchEntity b set b.status=org.meveo.model.billing.BatchEntityStatusEnum.CANCELED where b.id=:id " +
                         "and b.status=org.meveo.model.billing.BatchEntityStatusEnum.OPEN"),
-        @NamedQuery(name = "BatchEntity.listBatchEntities", query = "SELECT b FROM BatchEntity b WHERE b.id in (:ids)")
+        @NamedQuery(name = "BatchEntity.listBatchEntities", query = "SELECT b.id FROM BatchEntity b WHERE b.id in (:ids) and b.targetJob=:targetJob")
 })
 public class BatchEntity extends EnableBusinessEntity {
 

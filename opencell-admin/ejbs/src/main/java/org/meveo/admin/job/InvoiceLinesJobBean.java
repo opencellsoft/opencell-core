@@ -56,7 +56,7 @@ import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 
 @Stateless
-public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, Object>>> {
+public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<String, Object>>> {
 
     private static final long serialVersionUID = -1318477921039388503L;
 
@@ -114,149 +114,13 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
     /**
      * Initialize job settings and retrieve data to process
-     * 
+     *
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of Wallet operation Ids to convert to Rated transactions
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private Optional<Iterator<List<Map<String, Object>>>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-
-        JobInstance jobInstance = jobExecutionResult.getJobInstance();
-
-        // Get a list of Billing runs to process - either from job parameters or Billing runs with NEW and OPEN status
-        List<BillingRun> billingRuns = getBillingRunsToProcess(jobInstance, jobExecutionResult);
-        if (billingRuns == null || billingRuns.isEmpty()) {
-            return Optional.empty();
-        }
-
-        // Number of Rated transactions to process in a single job run
-        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("invoiceLinesJob.processNrInJobRun", 4000000);
-
-        // Grouping/processing settings
-        boolean groupByBA = (boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_GROUP_BY_BA, false);
-        final long nrRtsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_RTS_PER_TX, 1000000L);
-        final long nrILsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_ILS_PER_TX, 10000L);
-
-        Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbThreads == -1) {
-            nbThreads = (long) Runtime.getRuntime().availableProcessors();
-        }
-        int fetchSize = ((Long) nrILsPerTx).intValue() * nbThreads.intValue();
-
-        EntityManager em = emWrapper.getEntityManager();
-        statelessSession = em.unwrap(Session.class).getSessionFactory().openStatelessSession();
-
-        // Advance to the first unprocessed billing run. Loop over Billing runs to process and process the first one that has data. Others will be run in a next job run
-        boolean isLastBRToProcess = false;
-
-        if (jobInstance.getParamValue(BR_PROCESSED) == null) {
-            jobInstance.setParamValue(BR_PROCESSED, new ArrayList<Long>());
-        }
-
-        RTtoILAggregationQuery aggregationQueryInfo = null;
-
-        for (int i = 0; i < billingRuns.size(); i++) {
-            isLastBRToProcess = i == billingRuns.size() - 1;
-            BillingRun billingRun = billingRuns.get(i);
-
-            // Skip billing runs that were already processed by a job
-            if (((List<Long>) jobInstance.getParamValue(BR_PROCESSED)).contains(billingRun.getId())) {
-                continue;
-            }
-
-            // Initialize BR
-            billingRun.getBillingCycle().getType();
-
-            em.detach(billingRun);
-            currentBillingRun = billingRun;
-
-            // The first run of billing run (status is 'NEW' at that moment) should be in a normal run to create new invoice line
-            // and to avoid doing unnecessary joins.
-            // The next runs of BR (status has already changed to 'OPEN' at that moment) will apply the appending mode on existing invoice lines
-            incrementalInvoiceLines = currentBillingRun.getIncrementalInvoiceLines() && currentBillingRun.getStatus() == BillingRunStatusEnum.OPEN;
-
-            // set status of billing run as CREATING_INVOICE_LINES, i.e. it indicates that the invoice line job is running
-            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.CREATING_INVOICE_LINES, null);
-
-            // Determine aggregation options from Billing run
-            aggregationConfiguration = new AggregationConfiguration(currentBillingRun);
-            aggregationConfiguration.setEnterprise(appProvider.isEntreprise());
-
-            aggregationQueryInfo = invoiceLineAggregationService.getAggregationSummaryAndILDetailsQuery(currentBillingRun, aggregationConfiguration, statelessSession, incrementalInvoiceLines);
-            nrOfAccounts = aggregationQueryInfo.getNumberOfBA();
-
-            jobExecutionResult.addReport("Billing run #" + billingRun.getId() + ": will process " + nrOfAccounts + " accounts" + (incrementalInvoiceLines ? " in append mode." : "."));
-
-            // If no records found for a BR to process, continue to another BR
-            if (nrOfAccounts.intValue() == 0) {
-                dropView();
-                if (isLastBRToProcess) {
-                    closeBillingRun(jobExecutionResult);
-                    return Optional.empty();
-                } else {
-                    closeBillingRun(jobExecutionResult);
-                    continue;
-                }
-            }
-
-            break;
-        }
-
-        Object[] convertSummary = getProcessingSummary();
-        minId = (Long) convertSummary[0];
-        maxId = (Long) convertSummary[1];
-
-        scrollableResults = aggregationQueryInfo.getQuery().setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun).setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
-
-        Long nrOfRecords = aggregationQueryInfo.getNumberOfIL();
-        List<String> aggregationFields = aggregationQueryInfo.getFieldNames();
-
-        boolean brHasMore = nrOfRecords >= processNrInJobRun;
-
-        // Mark BR as processed if it has no more records
-        if (!brHasMore) {
-            ((List<Long>) jobInstance.getParamValue(BR_PROCESSED)).add(currentBillingRun.getId());
-        }
-
-        // Continue with additional job run if there are still BR related records to process or there are more BR to process
-        hasMore = brHasMore || (!brHasMore && !isLastBRToProcess);
-
-        if (groupByBA) {
-            return Optional.of(new SynchronizedIteratorGrouped<Map<String, Object>>(scrollableResults, nrOfRecords.intValue(), true, aggregationFields) {
-
-                @Override
-                public Object getGroupByValue(Map<String, Object> item) {
-                    return item.get("billing_account__id");
-                }
-            });
-        } else {
-            return Optional.of(new SynchronizedMultiItemIterator<Map<String, Object>>(scrollableResults, nrOfRecords.intValue(), true, aggregationFields) {
-
-                long totalRtCount = 0L;
-                long totalIlCount = 0L;
-
-                @Override
-                public void initializeDecisionMaking(Map<String, Object> item) {
-                    totalRtCount = item.get("rt_count") != null ? ((Number) item.get("rt_count")).longValue() : 1L;
-                    totalIlCount = 1;
-                }
-
-                @Override
-                public boolean isIncludeItem(Map<String, Object> item) {
-
-                    long rtCount = item.get("rt_count") != null ? ((Number) item.get("rt_count")).longValue() : 1L;
-
-                    if (totalIlCount + 1 > nrILsPerTx || totalRtCount + rtCount > nrRtsPerTx) {
-                        return false;
-                    }
-
-                    totalRtCount = totalRtCount + rtCount;
-                    totalIlCount++;
-                    return true;
-                }
-
-            });
-        }
+        return getIterator(jobExecutionResult);
     }
 
     private void createInvoiceLines(List<Map<String, Object>> aggregationInfo, JobExecutionResultImpl jobExecutionResult) {
@@ -351,22 +215,20 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
     /**
      * Get a min and max ID from RT table
-     * 
+     *
      * @return An array containing [ min RT id, max RT id]
      */
     private Long[] getProcessingSummary() {
-
         EntityManager em = emWrapper.getEntityManager();
         Object[] minMax = (Object[]) em.createQuery("select min(id), max(id) from RatedTransaction where status='OPEN'").getSingleResult();
-
         if (minMax[0] != null) {
             Long minId = ((Number) minMax[0]).longValue();
             Long maxId = ((Number) minMax[1]).longValue();
 
-            return new Long[] { minId, maxId };
+            return new Long[]{minId, maxId};
 
         } else {
-            return new Long[] { null, null };
+            return new Long[]{null, null};
         }
     }
 
@@ -475,4 +337,155 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         }
     }
 
+    private Optional<Iterator<List<Map<String, Object>>>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
+        // Get a list of Billing runs to process - either from job parameters or Billing runs with NEW and OPEN status
+        List<BillingRun> billingRuns = getBillingRunsToProcess(jobInstance, jobExecutionResult);
+        if (billingRuns == null || billingRuns.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // Number of Rated transactions to process in a single job run
+        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("invoiceLinesJob.processNrInJobRun", 4000000);
+
+        Long batchSize = 10L;// Just for fetching purpose
+        Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
+        if (nbThreads == -1) {
+            nbThreads = (long) Runtime.getRuntime().availableProcessors();
+        }
+        int fetchSize = batchSize.intValue() * nbThreads.intValue();
+
+        EntityManager em = emWrapper.getEntityManager();
+        statelessSession = em.unwrap(Session.class).getSessionFactory().openStatelessSession();
+
+        // Advance to the first unprocessed billing run. Loop over Billing runs to process and process the first one that has data. Others will be run in a next job run
+        boolean isLastBRToProcess = false;
+
+        if (jobInstance.getParamValue(BR_PROCESSED) == null) {
+            jobInstance.setParamValue(BR_PROCESSED, new ArrayList<Long>());
+        }
+
+        RTtoILAggregationQuery aggregationQueryInfo = null;
+
+        for (int i = 0; i < billingRuns.size(); i++) {
+            isLastBRToProcess = i == billingRuns.size() - 1;
+            BillingRun billingRun = billingRuns.get(i);
+
+            // Skip billing runs that were already processed by a job
+            if (((List<Long>) jobInstance.getParamValue(BR_PROCESSED)).contains(billingRun.getId())) {
+                continue;
+            }
+
+            currentBillingRun = billingRun;
+
+            // The first run of billing run (status is 'NEW' at that moment) should be in a normal run to create new invoice line
+            // and to avoid doing unnecessary joins.
+            // The next runs of BR (status has already changed to 'OPEN' at that moment) will apply the appending mode on existing invoice lines
+            incrementalInvoiceLines = currentBillingRun.getIncrementalInvoiceLines() && currentBillingRun.getStatus() == BillingRunStatusEnum.OPEN;
+
+            // set status of billing run as CREATING_INVOICE_LINES, i.e. it indicates that the invoice line job is running
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.CREATING_INVOICE_LINES, null);
+
+            // Determine aggregation options from Billing run
+            aggregationConfiguration = new AggregationConfiguration(currentBillingRun);
+            aggregationConfiguration.setEnterprise(appProvider.isEntreprise());
+
+            aggregationQueryInfo = invoiceLineAggregationService.getAggregationSummaryAndILDetailsQuery(currentBillingRun, aggregationConfiguration,
+                    statelessSession, incrementalInvoiceLines, jobItemsLimit);
+
+            nrOfAccounts = aggregationQueryInfo.getNumberOfBA();
+
+            jobExecutionResult.addReport("Billing run #" + billingRun.getId() + ": will process " + nrOfAccounts + " accounts" + (incrementalInvoiceLines ? " in append mode." : "."));
+
+            // If no records found for a BR to process, continue to another BR
+            if (nrOfAccounts.intValue() == 0) {
+                dropView();
+                if (isLastBRToProcess) {
+                    closeBillingRun(jobExecutionResult);
+                    return Optional.empty();
+                } else {
+                    closeBillingRun(jobExecutionResult);
+                    continue;
+                }
+            }
+
+            break;
+        }
+
+        Object[] convertSummary = getProcessingSummary();
+        minId = (Long) convertSummary[0];
+        maxId = (Long) convertSummary[1];
+
+        scrollableResults = aggregationQueryInfo.getQuery().setReadOnly(true).setCacheable(false)
+                .setMaxResults(processNrInJobRun > jobItemsLimit ? jobItemsLimit : processNrInJobRun).setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
+
+        Long nrOfRecords = aggregationQueryInfo.getNumberOfIL();
+        List<String> aggregationFields = aggregationQueryInfo.getFieldNames();
+
+        em.detach(currentBillingRun);
+
+        boolean brHasMore = nrOfRecords >= processNrInJobRun;
+
+        // Mark BR as processed if it has no more records
+        if (!brHasMore) {
+            ((List<Long>) jobInstance.getParamValue(BR_PROCESSED)).add(currentBillingRun.getId());
+        }
+
+        // Continue with additional job run if there are still BR related records to process or there are more BR to process
+        hasMore = brHasMore || (!brHasMore && !isLastBRToProcess);
+
+        // Grouping/processing settings
+        boolean groupByBA = (boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_GROUP_BY_BA, false);
+        final long nrRtsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_RTS_PER_TX, 1000000L);
+        final long nrILsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_ILS_PER_TX, 10000L);
+
+        if (groupByBA) {
+            return Optional.of(new SynchronizedIteratorGrouped<Map<String, Object>>(scrollableResults, nrOfRecords.intValue(), true, aggregationFields) {
+
+                @Override
+                public Object getGroupByValue(Map<String, Object> item) {
+                    return item.get("billing_account__id");
+                }
+            });
+        } else {
+            return Optional.of(new SynchronizedMultiItemIterator<Map<String, Object>>(scrollableResults, nrOfRecords.intValue(), true, aggregationFields) {
+
+                long totalRtCount = 0L;
+                long totalIlCount = 0L;
+
+                @Override
+                public void initializeDecisionMaking(Map<String, Object> item) {
+                    totalRtCount = item.get("rt_count") != null ? ((Number) item.get("rt_count")).longValue() : 1L;
+                    totalIlCount = 1;
+                }
+
+                @Override
+                public boolean isIncludeItem(Map<String, Object> item) {
+
+                    long rtCount = item.get("rt_count") != null ? ((Number) item.get("rt_count")).longValue() : 1L;
+
+                    if (totalIlCount + 1 > nrILsPerTx || totalRtCount + rtCount > nrRtsPerTx) {
+                        return false;
+                    }
+
+                    totalRtCount = totalRtCount + rtCount;
+                    totalIlCount++;
+                    return true;
+                }
+
+            });
+        }
+    }
+
+    @Override
+    Optional<Iterator<List<Map<String, Object>>>> getSynchronizedIteratorWithLimit(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        return getSynchronizedIterator(jobExecutionResult, jobItemsLimit);
+    }
+
+    @Override
+    Optional<Iterator<List<Map<String, Object>>>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult) {
+        return getSynchronizedIterator(jobExecutionResult, 0);
+    }
 }

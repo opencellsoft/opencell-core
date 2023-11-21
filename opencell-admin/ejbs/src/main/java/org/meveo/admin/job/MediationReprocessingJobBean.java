@@ -84,7 +84,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
 
         try {
             cdrReader = cdrParserService.getReader(readerCode);
-            cdrReader.init("DB");
+            cdrReader.init("DB", jobInstance);
             Integer totalNummberOfRecords = cdrReader.getNumberOfRecords();
             if (totalNummberOfRecords != null) {
                 jobExecutionResult.addNbItemsToProcess(totalNummberOfRecords);
@@ -166,8 +166,8 @@ public class MediationReprocessingJobBean extends BaseJobBean {
             boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstanceId) };
 
             // Start job status report task. Not run in future, so it will die when main thread dies
-            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance.getCode(), lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
-                currentUserProvider, log, jobExecutionResultService);
+            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance, lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
+                currentUserProvider, log, jobExecutionResultService, jobExecutionService);
             Thread jobStatusReportThread = new Thread(jobStatusReportTask);
             jobStatusReportThread.start();
 

@@ -38,12 +38,13 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 /**
  * Job definition to rerate wallet operations
  */
 @Stateless
-public class ReRatingJob extends Job {
+public class ReRatingJob extends ScopedJob {
 
     /** The re rating job bean. */
     @Inject
@@ -101,6 +102,16 @@ public class ReRatingJob extends Job {
                 "JobInstance_ReRatingJob");
         targetBatchesCFTemplate.setEntityClazz(BatchEntity.class.getName());
         result.put(CF_TARGET_BATCHES, targetBatchesCFTemplate);
+
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2", null, false, null, null, "JobInstance_ReRatingJob"));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", null, false, null, null, "JobInstance_ReRatingJob"));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;fieldGroup:Configuration:0;field:4", null, false, null, null, "JobInstance_ReRatingJob"));
+
 
         return result;
     }

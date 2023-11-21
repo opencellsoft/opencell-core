@@ -37,6 +37,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import com.google.common.collect.Lists;
 
@@ -457,26 +458,27 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return nrOfWosToRerate;
     }
 
-    public List<Long> listToRerate(String reratingTarget, List<Long> targetBatches) {
+    public List<Long> listToRerate(String reratingTarget, List<Long> targetBatches, int nbToRetrieve) {
+        // null | ALL
+        TypedQuery<Long> query = getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class);
         if (ReratingTargetEnum.NO_BATCH.name().equals(reratingTarget)) {
-            return getEntityManager().createNamedQuery("WalletOperation.listToRerateNoBatch", Long.class).getResultList();
+            query = getEntityManager().createNamedQuery("WalletOperation.listToRerateNoBatch", Long.class);
         } else if (ReratingTargetEnum.WITH_BATCH.name().equals(reratingTarget)) {
             if (CollectionUtils.isNotEmpty(targetBatches)) {
-                List<BatchEntity> batchEntities = getEntityManager().createNamedQuery("BatchEntity.listBatchEntities", BatchEntity.class)
-                        .setParameter("ids", targetBatches)
+                targetBatches = getEntityManager().createNamedQuery("BatchEntity.listBatchEntities", Long.class)
+                        .setParameter("ids", targetBatches).setParameter("targetJob", ReRatingJob.class.getSimpleName())
                         .getResultList();
-                targetBatches = batchEntities.stream().filter(be -> ReRatingJob.class.getSimpleName().equalsIgnoreCase(be.getTargetJob()))
-                        .map(be -> be.getId()).collect(toList());
                 if (CollectionUtils.isNotEmpty(targetBatches)) {
-                    return getEntityManager().createNamedQuery("WalletOperation.listToRerateWithBatches", Long.class)
-                            .setParameter("targetBatches", targetBatches)
-                            .getResultList();
+                    query = getEntityManager().createNamedQuery("WalletOperation.listToRerateWithBatches", Long.class)
+                            .setParameter("targetBatches", targetBatches);
                 }
             }
-            return getEntityManager().createNamedQuery("WalletOperation.listToRerateAllBatches", Long.class).getResultList();
+            query = getEntityManager().createNamedQuery("WalletOperation.listToRerateAllBatches", Long.class);
         }
-        // null | ALL
-        return getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class).getResultList();
+        if (nbToRetrieve > 0) {
+            query = query.setMaxResults(nbToRetrieve);
+        }
+        return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
