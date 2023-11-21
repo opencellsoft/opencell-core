@@ -147,6 +147,15 @@ public class FrontendServlet extends HttpServlet {
             return;
         }
 
+        // Check if requested file is in the frontend directory
+        String canonicalFrontendPath = path.getCanonicalPath();
+        String canonicalFilePath = file.getCanonicalPath();
+        if (!canonicalFilePath.startsWith(canonicalFrontendPath)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            log.debug("canonicalFilePath don't starts with canonicalFrontendPath");
+            return;
+        }
+
         // Prepare some variables. The ETag is an unique identifier of the file.
         String fileName = file.getName();
         long length = file.length();
