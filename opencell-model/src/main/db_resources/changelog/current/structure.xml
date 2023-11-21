@@ -8786,4 +8786,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <addNotNullConstraint tableName="billing_billing_account" columnName="trading_currency_id"/>
     </changeSet>
 
+    <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe">
+        <addColumn tableName="finance_settings">
+            <column name="nb_partitions_keep" type="int4" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
