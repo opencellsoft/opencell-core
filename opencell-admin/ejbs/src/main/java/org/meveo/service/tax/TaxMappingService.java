@@ -296,7 +296,8 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                 }
             }
             if (taxClass == null) {
-                if (chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
+				taxClass = chargeInstance.getTaxClassResolved();
+                if (taxClass == null && chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
                     taxClass = evaluateTaxClassExpression(chargeInstance.getChargeTemplate().getTaxClassEl(), chargeInstance);
                 }
                 if (taxClass == null) {
