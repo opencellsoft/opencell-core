@@ -27,6 +27,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -90,8 +92,15 @@ import org.meveo.model.billing.WalletOperation;
         @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN',rejectReason = NULL where e.status='REJECTED' and e.id in :ids"),
         @NamedQuery(name = "EDR.findEDREventVersioning", query = "SELECT e from EDR e where e.status in ('OPEN', 'REJECTED', 'RATED', 'CANCELLED') and e.eventKey=:eventKey and e.eventVersion != null order by e.eventVersion DESC"),
         @NamedQuery(name = "EDR.getByWO", query = "SELECT edr FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)"),
-		@NamedQuery(name = "EDR.deleteByWO", query = "DELETE FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)")
+		@NamedQuery(name = "EDR.deleteByWO", query = "DELETE FROM EDR edr WHERE edr.walletOperation.id IN (:WO_IDS)"),
+		@NamedQuery(name = "EDR.cancelEDRs", query = "UPDATE EDR set status='CANCELLED', rejectReason=:rejectReason, updated=:updatedDate where id in :ids")
     })
+
+
+@NamedNativeQueries({
+        @NamedNativeQuery(name = "EDR.triggeredEDRSummaryForRerating", query = "select edr.id, edr.status from {h-schema}rating_edr edr where edr.status<>'CANCELLED' and edr.wallet_operation_id in :woIds")
+})
+       
 public class EDR extends BaseEntity {
 
     private static final long serialVersionUID = 1278336655583933747L;

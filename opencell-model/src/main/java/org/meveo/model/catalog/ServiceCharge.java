@@ -4,6 +4,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.meveo.model.EnableBusinessCFEntity;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 import javax.persistence.MappedSuperclass;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @MappedSuperclass
+@Cacheable
 public abstract class ServiceCharge extends EnableBusinessCFEntity {
     /**
      * Mapping between service and recurring charges

@@ -547,6 +547,7 @@ public class ValueExpressionWrapper {
             }
         }
 
+        String contextMapAsString = contextMap!=null?contextMap.toString():null;
         try {
             result = ValueExpressionWrapper.getValue(expression, contextMap, resultClass);
             log.trace("EL {} => {}", expression, result);
@@ -554,8 +555,8 @@ public class ValueExpressionWrapper {
             return (T) result;
 
         } catch (Exception e) {
-            log.warn("EL {} throw error with variables {}", expression, contextMap, e);
-            throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage() + " " + e.getCause().getMessage());
+            log.warn("EL {} throw error with variables {}", expression, contextMapAsString, e);
+            throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage(), e);
         }
     }
 

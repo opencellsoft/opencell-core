@@ -7,8 +7,10 @@ import static org.meveo.commons.utils.ParamBeanFactory.getAppScopeInstance;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -140,5 +142,15 @@ public class FinanceSettingsService extends BusinessService<FinanceSettings> {
         } else {
             return "#{ca.name.firstName} #{ca.name.lastName}";
         }
+    }
+
+    public boolean isEntityWithHugeVolume(String entityName){
+        FinanceSettings financeSetting = getFinanceSetting();
+        return Optional.ofNullable(financeSetting)
+                .map(FinanceSettings::getEntitiesWithHugeVolume)
+                .map(Map::keySet)
+                .orElse(new HashSet<>())
+                .stream()
+                .anyMatch(e -> e.equalsIgnoreCase(entityName));
     }
 }

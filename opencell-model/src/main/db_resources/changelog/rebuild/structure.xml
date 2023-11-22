@@ -470,6 +470,7 @@
         <createSequence sequenceName="cpq_billing_rule_seq" startValue="1" />
         <createSequence sequenceName="meveo_script_parameter_seq"/>
         <createSequence sequenceName="crm_address_book_contact_seq" startValue="1" />
+        <createSequence sequenceName="batch_entity_seq" startValue="1"/>
     </changeSet>
 
 
@@ -11917,6 +11918,7 @@
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="entities_with_huge_volume" type="${type.json}"/>
+            <column name="nb_partitions_keep" type="int4" />
             <column name="wo_partition_range_months" type="int4">
                 <constraints nullable="true" />
             </column>
@@ -12460,6 +12462,29 @@
 			</column>
 		</createTable>
 	</changeSet>
+    
+	<changeSet id="#INTRD-9066_20231009-rebuild" author="AbdellatifBARI">
+        <createTable tableName="batch_entity">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="batch_entity_pkey"/>
+            </column>
+            <column name="version" type="int4" defaultValueNumeric="0"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="name" type="${type.text}"/>
+            <column name="target_job" type="varchar(255)"/>
+            <column name="target_entity" type="varchar(255)"/>
+            <column name="filters" type="${type.json}"/>
+            <column name="notify" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="status" type="varchar(25)"/>
+            <column name="job_instance_id" type="bigint"/>
+            <column name="job_execution_id" type="bigint"/>
+        </createTable>
+    </changeSet>
     
     <!-- end tables -->
 
@@ -16859,6 +16884,15 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="document"/>
     </changeSet>
+    
+    <changeSet id="#INTRD-9066_20231009-rebuild-fk" author="AbdellatifBARI">
+    	<addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_instance" referencedTableName="meveo_job_instance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="job_execution_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_execution" referencedTableName="job_execution"
+                                 referencedColumnNames="id"/>
+    </changeSet>                             
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -16952,7 +16986,7 @@
         <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
         <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code, priority, id)</sql>
         <sql>CREATE INDEX medina_access_user_id_index ON ${db.schema.adapted}medina_access(acces_user_id)</sql>
-        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id)</sql>
+        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id, priority)</sql>
         <sql>CREATE INDEX counter_period_ci_id ON ${db.schema.adapted}billing_counter_period(counter_instance_id)</sql>
         <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_record)</sql>
         <sql>CREATE INDEX rating_edr_wo_index ON ${db.schema.adapted}rating_edr(wallet_operation_id)</sql>
@@ -19552,6 +19586,9 @@
     <changeSet id="#INTRD-18140_20230904" author="AdilElJaouhari" />
     <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
     <changeSet id="INTRD-17830_20231108" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe" />
 
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

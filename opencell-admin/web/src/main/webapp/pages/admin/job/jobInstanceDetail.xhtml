@@ -75,6 +75,15 @@
 								rendered="#{jobInstanceBean.entity != null and (jobInstanceBean.entity.jobTemplate eq 'AccountOperationsGenerationJob')}" />
 						</h:panelGroup>
 
+						<p:fieldset legend="#{messages['jobExecution.runtime']}" styleClass="clearLeft">
+							<hftl:decorateFormField label="#{messages['jobExecution.nbOfAvailableProcessors']}">
+								<h:outputText value="#{jobInstanceBean.nrOfAvailableProcessors}" styleClass="field-value" />
+							</hftl:decorateFormField>
+							<hftl:decorateFormField label="#{messages['jobExecution.availableClusterNodes']}">
+								<h:outputText value="#{jobInstanceBean.availableClusterNodes}" styleClass="field-value" />
+							</hftl:decorateFormField>
+						</p:fieldset>
+
 						<p:fieldset legend="#{messages['jobExecution.status']}" styleClass="clearLeft">
 							<hftl:decorateFormField label="#{messages['jobExecution.status']}">
 								<h:outputText value="#{messages['JobRunningStatusEnum.'.concat(jobInstanceBean.jobExecutionStatus)]}" styleClass="field-value" />
@@ -156,8 +165,11 @@
 							<p:column sortBy="#{entity.status}" headerText="#{messages['jobExecution.status']}" width="10%">
 								<h:outputText value="#{messages[node.type eq 'child'?entity.status.label:entity.cumulativeStatus.label]}" />
 							</p:column>
-							<hftl:column label="#{messages['jobExecution.node']}" field="nodeName" show="#{node.type eq 'child' or entity.getWorkerJobExecutionResults().isEmpty()}" width="10%" />
-						
+							
+							<p:column sortBy="#{entity.nodename}" headerText="#{messages['jobExecution.node']}" width="10%" >
+								<h:outputText value="#{entity.nodeName}#{node.type eq 'child' and entity.jobLauncherEnum ne 'WORKER'?' (M)':''}" rendered="#{node.type eq 'child' or entity.getWorkerJobExecutionResults().isEmpty()}"/>
+							</p:column>
+							
 							<hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" show="#{node.type eq 'child' or entity.getWorkerJobExecutionResults().isEmpty()}" />
 						</p:treeTable>
 					</h:form>

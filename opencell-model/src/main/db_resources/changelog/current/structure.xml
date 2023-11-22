@@ -15936,18 +15936,18 @@ public class AgedBalanceReporting extends ReportExtractScript {
          </sql>
     </changeSet>
 
-    <changeSet id="#INTRD-17987_20230825_discount_agg_cherry-pick" author="a.rouaguebe">
-        <addColumn tableName="billing_billing_run">
-            <column name="discount_aggregation" type="varchar(17)" />
-        </addColumn>
-        <addColumn tableName="billing_cycle">
-            <column name="discount_aggregation" type="varchar(17)" />
-        </addColumn>
-        <sql>UPDATE ${db.schema.adapted}billing_billing_run set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
-        <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql>
-        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET DEFAULT 'FULL_AGGREGATION';</sql>
-        <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET NOT NULL</sql>
-	 </changeSet>
+<!--     <changeSet id="#INTRD-17987_20230825_discount_agg_cherry-pick" author="a.rouaguebe"> -->
+<!--         <addColumn tableName="billing_billing_run"> -->
+<!--             <column name="discount_aggregation" type="varchar(17)" /> -->
+<!--         </addColumn> -->
+<!--         <addColumn tableName="billing_cycle"> -->
+<!--             <column name="discount_aggregation" type="varchar(17)" /> -->
+<!--         </addColumn> -->
+<!--         <sql>UPDATE ${db.schema.adapted}billing_billing_run set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql> -->
+<!--         <sql>UPDATE ${db.schema.adapted}billing_cycle set discount_aggregation = 'NO_AGGREGATION' where discount_aggregation is null</sql> -->
+<!--         <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET DEFAULT 'FULL_AGGREGATION';</sql> -->
+<!--         <sql>ALTER TABLE ${db.schema.adapted}billing_cycle ALTER COLUMN discount_aggregation SET NOT NULL</sql> -->
+<!-- 	 </changeSet> -->
     
     <changeSet id="#INTRD-18004_2023-09-04" author="hatimOUDAD">
         <addColumn tableName="finance_settings">
@@ -16068,11 +16068,63 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="business_key" type="VARCHAR(255)" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="INTRD-17830_20231108" author="AbdelmounaimAkadid">
         <sql>CREATE INDEX idx_rating_edr__business_key ON ${db.schema.adapted}rating_edr using btree(business_key)</sql>
         <sql>CREATE INDEX idx_billing_rated_transaction__business_key ON billing_rated_transaction using btree(business_key)</sql>
         <sql>CREATE INDEX idx_rating_wo__business_key ON billing_wallet_operation using btree(business_key)</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI">
+        <createSequence sequenceName="batch_entity_seq" startValue="1"/>
+        <createTable tableName="batch_entity">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="batch_entity_pkey"/>
+            </column>
+            <column name="version" type="int4" defaultValueNumeric="0"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="name" type="${type.text}"/>
+            <column name="target_job" type="varchar(255)"/>
+            <column name="target_entity" type="varchar(255)"/>
+            <column name="filters" type="${type.json}"/>
+            <column name="notify" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="status" type="varchar(25)"/>
+            <column name="job_instance_id" type="bigint"/>
+            <column name="job_execution_id" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_instance" referencedTableName="meveo_job_instance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="job_execution_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_execution" referencedTableName="job_execution"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_InvoiceLinesJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_UsageRatingJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_UsageRatingJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReRatingJob' ) </sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_ReRatingJob'</sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-19413_20231113" author="AndriusKarpavicius">
+        <dropIndex tableName="billing_charge_instance" indexName="bc_instance_sub_id"/>
+        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id, priority)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe">
+        <addColumn tableName="finance_settings">
+            <column name="nb_partitions_keep" type="int4" />
+        </addColumn>
     </changeSet>
 
     <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe">
@@ -16088,4 +16140,5 @@ public class AgedBalanceReporting extends ReportExtractScript {
             </column>
         </addColumn>
     </changeSet>
+    
 </databaseChangeLog>

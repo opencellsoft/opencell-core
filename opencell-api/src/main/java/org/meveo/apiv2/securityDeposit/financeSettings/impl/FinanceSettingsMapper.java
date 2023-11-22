@@ -1,13 +1,15 @@
 package org.meveo.apiv2.securityDeposit.financeSettings.impl;
 
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.apiv2.securityDeposit.ImmutableFinanceSettings;
+import org.meveo.apiv2.securityDeposit.ImmutableHugeEntity;
 import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingMapper;
 import org.meveo.model.securityDeposit.AuxiliaryAccounting;
 import org.meveo.model.securityDeposit.FinanceSettings;
+import org.meveo.model.securityDeposit.HugeEntity;
 
 public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.securityDeposit.FinanceSettings, FinanceSettings> {
 
@@ -25,6 +27,7 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                 .maxAmountPerCustomer(entity.getMaxAmountPerCustomer())
                 .autoRefund(entity.isAutoRefund())
                 .activateDunning(entity.isActivateDunning())
+                .nbPartitionsToKeep(entity.getNbPartitionsToKeep())
                 .woPartitionPeriod(entity.getWoPartitionPeriod())
                 .rtPartitionPeriod(entity.getRtPartitionPeriod())
                 .edrPartitionPeriod(entity.getEdrPartitionPeriod());
@@ -37,9 +40,13 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          if(entity.getOpenOrderSetting() != null) {
             builder.openOrderSetting(openOrderSettingMapper.toResource(entity.getOpenOrderSetting()));
         }
-         
+
         // Set the entitiesWithHugeVolume field
-        Map<String, List<String>> entitiesWithHugeVolume = entity.getEntitiesWithHugeVolume();
+        Map<String, org.meveo.apiv2.securityDeposit.HugeEntity> entitiesWithHugeVolume = entity.getEntitiesWithHugeVolume()
+                                                                                               .entrySet()
+                                                                                               .stream()
+                                                                                               .map(e -> Map.entry(e.getKey(), toHugeEntityResource(e.getValue())))
+                                                                                               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         builder.entitiesWithHugeVolume(entitiesWithHugeVolume);
         return builder.build();
     }
@@ -70,11 +77,30 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          financeSettings.setAuxiliaryAccounting(auxiliaryAccounting);
          financeSettings.setActivateDunning(resource.getActivateDunning());
 	     // Set the entitiesWithHugeVolume field
-	     Map<String, List<String>> entitiesWithHugeVolume = resource.getEntitiesWithHugeVolume();
-	     financeSettings.setEntitiesWithHugeVolume(entitiesWithHugeVolume);
+	     Map<String, org.meveo.apiv2.securityDeposit.HugeEntity> entitiesWithHugeVolume = resource.getEntitiesWithHugeVolume();
+         Map<String, HugeEntity> hugeEntitiesSettings = entitiesWithHugeVolume.entrySet()
+                                                                              .stream()
+                                                                              .map(e -> Map.entry(e.getKey(), toHugeEntity(e.getValue())))
+                                                                              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+         financeSettings.setEntitiesWithHugeVolume(hugeEntitiesSettings);
+         financeSettings.setNbPartitionsToKeep(resource.getNbPartitionsToKeep());
          financeSettings.setWoPartitionPeriod(resource.getWoPartitionPeriod());
          financeSettings.setRtPartitionPeriod(resource.getRtPartitionPeriod());
          financeSettings.setEdrPartitionPeriod(resource.getEdrPartitionPeriod());
          return financeSettings;
+    }
+
+    private org.meveo.apiv2.securityDeposit.HugeEntity toHugeEntityResource(HugeEntity entity) {
+        return ImmutableHugeEntity.builder()
+                                  .entityClass(entity.getEntityClass())
+                                  .hugeLists(entity.getHugeLists())
+                                  .mandatoryFilterFields(entity.getMandatoryFilterFields())
+                                  .build();
+    }
+
+    private HugeEntity toHugeEntity(org.meveo.apiv2.securityDeposit.HugeEntity resource) {
+        return new HugeEntity().setEntityClass(resource.getEntityClass())
+                               .setHugeLists(resource.getHugeLists())
+                               .setMandatoryFilterFields(resource.getMandatoryFilterFields());
     }
 }

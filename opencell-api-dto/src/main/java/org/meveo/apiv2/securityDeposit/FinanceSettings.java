@@ -62,8 +62,12 @@ public interface FinanceSettings extends Resource {
         return FALSE;
     }
 	@Schema(description = "Entities with Huge Volume")
-    Map<String, List<String>> getEntitiesWithHugeVolume();
+    Map<String, HugeEntity> getEntitiesWithHugeVolume();
 
+    @Nullable
+    @Schema(description = "Number of partitions to keep")
+    Integer getNbPartitionsToKeep();
+    
     @Nullable
     @Schema(description = "Wallet Operation partition Period in Months")
     Integer getWoPartitionPeriod();
@@ -75,5 +79,4 @@ public interface FinanceSettings extends Resource {
     @Nullable
     @Schema(description = "EDR partition Period in Months")
     Integer getEdrPartitionPeriod();
-
 }
