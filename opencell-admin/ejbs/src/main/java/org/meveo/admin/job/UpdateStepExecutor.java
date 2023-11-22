@@ -44,6 +44,8 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
      */
     public Optional<Iterator<Long[]>> initFunction(JobExecutionResultImpl jobExecutionResult) {
         List<Long[]> intervals = new ArrayList<>();
+        
+        jobExecutionResult.addJobParam("updatedElementsCount", 0L);
 
         String readQuery = (String) jobExecutionResult.getJobParam(PARAM_READ_INTERVAL_QUERY);
         Object[] result=null;
@@ -72,7 +74,11 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initFunction, this::processUpdateByInterval, null, null, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initFunction, this::processUpdateByInterval, null, null, null, this::writeReport);
+    }
+    
+    private void writeReport(JobExecutionResultImpl jobExecutionResult) {
+    	jobExecutionResult.addReport("Total number of liked RTs :"+jobExecutionResult.getJobParam("updatedElementsCount"));
     }
 
     /**
@@ -94,6 +100,8 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
 		Query query = namedQuery != null ? emWrapper.getEntityManager().createNamedQuery(namedQuery)
 				: emWrapper.getEntityManager().createQuery((updateQuery.toUpperCase().contains("WHERE") ? " AND " : " WHERE ") + tableAlias + ".id BETWEEN :minId AND :maxId");
 
-		query.setParameter("minId", interval[0]).setParameter("maxId", interval[1]).executeUpdate();
+		int result = query.setParameter("minId", interval[0]).setParameter("maxId", interval[1]).executeUpdate();
+		Long updatedElementsCount = (Long) jobExecutionResult.getJobParam("updatedElementsCount");
+		updatedElementsCount = updatedElementsCount + result;
 	}
 }

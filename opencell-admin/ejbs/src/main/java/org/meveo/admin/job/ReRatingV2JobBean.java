@@ -71,14 +71,14 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 		
 		JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
-		int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("RatingCancellationJob.processNrInJobRun", 10000000);
+		int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("ReRatingV2Job.processNrInJobRun", 10000000);
 
 		Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
 		if (nbThreads == -1) {
 			nbThreads = (long) Runtime.getRuntime().availableProcessors();
 		}
 
-		final long configuredNrPerTx = (Long) this.getParamOrCFValue(jobInstance, RatingCancellationJob.CF_INVOICE_LINES_NR_RTS_PER_TX, 100000L);
+		final long configuredNrPerTx = (Long) this.getParamOrCFValue(jobInstance, ReRatingV2Job.CF_NR_ITEMS_PER_TX, 10000);
 		
 		entityManager = emWrapper.getEntityManager();
 		statelessSession = entityManager.unwrap(Session.class).getSessionFactory().openStatelessSession();
@@ -101,7 +101,7 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 
 					@Override
 					public void initializeDecisionMaking(Object[] item) {
-						count = 1;
+						count = 0L;
 					}
 
 					@Override
@@ -125,12 +125,10 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
     	final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", reratingService.SHORT_MAX_VALUE);
     	List<List<Long>> subList = partition(reratingTree, maxValue);
     	subList.forEach(ids -> rerate(ids));
-    	
-		
 	}
 
 	private void rerate(List<Long> ids) {
-		String readWOsQuery = "FROM WalletOperation wo left join fetch wo.chargeInstance ci left join fetch wo.wallet w left join fetch w.userAccount ua left JOIN FETCH wo.edr edr WHERE wo.status='TO_RERATE' AND wo.id IN (:ids)";
+		String readWOsQuery = "FROM WalletOperation wo left join fetch wo.chargeInstance ci left join fetch wo.edr edr WHERE wo.status='TO_RERATE' AND wo.id IN (:ids)";
 		List<WalletOperation> walletOperations = entityManager.createQuery(readWOsQuery, WalletOperation.class).setParameter("ids", ids).getResultList();
 		List<Long> failedIds = new ArrayList<>();
 		walletOperations.stream().forEach(operationToRerate -> {
@@ -143,7 +141,7 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 		});
 		ids.removeAll(failedIds);
 		String updateILQuery = "UPDATE billing_wallet_operation wo SET status='RERATED', updated = CURRENT_TIMESTAMP where id in (:ids) ";
-		statelessSession.createNativeQuery(updateILQuery).setParameter("ids", ids).executeUpdate();
+		entityManager.createNativeQuery(updateILQuery).setParameter("ids", ids).executeUpdate();
 	}
 
 	/**
