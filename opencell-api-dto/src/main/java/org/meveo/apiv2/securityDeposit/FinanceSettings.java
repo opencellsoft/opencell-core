@@ -95,4 +95,10 @@ public interface FinanceSettings extends Resource {
     @Nullable
     @Schema(description = "Number of partitions to keep")
     Integer getNbPartitionsToKeep();
+    
+    @Value.Default
+    @Schema(description = "Number of elements to process in a synchronous mode")
+    default Integer getSynchronousMassActionLimit() {
+        return 10000;
+    }
 }

@@ -189,8 +189,6 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.detachFromInvoiceLines", query = "UPDATE RatedTransaction rt set rt.invoiceLine = null, rt.status = 'OPEN' WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoices", query = "UPDATE RatedTransaction r SET r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceLine=null, r.invoiceAgregateF=null WHERE r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice.id IN (:ids)) "),
         @NamedQuery(name = "RatedTransaction.reopenRatedTransactions", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null, r.invoiceLine=null where r.id IN (:rtIds)"),
-        @NamedQuery(name = "RatedTransaction.updatePendingDuplicate", query = "update RatedTransaction r set r.pendingDuplicates= r.pendingDuplicates + :pendingDuplicates, r.pendingDuplicatesToNegate= r.pendingDuplicatesToNegate + :pendingDuplicatesToNegate where r.id in (:rtI)"),
-        @NamedQuery(name = "RatedTransaction.findPendingOrNegateDuplicated", query = "Select r from RatedTransaction r where r.pendingDuplicates > 0 or r.pendingDuplicatesToNegate > 0"),
         @NamedQuery(name = "RatedTransaction.cancelRatedTransactionsByBR", query = "update RatedTransaction rt set rt.status = 'CANCELED', rt.updated = CURRENT_TIMESTAMP ,rt.invoiceLine = null, rt.invoice = null where rt.billingRun.id = :billingRunId"),
         @NamedQuery(name = "RatedTransaction.findForAppyInvoicingRuleByIds", query = "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) AND  rt.status = 'OPEN' and rt.rulesContract is not null"),
         @NamedQuery(name = "RatedTransaction.updateStatusDiscountedRT", query = "UPDATE RatedTransaction rt " +
@@ -208,13 +206,10 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.findAmountsPerSubscriptionBilledDetails", query = "SELECT rt.subscription.id, SUM(rt.amountWithoutTax) AS subscription_amount, COUNT(rt.id) FROM RatedTransaction rt WHERE rt.id in (:ids) GROUP BY rt.subscription.id ORDER BY subscription_amount DESC"),
         @NamedQuery(name = "RatedTransaction.findAmountsPerArticleBilledDetails", query = "SELECT rt.accountingArticle.id, SUM(rt.amountWithoutTax) AS article_amount, COUNT(rt.id) FROM RatedTransaction rt WHERE rt.id in (:ids) GROUP BY rt.accountingArticle.id ORDER BY article_amount DESC"),
         @NamedQuery(name = "RatedTransaction.findAmountsPerProductBilledDetails", query = "SELECT rt.serviceInstance.productVersion.product.id, SUM(rt.amountWithoutTax) AS product_amount, COUNT(rt.id) FROM RatedTransaction rt WHERE rt.id in (:ids) GROUP BY rt.serviceInstance.productVersion.product.id ORDER BY product_amount DESC"),
-        @NamedQuery(name = "RatedTransaction.findReportInitialDataDetails", query = "SELECT COUNT(DISTINCT rt), COUNT(DISTINCT rt.billingAccount), COUNT(DISTINCT rt.subscription), COUNT(DISTINCT rt.chargeInstance) FROM RatedTransaction rt WHERE rt.id in (:ids)"),
-        @NamedQuery(name = "RatedTransaction.cancelRTs", query = "UPDATE RatedTransaction set status='CANCELED', rejectReason=:rejectReason, updated=:updatedDate where id in :ids")
+        @NamedQuery(name = "RatedTransaction.findReportInitialDataDetails", query = "SELECT COUNT(DISTINCT rt), COUNT(DISTINCT rt.billingAccount), COUNT(DISTINCT rt.subscription), COUNT(DISTINCT rt.chargeInstance) FROM RatedTransaction rt WHERE rt.id in (:ids)")
 })
 
 @NamedNativeQueries({
-        @NamedNativeQuery(name = "RatedTransaction.rtSummaryForRerating", query = "select rt.id, rt.status, rt.amount_without_tax, rt.amount_with_tax, rt.amount_tax, rt.quantity, rt.invoice_line_id, il.status as ilstatus, il.billing_run_id from {h-schema}billing_rated_transaction rt left join {h-schema}billing_invoice_line il on rt.invoice_line_id=il.id where rt.status<>'CANCELED' and rt.id in :rtIds"),
-    
         @NamedNativeQuery(name = "RatedTransaction.massUpdateWithDiscountedRT", query = "update {h-schema}billing_rated_transaction rt set discounted_ratedtransaction_id=discountedWO.rated_transaction_id , updated=now() from {h-schema}billing_wallet_operation discountWO, {h-schema}billing_wallet_operation discountedWO where discountWO.rated_transaction_id=rt.id and discountWO.discounted_wallet_operation_id=discountedWO.id and rt.status='OPEN' and rt.discounted_ratedtransaction_id is null and discountWO.id>=:minId and discountWO.id<=:maxId"),
         @NamedNativeQuery(name = "RatedTransaction.massUpdateWithDiscountedRTOracle", query = "UPDATE (SELECT rt.discounted_ratedtransaction_id, rt.updated FROM {h-schema}billing_rated_transaction rt, {h-schema}billing_wallet_operation discountWO, {h-schema}billing_wallet_operation discountedWO where discountWO.rated_transaction_id=rt.id and discountWO.discounted_wallet_operation_id=discountedWO.id and rt.status='OPEN' and rt.discounted_ratedtransaction_id is null and discountWO.id>=:minId and discountWO.id<=:maxId) SET rt.discounted_ratedtransaction_id=discountedWO.rated_transaction_id , updated=now()"),
 
@@ -687,12 +682,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
   	@Column(name = "sequence")
   	private Integer sequence;
 
-    @Column(name = "pending_duplicates")
-    private Integer pendingDuplicates = 0;
-
-    @Column(name = "pending_duplicates_to_negate")
-    private Integer pendingDuplicatesToNegate = 0;
-    
     @Column(name = "business_key")
     private String businessKey;
     
@@ -919,8 +908,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountedAmount = rateTransactionToDuplicate.getDiscountedAmount();
         this.sequence = rateTransactionToDuplicate.getSequence();
         this.rulesContract = rateTransactionToDuplicate.getRulesContract();
-        this.pendingDuplicates = 0;
-        this.pendingDuplicatesToNegate = 0;
         this.businessKey = rateTransactionToDuplicate.getBusinessKey();
     }
     
@@ -1877,22 +1864,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setTradingCurrency(TradingCurrency tradingCurrency) {
 		this.tradingCurrency = tradingCurrency;
 	}
-
-    public Integer getPendingDuplicates() {
-        return pendingDuplicates;
-    }
-
-    public void setPendingDuplicates(Integer pendingDuplicates) {
-        this.pendingDuplicates = pendingDuplicates;
-    }
-
-    public Integer getPendingDuplicatesToNegate() {
-        return pendingDuplicatesToNegate;
-    }
-
-    public void setPendingDuplicatesToNegate(Integer pendingDuplicatesToNegate) {
-        this.pendingDuplicatesToNegate = pendingDuplicatesToNegate;
-    }
 
 	public String getBusinessKey() {
 		return businessKey;
