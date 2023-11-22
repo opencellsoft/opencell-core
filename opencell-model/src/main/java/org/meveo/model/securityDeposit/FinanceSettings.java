@@ -213,4 +213,3 @@ public class FinanceSettings extends BusinessEntity {
 		this.synchronousMassActionLimit = synchronousMassActionLimit;
 	}
 }
-}

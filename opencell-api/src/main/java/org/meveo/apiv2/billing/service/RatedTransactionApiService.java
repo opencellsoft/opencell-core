@@ -235,15 +235,11 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 				throw new BusinessException("Job DuplicateRatedTransactionJob is already running. Please, wait until it is done before trying again.");
 			}
 
-			if (duplicateRatedTransactionJob.getCfValues() == null) {
-				duplicateRatedTransactionJob.setCfValues(new CustomFieldValues());
-			}
-
 			Map<String, Object> jobParams = new HashMap<>();
 			jobParams.put("DuplicateRatedTransactionJob_negateAmount", negateAmount);
-            jobParams.put("DuplicateRatedTransactionJob_advancedParameters", filters);
-            duplicateRatedTransactionJob.setRunTimeValues(jobParams);
-            
+			jobParams.put("DuplicateRatedTransactionJob_advancedParameters", filters);
+			duplicateRatedTransactionJob.setRunTimeValues(jobParams);
+
 			jobExecutionService.executeJob(duplicateRatedTransactionJob, jobParams, API);
 			result.getActionStatus().setMessage("Job DuplicateRatedTransactionJob launched");
 		}
