@@ -549,15 +549,27 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * Initialize cache record for a given job instance. According to Infinispan documentation in clustered mode one node is treated as primary node to manage a particular key
      * 
      * @param jobInstance Job instance
+     * @param preserveCurrentStatus Should existing job status be preserved - in case when user modifies job parameters while job is running
      */
-    public void addUpdateJobInstance(JobInstance jobInstance) {
+    public void addUpdateJobInstance(JobInstance jobInstance, boolean preserveCurrentStatus) {
 
         final Long jobInstanceId = jobInstance.getId();
         final String jobInstanceCode = jobInstance.getCode();
+        final String currentNode = EjbUtils.getCurrentClusterNode();
+        
         SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = (jobInstIdFullKey, jobExecutionStatusOld) -> {
 
             if (jobExecutionStatusOld != null) {
-                return jobExecutionStatusOld;
+
+                if (preserveCurrentStatus) {
+                    return jobExecutionStatusOld;
+                    
+                } else {
+                    JobExecutionStatus jobExecutionStatus = jobExecutionStatusOld.clone();
+                    jobExecutionStatus.markAsFinished(currentNode);
+
+                    return jobExecutionStatus;
+                }
             } else {
                 return new JobExecutionStatus(jobInstanceId, jobInstanceCode);
             }
@@ -618,7 +630,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         List<JobInstance> jobInsances = jobInstanceService.list();
         for (JobInstance jobInstance : jobInsances) {
-            addUpdateJobInstance(jobInstance);
+            addUpdateJobInstance(jobInstance, false);
         }
 
         log.debug("End populating Job cache of Provider {} with {} jobs.", CurrentUserProvider.getCurrentTenant(), jobInsances.size());
