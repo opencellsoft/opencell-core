@@ -13,8 +13,12 @@ import javax.ejb.Singleton;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
+import org.meveo.service.job.Job;
+import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.job.ScopedJob;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
 import org.meveo.service.medina.impl.CDRService;
@@ -36,6 +40,8 @@ public class CDRReprocessingReader implements ICdrReader, Serializable {
 
     @Inject
     private CDRService cdrService;
+    @Inject
+    private JobInstanceService jobInstanceService;
 
     private String batchName;
     private String username;
@@ -97,13 +103,13 @@ public class CDRReprocessingReader implements ICdrReader, Serializable {
     }
 
     @Override
-    public void init(String originBatch) {
+    public void init(String originBatch, JobInstance jobInstance) {
         batchName = originBatch;
         try {
-            List<CDR> cdrs = cdrService.getCDRsToReprocess();
+            Integer jobItemsLimit = jobInstanceService.getJobItemsLimit(jobInstance);
+            List<CDR> cdrs = cdrService.getCDRsToReprocess(jobItemsLimit != null ? jobItemsLimit : 0);
             totalNumberOfRecords = cdrs.size();
             cdrIterator = new SynchronizedIterator<CDR>(cdrs);
-
         } catch (Exception ex) {
             log.error("Failed to read cdrs to reprocess from DB", ex);
             throw (ex);

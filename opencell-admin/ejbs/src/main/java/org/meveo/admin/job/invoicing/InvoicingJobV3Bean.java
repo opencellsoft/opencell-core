@@ -54,6 +54,7 @@ import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.job.JobInstanceService;
 
 @Stateless
 public class InvoicingJobV3Bean extends BaseJobBean {
@@ -70,6 +71,8 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 	private IteratorBasedJobProcessing iteratorBasedJobProcessing;
 	@Inject
 	private BillingRunExtensionService billingRunExtensionService;
+	@Inject
+	private JobInstanceService jobInstanceService;
 	private static BigDecimal amountTax = ZERO;
 	private static BigDecimal amountWithTax = ZERO;
 	private static BigDecimal amountWithoutTax = ZERO;
@@ -118,8 +121,8 @@ public class InvoicingJobV3Bean extends BaseJobBean {
 			filters.put("status", INVOICE_LINES_CREATED);
 		}
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
-		paginationConfiguration
-				.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
+		paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
+		paginationConfiguration.setLimit(jobInstanceService.getJobItemsLimit(jobInstance));
 		List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
 		return billingRuns;
 	}

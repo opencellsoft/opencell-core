@@ -36,11 +36,13 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.admin.job.ReRatingJob;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -57,6 +59,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ReratingTargetEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -458,8 +461,27 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return nrOfWosToRerate;
     }
 
-    public List<Long> listToRerate() {
-        return getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class).getResultList();
+    public List<Long> listToRerate(String reratingTarget, List<Long> targetBatches, int nbToRetrieve) {
+        // null | ALL
+        TypedQuery<Long> query = getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class);
+        if (ReratingTargetEnum.NO_BATCH.name().equals(reratingTarget)) {
+            query = getEntityManager().createNamedQuery("WalletOperation.listToRerateNoBatch", Long.class);
+        } else if (ReratingTargetEnum.WITH_BATCH.name().equals(reratingTarget)) {
+            if (CollectionUtils.isNotEmpty(targetBatches)) {
+                targetBatches = getEntityManager().createNamedQuery("BatchEntity.listBatchEntities", Long.class)
+                        .setParameter("ids", targetBatches).setParameter("targetJob", ReRatingJob.class.getSimpleName())
+                        .getResultList();
+                if (CollectionUtils.isNotEmpty(targetBatches)) {
+                    query = getEntityManager().createNamedQuery("WalletOperation.listToRerateWithBatches", Long.class)
+                            .setParameter("targetBatches", targetBatches);
+                }
+            }
+            query = getEntityManager().createNamedQuery("WalletOperation.listToRerateAllBatches", Long.class);
+        }
+        if (nbToRetrieve > 0) {
+            query = query.setMaxResults(nbToRetrieve);
+        }
+        return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
