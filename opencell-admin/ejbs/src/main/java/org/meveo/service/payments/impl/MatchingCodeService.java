@@ -815,29 +815,32 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                         || accountOperation instanceof OtherCreditAndCharge)
                 .findFirst()
                 .orElse(null);
-        PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(payment.getReference());
-        if (payment != null && paymentHistory != null) {
-            List<Long> aoIdsToPay = operationIds.stream().filter(aoId -> !aoId.equals(payment.getId())).collect(toList());
-            if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
-                List<AccountOperation> aoToPay = new ArrayList<>();
-                for (Long aoId : aoIdsToPay) {
-                    aoToPay.add(accountOperationService.findById(aoId));
-                }
-                for (AccountOperation ao : aoToPay) {
-                    if (ao != null) {
-                        if (ao.getPaymentHistories() == null) {
-                            ao.setPaymentHistories(new ArrayList<>());
-                        }
-                        ao.getPaymentHistories().add(paymentHistory);
+		
+        if (payment != null && payment.getReference() != null) {
+			PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(payment.getReference());
+			if (paymentHistory != null) {
+				List<Long> aoIdsToPay = operationIds.stream().filter(aoId -> !aoId.equals(payment.getId())).collect(toList());
+				if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
+					List<AccountOperation> aoToPay = new ArrayList<>();
+					for (Long aoId : aoIdsToPay) {
+						aoToPay.add(accountOperationService.findById(aoId));
+					}
+					for (AccountOperation ao : aoToPay) {
+						if (ao != null) {
+							if (ao.getPaymentHistories() == null) {
+								ao.setPaymentHistories(new ArrayList<>());
+							}
+							ao.getPaymentHistories().add(paymentHistory);
 
-                        if (paymentHistory.getListAoPaid() == null) {
-                            paymentHistory.setListAoPaid(new ArrayList<>());
-                        }
-                        paymentHistory.getListAoPaid().add(ao);
-                    }
-                }
-            }
-        }
+							if (paymentHistory.getListAoPaid() == null) {
+								paymentHistory.setListAoPaid(new ArrayList<>());
+							}
+							paymentHistory.getListAoPaid().add(ao);
+						}
+					}
+				}
+			}
+		}
 
 
         if (balance.compareTo(ZERO) == 0) {
