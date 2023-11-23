@@ -101,4 +101,16 @@ public interface FinanceSettings extends Resource {
     default Integer getSynchronousMassActionLimit() {
         return 10000;
     }
+
+    @Nullable
+    @Schema(description = "Wallet Operation partition Period in Months")
+    Integer getWoPartitionPeriod();
+
+    @Nullable
+    @Schema(description = "Rated Transaction partition Period in Months")
+    Integer getRtPartitionPeriod();
+
+    @Nullable
+    @Schema(description = "EDR partition Period in Months")
+    Integer getEdrPartitionPeriod();
 }
