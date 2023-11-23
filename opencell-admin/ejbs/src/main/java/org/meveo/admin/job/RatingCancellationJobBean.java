@@ -128,7 +128,6 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 
 		markCanceledWOs("t", min, max);
 		markCanceledWOs("d", min, max);
-		entityManager.flush();
 	}
 	
 	/**

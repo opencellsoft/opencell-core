@@ -50,10 +50,10 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
         String readQuery = (String) jobExecutionResult.getJobParam(PARAM_READ_INTERVAL_QUERY);
         Object[] result=null;
         if(!StringUtils.isEmpty(readQuery)){
-        	result= (Object[]) emWrapper.getEntityManager().createQuery(readQuery).getSingleResult();
+        	result= (Object[]) emWrapper.getEntityManager().createNativeQuery(readQuery).getSingleResult();
         }
-		Long minId = result != null ? (Long)result[0] :  (Long)jobExecutionResult.getJobParam(PARAM_MIN_ID);
-		Long maxId = result != null ? (Long)result[1] : (Long) jobExecutionResult.getJobParam(PARAM_MAX_ID);
+		Long minId = result != null ? ((Number)result[0]).longValue() :  (Long)jobExecutionResult.getJobParam(PARAM_MIN_ID);
+		Long maxId = result != null ? ((Number)result[1]).longValue() :  (Long)jobExecutionResult.getJobParam(PARAM_MAX_ID);
         Long chunkSize = (Long) jobExecutionResult.getJobParam(PARAM_CHUNK_SIZE);
 
         if (minId == null || maxId == null || chunkSize == null) {
@@ -78,7 +78,7 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
     }
     
     private void writeReport(JobExecutionResultImpl jobExecutionResult) {
-    	jobExecutionResult.addReport("Total number of liked RTs :"+jobExecutionResult.getJobParam("updatedElementsCount"));
+    	jobExecutionResult.addReport("Total number of updated elements :"+jobExecutionResult.getJobParam("updatedElementsCount"));
     }
 
     /**
@@ -98,7 +98,7 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
 		}
 
 		Query query = namedQuery != null ? emWrapper.getEntityManager().createNamedQuery(namedQuery)
-				: emWrapper.getEntityManager().createQuery((updateQuery.toUpperCase().contains("WHERE") ? " AND " : " WHERE ") + tableAlias + ".id BETWEEN :minId AND :maxId");
+				: emWrapper.getEntityManager().createNativeQuery(updateQuery+(updateQuery.toUpperCase().contains("WHERE") ? " AND " : " WHERE ") + tableAlias + ".id BETWEEN :minId AND :maxId");
 
 		int result = query.setParameter("minId", interval[0]).setParameter("maxId", interval[1]).executeUpdate();
 		Long updatedElementsCount = (Long) jobExecutionResult.getJobParam("updatedElementsCount");
