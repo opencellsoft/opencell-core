@@ -213,8 +213,9 @@ public class DefaultObserver {
 
     @MeveoAudit
     public void inboundRequest(@Observes @InboundRequestReceived InboundRequest e) throws BusinessException {
-        log.debug("Defaut observer: inbound request {} ", e.getCode());
+        log.info("Defaut observer: inbound request {} {}", e.getCode(), e);
         boolean fired = checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
+        log.info("fired : {}", fired);
         e.getHeaders().put("fired", fired ? "true" : "false");
     }
 
