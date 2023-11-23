@@ -683,7 +683,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                                 try {
                                     final WalletOperation tmpWalletOperation = bareWalletOperation;
                                     PricePlanMatrixLine pricePlanMatrixLine = methodCallingUtils.callCallableInNewTx( () -> pricePlanMatrixVersionService.loadPrices(ppmVersion, tmpWalletOperation));
-                                    unitPriceWithoutTax = pricePlanMatrixLine.getValue();
+                                    unitPriceWithoutTax = pricePlanMatrixLine != null ? pricePlanMatrixLine.getValue() : ppmVersion.getPrice();
                                     if (pricePlan.getScriptInstance() != null) {
                                     	log.debug("start to execute script instance for ratePrice {}", pricePlan);
                                     	executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
@@ -741,7 +741,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
                             if (ppmVersion != null) {
                                  pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
-                                 discountRate= pricePlanMatrixLine.getValue();
+                                 discountRate= pricePlanMatrixLine != null ? pricePlanMatrixLine.getValue() : ppmVersion.getPrice();
                                  if(discountRate!=null){
                                      amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                                     if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !seperateDiscount)

@@ -75,7 +75,7 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 				}
 				break;
 			default:
-				this.stringValue = value.toString();
+				this.stringValue = value != null ? value.toString() : null;
 				break;
 			}
 		}
