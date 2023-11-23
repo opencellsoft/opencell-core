@@ -1053,6 +1053,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             } else {
                 thresholdAmounts.put(invoiceId, amounts.clone());
             }
+        }else{
+			log.warn("entity id: {}, invoice id : {}, and amount : [{}] can be lost ", entityId, invoiceId, amounts);
         }
     }
 
