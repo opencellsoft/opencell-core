@@ -27,7 +27,10 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                 .maxAmountPerCustomer(entity.getMaxAmountPerCustomer())
                 .autoRefund(entity.isAutoRefund())
                 .activateDunning(entity.isActivateDunning())
-                .nbPartitionsToKeep(entity.getNbPartitionsToKeep());
+                .nbPartitionsToKeep(entity.getNbPartitionsToKeep())
+                .woPartitionPeriod(entity.getWoPartitionPeriod())
+                .rtPartitionPeriod(entity.getRtPartitionPeriod())
+                .edrPartitionPeriod(entity.getEdrPartitionPeriod());
         if(entity.getAuxiliaryAccounting() != null) {
             builder.useAuxiliaryAccounting(entity.getAuxiliaryAccounting().isUseAuxiliaryAccounting())
                     .auxiliaryAccountCodeEl(entity.getAuxiliaryAccounting().getAuxiliaryAccountCodeEl())
@@ -81,6 +84,9 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                                                                               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
          financeSettings.setEntitiesWithHugeVolume(hugeEntitiesSettings);
          financeSettings.setNbPartitionsToKeep(resource.getNbPartitionsToKeep());
+         financeSettings.setWoPartitionPeriod(resource.getWoPartitionPeriod());
+         financeSettings.setRtPartitionPeriod(resource.getRtPartitionPeriod());
+         financeSettings.setEdrPartitionPeriod(resource.getEdrPartitionPeriod());
          return financeSettings;
     }
 

@@ -16126,5 +16126,19 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="nb_partitions_keep" type="int4" />
         </addColumn>
     </changeSet>
+
+    <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe">
+        <addColumn tableName="finance_settings">
+            <column name="wo_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="rt_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="edr_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
