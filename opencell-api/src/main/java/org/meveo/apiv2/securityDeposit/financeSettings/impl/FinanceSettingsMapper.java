@@ -96,6 +96,7 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          financeSettings.setEntitiesWithHugeVolume(hugeEntitiesSettings);
          financeSettings.setBillingRunProcessWarning(resource.getBillingRunProcessWarning());
          financeSettings.setNbPartitionsToKeep(resource.getNbPartitionsToKeep());
+         financeSettings.setSynchronousMassActionLimit(resource.getSynchronousMassActionLimit());
          financeSettings.setWoPartitionPeriod(resource.getWoPartitionPeriod());
          financeSettings.setRtPartitionPeriod(resource.getRtPartitionPeriod());
          financeSettings.setEdrPartitionPeriod(resource.getEdrPartitionPeriod());

@@ -289,7 +289,8 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         try {
 	        setTaxClassFromAccountingArticle(walletOperation, chargeInstance);
             if (taxClass == null && chargeInstance != null) {
-                if (chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
+				taxClass = chargeInstance.getTaxClassResolved();
+                if (taxClass == null && chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
                     taxClass = evaluateTaxClassExpression(chargeInstance.getChargeTemplate().getTaxClassEl(), chargeInstance);
                 }
 				if(taxClass == null ){
