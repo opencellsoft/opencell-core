@@ -19589,6 +19589,7 @@
     <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI" />
     <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe" />
 
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
