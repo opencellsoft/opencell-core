@@ -66,6 +66,7 @@ public class RatedTransactionDiscountJob extends Job {
 				("RatedTransaction.massUpdateWithDiscountedRTStep" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")));
 		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_READ_INTERVAL_QUERY,
 				("select min(id), max(id) from RatedTransaction where status ='OPEN' and discountedRatedTransaction is null"));
+		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_NAMED_QUERY, (false));
 	}
 
 	@Override

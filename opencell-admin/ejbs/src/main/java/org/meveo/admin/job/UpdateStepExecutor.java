@@ -29,6 +29,7 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
+    public static final String PARAM_NATIVE_QUERY = "PARAM_NATIVE_QUERY";
     public static final String PARAM_MIN_ID = "minId";
     public static final String PARAM_MAX_ID = "maxId";
     public static final String PARAM_CHUNK_SIZE = "chunkSize";
@@ -91,14 +92,16 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
 		String namedQuery = (String) jobExecutionResult.getJobParam(PARAM_NAMED_QUERY);
 		String updateQuery = (String) jobExecutionResult.getJobParam(PARAM_UPDATE_QUERY);
 		String tableAlias = (String) jobExecutionResult.getJobParam(PARAM_TABLE_ALIAS);
+		boolean isNativeQuery = jobExecutionResult.getJobParam(PARAM_NATIVE_QUERY)!=null?(boolean) jobExecutionResult.getJobParam(PARAM_NATIVE_QUERY):true;
 
 		if (namedQuery == null && (tableAlias == null || updateQuery == null)) {
 			log.error("params should not be null - updateQuery: {}, tableAlias: {}, namedQuery: {}", updateQuery, tableAlias, namedQuery);
 			return;
 		}
 
+		String sqlString = (updateQuery.toUpperCase().contains("WHERE") ? " AND " : " WHERE ") + tableAlias + ".id BETWEEN :minId AND :maxId";
 		Query query = namedQuery != null ? emWrapper.getEntityManager().createNamedQuery(namedQuery)
-				: emWrapper.getEntityManager().createNativeQuery(updateQuery+(updateQuery.toUpperCase().contains("WHERE") ? " AND " : " WHERE ") + tableAlias + ".id BETWEEN :minId AND :maxId");
+				: (isNativeQuery?emWrapper.getEntityManager().createNativeQuery(updateQuery+sqlString):emWrapper.getEntityManager().createQuery(sqlString));
 
 		int result = query.setParameter("minId", interval[0]).setParameter("maxId", interval[1]).executeUpdate();
 		Long updatedElementsCount = (Long) jobExecutionResult.getJobParam("updatedElementsCount");
