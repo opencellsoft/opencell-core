@@ -8808,4 +8808,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
     
+   	<changeSet id="#INTRD-18841_20231017" author="AdilElJaouhari">
+ 		<dropColumn columnName="pending_duplicates" tableName="billing_rated_transaction" />
+		<dropColumn columnName="pending_duplicates_to_negate" tableName="billing_rated_transaction" />
+		<addColumn tableName="finance_settings">
+			<column name="synchronous_mass_action_limit" type="int4" defaultValueNumeric="10000" />
+		</addColumn>
+	</changeSet>
+    
 </databaseChangeLog>

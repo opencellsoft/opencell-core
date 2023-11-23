@@ -6,28 +6,28 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
 import static org.meveo.model.billing.RatedTransactionStatusEnum.OPEN;
 import static org.meveo.model.billing.RatedTransactionStatusEnum.REJECTED;
+import static org.meveo.model.jobs.JobLauncherEnum.API;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.meveo.api.dto.ActionStatus;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.job.JobExecutionResultDto;
-import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
-import org.meveo.api.job.JobApi;
 import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.apiv2.billing.DuplicateRTResult;
 import org.meveo.apiv2.billing.ProcessCdrListResult.Statistics;
 import org.meveo.apiv2.billing.ProcessingModeEnum;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.securityDeposit.FinanceSettings;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,10 +54,14 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	private RatedTransactionService ratedTransactionService;
 
 	@Inject
-	private JobApi jobApi;
-	@Inject
 	private JobInstanceService jobInstanceService;
-
+	
+    @Inject
+    private JobExecutionService jobExecutionService;
+	
+	@Inject
+	private FinanceSettingsService financeSettingsService;
+	
 	@Override
 	public Optional<RatedTransaction> findById(Long id) {
 		return ofNullable(ratedTransactionService.findById(id));
@@ -141,10 +145,11 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 				description, unitAmountWithoutTax, quantity, param1, param2, param3, paramExtra, usageDate, businessKey);
 	}
 
-	public Object duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount,
-			boolean returnRts, boolean startJob) {
+	public Object duplication(Map<String, Object> filters, ProcessingModeEnum mode, boolean negateAmount, boolean returnRts, boolean startJob) {
 		DuplicateRTResult result = new DuplicateRTResult();
-		int maxLimit = ParamBean.getInstance().getPropertyAsInteger("api.ratedTransaction.massAction.limit", 10000);
+		
+		FinanceSettings financeSettings = financeSettingsService.getFinanceSetting();
+		int maxLimit = financeSettings.getSynchronousMassActionLimit(); 
 
 		if(MapUtils.isEmpty(filters)) {
 			throw new InvalidParameterException("filters is required");
@@ -156,19 +161,20 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 			return result;
 		}
 
-		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(filters);
-		if(countRatedTransaction.intValue() > maxLimit) {
+		
+		if (countRatedTransaction.intValue() > maxLimit) {
 			log.info("filter for duplication has more than : {}, current rated transaction from filters are : {} . will job be lunched ? : {}",
 					maxLimit, countRatedTransaction, startJob);
-			ratedTransactionService.incrementPendingDuplicate(rtToDuplicate.stream().map(RatedTransaction::getId).collect(Collectors.toList()), negateAmount);
-			if(!startJob){
-				result.setActionStatus(new ActionStatus(ActionStatusEnum.WARNING, "The filter reach the max limit to duplicate, to duplicate these rated transaction please run the job 'DuplicationRatedTransactionJob'"));
-				return result;
-			}else{
-				return duplicateRatedTransactionWithJob();
+			if (!startJob) {
+				throw new BusinessException(String.format(
+						"Number of rated items to process exceeds synchronous limit (%d/%d). Please, use flag ‘startJob’ to force asynchronous execution.",
+						countRatedTransaction.intValue(), maxLimit));
+			} else {
+				return duplicateRatedTransactionWithJob(filters, negateAmount);
 			}
 		}
 
+		List<RatedTransaction> rtToDuplicate = ratedTransactionService.findByFilter(filters);
 		List<Long> successList = new ArrayList<>();
 		Statistics statics = result.getStatistics();
 		statics.setTotal(rtToDuplicate.size());
@@ -221,18 +227,22 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 		return result;
 	}
 
-	public JobExecutionResultResponseDto duplicateRatedTransactionWithJob(){
+	public JobExecutionResultResponseDto duplicateRatedTransactionWithJob(Map<String, Object> filters, boolean negateAmount) {
 		JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
-		JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
-		List<JobInstance> instances = jobInstanceService.findByJobTemplate("DuplicateRatedTransactionJob");
-		String currentInstance = "DuplicateRatedTransactionJob";
-		if(CollectionUtils.isNotEmpty(instances)){
-			currentInstance = instances.get(0).getCode();
+		JobInstance duplicateRatedTransactionJob = jobInstanceService.findByCode("DuplicateRatedTransactionJob");
+		if (duplicateRatedTransactionJob != null) {
+			if (!jobExecutionService.isAllowedToExecute(duplicateRatedTransactionJob)) {
+				throw new BusinessException("Job DuplicateRatedTransactionJob is already running. Please, wait until it is done before trying again.");
+			}
+
+			Map<String, Object> jobParams = new HashMap<>();
+			jobParams.put("DuplicateRatedTransactionJob_negateAmount", negateAmount);
+			jobParams.put("DuplicateRatedTransactionJob_advancedParameters", filters);
+			duplicateRatedTransactionJob.setRunTimeValues(jobParams);
+
+			jobExecutionService.executeJob(duplicateRatedTransactionJob, jobParams, API);
+			result.getActionStatus().setMessage("Job DuplicateRatedTransactionJob launched");
 		}
-		jobInstanceInfoDto.setCode(currentInstance);
-		JobExecutionResultDto jobExecution = jobApi.executeJob(jobInstanceInfoDto, false);
-		result.setJobExecutionResultDto(jobExecution);
-		result.getActionStatus().setMessage(jobExecution.getId() == null ? "NOTHING_TO_DO" : jobExecution.getId().toString());
 		return result;
 	}
 

@@ -2136,17 +2136,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return this.count(configuration);
     }
 
-    public void incrementPendingDuplicate(List<Long> rtIds, boolean isPendingNegateExist){
-        if(CollectionUtils.isEmpty(rtIds)){
-            throw new BusinessApiException("List of rated Transaction is empty");
-        }
-        Query query = this.getEntityManager().createNamedQuery("RatedTransaction.updatePendingDuplicate");
-        query.setParameter("rtI", rtIds);
-        query.setParameter("pendingDuplicatesToNegate", isPendingNegateExist ? 1 : 0);
-        query.setParameter("pendingDuplicates", isPendingNegateExist ? 0 : 1);
-        query.executeUpdate();
-    }
-
     private PaginationConfiguration getPaginationConfigurationFromFilter(Map<String, Object> filters) {
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
         filters = genericRequestMapper.evaluateFilters(filters, entityClass);
