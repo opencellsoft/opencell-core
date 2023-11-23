@@ -259,7 +259,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 return;
             }
 
-            log.info("{}/{} - {} records to process", jobInstance.getJobTemplate(), jobInstance.getCode(), jobExecutionResult.getNbItemsToProcess());
+            log.info("{}/{} - {} records to process by main node", jobInstance.getJobTemplate(), jobInstance.getCode(), jobExecutionResult.getNbItemsToProcess());
 
         } else {
 
@@ -274,8 +274,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
-        // A value of data publishers might come from a Custom Field or calculated dynamically based on number of nodes in a cluster
-        Long nbPublishers = (Long) getParamOrCFValue(jobInstance, Job.CF_NB_PUBLISHERS, 0L);
+        Long nbPublishers = null;
 
         List<Future> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
@@ -298,6 +297,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             // Create publishing data to the job processing queue tasks if data processing is spread over a cluster
             if (isRunningAsJobManager && spreadOverCluster) {
 
+                // A value of data publishers might come from a Custom Field or calculated dynamically based on number of nodes in a cluster
+                nbPublishers = (Long) getParamOrCFValue(jobInstance, Job.CF_NB_PUBLISHERS, 0L);
                 if (nbPublishers == null || nbPublishers < 1) {
                     // Number of data publishing tasks is half of the cluster members or the number of nodes that job can run on
                     int nrOfNodes = jobInstance.getRunOnNodes() != null ? jobInstance.getRunOnNodes().split(",").length : channel.getView().getMembers().size();
@@ -338,7 +339,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             // Launch main publishing and processing tasks
             int i = 0;
             for (Runnable task : tasks) {
-                log.info("{}/{} Will submit data {} task #{} to run", jobInstance.getJobTemplate(), jobInstance.getCode(), i < nbPublishers ? "publishing" : "processing", i++);
+                log.info("{}/{} Will submit data {} task #{} to run", jobInstance.getJobTemplate(), jobInstance.getCode(), nbPublishers != null && i < nbPublishers ? "publishing" : "processing", i++);
                 futures.add(executor.submit(task));
                 try {
                     Thread.sleep(waitingMillis.longValue());
@@ -364,7 +365,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     future.get();
 
                     // Send EOF message to a queue once all data publishing tasks are finished
-                    if (!wasKilled && i == nbPublishers - 1) {
+                    if (!wasKilled && nbPublishers != null && i == nbPublishers - 1) {
                         methodCallingUtils.callMethodInNoTx(() -> sendEOFMessageToAQueue(jobQueue));
                     }
 
