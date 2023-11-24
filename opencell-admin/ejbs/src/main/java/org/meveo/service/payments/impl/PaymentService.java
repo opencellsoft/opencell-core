@@ -614,63 +614,65 @@ public class PaymentService extends PersistenceService<Payment> {
             if (StringUtils.isBlank(paymentId)) {
                 throw new BusinessException("paymentId is required");
             }
-            AccountOperation accountOperation = accountOperationService.findByReference(paymentId);
+            AccountOperation aoPaymentToReject = accountOperationService.findByReference(paymentId);
 
-            if (accountOperation == null) {
+            if (aoPaymentToReject == null) {
                 throw new BusinessException("Payment " + paymentId + " not found");
             }
-            if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L && accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
+            if (aoPaymentToReject.getMatchingStatus() != MatchingStatusEnum.L  && aoPaymentToReject.getMatchingStatus() != MatchingStatusEnum.P) {
                 throw new BusinessException("CallBack unexpected  for payment " + paymentId);
             }
             if (PaymentStatusEnum.ACCEPTED == paymentStatus) {
                 log.debug("Payment ok, nothing to do.");
             } else {
                 String occTemplateCode = null;
-                List<AccountOperation> listAoThatSupposedPaid = getAccountOperationThatWasPaid(accountOperation);
-                if (accountOperation instanceof AutomatedRefund || accountOperation instanceof Refund) {
-                    if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
+                List<AccountOperation> listAoThatSupposedPaid = getAccountOperationThatWasPaid(aoPaymentToReject);
+                log.info("listAoThatSupposedPaid : {}",listAoThatSupposedPaid);
+                if (aoPaymentToReject instanceof AutomatedRefund || aoPaymentToReject instanceof Refund) {
+                    if (PaymentMethodEnum.CARD == aoPaymentToReject.getPaymentMethod()) {
                         occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "REJ_RCR");
                     } else {
                         occTemplateCode = paramBean.getProperty("occ.rejectedRefund.dd", "REJ_RDD");
                     }
-                } else if (accountOperation instanceof Payment) {
-                    if (PaymentMethodEnum.CARD == accountOperation.getPaymentMethod()) {
+                } else if (aoPaymentToReject instanceof Payment) {
+                    if (PaymentMethodEnum.CARD == aoPaymentToReject.getPaymentMethod()) {
                         occTemplateCode = paramBean.getProperty("occ.rejectedPayment.card", "REJ_CRD");
                     } else {
                         occTemplateCode = paramBean.getProperty("occ.rejectedPayment.dd", "REJ_DDT");
                     }
                 }
 
-                OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
-                if (occTemplate == null) {
-                    throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
-                }
-                CustomerAccount ca = accountOperation.getCustomerAccount();
-                Long aoPaymentIdWasRejected = accountOperation.getId();
+				OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
+				if (occTemplate == null) {
+					throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
+				}
+				CustomerAccount ca = aoPaymentToReject.getCustomerAccount();
+				for (AccountOperation aoWasPaid : listAoThatSupposedPaid) {
 
-                matchingCodeService.unmatchingByAOid(aoPaymentIdWasRejected);
+					matchingCodeService.unmatchingByAOid(aoWasPaid.getId());
+				}
 
                 RejectedPayment rejectedPayment = new RejectedPayment();
                 rejectedPayment.setType("R");
                 rejectedPayment.setMatchingAmount(BigDecimal.ZERO);
                 rejectedPayment.setMatchingStatus(MatchingStatusEnum.O);
-                rejectedPayment.setUnMatchingAmount(accountOperation.getUnMatchingAmount());
-                rejectedPayment.setAmount(accountOperation.getUnMatchingAmount());
+                rejectedPayment.setUnMatchingAmount(aoPaymentToReject.getUnMatchingAmount());
+                rejectedPayment.setAmount(aoPaymentToReject.getUnMatchingAmount());
                 rejectedPayment.setReference("r_" + paymentId);
                 rejectedPayment.setCustomerAccount(ca);
                 rejectedPayment.setAccountingCode(occTemplate.getAccountingCode());
                 rejectedPayment.setCode(occTemplate.getCode());
                 rejectedPayment.setDescription(occTemplate.getDescription());
                 rejectedPayment.setTransactionCategory(occTemplate.getOccCategory());
-                rejectedPayment.setAccountCodeClientSide(accountOperation.getAccountCodeClientSide());
-                rejectedPayment.setPaymentMethod(accountOperation.getPaymentMethod());
-                rejectedPayment.setTaxAmount(accountOperation.getTaxAmount());
-                rejectedPayment.setAmountWithoutTax(accountOperation.getAmountWithoutTax());
-                rejectedPayment.setOrderNumber(accountOperation.getOrderNumber());
+                rejectedPayment.setAccountCodeClientSide(aoPaymentToReject.getAccountCodeClientSide());
+                rejectedPayment.setPaymentMethod(aoPaymentToReject.getPaymentMethod());
+                rejectedPayment.setTaxAmount(aoPaymentToReject.getTaxAmount());
+                rejectedPayment.setAmountWithoutTax(aoPaymentToReject.getAmountWithoutTax());
+                rejectedPayment.setOrderNumber(aoPaymentToReject.getOrderNumber());
                 rejectedPayment.setRejectedType(RejectedType.A);
                 rejectedPayment.setRejectedDate(new Date());
                 rejectedPayment.setTransactionDate(new Date());
-                rejectedPayment.setDueDate(accountOperation.getDueDate());
+                rejectedPayment.setDueDate(aoPaymentToReject.getDueDate());
                 rejectedPayment.setRejectedDescription(errorMessage);
                 rejectedPayment.setRejectedCode(errorCode);
                 rejectedPayment.setListAaccountOperationSupposedPaid(listAoThatSupposedPaid);
@@ -682,7 +684,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 Long oARejectPaymentID = rejectedPayment.getId();
 
                 List<Long> aos = new ArrayList<>();
-                aos.add(aoPaymentIdWasRejected);
+                aos.add(aoPaymentToReject.getId());
                 aos.add(oARejectPaymentID);
 
                 matchingCodeService.matchOperations(ca.getId(), null, aos, null);
@@ -713,14 +715,18 @@ public class PaymentService extends PersistenceService<Payment> {
             return null;
         }
         List<AccountOperation> listAoThatSupposedPaid = new ArrayList<AccountOperation>();
+        log.info("paymentOrRefund.reference:{}",paymentOrRefund.getReference());
         List<MatchingAmount> matchingAmounts = paymentOrRefund.getMatchingAmounts();
-        log.trace("matchingAmounts:" + matchingAmounts);
-        for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
-            log.trace("ma.getAccountOperation() id:{} , occ code:{}", ma.getAccountOperation().toString(), ma.getAccountOperation().getCode());
-            if (!(ma.getAccountOperation() instanceof Payment) && !(ma.getAccountOperation() instanceof Refund) && !(ma.getAccountOperation() instanceof RejectedPayment) ) {
-                listAoThatSupposedPaid.add(ma.getAccountOperation());
-            }
-        }
+        log.debug("matchingAmounts:{}" , matchingAmounts);
+        for(MatchingAmount maPay : matchingAmounts) {        	  
+        	 for (MatchingAmount ma : maPay.getMatchingCode().getMatchingAmounts()) {
+                 log.debug("ma.getAccountOperation() id:{} , occ code:{}", ma.getAccountOperation().toString(), ma.getAccountOperation().getCode());
+                 if (!(ma.getAccountOperation() instanceof Payment) && !(ma.getAccountOperation() instanceof Refund) && !(ma.getAccountOperation() instanceof RejectedPayment) ) {
+                     listAoThatSupposedPaid.add(ma.getAccountOperation());
+                 }
+             }
+        }      
+        
         if (listAoThatSupposedPaid.isEmpty()) {
             throw new BusinessException("Cant find invoice account operation to unmatching");
         }
