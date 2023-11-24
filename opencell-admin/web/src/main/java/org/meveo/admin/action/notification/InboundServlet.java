@@ -85,19 +85,16 @@ public class InboundServlet extends HttpServlet {
     private void doService(HttpServletRequest req, HttpServletResponse res) {
         
         try {
-        	
-        	log.info("HttpServletRequest : {} HttpServletResponse {}", req, res);
 
             ParamBean param = paramBeanFactory.getInstance();
             boolean authorizationDisabled = "true".equalsIgnoreCase(param.getProperty("inbound.authorization.disabled", "false"));
+
             boolean isUserInRole = isUserInRole(req);
 
             boolean processRequest = authorizationDisabled || isUserInRole;
-            
-            log.info("processRequest : {} authorizationDisabled {} isUserInRole {} ", processRequest, authorizationDisabled, isUserInRole);
 
             String path = req.getPathInfo();
-            log.info("received request for method {} , path={}", req.getMethod(), path);
+            log.debug("received request for method {} , path={}", req.getMethod(), path);
 
             auditOrigin.setAuditOrigin(ChangeOriginEnum.INBOUND_REQUEST);
             auditOrigin.setAuditOriginName(path);
@@ -128,12 +125,9 @@ public class InboundServlet extends HttpServlet {
             
             if(processRequest) {
                 // process the notifications
-            	
-            	log.info("processRequest");
-            	
                 status = processNotificationAndReturnStatus(inReq, status);
     
-                log.info("triggered {} notification, resp body= {}", inReq.getNotificationHistories().size(), inReq.getResponseBody());
+                log.debug("triggered {} notification, resp body= {}", inReq.getNotificationHistories().size(), inReq.getResponseBody());
                 // ONLY ScriptNotifications will produce notification history in
                 // synchronous mode. Other type notifications will produce notification
                 // history in asynchronous mode and thus
@@ -156,7 +150,7 @@ public class InboundServlet extends HttpServlet {
 
             inboundRequestService.update(inReq);
 
-            log.info("Inbound request finished with status {}", res.getStatus());
+            log.debug("Inbound request finished with status {}", res.getStatus());
 
         } catch (BusinessException | IOException e) {
             log.error("Failed to process Inbound request ", e);

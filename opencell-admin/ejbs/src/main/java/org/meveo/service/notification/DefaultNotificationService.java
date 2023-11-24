@@ -209,17 +209,16 @@ public class DefaultNotificationService {
     public boolean fireNotification(Notification notif, Object entityOrEvent) throws BusinessException {
 
         if (notif == null) {
-        	log.info("notif is null");
             return false;
         }
 
         try {
             if (!matchExpression(notif.getElFilter(), entityOrEvent)) {
-				log.info("Expression {} does not match", notif.getElFilter());
+//				log.debug("Expression {} does not match", notif.getElFilter());
                 return false;
             }
 
-            log.info("Fire Notification for notif with {} and entity with id={}", notif, extractId(entityOrEvent));
+            log.debug("Fire Notification for notif with {} and entity with id={}", notif, extractId(entityOrEvent));
 
             boolean sendNotify = true;
             // Check if the counter associated to notification was not exhausted yet
@@ -233,14 +232,12 @@ public class DefaultNotificationService {
             }
 
             if (!sendNotify) {
-            	log.info("sendNotify is false");
                 return false;
             }
 
             Map<String, Object> context = new HashMap<>();
             // Rethink notif and script - maybe create pre and post script
             if (!(notif instanceof WebHook) && notif.getScriptInstance() != null) {
-            	log.info("executeScript {} {} {}", notif.getScriptInstance(), notif.getParams(), context);
                 executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context);
             }
 
