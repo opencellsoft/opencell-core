@@ -230,13 +230,12 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(getAccountingCode(), getAnalyticCode1(), getAnalyticCode2(), getAnalyticCode3(),
-				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass(), getUnitPrice(), getInvoiceType(), getInvoiceTypeEl(), getColumnCriteriaEL());
-		return result;
-	}
+   	public int hashCode() {
+   		final int prime = 31;
+   		int result = super.hashCode();
+   		result = prime * result;
+   		return result;
+   	}
 
 	@Override
 	public boolean equals(Object obj) {
