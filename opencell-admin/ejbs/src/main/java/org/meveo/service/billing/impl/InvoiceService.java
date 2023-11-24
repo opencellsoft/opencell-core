@@ -4592,7 +4592,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
         invoiceAgregateTax.setBillingAccount(billingAccount);
         invoiceAgregateTax.setAuditable(auditable);
-        invoice.addInvoiceAggregate(invoiceAgregateTax);
+        //invoice.addInvoiceAggregate(invoiceAgregateTax);
         return invoiceAgregateTax;
     }
 
