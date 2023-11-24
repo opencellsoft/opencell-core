@@ -254,7 +254,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     }
     
     public InvoiceLine createInvoiceLineWithInvoice(InvoiceLine entity, Invoice invoice, boolean isDuplicated) throws BusinessException {
-    	invoice = invoiceService.refreshOrRetrieve(invoice);
         AccountingArticle accountingArticle=entity.getAccountingArticle();
         Date date=new Date();
         if(entity.getValueDate()!=null) {
