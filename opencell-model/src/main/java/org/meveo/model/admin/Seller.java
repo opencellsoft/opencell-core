@@ -45,6 +45,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.GeneralLedger;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -180,6 +181,13 @@ public class Seller extends AccountEntity implements IWFEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "general_ledger_id")
     private GeneralLedger generalLedger;
+    
+    
+    /**
+     * Bank coordinates
+     */
+    @Embedded
+    private BankCoordinates bankCoordinates = new BankCoordinates();
 
     public Seller() {
         accountType = ACCOUNT_TYPE;
@@ -428,4 +436,13 @@ public class Seller extends AccountEntity implements IWFEntity {
     public void setGeneralLedger(GeneralLedger generalLedger) {
         this.generalLedger = generalLedger;
     }
+
+	public BankCoordinates getBankCoordinates() {
+		return bankCoordinates;
+	}
+
+	public void setBankCoordinates(BankCoordinates bankCoordinates) {
+		this.bankCoordinates = bankCoordinates;
+	}
+    
 }

@@ -83,6 +83,7 @@ import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.CalendarBankingService;
 import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -164,6 +165,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	private DDRequestLOTService ddRequestLOTService = (DDRequestLOTService) EjbUtils.getServiceInterface(DDRequestLOTService.class.getSimpleName());
 	private DDRequestItemService ddRequestItemService = (DDRequestItemService) EjbUtils.getServiceInterface(DDRequestItemService.class.getSimpleName());	
 	private CustomerAccountService customerAccountService = (CustomerAccountService) EjbUtils.getServiceInterface(CustomerAccountService.class.getSimpleName());
+	private SellerService sellerService = (SellerService) EjbUtils.getServiceInterface(SellerService.class.getSimpleName());
 	
 	
 
@@ -178,7 +180,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
 	@Override
 	public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
-		ddRequestLot = ddRequestLOTService.findById(ddRequestLot.getId(), Arrays.asList("ddrequestItems"));
+		ddRequestLot = ddRequestLOTService.findById(ddRequestLot.getId(), Arrays.asList("ddrequestItems","seller"));
 		if (ddRequestLot.getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.DEBIT) {
 			generateDDRequestLotFileForSSD(ddRequestLot, appProvider);
 		} else {
@@ -255,7 +257,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		try {
 			ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
 			String fileName = fileNamePrefix + ddRequestLot.getId();
-			Seller seller = ddRequestLot.getSeller();
+			Seller seller = sellerService.refreshOrRetrieve(ddRequestLot.getSeller());
 			if (seller != null) {
 				fileName = fileName + UNDERSCORE_SEPARATOR + seller.getCode();
 			} else {
@@ -440,6 +442,15 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
 		if (bankCoordinates == null) {
 			throw new BusinessException("Missing bank information on provider or seller");
+		}
+		if (org.meveo.commons.utils.StringUtils.isBlank(bankCoordinates.getIban()) ) {
+			throw new BusinessException("Missing Iban on provider or seller");
+		}
+		if (org.meveo.commons.utils.StringUtils.isBlank(bankCoordinates.getIcs()) ) {
+			throw new BusinessException("Missing ICS on provider or seller");
+		}
+		if (org.meveo.commons.utils.StringUtils.isBlank(bankCoordinates.getBic()) ) {
+			throw new BusinessException("Missing BIC on provider or seller");
 		}
 		PartyIdentification32 creditor = new PartyIdentification32();
 		if (dDRequestItem.getDdRequestLOT().getSeller() != null) {
@@ -701,14 +712,9 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		return matcher.matches();
 	}
 
-	private BankCoordinates getBankCoordinates(DDRequestLOT ddRequestLOT, Provider appProvider) throws BusinessException {
-		if (ddRequestLOT.getSeller() != null) {
-			PaymentGatewayService paymentGatewayService = (PaymentGatewayService) getServiceInterface("PaymentGatewayService");
-			PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(ddRequestLOT.getSeller(), PaymentMethodEnum.DIRECTDEBIT);
-			if (paymentGateway == null) {
-				throw new BusinessException("Cant find payment gateway for seller : " + ddRequestLOT.getSeller());
-			}
-			return paymentGateway.getBankCoordinates();
+	private BankCoordinates getBankCoordinates(DDRequestLOT ddRequestLOT, Provider appProvider)  {
+		if (ddRequestLOT.getSeller() != null) {			
+			return ddRequestLOT.getSeller().getBankCoordinates();
 		} else {
 			return appProvider.getBankCoordinates();
 		}
