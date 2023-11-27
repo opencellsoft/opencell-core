@@ -8719,6 +8719,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="report_final" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#INTRD-19462_20231115" author="TarikFA.">
+        <addColumn tableName="billing_invoice">
+            <column name="certificate_uncollectibility_number" type="varchar(50)" />
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#INTRD-19322_add_aggre_fields" author="anas.rouaguebe">
         <addColumn tableName="billing_invoice_line">

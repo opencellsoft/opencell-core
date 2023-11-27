@@ -3239,6 +3239,7 @@
             <column name="ubl_reference" type="${type.boolean}" defaultValueNumeric="0" />
 			<column name="sips_batch_archive_name" type="varchar(255)" />
             <column name="pdp_status_id" type="bigint" />
+            <column name="certificate_uncollectibility_number" type="varchar(50)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -21098,6 +21099,7 @@
     <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe" />
     <changeSet id="#INTRD-18841_20231017" author="AdilElJaouhari" />
     <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe" />
+    <changeSet id="#INTRD-19462_20231115" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
