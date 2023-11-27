@@ -8724,5 +8724,9 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="fields"  type="varchar(255)"/>
         </createTable>
     </changeSet>
+    
+    <changeSet id="#INTRD-19614_20231127" author="AdilElJaouhari">
+        <sql>CREATE INDEX idx_job_execution_parent_job_result_id ON ${db.schema.adapted}job_execution(parent_job_result_id)</sql>
+    </changeSet>
 
 </databaseChangeLog>
