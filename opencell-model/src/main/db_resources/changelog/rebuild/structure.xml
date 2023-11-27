@@ -18038,6 +18038,7 @@
         <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
         <sql>create index idx__billing_wo__billing_account_id on ${db.schema.adapted}billing_wallet_operation(billing_account_id)</sql>
         <sql>create index idx__charge_instance__lower_description on ${db.schema.adapted}billing_charge_instance(lower(description))</sql>
+        <sql>CREATE INDEX idx_job_execution_parent_job_result_id ON ${db.schema.adapted}job_execution(parent_job_result_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -21101,6 +21102,7 @@
     <changeSet id="#INTRD-18841_20231017" author="AdilElJaouhari" />
     <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe" />
     <changeSet id="#INTRD-19462_20231115" author="TarikFA." />
+    <changeSet id="#INTRD-19614_20231127" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
