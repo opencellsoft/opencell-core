@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -73,7 +72,6 @@ import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceLineTaxModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.MinAmountsResult;
@@ -105,7 +103,6 @@ import org.meveo.model.ordering.OpenOrder;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.securityDeposit.SecurityDeposit;
 import org.meveo.model.settings.OpenOrderSetting;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -114,7 +111,6 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
-import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OpenOrderService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 import org.meveo.service.tax.TaxMappingService;
@@ -131,9 +127,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      * A number of Rated transaction, from which a pending table will be used to update Rated transaction status
      */
     private static int minNrOfRtsToUsePendingTable = -1;
-
-    @Inject
-    private FilterService filterService;
 
     @Inject
     private TaxMappingService taxMappingService;
@@ -166,9 +159,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     private InvoiceService invoiceService;
 
     @Inject
-    private SellerService sellerService;
-
-    @Inject
     private DiscountPlanItemService discountPlanItemService;
     
     @Inject
@@ -182,9 +172,6 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private OpenOrderService openOrderService;
-    
-    @Inject
-    private InvoiceTypeService invoiceTypeService;
 
     @Inject
     private UserAccountService userAccountService;
@@ -1206,7 +1193,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         Object[][] rtIlBrIds = new Object[groupedRTs.size()][3];
         int numberOrRts = 0;
         
-        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
+        List<InvoiceLine> invoiceLines = new ArrayList<>();
 
         int i = 0;
         for (Map<String, Object> groupedRT : groupedRTs) {

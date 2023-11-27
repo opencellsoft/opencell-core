@@ -189,8 +189,6 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.detachFromInvoiceLines", query = "UPDATE RatedTransaction rt set rt.invoiceLine = null, rt.status = 'OPEN' WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoices", query = "UPDATE RatedTransaction r SET r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceLine=null, r.invoiceAgregateF=null WHERE r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice.id IN (:ids)) "),
         @NamedQuery(name = "RatedTransaction.reopenRatedTransactions", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null, r.invoiceLine=null where r.id IN (:rtIds)"),
-        @NamedQuery(name = "RatedTransaction.updatePendingDuplicate", query = "update RatedTransaction r set r.pendingDuplicates= r.pendingDuplicates + :pendingDuplicates, r.pendingDuplicatesToNegate= r.pendingDuplicatesToNegate + :pendingDuplicatesToNegate where r.id in (:rtI)"),
-        @NamedQuery(name = "RatedTransaction.findPendingOrNegateDuplicated", query = "Select r from RatedTransaction r where r.pendingDuplicates > 0 or r.pendingDuplicatesToNegate > 0"),
         @NamedQuery(name = "RatedTransaction.cancelRatedTransactionsByBR", query = "update RatedTransaction rt set rt.status = 'CANCELED', rt.updated = CURRENT_TIMESTAMP ,rt.invoiceLine = null, rt.invoice = null where rt.billingRun.id = :billingRunId"),
         @NamedQuery(name = "RatedTransaction.findForAppyInvoicingRuleByIds", query = "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) AND  rt.status = 'OPEN' and rt.rulesContract is not null"),
         @NamedQuery(name = "RatedTransaction.updateStatusDiscountedRT", query = "UPDATE RatedTransaction rt " +
@@ -684,12 +682,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
   	@Column(name = "sequence")
   	private Integer sequence;
 
-    @Column(name = "pending_duplicates")
-    private Integer pendingDuplicates = 0;
-
-    @Column(name = "pending_duplicates_to_negate")
-    private Integer pendingDuplicatesToNegate = 0;
-    
     @Column(name = "business_key")
     private String businessKey;
     
@@ -916,8 +908,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountedAmount = rateTransactionToDuplicate.getDiscountedAmount();
         this.sequence = rateTransactionToDuplicate.getSequence();
         this.rulesContract = rateTransactionToDuplicate.getRulesContract();
-        this.pendingDuplicates = 0;
-        this.pendingDuplicatesToNegate = 0;
         this.businessKey = rateTransactionToDuplicate.getBusinessKey();
     }
     
@@ -1874,22 +1864,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setTradingCurrency(TradingCurrency tradingCurrency) {
 		this.tradingCurrency = tradingCurrency;
 	}
-
-    public Integer getPendingDuplicates() {
-        return pendingDuplicates;
-    }
-
-    public void setPendingDuplicates(Integer pendingDuplicates) {
-        this.pendingDuplicates = pendingDuplicates;
-    }
-
-    public Integer getPendingDuplicatesToNegate() {
-        return pendingDuplicatesToNegate;
-    }
-
-    public void setPendingDuplicatesToNegate(Integer pendingDuplicatesToNegate) {
-        this.pendingDuplicatesToNegate = pendingDuplicatesToNegate;
-    }
 
 	public String getBusinessKey() {
 		return businessKey;

@@ -59,6 +59,7 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
@@ -809,30 +810,37 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
         log.info("matchOperations  balance: {}", balance);
 
-        Payment payment = (Payment) listOcc.stream().filter(accountOperation -> accountOperation instanceof Payment).findFirst().orElse(null);
-        PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(payment.getReference());
-        if (payment != null && paymentHistory != null) {
-            List<Long> aoIdsToPay = operationIds.stream().filter(aoId -> !aoId.equals(payment.getId())).collect(toList());
-            if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
-                List<AccountOperation> aoToPay = new ArrayList<>();
-                for (Long aoId : aoIdsToPay) {
-                    aoToPay.add(accountOperationService.findById(aoId));
-                }
-                for (AccountOperation ao : aoToPay) {
-                    if (ao != null) {
-                        if (ao.getPaymentHistories() == null) {
-                            ao.setPaymentHistories(new ArrayList<>());
-                        }
-                        ao.getPaymentHistories().add(paymentHistory);
+        AccountOperation payment = listOcc.stream()
+                .filter(accountOperation -> accountOperation instanceof Payment
+                        || accountOperation instanceof OtherCreditAndCharge)
+                .findFirst()
+                .orElse(null);
+		
+        if (payment != null && payment.getReference() != null) {
+			PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(payment.getReference());
+			if (paymentHistory != null) {
+				List<Long> aoIdsToPay = operationIds.stream().filter(aoId -> !aoId.equals(payment.getId())).collect(toList());
+				if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
+					List<AccountOperation> aoToPay = new ArrayList<>();
+					for (Long aoId : aoIdsToPay) {
+						aoToPay.add(accountOperationService.findById(aoId));
+					}
+					for (AccountOperation ao : aoToPay) {
+						if (ao != null) {
+							if (ao.getPaymentHistories() == null) {
+								ao.setPaymentHistories(new ArrayList<>());
+							}
+							ao.getPaymentHistories().add(paymentHistory);
 
-                        if (paymentHistory.getListAoPaid() == null) {
-                            paymentHistory.setListAoPaid(new ArrayList<>());
-                        }
-                        paymentHistory.getListAoPaid().add(ao);
-                    }
-                }
-            }
-        }
+							if (paymentHistory.getListAoPaid() == null) {
+								paymentHistory.setListAoPaid(new ArrayList<>());
+							}
+							paymentHistory.getListAoPaid().add(ao);
+						}
+					}
+				}
+			}
+		}
 
 
         if (balance.compareTo(ZERO) == 0) {
@@ -945,13 +953,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         if (cptOccDebit == 0) {
             throw new BusinessException("matchingService.noDebitOps");
         }
-        BigDecimal balance = amount.subtract(amoutCredit);
-        balance = balance.abs();
+            BigDecimal balance = amount.subtract(amoutCredit);
+            balance = balance.abs();
 
 
-        log.info("matchOperations  balance: {}", balance);
+            log.info("matchOperations  balance: {}", balance);
 
-            Payment payment = (Payment) listOcc.stream().filter(accountOperation -> accountOperation instanceof Payment).findFirst().orElse(null);
+            AccountOperation payment = listOcc.stream()
+                    .filter(accountOperation -> accountOperation instanceof Payment
+                            || accountOperation instanceof OtherCreditAndCharge)
+                    .findFirst()
+                    .orElse(null);
             PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(payment.getReference());
             if (payment != null && paymentHistory != null) {
                 List<Long> aoIdsToPay = operationIds.stream().filter(aoId -> !aoId.equals(payment.getId())).collect(toList());

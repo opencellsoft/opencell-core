@@ -490,6 +490,7 @@
         <createSequence sequenceName="electronic_invoice_settings_seq" startValue="1"/>
         <createSequence sequenceName="pdp_status_seq" startValue="1"/>
         <createSequence sequenceName="pdp_status_history_seq" startValue="1"/>
+        <createSequence sequenceName="batch_entity_seq" startValue="1"/>
     </changeSet>
 
 
@@ -3522,8 +3523,6 @@
 			<column name="transactional_unit_amount_with_tax" type="numeric(23, 12)" />
 			<column name="transactional_unit_amount_tax" type="numeric(23, 12)" />
 			<column name="trading_currency_id" type="bigint" />
-            <column name="pending_duplicates" type="int4" defaultValueNumeric="0"/>
-            <column name="pending_duplicates_to_negate" type="int4" defaultValueNumeric="0"/>
             <column name="discounted_amount" type="numeric(23,12)" />
             <column name="business_key" type="VARCHAR(255)" />
         </createTable>
@@ -4146,6 +4145,7 @@
             <column name="contract_line_id" type="bigint" />
 			<column name="price_list_line_id" type="bigint" />
 			<column name="business_key" type="VARCHAR(255)" />
+			<column name="batch_entity_id" type="bigint"/>
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -5991,6 +5991,7 @@
             </column>
             <column name="job_status" type="varchar(14)"/>
             <column name ="parent_job_result_id" type="bigint" />
+            <column name="node" type="varchar(25)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-262">
@@ -6245,9 +6246,9 @@
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
-            <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
             <column name="query_scheduler_id" type="bigint" />
             <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
+            <column name="status_report_freq" type="int" defaultValueNumeric="60" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -11003,6 +11004,7 @@
             <column name="adjustment_status" type="varchar(50)"/>
             <column name="conversion_from_billing_currency" type="${type.boolean}" defaultValueNumeric="0" />
 			<column name="linked_invoice_line_id" type="bigint"/>
+            <column name="additional_agg_fields" type="${type.json}" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-488" author="NabilOUACHI">
@@ -12081,6 +12083,17 @@
             <column name="article_selection_mode" defaultValue="AFTER_PRICING" type="varchar(30)"/>
             <column name="entities_with_huge_volume" type="${type.json}"/>
             <column name="billing_run_process_warning" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="nb_partitions_keep" type="int4" />
+            <column name="synchronous_mass_action_limit" type="int4" defaultValueNumeric="10000" />
+            <column name="wo_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="rt_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="edr_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -12924,7 +12937,18 @@
             <column name="actions" type="varchar(2000)" />
         </createTable>
     </changeSet>
-        
+
+    <changeSet id="#INTRD-19322_add_aggre_fields_rebuild" author="anas.rouaguebe">
+        <createTable tableName="billing_cycle_aggregation_fields">
+            <column name="billing_cycle_id"  type="bigint"/>
+            <column name="fields"  type="varchar(255)"/>
+        </createTable>
+        <createTable tableName="billing_run_aggregation_fields">
+            <column name="billing_run_id"  type="bigint"/>
+            <column name="fields"  type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
     <changeSet id="#INTRD-17696_2023_09_11_rebuild_tbl" author="zbariki">
         <createTable tableName="product_amount">
             <column name="id" type="${cast.long}" autoIncrement="${id.auto}">
@@ -13027,6 +13051,33 @@
             <column name="deposit_date" type="datetime" />
         </createTable>
 
+    </changeSet>
+    
+    <changeSet id="#INTRD-9066_20231009-rebuild" author="AbdellatifBARI">
+        <createTable tableName="batch_entity">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="batch_entity_pkey"/>
+            </column>
+            <column name="version" type="int4" defaultValueNumeric="0"/>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="target_job" type="varchar(255)"/>
+            <column name="target_entity" type="varchar(255)"/>
+            <column name="filters" type="${type.json}"/>
+            <column name="notify" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="status" type="varchar(25)"/>
+            <column name="job_instance_id" type="bigint"/>
+            <column name="job_execution_id" type="bigint"/>
+            <column name="code" type="varchar(255)"/>
+            <column name="description" type="varchar(1000)"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
     </changeSet>
 
     <!-- end tables -->
@@ -17832,6 +17883,22 @@
     </changeSet>
 
 
+	<changeSet id="#INTRD-9066_20231009-rebuild-fk" author="AbdellatifBARI">
+    	<addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_instance" referencedTableName="meveo_job_instance"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="job_execution_id" baseTableName="batch_entity"
+                                 constraintName="fk_batch_entity_job_execution" referencedTableName="job_execution"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#INTRD-18966_20231018-rebuild-fk" author="AbdellatifBARI">
+        <addForeignKeyConstraint baseColumnNames="batch_entity_id" baseTableName="billing_wallet_operation"
+                                 constraintName="fk_billing_wallet_operation_batch_entity"
+                                 referencedTableName="batch_entity"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -17925,7 +17992,7 @@
         <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
         <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(charge_template_id, priority, id)</sql>
         <sql>CREATE INDEX medina_access_user_id_index ON ${db.schema.adapted}medina_access(acces_user_id)</sql>
-        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id)</sql>
+        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id, priority)</sql>
         <sql>CREATE INDEX counter_period_ci_id ON ${db.schema.adapted}billing_counter_period(counter_instance_id)</sql>
         <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_record)</sql>
         <sql>CREATE INDEX rating_edr_wo_index ON ${db.schema.adapted}rating_edr(wallet_operation_id)</sql>
@@ -19379,8 +19446,7 @@
                 referencedTableName="ar_account_operation"
                 referencedColumnNames="id" />
     </changeSet>
-
-
+    
     <changeSet author="AndriusKarpavicius"  id="rebuild_pg_audit_functions" dbms="postgresql">
         <createProcedure>
             CREATE OR REPLACE FUNCTION jsonb_minus ( arg1 jsonb, arg2 jsonb, preserveField varchar, retainOnlyFields varchar ) RETURNS jsonb
@@ -21007,6 +21073,7 @@
     <changeSet id="#INTRD-16881_20230614" author="Mohammed_ElAzzouzi"/>
     <changeSet id="#INTRD-16881_20230816" author="Mohammed_ElAzzouzi"/>    
     <changeSet id="#INTRD-17987_20230826_discount_agg" author="a.rouaguebe" />
+    <changeSet id="#INTRD-17222_20231005" author="AndriusKarpavicius"/>
 
     <changeSet id="#INTRD-18146_20230904" author="AdilElJaouhari" />
 	<changeSet id="#INTRD-18276_20230908" author="aelmalki" />
@@ -21025,6 +21092,13 @@
     <changeSet id="INTRD-19050_20231020" author="zbariki" />
     <changeSet id="#INTRD-18439_20230120" author="TarikFA." />
     <changeSet id="#INTRD-16834_20231026" author="TarikFA." />
+    <changeSet id="#INTRD-19322_add_aggre_fields" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-18966_20231018" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-18841_20231017" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe" />
     <changeSet id="#INTRD-19462_20231115" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

@@ -92,7 +92,9 @@ public class RatedTransactionsJob extends Job {
             false, null, null, "JobInstance_RatedTransactionsJob"));
         result.put(Job.CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
             "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, "JobInstance_RatedTransactionsJob"));
-        result.put(CF_BATCH_SIZE, CustomFieldTemplateUtils.buildCF(CF_BATCH_SIZE, resourceMessages.getString("jobExecution.batchSize"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2",
+        result.put(CF_NB_PUBLISHERS, CustomFieldTemplateUtils.buildCF(CF_NB_PUBLISHERS, resourceMessages.getString("jobExecution.nbPublishers"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2",
+            null, false, null, null, "JobInstance_RatedTransactionsJob"));        
+        result.put(CF_BATCH_SIZE, CustomFieldTemplateUtils.buildCF(CF_BATCH_SIZE, resourceMessages.getString("jobExecution.batchSize"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:3",
             "10000", true, null, null, "JobInstance_RatedTransactionsJob"));
         // aggregations
         result.put("woAggregationSettings",

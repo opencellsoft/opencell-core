@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -80,7 +82,8 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
         @NamedQuery(name = "BillingRun.getForInvoicingLimitToIds", query = "SELECT br FROM BillingRun br where (br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC')) and br.id in :ids and br.disabled = false order by br.id asc"),
         @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code "),
         @NamedQuery(name = "BillingRun.nullifyBillingRunXMLExecutionResultIds", query = "update BillingRun br set br.xmlJobExecutionResultId = null where br = :billingRun"),
-        @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") })
+        @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") ,
+        @NamedQuery(name = "BillingRun.findByBillingCycle", query = "FROM BillingRun br WHERE br.billingCycle = :bc")})
 public class BillingRun extends EnableEntity implements ICustomFieldEntity, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
@@ -507,6 +510,14 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_user_accounts")
     private boolean ignoreUserAccounts = true;
+
+    /**
+     * Define additional criterias for aggregation
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "billing_run_aggregation_fields", joinColumns = @JoinColumn(name = "billing_run_id"))
+    @Column(name = "fields")
+    private List<String> additionalAggregationFields;
 
     public BillingRun getNextBillingRun() {
         return nextBillingRun;
@@ -1216,5 +1227,13 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
 	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
 		this.ignoreUserAccounts = ignoreUserAccounts;
 	}
-    
+
+    public List<String> getAdditionalAggregationFields() {
+        return additionalAggregationFields;
+    }
+
+    public void setAdditionalAggregationFields(List<String> additionalAggregationFields) {
+        this.additionalAggregationFields = additionalAggregationFields;
+    }
+
 }

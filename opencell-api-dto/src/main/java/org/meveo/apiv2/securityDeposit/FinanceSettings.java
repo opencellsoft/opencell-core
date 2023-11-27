@@ -66,29 +66,51 @@ public interface FinanceSettings extends Resource {
     default Boolean getEnableBillingRedirectionRules() {
         return FALSE;
     }
-    
+
     @Value.Default
     @Schema(description = "Enable Billing Redirection Rules")
     default Boolean getDiscountAdvancedMode() {
         return FALSE;
     }
-    
+
     @Value.Default
     @Schema(description = "Enable Price List")
     default Boolean getEnablePriceList() {
         return FALSE;
     }
-	
+
 	@Nullable
 	@Schema(description = "determinate if the article will be compute before or after pricing")
 	ArticleSelectionModeEnum getArticleSelectionMode();
-	
+
 	@Schema(description = "Entities with Huge Volume")
-    Map<String, List<String>> getEntitiesWithHugeVolume();
+    Map<String, HugeEntity> getEntitiesWithHugeVolume();
 
     @Value.Default
     @Schema(description = "Display warning before process billing Run")
     default boolean getBillingRunProcessWarning() {
         return false;
     }
+
+    @Nullable
+    @Schema(description = "Number of partitions to keep")
+    Integer getNbPartitionsToKeep();
+    
+    @Value.Default
+    @Schema(description = "Number of elements to process in a synchronous mode")
+    default Integer getSynchronousMassActionLimit() {
+        return 10000;
+    }
+
+    @Nullable
+    @Schema(description = "Wallet Operation partition Period in Months")
+    Integer getWoPartitionPeriod();
+
+    @Nullable
+    @Schema(description = "Rated Transaction partition Period in Months")
+    Integer getRtPartitionPeriod();
+
+    @Nullable
+    @Schema(description = "EDR partition Period in Months")
+    Integer getEdrPartitionPeriod();
 }

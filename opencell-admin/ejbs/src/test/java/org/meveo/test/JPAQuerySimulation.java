@@ -1,7 +1,9 @@
 package org.meveo.test;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,10 +14,28 @@ import javax.persistence.Parameter;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 
+/**
+ * A simulation of JPA query for a Mockito based unit tests
+ * 
+ * @param <E> Record type
+ */
 public class JPAQuerySimulation<E> implements TypedQuery<E> {
+
+    /**
+     * Current query paramaters
+     */
+    protected Map<String, Object> parameters = new HashMap<String, Object>();
+
+    /**
+     * Tracks parameters that were used to execute a query - both update and select - in case same query object is reused multiple times
+     */
+    protected List<Map<String, Object>> parameterHistory = new ArrayList<Map<String, Object>>();
 
     @Override
     public int executeUpdate() {
+
+        parameterHistory.add(parameters);
+        parameters = new HashMap<String, Object>();
         return 0;
     }
 
@@ -96,6 +116,9 @@ public class JPAQuerySimulation<E> implements TypedQuery<E> {
 
     @Override
     public List<E> getResultList() {
+
+        parameterHistory.add(parameters);
+        parameters = new HashMap<String, Object>();
         return null;
     }
 
@@ -136,6 +159,7 @@ public class JPAQuerySimulation<E> implements TypedQuery<E> {
 
     @Override
     public TypedQuery<E> setParameter(String name, Object value) {
+        parameters.put(name, value);
         return this;
     }
 
@@ -172,5 +196,24 @@ public class JPAQuerySimulation<E> implements TypedQuery<E> {
     @Override
     public TypedQuery<E> setLockMode(LockModeType lockMode) {
         return this;
+    }
+
+    /**
+     * Get the parameter value set. If same query was called multiple times, the last parameter value will be returned
+     * 
+     * @param name Parmeter name
+     * @return A parameter valye
+     */
+    public Object getParameterRaw(String name) {
+        return parameters.get(name);
+    }
+
+    /**
+     * Get a set of parameters that were used to execute a query - both update and select
+     * 
+     * @return A list of set of parameters
+     */
+    public List<Map<String, Object>> getParameterRawHistory() {
+        return parameterHistory;
     }
 }

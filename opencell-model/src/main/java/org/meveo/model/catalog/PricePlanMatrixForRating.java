@@ -21,18 +21,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.QueryHint;
-
 /**
  * Price plan DTO style entity
  * 
  * @author Andrius Karpavicius
  */
-@NamedQueries({
-        @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCode", query = "SELECT ppm from PricePlanMatrix ppm where ppm.disabled is false and ppm.eventCode=:chargeCode order by ppm.priority ASC, id", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true"), @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
 public class PricePlanMatrixForRating implements Comparable<PricePlanMatrixForRating>, Serializable {
 
     private static final long serialVersionUID = -3464323449652262449L;

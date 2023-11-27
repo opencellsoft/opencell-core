@@ -170,6 +170,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 						}else
 							return true;
 					}
+
+					return true;
 				}   
 			}
 			return false;

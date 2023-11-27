@@ -12094,6 +12094,21 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="applies_to_id" value="-5"/>
 		</insert>
 	</changeSet>
+	
+	<changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="job_category" value="RATING"/>
+            <column name="job_template" value="MarkWOToRerateJob"/>
+            <column name="code" value="MarkWOToRerateJob"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="uuid" value="MarkWOToRerateJob"/>
+        </insert>
+    </changeSet>
+	
 
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
@@ -12116,6 +12131,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-18995_20231107" author="zelmeliani" />
     <changeSet id="#INTRD-19093_20231109" author="aeljaouhari" />
     <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid" />
+	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" dbms="postgresql" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

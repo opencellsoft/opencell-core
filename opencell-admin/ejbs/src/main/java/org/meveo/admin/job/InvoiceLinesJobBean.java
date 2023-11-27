@@ -4,7 +4,7 @@ import static java.lang.Long.valueOf;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.joining;
+import static java.util.List.of;
 import static java.util.stream.Collectors.toList;
 
 import java.sql.Connection;
@@ -27,12 +27,12 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
+import org.hibernate.collection.internal.PersistentBag;
 import org.meveo.admin.async.SynchronizedIteratorGrouped;
 import org.meveo.admin.async.SynchronizedMultiItemIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
@@ -54,6 +54,7 @@ import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceLineService.InvoiceLineCreationStatistics;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
+import org.primefaces.model.SortOrder;
 
 @Stateless
 public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, Object>>> {
@@ -101,14 +102,13 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
     private static final String BILLING_RUN_REPORT_JOB_CODE = "BILLING_RUN_REPORT_JOB";
 
-
     /**
      * Execution statistics
      */
     private BasicStatistics aggregatedStats = new BasicStatistics();
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED) // Transaction set to REQUIRED, so ScrollableResultset would do paging. With TX=NEVER all data is retrieved at once resulting in memory increase
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createInvoiceLines, null, this::hasMore, this::closeResultset, this::closeBillingRun);
     }
@@ -133,12 +133,16 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         // Number of Rated transactions to process in a single job run
         int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("invoiceLinesJob.processNrInJobRun", 4000000);
 
-        Long batchSize = 10L;// Just for fetching purpose
+        // Grouping/processing settings
+        boolean groupByBA = (boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_GROUP_BY_BA, false);
+        final long nrRtsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_RTS_PER_TX, 1000000L);
+        final long nrILsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_ILS_PER_TX, 10000L);
+
         Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbThreads == -1) {
             nbThreads = (long) Runtime.getRuntime().availableProcessors();
         }
-        int fetchSize = batchSize.intValue() * nbThreads.intValue();
+        int fetchSize = ((Long) nrILsPerTx).intValue() * nbThreads.intValue();
 
         EntityManager em = emWrapper.getEntityManager();
         statelessSession = em.unwrap(Session.class).getSessionFactory().openStatelessSession();
@@ -161,6 +165,10 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
                 continue;
             }
 
+            // Initialize BR
+            billingRun.getBillingCycle().getType();
+
+            em.detach(billingRun);
             currentBillingRun = billingRun;
 
             // The first run of billing run (status is 'NEW' at that moment) should be in a normal run to create new invoice line
@@ -172,6 +180,10 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.CREATING_INVOICE_LINES, null);
 
             // Determine aggregation options from Billing run
+            if(currentBillingRun.getAdditionalAggregationFields() != null
+                    && currentBillingRun.getAdditionalAggregationFields() instanceof PersistentBag) {
+                currentBillingRun = billingRunService.findById(currentBillingRun.getId(), of("additionalAggregationFields"));
+            }
             aggregationConfiguration = new AggregationConfiguration(currentBillingRun);
             aggregationConfiguration.setEnterprise(appProvider.isEntreprise());
 
@@ -204,8 +216,6 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         Long nrOfRecords = aggregationQueryInfo.getNumberOfIL();
         List<String> aggregationFields = aggregationQueryInfo.getFieldNames();
 
-        em.detach(currentBillingRun);
-
         boolean brHasMore = nrOfRecords >= processNrInJobRun;
 
         // Mark BR as processed if it has no more records
@@ -215,11 +225,6 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
         // Continue with additional job run if there are still BR related records to process or there are more BR to process
         hasMore = brHasMore || (!brHasMore && !isLastBRToProcess);
-
-        // Grouping/processing settings
-        boolean groupByBA = (boolean) getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_GROUP_BY_BA, false);
-        final long nrRtsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_RTS_PER_TX, 1000000L);
-        final long nrILsPerTx = (Long) this.getParamOrCFValue(jobInstance, InvoiceLinesJob.CF_INVOICE_LINES_NR_ILS_PER_TX, 10000L);
 
         if (groupByBA) {
             return Optional.of(new SynchronizedIteratorGrouped<Map<String, Object>>(scrollableResults, nrOfRecords.intValue(), true, aggregationFields) {
@@ -292,27 +297,28 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
     private void dropView() {
 
-    	if(currentBillingRun!=null) {
-	        EntityManager em = emWrapper.getEntityManager();
-	        Session hibernateSession = em.unwrap(Session.class);
-	
-	        String viewName = InvoiceLineAggregationService.getMaterializedAggregationViewName(currentBillingRun.getId());
-	        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
-	
-	            @Override
-	            public void execute(Connection connection) throws SQLException {
-	
-	                try (Statement statement = connection.createStatement()) {
-	                    log.info("Dropping materialized view {}", viewName);
-	                    statement.execute("drop materialized view if exists " + viewName);
-	
-	                } catch (Exception e) {
-	                    log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
-	                    throw new BusinessException(e);
-	                }
-	            }
-	        });
-    	}
+        if (currentBillingRun == null) {
+            return;
+        }
+        EntityManager em = emWrapper.getEntityManager();
+        Session hibernateSession = em.unwrap(Session.class);
+
+        String viewName = InvoiceLineAggregationService.getMaterializedAggregationViewName(currentBillingRun.getId());
+        hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+
+            @Override
+            public void execute(Connection connection) throws SQLException {
+
+                try (Statement statement = connection.createStatement()) {
+                    log.info("Dropping materialized view {}", viewName);
+                    statement.execute("drop materialized view if exists " + viewName);
+
+                } catch (Exception e) {
+                    log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
+                    throw new BusinessException(e);
+                }
+            }
+        });
     }
 
     /**
@@ -388,7 +394,8 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         } else {
             filters.put("inList id", billingRunIds);
         }
-        PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
+        PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters,
+                null, asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
 
         List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(billingRunService.list(pagination), jobInstance);
 
@@ -461,9 +468,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
 
     private void runBillingRunReports(List<Long> billingRuns) {
         Map<String, Object> jobParams = new HashMap<>();
-        jobParams.put("billingRuns", billingRuns.stream()
-        									   .map(idBr -> new EntityReferenceWrapper("org.meveo.model.billing.BillingRun", "BillingRun", idBr.toString()))
-        									   .collect(toList()));
+        jobParams.put("billingRuns", billingRuns.stream().map(idBr -> new EntityReferenceWrapper("org.meveo.model.billing.BillingRun", "BillingRun", idBr.toString())).collect(toList()));
         Map<String, Object> filters = new HashMap<>();
         filters.put("status", RatedTransactionStatusEnum.BILLED.toString());
         jobParams.put("filters", filters);
@@ -472,8 +477,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             jobInstance.setRunTimeValues(jobParams);
             jobExecutionService.executeJob(jobInstance, jobParams, JobLauncherEnum.TRIGGER);
         } catch (Exception exception) {
-            throw new BusinessException("Exception occurred during billing run report job execution : "
-                    + exception.getMessage(), exception.getCause());
+            throw new BusinessException("Exception occurred during billing run report job execution : " + exception.getMessage(), exception.getCause());
         }
     }
 

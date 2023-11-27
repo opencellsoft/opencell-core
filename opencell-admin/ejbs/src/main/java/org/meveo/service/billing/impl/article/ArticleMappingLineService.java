@@ -2,6 +2,7 @@ package org.meveo.service.billing.impl.article;
 
 import static java.util.Arrays.asList;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +41,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 	public List<ArticleMappingLine> findByProductAndCharge(Product product, ChargeTemplate chargeTemplate,
 														   OfferTemplate offer, String parameter1,
 														   String parameter2, String parameter3) {
-		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am");
+		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am", Arrays.asList("attributesMapping"));
 		if(product != null)
 			queryBuilder.addCriterionEntity("am.product.id", product.getId());
 		if(chargeTemplate != null)
