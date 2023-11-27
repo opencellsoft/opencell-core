@@ -224,7 +224,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         JobRunningStatusEnum previousStatus = isJobRunning(jobInstanceId);
         if (previousStatus == JobRunningStatusEnum.RUNNING_THIS) {
-            log.trace("Job {} of provider {} attempted to be marked as LOCKED in job cache for node {}. Job is already running on {} node.", jobInstanceId, currentProvider, currentNode, currentNode);
+            log.info("Job {} of provider {} attempted to be marked as LOCKED in job cache for node {}. Job is already running on {} node.", jobInstanceId, currentProvider, currentNode, currentNode);
             return previousStatus;
         }
 
@@ -289,7 +289,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         JobRunningStatusEnum currentStatus = getJobRunningStatus(jobStatus);
 
-        log.trace("Job {} of provider {} was attempted to be marked as LOCKED in job cache for node {}. Job is current status is {}. Previous job running status is {}. Current cache value is {}", jobInstanceId,
+        log.info("Job {} of provider {} was attempted to be marked as LOCKED in job cache for node {}. Job is current status is {}. Previous job running status is {}. Current cache value is {}", jobInstanceId,
             currentProvider, currentNode, currentStatus, previousStatus, jobStatus);
 
         if (currentStatus == JobRunningStatusEnum.LOCKED_OTHER || currentStatus == JobRunningStatusEnum.RUNNING_OTHER) {
@@ -388,7 +388,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             runningJobFutures.put(jobInstanceId, threads);
         }
 
-        log.trace("Job {} of provider {} was marked as RUNNING in job cache for node {}. Job is current status is {}. Previous job running status is {}. Current cache value is {}", jobInstanceId, currentProvider,
+        log.info("Job {} of provider {} was marked as RUNNING in job cache for node {}. Job is current status is {}. Previous job running status is {}. Current cache value is {}", jobInstanceId, currentProvider,
             currentNode, currentStatus, previousStatus, jobStatus);
 
         if (currentStatus == JobRunningStatusEnum.LOCKED_THIS || currentStatus == JobRunningStatusEnum.LOCKED_OTHER || currentStatus == JobRunningStatusEnum.RUNNING_OTHER) {
@@ -423,7 +423,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             log.error(" computeCacheWithRetry -> CacheException for [cacheKey = {}]", cacheKey, e);
 
             if (times > 0) {
-                log.debug(" computeCacheWithRetry : Retry with delay = {} and times = {} ", delay, times);
+                log.info(" computeCacheWithRetry : Retry with delay = {} and times = {} ", delay, times);
                 // waiting for the delay :
                 ThreadUtils.sleepSafe(TimeUnit.SECONDS, delay);
                 // then retry :
@@ -450,7 +450,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             log.error(" putInCacheWithRetry -> CacheException for [cacheKey = {}]", cacheKey, e);
 
             if (times > 0) {
-                log.debug(" putInCacheWithRetry : Retry with delay = {} and times = {} ", delay, times);
+                log.info(" putInCacheWithRetry : Retry with delay = {} and times = {} ", delay, times);
                 // waiting for the delay :
                 ThreadUtils.sleepSafe(TimeUnit.SECONDS, delay);
                 // then retry :
@@ -503,7 +503,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             runningJobFutures.remove(jobInstanceId);
         }
 
-        log.trace("Job {} of provider {} was marked as FINISHED in job cache for a node {}. Current cache value is {}.", jobInstanceId, currentProvider, currentNode, jobStatus);
+        log.info("Job {} of provider {} was marked as FINISHED in job cache for a node {}. Current cache value is {}.", jobInstanceId, currentProvider, currentNode, jobStatus);
     }
 
     /**
@@ -532,7 +532,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             runningJobFutures.remove(jobInstanceId);
         }
 
-        log.trace("Job {} of Provider {} was reset as not running in job cache", jobInstanceId, currentProvider);
+        log.info("Job {} of Provider {} was reset as not running in job cache", jobInstanceId, currentProvider);
     }
 
     /**
@@ -611,7 +611,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             log.error(" removeFromCacheWithRetry -> CacheException for [cacheKey = {}]", cacheKey, e);
 
             if (times > 0) {
-                log.debug(" removeFromCacheWithRetry : Retry with delay = {} and times = {} ", delay, times);
+                log.info(" removeFromCacheWithRetry : Retry with delay = {} and times = {} ", delay, times);
                 // waiting for the delay :
                 ThreadUtils.sleepSafe(TimeUnit.SECONDS, delay);
                 // then retry :
@@ -626,14 +626,14 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * Initialize cache for all job instances
      */
     private void populateJobCache() {
-        log.debug("Start to pre-populate Job cache of provider {}.", CurrentUserProvider.getCurrentTenant());
+        log.info("Start to pre-populate Job cache of provider {}.", CurrentUserProvider.getCurrentTenant());
 
         List<JobInstance> jobInsances = jobInstanceService.list();
         for (JobInstance jobInstance : jobInsances) {
             addUpdateJobInstance(jobInstance, false);
         }
 
-        log.debug("End populating Job cache of Provider {} with {} jobs.", CurrentUserProvider.getCurrentTenant(), jobInsances.size());
+        log.info("End populating Job cache of Provider {} with {} jobs.", CurrentUserProvider.getCurrentTenant(), jobInsances.size());
     }
 
     /**
@@ -656,7 +656,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         long times = ParamBean.getInstance().getPropertyAsInteger(CACHE_RETRY_TIMES, 3);
 
         for (CacheKeyLong elem : itemsToBeRemoved) {
-            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            log.info("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
             this.removeFromCacheWithRetry(elem, delay, times);
         }
     }
@@ -710,6 +710,6 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         this.computeCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId), remappingFunction, delay, times);
 
-        log.trace("Job {} of Provider {} marked as requested to stop in job cache", jobInstanceId, currentProvider);
+        log.info("Job {} of Provider {} marked as requested to stop in job cache", jobInstanceId, currentProvider);
     }
 }
