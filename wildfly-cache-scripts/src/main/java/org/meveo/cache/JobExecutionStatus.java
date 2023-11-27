@@ -1,13 +1,12 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.meveo.model.shared.DateUtils;
 
 /**
  * Tracks job execution status in cache
@@ -18,6 +17,8 @@ import org.meveo.model.shared.DateUtils;
 public class JobExecutionStatus implements Serializable {
 
     private static final long serialVersionUID = 88415736291469158L;
+
+    public static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
 
     /**
      * Job instance id
@@ -209,8 +210,8 @@ public class JobExecutionStatus implements Serializable {
             nodeInfo = nodeInfo + (nodeInfo.length() > 0 ? ", " : "") + nodeThreadInfo.getKey() + "(" + nodeThreadInfo.getValue().toString() + ")";
         }
 
-        return jobId + "/" + jobCode + (startedOn != null ? ", started on " + DateUtils.formatAsTime(startedOn) : "") + (requestedToStop ? ", stopping" : "") + (lockForNode != null ? ", locked for " + lockForNode : "")
-                + (!nodesAndThreads.isEmpty() ? ", running on " + nodeInfo : "");
+        return jobId + "/" + jobCode + (startedOn != null ? ", started on " + JobExecutionStatus.formatAsTime(startedOn) : "") + (requestedToStop ? ", stopping" : "")
+                + (lockForNode != null ? ", locked for " + lockForNode : "") + (!nodesAndThreads.isEmpty() ? ", running on " + nodeInfo : "");
     }
 
     /**
@@ -320,5 +321,38 @@ public class JobExecutionStatus implements Serializable {
         public String toString() {
             return (jobExecutionId != null ? "id:" + jobExecutionId : "") + "|threads:" + numberOfThreads + "|to stop:" + requestedToStop;
         }
+    }
+
+    /**
+     * Format date to yyyy-MM-dd'T'hh:mm:ssXXX pattern
+     * 
+     * @param value Date to format
+     * @return Date as yyyy-MM-dd'T'hh:mm:ssXXX string
+     */
+    public static String formatAsTime(Date value) {
+        return formatDateWithPattern(value, DATE_TIME_PATTERN);
+    }
+
+    /**
+     * Format date to a given pattern
+     * 
+     * @param value Date to format
+     * @param pattern Pattern to format to
+     * @return A date as a string
+     */
+    public static String formatDateWithPattern(Date value, String pattern) {
+        if (value == null) {
+            return "";
+        }
+        String result = null;
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+
+        try {
+            result = sdf.format(value);
+        } catch (Exception e) {
+            result = "";
+        }
+
+        return result;
     }
 }

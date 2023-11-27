@@ -40,6 +40,12 @@
             <groupId>com.opencellsoft</groupId>
             <artifactId>opencell-tmforum</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>com.opencellsoft.wildfly</groupId>
+            <artifactId>wildfly-cache-scripts</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.pdfbox</groupId>

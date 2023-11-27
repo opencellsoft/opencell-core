@@ -9,6 +9,7 @@
     <name>Opencell Parent Project</name>
 
     <modules>
+        <module>wildfly-cache-scripts</module>
         <module>opencell-security</module>
         <module>opencell-model</module>
         <module>opencell-api-dto</module>
@@ -99,6 +100,11 @@
                 <scope>import</scope>
             </dependency>
 
+           <dependency>
+                <groupId>com.opencellsoft.wildfly</groupId>
+                <artifactId>wildfly-cache-scripts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.opencellsoft</groupId>
                 <artifactId>opencell-api</artifactId>
