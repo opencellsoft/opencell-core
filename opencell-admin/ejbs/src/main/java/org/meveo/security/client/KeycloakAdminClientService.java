@@ -72,6 +72,7 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidParameterException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
@@ -313,7 +314,9 @@ public class KeycloakAdminClientService implements Serializable {
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
+		log.info("realm resource keycloak : " + realmResource);
         UsersResource usersResource = realmResource.users();
+	    log.info("usersResource : " + usersResource);
         UserRepresentation user = null;
 
         if (StringUtils.isBlank(userName) && StringUtils.isBlank(email)) {
@@ -402,7 +405,13 @@ public class KeycloakAdminClientService implements Serializable {
         // Update current user
         if (isUpdate) {
             userId = user.getId();
-            usersResource.get(userId).update(user);
+			try{
+				usersResource.get(userId).update(user);
+			}catch (BusinessApiException e){
+				log.warn("Impossible to update user on keycloak : " + usersResource.get(userId));
+				log.error("error when updating user  : " + user);
+			}
+        
         } else {
             // Create a new user
             Response response = usersResource.create(user);
