@@ -20561,6 +20561,7 @@
 	<changeSet id="#INTRD-18252_20230908" author="aelmalki" />
 	<changeSet id="#INTRD-18280_20230911" author="aelmalki" />
     <changeSet id="#INTRD-19322_add_aggre_fields" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-19607_23112023" author="anasseh" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
