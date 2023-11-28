@@ -8761,6 +8761,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>  
         <addColumn tableName="crm_seller">
             <column name="ics" type="varchar(35)" />
-        </addColumn>      
+        </addColumn>   
+     </changeSet>      
 
 </databaseChangeLog>
