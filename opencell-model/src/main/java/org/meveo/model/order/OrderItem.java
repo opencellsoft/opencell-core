@@ -50,6 +50,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.Subscription;
@@ -66,329 +67,340 @@ import org.meveo.model.shared.Address;
 @Entity
 @CustomFieldEntity(cftCodePrefix = "OrderItem")
 @WorkflowedEntity
+@ObservableEntity
 @ExportIdentifier({ "order.code", "itemId" })
 @Table(name = "ord_order_item")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ord_order_item_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "ord_order_item_seq"), })
 public class OrderItem extends BusinessEntity implements ICustomFieldEntity, IWFEntity {
 
-    private static final long serialVersionUID = -6831399734977276174L;
+	private static final long serialVersionUID = -6831399734977276174L;
 
-    /**
-     * Order
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false, updatable = false)
-    @NotNull
-    private Order order;
+	/**
+	 * Order
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_id", nullable = false, updatable = false)
+	@NotNull
+	private Order order;
 
-    /**
-     * Item id in the order
-     */
-    @Column(name = "item_id", length = 10, nullable = false)
-    @NotNull
-    private String itemId;
+	/**
+	 * Item id in the order
+	 */
+	@Column(name = "item_id", length = 10, nullable = false)
+	@NotNull
+	private String itemId;
 
-    /**
-     * Action requested on a product or product offer
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "action", length = 10, nullable = false)
-    @NotNull
-    private OrderItemActionEnum action;
+	/**
+	 * Action requested on a product or product offer
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "action", length = 10, nullable = false)
+	@NotNull
+	private OrderItemActionEnum action;
 
-    /**
-     * Associated user account
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_account_id")
-    private UserAccount userAccount;
+	/**
+	 * Associated user account
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_account_id")
+	private UserAccount userAccount;
 
-    /**
-     * Product offerings associated to an order item. In case of bundled offers, the first item in a list is the parent offering.
-     */
-    @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderColumn(name = "ITEM_ORDER")
-    private List<OrderItemProductOffering> orderItemProductOfferings = new ArrayList<>();
+	/**
+	 * Product offerings associated to an order item. In case of bundled offers, the
+	 * first item in a list is the parent offering.
+	 */
+	@OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderColumn(name = "ITEM_ORDER")
+	private List<OrderItemProductOffering> orderItemProductOfferings = new ArrayList<>();
 
-    /**
-     * Serialized orderItem dto
-     */
-    @Column(name = "source", nullable = false, columnDefinition = "TEXT")
-    private String source;
+	/**
+	 * Serialized orderItem dto
+	 */
+	@Column(name = "source", nullable = false, columnDefinition = "TEXT")
+	private String source;
 
-    /**
-     * Order item processing status as defined by the workflow.
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 20, nullable = false)
-    @NotNull
-    private OrderStatusEnum status = OrderStatusEnum.IN_CREATION;
+	/**
+	 * Order item processing status as defined by the workflow.
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", length = 20, nullable = false)
+	@NotNull
+	private OrderStatusEnum status = OrderStatusEnum.IN_CREATION;
 
-    /**
-     * Related product instances. Product instance(s) are created or updated by workflow while processing order item.
-     */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ord_item_prd_instance", joinColumns = @JoinColumn(name = "order_item_id"), inverseJoinColumns = @JoinColumn(name = "prd_instance_id"))
-    private List<ProductInstance> productInstances;
+	/**
+	 * Related product instances. Product instance(s) are created or updated by
+	 * workflow while processing order item.
+	 */
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "ord_item_prd_instance", joinColumns = @JoinColumn(name = "order_item_id"), inverseJoinColumns = @JoinColumn(name = "prd_instance_id"))
+	private List<ProductInstance> productInstances;
 
-    /**
-     * Related subscription. Subscription is created or updated by workflow while processing order item.
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subscription_id")
-    private Subscription subscription;
+	/**
+	 * Related subscription. Subscription is created or updated by workflow while
+	 * processing order item.
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "subscription_id")
+	private Subscription subscription;
 
-    /**
-     * Shipping address
-     */
-    @Embedded
-    private Address shippingAddress = new Address();
+	/**
+	 * Shipping address
+	 */
+	@Embedded
+	private Address shippingAddress = new Address();
 
-    /**
-     * Order action history
-     */
-    @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderHistory> orderHistories = new ArrayList<>();
+	/**
+	 * Order action history
+	 */
+	@OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrderHistory> orderHistories = new ArrayList<>();
 
-    /**
-     * Source of order in XML format
-     */
-    @Transient
-    private Object orderItemDto;
-    
+	/**
+	 * Source of order in XML format
+	 */
+	@Transient
+	private Object orderItemDto;
 
-    /**
-     * Custom field values in JSON format
-     */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
-    private CustomFieldValues cfValues;
-    
-    /**
-     * Accumulated custom field values in JSON format
-     */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
-    private CustomFieldValues cfAccumulatedValues;
-    /**
-     * Unique identifier - UUID
-     */
-    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
-    @Size(max = 60)
-    @NotNull
-    private String uuid;
+	/**
+	 * Custom field values in JSON format
+	 */
+	@Type(type = "cfjson")
+	@Column(name = "cf_values", columnDefinition = "text")
+	private CustomFieldValues cfValues;
 
-    /**
-     * Main product offering
-     */
-    @Transient
-    private ProductOffering mainOffering;
+	/**
+	 * Accumulated custom field values in JSON format
+	 */
+	@Type(type = "cfjson")
+	@Column(name = "cf_values_accum", columnDefinition = "text")
+	private CustomFieldValues cfAccumulatedValues;
+	/**
+	 * Unique identifier - UUID
+	 */
+	@Column(name = "uuid", nullable = false, updatable = false, length = 60)
+	@Size(max = 60)
+	@NotNull
+	private String uuid;
 
-    public Order getOrder() {
-        return order;
-    }
+	/**
+	 * Main product offering
+	 */
+	@Transient
+	private ProductOffering mainOffering;
 
-    public void setOrder(Order order) {
-        this.order = order;
-    }
+	public Order getOrder() {
+		return order;
+	}
 
-    public String getItemId() {
-        return itemId;
-    }
+	public void setOrder(Order order) {
+		this.order = order;
+	}
 
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
-    }
+	public String getItemId() {
+		return itemId;
+	}
 
-    public OrderItemActionEnum getAction() {
-        return action;
-    }
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
+	}
 
-    public void setAction(OrderItemActionEnum action) {
-        this.action = action;
-    }
+	public OrderItemActionEnum getAction() {
+		return action;
+	}
 
-    public UserAccount getUserAccount() {
-        return userAccount;
-    }
+	public void setAction(OrderItemActionEnum action) {
+		this.action = action;
+	}
 
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
-    }
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
 
-    public String getSource() {
-        return source;
-    }
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
 
-    public void setSource(String orderItemSource) {
-        this.source = orderItemSource;
-    }
+	public String getSource() {
+		return source;
+	}
 
-    public OrderStatusEnum getStatus() {
-        return status;
-    }
+	public void setSource(String orderItemSource) {
+		this.source = orderItemSource;
+	}
 
-    public void setStatus(OrderStatusEnum status) {
-        this.status = status;
-    }
+	public OrderStatusEnum getStatus() {
+		return status;
+	}
 
-    public Subscription getSubscription() {
-        return subscription;
-    }
+	public void setStatus(OrderStatusEnum status) {
+		this.status = status;
+	}
 
-    public void setSubscription(Subscription subscription) {
-        this.subscription = subscription;
-    }
+	public Subscription getSubscription() {
+		return subscription;
+	}
 
-    public List<ProductInstance> getProductInstances() {
-        return productInstances;
-    }
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
 
-    public void setProductInstances(List<ProductInstance> productInstances) {
-        this.productInstances = productInstances;
-    }
+	public List<ProductInstance> getProductInstances() {
+		return productInstances;
+	}
 
-    /**
-     * @return the shippingAddress
-     */
-    public Address getShippingAddress() {
-        return shippingAddress;
-    }
+	public void setProductInstances(List<ProductInstance> productInstances) {
+		this.productInstances = productInstances;
+	}
 
-    /**
-     * @param shippingAddress the shippingAddress to set
-     */
-    public void setShippingAddress(Address shippingAddress) {
-        this.shippingAddress = shippingAddress;
-    }
+	/**
+	 * @return the shippingAddress
+	 */
+	public Address getShippingAddress() {
+		return shippingAddress;
+	}
 
-    public void addProductInstance(ProductInstance productInstance) {
-        if (this.productInstances == null) {
-            this.productInstances = new ArrayList<>();
-        }
-        this.productInstances.add(productInstance);
-    }
+	/**
+	 * @param shippingAddress the shippingAddress to set
+	 */
+	public void setShippingAddress(Address shippingAddress) {
+		this.shippingAddress = shippingAddress;
+	}
 
-    // public ProductInstance getProductInstance() {
-    // Logger log = LoggerFactory.getLogger(getClass());
-    // if (productInstances != null && productInstances.size() > 0) {
-    // return productInstances.get(0);
-    // }
-    // return null;
-    // }
+	public void addProductInstance(ProductInstance productInstance) {
+		if (this.productInstances == null) {
+			this.productInstances = new ArrayList<>();
+		}
+		this.productInstances.add(productInstance);
+	}
 
-    public Object getOrderItemDto() {
-        return orderItemDto;
-    }
+	// public ProductInstance getProductInstance() {
+	// Logger log = LoggerFactory.getLogger(getClass());
+	// if (productInstances != null && productInstances.size() > 0) {
+	// return productInstances.get(0);
+	// }
+	// return null;
+	// }
 
-    public void setOrderItemDto(Object orderItemDto) {
-        this.orderItemDto = orderItemDto;
-    }
+	public Object getOrderItemDto() {
+		return orderItemDto;
+	}
 
-    public ProductOffering getMainOffering() {
+	public void setOrderItemDto(Object orderItemDto) {
+		this.orderItemDto = orderItemDto;
+	}
 
-        if (mainOffering == null && orderItemProductOfferings != null && !orderItemProductOfferings.isEmpty()) {
-            mainOffering = orderItemProductOfferings.get(0).getProductOffering();
-        }
+	public ProductOffering getMainOffering() {
 
-        return mainOffering;
-    }
+		if (mainOffering == null && orderItemProductOfferings != null && !orderItemProductOfferings.isEmpty()) {
+			mainOffering = orderItemProductOfferings.get(0).getProductOffering();
+		}
 
-    public void setMainOffering(ProductOffering mainOffering) {
-        this.mainOffering = mainOffering;
-    }
+		return mainOffering;
+	}
 
-    public void resetMainOffering(ProductOffering newMainOffer) {
-        this.mainOffering = newMainOffer;
-        orderItemProductOfferings.clear();
-        if (newMainOffer != null) {
-            orderItemProductOfferings.add(new OrderItemProductOffering(this, newMainOffer, orderItemProductOfferings.size()));
-        }
-        orderItemDto = null;
-        source = null;
-    }
+	public void setMainOffering(ProductOffering mainOffering) {
+		this.mainOffering = mainOffering;
+	}
 
-    public List<OrderItemProductOffering> getOrderItemProductOfferings() {
-        return orderItemProductOfferings;
-    }
+	public void resetMainOffering(ProductOffering newMainOffer) {
+		this.mainOffering = newMainOffer;
+		orderItemProductOfferings.clear();
+		if (newMainOffer != null) {
+			orderItemProductOfferings.add(new OrderItemProductOffering(this, newMainOffer, orderItemProductOfferings.size()));
+		}
+		orderItemDto = null;
+		source = null;
+	}
 
-    public void setOrderItemProductOfferings(List<OrderItemProductOffering> orderItemProductOfferings) {
-        this.orderItemProductOfferings = orderItemProductOfferings;
-    }
+	public List<OrderItemProductOffering> getOrderItemProductOfferings() {
+		return orderItemProductOfferings;
+	}
 
-    /**
-     * Interested in comparing order items within the order only
-     */
-    @Override
-    public boolean equals(Object obj) {
+	public void setOrderItemProductOfferings(List<OrderItemProductOffering> orderItemProductOfferings) {
+		this.orderItemProductOfferings = orderItemProductOfferings;
+	}
 
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof OrderItem)) {
-            return false;
-        }
+	/**
+	 * Interested in comparing order items within the order only
+	 */
+	@Override
+	public boolean equals(Object obj) {
 
-        OrderItem other = (OrderItem) obj;
+		if (this == obj) {
+			return true;
+		} else if (obj == null) {
+			return false;
+		} else if (!(obj instanceof OrderItem)) {
+			return false;
+		}
 
-        if (id != null && other.getId() != null && id.equals(other.getId())) {
-            return true;
-        }
+		OrderItem other = (OrderItem) obj;
 
-        return StringUtils.compare(getItemId(), other.getItemId()) == 0;
-    }
+		if (id != null && other.getId() != null && id.equals(other.getId())) {
+			return true;
+		}
 
-    public List<OrderHistory> getOrderHistories() {
-        return orderHistories;
-    }
+		return StringUtils.compare(getItemId(), other.getItemId()) == 0;
+	}
 
-    public void setOrderHistories(List<OrderHistory> orderHistories) {
-        this.orderHistories = orderHistories;
-    }
-    
-    @Override
-    public CustomFieldValues getCfValues() {
-        return cfValues;
-    }
-    @Override
-    public void setCfValues(CustomFieldValues cfValues) {
-        this.cfValues = cfValues;
-    }
-    /**
-     * setting uuid if null
-     */
-    @PrePersist
-    public void setUUIDIfNull() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID().toString();
-        }
-    }
-    @Override
-    public CustomFieldValues getCfAccumulatedValues() {
-        return cfAccumulatedValues;
-    }
-    @Override
-    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
-        this.cfAccumulatedValues = cfAccumulatedValues;
-    }
-    @Override
-    public String getUuid() {
-        setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
-        return uuid;
-    }
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-    @Override
-    public ICustomFieldEntity[] getParentCFEntities() {
-        return null;
-    }
-    @Override
-    public String clearUuid() {
-        String oldUuid = uuid;
-        uuid = UUID.randomUUID().toString();
-        return oldUuid;
-    }
+	public List<OrderHistory> getOrderHistories() {
+		return orderHistories;
+	}
+
+	public void setOrderHistories(List<OrderHistory> orderHistories) {
+		this.orderHistories = orderHistories;
+	}
+
+	@Override
+	public CustomFieldValues getCfValues() {
+		return cfValues;
+	}
+
+	@Override
+	public void setCfValues(CustomFieldValues cfValues) {
+		this.cfValues = cfValues;
+	}
+
+	/**
+	 * setting uuid if null
+	 */
+	@PrePersist
+	public void setUUIDIfNull() {
+		if (uuid == null) {
+			uuid = UUID.randomUUID().toString();
+		}
+	}
+
+	@Override
+	public CustomFieldValues getCfAccumulatedValues() {
+		return cfAccumulatedValues;
+	}
+
+	@Override
+	public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+		this.cfAccumulatedValues = cfAccumulatedValues;
+	}
+
+	@Override
+	public String getUuid() {
+		setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not
+							// null will not be impacted
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	@Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		return null;
+	}
+
+	@Override
+	public String clearUuid() {
+		String oldUuid = uuid;
+		uuid = UUID.randomUUID().toString();
+		return oldUuid;
+	}
 }
