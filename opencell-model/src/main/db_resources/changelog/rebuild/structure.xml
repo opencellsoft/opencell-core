@@ -18815,6 +18815,7 @@
     <changeSet id="#INTR-12252_20221212_agreement_date" author="a.rouaguebe" />
 	<changeSet id="#INTRD-11775_20221120" author="hichamELHALOUI" />
     <changeSet id="#INTRD-11841_20221214-reports" author="HichamHANINE" />
+    <changeSet id="#INTRD-19607_23112023" author="anasseh" />
 
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
