@@ -53,9 +53,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.storage.StorageFactory;
-import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -118,6 +118,7 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
@@ -613,7 +614,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     }
 
     
-    public static Map<String,Object> getServiceAttributeValue(ServiceInstance serviceInstance) { 
+    public  Map<String,Object> getServiceAttributeValue(ServiceInstance serviceInstance) { 
     	Map<String,Object> attributMap=new HashMap<>();
     	Object attributeValue=null;
     	if(!serviceInstance.getAttributeInstances().isEmpty()) {
@@ -637,10 +638,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 				}
 				break;
 			case EXPRESSION_LANGUAGE :
-				if(attributeInstance.getDoubleValue()!=null) {
-					attributeValue= attributeInstance.getDoubleValue(); 
-				}else if(!StringUtils.isBlank(attributeInstance.getStringValue())) {
-					attributeValue= attributeInstance.getStringValue();  
+				if(attributeInstance.getStringValue()!=null) {
+					RatedTransaction rt=ratedTransactionService.findByServiceInstance(serviceInstance.getId());
+					if(rt.getEdr()!=null) {
+					attributeValue = ValueExpressionWrapper.evaluateExpression(attributeInstance.getStringValue(), String.class, rt.getEdr(),null);
+					}
 				}
 				break;
 			case DATE:
@@ -661,7 +663,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 			}
     		attributMap.put(attribute.getCode(), attributeValue);
     		}}
-    	
     	return attributMap;
     }
     
@@ -842,7 +843,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected Element createNameSection(Document doc, AccountEntity account, String invoiceLanguageCode) {
 
-        Element nameTag = doc.createElement("name");
+    	Element nameTag = doc.createElement("name");
         Element quality = doc.createElement("quality");
         if (account != null && account.getName() != null && account.getName().getTitle() != null) {
             String translationKey = "T_" + account.getName().getTitle().getCode() + "_" + invoiceLanguageCode;
