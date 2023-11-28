@@ -26,7 +26,7 @@ import java.util.Set;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -48,6 +48,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.GeneralLedger;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -154,6 +155,13 @@ public class Seller extends AccountEntity implements IWFEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "general_ledger_id")
     private GeneralLedger generalLedger;
+    
+    
+    /**
+     * Bank coordinates
+     */
+    @Embedded
+    private BankCoordinates bankCoordinates = new BankCoordinates();
 
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY)
     private List<Contract> contracts = new ArrayList<>();
@@ -383,5 +391,13 @@ public class Seller extends AccountEntity implements IWFEntity {
 	 */
 	public void setMedias(List<Media> medias) {
 		this.medias = medias;
+	}
+	
+	public BankCoordinates getBankCoordinates() {
+		return bankCoordinates;
+	}
+
+	public void setBankCoordinates(BankCoordinates bankCoordinates) {
+		this.bankCoordinates = bankCoordinates;
 	}
 }
