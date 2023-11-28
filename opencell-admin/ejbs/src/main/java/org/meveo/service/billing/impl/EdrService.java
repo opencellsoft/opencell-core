@@ -134,6 +134,9 @@ public class EdrService extends PersistenceService<EDR> {
 	        if(parameter2!=null) {
 	        	query.setParameter("parameter2", parameter2.toLowerCase());
 	        }
+            if (nbToRetrieve > 0) {
+                query = query.setMaxResults(nbToRetrieve);
+            }
  	        return query.getResultList();
 
     }

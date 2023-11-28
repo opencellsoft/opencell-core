@@ -63,5 +63,20 @@ public interface FinanceSettings extends Resource {
     }
 	@Schema(description = "Entities with Huge Volume")
     Map<String, HugeEntity> getEntitiesWithHugeVolume();
-	
+
+    @Nullable
+    @Schema(description = "Number of partitions to keep")
+    Integer getNbPartitionsToKeep();
+    
+    @Nullable
+    @Schema(description = "Wallet Operation partition Period in Months")
+    Integer getWoPartitionPeriod();
+
+    @Nullable
+    @Schema(description = "Rated Transaction partition Period in Months")
+    Integer getRtPartitionPeriod();
+
+    @Nullable
+    @Schema(description = "EDR partition Period in Months")
+    Integer getEdrPartitionPeriod();
 }

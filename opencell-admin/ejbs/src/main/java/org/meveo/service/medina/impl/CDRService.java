@@ -178,23 +178,30 @@ public class CDRService extends PersistenceService<CDR> {
     }
     
     @SuppressWarnings("unchecked")
-    public List<CDR> getCDRsToReprocess() { 
-        return (List<CDR>) getEntityManager().createNamedQuery("CDR.listCDRsToReprocess").getResultList();
+    public List<CDR> getCDRsToReprocess(int nbToRetrieve) {
+        TypedQuery<CDR> query = getEntityManager().createNamedQuery("CDR.listCDRsToReprocess", CDR.class);
+        if (nbToRetrieve > 0) {
+            query = query.setMaxResults(nbToRetrieve);
+        }
+        return query.getResultList();
     }
     
     /**
      * Get a list of unprocessed CDRs to process
      *
+     * @param nbToRetrieve Number of items to retrieve for processing
      * @return List of CDR we can process.
      */
-    public List<Long> getCDRsToProcess() {
+    public List<Long> getCDRsToProcess(int nbToRetrieve) {
 
         StringBuilder strQuery = new StringBuilder();
         strQuery.append("SELECT cdr.id from CDR cdr where cdr.status='OPEN'");
 
-        TypedQuery<Long> query = getEntityManager().createQuery(strQuery.toString(),Long.class);
+        TypedQuery<Long> query = getEntityManager().createQuery(strQuery.toString(), Long.class);
+        if (nbToRetrieve > 0) {
+            query = query.setMaxResults(nbToRetrieve);
+        }
         return query.getResultList();
-
     }
     
     /**

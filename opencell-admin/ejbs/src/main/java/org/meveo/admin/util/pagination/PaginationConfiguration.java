@@ -79,6 +79,8 @@ public class PaginationConfiguration implements Serializable {
 
     private Boolean forceCount = false;
 
+    private Integer limit;
+
     /**
      * Shall query results be cached - see Hibernate query cache behavior
      */
@@ -120,6 +122,7 @@ public class PaginationConfiguration implements Serializable {
         this.fullTextFilter = fullTextFilter;
         this.doFetch = doFetch;
         this.fetchFields = fetchFields;
+        this.limit = numberOfRows;
 
         List<Object> sortValues = new ArrayList<Object>();
         for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
@@ -341,7 +344,15 @@ public class PaginationConfiguration implements Serializable {
 	public void setFilterOperator(FilterOperatorEnum filterOperator) {
 		this.filterOperator = filterOperator;
 	}
-	
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
 	/**
 	 * @param cacheable Shall query results be cached - see Hibernate query cache behavior
 	 */

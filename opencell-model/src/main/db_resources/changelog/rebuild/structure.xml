@@ -11918,6 +11918,16 @@
                     defaultValue="#{ca.description}"/>
             <column name="activate_dunning" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="entities_with_huge_volume" type="${type.json}"/>
+            <column name="nb_partitions_keep" type="int4" />
+            <column name="wo_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="rt_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
+            <column name="edr_partition_range_months" type="int4">
+                <constraints nullable="true" />
+            </column>
       </createTable>
     </changeSet>
     <changeSet id="#INTRD-3461_20212128-rebuild-str-tbl" author="hichamElHaloui">
@@ -17017,6 +17027,7 @@
         <sql>CREATE INDEX rating_edr_subscription_index ON ${db.schema.adapted}rating_edr(subscription_id)</sql>
         <sql>CREATE INDEX idx__billing_invoice_line_il_job ON ${db.schema.adapted}billing_invoice_line USING btree (billing_run_id, billing_account_id, offer_template_id, accounting_article_id, tax_id) where status='OPEN'</sql>
         <sql>CREATE INDEX idx__billing_rated_transaction__charge_instance ON ${db.schema.adapted}billing_rated_transaction USING btree (charge_instance_id) WHERE status= 'OPEN' and accounting_article_id is null </sql>
+        <sql>CREATE INDEX idx_job_execution_parent_job_result_id ON ${db.schema.adapted}job_execution(parent_job_result_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997">
@@ -19578,6 +19589,9 @@
     <changeSet id="INTRD-17830_20231108" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI" />
     <changeSet id="#INTRD-17222_20231110" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe" />
+    <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe" />
+    <changeSet id="#INTRD-19614_20231127" author="AdilElJaouhari" />
 
     
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->

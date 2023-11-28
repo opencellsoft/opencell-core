@@ -1,7 +1,6 @@
 package org.meveo.model.securityDeposit;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 
 import javax.persistence.*;
@@ -51,6 +50,18 @@ public class FinanceSettings extends BusinessEntity {
 	@Type(type = "json")
     @Column(name = "entities_with_huge_volume", columnDefinition = "jsonb")
     private Map<String, HugeEntity> entitiesWithHugeVolume;
+
+    @Column(name = "nb_partitions_keep")
+    private Integer nbPartitionsToKeep;
+
+   @Column(name = "wo_partition_range_months")
+   private Integer woPartitionPeriod;
+
+    @Column(name = "rt_partition_range_months")
+    private Integer rtPartitionPeriod;
+
+    @Column(name = "edr_partition_range_months")
+    private Integer edrPartitionPeriod;
 
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
@@ -131,4 +142,36 @@ public class FinanceSettings extends BusinessEntity {
 	public void setEntitiesWithHugeVolume(Map<String, HugeEntity> entitiesWithHugeVolume) {
 		this.entitiesWithHugeVolume = entitiesWithHugeVolume;
 	}
+
+    public Integer getNbPartitionsToKeep() {
+        return nbPartitionsToKeep;
+    }
+
+    public void setNbPartitionsToKeep(Integer nbPartitionsToKeep) {
+        this.nbPartitionsToKeep = nbPartitionsToKeep;
+    }
+
+    public Integer getWoPartitionPeriod() {
+        return woPartitionPeriod;
+    }
+
+    public void setWoPartitionPeriod(Integer woPartitionPeriod) {
+        this.woPartitionPeriod = woPartitionPeriod;
+    }
+
+    public Integer getRtPartitionPeriod() {
+        return rtPartitionPeriod;
+    }
+
+    public void setRtPartitionPeriod(Integer rtPartitionPeriod) {
+        this.rtPartitionPeriod = rtPartitionPeriod;
+    }
+
+    public Integer getEdrPartitionPeriod() {
+        return edrPartitionPeriod;
+    }
+
+    public void setEdrPartitionPeriod(Integer edrPartitionPeriod) {
+        this.edrPartitionPeriod = edrPartitionPeriod;
+    }
 }

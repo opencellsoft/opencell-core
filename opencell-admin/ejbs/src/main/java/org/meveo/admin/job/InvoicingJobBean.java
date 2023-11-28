@@ -67,6 +67,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.RejectedBillingAccountService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobInstanceService;
 
 /**
  * @author HORRI Khalid
@@ -104,11 +105,14 @@ public class InvoicingJobBean extends BaseJobBean {
     @Inject
     private RejectedBillingAccountService rejectedBillingAccountService;
 
+    @Inject
+    private JobInstanceService jobInstanceService;
+
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public JobExecutionResultImpl execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
 
-        List<BillingRun> billingRuns = getBillingRuns(this.getParamOrCFValue(jobInstance, "billingRuns"));
+        List<BillingRun> billingRuns = getBillingRuns(this.getParamOrCFValue(jobInstance, "billingRuns"), jobInstance);
 
         log.info("BillingRuns to process={}", billingRuns.size());
 
@@ -130,10 +134,11 @@ public class InvoicingJobBean extends BaseJobBean {
      * Get Billing runs to process
      *
      * @param billingRunsCF the billing runs setting from the custom field
+     * @param jobInstance the job instance
      * @return A list if billing runs to process
      */
     @SuppressWarnings("unchecked")
-    private List<BillingRun> getBillingRuns(Object billingRunsCF) {
+    private List<BillingRun> getBillingRuns(Object billingRunsCF, JobInstance jobInstance) {
         List<EntityReferenceWrapper> brList = (List<EntityReferenceWrapper>) billingRunsCF;
 
         if (brList != null && !brList.isEmpty()) {
@@ -148,7 +153,8 @@ public class InvoicingJobBean extends BaseJobBean {
             return billingRunService.listByNamedQuery("BillingRun.getForInvoicingLimitToIds", "ids", ids);
 
         } else {
-            return billingRunService.listByNamedQuery("BillingRun.getForInvoicing");
+            Integer jobItemsLimit = jobInstanceService.getJobItemsLimit(jobInstance);
+            return billingRunService.getForInvoicing(jobItemsLimit != null ? jobItemsLimit : 0);
         }
     }
 
