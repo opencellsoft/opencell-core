@@ -697,13 +697,13 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
 
         if (StringUtils.isNotBlank(customerAccountCode) || StringUtils.isNotBlank(customerAccountDescription)) {
-            from = from.concat(" inner join account_entity ca on ao.customer_account_id=ca.id");
+            from = from.concat(" inner join ar_customer_account ca on ao.customer_account_id=ca.id");
             where = where.concat(StringUtils.isNotBlank(customerAccountCode) ? " and UPPER(ca.code) like '%" + customerAccountCode.toUpperCase() +"%'": "");
             where = where.concat(StringUtils.isNotBlank(customerAccountDescription) ? " and UPPER(ca.description) like '%" + customerAccountDescription.toUpperCase() +"%'": "");
         }
 
         if (StringUtils.isNotBlank(sellerCode) || StringUtils.isNotBlank(sellerDescription)) {
-            from = from.concat(" inner join account_entity se on ao.seller_id=se.id");
+            from = from.concat(" inner join ar_customer_account se on ao.seller_id=se.id");
             where = where.concat(StringUtils.isNotBlank(sellerCode) ? " and UPPER(se.code) like '%" + sellerCode.toUpperCase() +"%'": "");
             where = where.concat(StringUtils.isNotBlank(sellerDescription) ? " and UPPER(se.description) like '%" + sellerDescription.toUpperCase() +"%'": "");
         }
