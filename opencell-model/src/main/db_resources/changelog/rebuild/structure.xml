@@ -21098,6 +21098,7 @@
     <changeSet id="#INTRD-19602_partitons_max_age" author="anas.rouaguebe" />
     <changeSet id="#INTRD-18841_20231017" author="AdilElJaouhari" />
     <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe" />
+    <changeSet id="#INTRD-19607_23112023" author="anasseh" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

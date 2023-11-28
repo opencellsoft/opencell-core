@@ -8829,5 +8829,45 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			<column name="synchronous_mass_action_limit" type="int4" defaultValueNumeric="10000" />
 		</addColumn>
 	</changeSet>
+	
+<changeSet id="#INTRD-19607_23112023" author="anasseh">
+        <addColumn tableName="crm_seller">
+            <column name="bank_code" type="varchar(5)" />
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="branch_code" type="varchar(5)" />
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="account_number" type="varchar(11)" />
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="hash_key" type="varchar(2)" />
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="iban" type="varchar(100)" />
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="bic" type="varchar(100)" />
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="account_owner" type="varchar(50)" />
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="bank_name" type="varchar(50)" />
+        </addColumn>        
+        <addColumn tableName="crm_seller">
+            <column name="bank_id" type="varchar(50)" />
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="issuer_number" type="varchar(50)" />
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="issuer_name" type="varchar(50)" />
+        </addColumn>  
+        <addColumn tableName="crm_seller">
+            <column name="ics" type="varchar(35)" />
+        </addColumn>      
+	</changeSet>
+	
     
 </databaseChangeLog>
