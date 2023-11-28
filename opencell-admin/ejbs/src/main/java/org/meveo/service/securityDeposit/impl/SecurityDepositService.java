@@ -520,6 +520,7 @@ public class SecurityDepositService extends BusinessService<SecurityDeposit> {
         securityDeposit.setStatus(SecurityDepositStatusEnum.VALIDATED);
         securityDeposit.setCustomerAccount(invoice.getBillingAccount().getCustomerAccount());
         securityDeposit.setBillingAccount(invoice.getBillingAccount());
+        securityDeposit.setSeller(invoice.getSeller());
         if (providerService.getProvider().getCode() != null) {
             Provider provider = providerService.findByCode(providerService.getProvider().getCode());
             securityDeposit.setCurrency(provider.getCurrency());
