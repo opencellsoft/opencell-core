@@ -17934,6 +17934,8 @@
 	<changeSet id="INTRD-10603_20221113" author="AbdelmounaimAkadid" />
     <changeSet id="#INTRD-10046_20221028" author="HichamHANINE" />
     <changeSet author="ZBariki" id="#INTRD-14208_20230224" dbms="oracle" />
+    <changeSet id="#INTRD-19607_23112023" author="anasseh" />
+   
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
