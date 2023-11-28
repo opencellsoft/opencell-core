@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -726,4 +728,22 @@ public class ReratingService extends RatingService implements Serializable {
             this.quantity = this.quantity.add(adjustmentToAdd.getQuantity());
         }
     }
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void applyMassRerate(List<Long> ids, boolean useSamePricePlan) {
+		String readWOsQuery = "FROM WalletOperation wo left join fetch wo.chargeInstance ci left join fetch wo.edr edr WHERE wo.status='TO_RERATE' AND wo.id IN (:ids)";
+		List<WalletOperation> walletOperations = getEntityManager().createQuery(readWOsQuery, WalletOperation.class).setParameter("ids", ids).getResultList();
+		List<Long> failedIds = new ArrayList<>();
+		walletOperations.stream().forEach(operationToRerate -> {
+		    try {
+		        rerateWalletOperationAndInstantiateTriggeredEDRs(operationToRerate, useSamePricePlan, false);
+		    } catch (Exception e) {
+		        failedIds.add(operationToRerate.getId());
+		        throw e;
+		    }
+		});
+		ids.removeAll(failedIds);
+		String updateILQuery = "UPDATE billing_wallet_operation wo SET status='RERATED', updated = CURRENT_TIMESTAMP where id in (:ids) ";
+		getEntityManager().createNativeQuery(updateILQuery).setParameter("ids", ids).executeUpdate();
+	}
 }

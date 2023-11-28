@@ -5,7 +5,6 @@ import static org.apache.commons.collections4.ListUtils.partition;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +26,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.ReratingService;
@@ -128,20 +126,7 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 	}
 
 	private void rerate(List<Long> ids) {
-		String readWOsQuery = "FROM WalletOperation wo left join fetch wo.chargeInstance ci left join fetch wo.edr edr WHERE wo.status='TO_RERATE' AND wo.id IN (:ids)";
-		List<WalletOperation> walletOperations = entityManager.createQuery(readWOsQuery, WalletOperation.class).setParameter("ids", ids).getResultList();
-		List<Long> failedIds = new ArrayList<>();
-		walletOperations.stream().forEach(operationToRerate -> {
-		    try {
-		        reratingService.rerateWalletOperationAndInstantiateTriggeredEDRs(operationToRerate, useSamePricePlan, false);
-		    } catch (Exception e) {
-		        failedIds.add(operationToRerate.getId());
-		        throw e;
-		    }
-		});
-		ids.removeAll(failedIds);
-		String updateILQuery = "UPDATE billing_wallet_operation wo SET status='RERATED', updated = CURRENT_TIMESTAMP where id in (:ids) ";
-		entityManager.createNativeQuery(updateILQuery).setParameter("ids", ids).executeUpdate();
+		reratingService.applyMassRerate(ids, useSamePricePlan);
 	}
 
 	/**

@@ -39,7 +39,6 @@ public class massUpdateJob extends Job {
 	private void initUpdateStepParams(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
 		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_CHUNK_SIZE,
 				(Long) getParamOrCFValue(jobInstance, massUpdateJob.CF_MASS_UPDATE_CHUNK, 100000L));
-		
 		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_UPDATE_QUERY,
 				(String)getParamOrCFValue(jobInstance, updateStepExecutor.PARAM_UPDATE_QUERY));
 		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_READ_INTERVAL_QUERY,
@@ -50,7 +49,7 @@ public class massUpdateJob extends Job {
 
 	@Override
 	public JobCategoryEnum getJobCategory() {
-		return MeveoJobCategoryEnum.INVOICING;
+		return MeveoJobCategoryEnum.UTILS;
 	}
 
 	@Override
