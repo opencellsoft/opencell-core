@@ -27,6 +27,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -92,6 +93,9 @@ public class SellerBean extends CustomFieldBean<Seller> {
         }
         if (entity.getContactInformation() == null) {
             entity.setContactInformation(new ContactInformation());
+        }
+        if (entity.getBankCoordinates() == null) {
+            entity.setBankCoordinates(new BankCoordinates());
         }
         return entity;
     }
