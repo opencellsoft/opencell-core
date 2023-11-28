@@ -604,17 +604,9 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         } else {
             BigDecimal unitPriceWithoutTax = unitPriceWithoutTaxOverridden;
             BigDecimal unitPriceWithTax = unitPriceWithTaxOverridden;
-            
-            BigDecimal unitPrice = appProvider.isEntreprise() ? unitPriceWithoutTax : unitPriceWithTax;
-            if (unitPrice == null) {
-                throw new BusinessException("No unit price found");
-            }
-            BigDecimal amount = bareWalletOperation.getQuantity().multiply(unitPrice);
-            bareWalletOperation.setAmountWithoutTax(amount);
-            bareWalletOperation.setAmountWithTax(amount);
 
             RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(chargeInstance);
-
+	        
             PricePlanMatrix pricePlan = null;
             BillingAccount billingAccount = bareWalletOperation.getBillingAccount();
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
@@ -702,7 +694,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     	unitPriceWithoutTax=bareWalletOperation.getUnitAmountWithoutTax()!=null?bareWalletOperation.getUnitAmountWithoutTax():BigDecimal.ZERO;
                     	unitPriceWithTax=bareWalletOperation.getUnitAmountWithTax()!=null?bareWalletOperation.getUnitAmountWithTax():BigDecimal.ZERO;
                     }
-
+	                
+	                BigDecimal amount = BigDecimal.ZERO;
                     BigDecimal discountRate=null;
                     PricePlanMatrixLine pricePlanMatrixLine =null;
                     
