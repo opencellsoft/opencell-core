@@ -19641,6 +19641,7 @@
     <changeSet id="#INTRD-14368_20230630" author="AbdellatifBARI"/>
     <changeSet id="#INTRD-17500_20230726" author="AbdellatifBARI"/>
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
+    <changeSet id="#INTRD-19607_23112023" author="anasseh" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
