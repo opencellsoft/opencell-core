@@ -145,7 +145,8 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 		@NamedQuery(name = "InvoiceLine.updateByIncrementalModeWoutDatesWithAverageUnitAmounts", query = "UPDATE InvoiceLine il SET il.amountWithoutTax=il.amountWithoutTax+:deltaAmountWithoutTax, il.amountWithTax=il.amountWithTax+:deltaAmountWithTax, il.amountTax=il.amountTax+:deltaAmountTax, il.quantity=il.quantity+:deltaQuantity, il.auditable.updated=:now, il.unitPrice=(il.amountWithoutTax+:deltaAmountWithoutTax)/(il.quantity+:deltaQuantity) WHERE il.id=:id"),
         @NamedQuery(name = "InvoiceLine.updateStatusInvoiceLine", query = "UPDATE InvoiceLine il SET " +
 				"il.status =: statusToUpdate WHERE il.id =: id"),
-		@NamedQuery(name = "InvoiceLine.countDistinctBAByBR", query = "select count(distinct il.billingAccount) from InvoiceLine il where billingRun.id=:brId")
+		@NamedQuery(name = "InvoiceLine.countDistinctBAByBR", query = "select count(distinct il.billingAccount) from InvoiceLine il where billingRun.id=:brId"),
+		@NamedQuery(name = "InvoiceLine.cancelByInvoiceLineIds", query = "update InvoiceLine il set il.status='CANCELED', il.auditable.updated = :now WHERE il.id IN (:invoiceLinesIds)"),
 	})
 
 @NamedNativeQueries({

@@ -1,5 +1,31 @@
 package org.meveo.service.billing.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RatingException;
+import org.meveo.commons.utils.MethodCallingUtils;
+import org.meveo.model.RatingResult;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.InvoiceLine;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
+
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -12,31 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.RatingException;
-import org.meveo.commons.utils.MethodCallingUtils;
-import org.meveo.model.RatingResult;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
-import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
-import org.meveo.model.shared.DateUtils;
-import org.slf4j.Logger;
 
 /**
  * Service to handle wallet operation re-rating when service parameters or tariffs change.
@@ -609,18 +610,27 @@ public class ReratingService extends RatingService implements Serializable {
 
         // Update Invoice lines - adjust amounts and quantity
         Date date = new Date();
+		List<Long> ilIds = new ArrayList<>();
         for (Entry<Long, ILAdjustments> ilInfo : ilAdjustments.entrySet()) {
             Long ilId = ilInfo.getKey();
             ILAdjustments ilAdjustment = ilInfo.getValue();
-            em.createNamedQuery("InvoiceLine.updateByIncrementalModeWoutDates" + (ilAdjustment.isAverageUnitAmounts() ? "WithAverageUnitAmounts" : ""))
-                .setParameter("deltaAmountWithoutTax", ilAdjustment.getAmountWithoutTax()).setParameter("deltaAmountWithTax", ilAdjustment.getAmountWithTax()).setParameter("deltaAmountTax", ilAdjustment.getAmountTax())
-                .setParameter("deltaQuantity", ilAdjustment.getQuantity()).setParameter("id", ilId).setParameter("now", date).executeUpdate();
+	        InvoiceLine invoiceLine = em.find(InvoiceLine.class, ilId);
+			if(invoiceLine != null && invoiceLine.getQuantity().compareTo(ilAdjustment.getQuantity().abs()) == 0) {
+				ilIds.add(ilId);
+			}else{
+				em.createNamedQuery("InvoiceLine.updateByIncrementalModeWoutDates" + (ilAdjustment.isAverageUnitAmounts() ? "WithAverageUnitAmounts" : ""))
+						.setParameter("deltaAmountWithoutTax", ilAdjustment.getAmountWithoutTax()).setParameter("deltaAmountWithTax", ilAdjustment.getAmountWithTax()).setParameter("deltaAmountTax", ilAdjustment.getAmountTax())
+						.setParameter("deltaQuantity", ilAdjustment.getQuantity()).setParameter("id", ilId).setParameter("now", date).executeUpdate();
+			}
         }
+		if(CollectionUtils.isNotEmpty(ilIds)){
+			var line = em.createNamedQuery("InvoiceLine.cancelByInvoiceLineIds").setParameter("now", new Date()).setParameter("invoiceLinesIds", ilIds).executeUpdate();
+			System.out.println(line);
+		}
 
         // No reason to reject rerating
         return null;
     }
-
     /**
      * Rate a copy of Wallet operation to rerate, preserving or not a priceplan. New Wallet operation will be associated with a rerated WalletOperation. OldWalletOperation.reratedWalletOperation = new WalletOperation
      * 
