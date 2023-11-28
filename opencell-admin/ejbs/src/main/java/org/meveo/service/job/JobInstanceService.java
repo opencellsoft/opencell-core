@@ -17,6 +17,7 @@
  */
 package org.meveo.service.job;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Stateless;
@@ -74,11 +76,13 @@ public class JobInstanceService extends BusinessService<JobInstance> {
      */
     public void registerJobs() {
 
-        Set<Class<?>> classes = ReflectionUtils.getSubclasses(Job.class);
+        Set<Class<?>> classes = ReflectionUtils.getSubclasses(Job.class).stream().filter(e -> !Modifier.isAbstract(e.getModifiers())).collect(Collectors.toSet());
 
         for (Class<?> jobClass : classes) {
             Job job = (Job) EjbUtils.getServiceInterface(jobClass.getSimpleName());
-            registerJob(job);
+            if(job != null) {
+                registerJob(job);
+            }
         }
     }
 
