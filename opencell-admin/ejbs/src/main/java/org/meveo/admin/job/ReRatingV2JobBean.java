@@ -153,7 +153,7 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 
 				try (Statement statement = connection.createStatement()) {
 					log.info("Dropping materialized view {}", viewName);
-					//statement.execute("drop materialized view if exists " + viewName);
+					statement.execute("drop materialized view if exists " + viewName);
 				} catch (Exception e) {
 					log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
 					throw new BusinessException(e);

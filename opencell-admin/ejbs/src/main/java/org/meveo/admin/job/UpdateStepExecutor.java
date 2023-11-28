@@ -102,7 +102,7 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
 			return;
 		}
 
-		String sqlString = updateQuery + (updateQuery.toUpperCase().contains("WHERE") ? " AND " : " WHERE ") + tableAlias + ".id BETWEEN :minId AND :maxId";
+		String sqlString = namedQuery!=null ? null : updateQuery + (updateQuery.toUpperCase().contains("WHERE") ? " AND " : " WHERE ") + tableAlias + ".id BETWEEN :minId AND :maxId";
 		Query query = namedQuery != null ? emWrapper.getEntityManager().createNamedQuery(namedQuery)
 				: (isNativeQuery ? emWrapper.getEntityManager().createNativeQuery(sqlString):emWrapper.getEntityManager().createQuery(sqlString));
 

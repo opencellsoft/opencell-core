@@ -149,7 +149,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 		Object[] count = (Object[]) entityManager.createNativeQuery("select sum(count_wo), count(id) from " + viewName)
 				.getSingleResult();
 
-		nrOfInitialWOs = count[0] != null ? ((Number) count[0]).longValue() : null;
+		nrOfInitialWOs = count[0] != null ? ((Number) count[0]).longValue() : 0;
 
 	}
 
