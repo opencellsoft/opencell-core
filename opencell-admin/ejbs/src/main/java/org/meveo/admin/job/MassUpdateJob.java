@@ -20,7 +20,9 @@ import org.meveo.service.job.Job;
 
 
 @Stateless
-public class massUpdateJob extends Job {
+public class MassUpdateJob extends Job {
+
+	private static final String JOB_INSTANCE_MASS_UPDATE_JOB = "JobInstance_massUpdateJob";
 
 	public static final String CF_MASS_UPDATE_CHUNK = "CF_MASS_UPDATE_CHUNK";
 
@@ -37,13 +39,13 @@ public class massUpdateJob extends Job {
 	}
 
 	private void initUpdateStepParams(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_CHUNK_SIZE,
-				(Long) getParamOrCFValue(jobInstance, massUpdateJob.CF_MASS_UPDATE_CHUNK, 100000L));
-		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_UPDATE_QUERY,
-				(String)getParamOrCFValue(jobInstance, updateStepExecutor.PARAM_UPDATE_QUERY));
-		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_READ_INTERVAL_QUERY,
+		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_CHUNK_SIZE,
+				(Long) getParamOrCFValue(jobInstance, MassUpdateJob.CF_MASS_UPDATE_CHUNK, 100000L));
+		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_UPDATE_QUERY,
+				(String)getParamOrCFValue(jobInstance, UpdateStepExecutor.PARAM_UPDATE_QUERY));
+		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY,
 				(String)getParamOrCFValue(jobInstance, UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY));
-		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_TABLE_ALIAS,
+		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_TABLE_ALIAS,
 				(String)getParamOrCFValue(jobInstance, UpdateStepExecutor.PARAM_TABLE_ALIAS));
 	}
 
@@ -59,32 +61,32 @@ public class massUpdateJob extends Job {
 		result.put(CF_NB_RUNS,
 				CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"),
 						CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", false,
-						null, null, "JobInstance_massUpdateJob"));
+						null, null, JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(Job.CF_WAITING_MILLIS,
 				CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS,
 						resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
 						"tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null,
-						"JobInstance_massUpdateJob"));
+						JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(UpdateStepExecutor.PARAM_TABLE_ALIAS,
 				CustomFieldTemplateUtils.buildCF(UpdateStepExecutor.PARAM_TABLE_ALIAS,
 						resourceMessages.getString("jobExecution.massUpdate.limitQuery"), CustomFieldTypeEnum.STRING,
-						"tab:Configuration:0;fieldGroup:Configuration:0;field:2", "", false, null, null,
-						"JobInstance_massUpdateJob"));
+						"tab:Configuration:0;fieldGroup:Configuration:0;field:2", "a", false, null, null,
+						JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(CF_MASS_UPDATE_CHUNK,
 				CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK,
 						resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG,
 						"tab:Configuration:0;fieldGroup:Configuration:0;field:3", "100000", false, null, null,
-						"JobInstance_massUpdateJob"));
+						JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(UpdateStepExecutor.PARAM_UPDATE_QUERY,
 				CustomFieldTemplateUtils.buildCF(UpdateStepExecutor.PARAM_UPDATE_QUERY,
 						resourceMessages.getString("jobExecution.massUpdate.updateQuery"), CustomFieldTypeEnum.TEXT_AREA,
 						"tab:Configuration:0;fieldGroup:Configuration:0;field:4", "", false, null, null,
-						"JobInstance_massUpdateJob"));
+						JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY,
 				CustomFieldTemplateUtils.buildCF(UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY,
 						resourceMessages.getString("jobExecution.massUpdate.limitQuery"), CustomFieldTypeEnum.TEXT_AREA,
 						"tab:Configuration:0;fieldGroup:Configuration:0;field:5", "", false, null, null,
-						"JobInstance_massUpdateJob"));
+						JOB_INSTANCE_MASS_UPDATE_JOB));
 		return result;
 	}
 }

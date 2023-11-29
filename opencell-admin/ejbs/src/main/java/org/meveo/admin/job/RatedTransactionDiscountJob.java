@@ -45,6 +45,8 @@ import org.meveo.service.job.Job;
 @Stateless
 public class RatedTransactionDiscountJob extends Job {
 
+	private static final String JOB_INSTANCE_RATED_TRANSACTION_DISCOUNT_JOB = "JobInstance_RatedTransactionDiscountJob";
+
 	public static final String CF_MASS_UPDATE_CHUNK = "CF_MASS_UPDATE_CHUNK";
 
 	@Inject
@@ -60,13 +62,13 @@ public class RatedTransactionDiscountJob extends Job {
 	}
 
 	private void initUpdateStepParams(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_CHUNK_SIZE,
+		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_CHUNK_SIZE,
 				(Long) getParamOrCFValue(jobInstance, RatedTransactionDiscountJob.CF_MASS_UPDATE_CHUNK, 100000L));
-		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_NAMED_QUERY,
+		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_NAMED_QUERY,
 				("RatedTransaction.massUpdateWithDiscountedRTStep" + (EntityManagerProvider.isDBOracle() ? "Oracle" : "")));
-		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_READ_INTERVAL_QUERY,
+		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY,
 				("select min(id), max(id) from RatedTransaction where status ='OPEN' and discountedRatedTransaction is null"));
-		jobExecutionResult.addJobParam(updateStepExecutor.PARAM_NATIVE_QUERY, (false));
+		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_NATIVE_QUERY, (false));
 	}
 
 	@Override
@@ -81,17 +83,17 @@ public class RatedTransactionDiscountJob extends Job {
 		result.put(CF_NB_RUNS,
 				CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"),
 						CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", false,
-						null, null, "JobInstance_RatedTransactionDiscountJob"));
+						null, null, JOB_INSTANCE_RATED_TRANSACTION_DISCOUNT_JOB));
 		result.put(Job.CF_WAITING_MILLIS,
 				CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS,
 						resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
 						"tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null,
-						"JobInstance_RatedTransactionDiscountJob"));
+						JOB_INSTANCE_RATED_TRANSACTION_DISCOUNT_JOB));
 		result.put(CF_MASS_UPDATE_CHUNK,
 				CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK,
 						resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG,
 						"tab:Configuration:0;fieldGroup:Configuration:0;field:3", "100000", false, null, null,
-						"JobInstance_RatedTransactionDiscountJob"));
+						JOB_INSTANCE_RATED_TRANSACTION_DISCOUNT_JOB));
 
 		return result;
 	}
