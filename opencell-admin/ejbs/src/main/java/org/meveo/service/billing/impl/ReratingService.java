@@ -22,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.MethodCallingUtils;
@@ -29,6 +30,7 @@ import org.meveo.model.RatingResult;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceLineStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -611,18 +613,27 @@ public class ReratingService extends RatingService implements Serializable {
 
         // Update Invoice lines - adjust amounts and quantity
         Date date = new Date();
+		List<Long> ilIds = new ArrayList<>();
         for (Entry<Long, ILAdjustments> ilInfo : ilAdjustments.entrySet()) {
             Long ilId = ilInfo.getKey();
             ILAdjustments ilAdjustment = ilInfo.getValue();
-            em.createNamedQuery("InvoiceLine.updateByIncrementalModeWoutDates" + (ilAdjustment.isAverageUnitAmounts() ? "WithAverageUnitAmounts" : ""))
-                .setParameter("deltaAmountWithoutTax", ilAdjustment.getAmountWithoutTax()).setParameter("deltaAmountWithTax", ilAdjustment.getAmountWithTax()).setParameter("deltaAmountTax", ilAdjustment.getAmountTax())
-                .setParameter("deltaQuantity", ilAdjustment.getQuantity()).setParameter("id", ilId).setParameter("now", date).executeUpdate();
+	        InvoiceLine invoiceLine = em.find(InvoiceLine.class, ilId);
+			if(invoiceLine != null && invoiceLine.getQuantity().compareTo(ilAdjustment.getQuantity().abs()) == 0) {
+				ilIds.add(ilId);
+			}else{
+				em.createNamedQuery("InvoiceLine.updateByIncrementalModeWoutDates" + (ilAdjustment.isAverageUnitAmounts() ? "WithAverageUnitAmounts" : ""))
+						.setParameter("deltaAmountWithoutTax", ilAdjustment.getAmountWithoutTax()).setParameter("deltaAmountWithTax", ilAdjustment.getAmountWithTax()).setParameter("deltaAmountTax", ilAdjustment.getAmountTax())
+						.setParameter("deltaQuantity", ilAdjustment.getQuantity()).setParameter("id", ilId).setParameter("now", date).executeUpdate();
+			}
         }
+		if(CollectionUtils.isNotEmpty(ilIds)){
+			var line = em.createNamedQuery("InvoiceLine.cancelByInvoiceLineIds").setParameter("now", new Date()).setParameter("invoiceLinesIds", ilIds).executeUpdate();
+			System.out.println(line);
+		}
 
         // No reason to reject rerating
         return null;
     }
-
     /**
      * Rate a copy of Wallet operation to rerate, preserving or not a priceplan. New Wallet operation will be associated with a rerated WalletOperation. OldWalletOperation.reratedWalletOperation = new WalletOperation
      * 
