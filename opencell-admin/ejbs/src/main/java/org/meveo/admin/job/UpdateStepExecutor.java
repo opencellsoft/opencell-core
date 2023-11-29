@@ -28,7 +28,10 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
+    
+    private boolean isNativeQuery = true;
 
+    public static final String PARAM_NATIVE_QUERY = "PARAM_NATIVE_QUERY";
     public static final String PARAM_MIN_ID = "minId";
     public static final String PARAM_MAX_ID = "maxId";
     public static final String PARAM_CHUNK_SIZE = "chunkSize";
@@ -44,14 +47,17 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
      */
     public Optional<Iterator<Long[]>> initFunction(JobExecutionResultImpl jobExecutionResult) {
         List<Long[]> intervals = new ArrayList<>();
+        
+        jobExecutionResult.addJobParam("updatedElementsCount", 0L);
 
         String readQuery = (String) jobExecutionResult.getJobParam(PARAM_READ_INTERVAL_QUERY);
+        isNativeQuery = jobExecutionResult.getJobParam(PARAM_NATIVE_QUERY)!=null?(boolean) jobExecutionResult.getJobParam(PARAM_NATIVE_QUERY):true;
         Object[] result=null;
         if(!StringUtils.isEmpty(readQuery)){
-        	result= (Object[]) emWrapper.getEntityManager().createQuery(readQuery).getSingleResult();
+        	result= isNativeQuery? (Object[]) emWrapper.getEntityManager().createNativeQuery(readQuery).getSingleResult() : (Object[]) emWrapper.getEntityManager().createQuery(readQuery).getSingleResult();
         }
-		Long minId = result != null ? (Long)result[0] :  (Long)jobExecutionResult.getJobParam(PARAM_MIN_ID);
-		Long maxId = result != null ? (Long)result[1] : (Long) jobExecutionResult.getJobParam(PARAM_MAX_ID);
+		Long minId = result != null ? ((Number)result[0]).longValue() :  (Long)jobExecutionResult.getJobParam(PARAM_MIN_ID);
+		Long maxId = result != null ? ((Number)result[1]).longValue() :  (Long)jobExecutionResult.getJobParam(PARAM_MAX_ID);
         Long chunkSize = (Long) jobExecutionResult.getJobParam(PARAM_CHUNK_SIZE);
 
         if (minId == null || maxId == null || chunkSize == null) {
@@ -72,7 +78,11 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initFunction, this::processUpdateByInterval, null, null, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initFunction, this::processUpdateByInterval, null, null, null, this::writeReport);
+    }
+    
+    private void writeReport(JobExecutionResultImpl jobExecutionResult) {
+    	jobExecutionResult.addReport("Total number of updated elements :"+jobExecutionResult.getJobParam("updatedElementsCount"));
     }
 
     /**
@@ -85,15 +95,19 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
 		String namedQuery = (String) jobExecutionResult.getJobParam(PARAM_NAMED_QUERY);
 		String updateQuery = (String) jobExecutionResult.getJobParam(PARAM_UPDATE_QUERY);
 		String tableAlias = (String) jobExecutionResult.getJobParam(PARAM_TABLE_ALIAS);
+		
 
 		if (namedQuery == null && (tableAlias == null || updateQuery == null)) {
 			log.error("params should not be null - updateQuery: {}, tableAlias: {}, namedQuery: {}", updateQuery, tableAlias, namedQuery);
 			return;
 		}
 
+		String sqlString = namedQuery!=null ? null : updateQuery + (updateQuery.toUpperCase().contains("WHERE") ? " AND " : " WHERE ") + tableAlias + ".id BETWEEN :minId AND :maxId";
 		Query query = namedQuery != null ? emWrapper.getEntityManager().createNamedQuery(namedQuery)
-				: emWrapper.getEntityManager().createQuery((updateQuery.toUpperCase().contains("WHERE") ? " AND " : " WHERE ") + tableAlias + ".id BETWEEN :minId AND :maxId");
+				: (isNativeQuery ? emWrapper.getEntityManager().createNativeQuery(sqlString):emWrapper.getEntityManager().createQuery(sqlString));
 
-		query.setParameter("minId", interval[0]).setParameter("maxId", interval[1]).executeUpdate();
+		int result = query.setParameter("minId", interval[0]).setParameter("maxId", interval[1]).executeUpdate();
+		Long updatedElementsCount = (Long) jobExecutionResult.getJobParam("updatedElementsCount");
+		updatedElementsCount = updatedElementsCount + result;
 	}
 }
