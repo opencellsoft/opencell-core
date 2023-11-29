@@ -1938,16 +1938,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
     
-    public RatedTransaction findByServiceInstance(Long serviceInstanceId) {
-        try {
-            return (RatedTransaction) getEntityManager().createNamedQuery("RatedTransaction.findByServiceInstance").setParameter("serviceInstanceId", serviceInstanceId).getResultList().get(0);
-
-        } catch (NoResultException e) {
-            log.warn("No service instance found with the given id={}", serviceInstanceId);
-            return null;
-        }
-    }
-    
     /**
 	 * @param result
 	 * @param billableEntity

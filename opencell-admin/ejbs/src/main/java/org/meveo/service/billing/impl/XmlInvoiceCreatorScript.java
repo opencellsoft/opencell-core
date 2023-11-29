@@ -22,38 +22,6 @@ import static java.util.Optional.ofNullable;
 import static org.meveo.commons.utils.NumberUtils.toPlainString;
 import static org.meveo.commons.utils.StringUtils.getDefaultIfNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.apache.commons.lang3.math.NumberUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
@@ -64,43 +32,11 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.AttributeInstance;
-import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.CounterPeriod;
-import org.meveo.model.billing.Country;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceConfiguration;
-import org.meveo.model.billing.InvoiceLine;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceSubTotals;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.LinkedInvoice;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -118,7 +54,6 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
@@ -128,6 +63,36 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * A default implementation of XML invoice creation.
@@ -190,9 +155,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     @Inject
     protected InvoiceSubTotalsService invoiceSubTotalsService;
-    
-    @Inject
-    protected AttributeInstanceService attributeInstanceService;
 
     /**
      * transformer factory.
@@ -596,77 +558,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         calendarTag.appendChild(calendarText);
         if (!isShort) {
             addCustomFields(serviceInstance, doc, serviceTag, true);
-            
-            Element attributTag = doc.createElement("attributes");
-            
-            Map<String,Object> attributMap=getServiceAttributeValue(serviceInstance);
-            if(!attributMap.isEmpty()) {
-            for(Map.Entry<String, Object> entry : attributMap.entrySet()) { 
-                Element attribute = doc.createElement("attribute");
-                attribute.setAttribute("code",entry.getKey()); 
-                attribute.setAttribute("value", (String)entry.getValue()); 
-                attributTag.appendChild(attribute);
-            }
-            }
-            serviceTag.appendChild(attributTag);
-            }
+        }
         return serviceTag;
     }
 
-    
-    public  Map<String,Object> getServiceAttributeValue(ServiceInstance serviceInstance) { 
-    	Map<String,Object> attributMap=new HashMap<>();
-    	Object attributeValue=null;
-    	if(!serviceInstance.getAttributeInstances().isEmpty()) {
-    	for(AttributeInstance attributeInstance : serviceInstance.getAttributeInstances()) {
-    		
-    		Attribute attribute = attributeInstance.getAttribute();
-    		switch (attribute.getAttributeType()) {
-			case TOTAL :
-			case COUNT :
-			case NUMERIC :
-			case INTEGER:
-				if(attributeInstance.getDoubleValue()!=null) {
-					attributeValue= attributeInstance.getDoubleValue(); 
-				}
-				break;
-			case LIST_MULTIPLE_TEXT:
-			case LIST_TEXT:
-			case TEXT:	
-				if(!StringUtils.isBlank(attributeInstance.getStringValue())) {
-					attributeValue= attributeInstance.getStringValue();  
-				}
-				break;
-			case EXPRESSION_LANGUAGE :
-				if(attributeInstance.getStringValue()!=null) {
-					RatedTransaction rt=ratedTransactionService.findByServiceInstance(serviceInstance.getId());
-					if(rt.getEdr()!=null) {
-					attributeValue = ValueExpressionWrapper.evaluateExpression(attributeInstance.getStringValue(), String.class, rt.getEdr(),null);
-					}
-				}
-				break;
-			case DATE:
-				if(attributeInstance.getDateValue()!=null) {
-					attributeValue= attributeInstance.getDateValue();  
-				}break;
-			case BOOLEAN:
-				if(attributeInstance.getBooleanValue()!=null) {
-					attributeValue= attributeInstance.getBooleanValue();  
-				} else {
-					if(attributeInstance.getStringValue()!=null) {
-						attributeValue= attributeInstance.getStringValue();  
-					}
-				}
-				break;
-			default:
-				break;  
-			}
-    		attributMap.put(attribute.getCode(), attributeValue);
-    		}}
-    	return attributMap;
-    }
-    
-    
     /**
      * Create invoice/priceplans DOM element
      *
@@ -843,7 +738,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected Element createNameSection(Document doc, AccountEntity account, String invoiceLanguageCode) {
 
-    	Element nameTag = doc.createElement("name");
+        Element nameTag = doc.createElement("name");
         Element quality = doc.createElement("quality");
         if (account != null && account.getName() != null && account.getName().getTitle() != null) {
             String translationKey = "T_" + account.getName().getTitle().getCode() + "_" + invoiceLanguageCode;
