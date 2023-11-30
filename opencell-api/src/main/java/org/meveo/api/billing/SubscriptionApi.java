@@ -2243,10 +2243,6 @@ public class SubscriptionApi extends BaseApi {
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, subscriptionValidityDate);
         }
-        if (!subscriptionService.willBeTerminatedInFuture(subscription)){
-            throw new MeveoApiException("No need to cancel the termination of subscription " + subscription.getCode()
-                    + ", because it is not programmed to be terminated in futur.");
-        }
 
         subscriptionService.cancelSubscriptionTermination(subscription);
     }
@@ -2710,8 +2706,7 @@ public class SubscriptionApi extends BaseApi {
             reactivateServices(lastSubscription);
             if(lastSubscription.getInitialSubscriptionRenewal() != null)
                 subscriptionService.cancelSubscriptionTermination(lastSubscription);
-        } else if (subscriptionService.willBeTerminatedInFuture(lastSubscription)
-                    && lastSubscription.getSubscriptionRenewal().getTerminationReason().getUseForOfferChange()) {
+        } else {
             // previous sub is still active, but maybe was planed for termination
             subscriptionService.cancelSubscriptionTermination(lastSubscription);
         }
