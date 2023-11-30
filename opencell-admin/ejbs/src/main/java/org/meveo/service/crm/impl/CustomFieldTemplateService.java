@@ -353,16 +353,16 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
     }
 
-    @Override
-    public CustomFieldTemplate update(CustomFieldTemplate cft) throws BusinessException {
-        return update(cft, true);
+    //@Override
+    public CustomFieldTemplate update(CustomFieldTemplate oldCft, CustomFieldTemplate cft) throws BusinessException {
+        return update(oldCft, cft, true);
     }
 
-    public CustomFieldTemplate updateWithoutUniqueConstraint(CustomFieldTemplate cft) throws BusinessException {
-        return update(cft, false);
+    public CustomFieldTemplate updateWithoutUniqueConstraint(CustomFieldTemplate oldCft, CustomFieldTemplate cft) throws BusinessException {
+        return update(oldCft, cft, false);
     }
 
-    private CustomFieldTemplate update(CustomFieldTemplate cft, boolean updateUniqueConstraint) {
+    private CustomFieldTemplate update(CustomFieldTemplate oldCft, CustomFieldTemplate cft, boolean updateUniqueConstraint) {
         if ("INVOICE_SEQUENCE".equals(cft.getCode())
                 && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new ValidationException("invoice_sequence CF must be versionnable, Long, Single value and must have a Calendar");
@@ -383,8 +383,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         // if its a custom table field update table structure in DB
         if (cet != null && cet.isStoreAsTable()) {
-            CustomFieldTemplate cftOld = getEntityManager().find(CustomFieldTemplate.class, cft.getId());
-            customTableCreatorService.updateField(cet.getDbTablename(), cft, cftOld);
+            customTableCreatorService.updateField(cet.getDbTablename(), cft, oldCft);
             cetFields.put(cft.getCode(), cft);
         }
 
