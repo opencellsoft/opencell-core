@@ -24,7 +24,7 @@ public interface BatchEntity extends Resource {
 
     @Schema(description = "An optional text for user to input a customized description")
     @NotNull
-    String getName();
+    String getCode();
 
     @NotNull
     @Schema(description = "The job template that can process the batch.\n" +
