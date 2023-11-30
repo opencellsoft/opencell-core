@@ -301,13 +301,11 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
 
     private Set<String> findColumnHeaderForReportQuery(ReportQuery reportQuery) {
         Map<String, String> aliases = reportQuery.getAliases() != null ? reportQuery.getAliases() : new HashMap<>();
-        List<String> fields;
-        if (reportQuery.getAdvancedQuery() != null && !reportQuery.getAdvancedQuery().isEmpty()) {
-            fields = (List<String>) reportQuery.getAdvancedQuery().getOrDefault("genericFields", new ArrayList<>());
-        } else {
-            fields = reportQuery.getFields();
+        List<String> fields = new ArrayList<>();
+        for (Entry<String, String> entry : aliases.entrySet()) {
+        	fields.add(entry.getKey());
         }
-        return mappingColumn(reportQuery.getGeneratedQuery(), fields, aliases).keySet();
+		return mappingColumn(reportQuery.getGeneratedQuery(), fields, aliases).keySet();
     }
 
     private Map<String, Integer> mappingColumn(String query, List<String> fields, Map<String, String> aliases) {

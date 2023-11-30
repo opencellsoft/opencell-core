@@ -274,11 +274,10 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 			return false;
 		AccountingArticle other = (AccountingArticle) obj;
 		if (id == null) {
-			if (other.getId() != null)
+			if (other.id != null)
 				return false;
-		} else if (other.getId()!=null && !id.equals(other.getId())) {
+		} else if (!id.equals(other.id))
 			return false;
-		}
 		return true;
 	}
 

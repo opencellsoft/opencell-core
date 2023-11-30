@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -32,7 +33,6 @@ import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.ExceptionUtils;
 import org.meveo.commons.utils.FileUtils;
@@ -56,7 +56,10 @@ import org.meveo.model.jaxb.customer.WarningCustomerAccount;
 import org.meveo.model.jaxb.customer.WarningSeller;
 import org.meveo.model.jaxb.customer.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.CustomerImportHistoService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -67,7 +70,9 @@ import org.meveo.service.crm.impl.AccountImportService;
 import org.meveo.service.crm.impl.CustomerImportService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ImportWarningException;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
@@ -75,9 +80,10 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * 
  */
 @Stateless
-public class ImportCustomersJobBean extends BaseJobBean {
+public class ImportCustomersJobBean {
 
-    private static final long serialVersionUID = 489244983081933038L;
+    @Inject
+    private Logger log;
 
     @Inject
     private TradingCountryService tradingCountryService;
@@ -108,6 +114,17 @@ public class ImportCustomersJobBean extends BaseJobBean {
 
     @Inject
     private AccountImportService accountImportService;
+
+    // @Inject
+    // @ApplicationProvider
+    // protected Provider appProvider;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     private Sellers sellersWarning;
     private Sellers sellersError;
@@ -167,7 +184,7 @@ public class ImportCustomersJobBean extends BaseJobBean {
             try {
                 log.info("InputFiles job " + file.getName() + " in progres");
                 currentFile = FileUtils.addExtension(file, ".processing");
-                importFile(currentFile, file.getName(), result.getJobInstance().getId());
+                importFile(currentFile, file.getName(), result.getJobInstance());
                 FileUtils.moveFile(dirOK, currentFile, file.getName());
                 log.info("InputFiles job " + file.getName() + " done");
             } catch (Exception e) {
@@ -215,11 +232,11 @@ public class ImportCustomersJobBean extends BaseJobBean {
     /**
      * @param file file to import
      * @param fileName file's name
-     * @param jobInstanceId the job Instance id
+     * @param jobInstance the job Instance
      * @throws JAXBException jaxb exception
      * @throws Exception exception
      */
-    private void importFile(File file, String fileName, Long jobInstanceId) throws JAXBException, Exception {
+    private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, Exception {
 
         log.info("start import file :" + fileName);
 
@@ -270,6 +287,7 @@ public class ImportCustomersJobBean extends BaseJobBean {
             createSellerWarning(null, "File empty");
         }
 
+        int ji = 0;
         for (org.meveo.model.jaxb.customer.Seller sell : sellerList) {
             i++;
             org.meveo.model.admin.Seller seller = null;
@@ -286,8 +304,10 @@ public class ImportCustomersJobBean extends BaseJobBean {
 
                 List<org.meveo.model.jaxb.customer.Customer> customerList = sell.getCustomers().getCustomer();
 
+                int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+                
                 for (org.meveo.model.jaxb.customer.Customer cust : customerList) {
-                    if (isJobRequestedToStop(jobInstanceId)) {
+                    if (ji % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                         break;
                     }
                     if (customerCheckError(sell, cust)) {
@@ -298,6 +318,7 @@ public class ImportCustomersJobBean extends BaseJobBean {
 
                     nbCustomers++;
                     createCustomer(fileName, seller, sell, cust, i);
+                    ji++;
                 }
             } catch (Exception e) {
                 createSellerError(sell, ExceptionUtils.getRootCause(e).getMessage());

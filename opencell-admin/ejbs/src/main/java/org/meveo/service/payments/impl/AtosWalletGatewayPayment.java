@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
@@ -95,6 +93,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
     private RequestConfig requestConfig;   
     private PaymentMethodService paymentMethodService;
     private ScriptInstanceService scriptInstanceService = null;
+    private ProviderService providerService;
 
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expiryDate, String issueNumber,
@@ -166,7 +165,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 			String seal;
 			try {
 				String data = getSealString(request,isPayment);
-				log.info("getSealString(request):{}" , data);
+				log.info("getSealString(request):" + data);
 				seal = SealCalculator.calculate(data, paymentGateway.getWebhooksSecretKey());
 				request.setSeal(seal);
 				request.setSealAlgorithm(paramBean().getProperty(SEAL_ALGORITHM_PROPERTY, "HMAC-SHA-256"));
@@ -176,7 +175,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 			}
 		} else {
 
-			Map<String, Object> context = new HashMap<>();
+			Map<String, Object> context = new HashMap<String, Object>();
 
 			context.put("CardPaymentMethod", paymentMethod);
 			context.put("ctsAmount", ctsAmount);
@@ -187,9 +186,9 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 			request = (WalletOrderRequest) context.get("WalletOrderRequest");
 
 		}
-		String wsUrl = paramBean().getProperty(OFFICE_URL_PROPERTY, null);
+		String wsUrl = paramBean().getProperty(OFFICE_URL_PROPERTY, "changeIt");
 		if(!isPayment) {
-			wsUrl = paramBean().getProperty(WALLET_URL_PROPERTY, null);
+			wsUrl = paramBean().getProperty(WALLET_URL_PROPERTY, "changeIt");
 		}
 		wsUrl += wsUri;
 		
@@ -253,7 +252,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 	}
 
 	private String[] getErreurCodeAndMsg(WalletOrderResponse response) {
-		Map<Object, Object> mapErrorCodeAndMsg = new HashMap();
+		Map<Object, Object> mapErrorCodeAndMsg = new HashMap<Object, Object>();
 		Provider provider = ((ProviderService) EjbUtils.getServiceInterface(ProviderService.class.getSimpleName())).getProvider();
 		log.info("WalletOrderResponse AuthorisationId:{}  AcquirerResponseCode:{}  ComplementaryCode:{}  ResponseCode:{}", response.getAuthorisationId(),
 				response.getAcquirerResponseCode(), response.getComplementaryCode(), response.getResponseCode());
@@ -299,7 +298,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
 		String transactionReference = System.currentTimeMillis() + "R" + ((int) (Math.random() * 1000 + 1)) + "CA"
 				+ ca.getId();
-		
+
 		if (hostedCheckoutInput.isOneShotPayment()) {
 			transactionReference = "oneShot" + transactionReference;
 		}
@@ -367,7 +366,10 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 	private WalletOrderRequest buildWalletOrderRequest(PaymentMethod paymentMethod, Long amount, String interfaceVersion,boolean isPayment) {
 		WalletOrderRequest request = new WalletOrderRequest();
 		request.setAmount(String.valueOf(amount));
-		request.setCurrencyCode(Currency.valueOf(paymentMethod.getCustomerAccount().getTradingCurrency().getCurrencyCode()).getCode());
+
+		Provider provider = providerService().getProvider();
+        
+        request.setCurrencyCode(Currency.valueOf(provider.getCurrency().getCurrencyCode()).getCode());
 		request.setMerchantId(paymentGateway.getMarchandId());
 		request.setOrderChannel(OrderChannel.INTERNET.name());
 		if(isPayment) {
@@ -375,7 +377,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 		}
 		request.setInterfaceVersion(interfaceVersion);
 		request.setKeyVersion(paymentGateway.getWebhooksKeyId());
-		request.setTransactionReference(buildTransactionReference());
+		request.setTransactionReference(amount+"T"+System.currentTimeMillis() + "R" + (int) (Math.random() * 1000000 + 1) + "CA" + paymentMethod.getCustomerAccount().getId());
 		if (!StringUtils.isBlank(paymentMethod.getToken3DsId()) && isPayment) {
 			request.setInitialSchemeTransactionIdentifier(paymentMethod.getToken3DsId());
 		}
@@ -395,11 +397,19 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 		return request;
 	}
 
-	private String buildTransactionReference() {
-		return UUID.randomUUID().toString().substring(0, paramBean().getPropertyAsInteger("sips.transReference.size",35)).replace("-", "x");
-	}
+    private String buildWalletActionnameList(String variant) {
+        String[] variantList = variant.split(",");
+        List<String> walletActionnameList = new ArrayList<>();
 
-	
+        for (String item : variantList) {
+            if (WalletAction.get(item) != null) {
+                walletActionnameList.add(variant);
+            }
+        }
+
+        return String.join(",", walletActionnameList);
+    }
+
     /**
      * Mapping status.
      *
@@ -500,7 +510,7 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
             paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
         }
 
-        return paramBeanFactory != null ? paramBeanFactory.getInstance() : ParamBean.getInstance();
+        return paramBeanFactory != null ? paramBeanFactory.getInstance() : null;
     }
 
     private CustomerAccountService customerAccountService() {
@@ -526,9 +536,18 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
         return paymentMethodService;
     }
-    @Override
+
+    private ProviderService providerService() {
+        if (providerService == null) {
+        	providerService = (ProviderService) EjbUtils.getServiceInterface(ProviderService.class.getSimpleName());
+        }
+
+        return providerService;
+    }
+
+	@Override
 	public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	@Override

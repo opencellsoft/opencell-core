@@ -24,23 +24,16 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.response.CounterTemplatesResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.catalog.CounterTemplateLevel;
-import org.meveo.model.catalog.CounterTypeEnum;
+import org.meveo.model.catalog.*;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -130,7 +123,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         counterTemplate.setAccumulator(isAccumulator);
         if (isAccumulator) {
             counterTemplate.setCeilingExpressionEl(null);
-            counterTemplate.setCeiling(null);
+            counterTemplate.setCeiling(BigDecimal.ZERO);
             counterTemplate.setAccumulatorType(postData.getAccumulatorType());
             if(postData.getAccumulatorType() != null && postData.getAccumulatorType().equals(AccumulatorCounterTypeEnum.MULTI_VALUE)) {
                 counterTemplate.setFilterEl(postData.getFilterEl());

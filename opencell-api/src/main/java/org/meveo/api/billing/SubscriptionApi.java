@@ -525,14 +525,14 @@ public class SubscriptionApi extends BaseApi {
                 subscription.setMinimumChargeTemplate(minimumChargeTemplate);
             }
         }
-	    PaymentMethod paymentMethod = null;
+
         if (Objects.nonNull(postData.getPaymentMethod())) {
-	        paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
+            PaymentMethod paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
             if (paymentMethod == null) {
                 throw new EntityNotFoundException("payment method not found!");
             }
+            subscription.setPaymentMethod(paymentMethod);
         }
-	    subscription.setPaymentMethod(paymentMethod);
 
         if (postData.getMinimumAmountEl() != null) {
             subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
@@ -2882,7 +2882,7 @@ public class SubscriptionApi extends BaseApi {
             }
 
             if (!offerTemplate.getSellers().isEmpty() && !offerTemplate.getSellers().contains(seller)) {
-                throw new EntityNotAllowedException(Seller.class, OfferTemplate.class, postData.getSeller());
+                throw new EntityNotAllowedException(Seller.class, Subscription.class, postData.getSeller());
             }
         }
         

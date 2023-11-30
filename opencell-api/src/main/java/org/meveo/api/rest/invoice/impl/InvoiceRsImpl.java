@@ -18,9 +18,6 @@
 
 package org.meveo.api.rest.invoice.impl;
 
-import static org.meveo.model.billing.InvoiceStatusEnum.DRAFT;
-import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
@@ -37,6 +34,7 @@ import org.meveo.api.rest.invoice.InvoiceRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -233,7 +231,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
             if(!putData.isSkipValidation()) {
                 invoiceApi.validateAdjAmount(putData.getInvoiceId());
                 Invoice invoice = invoiceApi.rebuildInvoice(putData.getInvoiceId(), false);
-                if(invoice != null && (invoice.getStatus() == DRAFT || invoice.getStatus() == NEW)) {
+                if(invoice != null && invoice.getStatus() == InvoiceStatusEnum.DRAFT) {
                     invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true);
                 }
             }else {

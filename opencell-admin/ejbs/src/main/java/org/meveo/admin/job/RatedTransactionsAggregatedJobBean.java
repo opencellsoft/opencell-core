@@ -106,10 +106,8 @@ public class RatedTransactionsAggregatedJobBean extends IteratorBasedJobBean<Agg
     }
 
     private void checkAggregatedWoCurrency(List<AggregatedWalletOperation> aggregatedWos) {
-        TradingCurrency functionalCurrency = null;
-        if (appProvider.getCurrency() != null && appProvider.getCurrency().getId() != null) {
-            tradingCurrencyService.findByTradingCurrencyByCurrencyID(appProvider.getCurrency().getId()).orElse(null);
-        }
+        TradingCurrency functionalCurrency = tradingCurrencyService
+                .findByTradingCurrencyByCurrencyID(appProvider.getCurrency().getId()).orElse(null);
         for (AggregatedWalletOperation aggregatedWalletOperation : aggregatedWos) {
             verifyWOCurrency(aggregatedWalletOperation, functionalCurrency);
         }

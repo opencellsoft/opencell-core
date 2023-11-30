@@ -533,7 +533,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					break;
 				}
 			}
-			attributeService.validAttribute(productVersionAttribute, attributeInstance);
 			serviceInstance.addAttributeInstance(attributeInstance);
 			
 		}

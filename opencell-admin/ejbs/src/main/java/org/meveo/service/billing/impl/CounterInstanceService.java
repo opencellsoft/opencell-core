@@ -405,7 +405,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             if (level != null) {
                 counterPeriod.setLevel(level);
             } else {
-                counterPeriod.setLevel(counterTemplate.getAccumulator() ? null : initialValue);
+                counterPeriod.setLevel(initialValue);
             }
 
             counterPeriod.setCode(counterTemplate.getCode());

@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import org.meveo.commons.utils.ReflectionUtils;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 class GenericSimpleBeanPropertyFilter extends SimpleBeanPropertyFilter.FilterExceptFilter {
     private final Set<String> GenericSimpleBeanPropertyFilterPropertiesToInclude;
@@ -24,18 +26,15 @@ class GenericSimpleBeanPropertyFilter extends SimpleBeanPropertyFilter.FilterExc
 
     @Override
     protected boolean include(PropertyWriter writer) {
-        return this.include(null, writer, null);
+        return this.include(null, writer);
     }
 
-    private boolean include(Object pojo, PropertyWriter writer, JsonGenerator jgen) {
+    private boolean include(Object pojo, PropertyWriter writer) {
         if(GenericSimpleBeanPropertyFilterPropertiesToInclude.isEmpty()){
             return true;
         }
         String fullDeclaringClassName = pojo != null ? pojo.getClass().getName() : writer.getMember().getDeclaringClass().getName();
         String declaringClassName = fullDeclaringClassName.substring(fullDeclaringClassName.lastIndexOf(".") + 1);
-        if(jgen != null) {
-            declaringClassName = getPathToRoot(jgen);
-        }
         String fieldPattern = declaringClassName +"."+ writer.getName();
         if(Modifier.isAbstract(writer.getMember().getDeclaringClass().getModifiers())) {
         	fieldPattern = writer.getName();
@@ -50,19 +49,8 @@ class GenericSimpleBeanPropertyFilter extends SimpleBeanPropertyFilter.FilterExc
         return false;
     }
 
-    private String getPathToRoot(JsonGenerator gen){
-        String fullPath = gen.getOutputContext()
-                            .pathAsPointer(false)
-                            .toString()
-                            .replaceFirst("/", "")
-                            .replaceAll("/\\d+", "")
-                            .replaceAll("/", ".")
-                            .replace("data.", "");
-        return gen.getOutputContext().getCurrentName() == null ? fullPath : fullPath.substring(0, fullPath.lastIndexOf("."));
-    }
-
     public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer) throws Exception {
-        if (this.include(pojo, writer, jgen)) {
+        if (this.include(pojo, writer)) {
             writer.serializeAsField(pojo, jgen, provider);
         } else if (!jgen.canOmitFields()) {
             writer.serializeAsOmittedField(pojo, jgen, provider);

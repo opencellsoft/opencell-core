@@ -427,6 +427,7 @@ public class Product extends ServiceCharge {
 	@Override
 	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
 		List<ServiceChargeTemplateRecurring> serviceRecurringCharges= new ArrayList<>();
+		if(this.serviceRecurringCharges.isEmpty()){
 			for(ProductChargeTemplateMapping pc : getProductCharges()) {
 				if(pc.getChargeTemplate() != null) {
 					ChargeTemplate ch = initializeAndUnproxy(pc.getChargeTemplate());
@@ -439,6 +440,7 @@ public class Product extends ServiceCharge {
 					}
 				}
 			}
+		}
 		return serviceRecurringCharges;
 	}
 

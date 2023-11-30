@@ -49,11 +49,13 @@ import org.meveo.model.jaxb.mediation.RatedTransactions;
 import org.meveo.model.jaxb.mediation.WalletOperations;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.job.JobExecutionService;
 
 /**
  * The Class ExportMediationEntityJob bean to export EDR, WO and RTx as XML file.
@@ -77,6 +79,9 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     @EJB
     ExportMediationEntityJobBean exportMediationEntityJobBeanNewTx;
@@ -159,7 +164,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             if (!edrList.isEmpty()) {
                 int size = edrList.size();
                 lastId = edrList.get(size - 1).getId();
-                EDRs edrs = edrsToDto(edrList, jobInstance.getId());
+                EDRs edrs = edrsToDto(edrList, jobInstance);
 
                 String exportDir = exportParentDir + "edr" + File.separator;
                 File dir = new File(exportDir);
@@ -235,14 +240,19 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @param jobInstanceId
      * @return
      */
-    private EDRs edrsToDto(List<EDR> edrs, Long jobInstanceId) {
+    private EDRs edrsToDto(List<EDR> edrs, JobInstance jobInstance) {
         EDRs dto = new EDRs();
         if (edrs != null) {
+            
+            int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+            
+            int i = 0;
             for (EDR edr : edrs) {
-                if (isJobRequestedToStop(jobInstanceId)) {
+                if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                     break;
                 }
                 dto.getEdrs().add(edrToDto(edr));
+                i++;
             }
         }
         return dto;
@@ -257,15 +267,16 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     private WalletOperations walletOperationsToDto(List<WalletOperation> walletOperations, Long jobInstanceId) {
         WalletOperations dto = new WalletOperations();
         if (walletOperations != null) {
-
+            int i = 0;
             for (WalletOperation wo : walletOperations) {
-                if (isJobRequestedToStop(jobInstanceId)) {
+                if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                     break;
                 }
                 if (wo != null) {
                     WalletOperationDto walletOperationDto = new WalletOperationDto(wo);
                     dto.getWalletOperations().add(walletOperationDto);
                 }
+                i++;
             }
         }
         return dto;
@@ -281,15 +292,16 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     private RatedTransactions ratedTransactionToDto(List<RatedTransaction> ratedTransactions, Long jobInstanceId) {
         RatedTransactions dto = new RatedTransactions();
         if (ratedTransactions != null) {
-
+            int i = 0;
             for (RatedTransaction rt : ratedTransactions) {
-                if (isJobRequestedToStop(jobInstanceId)) {
+                if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                     break;
                 }
                 if (rt != null) {
                     RatedTransactionDto ratedTransactionDto = new RatedTransactionDto(rt);
                     dto.getRatedTransactions().add(ratedTransactionDto);
                 }
+                i++;
             }
         }
         return dto;

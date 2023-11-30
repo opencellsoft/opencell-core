@@ -1,6 +1,5 @@
 package org.meveo.apiv2.billing.impl;
 
-import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoiceStatusEnum.DRAFT;
 import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
@@ -524,7 +523,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Override
     public Response updateValidateInvoice(Long id, InvoicePatchInput input) {
-		Invoice invoice = findValidatedInvoiceToUpdate(id);
+        final Invoice invoice = findValidatedInvoiceToUpdate(id);		
         invoiceApiService.updateValidatedInvoice(invoice, input);
         return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build()).build();
     }
@@ -535,7 +534,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
      * @return {@link org.meveo.apiv2.billing.Invoice}
      */
     private Invoice findValidatedInvoiceToUpdate(Long id) {
-        Invoice invoice = invoiceApiService.findById(id, asList("invoiceType")).orElseThrow(NotFoundException::new);
+        Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
         final InvoiceStatusEnum status = invoice.getStatus();
 
         if(!(VALIDATED.equals(status))) {

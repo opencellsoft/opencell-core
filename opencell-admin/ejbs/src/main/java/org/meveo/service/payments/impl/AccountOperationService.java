@@ -683,8 +683,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		Date accoutingOperationDate = null;
 		int customDay = Optional.ofNullable(accountingPeriod.getForceCustomDay()).orElse(0);
 		
-		AccountingPeriodForceEnum option = (accountingPeriod.getForceOption() == null)? AccountingPeriodForceEnum.FIRST_DAY : accountingPeriod.getForceOption();
-		
+		AccountingPeriodForceEnum option = accountingPeriod.getForceOption();
 		switch (option) {
 		case FIRST_DAY:
 			accoutingOperationDate = DateUtils.setDayToDate(dateReference, 1);

@@ -231,9 +231,6 @@ public class BillingCycleDto extends BusinessEntityDto {
     @Schema(description = "Billing cycle report config", nullable = true)
     private ReportConfig reportConfig = new ReportConfig();
 
-    @Schema(description = "List of additional aggregation criteria")
-    private List<String> additionalAggregationFields;
-
     public String getLastTransactionDateDelayEL() {
 		return lastTransactionDateDelayEL;
 	}
@@ -815,7 +812,7 @@ public class BillingCycleDto extends BusinessEntityDto {
     public String getApplicationEl() {
         return applicationEl;
     }
-
+    
     /**
      * Get the discountAggregation
      * @return discountAggregation value
@@ -852,21 +849,5 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     public void setReportConfig(ReportConfig reportConfig) {
         this.reportConfig = reportConfig;
-    }
-
-    /**
-     * Get the additional aggregration fields
-     * @return
-     */
-    public List<String> getAdditionalAggregationFields() {
-        return additionalAggregationFields;
-    }
-
-    /**
-     * Set the additional aggregation fields
-     * @param additionalAggregationFields
-     */
-    public void setAdditionalAggregationFields(List<String> additionalAggregationFields) {
-        this.additionalAggregationFields = additionalAggregationFields;
     }
 }

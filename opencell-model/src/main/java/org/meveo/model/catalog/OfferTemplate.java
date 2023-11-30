@@ -182,7 +182,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     @Type(type = "numeric_boolean")
     @Column(name = "is_offer_change_restricted")
-    private Boolean isOfferChangeRestricted = Boolean.FALSE;
+    private Boolean isOfferChangeRestricted;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name="offer_template_id")

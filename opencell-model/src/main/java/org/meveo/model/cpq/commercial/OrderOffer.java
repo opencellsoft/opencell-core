@@ -170,12 +170,7 @@ public class OrderOffer extends BusinessCFEntity {
 	public List<OrderProduct> getProducts() {
 		return new ArrayList<>(this.products);
 	}
-	
-	public Set<OrderProduct> getProductswithoutDuplication() {
-		return this.products;
-	}
-	
-	
+
 	public void setProducts(List<OrderProduct> products) {
 		this.products = new HashSet<>(products);
 	}

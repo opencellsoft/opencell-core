@@ -134,7 +134,7 @@ public class AggregationConfiguration {
         this.ignoreUserAccounts = billingRun.isIgnoreUserAccounts();
         this.discountAggregation = billingRun.getDiscountAggregation();
         this.disableAggregation = billingRun.isDisableAggregation();
-        this.type = (billingRun.getBillingCycle() != null) ? billingRun.getBillingCycle().getType() : BillingEntityTypeEnum.BILLINGACCOUNT;
+        this.type = billingRun.getBillingCycle().getType();
     }
 
     public boolean isEnterprise() {

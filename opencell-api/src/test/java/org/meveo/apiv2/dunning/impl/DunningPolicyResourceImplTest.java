@@ -31,7 +31,6 @@ import org.meveo.service.audit.logging.AuditLogService;
 import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPolicyLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
-import org.meveo.service.payments.impl.DunningSettingsService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -53,9 +52,6 @@ public class DunningPolicyResourceImplTest {
 
     @Mock
     private DunningPolicyLevelService dunningPolicyLevelService;
-
-    @Mock
-    private DunningSettingsService dunningSettingsService;
 
     @Mock
     private DunningPolicyService dunningPolicyService;
@@ -105,7 +101,6 @@ public class DunningPolicyResourceImplTest {
                 .minBalanceTrigger(0.5)
                 .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
-        when(dunningSettingsService.getMaxNumberOfDunningLevels()).thenReturn(5);
         Response response = dunningPolicyResource.create(resource);
 
         Assert.assertEquals(200, response.getStatus());
@@ -141,7 +136,6 @@ public class DunningPolicyResourceImplTest {
                 .minBalanceTrigger(0.5)
                 .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
-        when(dunningSettingsService.getMaxNumberOfDunningLevels()).thenReturn(5);
         when(dunningPolicyApiService.refreshPolicyLevel(any(org.meveo.model.dunning.DunningPolicyLevel.class)))
                 .thenThrow(new BadRequestException("Policy level creation fails dunning level does not exists"));
         dunningPolicyResource.create(resource);
@@ -160,7 +154,7 @@ public class DunningPolicyResourceImplTest {
                 .minBalanceTrigger(0.5)
                 .dunningPolicyLevels(asList(dunningPolicyLevel))
                 .build();
-        when(dunningSettingsService.getMaxNumberOfDunningLevels()).thenReturn(5);
+
         Response response = dunningPolicyResource.update(1L, resource);
         Assert.assertEquals(200, response.getStatus());
     }

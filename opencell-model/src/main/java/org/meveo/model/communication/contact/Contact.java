@@ -273,10 +273,6 @@ public class Contact extends BusinessCFEntity implements ISearchable {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "com_contact_category_contact", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "contact_category_id"))
     private List<ContactCategory> contactCategories = new ArrayList<>(); 
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "title_id")
-    private Title title;
 
     public String getAssistantName() {
         return assistantName;
@@ -559,14 +555,6 @@ public class Contact extends BusinessCFEntity implements ISearchable {
 
 	public void setContactCategories(List<ContactCategory> contactCategories) {
 		this.contactCategories = contactCategories;
-	}
-
-	public Title getTitle() {
-		return title;
-	}
-
-	public void setTitle(Title title) {
-		this.title = title;
 	}
 
 }

@@ -17,6 +17,19 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.RatingException;
@@ -44,18 +57,6 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * RecurringChargeInstanceService
@@ -373,7 +374,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             log.debug("Will apply recurring charge {} for missing periods {} - {} {}", recurringChargeInstance.getId(), nextChargeToDate, maxDate, isMaxDateInclusive ? "inclusive" : "exclusive");
             int i = 0;
             RatingResult ratingResult = new RatingResult();
-			Subscription subscription = recurringChargeInstance.getSubscription();
             while (nextChargeToDate != null && i < maxRecurringRatingHistory
                     && ((nextChargeToDate.getTime() <= maxDate.getTime() && isMaxDateInclusive) || (nextChargeToDate.getTime() < maxDate.getTime() && !isMaxDateInclusive))) {
 
@@ -382,8 +382,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 ratingResult.add(localRatingResult);
 
                 nextChargeToDate = recurringChargeInstance.getNextChargeDate();
-	            i++;
-				if(subscription.getSubscribedTillDate() != null && subscription.getSubscribedTillDate().equals(nextChargeToDate)) break;
+                i++;
 
             }
             if (!isVirtual && (chargeWasUpdated || !ratingResult.getWalletOperations().isEmpty())) {

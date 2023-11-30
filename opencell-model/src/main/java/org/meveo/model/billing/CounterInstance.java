@@ -128,6 +128,7 @@ public class CounterInstance extends BusinessEntity {
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_chrg_inst_counter", joinColumns = @JoinColumn(name = "counter_instance_id"), inverseJoinColumns = @JoinColumn(name = "chrg_instance_id"))
+    @OrderColumn(name = "INDX")
     private List<ChargeInstance> chargeInstances = new ArrayList<>();
 
     public CounterTemplate getCounterTemplate() {

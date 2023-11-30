@@ -785,8 +785,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             } else {
                 if (contracts != null && !contracts.isEmpty()) {
                     bareWalletOperation.setRulesContract(lookupSuitableContract(customers, contracts,sellers, true).get(0));
-	                bareWalletOperation.setOverrodePrice(true);
                 }
+                bareWalletOperation.setOverrodePrice(true);
             }
             	
             	if (unitPriceWithoutTax == null) {
@@ -1507,10 +1507,10 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     continue;
                 }
 
-                applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan,DiscountPlanItemTypeEnum.PERCENTAGE, operationDate, walletOperation.getSubscription(), walletOperation, accountingArticle));
-    			fixedDiscountPlanItems.addAll(
-    					discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate(), 
-    							walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle()));
+                applicableDiscountPlanItems.addAll(discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan, walletOperation.getSubscription(), walletOperation, accountingArticle,DiscountPlanItemTypeEnum.PERCENTAGE, operationDate));
+                fixedDiscountPlanItems.addAll(
+                        discountPlanItemService.getApplicableDiscountPlanItems(walletOperation.getBillingAccount(), discountPlan,
+                                walletOperation.getSubscription(), walletOperation, walletOperation.getAccountingArticle(), DiscountPlanItemTypeEnum.FIXED, walletOperation.getOperationDate()));
 
                 if( CollectionUtils.isNotEmpty(applicableDiscountPlanItems) || CollectionUtils.isNotEmpty(fixedDiscountPlanItems)) {
                     discountPlanInstance.setApplicationCount( discountPlanInstance.getApplicationCount() == null ? 1 : discountPlanInstance.getApplicationCount() + 1);

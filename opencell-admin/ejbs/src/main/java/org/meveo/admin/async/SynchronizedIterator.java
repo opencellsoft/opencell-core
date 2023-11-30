@@ -42,11 +42,6 @@ public class SynchronizedIterator<T> implements Iterator<T> {
     private int position;
 
     /**
-     * Keeps an "optimistic" track if there is any data more to retrieve
-     */
-    private boolean hasMore = true;
-
-    /**
      * Data iterator
      */
     private Iterator<T> iterator;
@@ -132,18 +127,15 @@ public class SynchronizedIterator<T> implements Iterator<T> {
                         }
 
                     } else {
-                        hasMore = false;
                         return null;
                     }
                 } catch (GenericJDBCException e) {
                     Logger log = LoggerFactory.getLogger(getClass());
                     log.error("Failed to scroll to the next record: {}", e.getMessage());
-                    hasMore = false;
                     return null;
                 }
 
             } else {
-                hasMore = false;
                 return null;
             }
         }
@@ -207,7 +199,6 @@ public class SynchronizedIterator<T> implements Iterator<T> {
                 items.add(item);
             }
             if (items.isEmpty()) {
-                hasMore = false;
                 return null;
             } else {
                 return items;
@@ -260,21 +251,19 @@ public class SynchronizedIterator<T> implements Iterator<T> {
 
                 return nextItem;
             } else {
-                hasMore = false;
                 return null;
             }
 
         } else {
-            hasMore = false;
             return null;
         }
     }
 
     /**
-     * An "optimistic" response if there is any data more to retrieve. Will return <b>False</n> ONLY if the last call to next() returned no data.
+     * Do not use this method - use next() instead. This method will always return false.
      */
     public boolean hasNext() {
-        return hasMore;
+        return false;
     }
 
     /**

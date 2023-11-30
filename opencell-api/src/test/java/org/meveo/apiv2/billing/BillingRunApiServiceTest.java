@@ -36,7 +36,6 @@ public class BillingRunApiServiceTest {
         BillingRun billingRun = new BillingRun();
         billingRun.setId(1L);
         billingRun.setStatus(DRAFT_INVOICES);
-        billingRun.setDisabled(false);
         when(billingRunService.findById(1L)).thenReturn(billingRun);
         when(billingRunService.update(billingRun)).thenReturn(billingRun);
 

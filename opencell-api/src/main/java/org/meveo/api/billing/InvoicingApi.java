@@ -229,15 +229,6 @@ public class InvoicingApi extends BaseApi {
             billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
         }
 
-        if(billingCycle.getAdditionalAggregationFields() != null) {
-            if(billingRun.getAdditionalAggregationFields() == null) {
-                billingRun.setAdditionalAggregationFields(new ArrayList<>());
-            } else {
-                billingRun.getAdditionalAggregationFields().clear();
-            }
-            billingRun.getAdditionalAggregationFields().addAll(billingCycle.getAdditionalAggregationFields());
-        }
-
         billingRunService.create(billingRun);
 
         // populate customFields
@@ -302,7 +293,7 @@ public class InvoicingApi extends BaseApi {
             }
             if (dto.getDateAggregation() == null) {
                 billingRun.setDateAggregation(billingCycle.getDateAggregation());
-            }
+        }
             if (dto.getDiscountAggregation() == null) {
                 billingRun.setDiscountAggregation(billingCycle.getDiscountAggregation());
             }

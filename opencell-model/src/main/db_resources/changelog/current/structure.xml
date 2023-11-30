@@ -7326,16 +7326,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>CREATE INDEX idx__billing_wo__rules_contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (rules_contract_id)</sql>
         <sql>CREATE INDEX idx__billing_wo__contract_id ON ${db.schema.adapted}billing_wallet_operation USING btree (contract_id)</sql>
     </changeSet>
-    
-    <changeSet id="#INTRD-17222_20231005" author="AndriusKarpavicius">
-        <addColumn tableName="job_execution">
-            <column name="node" type="varchar(25)"/>
-        </addColumn>
-        <addColumn tableName="meveo_job_instance">
-            <column name="status_report_freq" type="int" defaultValueNumeric="60" />
-        </addColumn>
-        <dropColumn tableName="meveo_job_instance" columnName="job_speed" />
-    </changeSet>
 
     <changeSet id="#INTRD-17026_delete_duplicated_data" author="a.rouaguebe_ext">
         <renameTable oldTableName="cat_price_plan_charge" newTableName="cat_price_plan_charge_tmp" />
@@ -8676,62 +8666,6 @@ public class AgedBalanceReporting extends ReportExtractScript {
               SET br.discount_aggregation = bc.discount_aggregation, br.disable_aggregation = bc.disable_aggregation, br.use_accounting_article_label = bc.use_accounting_article_label, br.date_aggregation = bc.date_aggregation,
               br.aggregate_unit_amounts = bc.aggregate_unit_amounts, br.ignore_subscriptions = bc.ignore_subscriptions, br.ignore_orders = bc.ignore_orders, br.incremental_invoice_lines = bc.incremental_invoice_lines"),
          </sql>
-    </changeSet>
-    
-    <changeSet id="INTRD-18839_20231012" author="AkadidAbdelmounaim">
-        <modifyDataType tableName="cpq_price_plan_version" columnName="price_el" newDataType="varchar(2000)"/>
-    </changeSet>
-
-    <changeSet id="INTRD-18726_20231012" author="khalidHORRI">
-        <dropForeignKeyConstraint baseTableName="billing_billing_run"
-                                  constraintName="billing_billing_run_billed_rated_transactions_report_id_fk"/>
-        <dropColumn columnName="billed_rated_transactions_report_id" tableName="billing_billing_run"/>
-    </changeSet>
-
-    <changeSet id="INTRD-19050_20231020" author="zbariki">
-        <addColumn tableName="billing_account_amount">
-            <column name="rated_transaction_count" type="numeric(23, 12)"/>
-        </addColumn>
-        <addColumn tableName="billing_offer_amount">
-            <column name="rated_transaction_count" type="numeric(23, 12)"/>
-        </addColumn>
-        <addColumn tableName="product_amount">
-            <column name="rated_transaction_count" type="numeric(23, 12)"/>
-        </addColumn>
-        <addColumn tableName="subscription_amount">
-            <column name="rated_transaction_count" type="numeric(23, 12)"/>
-        </addColumn>
-        <addColumn tableName="accounting_article_amount">
-            <column name="rated_transaction_count" type="numeric(23, 12)"/>
-        </addColumn>
-    </changeSet>
-    <changeSet id="#INTRD-18439_20230120" author="TarikFA.">
-        <addForeignKeyConstraint baseTableName="billing_chrg_inst_counter" baseColumnNames="chrg_instance_id"
-                                 constraintName="fk_billing_chrg_inst_counter_chrg_instance_id" referencedTableName="billing_charge_instance"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="billing_chrg_inst_counter" baseColumnNames="counter_instance_id"
-                                 constraintName="fk_billing_chrg_inst_counter_counter_instance_id" referencedTableName="billing_counter"
-                                 referencedColumnNames="id"/>
-    </changeSet>
-    
-    <changeSet id="#INTRD-16834_20231026" author="TarikFA.">
-        <addColumn tableName="billing_run_report">
-            <column name="report_final" type="${type.boolean}" defaultValueNumeric="0" />
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="#INTRD-19322_add_aggre_fields" author="anas.rouaguebe">
-        <addColumn tableName="billing_invoice_line">
-            <column name="additional_agg_fields" type="${type.json}" />
-        </addColumn>
-        <createTable tableName="billing_cycle_aggregation_fields">
-            <column name="billing_cycle_id"  type="bigint"/>
-            <column name="fields"  type="varchar(255)"/>
-        </createTable>
-        <createTable tableName="billing_run_aggregation_fields">
-            <column name="billing_run_id"  type="bigint"/>
-            <column name="fields"  type="varchar(255)"/>
-        </createTable>
     </changeSet>
 
     <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI">

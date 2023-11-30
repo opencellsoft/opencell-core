@@ -177,7 +177,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.cancelTriggerEdr", query = "UPDATE WalletOperation o SET o.status='TO_RERATE' where o.id in (ids)"),
         @NamedQuery(name = "WalletOperation.cancelDisountedWallet", query = "UPDATE WalletOperation o SET o.status='CANCELED' where o.discountedWalletOperation in (:walletOperationIds)"),
         @NamedQuery(name = "WalletOperation.findWalletOperationTradingCurrency", query = "SELECT wo.id, wo.tradingCurrency.id FROM WalletOperation wo WHERE wo.id in (:walletOperationIds)"),
-        @NamedQuery(name = "WalletOperation.findWalletOperationByChargeInstance", query = "SELECT wo.id FROM WalletOperation wo LEFT JOIN wo.ratedTransaction rt WHERE wo.subscription.id = :subscriptionId AND wo.chargeInstance.id = :chargeInstanceId AND wo.status IN ('OPEN', 'TREATED') AND (wo.startDate < :dateToCharge AND wo.endDate > :dateToCharge )AND (wo.ratedTransaction.id IN (SELECT rt.id FROM RatedTransaction rt WHERE rt.status = 'OPEN' AND rt.subscription.id = :subscriptionId AND rt.chargeInstance.id = :chargeInstanceId) OR wo.ratedTransaction.id IS NULL)"),
+        @NamedQuery(name = "WalletOperation.findWalletOperationByChargeInstance", query = "SELECT wo.id FROM WalletOperation wo LEFT JOIN wo.ratedTransaction rt WHERE wo.subscription.id = :subscriptionId AND wo.chargeInstance.id = :chargeInstanceId AND wo.status IN ('OPEN', 'TREATED') AND (wo.ratedTransaction.id IN (SELECT rt.id FROM RatedTransaction rt WHERE rt.status = 'OPEN' AND rt.subscription.id = :subscriptionId AND rt.chargeInstance.id = :chargeInstanceId) OR wo.ratedTransaction.id IS NULL)"),
 })
 
 @NamedNativeQueries({

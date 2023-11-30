@@ -17,7 +17,6 @@
  */
 package org.meveo.service.admin.impl;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,10 +55,7 @@ public class RoleService extends PersistenceService<Role> {
     public List<Role> list(PaginationConfiguration paginationConfig) {
     	String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
     	if(lUserManagementSource.equalsIgnoreCase("OC")) {
-    		if(paginationConfig==null) {
-    			paginationConfig=new PaginationConfiguration(new HashMap());
-    		}
-    		return super.list(paginationConfig);
+    	return super.list(paginationConfig);
     	}
     	return keycloakAdminClientService.listRoles(paginationConfig);
     }

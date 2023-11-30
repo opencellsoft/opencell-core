@@ -1107,7 +1107,16 @@ public class QueryBuilder {
 
         q.append(q.indexOf("ORDER BY") > 0 ? ", " : " ORDER BY ");
 
-        q.append(orderColumn);
+        if (clazz != null) {
+            Field field = ReflectionUtils.getField(clazz, orderColumn.substring(orderColumn.indexOf(".") + 1));
+            if (field != null && field.getType().isAssignableFrom(String.class)) {
+                q.append(" LOWER(CAST(" + orderColumn + " AS string))");
+            } else {
+                q.append(orderColumn);
+            }
+        } else {
+            q.append(orderColumn);
+        }
 
         if (ascending) {
             q.append(" ASC ");
@@ -1258,13 +1267,7 @@ public class QueryBuilder {
             if(value instanceof String) {
                 value = DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN);
             }
-
-            if(value instanceof Date) {
-                addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
-            } else {
-                addCriterionDateRangeToTruncatedToDay(concatenatedFields, DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN), inclusive, isFieldValueOptional);
-            }
-
+            addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
         }
         return this;
     }

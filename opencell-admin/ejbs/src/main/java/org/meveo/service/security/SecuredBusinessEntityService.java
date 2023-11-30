@@ -19,7 +19,6 @@
 package org.meveo.service.security;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +29,6 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.meveo.admin.exception.ValidationException;
@@ -193,11 +191,8 @@ public class SecuredBusinessEntityService extends PersistenceService<SecuredEnti
     			currentUser.getRoles().addAll(userRoles);
     		}
     	}
-		return getEntityManager()
-				.createNamedQuery("SecuredEntity.listForCurrentUser", org.meveo.security.SecuredEntity.class)
-				.setParameter("userName", currentUser.getUserName().toLowerCase())
-				.setParameter("roleNames", !CollectionUtils.isEmpty(currentUser.getRoles()) ? currentUser.getRoles() : new ArrayList<String>(Arrays.asList("")))
-				.getResultList();
+    	return getEntityManager().createNamedQuery("SecuredEntity.listForCurrentUser", org.meveo.security.SecuredEntity.class).setParameter("userName", currentUser.getUserName().toLowerCase())
+    			.setParameter("roleNames", currentUser.getRoles()).getResultList();
     }
 
     

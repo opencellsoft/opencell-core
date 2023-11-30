@@ -264,7 +264,8 @@ public abstract class ChargeInstance extends BusinessCFEntity {
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_chrg_inst_counter", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "counter_instance_id"))
-    protected List<CounterInstance> accumulatorCounterInstances = new ArrayList<>();
+    @OrderColumn(name = "INDX")
+    protected List<CounterInstance> accumulatorCounterInstances = new ArrayList<>(); 
 
     @Type(type = "numeric_boolean")
     @Column(name = "apply_discounts_on_overriden_price")

@@ -681,7 +681,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                         .createNamedQuery("WalletOperation.findWalletOperationByChargeInstance")
                         .setParameter("chargeInstanceId", recurringChargeInstance.getId())
                         .setParameter("subscriptionId", recurringChargeInstance.getSubscription().getId())
-		                .setParameter("dateToCharge", recurringChargeInstance.getNextChargeDate())
                         .getResultList();
 
                 if (walletOperations != null && !walletOperations.isEmpty()) {

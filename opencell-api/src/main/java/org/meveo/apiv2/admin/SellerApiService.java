@@ -120,7 +120,6 @@ public class SellerApiService extends BaseApi {
 		var invoiceTypeIds = postSeller.getInvoiceTypeSequence().stream()
 				.filter(invoiceTypeSellerSequence -> invoiceTypeSellerSequence.getInvoiceType() != null)
 				.map(invoiceTypeSellerSequence -> invoiceTypeSellerSequence.getInvoiceType().getId()).collect(Collectors.toList());
-		seller.getInvoiceTypeSequence().retainAll(postSeller.getInvoiceTypeSequence());
 		if(CollectionUtils.isNotEmpty(postSeller.getInvoiceTypeSequence())){
 			List<String> missingParam = null;
 			int index = 0;

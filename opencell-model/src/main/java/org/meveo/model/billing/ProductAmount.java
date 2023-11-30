@@ -11,8 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
@@ -21,9 +19,6 @@ import java.math.BigDecimal;
 @Table(name = "product_amount")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = {@Parameter(name = "sequence_name", value = "product_amount_seq"),})
-@NamedQueries({
-        @NamedQuery(name = "ProductAmount.deleteByBillingReport", query = "DELETE FROM ProductAmount WHERE billingRunReport.id = :billingRunReportId")
-})
 public class ProductAmount extends AuditableEntity {
 
     @OneToOne(fetch = LAZY)
@@ -36,9 +31,6 @@ public class ProductAmount extends AuditableEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "billing_run_report_id")
     private BillingRunReport billingRunReport;
-
-    @Column(name = "rated_transaction_count", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal ratedTransactionCount;
 
     public Product getProduct() {
         return product;
@@ -62,13 +54,5 @@ public class ProductAmount extends AuditableEntity {
 
     public void setBillingRunReport(BillingRunReport billingRunReport) {
         this.billingRunReport = billingRunReport;
-    }
-
-    public BigDecimal getRatedTransactionCount() {
-        return ratedTransactionCount;
-    }
-
-    public void setRatedTransactionCount(BigDecimal ratedTransactionCount) {
-        this.ratedTransactionCount = ratedTransactionCount;
     }
 }

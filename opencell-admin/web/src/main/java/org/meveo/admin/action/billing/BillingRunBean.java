@@ -37,6 +37,9 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.PostInvoicingReportsDTO;
+import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -99,6 +102,14 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
             log.info("postReport {}", postReport);
             if (billingRun.getId() == null) {
                 billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
+            }
+
+            if ((billingRun != null) && (billingRun.getId() != null) && (preReport != null) && preReport) {
+                PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService.generatePreInvoicingReports(billingRun);
+                billingRun.setPreInvoicingReports(preInvoicingReportsDTO);
+            } else if ((billingRun != null) && (billingRun.getId() != null) && (postReport != null) && postReport) {
+                PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(billingRun);
+                billingRun.setPostInvoicingReports(postInvoicingReportsDTO);
             }
 
         } catch (BusinessException e) {

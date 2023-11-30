@@ -1088,10 +1088,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		orderOffer.setTerminationDate(orderOfferDto.getTerminationDate());
         }
         
-    	List<OrderProduct> products = processOrderProductFromOffer(orderOfferDto, orderOffer);
-		Optional.ofNullable(products).orElse(Collections.emptyList())
+    	processOrderProductFromOffer(orderOfferDto, orderOffer);
+		Optional.ofNullable(orderOffer.getProducts()).orElse(Collections.emptyList())
 				.forEach(orderProduct -> attributeService.validateAttributes(
-						products.get(0).getProductVersion().getAttributes(),
+						orderOffer.getProducts().get(0).getProductVersion().getAttributes(),
 						orderProduct.getOrderAttributes()));
         processOrderAttribute(orderOfferDto,  orderOffer);
         if (orderOfferDto.getCustomFields() != null) {
@@ -1129,7 +1129,7 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     	
     }
 	
-	private List<OrderProduct> processOrderProductFromOffer(OrderOfferDto orderOfferDTO, OrderOffer orderOffer) {
+	private void processOrderProductFromOffer(OrderOfferDto orderOfferDTO, OrderOffer orderOffer) {
         List<OrderProductDto> orderProductDtos = orderOfferDTO.getOrderProducts(); 
         var existencOrderProducts = orderOffer.getProducts();
         var hasExistingOrders = existencOrderProducts != null && !existencOrderProducts.isEmpty();
@@ -1154,11 +1154,9 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
                     }
                 }
             }
-        }else if(orderProductDtos != null && orderProductDtos.isEmpty()) {
-	        orderOffer.getProductswithoutDuplication().clear();
+        } else if (hasExistingOrders) {
+            orderOffer.getProducts().removeAll(existencOrderProducts);
         }
-		orderOffer.getProductswithoutDuplication().retainAll(existencOrderProducts);
-		return existencOrderProducts;
     }
 	 private void processOrderProduct(OrderProductDto orderProductDTO, OrderProduct q) {
 	        var orderAttributeDtos = orderProductDTO.getOrderAttributes();

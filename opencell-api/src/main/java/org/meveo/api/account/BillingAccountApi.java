@@ -469,14 +469,14 @@ public class BillingAccountApi extends AccountEntityApi {
                 billingAccount.setTradingCurrency(tradingCurrency);
         	}
         }
-	    PaymentMethod paymentMethod = null;
+        
         if (Objects.nonNull(postData.getPaymentMethod())) {
-            paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
+            PaymentMethod paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
             if (paymentMethod == null) {
                 throw new EntityNotFoundException("payment method not found!");
             }
+            billingAccount.setPaymentMethod(paymentMethod);
         }
-	    billingAccount.setPaymentMethod(paymentMethod);
 
         if (postData.getBillingCycle() != null) {
             BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());

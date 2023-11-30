@@ -47,7 +47,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  */
-@Stateless(name="EDRService")
+@Stateless
 public class EdrService extends PersistenceService<EDR> {
 
     @Inject

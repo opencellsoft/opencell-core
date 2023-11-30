@@ -5,8 +5,6 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.ValueExpressionWrapper;
 
-import com.google.common.base.Strings;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,8 +19,9 @@ public class BillinRunApplicationElFilterUtils {
      * @return Sí / No
      */
     public static boolean isToProcessBR(BillingRun billingRun, JobInstance jobInstance) {
-        return Strings.isNullOrEmpty(billingRun.getApplicationEl())? true : Objects.requireNonNullElse((Boolean) ValueExpressionWrapper.evaluateExpression(billingRun.getApplicationEl(),
-                Map.of("br", billingRun, "jobInstance", jobInstance), Boolean.class), true);
+        return Objects.requireNonNullElse((Boolean) ValueExpressionWrapper.evaluateExpression(billingRun.getApplicationEl(),
+                Map.of("br", billingRun, "jobInstance", jobInstance),
+                Boolean.class), true);
     }
 
     /**

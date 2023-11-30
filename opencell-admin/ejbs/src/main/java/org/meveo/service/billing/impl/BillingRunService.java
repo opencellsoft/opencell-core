@@ -1780,8 +1780,4 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	public List<Long> getBAsHavingOpenILs(BillingRun billingRun) {
 		return getEntityManager().createNamedQuery("InvoiceLine.getBAsHavingOpenILsByBR",Long.class).setParameter("billingRunId", billingRun.getId()).getResultList();
 	}
-
-    public List<BillingRun> findBillingRunsByBillingCycle(BillingCycle bc) {
-        return getEntityManager().createNamedQuery("BillingRun.findByBillingCycle", BillingRun.class).setParameter("bc", bc).getResultList();
-    }
 }

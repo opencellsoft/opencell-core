@@ -30,7 +30,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.PaymentPlanPolicy;
 import org.meveo.model.payments.RecurrenceUnitEnum;
 import org.meveo.model.payments.plan.PaymentPlan;
 import org.meveo.model.payments.plan.PaymentPlanStatusEnum;
@@ -263,22 +262,22 @@ public class PaymentPlanApi extends BaseApi {
         }
 
         validateAOs(dto.getAmountToRecover(), aos);
-	    PaymentPlanPolicy  paymentPlanPolicy = provider.getPaymentPlanPolicy();
-        if (paymentPlanPolicy.getMinInstallmentAmount() != null && dto.getAmountPerInstallment().compareTo(paymentPlanPolicy.getMinInstallmentAmount()) < 0) {
+
+        if (dto.getAmountPerInstallment().compareTo(provider.getPaymentPlanPolicy().getMinInstallmentAmount()) < 0) {
             throw new BusinessApiException("Amount per installment '" + dto.getAmountPerInstallment() + "' must be greater than MinInstallmentAmount '" + provider.getPaymentPlanPolicy().getMinInstallmentAmount() + "'");
         }
 
         // 'amountToRecover' must be between minimumAllowedOriginalReceivableAmount and maximumAllowedOriginalReceivableAmount
-        if (paymentPlanPolicy.getMinAllowedReceivableAmount() != null && dto.getAmountToRecover().compareTo(paymentPlanPolicy.getMinAllowedReceivableAmount()) < 0) {
+        if (dto.getAmountToRecover().compareTo(provider.getPaymentPlanPolicy().getMinAllowedReceivableAmount()) < 0) {
             throw new BusinessApiException("Amount to recover '" + dto.getAmountToRecover() + "' must be greater than MinAllowedReceivableAmount '" + provider.getPaymentPlanPolicy().getMinAllowedReceivableAmount() + "'");
         }
 
-        if (paymentPlanPolicy.getMaxAllowedReceivableAmount() != null && dto.getAmountToRecover().compareTo(paymentPlanPolicy.getMaxAllowedReceivableAmount()) >= 0) {
+        if (dto.getAmountToRecover().compareTo(provider.getPaymentPlanPolicy().getMaxAllowedReceivableAmount()) >= 0) {
             throw new BusinessApiException("Amount to recover '" + dto.getAmountToRecover() + "' must be less than MaxAllowedReceivableAmount '" + provider.getPaymentPlanPolicy().getMaxAllowedReceivableAmount() + "'");
         }
 
         // check that numberOfInstallments is less than the maximumPaymentPlanDuration
-        if (paymentPlanPolicy.getMaxPaymentPlanDuration() != null && dto.getNumberOfInstallments() > paymentPlanPolicy.getMaxPaymentPlanDuration()) {
+        if (dto.getNumberOfInstallments() > provider.getPaymentPlanPolicy().getMaxPaymentPlanDuration()) {
             throw new BusinessApiException("Number of installments '" + dto.getNumberOfInstallments() + "' must be less than MaxPaymentPlanDuration '" + provider.getPaymentPlanPolicy().getMaxPaymentPlanDuration() + "'");
         }
 
