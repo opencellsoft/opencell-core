@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -80,7 +82,8 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
         @NamedQuery(name = "BillingRun.getForInvoicingLimitToIds", query = "SELECT br FROM BillingRun br where (br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC')) and br.id in :ids and br.disabled = false order by br.id asc"),
         @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code "),
         @NamedQuery(name = "BillingRun.nullifyBillingRunXMLExecutionResultIds", query = "update BillingRun br set br.xmlJobExecutionResultId = null where br = :billingRun"),
-        @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") })
+        @NamedQuery(name = "BillingRun.nullifyBillingRunPDFExecutionResultIds", query = "update BillingRun br set br.pdfJobExecutionResultId = null where br = :billingRun") ,
+        @NamedQuery(name = "BillingRun.findByBillingCycle", query = "FROM BillingRun br WHERE br.billingCycle = :bc")})
 public class BillingRun extends EnableEntity implements ICustomFieldEntity, IReferenceEntity {
 
     private static final long serialVersionUID = 1L;
@@ -265,18 +268,6 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @Type(type = "longText")
     @Column(name = "selected_billing_accounts")
     private String selectedBillingAccounts;
-
-    /**
-     * Pre-invoicing reports
-     */
-    @Transient
-    PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
-
-    /**
-     * Post-invoicing reports
-     */
-    @Transient
-    PostInvoicingReportsDTO postInvoicingReports = new PostInvoicingReportsDTO();
 
     /**
      * Rejected billing accounts
@@ -507,13 +498,6 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     private boolean preReportAutoOnInvoiceLinesJob = false;
 
     /**
-     * Billing run report generated after invoice line job
-     */
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "billed_rated_transactions_report_id")
-    private BillingRunReport billedRatedTransactionsReport;
-
-    /**
      * An expression to decide if a billing run will be processed or ignored by the jobs.
      */
     @Column(name = "application_el", length = 2000)
@@ -526,6 +510,14 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
     @Type(type = "numeric_boolean")
     @Column(name = "ignore_user_accounts")
     private boolean ignoreUserAccounts = true;
+
+    /**
+     * Define additional criterias for aggregation
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "billing_run_aggregation_fields", joinColumns = @JoinColumn(name = "billing_run_id"))
+    @Column(name = "fields")
+    private List<String> additionalAggregationFields;
 
     public BillingRun getNextBillingRun() {
         return nextBillingRun;
@@ -687,22 +679,6 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
      */
     public void setLastTransactionDate(Date lastTransactionDate) {
         this.lastTransactionDate = lastTransactionDate;
-    }
-
-    public PreInvoicingReportsDTO getPreInvoicingReports() {
-        return preInvoicingReports;
-    }
-
-    public void setPreInvoicingReports(PreInvoicingReportsDTO preInvoicingReports) {
-        this.preInvoicingReports = preInvoicingReports;
-    }
-
-    public PostInvoicingReportsDTO getPostInvoicingReports() {
-        return postInvoicingReports;
-    }
-
-    public void setPostInvoicingReports(PostInvoicingReportsDTO postInvoicingReports) {
-        this.postInvoicingReports = postInvoicingReports;
     }
 
     public List<BillingAccount> getBillableBillingAccounts() {
@@ -1236,14 +1212,6 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
         this.preReportAutoOnInvoiceLinesJob = preReportAutoOnInvoiceLinesJob;
     }
 
-    public BillingRunReport getBilledRatedTransactionsReport() {
-        return billedRatedTransactionsReport;
-    }
-
-    public void setBilledRatedTransactionsReport(BillingRunReport billedRatedTransactionsReport) {
-        this.billedRatedTransactionsReport = billedRatedTransactionsReport;
-    }
-
     public String getApplicationEl() {
         return applicationEl;
     }
@@ -1259,5 +1227,13 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
 	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
 		this.ignoreUserAccounts = ignoreUserAccounts;
 	}
-    
+
+    public List<String> getAdditionalAggregationFields() {
+        return additionalAggregationFields;
+    }
+
+    public void setAdditionalAggregationFields(List<String> additionalAggregationFields) {
+        this.additionalAggregationFields = additionalAggregationFields;
+    }
+
 }

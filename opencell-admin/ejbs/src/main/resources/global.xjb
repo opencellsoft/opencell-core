@@ -9,5 +9,8 @@
         <jaxb:javaType name="java.util.Calendar" xmlType="xs:dateTime"
             parseMethod="jakarta.xml.bind.DatatypeConverter.parseDateTime"
             printMethod="jakarta.xml.bind.DatatypeConverter.printDateTime" />
+        <jaxb:javaType name="javax.xml.datatype.XMLGregorianCalendar" xmlType="xs:date"
+                       parseMethod="org.meveo.util.XMLGregorianCalendarFormatDate.parse"
+                       printMethod="org.meveo.util.XMLGregorianCalendarFormatDate.marshal" />
     </jaxb:globalBindings>
 </jaxb:bindings>

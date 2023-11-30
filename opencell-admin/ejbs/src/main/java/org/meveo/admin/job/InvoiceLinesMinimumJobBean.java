@@ -32,8 +32,7 @@ import org.slf4j.Logger;
 @Stateless
 public class InvoiceLinesMinimumJobBean extends BaseJobBean {
 
-	@Inject
-	private Logger log;
+    private static final long serialVersionUID = 4452647901230513885L;
 
 	@Inject
 	private BillingRunService billingRunService;
@@ -43,10 +42,6 @@ public class InvoiceLinesMinimumJobBean extends BaseJobBean {
 
 	@Inject
 	private IteratorBasedJobProcessing iteratorBasedJobProcessing;
-
-	@Inject
-	@ApplicationProvider
-	protected Provider appProvider;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -86,7 +81,7 @@ public class InvoiceLinesMinimumJobBean extends BaseJobBean {
 
 	private void createMinInvoicLine(JobExecutionResultImpl result, JobInstance jobInstance, BillingRun billingRun, List<Object[]> minimumForServices, AccountingArticle defaultMinAccountingArticle, Long waitingMillis, Long nbRuns) {
 		BiConsumer<Object[], JobExecutionResultImpl> task = (minimumForService, jobResult) -> invoiceLinesService .createMinInvoiceLine(billingRun, defaultMinAccountingArticle, minimumForService);
-		iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator((Collection<Object[]>) minimumForServices), task, null, null, nbRuns, waitingMillis, true, jobInstance.getJobSpeed(), true);
+		iteratorBasedJobProcessing.processItems(result, new SynchronizedIterator((Collection<Object[]>) minimumForServices), task, null, null, nbRuns, waitingMillis, true, true);
 	}
 
 }

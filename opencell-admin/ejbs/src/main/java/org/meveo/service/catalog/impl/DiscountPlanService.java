@@ -51,6 +51,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
@@ -231,36 +232,44 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
     				unitAmountWithoutTax=walletOperation.getDiscountedAmount();
     				discountedAmount=unitAmountWithoutTax;
     			}else if(walletOperation!=null){
-    				unitAmountWithoutTax=walletOperation.getUnitAmountWithoutTax();
-    				discountedAmount=walletOperation.getDiscountedAmount()!=null && walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 ?walletOperation.getDiscountedAmount():walletOperation.getUnitAmountWithoutTax();
+    				unitAmountWithoutTax=appProvider.isEntreprise() ? walletOperation.getUnitAmountWithoutTax() : walletOperation.getUnitAmountWithTax();
+    				discountedAmount=walletOperation.getDiscountedAmount()!=null && walletOperation.getDiscountedAmount().compareTo(BigDecimal.ZERO)>0 ?walletOperation.getDiscountedAmount():unitAmountWithoutTax;
     			}
     			 
-    			walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,product,serviceInstance!=null?new ArrayList<>(serviceInstance.getAttributeInstances()):Collections.emptyList());
-    			discountValue=discountPlanItemService.getDiscountAmountOrPercent(null, null, unitAmountWithoutTax, discountPlanItem,product, serviceInstance!=null?new HashSet<>(serviceInstance.getAttributeInstances()):Collections.emptySet());
-                BigDecimal amount = walletOperation.getQuantity().multiply(walletOperationDiscountAmount);
+			    walletOperationDiscountAmount = discountPlanItemService.getDiscountAmount(unitAmountWithoutTax, discountPlanItem,product,null,null,serviceInstance!=null?new ArrayList<>(serviceInstance.getAttributeInstances()):Collections.emptyList());
+    			discountValue=discountPlanItemService.getDiscountAmountOrPercent(null,null, null, unitAmountWithoutTax, discountPlanItem,product, serviceInstance!=null?new HashSet<>(serviceInstance.getAttributeInstances()):Collections.emptySet());
 
 				// Unit prices and unit taxes are with higher precision
 				unitAmounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
 				amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-    			discountedAmount=discountedAmount!=null?discountedAmount.add(walletOperationDiscountAmount):null;
+    			discountedAmount=discountedAmount!=null?discountedAmount.add(walletOperationDiscountAmount).multiply(walletOperation.getQuantity()):null;
     			
     		     log.info("calculateDiscountplanItems walletOperationDiscountAmount{},unitAmountWithoutTax{} ,discountValue{} ,discountedAmount{} ",walletOperationDiscountAmount,unitAmountWithoutTax,discountValue,discountedAmount);
     			
     		    discountWalletOperation.setUnitAmountTax(walletOperationDiscountAmount);
-     			discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?amounts[0]:BigDecimal.ZERO);
-     			discountWalletOperation.setAmountWithTax(amounts[1]);
-     			discountWalletOperation.setAmountTax(amounts[2]);
+				if(discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.PERCENTAGE){
+					discountWalletOperation.setAmountWithoutTax(quantity.compareTo(BigDecimal.ZERO)>0?amounts[0].multiply(walletOperation.getQuantity()):BigDecimal.ZERO);
+					discountWalletOperation.setAmountWithTax(amounts[1].multiply(walletOperation.getQuantity()));
+					discountWalletOperation.setAmountTax(amounts[2].multiply(walletOperation.getQuantity()));
+					discountWalletOperation.setDiscountValue(discountValue.multiply(walletOperation.getQuantity()));
+				}else{
+					discountWalletOperation.setAmountWithoutTax(amounts[0]);
+					discountWalletOperation.setAmountWithTax(amounts[1]);
+					discountWalletOperation.setAmountTax(amounts[2]);
+					discountWalletOperation.setDiscountValue(discountValue);
+				}
      			discountWalletOperation.setTaxPercent(taxPercent);
      			discountWalletOperation.setUnitAmountWithoutTax(unitAmounts[0]);
      			discountWalletOperation.setUnitAmountWithTax(unitAmounts[1]);
      			discountWalletOperation.setUnitAmountTax(unitAmounts[2]);
 				discountWalletOperation.setTax(taxInfo.tax);
 				discountWalletOperation.setTaxClass(taxInfo.taxClass);
-    			discountWalletOperation.setDiscountValue(discountValue);
     			discountWalletOperation.setDiscountedAmount(discountedAmount);
-				discountWalletOperation.setOrderNumber(walletOperation != null ? walletOperation.getOrderNumber() : null);
-			    discountWalletOperation.setUuid(walletOperation.getUuid());
-			    discountWalletOperation.setBusinessKey(walletOperation != null ? walletOperation.getBusinessKey() : null);
+				if(walletOperation != null){
+					discountWalletOperation.setOrderNumber(walletOperation.getOrderNumber());
+					discountWalletOperation.setUuid(walletOperation.getUuid());
+					discountWalletOperation.setBusinessKey(walletOperation.getBusinessKey());
+				}
     			
     			if(!isVirtual) {
     				discountWalletOperation.setSubscription(subscription);

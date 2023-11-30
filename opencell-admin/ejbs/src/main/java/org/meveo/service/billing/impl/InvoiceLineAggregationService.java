@@ -212,11 +212,9 @@ public class InvoiceLineAggregationService implements Serializable {
                     "SUM(a.amountWithoutTax) as sum_without_tax", "SUM(a.amountWithTax) as sum_with_tax", "offerTemplate.id as offer_id", usageDateAggregationFunction + " as usage_date", "min(a.startDate) as start_date",
                     "max(a.endDate) as end_date", "taxPercent as tax_percent", "tax.id as tax_id", "infoOrder.productVersion.id as product_version_id", "accountingArticle.id as article_id", "count(a.id) as rt_count"));
 
-            if (aggregationConfiguration.getDiscountAggregation() == DiscountAggregationModeEnum.NO_AGGREGATION) {
-                fieldToFetch.add("discountedRatedTransaction as discounted_ratedtransaction_id");
-                fieldToFetch.add("discountPlanType as discount_plan_type");
-                fieldToFetch.add("discountValue as discount_value");
-            }
+            fieldToFetch.add("discountedRatedTransaction as discounted_ratedtransaction_id");
+            fieldToFetch.add("discountPlanType as discount_plan_type");
+            fieldToFetch.add("discountValue as discount_value");
 
             if (!aggregationConfiguration.isIgnoreOrders()) {
                 fieldToFetch.add("infoOrder.order.id as commercial_order_id");
@@ -259,7 +257,7 @@ public class InvoiceLineAggregationService implements Serializable {
 
         PaginationConfiguration searchConfig = new PaginationConfiguration(null, null, bcFilter, null, fieldToFetch, groupBy, (Set<String>) null, "billingAccount.id", SortOrder.ASCENDING);
 
-        String extraCondition = (billingRun.getLastTransactionDate() != null ? " a.usageDate < :lastTransactionDate and " : " and ") + QUERY_FILTER;
+        String extraCondition = (billingRun.getLastTransactionDate() != null ? " a.usageDate < :lastTransactionDate and " : " ") + QUERY_FILTER;
 
         QueryBuilder queryBuilder = nativePersistenceService.getAggregateQuery("RatedTransaction", searchConfig, null, extraCondition, null);
         return queryBuilder.getQueryAsString();
@@ -308,11 +306,9 @@ public class InvoiceLineAggregationService implements Serializable {
         groupBy.add("tax.id");
         groupBy.add("taxPercent");
         groupBy.add("infoOrder.productVersion.id");
-        if (aggregationConfiguration.getDiscountAggregation() == DiscountAggregationModeEnum.NO_AGGREGATION) {
-            groupBy.add("discountedRatedTransaction");
-            groupBy.add("discountValue");
-            groupBy.add("discountPlanType");
-        }
+        groupBy.add("discountedRatedTransaction");
+        groupBy.add("discountValue");
+        groupBy.add("discountPlanType");
         if (aggregationConfiguration.getType() == BillingEntityTypeEnum.ORDER) {
             groupBy.add("orderNumber");
         } else if (aggregationConfiguration.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
@@ -330,6 +326,10 @@ public class InvoiceLineAggregationService implements Serializable {
         if (!aggregationConfiguration.isIgnoreOrders()) {
             groupBy.add("infoOrder.order.id");
             groupBy.add("orderNumber");
+        }
+        
+        if (!aggregationConfiguration.isIgnoreUserAccounts()) {
+            groupBy.add("userAccount.id");
         }
 
         if (!aggregationConfiguration.isAggregationPerUnitAmount()) {
@@ -378,6 +378,9 @@ public class InvoiceLineAggregationService implements Serializable {
 		if(aggregationConfiguration.isDisableAggregation() || !aggregationConfiguration.isIgnoreOrders()) {
 	        mapToInvoiceLineTable.put("order_id", "((agr.order_id is null and ivl.commercial_order_id is null) or agr.order_id =  ivl.commercial_order_id)");
 	        mapToInvoiceLineTable.put("order_number", "((agr.order_number is null and ivl.order_number is null) or agr.order_number = ivl.order_number)");
+		}
+		if(aggregationConfiguration.isDisableAggregation() || !aggregationConfiguration.isIgnoreUserAccounts()) {
+	        mapToInvoiceLineTable.put("user_account_id", "((agr.user_account_id is null and ivl.user_account is null) or agr.user_account_id =  ivl.user_account_id)");
 		}
 		if(aggregationConfiguration.isDisableAggregation() || !aggregationConfiguration.isAggregationPerUnitAmount()) {
 			if (appProvider.isEntreprise()) {

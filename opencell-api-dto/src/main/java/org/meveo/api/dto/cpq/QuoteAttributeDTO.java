@@ -21,6 +21,7 @@ package org.meveo.api.dto.cpq;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.cpq.AttributeCategoryEnum;
 import org.meveo.model.cpq.QuoteAttribute;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -68,6 +70,12 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	private Boolean booleanValue;
 	
 	private Integer sequence;
+	private boolean mandatory=Boolean.FALSE;
+	private boolean display;
+	private boolean readOnly = Boolean.FALSE;
+	
+	private Set<String> allowedValues;
+	private AttributeCategoryEnum attributeCategoryEnum;
 
 	/**
 	 * @return the quoteAttributeCode
@@ -91,9 +99,14 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 		booleanValue = quoteAttribute.getBooleanValue();
 	}
 	
-	public QuoteAttributeDTO(QuoteAttribute quoteAttribute, Integer sequence) {
+	public QuoteAttributeDTO(QuoteAttribute quoteAttribute, Integer sequence, boolean mandatory, boolean display, boolean readOnly, Set<String> allowedValues, AttributeCategoryEnum attributeCategoryEnum) {
 		this(quoteAttribute);
 		this.sequence = sequence;
+		this.mandatory = mandatory;
+		this.display = display;
+		this.readOnly = readOnly;
+		this.allowedValues = allowedValues;
+		this.attributeCategoryEnum = attributeCategoryEnum;
 	}
 	/**
 	 * @param quoteAttributeCode the quoteAttributeCode to set
@@ -175,5 +188,32 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+	
+	public boolean isMandatory() {
+		return mandatory;
+	}
+	
+	public QuoteAttributeDTO setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+		return this;
+	}
+	
+	public boolean isDisplay() {
+		return display;
+	}
+	
+	public QuoteAttributeDTO setDisplay(boolean display) {
+		this.display = display;
+		return this;
+	}
+	
+	public Boolean getReadOnly() {
+		return readOnly;
+	}
+	
+	public QuoteAttributeDTO setReadOnly(Boolean readOnly) {
+		this.readOnly = readOnly;
+		return this;
 	}
 }

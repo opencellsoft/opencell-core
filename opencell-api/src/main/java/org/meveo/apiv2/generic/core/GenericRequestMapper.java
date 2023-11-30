@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.assertj.core.util.VisibleForTesting;
+import org.apache.commons.collections.MapUtils;
 import org.meveo.admin.util.pagination.FilterOperatorEnum;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -61,7 +61,7 @@ public class GenericRequestMapper {
         return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
                 computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getGroupBy(), genericPagingAndFiltering.getHaving(), genericPagingAndFiltering.getJoinType(),
-                genericPagingAndFiltering.getIsFilter(), genericPagingAndFiltering.getForceCount(), Optional.ofNullable(genericPagingAndFiltering.getSortBy()).orElse(defaultSort ? "id" : null), Optional.ofNullable(genericPagingAndFiltering.getSortOrder()).map(PagingAndFiltering.SortOrder::valueOf).orElse(defaultSort ? PagingAndFiltering.SortOrder.ASCENDING : null));
+                genericPagingAndFiltering.getIsFilter() || useDistinctProjection(genericPagingAndFiltering), genericPagingAndFiltering.getForceCount(), Optional.ofNullable(genericPagingAndFiltering.getSortBy()).orElse(defaultSort ? "id" : null), Optional.ofNullable(genericPagingAndFiltering.getSortOrder()).map(PagingAndFiltering.SortOrder::valueOf).orElse(defaultSort ? PagingAndFiltering.SortOrder.ASCENDING : null));
     }
     private List<String> computeFetchFields(GenericPagingAndFiltering genericPagingAndFiltering) {
         if(genericPagingAndFiltering.getSortBy() == null) {
@@ -75,7 +75,21 @@ public class GenericRequestMapper {
                 .collect(Collectors.toList());
 		return sortByFetchList;
     }
-    
+
+    private boolean useDistinctProjection(GenericPagingAndFiltering genericPagingAndFiltering) {
+
+        if(genericPagingAndFiltering.getSortBy() == null) {
+            return MapUtils.isNotEmpty(genericPagingAndFiltering.getFilters());
+        }
+
+        if(MapUtils.isNotEmpty(genericPagingAndFiltering.getFilters())) {
+            return Stream.of(genericPagingAndFiltering.getSortBy().split(","))
+                         .noneMatch(s -> !s.isBlank() && s.contains("."));
+        }
+
+        return false;
+    }
+
    private List<String> getFetchList(String fetchProperty){
     	List<String> result = new ArrayList<String>();
     	final String[] split = fetchProperty.split("\\.");

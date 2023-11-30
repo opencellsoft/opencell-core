@@ -10,6 +10,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
 public class EinvoiceSettingService extends PersistenceService<ElectronicInvoiceSetting> {
@@ -17,7 +19,7 @@ public class EinvoiceSettingService extends PersistenceService<ElectronicInvoice
 	@Inject
 	private JobInstanceService jobInstanceService;
 	
-	public ElectronicInvoiceSetting findEinvoiceSetting(){
+	public ElectronicInvoiceSetting findEinvoiceSetting() {
 		try {
 			TypedQuery<ElectronicInvoiceSetting> query = getEntityManager().createQuery("from ElectronicInvoiceSetting g order by g.id desc", entityClass).setMaxResults(1);
 			return query.getSingleResult();
@@ -26,30 +28,42 @@ public class EinvoiceSettingService extends PersistenceService<ElectronicInvoice
 			return null;
 		}
 	}
+	
 	public void chainToNextJob(ElectronicInvoiceSetting electronicInvoiceSetting) {
-		JobInstance jobInstance = find(electronicInvoiceSetting.getInvoicingJob());
-		JobInstance nextJobInstance = setChain(jobInstance, electronicInvoiceSetting.isForceXmlGeneration(), electronicInvoiceSetting.getXmlGenerationJob());
-		nextJobInstance = setChain(nextJobInstance, electronicInvoiceSetting.isForcePDFGeneration(), electronicInvoiceSetting.getPdfGenerationJob());
-		setChain(nextJobInstance, electronicInvoiceSetting.isForceUBLGeneration(), electronicInvoiceSetting.getUblGenerationJob());
+		JobInstance invoiceJobInstance = find(electronicInvoiceSetting.getInvoicingJob());
+		JobInstance xmlJobInstance = setChain(invoiceJobInstance, electronicInvoiceSetting.isForceXmlGeneration(), electronicInvoiceSetting.getXmlGenerationJob());
+		JobInstance pdfJobInstance = setChain(xmlJobInstance, electronicInvoiceSetting.isForcePDFGeneration(), electronicInvoiceSetting.getPdfGenerationJob());
+		setChain(pdfJobInstance, electronicInvoiceSetting.isForceUBLGeneration(), electronicInvoiceSetting.getUblGenerationJob());
 	}
 	
 	private JobInstance setChain(JobInstance jobInstance, boolean isForcingGeneration, String generationNextJob) {
-		JobInstance nextJobInstance = getNext(jobInstance);
-		if(isForcingGeneration) {
+		List<JobInstance> chainingJobs = new ArrayList<>();
+		JobInstance nextJobInstance = getNext(jobInstance, chainingJobs, generationNextJob);
+		if (isForcingGeneration && !nextJobInstance.getCode().equals(generationNextJob)) {
 			nextJobInstance.setFollowingJob(find(generationNextJob));
 			jobInstanceService.update(nextJobInstance);
+		}else{
+			return jobInstance;
 		}
 		return nextJobInstance;
 	}
+	
 	private JobInstance find(String instanceJobCode) {
 		JobInstance jobInstance = jobInstanceService.findByCode(instanceJobCode);
-		if(jobInstance == null) {
+		if (jobInstance == null) {
 			throw new EntityDoesNotExistsException(JobInstance.class, instanceJobCode);
 		}
 		return jobInstance;
 	}
-	private JobInstance getNext(JobInstance jobInstance) {
-		if(jobInstance.getFollowingJob() == null) return jobInstance;
-		return getNext(jobInstanceService.findByCode(jobInstance.getFollowingJob().getCode()));
+	
+	private JobInstance getNext(JobInstance jobInstance, List<JobInstance> chainingJobs, String generationNextJob) {
+		if (jobInstance.getFollowingJob() == null) return jobInstance;
+		if(jobInstance.getCode().equals(generationNextJob)){
+			return jobInstanceService.findByCode(jobInstance.getCode());
+		}
+		chainingJobs.add(jobInstance.getFollowingJob());
+		return getNext(jobInstanceService.findByCode(jobInstance.getFollowingJob().getCode()), chainingJobs, generationNextJob);
 	}
 }
+	
+	

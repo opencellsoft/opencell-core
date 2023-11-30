@@ -115,7 +115,7 @@ public class ChargeTemplateServiceAll extends BusinessService<ChargeTemplate> {
 							.findFirst()
 							.isPresent())
 					.findFirst();
-			if(publishedPricePlanMatrix.isEmpty()){
+			if(publishedPricePlanMatrix.isEmpty() && chargeTemplate.getRatingScript()==null){
 				throw new BusinessException("to activate a charge, it should at least have ONE PUBLISHED Price plan Version");
 			}
 		}
