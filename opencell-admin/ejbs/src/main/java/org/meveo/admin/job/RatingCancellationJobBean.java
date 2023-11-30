@@ -118,16 +118,20 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 		markFailedToRerate("", min, max);
 		markFailedToRerate("t", min, max);
 		markFailedToRerate("d", min, max);
+		markFailedToRerate("dt", min, max);
 
 		recalculateInvoiceLinesAndCancelRTs("", min, max);
 		recalculateInvoiceLinesAndCancelRTs("t", min, max);
 		recalculateInvoiceLinesAndCancelRTs("d", min, max);
+		recalculateInvoiceLinesAndCancelRTs("dt", min, max);
 
 
-		markCanceledEDRs(min, max);
+		markCanceledEDRs("",min, max);
+		markCanceledEDRs("d",min, max);
 
 		markCanceledWOs("t", min, max);
 		markCanceledWOs("d", min, max);
+		markCanceledWOs("dt", min, max);
 	}
 	
 	/**
@@ -159,18 +163,23 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 				+ "SELECT string_agg(edr.id::text,',') as edr_id, string_agg(wo.id::text,',') AS wo_id, string_agg(rt.id::text,',') as rt_id, il.id as il_id, sum(rt.amount_without_tax) as rt_amount_without_tax, sum(rt.amount_with_tax) as rt_amount_with_tax, sum(rt.amount_tax) as rt_amount_tax, sum(rt.quantity) as rt_quantity,\n"
 				+ "			string_agg(dwo.id::text,',') AS dwo_id, string_agg(drt.id::text,',') as drt_id, dil.id as dil_id, sum(drt.amount_without_tax) as drt_amount_without_tax, sum(drt.amount_with_tax) as drt_amount_with_tax, sum(drt.amount_tax) as drt_amount_tax, sum(drt.quantity) as drt_quantity, \n"
 				+ "			string_agg(two.id::text,',') AS two_id, string_agg(trt.id::text,',') as trt_id, til.id as til_id, sum(trt.amount_without_tax) as trt_amount_without_tax, sum(trt.amount_with_tax) as trt_amount_with_tax, sum(trt.amount_tax) as trt_amount_tax, sum(trt.quantity) as trt_quantity, \n"
-				+ "			wo.subscription_id as s_id, CASE  WHEN il.status = 'BILLED' THEN il.id  WHEN dil.status = 'BILLED' THEN dil.id WHEN til.status = 'BILLED' THEN til.id ELSE null END AS billed_il, count(1) as count_WO, ROW_NUMBER() OVER (ORDER BY count(1)/"+configuredNrPerTx+" desc, wo.subscription_id) AS id\n"
+				+ "			string_agg(dtwo.id::text,',') AS dtwo_id, string_agg(dtrt.id::text,',') as dtrt_id, dtil.id as dtil_id, sum(dtrt.amount_without_tax) as dtrt_amount_without_tax, sum(dtrt.amount_with_tax) as dtrt_amount_with_tax, sum(dtrt.amount_tax) as dtrt_amount_tax, sum(dtrt.quantity) as dtrt_quantity, \n"
+				+ "			wo.subscription_id as s_id, CASE  WHEN il.status = 'BILLED' THEN il.id  WHEN dil.status = 'BILLED' THEN dil.id WHEN til.status = 'BILLED' THEN til.id WHEN dtil.status = 'BILLED' THEN dtil.id ELSE null END AS billed_il, count(1) as count_WO, ROW_NUMBER() OVER (ORDER BY count(1)/"+configuredNrPerTx+" desc, wo.subscription_id) AS id\n"
 				+ "	FROM billing_wallet_operation wo\n"
 				+ "		LEFT JOIN billing_rated_transaction rt ON rt.id = wo.rated_transaction_id and rt.status<>'CANCELED'\n"
 				+ "		LEFT JOIN billing_invoice_line il ON il.id = rt.invoice_line_id\n"
 				+ "		LEFT JOIN billing_wallet_operation dwo ON wo.id = dwo.discounted_wallet_operation_id\n"
 				+ "		LEFT JOIN billing_rated_transaction drt ON drt.id = dwo.rated_transaction_id and drt.status<>'CANCELED'\n"
 				+ "		LEFT JOIN billing_invoice_line dil ON dil.id = drt.invoice_line_id\n"
-				+ "		LEFT JOIN rating_edr edr ON edr.id = wo.edr_id and edr.status <> 'CANCELLED'\n"
+				+ "		LEFT JOIN rating_edr edr ON edr.wallet_operation_id = wo.id and edr.status <> 'CANCELLED'\n"
 				+ "		LEFT JOIN billing_wallet_operation two ON two.id = edr.wallet_operation_id\n"
 				+ "		LEFT JOIN billing_rated_transaction trt ON trt.id = two.rated_transaction_id and trt.status<>'CANCELED'\n"
 				+ "		LEFT JOIN billing_invoice_line til ON til.id = trt.invoice_line_id\n"
-				+ "WHERE wo.status = 'TO_RERATE'\n" + "group by s_id, il_id, dil_id, til_id";
+				+ "		LEFT JOIN rating_edr dedr ON dedr.wallet_operation_id = dwo.id and dedr.status <> 'CANCELLED'\n"
+				+ "		LEFT JOIN billing_wallet_operation dtwo ON dtwo.id = dedr.wallet_operation_id\n"
+				+ "		LEFT JOIN billing_rated_transaction dtrt ON dtrt.id = dtwo.rated_transaction_id and dtrt.status<>'CANCELED'\n"
+				+ "		LEFT JOIN billing_invoice_line dtil ON dtil.id = dtrt.invoice_line_id\n"
+				+ "WHERE wo.status = 'TO_RERATE'\n" + "group by s_id, il_id, dil_id, til_id, dtil_id";
 
 		hibernateSession.doWork(new org.hibernate.jdbc.Work() {
 			@Override
@@ -204,10 +213,10 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 				.executeUpdate();
 	}
 
-	private void markCanceledEDRs(long min, long max) {
+	private void markCanceledEDRs(String prefix, long min, long max) {
 		String updateILQuery = "UPDATE rating_EDR edr SET status='CANCELLED', last_updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' "
 				+ " FROM " + viewName
-				+ " rr, unnest(string_to_array(edr_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and edr_id is not null and edr.id = CAST(to_update AS bigint)";
+				+ " rr, unnest(string_to_array(" + prefix + "edr_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and edr_id is not null and edr.id = CAST(to_update AS bigint)";
 		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
 				.executeUpdate();
 	}
