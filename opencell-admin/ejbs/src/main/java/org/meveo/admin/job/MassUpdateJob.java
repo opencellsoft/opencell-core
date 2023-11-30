@@ -60,33 +60,27 @@ public class MassUpdateJob extends Job {
 
 		result.put(CF_NB_RUNS,
 				CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"),
-						CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", false,
-						null, null, JOB_INSTANCE_MASS_UPDATE_JOB));
+						CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(Job.CF_WAITING_MILLIS,
 				CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS,
 						resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
-						"tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null,
-						JOB_INSTANCE_MASS_UPDATE_JOB));
+						"tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(UpdateStepExecutor.PARAM_TABLE_ALIAS,
 				CustomFieldTemplateUtils.buildCF(UpdateStepExecutor.PARAM_TABLE_ALIAS,
 						resourceMessages.getString("jobExecution.massUpdate.limitQuery"), CustomFieldTypeEnum.STRING,
-						"tab:Configuration:0;fieldGroup:Configuration:0;field:2", "a", false, null, null,
-						JOB_INSTANCE_MASS_UPDATE_JOB));
+						"tab:Configuration:0;fieldGroup:Configuration:0;field:2", "a", JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(CF_MASS_UPDATE_CHUNK,
 				CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK,
 						resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG,
-						"tab:Configuration:0;fieldGroup:Configuration:0;field:3", "100000", false, null, null,
-						JOB_INSTANCE_MASS_UPDATE_JOB));
+						"tab:Configuration:0;fieldGroup:Configuration:0;field:3", "100000", JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(UpdateStepExecutor.PARAM_UPDATE_QUERY,
 				CustomFieldTemplateUtils.buildCF(UpdateStepExecutor.PARAM_UPDATE_QUERY,
 						resourceMessages.getString("jobExecution.massUpdate.updateQuery"), CustomFieldTypeEnum.TEXT_AREA,
-						"tab:Configuration:0;fieldGroup:Configuration:0;field:4", "", false, null, null,
-						JOB_INSTANCE_MASS_UPDATE_JOB));
+						"tab:Configuration:0;fieldGroup:Configuration:0;field:4", "", JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY,
 				CustomFieldTemplateUtils.buildCF(UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY,
 						resourceMessages.getString("jobExecution.massUpdate.limitQuery"), CustomFieldTypeEnum.TEXT_AREA,
-						"tab:Configuration:0;fieldGroup:Configuration:0;field:5", "", false, null, null,
-						JOB_INSTANCE_MASS_UPDATE_JOB));
+						"tab:Configuration:0;fieldGroup:Configuration:0;field:5", "", JOB_INSTANCE_MASS_UPDATE_JOB));
 		return result;
 	}
 }

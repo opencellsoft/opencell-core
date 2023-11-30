@@ -103,13 +103,13 @@ public class InvoicingJob extends ScopedJob {
         result.put("billingRuns", customFieldBR);
 
         result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:3", null, false, null, null, "JobInstance_InvoicingJob"));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:3", "JobInstance_InvoicingJob"));
 
         result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:4", null, false, null, null, "JobInstance_InvoicingJob"));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:4", "JobInstance_InvoicingJob"));
 
         result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
-                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:5", null, false, null, null, "JobInstance_InvoicingJob"));
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:5", "JobInstance_InvoicingJob", 5L));
 
 
         return result;
