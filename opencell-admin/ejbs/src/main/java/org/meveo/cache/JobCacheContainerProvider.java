@@ -31,6 +31,9 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -55,6 +58,7 @@ import org.slf4j.Logger;
  */
 // @Singleton
 // @Lock(LockType.READ)
+@Stateless
 public class JobCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = -4730906690144309131L;
@@ -312,6 +316,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     // @Lock(LockType.WRITE)
     @SuppressWarnings("rawtypes")
     @Interceptors(JobExecutionInterceptor.class)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public JobRunningStatusEnum markJobAsRunning(JobInstance jobInstance, boolean limitToSingleNode, Long jobExecutionResultId, List<Future> threads) {
 
         String currentNode = EjbUtils.getCurrentClusterNode();
@@ -468,6 +473,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     // @Lock(LockType.READ)
     @Interceptors(JobExecutionInterceptor.class)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void markJobAsFinished(JobInstance jobInstance) {
 
         String currentNode = EjbUtils.getCurrentClusterNode();
@@ -556,14 +562,14 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         final Long jobInstanceId = jobInstance.getId();
         final String jobInstanceCode = jobInstance.getCode();
         final String currentNode = EjbUtils.getCurrentClusterNode();
-        
+
         SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = (jobInstIdFullKey, jobExecutionStatusOld) -> {
 
             if (jobExecutionStatusOld != null) {
 
                 if (preserveCurrentStatus) {
                     return jobExecutionStatusOld;
-                    
+
                 } else {
                     JobExecutionStatus jobExecutionStatus = jobExecutionStatusOld.clone();
                     jobExecutionStatus.markAsFinished(currentNode);
@@ -685,6 +691,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * 
      * @param jobInstance Job instance to stop
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void markJobToStop(JobInstance jobInstance) {
 
         String currentProvider = CurrentUserProvider.getCurrentTenant();
