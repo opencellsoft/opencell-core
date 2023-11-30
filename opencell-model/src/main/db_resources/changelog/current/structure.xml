@@ -7467,6 +7467,34 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>create index idx__billing_rating_transaction__id_desc on ${db.schema.adapted}billing_rated_transaction (id desc)</sql>
         <sql>create index idx__billing_rating_transaction__usage_date_desc on ${db.schema.adapted}billing_rated_transaction (usage_date desc)</sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi">
+     <createSequence sequenceName="advanced_settings_seq" startValue="1" />
+    	<createTable tableName="advanced_settings">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="advanced_settings_pk" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="unique_advanced_settings_code" />
+            </column>
+            <column name="description" type="varchar(255)" />
+	        <column name="origin" type="varchar(100)"/>
+	        <column name="category" type="varchar(100)"/>
+	        <column name="property_group" type="varchar(100)"/>
+	        <column name="property_value" type="VARCHAR(255)"/>
+	        <column name="property_type" type="VARCHAR(255)"/>
+	    </createTable>
+	</changeSet>
 
     <changeSet id="#INTRD-17451_20230731" author="ZBariki">
         <addColumn tableName="cpq_price_plan_matrix_line">
