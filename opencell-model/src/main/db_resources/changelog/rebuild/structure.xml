@@ -491,6 +491,7 @@
         <createSequence sequenceName="pdp_status_seq" startValue="1"/>
         <createSequence sequenceName="pdp_status_history_seq" startValue="1"/>
         <createSequence sequenceName="batch_entity_seq" startValue="1"/>
+        <createSequence sequenceName="advanced_settings_seq" startValue="1" />
     </changeSet>
 
 
@@ -12619,6 +12620,33 @@
             </column>
         </createTable>
     </changeSet>
+	
+	<changeSet id="#INTRD-18792_advanced_settings-rebuild" author="Mohammed_ElAzzouzi">
+    	<createTable tableName="advanced_settings">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="advanced_settings_pk" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="unique_advanced_settings_code" />
+            </column>
+            <column name="description" type="varchar(255)" />
+	        <column name="origin" type="varchar(100)"/>
+	        <column name="category" type="varchar(100)"/>
+	        <column name="property_group" type="varchar(100)"/>
+	        <column name="property_value" type="VARCHAR(255)"/>
+	        <column name="property_type" type="VARCHAR(255)"/>
+	    </createTable>
+	</changeSet>
 
 
     <changeSet id="#INTRD-16031_20230508_rebuild" author="zelmeliani">
@@ -12773,6 +12801,33 @@
 			    <constraints nullable="false" />
 			</column>
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="#INTRD-18792_advanced_settings-rebuild" author="Mohammed_ElAzzouzi">
+    	<createTable tableName="advanced_settings">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="advanced_settings_pk" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="unique_advanced_settings_code" />
+            </column>
+            <column name="description" type="varchar(255)" />
+	        <column name="origin" type="varchar(100)"/>
+	        <column name="category" type="varchar(100)"/>
+	        <column name="property_group" type="varchar(100)"/>
+	        <column name="property_value" type="VARCHAR(255)"/>
+	        <column name="property_type" type="VARCHAR(255)"/>
+	    </createTable>
 	</changeSet>
 
     <changeSet id="#INTRD-17632_2023_08_09_rebuild" author="zbariki">
@@ -21103,6 +21158,7 @@
     <changeSet id="#INTRD-19124_wo_partitioning" author="a.rouaguebe" />
     <changeSet id="#INTRD-19462_20231115" author="TarikFA." />
     <changeSet id="#INTRD-19614_20231127" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
