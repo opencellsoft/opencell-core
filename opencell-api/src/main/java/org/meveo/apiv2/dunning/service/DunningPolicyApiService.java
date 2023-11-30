@@ -15,6 +15,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.apiv2.dunning.impl.DunningPolicyRuleLineMapper;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.admin.Currency;
@@ -93,6 +94,9 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                     throw new NotFoundException("Currency with code " + dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode() + " not found");
                 }
                 dunningPolicy.setMinBalanceTriggerCurrency(currencyService.findByCode(dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode()));
+            }
+            if(dunningPolicyService.checkIfSamePriorityExists(dunningPolicy.getPolicyPriority())) {
+                throw new BusinessApiException("Policy with priority " + dunningPolicy.getPolicyPriority() + " already exists");
             }
             dunningPolicyService.create(dunningPolicy);
             auditLogService.trackOperation("create", new Date(), dunningPolicy, dunningPolicy.getPolicyName());
