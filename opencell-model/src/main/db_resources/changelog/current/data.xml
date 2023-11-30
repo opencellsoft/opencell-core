@@ -21806,5 +21806,268 @@ public class ImportJobNotification extends Script {
             END $$;]]>
         </sql>
     </changeSet>
+    
+    <changeSet id="INTRD-18792_INSERT_DEFAULT_PP_FILTERS_CONFIGURATION" author="Mohammed_ElAzzouzi">
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enablePricePlanFilters"/>
+		    <column name="description" value="pricePlanFilters.enablePricePlanFilters"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableOfferTemplate"/>
+		    <column name="description" value="pricePlanFilters.enableOfferTemplate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableStartSubscriptionDate"/>
+		    <column name="description" value="pricePlanFilters.enableStartSubscriptionDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableEndSubscriptionDate"/>
+		    <column name="description" value="pricePlanFilters.enableEndSubscriptionDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableStartRatingDate"/>
+		    <column name="description" value="pricePlanFilters.enableStartRatingDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableEndRatingDate"/>
+		    <column name="description" value="pricePlanFilters.enableEndRatingDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMinQuantity"/>
+		    <column name="description" value="pricePlanFilters.enableMinQuantity"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMaxQuantity"/>
+		    <column name="description" value="pricePlanFilters.enableMaxQuantity"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMinSubscriptionAgeInMonth"/>
+		    <column name="description" value="pricePlanFilters.enableMinSubscriptionAgeInMonth"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMaxSubscriptionAgeInMonth"/>
+		    <column name="description" value="pricePlanFilters.enableMaxSubscriptionAgeInMonth"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria1Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria1Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria2Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria2Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria3Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria3Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteriaEL"/>
+		    <column name="description" value="pricePlanFilters.enableCriteriaEL"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableTradingCurrency"/>
+		    <column name="description" value="pricePlanFilters.enableTradingCurrency"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableTradingCountry"/>
+		    <column name="description" value="pricePlanFilters.enableTradingCountry"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableSeller"/>
+		    <column name="description" value="pricePlanFilters.enableSeller"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityCalendar"/>
+		    <column name="description" value="pricePlanFilters.enableValidityCalendar"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityFrom"/>
+		    <column name="description" value="pricePlanFilters.enableValidityFrom"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityDate"/>
+		    <column name="description" value="pricePlanFilters.enableValidityDate"/>
+		</insert>
+	</changeSet>
 
 </databaseChangeLog>
