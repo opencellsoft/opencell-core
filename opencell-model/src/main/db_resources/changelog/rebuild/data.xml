@@ -12109,12 +12109,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         </insert>
     </changeSet>
 	
-
-	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
-	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
-	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
-	<changeSet id="#INTRD-16296_20230517" author="aeljaouhari" />
-	<changeSet id="INTRD-5701_20220215" author="HatimOUDAD" />
 	<changeSet id="INTRD-18792_INSERT_DEFAULT_PP_FILTERS_CONFIGURATION" author="Mohammed_ElAzzouzi">
 		<insert tableName="advanced_settings">
 		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
@@ -12378,6 +12372,11 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 	
+	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
+	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
+	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
+	<changeSet id="#INTRD-16296_20230517" author="aeljaouhari" />
+	<changeSet id="INTRD-5701_20220215" author="HatimOUDAD" />
 	<changeSet id="#INTRD-16482_20230526" author="aeljaouhari" />
 	<changeSet id="#INTRD-16247_20230605" author="zelmeliani" />
     <changeSet id="#INTRD-16278_20230606" author="anasseh" />
