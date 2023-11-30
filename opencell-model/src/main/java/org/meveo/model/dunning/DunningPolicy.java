@@ -19,7 +19,8 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "DunningPolicy.findByName", query = "SELECT dp FROM DunningPolicy dp where dp.policyName=:policyName"),
         @NamedQuery(name = "DunningPolicy.listPoliciesByIsActive", query = "SELECT DISTINCT dp FROM DunningPolicy dp left join fetch dp.dunningLevels dpl left join fetch dpl.dunningLevel dl where dp.isActivePolicy=:active"),
-        @NamedQuery(name = "DunningPolicy.DeactivateDunningPolicies", query = "UPDATE DunningPolicy dp SET dp.isActivePolicy=false WHERE dp.id IN (:ids)")})
+        @NamedQuery(name = "DunningPolicy.DeactivateDunningPolicies", query = "UPDATE DunningPolicy dp SET dp.isActivePolicy=false WHERE dp.id IN (:ids)"),
+        @NamedQuery(name = "DunningPolicy.checkIfPriorityAlreadyTaken", query = "SELECT dp FROM DunningPolicy dp where dp.policyPriority=:priority")})
 public class DunningPolicy extends EnableEntity {
 
     private static final long serialVersionUID = 1L;
