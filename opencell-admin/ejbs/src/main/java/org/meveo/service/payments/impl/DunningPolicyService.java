@@ -378,4 +378,16 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         update(dunningPolicy);
     }
+
+    /**
+     * Check if priority already taken by an other policy
+     * @param priority
+     * @return true if priority already taken, false if not
+     */
+    public boolean checkIfSamePriorityExists(int priority) {
+        return !getEntityManager().createNamedQuery("DunningPolicy.checkIfPriorityAlreadyTaken")
+                .setParameter("priority", priority)
+                .getResultList()
+                .isEmpty();
+    }
 }
