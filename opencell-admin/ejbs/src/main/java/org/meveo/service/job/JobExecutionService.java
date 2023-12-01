@@ -38,6 +38,7 @@ import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobExecutionStatus;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
@@ -127,8 +128,9 @@ public class JobExecutionService extends BaseService {
 
         boolean isRunningAsJobManager = jobLauncher != JobLauncherEnum.WORKER;
         // In Spread data processing over cluster nodes only one node can act as a job manager
-        boolean limitRunToASingleNode = jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE || (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && isRunningAsJobManager);
-        
+        boolean limitRunToASingleNode = jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE
+                || (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && isRunningAsJobManager);
+
         if (jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())) {
 
             JobRunningStatusEnum isRunning = lockForRunning(jobInstance, limitRunToASingleNode);
@@ -199,8 +201,23 @@ public class JobExecutionService extends BaseService {
 
         if (jobLauncher != JobLauncherEnum.WORKER) {
             int i = 0;
+
+            final long checkEveryMilis = ((Integer) ParamBean.getInstance().getPropertyAsInteger("jobs.completeMore.checkEveryMilis", 5000)).longValue();
+            final int checkTimes = ParamBean.getInstance().getPropertyAsInteger("jobs.completeMore.checkTimes", 15);
+
             while (jobResultStatus == JobExecutionResultStatusEnum.COMPLETED_MORE && i < MAX_TIMES_TO_RUN_INCOMPLETE_JOB) {
-                jobResultStatus = job.execute(jobInstance, null, JobLauncherEnum.INCOMPLETE);
+
+                if (!waitForAllNodesToFinishRunning(jobInstance.getId(), checkEveryMilis, checkTimes)) {
+                    jobExecutionResult.setStatus(JobExecutionResultStatusEnum.FAILED);
+                    jobExecutionResult.addReportToBeginning("Job completed successfully with more data to process, but failed to complete on other nodes. Will stop further processing.");
+                    jobExecutionResultService.persistResult(jobExecutionResult);
+                    return;
+                }
+
+                jobExecutionResult = new JobExecutionResultImpl(jobInstance, jobLauncher, EjbUtils.getCurrentClusterNode());
+                jobExecutionResultService.persistResult(jobExecutionResult);
+
+                jobResultStatus = job.execute(jobInstance, jobExecutionResult, JobLauncherEnum.INCOMPLETE);
                 i++;
             }
 
@@ -245,7 +262,7 @@ public class JobExecutionService extends BaseService {
         IteratorBasedJobBean.markJobToStop(jobInstance.getId());
         jobCacheContainerProvider.markJobToStop(jobInstance);
         IteratorBasedJobBean.releaseJobDataProcessingThreads(jobInstance.getId());
-        
+
         // Publish to other cluster nodes to cancel job execution
         if (triggerStopOnOtherNodes) {
             clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.stop);
@@ -457,5 +474,32 @@ public class JobExecutionService extends BaseService {
                 jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.INCOMPLETE, false);
             }
         }
+    }
+
+    /**
+     * Wait for all nodes to finish running a job
+     * 
+     * @param jobInstanceId Job instance identifier
+     * @param checkEveryMillis Wait time between status checks
+     * @param checkTimes How many times to repeat status check
+     * @return True if all nodes have finished running the job. False, if even after waiting, job is still marked as running
+     */
+    private boolean waitForAllNodesToFinishRunning(long jobInstanceId, long checkEveryMillis, int checkTimes) {
+
+        JobRunningStatusEnum status = null;
+        for (int i = 0; i < checkTimes; i++) {
+            status = jobCacheContainerProvider.isJobRunning(jobInstanceId);
+            if (status == JobRunningStatusEnum.NOT_RUNNING) {
+                return true;
+            }
+            try {
+                Thread.sleep(checkEveryMillis);
+            } catch (InterruptedException e) {
+            }
+        }
+
+        log.error("Timedout while waiting for all nodes to finish executing a job {}. Last status received was {}.", jobInstanceId, status);
+
+        return false;
     }
 }

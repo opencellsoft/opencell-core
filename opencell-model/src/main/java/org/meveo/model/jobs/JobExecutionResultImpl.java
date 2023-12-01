@@ -517,6 +517,15 @@ public class JobExecutionResultImpl extends BaseEntity {
     public synchronized void addReport(String messageToAppend) {
         this.report = (this.report == null ? "" : (this.report + " \n ")) + messageToAppend;
     }
+    
+    /**
+     * Append message to report to the beginning
+     * 
+     * @param messageToAppend A message to append
+     */
+    public synchronized void addReportToBeginning(String messageToAppend) {
+        this.report = messageToAppend + (this.report == null ? "" : (" \n " + this.report));
+    }
 
     /**
      * @return Job execution status

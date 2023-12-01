@@ -193,7 +193,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     @Override
     public void create(JobInstance jobInstance) throws BusinessException {
         super.create(jobInstance);
-        jobCacheContainerProvider.addUpdateJobInstance(jobInstance);
+        jobCacheContainerProvider.addUpdateJobInstance(jobInstance, true);
         scheduleJob(jobInstance, null);
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.create);
@@ -202,7 +202,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     @Override
     public JobInstance update(JobInstance jobInstance) throws BusinessException {
         super.update(jobInstance);
-        jobCacheContainerProvider.addUpdateJobInstance(jobInstance);
+        jobCacheContainerProvider.addUpdateJobInstance(jobInstance, true);
         scheduleUnscheduleJob(jobInstance);
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.update);
