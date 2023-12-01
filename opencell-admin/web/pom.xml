@@ -365,6 +365,12 @@
             <artifactId>opencell-scripts</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.opencellsoft.wildfly</groupId>
+            <artifactId>wildfly-cache-scripts</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Libraries included in JBoss -->
 
         <dependency>
