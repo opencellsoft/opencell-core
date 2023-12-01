@@ -658,7 +658,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
             }
             	
             List<Contract> suitableContracts = new ArrayList<>();
-            Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null && "ACTIVE".equals(bareWalletOperation.getSubscription().getContract().getStatus()) ? bareWalletOperation.getSubscription().getContract() : null : null;
+            Contract contractFromSubscription = bareWalletOperation.getSubscription() != null ? bareWalletOperation.getSubscription().getContract() != null
+            		&& "ACTIVE".equals(bareWalletOperation.getSubscription().getContract().getStatus()) && !bareWalletOperation.getSubscription().getContract().isDisabled()? bareWalletOperation.getSubscription().getContract() : null : null;
             if(contractFromSubscription != null) {
             	suitableContracts.add(contractFromSubscription);
             }else {
