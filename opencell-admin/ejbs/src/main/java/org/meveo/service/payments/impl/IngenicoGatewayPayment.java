@@ -705,9 +705,17 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         SepaDirectDebitPaymentMethodSpecificInput sepaPmInput = new SepaDirectDebitPaymentMethodSpecificInput();
         sepaPmInput.setPaymentProductId(771);
         sepaPmInput.setToken(ddPaymentMethod.getTokenId());
+        String mandateRef=ddPaymentMethod.getMandateIdentification();
+        if(mandateRef!=null) {
         SepaDirectDebitPaymentProduct771SpecificInput sepaDirectDebitPaymentProduct771SpecificInput = new SepaDirectDebitPaymentProduct771SpecificInput();
-        sepaDirectDebitPaymentProduct771SpecificInput.setMandateReference(ddPaymentMethod.getMandateIdentification());
+        MandatInfoDto mandateDto=checkMandat(mandateRef,null);
+        if(MandatStateEnum.blocked.equals(mandateDto.getState())) {
+        	GetMandateResponse response= getClient().merchant(paymentGateway.getMarchandId()).mandates().unblock(mandateRef);
+        	log.info("Reactivate mandate={}, status={}",mandateRef,response.getMandate().getStatus());
+        }
+        sepaDirectDebitPaymentProduct771SpecificInput.setExistingUniqueMandateReference(mandateRef);
         sepaPmInput.setPaymentProduct771SpecificInput(sepaDirectDebitPaymentProduct771SpecificInput);
+        }
         return sepaPmInput;
     }
 
