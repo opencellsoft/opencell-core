@@ -194,6 +194,8 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                 index++;
             }
             if(nbLevelDone == collectionPlan.getDunningLevelInstances().size()) {
+                collectionPlan.setNextActionDate(null);
+                collectionPlan.setNextAction(null);
                 if (collectionPlan.getRelatedInvoice().getPaymentStatus().equals(InvoicePaymentStatusEnum.UNPAID)) {
                     collectionPlan.setStatus(collectionPlanStatusService.findByStatus(FAILED));
                     updateCollectionPlan = true;
