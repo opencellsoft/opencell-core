@@ -59,7 +59,7 @@ public class DunningLevelMapper extends ResourceMapper<org.meveo.apiv2.dunning.D
             chargeCurrency.setCurrencyCode(resource.getDunningLevelChargeCurrency());
             entity.setChargeCurrency(chargeCurrency);
         }
-        if (resource.getDunningLevelMinBalanceCurrency() != null) {
+        if (resource.getDunningLevelMinBalanceCurrency() != null && !resource.getDunningLevelMinBalanceCurrency().isEmpty()) {
         	var minBalanceCurrency = new Currency();
         	minBalanceCurrency.setCurrencyCode(resource.getDunningLevelMinBalanceCurrency());
         	entity.setMinBalanceCurrency(minBalanceCurrency);
