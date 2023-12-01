@@ -27,6 +27,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -226,10 +227,15 @@ public class AttributeService extends BusinessService<Attribute>{
 
         Set<String> givenValues = Set.of(attributeValue.getRealValue().toString().split(seperator));
 
-        if (AttributeTypeEnum.LIST_TEXT == pvAttribute.getAttribute().getAttributeType() ||
-                AttributeTypeEnum.LIST_NUMERIC == pvAttribute.getAttribute().getAttributeType()) {
-            if (CollectionUtils.isNotEmpty(pvAttribute.getAttribute().getAllowedValues()) && !pvAttribute.getAttribute().getAllowedValues().contains(attributeValue.getRealValue().toString())) {
+        if ((AttributeTypeEnum.LIST_TEXT == pvAttribute.getAttribute().getAttributeType() ||
+                AttributeTypeEnum.LIST_NUMERIC == pvAttribute.getAttribute().getAttributeType()) && CollectionUtils.isNotEmpty(pvAttribute.getAttribute().getAllowedValues())) {
+            if (AttributeTypeEnum.LIST_TEXT == pvAttribute.getAttribute().getAttributeType() && !pvAttribute.getAttribute().getAllowedValues().contains(attributeValue.getRealValue())) {
                 throw new BusinessApiException("The value '" + attributeValue.getRealValue() + "' is not part of allowed values " + pvAttribute.getAttribute().getAllowedValues());
+            }else if(AttributeTypeEnum.LIST_NUMERIC == pvAttribute.getAttribute().getAttributeType()){
+	           boolean valueExist = pvAttribute.getAttribute().getAllowedValues().stream().anyMatch(value -> new BigDecimal(value).compareTo(new BigDecimal(attributeValue.getRealValue().toString())) == 0);
+			   if(!valueExist){
+				   throw new BusinessApiException("The value '" + attributeValue.getRealValue() + "' is not part of allowed values " + pvAttribute.getAttribute().getAllowedValues());
+			   }
             }
 
         }
