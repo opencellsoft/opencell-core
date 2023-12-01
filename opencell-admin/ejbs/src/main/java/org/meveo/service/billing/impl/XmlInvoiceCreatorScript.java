@@ -1613,6 +1613,22 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     }
 
     /**
+     * Create invoice/header/invoiceType DOM element
+     *
+     * @param doc                  XML invoice DOM
+     * @param invoiceType             invoiceType
+     * @return DOM element
+     */
+    protected Element createInvoiceTypeSection(Document doc, Invoice invoice) {
+        InvoiceType invoiceType= invoice.getInvoiceType();
+        Element invoiceTypeTag = doc.createElement("invoiceType");
+        invoiceTypeTag.setAttribute("code", invoiceType.getCode());
+        invoiceTypeTag.setAttribute("description", invoiceType.getDescription());
+        addCustomFields(invoiceType, doc, invoiceTypeTag);
+        return invoiceTypeTag;
+    }
+    
+    /**
      * Create invoice/orders DOM element
      * @param invoice              Invoice to convert
      * @param doc                  XML invoice DOM Builder
@@ -1744,6 +1760,11 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             if (providerTag != null) {
                 header.appendChild(providerTag);
             }
+        }
+        
+        Element invoiceTypeTag = createInvoiceTypeSection(doc, invoice);
+        if (invoiceTypeTag != null) {
+            header.appendChild(invoiceTypeTag);
         }
         Element customerTag = createCustomerSection(doc, invoice);
         if (customerTag != null) {
