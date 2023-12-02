@@ -162,4 +162,27 @@ public class UserService extends PersistenceService<User> {
         user.setUserLevel(kcUser.getUserLevel());
         return user;
     }
+
+    /**
+     * Gets user attribute value
+     *
+     * @param username      User name
+     * @param attributeName Attribute name
+     * @return The attribute value
+     */
+    public String getUserAttributeValue(String username, String attributeName) {
+        UserRepresentation userRepresentation = getUserRepresentationByUsername(username);
+        if (userRepresentation != null) {
+            Map<String, List<String>> keycloakAttributes = userRepresentation.getAttributes();
+
+            if (keycloakAttributes != null && !keycloakAttributes.isEmpty()) {
+                for (Map.Entry<String, List<String>> entry : keycloakAttributes.entrySet()) {
+                    if (entry.getKey().equalsIgnoreCase(attributeName)) {
+                        return String.join(", ", entry.getValue());
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

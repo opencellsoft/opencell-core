@@ -22,6 +22,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.BatchEntity;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BatchEntityService;
@@ -57,6 +58,7 @@ public class MarkWOToRerateJobBean extends IteratorBasedJobBean<BatchEntity> {
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         List<BatchEntity> batchEntities = emWrapper.getEntityManager().createNamedQuery("BatchEntity.getOpenedBatchEntity").
                 setParameter("targetJob", "MarkWOToRerateJob").getResultList();
-        batchEntityService.markWoToRerate(batchEntities, jobExecutionResult);
+        EntityReferenceWrapper emailTemplate = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MarkWOToRerateJob.CF_EMAIL_TEMPLATE);
+        batchEntityService.markWoToRerate(batchEntities, jobExecutionResult, emailTemplate != null ? emailTemplate.getId() : null);
     }
 }

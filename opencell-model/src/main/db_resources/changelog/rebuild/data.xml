@@ -17015,12 +17015,13 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" />
 	<changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI" />
+	<changeSet id="#INTRD-19685_20231130" author="AbdellatifBARI" />
 	
 	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
-    
-    
+
+
     
 </databaseChangeLog>
