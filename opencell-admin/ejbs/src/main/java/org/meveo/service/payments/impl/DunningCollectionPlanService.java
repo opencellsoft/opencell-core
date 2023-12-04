@@ -1,5 +1,6 @@
 package org.meveo.service.payments.impl;
 
+import static java.lang.Math.abs;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.DONE;
@@ -187,26 +188,21 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         collectionPlan.setTotalDunningLevels(policy.getTotalDunningLevels());
         collectionPlan.setStartDate(addDaysToDate(invoice.getDueDate(), dayOverDue));
         collectionPlan.setStatus(collectionPlanStatus);
-        if(policy.getDunningLevels() != null && !policy.getDunningLevels().isEmpty()) {
-            DunningLevel firstLevel = findLevelBySequence(policy.getDunningLevels(), 1);
-            DunningLevel reminderLevel = findLevelBySequence(policy.getDunningLevels(), 0);
-            if(firstLevel != null
-                    && firstLevel.getDunningActions() != null && !firstLevel.getDunningActions().isEmpty()) {
-                int dOverDue = Optional.ofNullable(firstLevel.getDaysOverdue()).orElse(0);
-                collectionPlan.setNextAction(firstLevel.getDunningActions().get(0).getCode());
-                collectionPlan.setNextActionDate(addDaysToDate(collectionPlan.getStartDate(), dOverDue));
-            }
-            if (reminderLevel != null
-                    && reminderLevel.getDunningActions() != null && !reminderLevel.getDunningActions().isEmpty()) {
-                int dOverDue = Optional.ofNullable(reminderLevel.getDaysOverdue()).orElse(0);
-                collectionPlan.setLastAction(reminderLevel.getDunningActions().get(0).getCode());
-                collectionPlan.setLastActionDate(addDaysToDate(collectionPlan.getStartDate(), dOverDue));
+        collectionPlan.setDaysOpen(abs((int) daysBetween(new Date(), collectionPlan.getStartDate())));
+        Optional<DunningPolicyLevel> policyLevel = policy.getDunningLevels().stream()
+                .filter(dunningPolicyLevel -> dunningPolicyLevel.getSequence() == 0)
+                .findFirst();
+        if(policyLevel.isPresent()) {
+            List<DunningAction> actions = policyLevel.get().getDunningLevel().getDunningActions();
+            if(actions != null && !actions.isEmpty()) {
+                collectionPlan.setNextAction(actions.get(0).getCode());
+                collectionPlan.setNextActionDate(addDaysToDate(collectionPlan.getStartDate(),
+                        collectionPlan.getDaysOpen()));
             }
         }
         Optional.ofNullable(invoice.getRecordedInvoice())
                 .ifPresent(recordedInvoice ->
                         collectionPlan.setBalance(recordedInvoice.getUnMatchingAmount()));
-        collectionPlan.setDaysOpen((int) daysBetween(collectionPlan.getStartDate(), new Date()) + 1);
         create(collectionPlan);
         invoice.setRelatedDunningCollectionPlan(collectionPlan);
         invoice.setDunningCollectionPlanTriggered(true);
@@ -234,14 +230,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         List<DunningLevelInstance> levelInstances = new ArrayList<>();
         for (DunningPolicyLevel policyLevel : policy.getDunningLevels()) {
             DunningLevelInstance levelInstance;
-            if (policyLevel.getDunningLevel().isReminder()) {
-                levelInstance = levelInstanceService.findByLevelId(policyLevel.getDunningLevel().getId());
-                if (levelInstance == null) {
-                    levelInstance = createLevelInstance(collectionPlan, collectionPlanStatus, dayOverDue, policyLevel, DONE);
-                }
-            } else {
-                levelInstance = createLevelInstance(collectionPlan, collectionPlanStatus, dayOverDue, policyLevel, TO_BE_DONE);
-            }
+            levelInstance = createLevelInstance(collectionPlan, collectionPlanStatus, dayOverDue, policyLevel, TO_BE_DONE);
             levelInstances.add(levelInstance);
         }
         return levelInstances;
