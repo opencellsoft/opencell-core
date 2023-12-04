@@ -38,7 +38,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 
 @Stateless
-public class MediationsettingService extends PersistenceService<MediationSetting> {
+public class MediationSettingService extends PersistenceService<MediationSetting> {
 
     @Inject
     private WalletOperationService walletOperationService;

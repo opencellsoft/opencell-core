@@ -82,7 +82,7 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.UsageRatingService;
-import org.meveo.service.mediation.MediationsettingService;
+import org.meveo.service.mediation.MediationSettingService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRAlreadyProcessedException;
 import org.meveo.service.medina.impl.CDRParsingException;
@@ -151,7 +151,7 @@ public class MediationApiService {
     private TimerService timerService;
 
     @Inject
-    private MediationsettingService mediationsettingService;
+    private MediationSettingService mediationsettingService;
 
     @Inject
     private RatedTransactionService ratedTransactionService;

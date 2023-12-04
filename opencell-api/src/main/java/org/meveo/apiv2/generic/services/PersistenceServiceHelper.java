@@ -47,7 +47,7 @@ public final class PersistenceServiceHelper {
 	        	}
 			}
         }
-		String entityName = entityClass.getSimpleName().replace("Impl", "").replace("MediationSetting", "Mediationsetting");
+		String entityName = entityClass.getSimpleName().replace("Impl", "");
 		PersistenceService serviceInterface = (PersistenceService) EjbUtils.getServiceInterface( entityName+ "Service");
         if(serviceInterface == null){
             serviceInterface = (PersistenceService) EjbUtils.getServiceInterface("BaseEntityService");
