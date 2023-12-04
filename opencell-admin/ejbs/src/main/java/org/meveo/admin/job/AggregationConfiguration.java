@@ -1,14 +1,9 @@
 package org.meveo.admin.job;
 
-import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
-import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
-
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DateAggregationOption;
 import org.meveo.model.billing.DiscountAggregationModeEnum;
-
-import java.util.List;
 
 public class AggregationConfiguration {
 
@@ -54,9 +49,7 @@ public class AggregationConfiguration {
      */
     private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
 
-    private BillingEntityTypeEnum type = BILLINGACCOUNT;
-
-    private List<String> additionalAggregation;
+    private BillingEntityTypeEnum type = BillingEntityTypeEnum.BILLINGACCOUNT;
 
     /**
      * @return Do not aggregate RTs to ILs at all
@@ -133,7 +126,7 @@ public class AggregationConfiguration {
     }
 
     public AggregationConfiguration(BillingRun billingRun) {
-        this.dateAggregationOption = billingRun.getDateAggregation() != null ? billingRun.getDateAggregation() : NO_DATE_AGGREGATION;
+        this.dateAggregationOption = billingRun.getDateAggregation() != null ? billingRun.getDateAggregation() : DateAggregationOption.NO_DATE_AGGREGATION;
         this.aggregationPerUnitAmount = billingRun.isAggregateUnitAmounts();
         this.useAccountingArticleLabel = billingRun.isUseAccountingArticleLabel();
         this.ignoreSubscriptions = billingRun.isIgnoreSubscriptions();
@@ -141,8 +134,7 @@ public class AggregationConfiguration {
         this.ignoreUserAccounts = billingRun.isIgnoreUserAccounts();
         this.discountAggregation = billingRun.getDiscountAggregation();
         this.disableAggregation = billingRun.isDisableAggregation();
-        this.type = (billingRun.getBillingCycle() != null) ? billingRun.getBillingCycle().getType() : BILLINGACCOUNT;
-        this.additionalAggregation = billingRun.getAdditionalAggregationFields();
+        this.type = (billingRun.getBillingCycle() != null) ? billingRun.getBillingCycle().getType() : BillingEntityTypeEnum.BILLINGACCOUNT;
     }
 
     public boolean isEnterprise() {
@@ -161,7 +153,7 @@ public class AggregationConfiguration {
     }
 
     /**
-     * @param dateAggregationOption the dateAggregationOptions to set
+     * @param dateAggregationOptions the dateAggregationOptions to set
      */
     public void setDateAggregationOption(DateAggregationOption dateAggregationOption) {
         this.dateAggregationOption = dateAggregationOption;
@@ -183,14 +175,6 @@ public class AggregationConfiguration {
 
     public BillingEntityTypeEnum getType() {
         return type;
-    }
-
-    public List<String> getAdditionalAggregation() {
-        return additionalAggregation;
-    }
-
-    public void setAdditionalAggregation(List<String> additionalAggregation) {
-        this.additionalAggregation = additionalAggregation;
     }
 
     @Override
