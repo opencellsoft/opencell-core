@@ -4,7 +4,7 @@ import static java.lang.Long.valueOf;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.List.of;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import java.sql.Connection;
@@ -27,12 +27,12 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
-import org.hibernate.collection.internal.PersistentBag;
 import org.meveo.admin.async.SynchronizedIteratorGrouped;
 import org.meveo.admin.async.SynchronizedMultiItemIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
@@ -54,7 +54,6 @@ import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceLineService.InvoiceLineCreationStatistics;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
-import org.primefaces.model.SortOrder;
 
 @Stateless
 public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, Object>>> {
@@ -173,10 +172,6 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.CREATING_INVOICE_LINES, null);
 
             // Determine aggregation options from Billing run
-            if(currentBillingRun.getAdditionalAggregationFields() != null
-                    && currentBillingRun.getAdditionalAggregationFields() instanceof PersistentBag) {
-                currentBillingRun = billingRunService.findById(currentBillingRun.getId(), of("additionalAggregationFields"));
-            }
             aggregationConfiguration = new AggregationConfiguration(currentBillingRun);
             aggregationConfiguration.setEnterprise(appProvider.isEntreprise());
 
@@ -393,8 +388,7 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
         } else {
             filters.put("inList id", billingRunIds);
         }
-        PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters,
-                null, asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
+        PaginationConfiguration pagination = new PaginationConfiguration(null, null, filters, null, asList("billingCycle"), FIELD_PRIORITY_SORT, SortOrder.ASCENDING);
 
         List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(billingRunService.list(pagination), jobInstance);
 
