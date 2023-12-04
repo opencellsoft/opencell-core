@@ -23,6 +23,7 @@ import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREINVOICED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -150,6 +151,7 @@ public class BillingRunJobBean extends BaseJobBean {
                 billingRun.setDiscountAggregation(billingCycle.getDiscountAggregation());
                 billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
                 billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+                billingRun.setAdditionalAggregationFields(new ArrayList<>(billingCycle.getAdditionalAggregationFields()));
 
                 billingRunService.create(billingRun);
                 result.registerSucces();
