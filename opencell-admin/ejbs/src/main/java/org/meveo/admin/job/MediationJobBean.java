@@ -18,10 +18,8 @@
 
 package org.meveo.admin.job;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.FlatFileProcessing;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.cache.JobRunningStatusEnum;
@@ -33,16 +31,13 @@ import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
-import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.AuditOrigin;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.job.Job;
-import org.meveo.service.mediation.MediationsettingService;
+import org.meveo.service.mediation.MediationSettingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
@@ -63,7 +58,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -102,7 +96,7 @@ public class MediationJobBean extends BaseJobBean {
     
 
     @Inject
-    private MediationsettingService mediationsettingService;
+    private MediationSettingService mediationsettingService;
 
     /** The cdr file name. */
     String cdrFileName;
