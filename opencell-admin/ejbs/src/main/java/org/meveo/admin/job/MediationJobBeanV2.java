@@ -55,7 +55,7 @@ import org.meveo.service.medina.impl.DuplicateException;
  *
  */
 @Stateless
-public class MediationJobBeanV2 extends IteratorBasedJobBean<Long> {
+public class MediationJobBeanV2 extends IteratorBasedScopedJobBean<Long> {
 
     /**
      * 
@@ -109,11 +109,7 @@ public class MediationJobBeanV2 extends IteratorBasedJobBean<Long> {
      * @return An iterator over a list of CDR Ids to convert to EDRs
      */
     private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-
-        // Number of CDRs to process in a single job run
-        List<Long> ids = cdrService.getCDRsToProcess();
-
-        return Optional.of(new SynchronizedIterator<Long>(ids));
+        return getIterator(jobExecutionResult);
     }
     
     /**
@@ -208,4 +204,19 @@ public class MediationJobBeanV2 extends IteratorBasedJobBean<Long> {
         return hasMore;
     }
 
+    private Optional<Iterator<Long>> getSynchronizedIterator(int jobItemsLimit) {
+        // Number of CDRs to process in a single job run
+        List<Long> ids = cdrService.getCDRsToProcess(jobItemsLimit);
+        return Optional.of(new SynchronizedIterator<Long>(ids));
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIteratorWithLimit(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        return getSynchronizedIterator(jobItemsLimit);
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult) {
+        return getSynchronizedIterator(0);
+    }
 }

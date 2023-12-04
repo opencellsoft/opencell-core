@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,6 +12,8 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -64,6 +67,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.audit.AuditOrigin;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionResultService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -332,8 +336,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstance.getId()) };
 
             // Start job status report task. Not run in future, so it will die when main thread dies
-            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance.getCode(), lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
-                currentUserProvider, log, jobExecutionResultService);
+            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance, lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
+                currentUserProvider, log, jobExecutionResultService, jobExecutionService);
             Thread jobStatusReportThread = new Thread(jobStatusReportTask);
             jobStatusReportThread.start();
 
@@ -501,16 +505,24 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
     /**
      * Create a task to save to DB job processing progress
      * 
-     * @param jobInstanceCode Job instance code
+     * @param jobInstance Job instance
      * @param lastCurrentUser Current user
      * @param reportFrequency How often (number of seconds) job progress should be saved to DB
      * @param jobExecutionResult Job execution result
+     * @param jobExecutionService Job execution service
      * @return A task definition
      */
-    public static Runnable getJobStatusReportingTask(String jobInstanceCode, MeveoUser lastCurrentUser, int reportFrequency, JobExecutionResultImpl jobExecutionResult, boolean[] isProcessing,
-            CurrentUserProvider currentUserProvider, Logger log, JobExecutionResultService jobExecutionResultService) {
+    public static Runnable getJobStatusReportingTask(JobInstance jobInstance, MeveoUser lastCurrentUser, int reportFrequency, JobExecutionResultImpl jobExecutionResult, boolean[] isProcessing,
+            CurrentUserProvider currentUserProvider, Logger log, JobExecutionResultService jobExecutionResultService, JobExecutionService jobExecutionService) {
 
+        String jobInstanceCode = jobInstance.getCode();
         Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
+        Long jobDurationLimit = jobExecutionResultService.getJobDurationLimit(jobExecutionResult, jobInstance);
+        Long jobTimeLimit = jobExecutionResultService.getJobTimeLimit(jobExecutionResult, jobInstance);
+
+        final AtomicLong durationLimit = jobDurationLimit != null ? new AtomicLong(jobDurationLimit) : null;
+        final AtomicLong timeLimit = jobTimeLimit != null ? new AtomicLong(jobTimeLimit) : null;
+
 
         Runnable task = () -> {
             Thread.currentThread().setName(jobInstanceCode + "-ReportJobStatus");
@@ -529,15 +541,45 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 } catch (Exception e) {
                     log.error("Failed to update job progress", e);
                 }
-                try {
-                    Thread.sleep(reportFrequency * 1000);
-                } catch (InterruptedException e1) {
 
+                try {
+                    if ((durationLimit != null && durationLimit.get() <= 0) || (timeLimit != null && timeLimit.get() <= 0)) {
+                        jobExecutionService.stopJob(jobInstance);
+                    } else {
+                        if ((durationLimit != null && durationLimit.get() < reportFrequency)
+                                || (timeLimit != null && timeLimit.get() < reportFrequency)) {
+                            if (durationLimit != null && timeLimit != null) {
+                                if (durationLimit.get() < timeLimit.get()) {
+                                    Thread.sleep(durationLimit.get() * 1000);
+                                    durationLimit.set(0L);
+                                } else {
+                                    Thread.sleep(timeLimit.get() * 1000);
+                                    timeLimit.set(0L);
+                                }
+                            } else {
+                                if (durationLimit != null) {
+                                    Thread.sleep(durationLimit.get() * 1000);
+                                    durationLimit.set(0L);
+                                } else {
+                                    Thread.sleep(timeLimit.get() * 1000);
+                                    timeLimit.set(0L);
+                                }
+                            }
+                        } else {
+                            if (durationLimit != null) {
+                                durationLimit.set(durationLimit.get() - reportFrequency);
+                            }
+                            if (timeLimit != null) {
+                                timeLimit.set(timeLimit.get() - reportFrequency);
+                            }
+                            Thread.sleep(reportFrequency * 1000);
+                        }
+                    }
+                } catch (InterruptedException e1) {
                 }
             }
             log.info("Thread {} will stop storing job progress", Thread.currentThread().getName());
         };
-
         return task;
     }
 

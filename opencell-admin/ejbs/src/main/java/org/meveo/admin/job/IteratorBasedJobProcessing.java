@@ -184,8 +184,8 @@ public class IteratorBasedJobProcessing implements Serializable {
         boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstanceId) };
 
         // Start job status report task. Not run in future, so it will die when main thread dies
-        Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance.getCode(), lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
-            currentUserProvider, log, jobExecutionResultService);
+        Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance, lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
+            currentUserProvider, log, jobExecutionResultService, jobExecutionService);
         Thread jobStatusReportThread = new Thread(jobStatusReportTask);
         jobStatusReportThread.start();
 
@@ -356,8 +356,8 @@ public class IteratorBasedJobProcessing implements Serializable {
         boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstanceId) };
 
         // Start job status report task. Not run in future, so it will die when main thread dies
-        Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance.getCode(), lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
-            currentUserProvider, log, jobExecutionResultService);
+        Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance, lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
+            currentUserProvider, log, jobExecutionResultService, jobExecutionService);
         Thread jobStatusReportThread = new Thread(jobStatusReportTask);
         jobStatusReportThread.start();
 

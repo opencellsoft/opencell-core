@@ -45,16 +45,16 @@ public class DuplicateRatedTransactionJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
 
         result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG,
-                "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", false, null, null, JOB_INSTANCE_DUPLICATION_RT_JOB));
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", JOB_INSTANCE_DUPLICATION_RT_JOB));
 
         result.put(Job.CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
-                "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, JOB_INSTANCE_DUPLICATION_RT_JOB));
-        
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", JOB_INSTANCE_DUPLICATION_RT_JOB));
+
         result.put(DUPLICATION_RT_JOB_NEGATE_AMOUNT, CustomFieldTemplateUtils.buildCF(DUPLICATION_RT_JOB_NEGATE_AMOUNT, "Apply negate amount", CustomFieldTypeEnum.BOOLEAN,
-                "tab:Configuration:0;fieldGroup:Configuration:0;field:2", "true", false, CustomFieldStorageTypeEnum.SINGLE, null, JOB_INSTANCE_DUPLICATION_RT_JOB));
-        
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:2", "true", false, CustomFieldStorageTypeEnum.SINGLE, null, JOB_INSTANCE_DUPLICATION_RT_JOB, null));
+
         result.put(DUPLICATION_RT_JOB_ADVANCED_PARAMETERS, CustomFieldTemplateUtils.buildCF(DUPLICATION_RT_JOB_ADVANCED_PARAMETERS, "Advanced parameters for Job", CustomFieldTypeEnum.STRING,
-                "tab:Configuration:0;fieldGroup:Configuration:0;field:3", null, false, CustomFieldStorageTypeEnum.MAP, null, JOB_INSTANCE_DUPLICATION_RT_JOB));
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:3", null, false, CustomFieldStorageTypeEnum.MAP, null, JOB_INSTANCE_DUPLICATION_RT_JOB, null));
 
         return result;
     }

@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
 import org.meveo.admin.storage.StorageFactory;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -42,6 +43,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 /**
  * Job definition to process CDR files converting CDRs to EDR records
@@ -52,7 +54,7 @@ import org.meveo.service.job.Job;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class MediationJob extends Job {
+public class MediationJob extends ScopedJob {
 
     private static final String JOB_INSTANCE_MEDIATION_JOB = "JobInstance_MediationJob";
 
@@ -259,7 +261,7 @@ public class MediationJob extends Job {
         readerCF.setMaxValue(256L);
         readerCF.setGuiPosition("tab:Configuration:0;field:5");
         result.put(MEDIATION_JOB_READER, readerCF);
-        
+
         CustomFieldTemplate batchSize = new CustomFieldTemplate();
         batchSize.setCode(CF_BATCH_SIZE);
         batchSize.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
@@ -283,8 +285,17 @@ public class MediationJob extends Job {
         listValuesProcessingOrder.put(SortingFilesEnum.ALPHA.name(), resourceMessages.getString("flatFile.alphabeticFileNameOrder"));
         listValuesProcessingOrder.put(SortingFilesEnum.CREATION_DATE.name(), resourceMessages.getString("flatFile.creationDateFileOrder"));
         processingOrder.setListValues(listValuesProcessingOrder);
-        processingOrder.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:7");
+        processingOrder.setGuiPosition("tab:Configuration:0;field:7");
         result.put(CF_SORTING_OPTION, processingOrder);
+
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:8", JOB_INSTANCE_MEDIATION_JOB));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:9", JOB_INSTANCE_MEDIATION_JOB));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:10", JOB_INSTANCE_MEDIATION_JOB, 5L));
 
         return result;
     }

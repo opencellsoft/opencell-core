@@ -48,6 +48,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -1783,5 +1784,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     public List<BillingRun> findBillingRunsByBillingCycle(BillingCycle bc) {
         return getEntityManager().createNamedQuery("BillingRun.findByBillingCycle", BillingRun.class).setParameter("bc", bc).getResultList();
+    }
+
+    public List<BillingRun> getForInvoicing(int nbToRetrieve) {
+        TypedQuery<BillingRun> query = getEntityManager().createNamedQuery("BillingRun.getForInvoicing", BillingRun.class);
+        if (nbToRetrieve > 0) {
+            query = query.setMaxResults(nbToRetrieve);
+        }
+        return query.getResultList();
     }
 }
