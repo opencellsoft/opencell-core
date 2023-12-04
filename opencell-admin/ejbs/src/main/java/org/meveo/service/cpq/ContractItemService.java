@@ -128,13 +128,15 @@ public class ContractItemService extends BusinessService<ContractItem> {
     public ContractItem getApplicableContractItem(Contract contract, OfferTemplate offer, Long productId,
 												  ChargeTemplate chargeTemplate, WalletOperation walletOperation) {
         
-	        Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
-					.setParameter("contractId", contract.getId())
-					.setParameter("offerId", offer.getId())
-					.setParameter("productId", productId)
-					.setParameter("chargeTemplateId", chargeTemplate.getId())
-			        .setParameter("accountingArticleId", walletOperation != null && walletOperation.getAccountingArticle() != null ? walletOperation.getAccountingArticle().getId() : 0L);
-	        List<ContractItem> applicableContractItems = query.getResultList();
+		Query query = getEntityManager().createNamedQuery("ContractItem.getApplicableContracts")
+				.setParameter("contractId", contract.getId())
+				.setParameter("offerId", offer.getId())
+				.setParameter("productId", productId)
+				.setParameter("chargeTemplateId", chargeTemplate.getId())
+				.setParameter("accountingArticleId", walletOperation != null && walletOperation.getAccountingArticle() != null
+								? walletOperation.getAccountingArticle().getId() : 0L);
+		
+		List<ContractItem> applicableContractItems = query.getResultList();
 
         if (!applicableContractItems.isEmpty()) {
 			Map<Object, Object> contextVariables = new HashMap<>();
