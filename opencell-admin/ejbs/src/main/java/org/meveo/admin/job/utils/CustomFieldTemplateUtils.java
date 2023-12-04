@@ -107,6 +107,6 @@ public class CustomFieldTemplateUtils {
      * @return A custom field template
      */
     public static CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum fieldType, String guiPosition, String appliesTo, Long maxValue) {
-        return buildCF(code, description, fieldType, guiPosition, null, false, null, null, appliesTo, null);
+        return buildCF(code, description, fieldType, guiPosition, null, false, null, null, appliesTo, maxValue);
     }
 }
