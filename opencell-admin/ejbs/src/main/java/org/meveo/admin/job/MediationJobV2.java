@@ -118,13 +118,13 @@ public class MediationJobV2 extends ScopedJob {
         result.put(batchSize.getCode(), batchSize);
 
         result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:3", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:3", JOB_INSTANCE_MEDIATION_JOB));
 
         result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:4", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:4", JOB_INSTANCE_MEDIATION_JOB));
 
         result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
-                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:5", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:5", JOB_INSTANCE_MEDIATION_JOB, 5L));
 
 
         return result;

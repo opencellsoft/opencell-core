@@ -56,8 +56,7 @@ public class MarkWOToRerateJob extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
         CustomFieldTemplate emailTemplateCF = CustomFieldTemplateUtils.buildCF(CF_EMAIL_TEMPLATE, resourceMessages.getString("jobExecution.emailTemplate"), CustomFieldTypeEnum.ENTITY,
-                "tab:Configuration:0;fieldGroup:Configuration:0;field:0", null, false, null, EmailTemplate.class.getName(),
-                "JobInstance_MarkWOToRerateJob");
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:0", null, false, null, EmailTemplate.class.getName(), "JobInstance_MarkWOToRerateJob", null);
         emailTemplateCF.setDataFilterEL("{\"media\":\"EMAIL\"}");
         result.put(CF_EMAIL_TEMPLATE, emailTemplateCF);
         return result;

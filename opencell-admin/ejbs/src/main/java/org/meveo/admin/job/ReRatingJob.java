@@ -76,18 +76,18 @@ public class ReRatingJob extends ScopedJob {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
 
-        result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1",
-                false, null, null, "JobInstance_ReRatingJob"));
+        result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG,
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", "JobInstance_ReRatingJob"));
         result.put(Job.CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
-                "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, "JobInstance_ReRatingJob"));
-        result.put(CF_NB_PUBLISHERS, CustomFieldTemplateUtils.buildCF(CF_NB_PUBLISHERS, resourceMessages.getString("jobExecution.nbPublishers"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2",
-            null, false, null, null, "JobInstance_ReRatingJob"));     
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", "JobInstance_ReRatingJob"));
+        result.put(CF_NB_PUBLISHERS, CustomFieldTemplateUtils.buildCF(CF_NB_PUBLISHERS, resourceMessages.getString("jobExecution.nbPublishers"), CustomFieldTypeEnum.LONG,
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:2", "JobInstance_ReRatingJob"));
 
         CustomFieldTemplate reratingTargetCFTemplate = CustomFieldTemplateUtils.buildCF(CF_RERATING_TARGET,
                 resourceMessages.getString("jobExecution.reratingTarget"), CustomFieldTypeEnum.LIST,
                 "tab:Configuration:0;fieldGroup:Configuration:0;field:3",
                 ReratingTargetEnum.ALL.name(), false, CustomFieldStorageTypeEnum.SINGLE, null,
-                "JobInstance_ReRatingJob");
+                "JobInstance_ReRatingJob", null);
         Map<String, String> listValues = new HashMap();
         for (ReratingTargetEnum reratingTarget : ReratingTargetEnum.values()) {
             listValues.put(reratingTarget.name(), reratingTarget.getLabel());
@@ -100,18 +100,18 @@ public class ReRatingJob extends ScopedJob {
                 resourceMessages.getString("jobExecution.targetBatches"), CustomFieldTypeEnum.ENTITY,
                 "tab:Configuration:0;fieldGroup:Configuration:0;field:4",
                 null, false, CustomFieldStorageTypeEnum.LIST, null,
-                "JobInstance_ReRatingJob");
+                "JobInstance_ReRatingJob", null);
         targetBatchesCFTemplate.setEntityClazz(BatchEntity.class.getName());
         result.put(CF_TARGET_BATCHES, targetBatchesCFTemplate);
 
         result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2", null, false, null, null, "JobInstance_ReRatingJob"));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:5", "JobInstance_ReRatingJob"));
 
         result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:3", null, false, null, null, "JobInstance_ReRatingJob"));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:6", "JobInstance_ReRatingJob"));
 
         result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
-                CustomFieldTypeEnum.STRING, "tab:Configuration:0;fieldGroup:Configuration:0;field:4", null, false, null, null, "JobInstance_ReRatingJob"));
+            CustomFieldTypeEnum.STRING, "tab:Configuration:0;fieldGroup:Configuration:0;field:7", "JobInstance_ReRatingJob", 5L));
         return result;
     }
 }

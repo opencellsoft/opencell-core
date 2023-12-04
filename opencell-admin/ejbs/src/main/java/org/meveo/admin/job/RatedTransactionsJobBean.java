@@ -188,7 +188,7 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
 
         statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
         scrollableResults = statelessSession.createNamedQuery("WalletOperationNative.listConvertToRTs").setParameter("maxId", maxId)
-                .setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun > jobItemsLimit ? jobItemsLimit : processNrInJobRun)
+                .setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun > jobItemsLimit && jobItemsLimit > 0 ? jobItemsLimit : processNrInJobRun)
                 .setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
 
         hasMore = nrOfRecords >= processNrInJobRun;
