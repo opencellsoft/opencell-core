@@ -2007,7 +2007,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 			case COUNT :
 			case NUMERIC :
 			case INTEGER:
-				
+			case LIST_NUMERIC:
 				if(attributInstance.get().getDoubleValue()!=null) {
 					return attributInstance.get().getDoubleValue(); 
 				}
