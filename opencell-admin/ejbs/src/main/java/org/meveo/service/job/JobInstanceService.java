@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.report.query.QueryScheduler;
 import org.meveo.model.report.query.QueryTimer;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.EntityCustomizationUtils;
@@ -407,5 +409,51 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     public List<JobInstance> findByJobTemplate(String jobTemplateName) {
 
         return getEntityManager().createNamedQuery("JobInstance.findByJobTemplate", JobInstance.class).setParameter("jobTemplate", jobTemplateName).getResultList();
+    }
+
+    /**
+     * Gets the parameter CF value if found , otherwise return CF value from customFieldInstanceService
+     *
+     * @param jobInstance the job instance
+     * @param cfCode      the cf code
+     * @return the param or CF value
+     */
+    public Object getParamOrCFValue(JobInstance jobInstance, String cfCode) {
+        Object value = jobInstance.getParamValue(cfCode);
+        if (value == null) {
+            return customFieldInstanceService.getCFValue(jobInstance, cfCode);
+        }
+        return value;
+    }
+
+    /**
+     * Gets the job items limit CF value.
+     *
+     * @param jobInstance the job instance
+     * @return job items limit CF value
+     */
+    public Integer getJobItemsLimit(JobInstance jobInstance) {
+        Long jobItemsLimit = (Long) this.getParamOrCFValue(jobInstance, ScopedJob.CF_JOB_ITEMS_LIMIT);
+        return jobItemsLimit != null ? jobItemsLimit.intValue() : null;
+    }
+
+    /**
+     * Gets the job duration limit CF value.
+     *
+     * @param jobInstance the job instance
+     * @return job duration limit CF value
+     */
+    public Long getJobDurationLimit(JobInstance jobInstance) {
+        return (Long) this.getParamOrCFValue(jobInstance, ScopedJob.CF_JOB_DURATION_LIMIT);
+    }
+
+    /**
+     * Gets the job time limit CF value.
+     *
+     * @param jobInstance the job instance
+     * @return job time limit CF value
+     */
+    public Date getJobTimeLimit(JobInstance jobInstance) {
+        return DateUtils.parseDateWithPattern((String) this.getParamOrCFValue(jobInstance, ScopedJob.CF_JOB_TIME_LIMIT), "HH24:MI");
     }
 }
