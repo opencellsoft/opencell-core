@@ -20,7 +20,6 @@ package org.meveo.service.billing.impl;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BatchEntity;
 import org.meveo.model.billing.BatchEntityStatusEnum;
@@ -60,6 +59,8 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
  */
 @Stateless
 public class BatchEntityService extends PersistenceService<BatchEntity> {
+
+    private static final String DEFAULT_EMAIL_ADDRESS = "no-reply@opencellsoft.com";
 
     @Inject
     @Named
@@ -199,29 +200,6 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
     }
 
     /**
-     * Gets the seller.
-     *
-     * @return the seller.
-     */
-    private Seller getSeller() {
-        Provider provider = providerService.getProvider();
-        Seller seller = provider.getCustomer() != null ? provider.getCustomer().getSeller() : null;
-        if (seller != null) {
-            return seller;
-        }
-        seller = provider.getCustomerAccount() != null ? provider.getCustomerAccount().getCustomer().getSeller() : null;
-        if (seller != null) {
-            return seller;
-        }
-        seller = provider.getBillingAccount() != null ? provider.getBillingAccount().getCustomerAccount().getCustomer().getSeller() : null;
-        if (seller != null) {
-            return seller;
-        }
-        seller = provider.getUserAccount() != null ? provider.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller() : null;
-        return seller;
-    }
-
-    /**
      * Send Email to the creator
      *
      * @param batchEntity        Batch entity
@@ -229,33 +207,43 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
      * @param jobExecutionResult Job execution result
      */
     private void sendEmail(BatchEntity batchEntity, Long emailTemplateId, JobExecutionResultImpl jobExecutionResult) {
-        Seller seller = getSeller();
-        String from = seller != null && seller.getContactInformation() != null ? seller.getContactInformation().getEmail() : "";
+        String from = DEFAULT_EMAIL_ADDRESS;
+        Provider provider = providerService.getProvider();
+        if (provider != null && StringUtils.isNotBlank(provider.getEmail())) {
+            from = provider.getEmail();
+        }
         String username = batchEntity.getAuditable().getCreator();
         User user = userService.findByUsername(username, false);
-        String to = user.getEmail();
-        if (!StringUtils.isBlank(from) && !StringUtils.isBlank(to)) {
-            EmailTemplate emailTemplate = emailTemplateService.findById(emailTemplateId);
-            String localeAttribute = userService.getUserAttributeValue(username, "locale");
-            Locale locale = !StringUtils.isBlank(localeAttribute) ? new Locale(localeAttribute) : new Locale("en");
-            String languageCode = locale.getISO3Language().toUpperCase();
-
-            String emailSubject = internationalSettingsService.resolveSubject(emailTemplate, languageCode);
-            String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate, languageCode);
-            String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate, languageCode);
-
-
-            Map<Object, Object> params = new HashMap<>();
-            params.put("batchStatus", batchEntity.getStatus());
-            params.put("batchDescription", StringUtils.isNotBlank(batchEntity.getDescription()) ? batchEntity.getDescription() : "");
-            params.put("jobExecutionId", jobExecutionResult.getId() != null ? jobExecutionResult.getId() : "");
-            params.put("jobInstanceCode", batchEntity.getJobInstance() != null ? batchEntity.getJobInstance().getCode() : "");
-
-            String subject = StringUtils.isNotBlank(emailTemplate.getSubject()) ? evaluateExpression(emailSubject, params, String.class) : "";
-            String content = StringUtils.isNotBlank(emailTemplate.getTextContent()) ? evaluateExpression(emailContent, params, String.class) : "";
-            String contentHtml = StringUtils.isNotBlank(emailTemplate.getHtmlContent()) ? evaluateExpression(htmlContent, params, String.class) : "";
-
-            emailSender.send(from, asList(from), asList(to), subject, content, contentHtml);
+        if (user == null) {
+            log.warn("No user with username {} was found", username);
+            return;
         }
+        String to = user.getEmail();
+        if (StringUtils.isBlank(to)) {
+            log.warn("Cannot send batch entity notification message to the creator {}, because he doesn't have an email", username);
+            return;
+        }
+
+        EmailTemplate emailTemplate = emailTemplateService.findById(emailTemplateId);
+        String localeAttribute = userService.getUserAttributeValue(username, "locale");
+        Locale locale = !StringUtils.isBlank(localeAttribute) ? new Locale(localeAttribute) : new Locale("en");
+        String languageCode = locale.getISO3Language().toUpperCase();
+
+        String emailSubject = internationalSettingsService.resolveSubject(emailTemplate, languageCode);
+        String emailContent = internationalSettingsService.resolveEmailContent(emailTemplate, languageCode);
+        String htmlContent = internationalSettingsService.resolveHtmlContent(emailTemplate, languageCode);
+
+
+        Map<Object, Object> params = new HashMap<>();
+        params.put("batchStatus", batchEntity.getStatus());
+        params.put("batchDescription", StringUtils.isNotBlank(batchEntity.getDescription()) ? batchEntity.getDescription() : "");
+        params.put("jobExecutionId", jobExecutionResult.getId() != null ? jobExecutionResult.getId() : "");
+        params.put("jobInstanceCode", batchEntity.getJobInstance() != null ? batchEntity.getJobInstance().getCode() : "");
+
+        String subject = StringUtils.isNotBlank(emailTemplate.getSubject()) ? evaluateExpression(emailSubject, params, String.class) : "";
+        String content = StringUtils.isNotBlank(emailTemplate.getTextContent()) ? evaluateExpression(emailContent, params, String.class) : "";
+        String contentHtml = StringUtils.isNotBlank(emailTemplate.getHtmlContent()) ? evaluateExpression(htmlContent, params, String.class) : "";
+
+        emailSender.send(from, asList(from), asList(to), subject, content, contentHtml);
     }
 }
