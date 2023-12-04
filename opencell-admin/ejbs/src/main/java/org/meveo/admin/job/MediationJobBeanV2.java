@@ -42,7 +42,7 @@ import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.mediation.MediationsettingService;
+import org.meveo.service.mediation.MediationSettingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
@@ -73,7 +73,7 @@ public class MediationJobBeanV2 extends IteratorBasedJobBean<Long> {
     private Event<Serializable> rejectededCdrEventProducer;
 
     @Inject
-    private MediationsettingService mediationsettingService;
+    private MediationSettingService mediationsettingService;
     
     @Inject
     private CDRParsingService cdrParsingService;
