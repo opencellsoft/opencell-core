@@ -137,13 +137,13 @@ public class CreateBillingRunDto extends BaseEntityDto {
     private List<LanguageDescriptionDto> descriptionsTranslated;
     
     @Schema(description = " Do not aggregate Rated transactions to Invoice lines at all", nullable = true)
-    private Boolean disableAggregation = false;
+    private Boolean disableAggregation;
 
     /**
      * Aggregate based on accounting article label instead of RT description
      */
     @Schema(description = "Aggregate based on accounting article label instead of RT description", nullable = true)
-    private Boolean useAccountingArticleLabel = false;
+    private Boolean useAccountingArticleLabel;
 
     /**
      * Aggregate by date option
