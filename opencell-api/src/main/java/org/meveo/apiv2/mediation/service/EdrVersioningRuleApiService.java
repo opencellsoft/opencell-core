@@ -1,6 +1,5 @@
 package org.meveo.apiv2.mediation.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,26 +8,23 @@ import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.mediation.MediationSetting;
 import org.meveo.service.mediation.EdrVersioningRuleService;
-import org.meveo.service.mediation.MediationsettingService;
+import org.meveo.service.mediation.MediationSettingService;
 
 public class EdrVersioningRuleApiService implements ApiService<EdrVersioningRule>{
 
 	@Inject
 	private EdrVersioningRuleService edrVersioningRuleService;
 	@Inject
-	private MediationsettingService mediationsettingService;
+	private MediationSettingService mediationsettingService;
 
 
 	@Override

@@ -56,9 +56,8 @@ import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.AuditOrigin;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.job.Job;
-import org.meveo.service.mediation.MediationsettingService;
+import org.meveo.service.mediation.MediationSettingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
@@ -97,7 +96,7 @@ public class MediationJobBean extends BaseJobBean {
     private MediationJobBean thisNewTX;
     
     @Inject
-    private MediationsettingService mediationsettingService;
+    private MediationSettingService mediationsettingService;
 
     /** The cdr file name. */
     String cdrFileName;
