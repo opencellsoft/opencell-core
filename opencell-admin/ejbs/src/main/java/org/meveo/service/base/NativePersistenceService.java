@@ -1728,29 +1728,21 @@ public class NativePersistenceService extends BaseService {
      *
      * @param updateQueryBuilder the update query builder
      * @param entityClassName    the entity class name
-     * @param tableNameAlias     the table name alias
      * @param filters            the filters
      */
-    public void update(QueryBuilder updateQueryBuilder, String entityClassName, String tableNameAlias, Map<String, Object> filters) {
+    public void update(QueryBuilder updateQueryBuilder, String entityClassName, Map<String, Object> filters) {
         if (updateQueryBuilder != null) {
             String updateQuery = updateQueryBuilder.getQueryAsString();
             if (filters != null && !filters.isEmpty()) {
-                StringBuilder selectQuery = new StringBuilder("SELECT ").append(tableNameAlias).append(".id")
-                        .append(" FROM ").append(entityClassName).append(" ").append(tableNameAlias);
-                QueryBuilder selectQueryBuilder = new QueryBuilder(selectQuery.toString(), tableNameAlias);
-                NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(selectQueryBuilder, tableNameAlias);
-                filters.keySet().stream()
-                        .sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".")
-                                - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
-                        .filter(key -> filters.get(key) != null)
-                        .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
-                String subQuery = selectQueryBuilder.getQueryAsString();
+                PaginationConfiguration searchConfig = new PaginationConfiguration(filters);
+                searchConfig.setFetchFields(Arrays.asList("id"));
+                String subQuery = getQuery(entityClassName, searchConfig, null).getQueryAsString();
                 if (subQuery.indexOf("join") > -1) {
                     updateQuery = updateQuery + " WHERE id in (" + subQuery + ")";
                 } else {
                     updateQuery = updateQuery + subQuery.substring(subQuery.indexOf(" where "));
-                    updateQuery = updateQuery.replaceAll(" " + tableNameAlias + "\\.", " ");
-                    updateQuery = updateQuery.replaceAll("\\(" + tableNameAlias + "\\.", "(");
+                    updateQuery = updateQuery.replaceAll(" a\\.", " ");
+                    updateQuery = updateQuery.replaceAll("\\(a\\.", "(");
                 }
             }
             getEntityManager().createQuery(updateQuery).executeUpdate();

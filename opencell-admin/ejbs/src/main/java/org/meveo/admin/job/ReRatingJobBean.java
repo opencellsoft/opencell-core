@@ -86,7 +86,7 @@ public class ReRatingJobBean extends IteratorBasedScopedJobBean<Long> {
         String reratingTarget = (String) this.getParamOrCFValue(jobInstance, ReRatingJob.CF_RERATING_TARGET);
         List<EntityReferenceWrapper> batchEntityWrappers = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, ReRatingJob.CF_TARGET_BATCHES);
         List<Long> targetBatches = CollectionUtils.isNotEmpty(batchEntityWrappers) ? batchEntityWrappers.stream().map(br -> br.getId()).collect(Collectors.toList()) : Collections.emptyList();
-        List<Long> ids = walletOperationService.listToRerate(reratingTarget, targetBatches);
+        List<Long> ids = walletOperationService.listToRerate(reratingTarget, targetBatches, jobItemsLimit);
 
         useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
 

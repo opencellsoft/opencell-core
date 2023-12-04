@@ -55,7 +55,6 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BatchEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
@@ -463,26 +462,33 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return nrOfWosToRerate;
     }
 
-    public List<Long> listToRerate(String reratingTarget, List<Long> targetBatches) {
+
+    /**
+     * Gets wallet operations list to rerate
+     *
+     * @param reratingTarget Rerating target
+     * @param targetBatches  Target batchs
+     * @param nbToRetrieve   Number of wallet operations to retrieve
+     * @return The wallet operations list to rerate
+     */
+    public List<Long> listToRerate(String reratingTarget, List<Long> targetBatches, int nbToRetrieve) {
+        // null | ALL
+        TypedQuery<Long> query = getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class);
         if (ReratingTargetEnum.NO_BATCH.name().equals(reratingTarget)) {
-            return getEntityManager().createNamedQuery("WalletOperation.listToRerateNoBatch", Long.class).getResultList();
+            query = getEntityManager().createNamedQuery("WalletOperation.listToRerateNoBatch", Long.class);
         } else if (ReratingTargetEnum.WITH_BATCH.name().equals(reratingTarget)) {
             if (CollectionUtils.isNotEmpty(targetBatches)) {
-                List<BatchEntity> batchEntities = getEntityManager().createNamedQuery("BatchEntity.listBatchEntities", BatchEntity.class)
-                        .setParameter("ids", targetBatches)
-                        .getResultList();
-                targetBatches = batchEntities.stream().filter(be -> ReRatingJob.class.getSimpleName().equalsIgnoreCase(be.getTargetJob()))
-                        .map(be -> be.getId()).collect(Collectors.toList());
-                if (CollectionUtils.isNotEmpty(targetBatches)) {
-                    return getEntityManager().createNamedQuery("WalletOperation.listToRerateWithBatches", Long.class)
-                            .setParameter("targetBatches", targetBatches)
-                            .getResultList();
-                }
+                query = getEntityManager().createNamedQuery("WalletOperation.listToRerateWithBatches", Long.class)
+                        .setParameter("targetBatches", targetBatches)
+                        .setParameter("targetJob", ReRatingJob.class.getSimpleName());
+            } else {
+                query = getEntityManager().createNamedQuery("WalletOperation.listToRerateAllBatches", Long.class);
             }
-            return getEntityManager().createNamedQuery("WalletOperation.listToRerateAllBatches", Long.class).getResultList();
         }
-        // null | ALL
-        return getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class).getResultList();
+        if (nbToRetrieve > 0) {
+            return query.setMaxResults(nbToRetrieve).getResultList();
+        }
+        return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")

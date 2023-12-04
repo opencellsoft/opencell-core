@@ -109,7 +109,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.listToRerate", query = "SELECT o.id FROM WalletOperation o WHERE o.status='TO_RERATE'"),
         @NamedQuery(name = "WalletOperation.listToRerateNoBatch", query = "SELECT o.id FROM WalletOperation o WHERE o.status='TO_RERATE' and o.reratingBatch is null"),
         @NamedQuery(name = "WalletOperation.listToRerateAllBatches", query = "SELECT o.id FROM WalletOperation o WHERE o.status='TO_RERATE' and o.reratingBatch is not null"),
-        @NamedQuery(name = "WalletOperation.listToRerateWithBatches", query = "SELECT o.id FROM WalletOperation o WHERE o.status='TO_RERATE' and o.reratingBatch.id in (:targetBatches)"),
+        @NamedQuery(name = "WalletOperation.listToRerateWithBatches", query = "SELECT o.id FROM WalletOperation o join o.reratingBatch b WHERE o.status='TO_RERATE' and b.id in (:targetBatches) and b.targetJob=:targetJob"),
 
         @NamedQuery(name = "WalletOperation.getBalancesForWalletInstance", query = "SELECT sum(case when o.status in ('OPEN','TREATED') then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o WHERE o.wallet.id=:walletId and o.status in ('OPEN','RESERVED','TREATED')"),
         @NamedQuery(name = "WalletOperation.getBalancesForCache", query = "SELECT o.wallet.id, sum(case when o.status in ('OPEN','TREATED') then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o WHERE o.status in ('OPEN','RESERVED','TREATED') and o.wallet.walletTemplate.walletType='PREPAID' group by o.wallet.id"),
