@@ -413,7 +413,11 @@ public class RecurringRatingService extends RatingService implements Serializabl
                                     + ", proratedFrom=" + effectiveChargeFromDate + ", proratedTo=" + effectiveChargeToDate);
                         }
 
-                        inputQuantity = inputQuantity.multiply(prorata);
+                        inputQuantity = inputQuantity.multiply(prorata)
+                                .setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                        if(effectiveChargeFromDate.after(effectiveChargeToDate)) {
+                            inputQuantity = inputQuantity.negate();
+                        }
                     }
 
                     if (chargeMode.isReimbursement()) {
