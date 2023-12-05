@@ -909,16 +909,17 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     log.trace("charge is shared {} times, so unit price is {}", sharedQuantity, unitPriceWithoutTax);
                 }
             }
-
+	        /*if (pricePlan != null && pricePlan.getScriptInstance() != null) {
+		        log.debug("start to execute script instance for ratePrice {}", pricePlan);
+		        executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
+		        unitPriceWithoutTax = bareWalletOperation.getUnitAmountWithoutTax();
+	        }*/
             // Override wallet operation parameters using PP EL parameters
             setWalletOperationPropertiesFromAPriceplan(bareWalletOperation, pricePlan);
             calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
             computeTransactionalAmounts(bareWalletOperation);
 
-            if (pricePlan != null && pricePlan.getScriptInstance() != null) {
-                log.debug("start to execute script instance for ratePrice {}", pricePlan);
-                executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance(), false);
-            }
+            
         }
 
         // Execute a final rating script set on offer template
@@ -1171,7 +1172,13 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
         if(wo.isOverrodePrice()) {
             priceWithoutTax=wo.getUnitAmountWithoutTax();
         }
-
+	    if (pricePlan.getScriptInstance() != null) {
+		    log.debug("start to execute script instance for ratePrice {}", pricePlan);
+		    executeRatingScript(wo, pricePlan.getScriptInstance(), false);
+		    priceWithoutTax = wo.getUnitAmountWithoutTax()!=null?wo.getUnitAmountWithoutTax():BigDecimal.ZERO;
+		    priceWithTax = wo.getUnitAmountWithTax()!=null?wo.getUnitAmountWithTax():BigDecimal.ZERO;
+		    return new Amounts(priceWithoutTax, priceWithTax);
+	    }
         ServiceInstance serviceInstance = wo.getServiceInstance();
         Date ppmvDate = wo.getOperationDate();
         if(ChargeTemplate.ChargeMainTypeEnum.ONESHOT.equals(wo.getChargeInstance().getChargeTemplate().getChargeMainType())) {
