@@ -1,0 +1,15 @@
+com.opencellsoft.cache-scripts module provides a shared scripts to manipute a distributed Opencell Infinispan cache
+
+To use remapping scripts in cache requires:
+1. Deploy a module
+2. Specify a module in Infinispan cache
+
+1.Deploy a module
+
+To deploy a module to Wildfly server, copy wildfly-cache-scripts\src\deploy\module.xml and wildfly-cache-scripts\target\wf-cache-scripts-XX.jar files to a <wildfly instalation>\modules\com\opencellsoft\cache-scripts\main directory
+
+2. Specify a module in Infinispan cache
+
+<cache-container name="opencell" marshaller="JBOSS" modules="com.opencellsoft.cache-scripts">
+
+

@@ -360,6 +360,12 @@
             <groupId>com.opencellsoft</groupId>
             <artifactId>opencell-client</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>com.opencellsoft.wildfly</groupId>
+            <artifactId>wildfly-cache-scripts</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Libraries included in JBoss -->
 
