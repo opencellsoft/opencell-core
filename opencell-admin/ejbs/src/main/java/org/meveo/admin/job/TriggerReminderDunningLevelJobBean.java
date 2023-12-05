@@ -141,7 +141,7 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
                         }
                     }
                     action.setActionStatus(DunningActionInstanceStatusEnum.DONE);
-                    dunningCollectionPlan.setLastAction(action.getCode());
+                    dunningCollectionPlan.setLastAction(action.getActionType().toString());
                     dunningCollectionPlan.setLastActionDate(new Date());
                     dunningCollectionPlan.setDaysOpen(Math.abs((int) daysBetween(new Date(), dunningCollectionPlan.getStartDate())));
                 }
@@ -150,7 +150,7 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
             levels.sort(comparing(DunningPolicyLevel::getSequence));
             List<DunningAction> nextLevelActions = levels.get(1).getDunningLevel().getDunningActions();
             dunningCollectionPlan.setNextAction(nextLevelActions != null && !nextLevelActions.isEmpty()
-                    ? nextLevelActions.get(0).getCode() : null);
+                    ? nextLevelActions.get(0).getActionType().toString() : null);
             dunningCollectionPlan.setNextActionDate(nextLevelActions != null && !nextLevelActions.isEmpty()
                     ? addDaysToDate(dunningCollectionPlan.getStartDate(), dunningCollectionPlan.getDaysOpen()) : null);
         }
