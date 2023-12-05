@@ -157,7 +157,7 @@ public class EntityToDtoConverter {
                     }
                     for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
                         if (!cfValue.isExcessiveInSize()) {
-                            currentEntityCFs.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                            currentEntityCFs.getCustomField().add(customFieldToDTO(entity, cfCode, cfValue, cfts.get(cfCode)));
                         }
                     }
                 }
@@ -173,7 +173,7 @@ public class EntityToDtoConverter {
                     }
                     for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
                         if (!cfValue.isExcessiveInSize()) {
-                            currentEntityCFs.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                            currentEntityCFs.getCustomField().add(customFieldToDTO(entity, cfCode, cfValue, cfts.get(cfCode)));
                         }
                     }
                 }
@@ -195,7 +195,7 @@ public class EntityToDtoConverter {
                     // Add only those that are really inherited values
                     for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
                         if (!cfValue.isExcessiveInSize()) {
-                            currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                            currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(entity, cfCode, cfValue, cfts.get(cfCode)));
                         }
                     }
                 }
@@ -224,7 +224,7 @@ public class EntityToDtoConverter {
                                 }
                                 for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
                                     if (!cfValue.isExcessiveInSize()) {
-                                        currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                                        currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(entity, cfCode, cfValue, cfts.get(cfCode)));
                                     }
                                 }
                             }
@@ -274,7 +274,7 @@ public class EntityToDtoConverter {
                 cfValue.setCustomTableCode(customTableCode);
                 cfValue.setDataFilter(filters);
                 cfValue.setFields(fields);
-                CustomFieldDto dto = customFieldToDTO(cft.getCode(), cfValue, cft);
+                CustomFieldDto dto = customFieldToDTO(entity, cft.getCode(), cfValue, cft);
                 currentEntityCFs.getCustomField().add(dto);
             });
 
@@ -469,6 +469,48 @@ public class EntityToDtoConverter {
         dto.setFieldType(cft.getFieldType());
         dto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(cft.getDescriptionI18n()));
         dto.setGuiPosition(cft.getGuiPosition());
+        if (cfValue.getPeriod() != null) {
+            dto.setValuePeriodStartDate(cfValue.getPeriod().getFrom());
+            dto.setValuePeriodEndDate(cfValue.getPeriod().getTo());
+        }
+
+        if (cfValue.getPriority() > 0) {
+            dto.setValuePeriodPriority(cfValue.getPriority());
+        }
+        dto.setStringValue(cfValue.getStringValue());
+        dto.setDateValue(cfValue.getDateValue());
+        dto.setLongValue(cfValue.getLongValue());
+        dto.setDoubleValue(cfValue.getDoubleValue());
+        dto.setListValue(customFieldValueToDTO(cfValue.getListValue(), isChildEntityTypeField));
+        dto.setMapValue(customFieldValueToDTO(cfValue.getMapValue()));
+
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && dto.getMapValue() != null && !dto.getMapValue().isEmpty() && !dto.getMapValue()
+                .containsKey(CustomFieldValue.MAP_KEY)) {
+            dto.getMapValue()
+                    .put(CustomFieldValue.MAP_KEY, new CustomFieldValueDto(StringUtils.concatenate(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR, cft.getMatrixColumnCodes())));
+        }
+
+        if (cfValue.getEntityReferenceValue() != null) {
+            dto.setEntityReferenceValue(new EntityReferenceDto(cfValue.getEntityReferenceValue()));
+        }
+        dto.setCustomTableCode(cfValue.getCustomTableCode());
+        dto.setDataFilter(cfValue.getDataFilter());
+        dto.setFields(cfValue.getFields());
+        return dto;
+    }
+
+    private CustomFieldDto customFieldToDTO(ICustomFieldEntity entity, String cfCode, CustomFieldValue cfValue, CustomFieldTemplate cft) {
+
+        boolean isChildEntityTypeField = cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY;
+
+        CustomFieldDto dto = customFieldToDTO(cfCode, cfValue.getValue(), isChildEntityTypeField, cft);
+        dto.setCode(cfCode);
+        dto.setDescription(cft.getDescription());
+        dto.setFieldType(cft.getFieldType());
+        dto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(cft.getDescriptionI18n()));
+        dto.setGuiPosition(cft.getGuiPosition());
+        dto.setApplicableOnEl(ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity));
+        dto.setApplicableOnElExpression(cft.getApplicableOnEl());
         if (cfValue.getPeriod() != null) {
             dto.setValuePeriodStartDate(cfValue.getPeriod().getFrom());
             dto.setValuePeriodEndDate(cfValue.getPeriod().getTo());
