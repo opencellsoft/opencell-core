@@ -195,7 +195,9 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         if(policyLevel.isPresent()) {
             List<DunningAction> actions = policyLevel.get().getDunningLevel().getDunningActions();
             if(actions != null && !actions.isEmpty()) {
-                collectionPlan.setNextAction(actions.get(0).getCode());
+                if(actions.get(0).getActionType() != null) {
+                    collectionPlan.setNextAction(actions.get(0).getActionType().toString());
+                }
                 collectionPlan.setNextActionDate(addDaysToDate(collectionPlan.getStartDate(),
                         collectionPlan.getDaysOpen()));
             }
