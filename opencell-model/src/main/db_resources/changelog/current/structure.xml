@@ -16321,5 +16321,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="ics" type="varchar(35)" />
         </addColumn>                                                                       
     </changeSet>     
+    
+    <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid">
+		<update tableName="adm_custom_generic_entity_code">
+            <column name="format_el" value="#{'BA-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}" />
+            <where>entity_class='org.meveo.model.billing.BillingAccount' and format_el='#{''CU-''.concat((mv:formatDate(null, ''YY''))).concat(generatedCode)}'</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>
