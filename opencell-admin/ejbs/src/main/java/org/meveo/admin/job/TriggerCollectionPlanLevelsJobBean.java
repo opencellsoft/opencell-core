@@ -12,6 +12,7 @@ import static org.meveo.model.payments.ActionTypeEnum.*;
 import static org.meveo.model.payments.DunningCollectionPlanStatusEnum.*;
 import static org.meveo.model.payments.PaymentMethodEnum.CARD;
 import static org.meveo.model.payments.PaymentMethodEnum.DIRECTDEBIT;
+import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
@@ -122,7 +123,10 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
         } else {
             collectionPlan.getDunningLevelInstances().sort(Comparator.comparing(DunningLevelInstance::getSequence));
             int nbLevelDone = 0;
-            for (DunningLevelInstance levelInstance : collectionPlan.getDunningLevelInstances()) {
+            DunningLevelInstance levelInstance= null;
+            List<DunningLevelInstance> levelInstances = collectionPlan.getDunningLevelInstances();
+            for (int levelsIndex = 0 ; levelsIndex < levelInstances.size(); levelsIndex++) {
+                levelInstance = levelInstances.get(levelsIndex);
                 dateToCompare = DateUtils.addDaysToDate(collectionPlan.getStartDate(),
                         ofNullable(collectionPlan.getPauseDuration()).orElse(0) + levelInstance.getDaysOverdue());
                 if(levelInstance.getLevelStatus() == DunningLevelInstanceStatusEnum.DONE) {
@@ -144,10 +148,8 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                                     levelInstance.setLevelStatus(DunningLevelInstanceStatusEnum.IN_PROGRESS);
                                     levelInstanceService.update(levelInstance);
                                 }
-                                lastAction = actionInstance.getCode();
-                                if (i + 1 < levelInstance.getActions().size()) {
-                                    nextAction = levelInstance.getActions().get(i + 1).getCode();
-                                }
+                                collectionPlan.setLastActionDate(new Date());
+                                collectionPlan.setLastAction(actionInstance.getDunningAction().getActionType().toString());
                             } catch (Exception exception) {
                                 registerKO = true;
                                 jobExecutionResult.addReport("Collection plan ID : "
@@ -158,9 +160,25 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                         }
                         actionInstanceService.update(actionInstance);
                     }
-                    collectionPlan.setLastActionDate(new Date());
-                    collectionPlan.setLastAction(lastAction);
-                    collectionPlan.setNextAction(nextAction);
+                    if (!registerKO) {
+                        if (levelsIndex + 1 < levelInstances.size()) {
+                            for (int i = levelsIndex + 1; i < levelInstances.size(); i++) {
+                                if(levelInstances.get(i).getActions() != null
+                                        && !levelInstances.get(i).getActions().isEmpty()) {
+                                    collectionPlan.setNextAction(levelInstances.get(i).getActions().get(0).getDunningAction().getActionType().toString());
+                                    collectionPlan.setNextActionDate(addDaysToDate(collectionPlan.getStartDate(), collectionPlan.getDaysOpen()));
+                                    break;
+                                }
+                            }
+                        } else {
+                            if(levelsIndex == levelInstances.size()) {
+                                collectionPlan.setNextAction(null);
+                                collectionPlan.setNextActionDate(null);
+                            }
+                        }
+                        collectionPlanService.update(collectionPlan);
+                        collectionPlanService.getEntityManager().flush();
+                    }
                     updateCollectionPlan = true;
                     if(registerKO) {
                         jobExecutionResult.addNbItemsProcessedWithError(1L);
@@ -222,29 +240,7 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                         collectionPlan.getRelatedInvoice(), collectionPlan.getLastActionDate());
         }
         if (actionInstance.getActionType().equals(RETRY_PAYMENT)) {
-            BillingAccount billingAccount = collectionPlan.getBillingAccount();
-            if (billingAccount != null && billingAccount.getCustomerAccount() != null
-                    && billingAccount.getCustomerAccount().getPaymentMethods() != null) {
-                PaymentMethod preferredPaymentMethod = billingAccount.getCustomerAccount()
-                        .getPaymentMethods()
-                        .stream()
-                        .filter(PaymentMethod::isPreferred)
-                        .findFirst()
-                        .orElseThrow(() -> new BusinessException("No preferred payment method found for customer account"
-                                + billingAccount.getCustomerAccount().getCode()));
-                CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-                //PaymentService.doPayment consider amount to pay in cent so amount should be * 100
-                long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().multiply(BigDecimal.valueOf(100)).longValue();
-                Invoice invoice = collectionPlan.getRelatedInvoice();
-                if (invoice.getRecordedInvoice() == null) {
-                    throw new BusinessException("No getRecordedInvoice for the invoice "
-                            + (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()));
-                }
-                PaymentGateway paymentGateway =
-                        paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
-                jobBean.doPayment(preferredPaymentMethod, customerAccount, amountToPay,
-                        asList(invoice.getRecordedInvoice().getId()), paymentGateway);
-            }
+            launchPaymentAction(collectionPlan);
         }
     }
 
@@ -315,6 +311,31 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
             }
         } else {
             throw new BusinessException("The email sending skipped because the from email is missing for the seller : " + invoice.getSeller().getCode());
+        }
+    }
+
+    private void launchPaymentAction(DunningCollectionPlan collectionPlan) {
+        BillingAccount billingAccount = collectionPlan.getBillingAccount();
+        if (billingAccount != null && billingAccount.getCustomerAccount() != null
+                && billingAccount.getCustomerAccount().getPaymentMethods() != null) {
+            PaymentMethod preferredPaymentMethod = billingAccount.getCustomerAccount()
+                    .getPaymentMethods()
+                    .stream()
+                    .filter(PaymentMethod::isPreferred)
+                    .findFirst()
+                    .orElseThrow(() -> new BusinessException("No preferred payment method found for customer account"
+                            + billingAccount.getCustomerAccount().getCode()));
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            //PaymentService.doPayment consider amount to pay in cent so amount should be * 100
+            long amountToPay = collectionPlan.getRelatedInvoice().getNetToPay().multiply(BigDecimal.valueOf(100)).longValue();
+            Invoice invoice = collectionPlan.getRelatedInvoice();
+            if (invoice.getRecordedInvoice() == null) {
+                throw new BusinessException("No getRecordedInvoice for the invoice "
+                        + (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()));
+            }
+            PaymentGateway paymentGateway =
+                    paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
+            //jobBean.doPayment(preferredPaymentMethod, customerAccount, amountToPay, asList(invoice.getRecordedInvoice().getId()), paymentGateway);
         }
     }
 
