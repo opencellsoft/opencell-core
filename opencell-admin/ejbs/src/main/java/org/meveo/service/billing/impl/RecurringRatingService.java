@@ -405,7 +405,8 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
                     if (chargeInstance != null && chargeInstance.getSubscription() != null
                             && chargeInstance.getSubscription().getSubscribedTillDate() != null
-                            && chargeInstance.getRecurringChargeTemplate().getTerminationProrata()) {
+                            && chargeInstance.getRecurringChargeTemplate().getTerminationProrata()
+                            && chargeInstance.getChargeToDateOnTermination() != null) {
                         prorate = true;
                         if(chargeInstance.getWalletOperations() != null && !chargeInstance.getWalletOperations().isEmpty()) {
                             final int lastIndex = chargeInstance.getWalletOperations().size() - 1;
