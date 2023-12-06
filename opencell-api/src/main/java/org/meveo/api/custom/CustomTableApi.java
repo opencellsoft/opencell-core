@@ -22,19 +22,13 @@ import static java.util.stream.Collectors.toList;
 import static org.meveo.service.base.NativePersistenceService.FIELD_ID;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -227,19 +221,6 @@ public class CustomTableApi extends BaseApi {
         if (totalCount > 0) {
             List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
             customTableService.completeWithEntities(list, cfts, pagingAndFiltering.getLoadReferenceDepth());
-	        for (Map<String, Object> elements : list) {
-		        for (String key : elements.keySet()) {
-			        Object value = elements.get(key);
-			        if(value instanceof Date) {
-				        Calendar calendar = Calendar.getInstance();
-				        calendar.setTime((Date) value);
-				        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
-				        calendar.clear(Calendar.ZONE_OFFSET);
-				        elements.put(key, calendar);
-						
-			        }
-		        }
-	        }
             result.getCustomTableData().setValuesFromListofMap(list);
         }
         return result;
