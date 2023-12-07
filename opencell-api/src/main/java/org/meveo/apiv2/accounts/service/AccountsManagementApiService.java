@@ -55,6 +55,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.audit.logging.AuditLog;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
@@ -74,6 +75,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -103,6 +105,9 @@ public class AccountsManagementApiService {
 
     @Inject
     private UserAccountService userAccountService;
+    
+    @Inject 
+    private BillingAccountService billingAccountService;
 
     @Inject
     private CustomerAccountService customerAccountService;
@@ -135,15 +140,18 @@ public class AccountsManagementApiService {
     @Inject
     private CounterInstanceService counterInstanceService;
 
-
     @Inject
     private ChargeInstanceService<ChargeInstance> chargeInstanceService;
+    
     @Inject
     private UsageChargeInstanceService usageChargeInstanceService;
+    
     @Inject
     private OneShotChargeInstanceService oneShotChargeInstanceService;
+    
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
+    
     @Inject
     private ProductChargeTemplateMappingService productChargeTemplateMappingService;
 
@@ -154,11 +162,11 @@ public class AccountsManagementApiService {
     private SubscriptionApi subscriptionApi;
 
     @Inject
-
     private MethodCallingUtils methodCallingUtils;
-	@Inject
-    AccountingArticleService accountingArticleService;
 
+    @Inject
+    AccountingArticleService accountingArticleService;
+    
     @Resource(lookup = "java:jboss/ee/concurrency/executor/job_executor")
     protected ManagedExecutorService executor;
 
@@ -319,27 +327,106 @@ public class AccountsManagementApiService {
         } catch (NumberFormatException e) {
             customerAccount = customerAccountService.findByCode(customerAccountCode, Arrays.asList("paymentMethods"));
         }
-        Customer newCustomerParent = parentInput.getParentId() != null ? customerService.findById(parentInput.getParentId(), Arrays.asList("customerAccounts"))
-                : customerService.findByCode(parentInput.getParentCode(), Arrays.asList("customerAccounts"));
+        
+		Customer newCustomerParent = parentInput.getParentId() != null
+				? customerService.findById(parentInput.getParentId(), Arrays.asList("customerAccounts"))
+				: customerService.findByCode(parentInput.getParentCode(), Arrays.asList("customerAccounts"));
+        
         if (Objects.isNull(newCustomerParent)) {
             if (parentInput.getParentId() != null) {
                 throw new EntityDoesNotExistsException(Customer.class, parentInput.getParentId());
             }
             throw new EntityDoesNotExistsException(Customer.class, parentInput.getParentCode());
         }
+        
+        if (parentInput.getParentId() != null && Strings.isNotBlank(parentInput.getParentCode())) {
+        	if (!newCustomerParent.getCode().equals(parentInput.getParentCode())) {
+        		throw new ValidationException("Provided parentId and parentCode do not point to the same Customer");
+        	}
+        }
+        
         Customer oldCustomerParent = customerService.findById(customerAccount.getCustomer().getId(), Arrays.asList("customerAccounts"));
         customerAccount.setCustomer(newCustomerParent);
         customerAccountService.update(customerAccount);
 
         customerAccount = customerAccountService.findById(customerAccount.getId(), Arrays.asList("billingAccounts"));
-        customerAccount.getBillingAccounts().stream()
-            .map(billingAccount -> customerAccountService.getEntityManager().createNamedQuery("WalletOperation.listOpenWOsToRateByBA", WalletOperation.class)
-                .setParameter("billingAccount", billingAccount).getResultList())
-            .flatMap(List::stream).peek(walletOperation -> walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE))
-            .forEach(walletOperation -> walletOperationService.update(walletOperation));
 
         createAuditLog(CustomerAccount.class.getName());
         log.info("the parent customer for the customer account {}, changed from {} to {}", customerAccount.getCode(), oldCustomerParent.getCode(), newCustomerParent.getCode());
+
+        if (parentInput.getMarkOpenWalletOperationsToRerate()) {
+			customerAccount.getBillingAccounts().stream()
+					.map(billingAccount -> customerAccountService.getEntityManager()
+							.createNamedQuery("WalletOperation.listOpenWOsToRateByBA", WalletOperation.class)
+							.setParameter("billingAccount", billingAccount).getResultList())
+					.flatMap(List::stream)
+					.peek(walletOperation -> walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE))
+					.forEach(walletOperation -> walletOperationService.update(walletOperation));
+		}
+
+    }
+
+    /**
+     * Move the customer account from a group to another
+     * 
+     * @param billingAccountCode
+     * @param parentInput
+     */
+    public void changeBillingAccountParentAccount(String billingAccountCode, ParentInput parentInput) {
+        if (parentInput == null || (parentInput.getParentId() == null && Strings.isBlank(parentInput.getParentCode()))) {
+            throw new ValidationException("parent account id or code are required for this operation.");
+        }
+
+        BillingAccount billingAccount = null;
+        try {
+            billingAccount = billingAccountService.findByCode(billingAccountCode);
+            if (Objects.isNull(billingAccount)) {
+                Long id = Long.parseLong(billingAccountCode);
+                billingAccount = billingAccountService.findById(id);
+                if (Objects.isNull(billingAccount)) {
+                    throw new EntityDoesNotExistsException(BillingAccount.class, id);
+                }
+            }
+        } catch (NumberFormatException e) {
+        	throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
+        }
+        
+		CustomerAccount newCustomerAccountParent = parentInput.getParentId() != null
+				? customerAccountService.findById(parentInput.getParentId(), Arrays.asList("billingAccounts"))
+				: customerAccountService.findByCode(parentInput.getParentCode(), Arrays.asList("billingAccounts"));
+        
+        if (Objects.isNull(newCustomerAccountParent)) {
+            if (parentInput.getParentId() != null) {
+                throw new EntityDoesNotExistsException(CustomerAccount.class, parentInput.getParentId());
+            }
+            throw new EntityDoesNotExistsException(CustomerAccount.class, parentInput.getParentCode());
+        }
+        
+        if (parentInput.getParentId() != null && Strings.isNotBlank(parentInput.getParentCode())) {
+        	if (!newCustomerAccountParent.getCode().equals(parentInput.getParentCode())) {
+        		throw new ValidationException("Provided parentId and parentCode do not point to the same Customer Account");
+        	}
+        }
+        
+        CustomerAccount oldCustomerAccountParent = customerAccountService.findById(billingAccount.getCustomerAccount().getId(), Arrays.asList("billingAccounts"));
+        billingAccount.setCustomerAccount(newCustomerAccountParent);
+        billingAccount.setPaymentMethod(null);
+        billingAccountService.update(billingAccount);
+
+        billingAccount = billingAccountService.findById(billingAccount.getId());
+        subscriptionService.removePaymentMethodLink(billingAccount);
+
+        createAuditLog(BillingAccount.class.getName());
+        log.info("the parent customer account for the billing account {}, changed from {} to {}", billingAccount.getCode(), oldCustomerAccountParent.getCode(), newCustomerAccountParent.getCode());
+
+        if (parentInput.getMarkOpenWalletOperationsToRerate()) {
+			customerAccountService.getEntityManager()
+					.createNamedQuery("WalletOperation.listOpenWOsToRateByBA", WalletOperation.class)
+					.setParameter("billingAccount", billingAccount).getResultList().stream()
+					.peek(walletOperation -> walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE))
+					.forEach(walletOperation -> walletOperationService.update(walletOperation));
+		}
+
     }
 
     public List<Long> createCounterInstance(CounterInstanceDto dto) {
