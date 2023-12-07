@@ -95,7 +95,7 @@ public class DunningPolicyApiService implements ApiService<DunningPolicy> {
                 }
                 dunningPolicy.setMinBalanceTriggerCurrency(currencyService.findByCode(dunningPolicy.getMinBalanceTriggerCurrency().getCurrencyCode()));
             }
-            if(dunningPolicyService.checkIfSamePriorityExists(dunningPolicy.getPolicyPriority())) {
+            if(dunningPolicy.getPolicyPriority() != null && dunningPolicyService.checkIfSamePriorityExists(dunningPolicy.getPolicyPriority())) {
                 throw new BusinessApiException("Policy with priority " + dunningPolicy.getPolicyPriority() + " already exists");
             }
             dunningPolicyService.create(dunningPolicy);
