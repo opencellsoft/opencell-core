@@ -36,7 +36,7 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 
 	private static final long serialVersionUID = 8799763764569695857L;
 
-	private static final String viewName = "rerate_tree";
+	private static final String viewName = "main_rerate_tree";
 
 	@Inject
 	@MeveoJpa
@@ -153,7 +153,7 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 
 				try (Statement statement = connection.createStatement()) {
 					log.info("Dropping materialized view {}", viewName);
-					statement.execute("drop materialized view if exists " + viewName);
+					statement.execute("drop materialized view if exists " + viewName +" cascade");
 				} catch (Exception e) {
 					log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
 					throw new BusinessException(e);
