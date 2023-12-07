@@ -30,7 +30,9 @@ import org.meveo.service.job.Job;
 public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[]>> {
 
 	private static final long serialVersionUID = -4097694568061727769L;
-	private static final String viewName = "rerate_tree";
+	private static final String mainViewName = "main_rerate_tree";
+	private static final String billedViewName = "rerate_billed_IL";
+	private static final String triggeredViewName = "triggered_rerate_tree";
 
 	@Inject
 	@MeveoJpa
@@ -48,8 +50,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-		super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::applyRatingCancellation,
-				null, null, this::closeResultset, null);
+		super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::applyRatingCancellation, null, null, this::closeResultset, null);
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -67,7 +68,9 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 		final long configuredNrPerTx = (Long) this.getParamOrCFValue(jobInstance, RatingCancellationJob.CF_INVOICE_LINES_NR_RTS_PER_TX, 100000L);
 		
 		entityManager = emWrapper.getEntityManager();
-		createView(configuredNrPerTx);
+		createMainView(configuredNrPerTx);
+		createTriggeredOperationsView();
+		createBilledILsView();
 		statelessSession = entityManager.unwrap(Session.class).getSessionFactory().openStatelessSession();
 		getProcessingSummary();
 		if (nrOfInitialWOs.intValue() == 0) {
@@ -77,7 +80,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 		
 		final long nrPerTx = (nrOfInitialWOs / nbThreads) < configuredNrPerTx ? nrOfInitialWOs / nbThreads : configuredNrPerTx;
 		int fetchSize = ((Long) nrPerTx).intValue() * nbThreads.intValue();
-		org.hibernate.query.Query nativeQuery = statelessSession.createNativeQuery("select id, count_wo from " + viewName + " order by id");
+		org.hibernate.query.Query nativeQuery = statelessSession.createNativeQuery("select id, count_wo from " + mainViewName + " order by id");
 		scrollableResults = nativeQuery.setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun).setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
 
 		return Optional.of(
@@ -115,23 +118,18 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 	}
 
 	private void cancelAllObjects(long min, long max) {
-		markFailedToRerate("", min, max);
-		markFailedToRerate("t", min, max);
-		markFailedToRerate("d", min, max);
-		markFailedToRerate("dt", min, max);
-
-		recalculateInvoiceLinesAndCancelRTs("", min, max);
-		recalculateInvoiceLinesAndCancelRTs("t", min, max);
-		recalculateInvoiceLinesAndCancelRTs("d", min, max);
-		recalculateInvoiceLinesAndCancelRTs("dt", min, max);
-
-
-		markCanceledEDRs("",min, max);
-		markCanceledEDRs("d",min, max);
-
-		markCanceledWOs("t", min, max);
-		markCanceledWOs("d", min, max);
-		markCanceledWOs("dt", min, max);
+		
+		markFailedToRerate(min, max);
+		
+		markCanceledEDRs(min, max);
+		
+		markCanceledWOs("d",mainViewName, min, max);
+		markCanceledWOs("t",triggeredViewName, min, max);
+		
+		recalculateInvoiceLinesAndCancelRTs("",mainViewName, min, max);
+		recalculateInvoiceLinesAndCancelRTs("d",mainViewName, min, max);
+		recalculateInvoiceLinesAndCancelRTs("t",triggeredViewName, min, max);
+		
 	}
 	
 	/**
@@ -150,95 +148,160 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 
 	private void getProcessingSummary() {
 
-		Object[] count = (Object[]) entityManager.createNativeQuery("select sum(count_wo), count(id) from " + viewName)
+		Object[] count = (Object[]) entityManager.createNativeQuery("select sum(count_wo), count(id) from " + mainViewName)
 				.getSingleResult();
 
 		nrOfInitialWOs = count[0] != null ? ((Number) count[0]).longValue() : 0;
 
 	}
 
-	private void createView(long configuredNrPerTx) {
+	private void createMainView(long configuredNrPerTx) {
 		Session hibernateSession = entityManager.unwrap(Session.class);
-		String sql = "CREATE MATERIALIZED VIEW " + viewName + " AS\n"
-				+ "SELECT string_agg(edr.id::text,',') as edr_id, string_agg(wo.id::text,',') AS wo_id, string_agg(rt.id::text,',') as rt_id, il.id as il_id, sum(rt.amount_without_tax) as rt_amount_without_tax, sum(rt.amount_with_tax) as rt_amount_with_tax, sum(rt.amount_tax) as rt_amount_tax, sum(rt.quantity) as rt_quantity,\n"
-				+ "			string_agg(dwo.id::text,',') AS dwo_id, string_agg(drt.id::text,',') as drt_id, dil.id as dil_id, sum(drt.amount_without_tax) as drt_amount_without_tax, sum(drt.amount_with_tax) as drt_amount_with_tax, sum(drt.amount_tax) as drt_amount_tax, sum(drt.quantity) as drt_quantity, \n"
-				+ "			string_agg(two.id::text,',') AS two_id, string_agg(trt.id::text,',') as trt_id, til.id as til_id, sum(trt.amount_without_tax) as trt_amount_without_tax, sum(trt.amount_with_tax) as trt_amount_with_tax, sum(trt.amount_tax) as trt_amount_tax, sum(trt.quantity) as trt_quantity, \n"
-				+ "			string_agg(dtwo.id::text,',') AS dtwo_id, string_agg(dtrt.id::text,',') as dtrt_id, dtil.id as dtil_id, sum(dtrt.amount_without_tax) as dtrt_amount_without_tax, sum(dtrt.amount_with_tax) as dtrt_amount_with_tax, sum(dtrt.amount_tax) as dtrt_amount_tax, sum(dtrt.quantity) as dtrt_quantity, \n"
-				+ "			wo.subscription_id as s_id, CASE  WHEN il.status = 'BILLED' THEN il.id  WHEN dil.status = 'BILLED' THEN dil.id WHEN til.status = 'BILLED' THEN til.id WHEN dtil.status = 'BILLED' THEN dtil.id ELSE null END AS billed_il, count(1) as count_WO, ROW_NUMBER() OVER (ORDER BY count(1)/"+configuredNrPerTx+" desc, wo.subscription_id) AS id\n"
+		String mainViewQuery = "CREATE MATERIALIZED VIEW " + mainViewName + " AS\n"
+				+ "SELECT string_agg(wo.id::text, ',') AS wo_id, string_agg(rt.id::text, ',') AS rt_id, il.id AS il_id, SUM(CASE WHEN rt.status = 'BILLED' THEN rt.amount_without_tax ELSE 0 END) AS rt_amount_without_tax,\n"
+				+ "	    SUM(CASE WHEN rt.status = 'BILLED' THEN rt.amount_with_tax ELSE 0 END) AS rt_amount_with_tax, SUM(CASE WHEN rt.status = 'BILLED' THEN rt.amount_tax ELSE 0 END) AS rt_amount_tax, SUM(CASE WHEN rt.status = 'BILLED' THEN rt.quantity ELSE 0 END) AS rt_quantity,\n"
+				+ "	    string_agg(dwo.id::text, ',') AS dwo_id, string_agg(drt.id::text, ',') AS drt_id, dil.id AS dil_id, SUM(CASE WHEN drt.status = 'BILLED' THEN drt.amount_without_tax ELSE 0 END) AS drt_amount_without_tax,\n"
+				+ "	    SUM(CASE WHEN drt.status = 'BILLED' THEN drt.amount_with_tax ELSE 0 END) AS drt_amount_with_tax, SUM(CASE WHEN drt.status = 'BILLED' THEN drt.amount_tax ELSE 0 END) AS drt_amount_tax, SUM(CASE WHEN drt.status = 'BILLED' THEN drt.quantity ELSE 0 END) AS drt_quantity,\n"
+				+ "	    wo.subscription_id AS s_id, COUNT(1) AS count_WO, ROW_NUMBER() OVER (ORDER BY COUNT(1) / "+configuredNrPerTx+" DESC, wo.subscription_id) AS id, CASE WHEN il.status = 'BILLED' THEN il.id WHEN dil.status = 'BILLED' THEN dil.id ELSE NULL END AS billed_il\n"
 				+ "	FROM billing_wallet_operation wo\n"
-				+ "		LEFT JOIN billing_rated_transaction rt ON rt.id = wo.rated_transaction_id and rt.status<>'CANCELED'\n"
+				+ "		LEFT JOIN billing_rated_transaction rt ON rt.id = wo.rated_transaction_id\n"
 				+ "		LEFT JOIN billing_invoice_line il ON il.id = rt.invoice_line_id\n"
 				+ "		LEFT JOIN billing_wallet_operation dwo ON wo.id = dwo.discounted_wallet_operation_id\n"
-				+ "		LEFT JOIN billing_rated_transaction drt ON drt.id = dwo.rated_transaction_id and drt.status<>'CANCELED'\n"
+				+ "		LEFT JOIN billing_rated_transaction drt ON drt.id = dwo.rated_transaction_id\n"
 				+ "		LEFT JOIN billing_invoice_line dil ON dil.id = drt.invoice_line_id\n"
-				+ "		LEFT JOIN rating_edr edr ON edr.wallet_operation_id = wo.id and edr.status <> 'CANCELLED'\n"
-				+ "		LEFT JOIN billing_wallet_operation two ON two.id = edr.wallet_operation_id\n"
-				+ "		LEFT JOIN billing_rated_transaction trt ON trt.id = two.rated_transaction_id and trt.status<>'CANCELED'\n"
-				+ "		LEFT JOIN billing_invoice_line til ON til.id = trt.invoice_line_id\n"
-				+ "		LEFT JOIN rating_edr dedr ON dedr.wallet_operation_id = dwo.id and dedr.status <> 'CANCELLED'\n"
-				+ "		LEFT JOIN billing_wallet_operation dtwo ON dtwo.id = dedr.wallet_operation_id\n"
-				+ "		LEFT JOIN billing_rated_transaction dtrt ON dtrt.id = dtwo.rated_transaction_id and dtrt.status<>'CANCELED'\n"
-				+ "		LEFT JOIN billing_invoice_line dtil ON dtil.id = dtrt.invoice_line_id\n"
-				+ "WHERE wo.status = 'TO_RERATE'\n" + "group by s_id, il_id, dil_id, til_id, dtil_id";
+				+ "	WHERE wo.status = 'TO_RERATE'\n"
+				+ "GROUP BY s_id, il_id, dil_id";
 
 		hibernateSession.doWork(new org.hibernate.jdbc.Work() {
 			@Override
 			public void execute(Connection connection) throws SQLException {
 				try (Statement statement = connection.createStatement()) {
-					log.info("Dropping and recreating materialized view {} : ", viewName);
-					statement.execute("drop materialized view if EXISTS " + viewName);
-					statement.execute(sql);
-					statement.execute("create index idx__" + viewName + "__subscription_id ON " + viewName + " USING btree (s_id) ");
+					log.info("Dropping and recreating materialized view {} : ", mainViewName);
+					statement.execute("drop materialized view if EXISTS " + mainViewName +" cascade");
+					log.info(mainViewQuery);
+					statement.execute(mainViewQuery);
+					statement.execute("create index idx__" + mainViewName + "__billed_il ON " + mainViewName + " USING btree (billed_il) ");
+					statement.execute("create index idx__" + mainViewName + "__subscription_id ON " + mainViewName + " USING btree (s_id) ");
+					statement.execute("create index idx__" + mainViewName + "__id ON " + mainViewName + " USING btree (id) ");
 				} catch (Exception e) {
-					log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());
+					log.error("Failed to drop/create the materialized view " + mainViewName, e.getMessage());
 					throw new BusinessException(e);
 				}
 			}
 		});
 	}
+	
+	private void createTriggeredOperationsView() {
+		Session hibernateSession = entityManager.unwrap(Session.class);
+		String mainViewQuery = "CREATE MATERIALIZED VIEW " + triggeredViewName + " AS\n"
+				+ "select mrt.id AS id, til.id AS til_id, string_agg(edr.id::text, ',') AS edr_id, string_agg(two.id::text, ',') AS two_id, string_agg(trt.id::text, ',') AS trt_id,\n"
+				+ "	    SUM(CASE WHEN trt.status = 'BILLED' THEN trt.amount_without_tax ELSE 0 END) AS trt_amount_without_tax,\n"
+				+ "	    SUM(CASE WHEN trt.status = 'BILLED' THEN trt.amount_with_tax ELSE 0 END) AS trt_amount_with_tax,\n"
+				+ "	    SUM(CASE WHEN trt.status = 'BILLED' THEN trt.amount_tax ELSE 0 END) AS trt_amount_tax,\n"
+				+ "	    SUM(CASE WHEN trt.status = 'BILLED' THEN trt.quantity ELSE 0 END) AS trt_quantity,\n"
+				+ "	    CASE  WHEN til.status = 'BILLED' THEN til.id ELSE null END AS billed_il\n"
+				+ "	FROM main_rerate_tree mrt\n"
+				+ "		JOIN rating_edr edr on mrt.billed_il is null and edr.wallet_operation_id = ANY(string_to_array(CASE WHEN mrt.dwo_id IS NULL THEN mrt.wo_id ELSE mrt.wo_id || ',' || mrt.dwo_id END, ',')::bigint[])\n"
+				+ "		LEFT JOIN billing_wallet_operation two ON two.edr_id = edr.id\n"
+				+ "		LEFT JOIN billing_rated_transaction trt ON trt.id = two.rated_transaction_id\n"
+				+ "		LEFT JOIN billing_invoice_line til ON til.id = trt.invoice_line_id\n"
+				+ "GROUP BY mrt.id, til.id";
 
-	private void markCanceledRTs(String prefix, long min, long max) {
-		String updateILQuery = "UPDATE billing_Rated_transaction rt SET status='CANCELED', updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' "
-				+ " FROM " + viewName 
-				+ " rr, unnest(string_to_array(" + prefix + "rt_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and " + prefix + "rt_id is not null and rt.id = CAST(to_update AS bigint)";
-		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
-				.executeUpdate();
+		hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+			@Override
+			public void execute(Connection connection) throws SQLException {
+				try (Statement statement = connection.createStatement()) {
+					log.info("Dropping and recreating materialized view {} : ", triggeredViewName);
+					statement.execute("drop materialized view if EXISTS " + triggeredViewName);
+					log.info(mainViewQuery);
+					statement.execute(mainViewQuery);
+					statement.execute("create index idx__" + triggeredViewName + "__billed_il ON " + triggeredViewName + " USING btree (billed_il) ");
+					statement.execute("create index idx__" + triggeredViewName + "__main_id ON " + triggeredViewName + " USING btree (id) ");
+				} catch (Exception e) {
+					log.error("Failed to drop/create the materialized view " + triggeredViewName, e.getMessage());
+					throw new BusinessException(e);
+				}
+			}
+		});
+	}
+	
+	private void createBilledILsView() {
+		Session hibernateSession = entityManager.unwrap(Session.class);
+		String mainViewQuery = "CREATE MATERIALIZED VIEW " + billedViewName + " AS\n"
+				+ "	(SELECT id, MIN(BILLED_IL) AS BILLED_IL FROM " + triggeredViewName + " WHERE BILLED_IL IS NOT NULL GROUP BY id\n"
+				+ "		UNION SELECT ID as id, BILLED_IL FROM " + mainViewName + " where BILLED_IL is not null)";
+
+		hibernateSession.doWork(new org.hibernate.jdbc.Work() {
+			@Override
+			public void execute(Connection connection) throws SQLException {
+				try (Statement statement = connection.createStatement()) {
+					log.info("Dropping and recreating materialized view {} : ", billedViewName);
+					statement.execute("drop materialized view if EXISTS " + billedViewName);
+					log.info(mainViewQuery);
+					statement.execute(mainViewQuery);
+					statement.execute("create index idx__" + billedViewName + "__billed_il ON " + billedViewName + " USING btree (billed_il) ");
+					statement.execute("create index idx__" + billedViewName + "__main_id ON " + billedViewName + " USING btree (id) ");
+				} catch (Exception e) {
+					log.error("Failed to drop/create the materialized view " + billedViewName, e.getMessage());
+					throw new BusinessException(e);
+				}
+			}
+		});
+	}
+	
+	private void markFailedToRerate(long min, long max) {
+		String updateILQuery = "UPDATE billing_wallet_operation wo\n"
+				+ "	SET status='F_TO_RERATE', updated = CURRENT_TIMESTAMP, reject_reason = 'failed to rerate operation because invoiceLine ' || bil.billed_il || ' already billed' "
+				+ "		FROM " + mainViewName + " rr CROSS JOIN unnest(string_to_array(wo_id, ',')) AS to_update JOIN " + billedViewName + " bil ON rr.id = bil.BILLED_IL "
+				+ "			WHERE rr.id between :min and :max and wo.id = CAST(to_update AS bigint)";
+		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max).executeUpdate();
+	}
+	
+	private void markCanceledEDRs(long min, long max) {
+	    String updateILQuery = "UPDATE rating_EDR edr " +
+	            "SET status='CANCELLED', last_updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' " +
+	            "	FROM " + triggeredViewName + " rr CROSS JOIN unnest(string_to_array(edr_id, ',')) AS to_update " +
+	            "		WHERE rr.id BETWEEN :min AND :max " +
+	            "			AND rr.id NOT IN (SELECT id FROM " + billedViewName + ") " +
+	            "			AND edr.id = CAST(to_update AS bigint)";
+	    
+	    statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max).executeUpdate();
+	}
+	
+	private void markCanceledWOs(String prefix, String viewName, long min, long max) {
+	    String updateILQuery = "UPDATE billing_wallet_operation wo " +
+	            "SET status='CANCELED', updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' " +
+	            "	FROM " + viewName + " rr CROSS JOIN unnest(string_to_array(" + prefix + "wo_id, ',')) AS to_update " +
+	            "		WHERE rr.id BETWEEN :min AND :max " +
+	            "			AND rr.id NOT IN (SELECT id FROM " + billedViewName + ") " +
+	            "			AND wo.id = CAST(to_update AS bigint)";
+	    
+	    statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max).executeUpdate();
 	}
 
-	private void markCanceledWOs(String prefix, long min, long max) {
-		String updateILQuery = "UPDATE billing_wallet_operation wo SET status='CANCELED', updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' "
-				+ " FROM " + viewName 
-				+ " rr, unnest(string_to_array(" + prefix + "wo_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and " + prefix + "wo_id is not null and wo.id = CAST(to_update AS bigint)";
-		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
-				.executeUpdate();
+	private void markCanceledRTs(String prefix, String viewName, long min, long max) {
+	    String updateILQuery = "UPDATE billing_Rated_transaction rt " +
+	            "SET status='CANCELED', updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' " +
+	            "	FROM " + viewName + " rr CROSS JOIN unnest(string_to_array(" + prefix + "rt_id, ',')) AS to_update" +
+	            "		WHERE rr.id BETWEEN :min AND :max " +
+	            "			AND rr.id NOT IN (SELECT id FROM " + billedViewName + ") " +
+	            "			AND rt.id = CAST(to_update AS bigint)";
+	    
+	    statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max).executeUpdate();
 	}
 
-	private void markCanceledEDRs(String prefix, long min, long max) {
-		String updateILQuery = "UPDATE rating_EDR edr SET status='CANCELLED', last_updated = CURRENT_TIMESTAMP, reject_Reason='Origin wallet operation has been rerated' "
-				+ " FROM " + viewName
-				+ " rr, unnest(string_to_array(" + prefix + "edr_id, ',')) AS to_update WHERE rr.billed_il is null and rr.id between :min and :max and edr_id is not null and edr.id = CAST(to_update AS bigint)";
-		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
-				.executeUpdate();
-	}
+	private void recalculateInvoiceLinesAndCancelRTs(String prefix, String viewName, long min, long max) {
+	    String updateILQuery = "UPDATE billing_invoice_line il " +
+	    		"	SET amount_without_tax = il.amount_without_tax + rr." + prefix + "rt_amount_without_tax, amount_with_tax = il.amount_with_tax + rr." + prefix + "rt_amount_with_tax," +
+	    		"		quantity = il.quantity + rr." + prefix + "rt_quantity, amount_tax = il.amount_tax + rr." + prefix + "rt_amount_tax, updated = CURRENT_TIMESTAMP " +
+	            "	FROM " + viewName + " rr " +
+	            "		WHERE rr.id NOT IN (SELECT id FROM rerate_billed_IL) " +
+	            "		AND rr." + prefix + "il_id IS NOT NULL " +
+	            "		AND il.id = rr." + prefix + "il_id " +
+	            "		AND rr.id BETWEEN :min AND :max";
 
-	private void markFailedToRerate(String prefix, long min, long max) {
-		String updateILQuery = "UPDATE billing_wallet_operation wo SET status='F_TO_RERATE', updated = CURRENT_TIMESTAMP, reject_reason='failed to rerate operation because invoiceLine '||rr.billed_il||' already billed' "
-				+ " FROM " + viewName 
-				+ " rr, unnest(string_to_array(" + prefix + "wo_id, ',')) AS to_update WHERE rr.billed_il is not null and rr.id between :min and :max and wo.id = CAST(to_update AS bigint)";
-		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
-				.executeUpdate();
-	}
-
-	private void recalculateInvoiceLinesAndCancelRTs(String prefix, long min, long max) {
-		String updateILQuery = "UPDATE billing_invoice_line il SET"
-				+ "    amount_without_tax = il.amount_without_tax + rr." + prefix
-				+ "rt_amount_without_tax, amount_with_tax = il.amount_with_tax + rr." + prefix + "rt_amount_with_tax,"
-				+ "    quantity = il.quantity + rr." + prefix + "rt_quantity, amount_tax = il.amount_tax + rr." + prefix
-				+ "rt_amount_tax, updated = CURRENT_TIMESTAMP" + " FROM " + viewName
-				+ " rr WHERE rr.billed_il is null and rr." + prefix + "il_id is not null and il.id = rr." + prefix + "il_id and rr.id between :min and :max";
-		statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max)
-				.executeUpdate();
-		markCanceledRTs(prefix, min, max);
+	    statelessSession.createNativeQuery(updateILQuery).setParameter("min", min).setParameter("max", max).executeUpdate();
+	    markCanceledRTs(prefix, viewName, min, max);
 	}
 
 }
