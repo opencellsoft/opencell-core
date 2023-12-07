@@ -22,18 +22,29 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.accounts.ConsumerInput;
 import org.meveo.apiv2.accounts.OpenTransactionsActionEnum;
+import org.meveo.apiv2.accounts.ParentInput;
 import org.meveo.apiv2.generic.exception.ConflictException;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.audit.logging.AuditLogService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.meveo.apiv2.accounts.ImmutableParentInput;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountsManagementApiServiceTest {
@@ -51,6 +62,22 @@ public class AccountsManagementApiServiceTest {
     @Mock
     private CustomerService customerService;
 
+    @Mock
+    private CustomerAccountService customerAccountService;
+    
+    @Mock
+    private BillingAccountService billingAccountService;
+    
+    @Mock
+    private AuditLogService auditLogService;
+    
+    @Mock
+    private FinanceSettingsService financeSettingsService;
+    
+    @Mock
+    @CurrentUser
+    private MeveoUser currentUser;
+    
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
@@ -155,6 +182,151 @@ public class AccountsManagementApiServiceTest {
     	
     	when(customerService.findByCode("codeCustomer")).thenReturn(customer);
         accountsManagementApiService.getAllParentCustomers("codeCustomer");
+        Assert.assertTrue("All good", true );
+    }
+    
+    @Test(expected = ValidationException.class)
+    public void test_changeCustomerAccountParentAccount_with_parentInput_empty() {
+        ParentInput parentInput = ImmutableParentInput.builder().build();
+        accountsManagementApiService.changeCustomerAccountParentAccount("codeCA", parentInput);
+    }
+    
+    @Test(expected = ValidationException.class)
+    public void test_changeCustomerAccountParentAccount_incompatible_data_parentInput() {
+        ParentInput parentInput = ImmutableParentInput.builder().parentId(1L).parentCode("CODE01").build();
+        
+        CustomerAccount ca = new CustomerAccount();
+        ca.setId(1L);
+        ca.setCode("codeCA");
+        when(customerAccountService.findByCode(any(), any())).thenReturn(ca);
+        
+        Customer cust = new Customer();
+        cust.setId(1L);
+        cust.setCode("codeCustomer");
+        when(customerService.findById(any(), any())).thenReturn(cust);
+        
+        accountsManagementApiService.changeCustomerAccountParentAccount("codeCA", parentInput);
+    }
+    
+    @Test(expected = BusinessApiException.class)
+    public void test_changeCustomerAccountParentAccount_huge_entity() {
+        ParentInput parentInput = ImmutableParentInput.builder().parentId(1L).parentCode("codeCustomer").markOpenWalletOperationsToRerate(true).build();
+        
+        CustomerAccount ca = new CustomerAccount();
+        ca.setId(1L);
+        ca.setCode("codeCA");
+        when(customerAccountService.findByCode(any(), any())).thenReturn(ca);
+        when(customerAccountService.findById(any(), any())).thenReturn(ca);
+        
+        Customer cust = new Customer();
+        cust.setId(1L);
+        cust.setCode("codeCustomer");
+        ca.setCustomer(cust);
+        when(customerService.findById(any(), any())).thenReturn(cust);
+        
+        Mockito.doReturn(ca).when(customerAccountService).update(ca);
+        
+        Mockito.doNothing().when(auditLogService).create(any());
+        
+        when(financeSettingsService.isEntityWithHugeVolume("WalletOperation")).thenReturn(true);
+        
+        accountsManagementApiService.changeCustomerAccountParentAccount("codeCA", parentInput);
+    }
+    
+    public void test_changeCustomerAccountParentAccount_ok() {
+        ParentInput parentInput = ImmutableParentInput.builder().parentId(1L).parentCode("codeCustomer").build();
+        
+        CustomerAccount ca = new CustomerAccount();
+        ca.setId(1L);
+        ca.setCode("codeCA");
+        when(customerAccountService.findByCode(any(), any())).thenReturn(ca);
+        when(customerAccountService.findById(any(), any())).thenReturn(ca);
+        
+        Customer cust = new Customer();
+        cust.setId(1L);
+        cust.setCode("codeCustomer");
+        ca.setCustomer(cust);
+        when(customerService.findById(any(), any())).thenReturn(cust);
+        
+        Mockito.doReturn(ca).when(customerAccountService).update(ca);
+        
+        Mockito.doNothing().when(auditLogService).create(any());
+        
+        accountsManagementApiService.changeCustomerAccountParentAccount("codeCA", parentInput);
+        Assert.assertTrue("All good", true );
+    }
+    
+    @Test(expected = ValidationException.class)
+    public void test_changeBillingAccountParentAccount_with_parentInput_empty() {
+        ParentInput parentInput = ImmutableParentInput.builder().build();
+        accountsManagementApiService.changeBillingAccountParentAccount("codeBA", parentInput);
+    }
+    
+    @Test(expected = ValidationException.class)
+    public void test_changeBillingAccountParentAccount_incompatible_data_parentInput() {
+        ParentInput parentInput = ImmutableParentInput.builder().parentId(1L).parentCode("CODE01").build();
+        
+        BillingAccount ba = new BillingAccount();
+        ba.setId(1L);
+        ba.setCode("codeBA");
+        when(billingAccountService.findByCode(any())).thenReturn(ba);
+        
+        CustomerAccount ca = new CustomerAccount();
+        ca.setId(1L);
+        ca.setCode("codeCA");
+        when(customerAccountService.findById(any(), any())).thenReturn(ca);
+        
+        accountsManagementApiService.changeBillingAccountParentAccount("codeBA", parentInput);
+    }
+    
+    @Test(expected = BusinessApiException.class)
+    public void test_changeBillingAccountParentAccount_huge_entity() {
+        ParentInput parentInput = ImmutableParentInput.builder().parentId(1L).parentCode("codeCA").markOpenWalletOperationsToRerate(true).build();
+        
+        BillingAccount ba = new BillingAccount();
+        ba.setId(1L);
+        ba.setCode("codeBA");
+        when(billingAccountService.findByCode(any())).thenReturn(ba);
+        when(billingAccountService.findById(any())).thenReturn(ba);
+        
+        CustomerAccount ca = new CustomerAccount();
+        ca.setId(1L);
+        ca.setCode("codeCA");
+        ba.setCustomerAccount(ca);
+        when(customerAccountService.findById(any(), any())).thenReturn(ca);
+        
+        Mockito.doReturn(ba).when(billingAccountService).update(ba);
+        Mockito.doNothing().when(subscriptionService).removePaymentMethodLink(ba);
+
+        
+        Mockito.doNothing().when(auditLogService).create(any());
+        
+        when(financeSettingsService.isEntityWithHugeVolume("WalletOperation")).thenReturn(true);
+        
+        accountsManagementApiService.changeBillingAccountParentAccount("codeBA", parentInput);
+    }
+    
+    public void test_changeBillingAccountParentAccount_ok() {
+        ParentInput parentInput = ImmutableParentInput.builder().parentId(1L).parentCode("codeCA").build();
+        
+        BillingAccount ba = new BillingAccount();
+        ba.setId(1L);
+        ba.setCode("codeBA");
+        when(billingAccountService.findByCode(any())).thenReturn(ba);
+        when(billingAccountService.findById(any())).thenReturn(ba);
+        
+        CustomerAccount ca = new CustomerAccount();
+        ca.setId(1L);
+        ca.setCode("codeCA");
+        ba.setCustomerAccount(ca);
+        when(customerAccountService.findById(any(), any())).thenReturn(ca);
+        
+        Mockito.doReturn(ba).when(billingAccountService).update(ba);
+        Mockito.doNothing().when(subscriptionService).removePaymentMethodLink(ba);
+        
+        Mockito.doNothing().when(auditLogService).create(any());
+        
+        accountsManagementApiService.changeBillingAccountParentAccount("codeBA", parentInput);
         Assert.assertTrue("All good", true );
     }
 }

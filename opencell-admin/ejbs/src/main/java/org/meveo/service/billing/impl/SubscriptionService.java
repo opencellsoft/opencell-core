@@ -1082,4 +1082,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
              return null;
          }
     }
+    
+    public void removePaymentMethodLink(BillingAccount billingAccount) {
+		getEntityManager().createNamedQuery("Subscription.unlinkPaymentMehtodByBA")
+				.setParameter("billingAccount", billingAccount)
+				.executeUpdate();
+    }
 }

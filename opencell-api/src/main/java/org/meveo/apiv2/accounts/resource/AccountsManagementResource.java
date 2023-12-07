@@ -62,6 +62,27 @@ public interface AccountsManagementResource {
                                     @ApiResponse(responseCode = "400", description = "bad request when input not well formed") })
     Response changeCustomerAccountParentAccount(@PathParam("customerAccountCode") String customerAccountCode,
             @Parameter(description = "Parent id or code", required = true) ParentInput parentInput) throws JsonProcessingException;
+    
+    /**
+     * Change a billing account's parent using API to attach it to an other account.
+     *
+     * @param billingAccountCode The billing account's code or id
+     * @param parentInput The parent customer code or id
+     */
+    @POST
+    @Path("/billingAccounts/{billingAccountCode}/moving")
+    @Operation(summary = "The Billing Account will be moved immediately under the provided Customer Account.\\n\" +\n"
+            + "                    \"All open wallet operation will be rerated.", tags = { "Generic", "Move",
+                    "Customer Account" }, description = "The Billing Account will be moved immediately under the provided Customer Account.\n"
+                            + "All open wallet operation will be rerated.\n" + "\n" + "No consistency check is performed, no other data is modified.\n" + "Especially:\n" + "\n"
+                            + "counters (accumulators) set on the origin or target Customer will not be updated to reflect the move\n" + "\n"
+                            + "custom fields referencing entities in the origin hierarchy will not be updated\n" + "\n"
+                            + "Unless specifically developed to use field history, reports will use the customer at the time of execution", responses = {
+                                    @ApiResponse(responseCode = "204", description = "resource successfully updated but not content exposed except the hypermedia"),
+                                    @ApiResponse(responseCode = "404", description = "entity not found"),
+                                    @ApiResponse(responseCode = "400", description = "bad request when input not well formed") })
+    Response changeBillingAccountParentAccount(@PathParam("billingAccountCode") String billingAccountCode,
+            @Parameter(description = "Parent id or code", required = true) ParentInput parentInput) throws JsonProcessingException;
 
     @POST
     @Path("/counterInstance")

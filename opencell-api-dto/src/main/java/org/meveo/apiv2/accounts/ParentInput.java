@@ -24,7 +24,7 @@ public interface ParentInput {
     
     @Default
     @Schema(description = "flag to forces OPEN  wallet operations rerate")
-    default boolean isMarkOpenWalletOperationsToRerate() {
+    default boolean getMarkOpenWalletOperationsToRerate() {
         return false;
     }
 }
