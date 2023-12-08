@@ -1,19 +1,5 @@
 package org.meveo.apiv2.rating.impl;
 
-import static org.apache.commons.collections4.ListUtils.partition;
-import static org.meveo.commons.utils.ParamBean.getInstance;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.persistence.criteria.JoinType;
-
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -32,6 +18,15 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.service.billing.impl.BatchEntityService;
 import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.persistence.criteria.JoinType;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 @Interceptors({WsRestApiInterceptor.class})
 public class WalletOperationResourceImpl implements WalletOperationResource {
 
@@ -47,11 +42,6 @@ public class WalletOperationResourceImpl implements WalletOperationResource {
 
     @Inject
     private BatchEntityService batchEntityService;
-
-    /**
-     *
-     */
-    public static final int SHORT_MAX_VALUE = 32767;
 
     @Override
     public ActionStatus markWOToRerate(WalletOperationRerate reRateFilters) {
@@ -76,35 +66,18 @@ public class WalletOperationResourceImpl implements WalletOperationResource {
             // Prepare filter filterQuery
             paginationConfiguration.setJoinType(JoinType.LEFT);
 
-            Map<String, Object> updatedFields = new HashMap<>();
-            updatedFields.put("status", WalletOperationStatusEnum.TO_RERATE);
-            updatedFields.put("updated", new Date());
 
             String filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsString(WalletOperation.class, " a.ratedTransaction rt ",
                     paginationConfiguration);
             List<Long> ids = entityManagerWrapper.getEntityManager().createQuery(filterQuery).getResultList();
 
-            final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
-            List<Integer> updated = new ArrayList<>();
-            if (ids.size() > 0) {
-                List<List<Long>> listOfSubListIds = partition(ids, maxValue);
-                listOfSubListIds.forEach(sublist -> {
-                    // Build update filterQuery
-                    StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation a SET");
-                    updatedFields.forEach((s, o) ->
-                            updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
-                    );
-                    updateQuery.setLength(updateQuery.length() - 1);
-                    updateQuery.append(" WHERE a.id in (").append(sublist).append(")");
+            StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation SET ")
+                    .append("status=").append(QueryBuilder.paramToString(WalletOperationStatusEnum.TO_RERATE))
+                    .append(", updated=").append(QueryBuilder.paramToString(new Date()));
 
-                    updated.add(entityManagerWrapper.getEntityManager().createQuery(updateQuery.toString()).executeUpdate());
+            int updated = batchEntityService.markWoToRerate(updateQuery, ids);
 
-                    entityManagerWrapper.getEntityManager().flush();
-                    entityManagerWrapper.getEntityManager().clear();
-                });
-            }
-
-            if (updated.stream().anyMatch(p -> p > 0)) {
+            if (updated > 0) {
                 result.setMessage(updated + " Wallet operations updated to status 'TO_RERATE'");
             } else {
                 result.setMessage("No Wallet operations found to update");

@@ -18,6 +18,7 @@
 
 package org.meveo.api;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldMatrixColumnDto;
@@ -237,12 +238,13 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("childEntityFieldsForSummary");
         }
 
+        CustomFieldTemplate oldCft = SerializationUtils.clone(cft);
         cft = fromDTO(postData, appliesTo, cft);
         
 		if(withoutUniqueConstraint) {
-        	customFieldTemplateService.updateWithoutUniqueConstraint(cft);
+        	customFieldTemplateService.updateWithoutUniqueConstraint(oldCft, cft);
         }else {
-        	customFieldTemplateService.update(cft);
+        	customFieldTemplateService.update(oldCft, cft);
         }
 	}
 

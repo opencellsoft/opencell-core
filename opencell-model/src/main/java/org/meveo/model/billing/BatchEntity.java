@@ -20,7 +20,7 @@ package org.meveo.model.billing;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 
@@ -54,15 +54,9 @@ import java.util.Map;
                 query = "UPDATE BatchEntity b set b.status=org.meveo.model.billing.BatchEntityStatusEnum.CANCELED where b.id=:id " +
                         "and b.status=org.meveo.model.billing.BatchEntityStatusEnum.OPEN")
 })
-public class BatchEntity extends AuditableEntity {
+public class BatchEntity extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Name
-     */
-    @Column(name = "name")
-    private String name;
 
     /**
      * The job template classname
@@ -112,24 +106,6 @@ public class BatchEntity extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_execution_id")
     private JobExecutionResultImpl jobExecutionResult;
-
-    /**
-     * Gets name.
-     *
-     * @return value of name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets name.
-     *
-     * @param name value of name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
 
     /**
      * Gets targetJob.

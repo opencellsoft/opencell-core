@@ -17,7 +17,7 @@ public class BatchEntityMapper extends ResourceMapper<org.meveo.apiv2.billing.Ba
     protected org.meveo.apiv2.billing.BatchEntity toResource(BatchEntity entity) {
         return ImmutableBatchEntity.builder()
                 .id(entity.getId())
-                .name(entity.getName())
+                .code(entity.getCode())
                 .targetJob(entity.getTargetJob())
                 .targetEntity(entity.getTargetEntity())
                 .filters(entity.getFilters())
@@ -28,7 +28,7 @@ public class BatchEntityMapper extends ResourceMapper<org.meveo.apiv2.billing.Ba
     @Override
     protected BatchEntity toEntity(org.meveo.apiv2.billing.BatchEntity resource) {
         BatchEntity batchEntity = new BatchEntity();
-        batchEntity.setName(resource.getName());
+        batchEntity.setCode(resource.getCode());
         batchEntity.setTargetJob(resource.getTargetJob());
         batchEntity.setTargetEntity(resource.getTargetEntity());
         if (resource.getFilters().isEmpty()) {

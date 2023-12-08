@@ -1882,7 +1882,7 @@ public class CpqQuoteApi extends BaseApi {
                      } catch (RatingException e) {
                          log.trace("Failed to apply a subscription charge {}: {}", subscriptionCharge,
                                  e.getRejectionReason());
-                         throw new BusinessException("Failed to apply a subscription charge {}: {}"+subscriptionCharge.getCode(),e); // e.getBusinessException();
+                         throw new BusinessApiException(e.getMessage()); // e.getBusinessException();
 
                      }
                  }

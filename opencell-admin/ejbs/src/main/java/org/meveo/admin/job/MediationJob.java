@@ -261,7 +261,7 @@ public class MediationJob extends ScopedJob {
         readerCF.setMaxValue(256L);
         readerCF.setGuiPosition("tab:Configuration:0;field:5");
         result.put(MEDIATION_JOB_READER, readerCF);
-        
+
         CustomFieldTemplate batchSize = new CustomFieldTemplate();
         batchSize.setCode(CF_BATCH_SIZE);
         batchSize.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
@@ -289,13 +289,13 @@ public class MediationJob extends ScopedJob {
         result.put(CF_SORTING_OPTION, processingOrder);
 
         result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:8", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:8", JOB_INSTANCE_MEDIATION_JOB));
 
         result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:9", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:9", JOB_INSTANCE_MEDIATION_JOB));
 
         result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
-                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:10", null, false, null, null, JOB_INSTANCE_MEDIATION_JOB));
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:10", JOB_INSTANCE_MEDIATION_JOB, 5L));
 
         return result;
     }

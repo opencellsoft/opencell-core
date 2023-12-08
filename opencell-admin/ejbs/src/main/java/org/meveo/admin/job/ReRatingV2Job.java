@@ -39,12 +39,12 @@ public class ReRatingV2Job extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
 
-        result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1",
-            false, null, null, "JobInstance_ReRatingV2Job"));
+        result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG,
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", "JobInstance_ReRatingV2Job"));
         result.put(Job.CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
-            "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, "JobInstance_ReRatingV2Job"));
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", "JobInstance_ReRatingV2Job"));
         result.put(CF_NR_ITEMS_PER_TX, CustomFieldTemplateUtils.buildCF(CF_NR_ITEMS_PER_TX, resourceMessages.getString("jobExecution.numberOfItems"), CustomFieldTypeEnum.LONG,
-            "tab:Configuration:0;fieldGroup:Configuration:0;field:2", "100000", true, null, null, "JobInstance_ReRatingV2Job"));
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:2", "100000", true, "JobInstance_ReRatingV2Job"));
 
         return result;
     }

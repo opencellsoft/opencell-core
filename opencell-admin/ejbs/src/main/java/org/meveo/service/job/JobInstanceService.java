@@ -454,6 +454,6 @@ public class JobInstanceService extends BusinessService<JobInstance> {
      * @return job time limit CF value
      */
     public Date getJobTimeLimit(JobInstance jobInstance) {
-        return DateUtils.parseDateWithPattern((String) this.getParamOrCFValue(jobInstance, ScopedJob.CF_JOB_TIME_LIMIT), "HH24:MI");
+        return DateUtils.parseDateWithPattern((String) this.getParamOrCFValue(jobInstance, ScopedJob.CF_JOB_TIME_LIMIT), "hh:mm");
     }
 }

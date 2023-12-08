@@ -103,7 +103,7 @@ public class UsageRatingJob extends ScopedJob {
         waitingMillis.setDefaultValue("0");
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put(Job.CF_WAITING_MILLIS, waitingMillis);
-        
+
         CustomFieldTemplate nbPublishers = new CustomFieldTemplate();
         nbPublishers.setCode(Job.CF_NB_PUBLISHERS);
         nbPublishers.setAppliesTo("JobInstance_UsageRatingJob");
@@ -148,7 +148,7 @@ public class UsageRatingJob extends ScopedJob {
         batchSize.setMaxValue(10000L);
         batchSize.setGuiPosition("tab:Configuration:0;field:5");
         result.put(batchSize.getCode(), batchSize);
-        
+
         CustomFieldTemplate parameter1 = new CustomFieldTemplate();
         parameter1.setCode("parameter1");
         parameter1.setAppliesTo("JobInstance_UsageRatingJob");
@@ -160,7 +160,7 @@ public class UsageRatingJob extends ScopedJob {
         parameter1.setMaxValue(200L);
         parameter1.setGuiPosition("tab:Configuration:0;field:6");
         result.put("parameter1", parameter1);
-        
+
         CustomFieldTemplate parameter2 = new CustomFieldTemplate();
         parameter2.setCode("parameter2");
         parameter2.setAppliesTo("JobInstance_UsageRatingJob");
@@ -174,13 +174,13 @@ public class UsageRatingJob extends ScopedJob {
         result.put("parameter2", parameter2);
 
         result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:7", null, false, null, null, "JobInstance_UsageRatingJob"));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:8", "JobInstance_UsageRatingJob"));
 
         result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:8", null, false, null, null, "JobInstance_UsageRatingJob"));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:9", "JobInstance_UsageRatingJob"));
 
         result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
-                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:9", null, false, null, null, "JobInstance_UsageRatingJob"));
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:10", "JobInstance_UsageRatingJob", 5L));
 
         return result;
     }

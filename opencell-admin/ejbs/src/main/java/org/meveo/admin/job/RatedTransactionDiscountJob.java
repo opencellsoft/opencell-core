@@ -81,19 +81,12 @@ public class RatedTransactionDiscountJob extends Job {
 		Map<String, CustomFieldTemplate> result = new HashMap<>();
 
 		result.put(CF_NB_RUNS,
-				CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"),
-						CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", false,
-						null, null, JOB_INSTANCE_RATED_TRANSACTION_DISCOUNT_JOB));
-		result.put(Job.CF_WAITING_MILLIS,
-				CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS,
-						resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
-						"tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null,
-						JOB_INSTANCE_RATED_TRANSACTION_DISCOUNT_JOB));
-		result.put(CF_MASS_UPDATE_CHUNK,
-				CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK,
-						resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG,
-						"tab:Configuration:0;fieldGroup:Configuration:0;field:3", "100000", false, null, null,
-						JOB_INSTANCE_RATED_TRANSACTION_DISCOUNT_JOB));
+				CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG,
+						"tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", JOB_INSTANCE_RATED_TRANSACTION_DISCOUNT_JOB));
+		result.put(Job.CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
+				"tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", JOB_INSTANCE_RATED_TRANSACTION_DISCOUNT_JOB));
+		result.put(CF_MASS_UPDATE_CHUNK, CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK, resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG,
+				"tab:Configuration:0;fieldGroup:Configuration:0;field:3", "100000", JOB_INSTANCE_RATED_TRANSACTION_DISCOUNT_JOB));
 
 		return result;
 	}

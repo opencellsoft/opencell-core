@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +34,16 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
 
 
     @Override
+    public List<BatchEntity> list(Long offset, Long limit, String sort, String orderBy, String filter) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Long getCount(String filter) {
+        return null;
+    }
+
+    @Override
     public Optional<BatchEntity> findById(Long id) {
         return ofNullable(service.findById(id));
     }
@@ -51,8 +61,8 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
             throw new EntityDoesNotExistsException(BatchEntity.class, id);
         }
         BatchEntity batchEntity = batchEntityOptional.get();
-        if (!isBlank(baseEntity.getName())) {
-            batchEntity.setName(baseEntity.getName());
+        if (!isBlank(baseEntity.getCode())) {
+            batchEntity.setCode(baseEntity.getCode());
         }
         if (!isBlank(baseEntity.getTargetJob())) {
             batchEntity.setTargetJob(baseEntity.getTargetJob());
@@ -71,6 +81,11 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
     }
 
     @Override
+    public Optional<BatchEntity> patch(Long id, BatchEntity baseEntity) {
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<BatchEntity> delete(Long id) {
         Optional<BatchEntity> batchEntity = findById(id);
         if (batchEntity.isEmpty()) {
@@ -82,6 +97,11 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
             throw new BadRequestException(e);
         }
         return batchEntity;
+    }
+
+    @Override
+    public Optional<BatchEntity> findByCode(String code) {
+        return Optional.empty();
     }
 
     /**
@@ -98,7 +118,6 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
         }
         return true;
     }
-    
 
     /**
      * Cancel the batch entity
@@ -108,28 +127,4 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
     public void cancel(Long id) {
         service.cancel(id);
     }
-
-	@Override
-	public List<BatchEntity> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Long getCount(String filter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Optional<BatchEntity> patch(Long id, BatchEntity baseEntity) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
-	}
-
-	@Override
-	public Optional<BatchEntity> findByCode(String code) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
-	}
 }

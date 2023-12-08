@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -1723,34 +1724,53 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Specific getQuery
+     * Execute the provided query builder with the provided filters
      *
-     * @param tableName                table name
-     * @param updatedFields            table fields to be updated
-     * @param config                   the pagination configuration
-     * @return List<Integer>           list of execute update return
+     * @param updateQueryBuilder the update query builder
+     * @param entityClassName    the entity class name
+     * @param filters            the filters
      */
-    public List<Integer> update(String tableName, Map<String, Object> updatedFields, PaginationConfiguration config) {
-        final List<Integer> updated = new ArrayList<>();
-        StringBuilder updateQuery = new StringBuilder("UPDATE ").append(tableName).append(" a SET");
-        updatedFields.forEach((s, o) ->
-                updateQuery.append(" a.").append(s).append("=").append(QueryBuilder.paramToString(o)).append(",")
-        );
-        updateQuery.setLength(updateQuery.length() - 1);
-        QueryBuilder queryBuilder = new QueryBuilder(updateQuery.toString(), "a");
-
-
-        Map<String, Object> filters = config.getFilters();
-
-        if (filters != null && !filters.isEmpty()) {
-            NativeExpressionFactory nativeExpressionFactory = new NativeExpressionFactory(queryBuilder, "a");
-            filters.keySet().stream()
-                    .sorted((k1, k2) -> org.apache.commons.lang3.StringUtils.countMatches(k2, ".") - org.apache.commons.lang3.StringUtils.countMatches(k1, "."))
-                    .filter(key -> filters.get(key) != null)
-                    .forEach(key -> nativeExpressionFactory.addFilters(key, filters.get(key)));
-
+    public void update(QueryBuilder updateQueryBuilder, String entityClassName, Map<String, Object> filters) {
+        if (updateQueryBuilder != null) {
+            String updateQuery = updateQueryBuilder.getQueryAsString();
+            if (filters != null && !filters.isEmpty()) {
+                PaginationConfiguration searchConfig = new PaginationConfiguration(filters);
+                searchConfig.setFetchFields(Arrays.asList("id"));
+                String subQuery = getQuery(entityClassName, searchConfig, null).getQueryAsString();
+                if (subQuery.indexOf("join") > -1) {
+                    updateQuery = updateQuery + " WHERE id in (" + subQuery + ")";
+                } else {
+                    updateQuery = updateQuery + subQuery.substring(subQuery.indexOf(" where "));
+                    updateQuery = updateQuery.replaceAll(" a\\.", " ");
+                    updateQuery = updateQuery.replaceAll("\\(a\\.", "(");
+                }
+            }
+            getEntityManager().createQuery(updateQuery).executeUpdate();
         }
-        updated.add(getEntityManager().createQuery(queryBuilder.getQueryAsString()).executeUpdate());
-        return updated;
+    }
+    /**
+     * Execute the provided update query with the provided ids
+     *
+     * @param updateQuery the update query to be executed
+     * @param ids         the ids of records to be updated
+     * @return the number of updated records
+     */
+    public int update(StringBuilder updateQuery, List<Long> ids) {
+        AtomicInteger updated = new AtomicInteger(0);
+        if (updateQuery != null && updateQuery.length() > 0 && ids != null && ids.size() > 0) {
+            final int maxValue = getInstance().getPropertyAsInteger("database.number.of.inlist.limit", SHORT_MAX_VALUE);
+            List<List<Long>> listOfSubListIds = partition(ids, maxValue);
+            listOfSubListIds.forEach(sublist -> {
+                if (sublist != null && !sublist.isEmpty()) {
+                    updateQuery.append(" WHERE id in (")
+                            .append(sublist.stream().map(String::valueOf).collect(joining(",")))
+                            .append(")");
+                    updated.addAndGet(getEntityManager().createQuery(updateQuery.toString()).executeUpdate());
+                    getEntityManager().flush();
+                    getEntityManager().clear();
+                }
+            });
+        }
+        return updated.intValue();
     }
 }
