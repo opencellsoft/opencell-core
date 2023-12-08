@@ -17014,10 +17014,50 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#INTRD-16167_20230515_revert" author="TarikFA." />
     <changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
 	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" />
-	<changeSet id="#INTRD-19685_20231130" author="AbdellatifBARI" />
-	
-	
-	<!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
+    <changeSet id="#INTRD-19685_20231208" author="AbdellatifBARI">
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL" />
+            <column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="MASS_RERATE_EMAIL" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="#{batchEntityStatus} Mark to rerate wallet operations batch #{batchEntityId}" />
+            <column name="subject_i18n" value='{"FRA":"#{batchEntityStatus} Marquer à revaloriser le lot de wallet operations #{batchEntityId}","ENG":"#{batchEntityStatus} Mark to rerate wallet operations batch #{batchEntityId}"}'/>
+            <column name="htmlcontent">
+                <![CDATA[
+                    Batch "#{batchEntityDescription}" has been processed by job #{jobInstanceCode}<br>Result: #{batchEntityStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal.
+                    ]]>
+            </column>
+            <column name="htmlcontent_i18n">
+                <![CDATA[
+                    {"FRA":"Le lot \"#{batchEntityDescription}\" a été traité par le job #{jobInstanceCode}<br>Résultat: #{batchEntityStatus}<br>Exécution du job #{jobExecutionId}<br>Plus d'information sur le rapport d'exécution du job sur l'écran des wallet operations du Portal.","ENG":"Batch \"#{batchEntityDescription}\" has been processed by job #{jobInstanceCode}<br>Result: #{batchEntityStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal."}
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="generic_sequence">
+            <column name="id" valueNumeric="-4" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="version" valueNumeric="1" />
+            <column name="code" value="batch_entity_sequence" />
+            <column name="description" value="Batch entity sequence" />
+            <column name="sequence_type" value="SEQUENCE" />
+            <column name="sequence_size" valueNumeric="5" />
+            <column name="current_number" valueNumeric="0" />
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+            <column name="entity_class" value="org.meveo.model.billing.BatchEntity" />
+            <column name="format_el" value="BATCH-#{mv:formatDate(null,'yy')}#{generatedCode}" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="sequence_id" valueNumeric="-4" />
+        </insert>
+    </changeSet>
+
+    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>

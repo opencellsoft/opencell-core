@@ -3,6 +3,7 @@ package org.meveo.apiv2.billing.service;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.ordering.services.ApiService;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BatchEntity;
 import org.meveo.model.billing.BatchEntityStatusEnum;
 import org.meveo.service.billing.impl.BatchEntityService;
@@ -32,7 +33,6 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
     @Inject
     private BatchEntityService service;
 
-
     @Override
     public List<BatchEntity> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         return new ArrayList<>();
@@ -50,6 +50,9 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
 
     @Override
     public BatchEntity create(BatchEntity baseEntity) {
+        if (StringUtils.isBlank(baseEntity.getCode())) {
+            baseEntity.setCode(service.getBatchEntityCode(null));
+        }
         service.create(baseEntity);
         return baseEntity;
     }
@@ -126,5 +129,9 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
      */
     public void cancel(Long id) {
         service.cancel(id);
+    }
+
+    public void setBatchEntityCode(String defaultCode) {
+
     }
 }
