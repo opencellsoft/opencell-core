@@ -614,5 +614,87 @@
         }
       }
     ]
+  },
+  {
+    "entityName": "QuoteOffer",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "billableAccount",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              },
+              {
+                "property": "userAccount",
+                "entityClass": "org.meveo.model.billing.UserAccount"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "billableAccount",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              },
+              {
+                "property": "userAccount",
+                "entityClass": "org.meveo.model.billing.UserAccount"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "InvoiceLine",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "billingAccount",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "billingAccount",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
+      }
+    ]
   }
 ]
