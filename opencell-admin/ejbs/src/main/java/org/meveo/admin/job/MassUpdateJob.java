@@ -68,7 +68,7 @@ public class MassUpdateJob extends Job {
 		result.put(UpdateStepExecutor.PARAM_TABLE_ALIAS,
 				CustomFieldTemplateUtils.buildCF(UpdateStepExecutor.PARAM_TABLE_ALIAS,
 						resourceMessages.getString("jobExecution.massUpdate.tableAlias"), CustomFieldTypeEnum.STRING,
-						"tab:Configuration:0;fieldGroup:Configuration:0;field:2", "a", false, null, null, JOB_INSTANCE_MASS_UPDATE_JOB, 5));
+						"tab:Configuration:0;fieldGroup:Configuration:0;field:2", "a", false, null, null, JOB_INSTANCE_MASS_UPDATE_JOB, 5L));
 		result.put(CF_MASS_UPDATE_CHUNK,
 				CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK,
 						resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG,
