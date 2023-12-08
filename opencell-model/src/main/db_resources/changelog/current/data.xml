@@ -19467,5 +19467,9 @@ public class ValidateBRScript extends ValidateBR {
             </column>
         </insert>
     </changeSet>
+    
+    <changeSet id="#INTRD-19943_fix_event_code_ppm_frag" author="a.rouaguebe">
+        <sql>update cat_price_plan_matrix set event_code = cci.code from cpq_contract_item cci where cci.price_plan_id = cat_price_plan_matrix.id</sql>
+    </changeSet>
 
 </databaseChangeLog>
