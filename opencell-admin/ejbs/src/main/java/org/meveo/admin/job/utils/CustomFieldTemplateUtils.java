@@ -10,27 +10,6 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 public class CustomFieldTemplateUtils {
 	
 	
-    /**
-     * Build a custom field definition
-     * 
-     * @param code Custom field code
-     * @param description Description
-     * @param fieldType Field type
-     * @param guiPosition GUI position
-     * @param defaultValue Default value
-     * @param valueRequire Is value required
-     * @param storageType Storage type
-     * @param entityClazz Entity class
-     * @param appliesTo Applies to value
-     * @param maxValue max length of field
-     * @return A custom field template
-     */
-    public static CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum fieldType, String guiPosition, String defaultValue, boolean valueRequire, CustomFieldStorageTypeEnum storageType,
-            String entityClazz, String appliesTo, long maxValue) {
-    	CustomFieldTemplate cf = buildCF(appliesTo, appliesTo, fieldType, appliesTo, appliesTo, valueRequire, storageType, appliesTo, appliesTo);
-    	cf.setMaxValue(maxValue);
-    	return cf;
-    }
 
     /**
      * Build a custom field definition
@@ -51,7 +30,6 @@ public class CustomFieldTemplateUtils {
                                               boolean valueRequire, CustomFieldStorageTypeEnum storageType, String entityClazz, String appliesTo, Long maxValue) {
         CustomFieldTemplate cft = new CustomFieldTemplate();
         cft.setCode(code);
-        cft.setMaxValue(null);
         cft.setAppliesTo(appliesTo);
         cft.setActive(true);
         cft.setDescription(description);
