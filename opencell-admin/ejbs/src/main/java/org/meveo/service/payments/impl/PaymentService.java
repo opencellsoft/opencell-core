@@ -400,6 +400,7 @@ public class PaymentService extends PersistenceService<Payment> {
             	Map<String, Object> additionalParams=new HashedMap<String, Object>();
             	additionalParams.put("customerAccountCode", customerAccount.getCode());  
             	additionalParams.put("aoToPayOrRefund", aoIdsToPay.get(0));
+            	additionalParams.put("listAoToPayOrRefund", aoIdsToPay);
             	additionalParams.put("createdAO", aoPaymentId);
                 if (preferredMethod instanceof HibernateProxy) {
                     preferredMethod = (PaymentMethod) ((HibernateProxy) preferredMethod).getHibernateLazyInitializer()
@@ -413,7 +414,7 @@ public class PaymentService extends PersistenceService<Payment> {
                     throw new PaymentException(PaymentErrorEnum.PAY_SEPA_MANDATE_BLANK, "Can not process payment sepa as Mandate or token is blank");
                 }
                 if (isPayment) {
-                    doPaymentResponseDto = gatewayPaymentInterface.doPaymentSepa(((DDPaymentMethod) preferredMethod), ctsAmount, null);
+                    doPaymentResponseDto = gatewayPaymentInterface.doPaymentSepa(((DDPaymentMethod) preferredMethod), ctsAmount, additionalParams);
                 } else {
                     doPaymentResponseDto = gatewayPaymentInterface.doRefundSepa(((DDPaymentMethod) preferredMethod), ctsAmount, additionalParams);
                 }
@@ -480,6 +481,7 @@ public class PaymentService extends PersistenceService<Payment> {
                      doPaymentResponseDto.setMatchingCreated(true);
                  } catch (Exception e) {
                 	 aoPaymentId = null;
+                	 doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
                      log.warn("Cant create matching :", e);
                  }
              }
@@ -664,6 +666,7 @@ public class PaymentService extends PersistenceService<Payment> {
             Map<String, Object> additionalParams=new HashedMap<String, Object>();
             additionalParams.put("customerAccountCode", customerAccount.getCode());  
             additionalParams.put("aoToPayOrRefund", aoIdsToPay.get(0));
+            additionalParams.put("listAoToPayOrRefund", aoIdsToPay);
             additionalParams.put("createdAO", aoPaymentId);
             if (preferredMethod instanceof HibernateProxy) {
                 preferredMethod = (PaymentMethod) ((HibernateProxy) preferredMethod).getHibernateLazyInitializer()
@@ -885,6 +888,8 @@ public class PaymentService extends PersistenceService<Payment> {
 
                 RejectedPayment rejectedPayment = new RejectedPayment();
                 rejectedPayment.setType("R");
+                calculateAmountsByTransactionCurrency(rejectedPayment, ca,accountOperation.getUnMatchingAmount(),
+                        null, new Date());
                 rejectedPayment.setMatchingAmount(BigDecimal.ZERO);
                 rejectedPayment.setMatchingStatus(MatchingStatusEnum.O);
                 rejectedPayment.setUnMatchingAmount(accountOperation.getUnMatchingAmount());
@@ -1001,7 +1006,7 @@ public class PaymentService extends PersistenceService<Payment> {
         return getEntityManager().createNamedQuery("Refund.updateReference").executeUpdate();
     }
 
-    public void calculateAmountsByTransactionCurrency(Payment payment, CustomerAccount customerAccount,
+    public void calculateAmountsByTransactionCurrency(AccountOperation payment, CustomerAccount customerAccount,
                                                       BigDecimal amount,
                                                       String transactionalCurrencyCode, Date transactionDate) {
         TradingCurrency functionalCurrency = appProvider.getCurrency() != null && appProvider.getCurrency().getCurrencyCode() != null ?

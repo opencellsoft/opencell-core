@@ -294,8 +294,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
                     .append(" AND ao.customerAccount.id = pm.customerAccount.id ")
                     .append(" AND pm.paymentType =:paymentMethodIN ")
                     .append(" AND pm.preferred IS TRUE ")
-                    .append(" AND ao.dueDate >=:fromDueDateIN ")
-                    .append(" AND ao.dueDate <:toDueDateIN ");
+                    .append(" AND ao.unMatchingAmount <> 0 ")
+                    .append(" AND ao.collectionDate >=:fromDueDateIN ")
+                    .append(" AND ao.collectionDate <:toDueDateIN ");
 
             if (seller != null) {
                 queryName.append(" AND ao.seller =:sellerIN ");
