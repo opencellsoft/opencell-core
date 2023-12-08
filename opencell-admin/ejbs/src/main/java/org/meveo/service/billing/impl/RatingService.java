@@ -742,7 +742,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                             PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getPublishedVersionValideForDate(pricePlanMatrix.getCode(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
                             if (ppmVersion != null) {
                                  pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation);
-                                 discountRate= pricePlanMatrixLine != null ? pricePlanMatrixLine.getValue() : ppmVersion.getPrice();
+                                 discountRate = pricePlanMatrixLine != null ? pricePlanMatrixLine.getValue() : null;
                                  if(discountRate!=null){
                                      amount = unitPriceWithoutTax.abs().multiply(discountRate.divide(HUNDRED));
                                     if (amount != null && unitPriceWithoutTax.compareTo(amount) > 0 && !seperateDiscount)
@@ -1073,6 +1073,8 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     if (!StringUtils.isBlank(amountELPricePlanMatrixLine)) {
                         priceWithoutTax = evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
+                }else{
+					priceWithoutTax = ppmVersion.getPrice();
                 }
                 if (priceWithoutTax == null && priceWithTax == null) {
                     throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId() + "and charge instance : " + wo.getChargeInstance());
