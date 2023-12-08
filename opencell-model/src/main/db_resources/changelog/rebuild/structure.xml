@@ -5577,6 +5577,19 @@
             <column name="legal_entity_type_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
             <column name="icd_id" type="bigint" />
+            
+            <column name="bank_code" type="varchar(5)" />
+            <column name="branch_code" type="varchar(5)" />
+            <column name="account_number" type="varchar(11)" />
+            <column name="hash_key" type="varchar(2)" />
+            <column name="iban" type="varchar(100)" />
+            <column name="bic" type="varchar(100)" />
+            <column name="account_owner" type="varchar(50)" />
+            <column name="bank_name" type="varchar(50)" />
+            <column name="bank_id" type="varchar(50)" />
+            <column name="issuer_number" type="varchar(50)" />
+            <column name="issuer_name" type="varchar(50)" />
+            <column name="ics" type="varchar(35)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-252">
@@ -19643,6 +19656,7 @@
     <changeSet id="#INTRD-17592-rt-indexes" author="a.rouaguebe" />
     <changeSet id="#INTRD-19607_23112023" author="anasseh" />
     <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid" />
+    <changeSet id="#INTRD-19607_23112023" author="anasseh" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
