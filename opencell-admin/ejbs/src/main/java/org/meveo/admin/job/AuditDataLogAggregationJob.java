@@ -66,12 +66,12 @@ public class AuditDataLogAggregationJob extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
 
-        result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1",
-            false, null, null, "JobInstance_AuditDataLogAggregationJob"));
+        result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG,
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", "JobInstance_AuditDataLogAggregationJob"));
         result.put(Job.CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
-            "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, "JobInstance_AuditDataLogAggregationJob"));
-        result.put(CF_BATCH_SIZE, CustomFieldTemplateUtils.buildCF(CF_BATCH_SIZE, resourceMessages.getString("jobExecution.batchSize"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2",
-            "10000", true, null, null, "JobInstance_AuditDataLogAggregationJob"));
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", "JobInstance_AuditDataLogAggregationJob"));
+        result.put(CF_BATCH_SIZE, CustomFieldTemplateUtils.buildCF(CF_BATCH_SIZE, resourceMessages.getString("jobExecution.batchSize"), CustomFieldTypeEnum.LONG,
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:2", "10000", true, "JobInstance_AuditDataLogAggregationJob"));
 
         return result;
     }

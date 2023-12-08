@@ -135,7 +135,7 @@ import org.meveo.service.catalog.impl.PriceListLineService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
-import org.meveo.service.mediation.MediationsettingService;
+import org.meveo.service.mediation.MediationSettingService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScript;
 import org.meveo.service.script.catalog.TriggeredEdrScriptInterface;
@@ -203,7 +203,7 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
     private ELUtils elUtils;
 
     @Inject
-    private MediationsettingService mediationsettingService;
+    private MediationSettingService mediationsettingService;
 
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;

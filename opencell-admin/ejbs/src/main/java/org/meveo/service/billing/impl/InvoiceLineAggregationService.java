@@ -73,10 +73,12 @@ public class InvoiceLineAggregationService implements Serializable {
      * @param statelessSession Stateless session for query creation
      * @param incrementalInvoiceLines Shall Invoice lines be created in incremental mode
      * @param aggregationConfiguration
+     * @param nbToRetrieve Number of items to retrieve for processing
      * @return Aggregation summary - number of ILs, BAs and a hibernate query
      */
     @SuppressWarnings("rawtypes")
-    public RTtoILAggregationQuery getAggregationSummaryAndILDetailsQuery(BillingRun billingRun, AggregationConfiguration aggregationConfiguration, StatelessSession statelessSession, boolean incrementalInvoiceLines) {
+    public RTtoILAggregationQuery getAggregationSummaryAndILDetailsQuery(BillingRun billingRun, AggregationConfiguration aggregationConfiguration,
+                                                                         StatelessSession statelessSession, boolean incrementalInvoiceLines, int nbToRetrieve) {
 
         // Get a basic RT to IL aggregation query
 
@@ -117,9 +119,9 @@ public class InvoiceLineAggregationService implements Serializable {
             public void execute(Connection connection) throws SQLException {
 
                 try (Statement statement = connection.createStatement()) {
-                    log.info("Dropping and rereating materialized view {} with fields {} and request {}: ", viewName, materializedViewFields, sql);
+                    log.info("Dropping and rereating materialized view {} with fields {} and request {}: ", viewName, materializedViewFields, (nbToRetrieve > 0 ? sql + " limit " + nbToRetrieve : sql));
                     statement.execute("drop materialized view if exists " + viewName);
-                    statement.execute("create materialized view " + viewName + "(" + materializedViewFields + ") as " + sql);
+                    statement.execute("create materialized view " + viewName + "(" + materializedViewFields + ") as " + (nbToRetrieve > 0 ? sql + " limit " + nbToRetrieve : sql));
                     statement.execute("create index idx__" + viewName + " ON " + viewName + " USING btree (billing_account__id, offer_id, article_id, tax_id) ");
                 } catch (Exception e) {
                     log.error("Failed to drop/create the materialized view " + viewName, e.getMessage());

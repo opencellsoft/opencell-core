@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -42,6 +43,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 /**
  * Job definition to process CDR files converting CDRs to EDR records
@@ -52,7 +54,7 @@ import org.meveo.service.job.Job;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class MediationJobV2 extends Job {
+public class MediationJobV2 extends ScopedJob {
 
     private static final String JOB_INSTANCE_MEDIATION_JOB = "JobInstance_MediationJobV2";
 
@@ -112,8 +114,18 @@ public class MediationJobV2 extends Job {
         batchSize.setFieldType(CustomFieldTypeEnum.LONG);
         batchSize.setValueRequired(true);
         batchSize.setDefaultValue("1000");
-        batchSize.setGuiPosition("tab:Configuration:0;field:6");
+        batchSize.setGuiPosition("tab:Configuration:0;field:2");
         result.put(batchSize.getCode(), batchSize);
+
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:3", JOB_INSTANCE_MEDIATION_JOB));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:4", JOB_INSTANCE_MEDIATION_JOB));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:5", JOB_INSTANCE_MEDIATION_JOB, 5L));
+
 
         return result;
     }

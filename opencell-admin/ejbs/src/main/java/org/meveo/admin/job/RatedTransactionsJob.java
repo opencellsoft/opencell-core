@@ -38,6 +38,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 /**
  * Job definition to convert Open Wallet operations to Rated transactions
@@ -47,7 +48,7 @@ import org.meveo.service.job.Job;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class RatedTransactionsJob extends Job {
+public class RatedTransactionsJob extends ScopedJob {
 
     /** The rated transactions job bean. */
     @Inject
@@ -88,19 +89,26 @@ public class RatedTransactionsJob extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
 
-        result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1",
-            false, null, null, "JobInstance_RatedTransactionsJob"));
+        result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"), CustomFieldTypeEnum.LONG,
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:0", "-1", "JobInstance_RatedTransactionsJob"));
         result.put(Job.CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(Job.CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"), CustomFieldTypeEnum.LONG,
-            "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", false, null, null, "JobInstance_RatedTransactionsJob"));
-        result.put(CF_NB_PUBLISHERS, CustomFieldTemplateUtils.buildCF(CF_NB_PUBLISHERS, resourceMessages.getString("jobExecution.nbPublishers"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:2",
-            null, false, null, null, "JobInstance_RatedTransactionsJob"));        
-        result.put(CF_BATCH_SIZE, CustomFieldTemplateUtils.buildCF(CF_BATCH_SIZE, resourceMessages.getString("jobExecution.batchSize"), CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:3",
-            "10000", true, null, null, "JobInstance_RatedTransactionsJob"));
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", "JobInstance_RatedTransactionsJob"));
+        result.put(CF_NB_PUBLISHERS, CustomFieldTemplateUtils.buildCF(CF_NB_PUBLISHERS, resourceMessages.getString("jobExecution.nbPublishers"), CustomFieldTypeEnum.LONG,
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:2", "JobInstance_RatedTransactionsJob"));
+        result.put(CF_BATCH_SIZE, CustomFieldTemplateUtils.buildCF(CF_BATCH_SIZE, resourceMessages.getString("jobExecution.batchSize"), CustomFieldTypeEnum.LONG,
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:3", "10000", true, "JobInstance_RatedTransactionsJob"));
+
         // aggregations
-        result.put("woAggregationSettings",
-            CustomFieldTemplateUtils.buildCF("woAggregationSettings", resourceMessages.getString("jobExecution.woAggregationSettings"), CustomFieldTypeEnum.ENTITY,
-                "tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:0", null, false, CustomFieldStorageTypeEnum.SINGLE, "org.meveo.model.billing.WalletOperationAggregationSettings",
-                "JobInstance_RatedTransactionsJob"));
+        result.put("woAggregationSettings", CustomFieldTemplateUtils.buildCF("woAggregationSettings", resourceMessages.getString("jobExecution.woAggregationSettings"), CustomFieldTypeEnum.ENTITY,
+                "tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:0", null, false, CustomFieldStorageTypeEnum.SINGLE,
+                "org.meveo.model.billing.WalletOperationAggregationSettings", "JobInstance_RatedTransactionsJob", null));
+
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"), CustomFieldTypeEnum.LONG,
+                "tab:Configuration:0;fieldGroup:Configuration:0;field:6", "JobInstance_RatedTransactionsJob"));
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;fieldGroup:Configuration:0;field:7", "JobInstance_RatedTransactionsJob"));
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;fieldGroup:Configuration:0;field:8", "JobInstance_RatedTransactionsJob", 5L));
 
         return result;
     }
