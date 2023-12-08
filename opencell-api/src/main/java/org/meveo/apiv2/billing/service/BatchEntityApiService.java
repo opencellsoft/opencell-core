@@ -56,7 +56,7 @@ public class BatchEntityApiService implements ApiService<BatchEntity> {
 
     @Override
     public BatchEntity create(BatchEntity baseEntity) {
-        if (StringUtils.isBlank(baseEntity.getCode())) {
+        if (baseEntity != null && StringUtils.isBlank(baseEntity.getCode())) {
             baseEntity.setCode(service.getBatchEntityCode(null));
         }
         service.create(baseEntity);
