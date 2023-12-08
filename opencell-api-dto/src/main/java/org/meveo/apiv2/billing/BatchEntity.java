@@ -21,6 +21,7 @@ import java.util.Map;
 @JsonDeserialize(as = ImmutableBatchEntity.class)
 public interface BatchEntity extends Resource {
 
+    @Nullable
     @Schema(description = "An optional text for user to input a customized description")
     String getDescription();
 
