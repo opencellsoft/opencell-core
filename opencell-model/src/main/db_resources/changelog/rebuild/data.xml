@@ -12372,28 +12372,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 	
-	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
-	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
-	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
-	<changeSet id="#INTRD-16296_20230517" author="aeljaouhari" />
-	<changeSet id="INTRD-5701_20220215" author="HatimOUDAD" />
-	<changeSet id="#INTRD-16482_20230526" author="aeljaouhari" />
-	<changeSet id="#INTRD-16247_20230605" author="zelmeliani" />
-    <changeSet id="#INTRD-16278_20230606" author="anasseh" />
-    <changeSet id="INTRD-17129_20230627" author="TarikFA." />
-	<changeSet id="INTRD-16743_20230720" author="aelmalki" />
-    <changeSet id="INTRD-17135_20230713" author="TarikFA." />
-	<changeSet id="#INTRD-16833-20230830" author="ZBariki" />
-    <changeSet id="#INTRD-10574_20230214" author="AndriusKarpavicius"/>
-    <changeSet id="#INTRD-18352_20230915_data" author="TarikFA." />
-	<changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
-    <changeSet id="#INTRD-18858_202301006" author="TARIKFA." />
-    <changeSet id="#INTRD-19070" author="TARIKFA." />
-    <changeSet id="#INTRD-19224_20231101" author="zelmeliani" />
-    <changeSet id="#INTRD-18995_20231107" author="zelmeliani" />
-    <changeSet id="#INTRD-19093_20231109" author="aeljaouhari" />
-    <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid" />
-	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" dbms="postgresql" />
 	<changeSet id="#INTRD-19685_20231208" author="AbdellatifBARI">
 		<insert tableName="com_message_template">
 			<column name="media" value="EMAIL" />
@@ -12436,6 +12414,30 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="sequence_id" valueNumeric="-4" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
+	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
+	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
+	<changeSet id="#INTRD-16296_20230517" author="aeljaouhari" />
+	<changeSet id="INTRD-5701_20220215" author="HatimOUDAD" />
+	<changeSet id="#INTRD-16482_20230526" author="aeljaouhari" />
+	<changeSet id="#INTRD-16247_20230605" author="zelmeliani" />
+    <changeSet id="#INTRD-16278_20230606" author="anasseh" />
+    <changeSet id="INTRD-17129_20230627" author="TarikFA." />
+	<changeSet id="INTRD-16743_20230720" author="aelmalki" />
+    <changeSet id="INTRD-17135_20230713" author="TarikFA." />
+	<changeSet id="#INTRD-16833-20230830" author="ZBariki" />
+    <changeSet id="#INTRD-10574_20230214" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-18352_20230915_data" author="TarikFA." />
+	<changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-18858_202301006" author="TARIKFA." />
+    <changeSet id="#INTRD-19070" author="TARIKFA." />
+    <changeSet id="#INTRD-19224_20231101" author="zelmeliani" />
+    <changeSet id="#INTRD-18995_20231107" author="zelmeliani" />
+    <changeSet id="#INTRD-19093_20231109" author="aeljaouhari" />
+    <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid" />
+	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" dbms="postgresql" />
+	<changeSet id="#INTRD-19685_20231130" author="AbdellatifBARI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

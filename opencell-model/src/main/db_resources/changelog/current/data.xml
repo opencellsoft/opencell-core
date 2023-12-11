@@ -22070,7 +22070,7 @@ public class ImportJobNotification extends Script {
 		</insert>
 	</changeSet>
 
-    <changeSet id="#INTRD-19685_20231208" author="AbdellatifBARI">
+	<changeSet id="#INTRD-19685_20231130" author="AbdellatifBARI">
         <insert tableName="com_message_template">
             <column name="media" value="EMAIL" />
             <column name="id" valueSequenceNext="com_msg_tmpl_seq" />
@@ -22079,9 +22079,26 @@ public class ImportJobNotification extends Script {
             <column name="code" value="MASS_RERATE_EMAIL" />
             <column name="tag_start" value="#{" />
             <column name="tag_end" value="}" />
-            <column name="subject" value="#{batchEntityStatus} Mark to rerate wallet operations batch #{batchEntityId}" />
-            <column name="subject_i18n" value='{"FRA":"#{batchEntityStatus} Marquer à revaloriser le lot de wallet operations #{batchEntityId}","ENG":"#{batchEntityStatus} Mark to rerate wallet operations batch #{batchEntityId}"}'/>
+            <column name="subject" value="#{batchStatus} Mark to rerate wallet operations batch #{jobInstanceCode}" />
+            <column name="subject_i18n" value='{"FRA":"#{batchStatus} Marquer à revaloriser le lot de wallet operations #{jobInstanceCode}","ENG":"#{batchStatus} Mark to rerate wallet operations batch #{jobInstanceCode}"}'/>
             <column name="htmlcontent">
+                <![CDATA[
+                    Batch "#{batchDescription}" has been processed by job #{jobInstanceCode}<br>Result: #{batchStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal.
+                    ]]>
+            </column>
+            <column name="htmlcontent_i18n">
+                <![CDATA[
+                    {"FRA":"Le lot \"#{batchDescription}\" a été traité par le job #{jobInstanceCode}<br>Résultat: #{batchStatus}<br>Exécution du job #{jobExecutionId}<br>Plus d'information sur le rapport d'exécution du job sur l'écran des wallet operations du Portal.","ENG":"Batch \"#{batchDescription}\" has been processed by job #{jobInstanceCode}<br>Result: #{batchStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal."}
+                ]]>
+            </column>
+        </insert>
+    </changeSet>
+    
+    <changeSet id="#INTRD-19685_20231208" author="AbdellatifBARI">
+    	<update tableName="com_message_template">
+    		<column name="subject">#{batchEntityStatus} Mark to rerate wallet operations batch #{batchEntityId}</column>
+    		<column name="subject_i18n">{"FRA":"#{batchEntityStatus} Marquer à revaloriser le lot de wallet operations #{batchEntityId}","ENG":"#{batchEntityStatus} Mark to rerate wallet operations batch #{batchEntityId}"}</column>
+    		<column name="htmlcontent">
                 <![CDATA[
                     Batch "#{batchEntityDescription}" has been processed by job #{jobInstanceCode}<br>Result: #{batchEntityStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal.
                     ]]>
@@ -22091,7 +22108,8 @@ public class ImportJobNotification extends Script {
                     {"FRA":"Le lot \"#{batchEntityDescription}\" a été traité par le job #{jobInstanceCode}<br>Résultat: #{batchEntityStatus}<br>Exécution du job #{jobExecutionId}<br>Plus d'information sur le rapport d'exécution du job sur l'écran des wallet operations du Portal.","ENG":"Batch \"#{batchEntityDescription}\" has been processed by job #{jobInstanceCode}<br>Result: #{batchEntityStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal."}
                 ]]>
             </column>
-        </insert>
+    		<where>code='MASS_RERATE_EMAIL'</where>
+    	</update>
         <insert tableName="generic_sequence">
             <column name="id" valueNumeric="-4" />
             <column name="created" valueDate="${db.current.time}" />
