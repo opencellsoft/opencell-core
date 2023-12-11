@@ -385,7 +385,7 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
             }
 
             // Initialize BR
-            billingRun.getBillingCycle().getType();
+            billingRun.getBillingCycle();
 
             em.detach(billingRun);
             currentBillingRun = billingRun;
