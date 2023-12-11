@@ -1073,8 +1073,6 @@ public abstract class RatingService extends PersistenceService<WalletOperation> 
                     if (!StringUtils.isBlank(amountELPricePlanMatrixLine)) {
                         priceWithoutTax = evaluateAmountExpression(amountELPricePlanMatrixLine, wo, wo.getChargeInstance().getUserAccount(), null, priceWithoutTax);
                     }
-                }else{
-					priceWithoutTax = ppmVersion.getPrice();
                 }
                 if (priceWithoutTax == null && priceWithTax == null) {
                     throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId() + "and charge instance : " + wo.getChargeInstance());
