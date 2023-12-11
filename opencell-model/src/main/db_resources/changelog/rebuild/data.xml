@@ -17022,7 +17022,5 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
-
-
     
 </databaseChangeLog>
