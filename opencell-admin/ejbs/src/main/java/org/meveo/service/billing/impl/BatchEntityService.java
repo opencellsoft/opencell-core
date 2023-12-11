@@ -17,9 +17,12 @@
  */
 package org.meveo.service.billing.impl;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BatchEntity;
 import org.meveo.model.billing.BatchEntityStatusEnum;
@@ -28,6 +31,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
@@ -49,6 +53,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.ofNullable;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
 /**
@@ -84,6 +89,12 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
     @Inject
     private EmailSender emailSender;
 
+    @Inject
+    private CustomGenericEntityCodeService customGenericEntityCodeService;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
+
     /**
      * Create the new batch entity
      *
@@ -93,7 +104,8 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
      */
     public void create(Map<String, Object> filters, String targetJob, String targetEntity) {
         BatchEntity batchEntity = new BatchEntity();
-        batchEntity.setCode(targetJob + "_" + targetEntity);
+        batchEntity.setCode(getBatchEntityCode(null));
+        batchEntity.setDescription(targetJob + "_" + targetEntity);
         batchEntity.setTargetJob(targetJob);
         batchEntity.setTargetEntity(targetEntity);
         batchEntity.setFilters(filters);
@@ -224,7 +236,8 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
             return;
         }
 
-        EmailTemplate emailTemplate = emailTemplateService.findById(emailTemplateId);
+        EmailTemplate emailTemplate = ofNullable(emailTemplateService.findById(emailTemplateId))
+                .orElseThrow(() -> new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateId));
         String localeAttribute = userService.getUserAttributeValue(username, "locale");
         Locale locale = !StringUtils.isBlank(localeAttribute) ? new Locale(localeAttribute) : new Locale("en");
         String languageCode = locale.getISO3Language().toUpperCase();
@@ -235,8 +248,9 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
 
 
         Map<Object, Object> params = new HashMap<>();
-        params.put("batchStatus", batchEntity.getStatus());
-        params.put("batchDescription", StringUtils.isNotBlank(batchEntity.getDescription()) ? batchEntity.getDescription() : "");
+        params.put("batchEntityId", batchEntity.getId());
+        params.put("batchEntityStatus", batchEntity.getStatus());
+        params.put("batchEntityDescription", StringUtils.isNotBlank(batchEntity.getDescription()) ? batchEntity.getDescription() : "");
         params.put("jobExecutionId", jobExecutionResult.getId() != null ? jobExecutionResult.getId() : "");
         params.put("jobInstanceCode", batchEntity.getJobInstance() != null ? batchEntity.getJobInstance().getCode() : "");
 
@@ -246,5 +260,20 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
 
         emailSender.send(from, asList(from), asList(to), subject, content, contentHtml);
     }
-}
 
+    /**
+     * Gets the batch entity code
+     *
+     * @param defaultCode the default batch entity code
+     * @return the batch entity code
+     */
+    public String getBatchEntityCode(String defaultCode) {
+        String code = defaultCode;
+        if (StringUtils.isBlank(code)) {
+            CustomGenericEntityCode customGenericEntityCode = ofNullable(customGenericEntityCodeService.findByClass(BatchEntity.class.getName()))
+                    .orElseThrow(() -> new BusinessException("Generic code does not exist for the BatchEntity class."));
+            code = serviceSingleton.getGenericCode(customGenericEntityCode);
+        }
+        return code;
+    }
+}
