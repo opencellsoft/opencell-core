@@ -8867,5 +8867,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	<changeSet id="#INTRD-19614_20231127" author="AdilElJaouhari">
         <sql>CREATE INDEX idx_job_execution_parent_job_result_id ON ${db.schema.adapted}job_execution(parent_job_result_id)</sql>
     </changeSet>
+
+    <changeSet id="#INTRD-20056_finance_settings" author="a.rouaguebe">
+        <sql>update ${db.schema.adapted}finance_settings set use_auxiliary_accounting = 0 where use_auxiliary_accounting is null;</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}finance_settings ALTER COLUMN use_auxiliary_accounting SET NOT NULL ;</sql>
+    </changeSet>
     
 </databaseChangeLog>
