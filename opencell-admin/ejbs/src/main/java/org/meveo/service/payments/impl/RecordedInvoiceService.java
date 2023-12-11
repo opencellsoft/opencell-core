@@ -590,7 +590,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 .append("'  then  ao.unMatchingAmount else 0 end ) as notYetDue,")
                 .append("sum (case when ao.dueDate >= '")
                 .append(DateUtils.formatDateWithPattern(startDate, datePattern))
-                .append("'  then  ao.transactionalUnMatchingAmount else 0 end ) as transactional_notYetDue,");
+                .append("'  then  ao.transactionalUnMatchingAmount else 0 end ) as transactional_NotYetDue,");
     	if(stepInDays != null && numberOfPeriods != null) {
     	    String alias;
     	    int step;
