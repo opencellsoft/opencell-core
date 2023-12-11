@@ -2,7 +2,9 @@ package org.meveo.apiv2.settings.globalSettings.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -51,6 +53,13 @@ public class AdvancedSettingsResourceImpl implements AdvancedSettingsResource {
 		target.setValue(source.getValue());
 		target.setType(source.getType());
 		return target;
+	}
+
+	@Override
+	public Response patch(List<org.meveo.apiv2.settings.AdvancedSettings> input) {
+		List<AdvancedSettings> listEntities = input.stream().map(x->mapToEntity(x)).collect(Collectors.toList());
+		List<AdvancedSettings> entityToUpdate = advancedSettingsApiService.patch(listEntities).get();
+		return Response.ok().entity(entityToUpdate).build();
 	}
 
 }
