@@ -16998,22 +16998,7 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
             <column name="uuid" value="MarkWOToRerateJob"/>
         </insert>
     </changeSet>
-
-	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI" />
-	<changeSet id="#INTRD-12463_20230119" author="AbdellatifBARI" />
-    <changeSet id="#INTRD-13386_20230223" author="TarikFA." />
-    <changeSet id="#INTRD-12925_20230106" author="aeljaouhari" />
-    <changeSet id="#INTRD-13379_20230127" author="aeljaouhari" />
-	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
-	<changeSet id="#INTRD-13717_20230202" author="aeljaouhari" />
-	<changeSet id="#INTRD-13967_20230215" author="houdad"/>
-	<changeSet id="#INTRD-13968" author="houdad"/>
-	<changeSet id="#INTRD-13967_20230217" author="houdad"/>
-    <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
-    <changeSet id="#INTRD-16167_20230515" author="TarikFA." />
-    <changeSet id="#INTRD-16167_20230515_revert" author="TarikFA." />
-    <changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
-	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" />
+    
     <changeSet id="#INTRD-19685_20231208" author="AbdellatifBARI">
         <insert tableName="com_message_template">
             <column name="media" value="EMAIL" />
@@ -17056,6 +17041,23 @@ public class ServiceInstanceImportScript extends GenericMassImportScript {
             <column name="sequence_id" valueNumeric="-4" />
         </insert>
     </changeSet>
+
+	<changeSet id="#INTRD-12327_20230117" author="AbdellatifBARI" />
+	<changeSet id="#INTRD-12463_20230119" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-13386_20230223" author="TarikFA." />
+    <changeSet id="#INTRD-12925_20230106" author="aeljaouhari" />
+    <changeSet id="#INTRD-13379_20230127" author="aeljaouhari" />
+	<changeSet id="#INTRD-13122_20220111" author="HichamHANINE" />
+	<changeSet id="#INTRD-13717_20230202" author="aeljaouhari" />
+	<changeSet id="#INTRD-13967_20230215" author="houdad"/>
+	<changeSet id="#INTRD-13968" author="houdad"/>
+	<changeSet id="#INTRD-13967_20230217" author="houdad"/>
+    <changeSet id="#INTRD-13267_20230220" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-16167_20230515" author="TarikFA." />
+    <changeSet id="#INTRD-16167_20230515_revert" author="TarikFA." />
+    <changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
+	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" />
+	<changeSet id="#INTRD-19685_20231130" author="AbdellatifBARI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
