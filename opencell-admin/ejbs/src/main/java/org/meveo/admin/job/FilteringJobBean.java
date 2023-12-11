@@ -180,6 +180,7 @@ public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
         context.put(recordVariableName, entity);
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+        context.put(Script.CONTEXT_ENTITY, jobExecutionResult.getJobInstance());
 
         scriptInterface.execute(context);
     }
