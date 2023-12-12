@@ -8,6 +8,8 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
  * Custom field template related utilities
  */
 public class CustomFieldTemplateUtils {
+	
+	
 
     /**
      * Build a custom field definition

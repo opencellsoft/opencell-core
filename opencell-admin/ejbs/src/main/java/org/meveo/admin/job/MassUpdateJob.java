@@ -22,7 +22,7 @@ import org.meveo.service.job.Job;
 @Stateless
 public class MassUpdateJob extends Job {
 
-	private static final String JOB_INSTANCE_MASS_UPDATE_JOB = "JobInstance_massUpdateJob";
+	private static final String JOB_INSTANCE_MASS_UPDATE_JOB = "JobInstance_MassUpdateJob";
 
 	public static final String CF_MASS_UPDATE_CHUNK = "CF_MASS_UPDATE_CHUNK";
 
@@ -67,8 +67,8 @@ public class MassUpdateJob extends Job {
 						"tab:Configuration:0;fieldGroup:Configuration:0;field:1", "0", JOB_INSTANCE_MASS_UPDATE_JOB));
 		result.put(UpdateStepExecutor.PARAM_TABLE_ALIAS,
 				CustomFieldTemplateUtils.buildCF(UpdateStepExecutor.PARAM_TABLE_ALIAS,
-						resourceMessages.getString("jobExecution.massUpdate.limitQuery"), CustomFieldTypeEnum.STRING,
-						"tab:Configuration:0;fieldGroup:Configuration:0;field:2", "a", JOB_INSTANCE_MASS_UPDATE_JOB));
+						resourceMessages.getString("jobExecution.massUpdate.tableAlias"), CustomFieldTypeEnum.STRING,
+						"tab:Configuration:0;fieldGroup:Configuration:0;field:2", "a", false, null, null, JOB_INSTANCE_MASS_UPDATE_JOB, 5L));
 		result.put(CF_MASS_UPDATE_CHUNK,
 				CustomFieldTemplateUtils.buildCF(CF_MASS_UPDATE_CHUNK,
 						resourceMessages.getString("jobExecution.massUpdate.Size"), CustomFieldTypeEnum.LONG,
