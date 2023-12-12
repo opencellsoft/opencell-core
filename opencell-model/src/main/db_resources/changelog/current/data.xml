@@ -15553,5 +15553,16 @@ public class ValidateBRScript extends ValidateBR {
             <where>code='DWH_Job_CHURN'</where>
         </delete>
     </changeSet>
+    
+  	<changeSet id="#INTRD-19367_20231212" author="aeljaouhari">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueSequenceNext="meveo_script_instance_cat_seq"/>
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="RATING" />
+			<column name="description" value="Rating" />
+			<column name="description_i18n" value='{"FR":"Valorisation","EN":"Rating"}' />
+		</insert>
+	</changeSet>
 
 </databaseChangeLog>
