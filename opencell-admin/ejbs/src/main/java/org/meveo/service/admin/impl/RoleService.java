@@ -93,8 +93,9 @@ public class RoleService extends PersistenceService<Role> {
      * @return User found
      */
     public Role findByName(String name, boolean extendedInfo, boolean syncWithKC) {
+	    String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
         Role kcRole = keycloakAdminClientService.findRole(name, extendedInfo, false);
-        if (kcRole == null) {
+        if (kcRole == null && lUserManagementSource.equalsIgnoreCase("KC")) {
             return null;
         }
 
@@ -110,10 +111,11 @@ public class RoleService extends PersistenceService<Role> {
             role.setDescription(kcRole.getDescription());
             super.create(role);
         }
-
-        role.setName(kcRole.getName());
-        role.setRoles(kcRole.getRoles());
-        role.setDescription(kcRole.getDescription());
+		if(kcRole != null) {
+			role.setName(kcRole.getName());
+			role.setRoles(kcRole.getRoles());
+			role.setDescription(kcRole.getDescription());
+		}
         return role;
 
     }
@@ -160,8 +162,9 @@ public class RoleService extends PersistenceService<Role> {
      */
      
     public Role update(Role role,Boolean replicateInKc) throws BusinessException {
-    	
-    	if(BooleanUtils.isTrue(replicateInKc)) {
+	    String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
+	    
+	    if(BooleanUtils.isTrue(replicateInKc) && lUserManagementSource.equalsIgnoreCase("KC")) {
     		keycloakAdminClientService.updateRole(role.getName(), role.getDescription(), role.isClientRole());
     	}
     	role = super.update(role);
