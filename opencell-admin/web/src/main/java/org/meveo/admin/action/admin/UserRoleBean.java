@@ -32,6 +32,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -57,7 +58,7 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
-public class UserRoleBean extends BaseBean<Role> {
+public class UserRoleBean extends CustomFieldBean<Role> {
 
     private static final long serialVersionUID = 1L;
 
