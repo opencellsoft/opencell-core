@@ -1,0 +1,77 @@
+{
+	"info": {
+		"_postman_id": "75723ad7-ad61-411c-ac5b-c97f63d4a7aa",
+		"name": "INTRD-19415 - Remove NEW buttons, forbid CA and C direct update, add change payer action, no automatic rerate",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23793433",
+		"_collection_link": "https://speeding-capsule-744848.postman.co/workspace/Team-Workspace~2bbd7fe5-823c-4a4b-8f02-dcf76daa8a43/collection/23793433-75723ad7-ad61-411c-ac5b-c97f63d4a7aa?action=share&source=collection_link&creator=23793433"
+	},
+	"item": [
+		{
+			"name": "moving CustomerAccount",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"parentCode\": \"OPENSOFT-04\",\n  \"parentId\": 31,\n  \"markOpenWalletOperationsToRerate\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/opencell/api/rest/v2/accountsManagement/customerAccounts/IDW1266/moving",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"opencell",
+						"api",
+						"rest",
+						"v2",
+						"accountsManagement",
+						"customerAccounts",
+						"IDW1266",
+						"moving"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "moving BillingAccount",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parentCode\": \"IDW1266\",\r\n  \"parentId\": 140,\r\n  \"markOpenWalletOperationsToRerate\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{opencell.base}}/opencell/api/rest/v2/accountsManagement/billingAccounts/OPENSOFT-06/moving",
+					"host": [
+						"{{opencell.base}}"
+					],
+					"path": [
+						"opencell",
+						"api",
+						"rest",
+						"v2",
+						"accountsManagement",
+						"billingAccounts",
+						"OPENSOFT-06",
+						"moving"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
